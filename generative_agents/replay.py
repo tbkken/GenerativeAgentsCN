@@ -32,6 +32,7 @@ def index():
 
     with open(replay_file, "r", encoding="utf-8") as f:
         params = json.load(f)
+    replay_personas = list(params["persona_init_pos"].keys())
 
     if step < 1:
         step = 1
@@ -58,7 +59,7 @@ def index():
 
     return render_template(
         "index.html",
-        persona_names=personas,
+        persona_names=replay_personas,
         step=step,
         play_speed=speed,
         zoom=zoom,
@@ -67,4 +68,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

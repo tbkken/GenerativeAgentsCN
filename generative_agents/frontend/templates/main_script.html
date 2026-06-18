@@ -10,6 +10,9 @@
 	let execute_count_max = tile_width / movement_speed;
 	let execute_count = execute_count_max;
 	let all_movement = {{ all_movement|tojson }};
+	let live_config = {{ live_config|default(none)|tojson }};
+	let live_refreshing = false;
+	let live_last_checkpoint_mtime = {{ latest_checkpoint_mtime|default(0)|tojson }};
 
 	let datetime_options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 	let start_datetime = new Date(Date.parse({{ start_datetime|tojson }}));
@@ -31,6 +34,38 @@
 
 	let finished = false;
 	let paused = false;
+
+	async function refresh_live_data() {
+		if (!live_config || live_refreshing) return;
+		live_refreshing = true;
+		try {
+			const response = await fetch(live_config.api_url, { cache: "no-store" });
+			if (response.status === 202) return;
+			if (!response.ok) throw new Error("live api status " + response.status);
+
+			const payload = await response.json();
+			if (!payload.ready) return;
+			if (payload.latest_checkpoint_mtime < live_last_checkpoint_mtime) return;
+
+			live_last_checkpoint_mtime = payload.latest_checkpoint_mtime;
+			all_movement = payload.all_movement;
+			if (!paused && !finished && buttonPlay) {
+				buttonPlay.text = (step in all_movement) ? "[实时运行]" : "[等待新帧]";
+			}
+		} catch (error) {
+			console.warn("Live refresh failed:", error);
+		} finally {
+			live_refreshing = false;
+		}
+	}
+
+	function stop_persona_animation(persona_name, persona) {
+		if (pre_anims_direction_dict[persona_name] == "l") persona.setTexture(persona_name, "left");
+		else if (pre_anims_direction_dict[persona_name] == "r") persona.setTexture(persona_name, "right");
+		else if (pre_anims_direction_dict[persona_name] == "u") persona.setTexture(persona_name, "up");
+		else if (pre_anims_direction_dict[persona_name] == "d") persona.setTexture(persona_name, "down");
+		persona.anims.stop();
+	}
 
 	// Phaser configuration
 	const config = {
@@ -173,7 +208,7 @@
 		posY = 20;
 
 		// Add button: play, pause ...
-		buttonPlay = add_text(this, posX, posY, "[运行]", "#ffffcc");
+		buttonPlay = add_text(this, posX, posY, live_config ? "[实时运行]" : "[运行]", "#ffffcc");
 		buttonPlay.setInteractive();
 		posX += buttonPlay.width + 10;
 
@@ -271,6 +306,11 @@
 				repeat: -1
 			});
 		}
+
+		if (live_config) {
+			setInterval(refresh_live_data, live_config.poll_ms);
+			refresh_live_data();
+		}
 	}
 
 	// Update function
@@ -329,6 +369,24 @@
 			return;
 		}
 
+		if (!(step in all_movement)) {
+			for (let i = 0; i < Object.keys(personas).length; i++) {
+				let persona_name = Object.keys(personas)[i];
+				stop_persona_animation(persona_name, personas[persona_name]);
+			}
+
+			if (live_config) {
+				buttonPlay.text = "[等待新帧]";
+				refresh_live_data();
+				return;
+			}
+
+			finished = true;
+			buttonPlay.text = "[回放结束]";
+			buttonPause.setVisible(false);
+			return;
+		}
+
 		curr_datetime = new Date(start_datetime.getTime());
 		curr_year = curr_datetime.getFullYear().toString().padStart(4, "0");
 		curr_month = (curr_datetime.getMonth() + 1).toString().padStart(2, "0");
@@ -347,79 +405,67 @@
 			let curr_persona = personas[curr_persona_name];
 			let curr_pronunciatio = pronunciatios[Object.keys(personas)[i]];
 
-			if (step in all_movement) {
-				if (curr_persona_name.replace("_", " ") in all_movement[step]) {
-					if (execute_count == execute_count_max) {
-						let curr_x = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][0];
-						let curr_y = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][1];
-						movement_target[curr_persona_name] = [curr_x * tile_width, curr_y * tile_width];
+			if (curr_persona_name.replace("_", " ") in all_movement[step]) {
+				if (execute_count == execute_count_max) {
+					let curr_x = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][0];
+					let curr_y = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][1];
+					movement_target[curr_persona_name] = [curr_x * tile_width, curr_y * tile_width];
 
-						let action = all_movement[step][curr_persona_name.replace("_", " ")]["action"];
+					let action = all_movement[step][curr_persona_name.replace("_", " ")]["action"];
 
-						let act = action;
-						act = act.length > 25 ? act.substring(0, 20)+"..." : act;
-						pronunciatios[curr_persona_name].setText(curr_persona_name + ": " + act);
+					let act = action;
+					act = act.length > 25 ? act.substring(0, 20)+"..." : act;
+					pronunciatios[curr_persona_name].setText(curr_persona_name + ": " + act);
 
-						// Updating the status of each personas
-						document.getElementById("agent_desc__"+curr_persona_name).innerHTML = all_movement["description"][curr_persona_name]["currently"];
-						document.getElementById("current_action__"+curr_persona_name).innerHTML = action;
-						document.getElementById("target_address__"+curr_persona_name).innerHTML = all_movement[step][curr_persona_name.replace("_", " ")]["location"];
+					// Updating the status of each personas
+					document.getElementById("agent_desc__"+curr_persona_name).innerHTML = all_movement["description"][curr_persona_name]["currently"];
+					document.getElementById("current_action__"+curr_persona_name).innerHTML = action;
+					document.getElementById("target_address__"+curr_persona_name).innerHTML = all_movement[step][curr_persona_name.replace("_", " ")]["location"];
+				}
+
+				if (execute_count > 0 && movement_target[curr_persona_name]) {
+					if (curr_persona.body.x < movement_target[curr_persona_name][0]) {
+						curr_persona.body.x += movement_speed;
+						anims_direction = "r";
+						pre_anims_direction = "r";
+						pre_anims_direction_dict[curr_persona_name] = "r";
+					} else if (curr_persona.body.x > movement_target[curr_persona_name][0]) {
+						curr_persona.body.x -= movement_speed;
+						anims_direction = "l";
+						pre_anims_direction = "l";
+						pre_anims_direction_dict[curr_persona_name] = "l";
+					} else if (curr_persona.body.y < movement_target[curr_persona_name][1]) {
+						curr_persona.body.y += movement_speed;
+						anims_direction = "d";
+						pre_anims_direction = "d";
+						pre_anims_direction_dict[curr_persona_name] = "d";
+					} else if (curr_persona.body.y > movement_target[curr_persona_name][1]) {
+						curr_persona.body.y -= movement_speed;
+						anims_direction = "u";
+						pre_anims_direction = "u";
+						pre_anims_direction_dict[curr_persona_name] = "u";
+					} else {
+						anims_direction = "";
 					}
 
-					if (execute_count > 0) {
-						if (curr_persona.body.x < movement_target[curr_persona_name][0]) {
-							curr_persona.body.x += movement_speed;
-							anims_direction = "r";
-							pre_anims_direction = "r";
-							pre_anims_direction_dict[curr_persona_name] = "r";
-						} else if (curr_persona.body.x > movement_target[curr_persona_name][0]) {
-							curr_persona.body.x -= movement_speed;
-							anims_direction = "l";
-							pre_anims_direction = "l";
-							pre_anims_direction_dict[curr_persona_name] = "l";
-						} else if (curr_persona.body.y < movement_target[curr_persona_name][1]) {
-							curr_persona.body.y += movement_speed;
-							anims_direction = "d";
-							pre_anims_direction = "d";
-							pre_anims_direction_dict[curr_persona_name] = "d";
-						} else if (curr_persona.body.y > movement_target[curr_persona_name][1]) {
-							curr_persona.body.y -= movement_speed;
-							anims_direction = "u";
-							pre_anims_direction = "u";
-							pre_anims_direction_dict[curr_persona_name] = "u";
-						} else {
-							anims_direction = "";
-						}
+					curr_pronunciatio.x = curr_persona.body.x - 15;
+					curr_pronunciatio.y = curr_persona.body.y - 15 - 25;
 
-						curr_pronunciatio.x = curr_persona.body.x - 15;
-						curr_pronunciatio.y = curr_persona.body.y - 15 - 25;
+					let left_walk_name = curr_persona_name + "-left-walk";
+					let right_walk_name = curr_persona_name + "-right-walk";
+					let down_walk_name = curr_persona_name + "-down-walk";
+					let up_walk_name = curr_persona_name + "-up-walk";
 
-						let left_walk_name = curr_persona_name + "-left-walk";
-						let right_walk_name = curr_persona_name + "-right-walk";
-						let down_walk_name = curr_persona_name + "-down-walk";
-						let up_walk_name = curr_persona_name + "-up-walk";
-
-						if (anims_direction == "l") {
-							curr_persona.anims.play(left_walk_name, true);
-						} else if (anims_direction == "r") {
-							curr_persona.anims.play(right_walk_name, true);
-						} else if (anims_direction == "u") {
-							curr_persona.anims.play(up_walk_name, true);
-						} else if (anims_direction == "d") {
-							curr_persona.anims.play(down_walk_name, true);
-						}
+					if (anims_direction == "l") {
+						curr_persona.anims.play(left_walk_name, true);
+					} else if (anims_direction == "r") {
+						curr_persona.anims.play(right_walk_name, true);
+					} else if (anims_direction == "u") {
+						curr_persona.anims.play(up_walk_name, true);
+					} else if (anims_direction == "d") {
+						curr_persona.anims.play(down_walk_name, true);
 					}
 				}
-			} else {
-				if (pre_anims_direction_dict[curr_persona_name] == "l") curr_persona.setTexture(curr_persona_name, "left");
-				else if (pre_anims_direction_dict[curr_persona_name] == "r") curr_persona.setTexture(curr_persona_name, "right");
-				else if (pre_anims_direction_dict[curr_persona_name] == "u") curr_persona.setTexture(curr_persona_name, "up");
-				else if (pre_anims_direction_dict[curr_persona_name] == "d") curr_persona.setTexture(curr_persona_name, "down");
-				curr_persona.anims.stop();
-
-				finished = true;
-				buttonPlay.text = "[回放结束]";
-				buttonPause.setVisible(false);
 			}
 		}
 
@@ -427,8 +473,10 @@
 			for (let i = 0; i < Object.keys(personas).length; i++) {
 				let curr_persona_name = Object.keys(personas)[i];
 				let curr_persona = personas[curr_persona_name];
-				curr_persona.body.x = movement_target[curr_persona_name][0];
-				curr_persona.body.y = movement_target[curr_persona_name][1];
+				if (movement_target[curr_persona_name]) {
+					curr_persona.body.x = movement_target[curr_persona_name][0];
+					curr_persona.body.y = movement_target[curr_persona_name][1];
+				}
 			}
 			execute_count = execute_count_max + 1;
 			step = step + 1;

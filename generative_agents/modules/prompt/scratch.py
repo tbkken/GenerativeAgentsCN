@@ -197,6 +197,29 @@ class Scratch:
             res: List[Tuple[str, int]] = Field(description="子任务列表，每项为 [活动描述, 时长分钟数] 的元组")
 
         def _callback(response):
+            normalized = []
+            for item in response:
+                if isinstance(item, dict):
+                    describe = (
+                        item.get("describe")
+                        or item.get("activity")
+                        or item.get("task")
+                        or item.get("活动描述")
+                    )
+                    duration = item.get("duration") or item.get("minutes") or item.get("时长分钟数")
+                elif isinstance(item, (list, tuple)) and len(item) >= 2:
+                    describe, duration = item[0], item[1]
+                else:
+                    continue
+
+                try:
+                    duration = int(duration)
+                except (TypeError, ValueError):
+                    continue
+                if describe and duration > 0:
+                    normalized.append((str(describe), duration))
+
+            response = normalized or failsafe
             left = plan["duration"] - sum([s[1] for s in response])
             if left > 0:
                 response.append((plan["describe"], left))

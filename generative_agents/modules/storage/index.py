@@ -2,16 +2,47 @@
 
 import os
 import time
+import requests
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core.base.embeddings.base import BaseEmbedding
+from llama_index.core.bridge.pydantic import Field
 from llama_index.core.indices.vector_store.retrievers import VectorIndexRetriever
 from llama_index.core.schema import TextNode
 from llama_index import core as index_core
-from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import Settings
 
 from modules import utils
+
+
+class OllamaHttpEmbedding(BaseEmbedding):
+    model_name: str = Field(description="The Ollama embedding model to use.")
+    base_url: str = Field(default="http://localhost:11434")
+
+    def _embed(self, text):
+        response = requests.post(
+            url=f"{self.base_url.rstrip('/')}/api/embed",
+            json={
+                "model": self.model_name,
+                "input": text,
+            },
+            timeout=300,
+        )
+        response.raise_for_status()
+        return response.json()["embeddings"]
+
+    def _get_text_embedding(self, text):
+        return self._embed(text)[0]
+
+    def _get_text_embeddings(self, texts):
+        return self._embed(texts)
+
+    def _get_query_embedding(self, query):
+        return self._get_text_embedding(query)
+
+    async def _aget_query_embedding(self, query):
+        return self._get_query_embedding(query)
 
 
 class LlamaIndex:
@@ -20,10 +51,9 @@ class LlamaIndex:
         if embedding_config["provider"] == "hugging_face":
             embed_model = HuggingFaceEmbedding(model_name=embedding_config["model"])
         elif embedding_config["provider"] == "ollama":
-            embed_model = OllamaEmbedding(
+            embed_model = OllamaHttpEmbedding(
                 model_name=embedding_config["model"],
                 base_url=embedding_config["base_url"],
-                ollama_additional_kwargs={"mirostat": 0},
             )
         elif embedding_config["provider"] == "openai":
             embed_model = OpenAIEmbedding(

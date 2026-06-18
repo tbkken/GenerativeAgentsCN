@@ -165,6 +165,8 @@ parser.add_argument("--start", type=str, default="20240213-09:30", help="The sta
 parser.add_argument("--resume", action="store_true", help="Resume running the simulation")
 parser.add_argument("--step", type=int, default=10, help="The simulate step")
 parser.add_argument("--stride", type=int, default=10, help="The step stride in minute")
+parser.add_argument("--agent-count", type=int, default=0, help="Limit the number of agents for a lightweight local run")
+parser.add_argument("--agents", type=str, default="", help="Comma-separated agent names to run")
 parser.add_argument("--verbose", type=str, default="debug", help="The verbose level")
 parser.add_argument("--log", type=str, default="", help="Name of the log file")
 args = parser.parse_args()
@@ -195,7 +197,16 @@ if __name__ == "__main__":
             exit(0)
         start_step = sim_config["step"]
     else:
-        sim_config = get_config(start_time, args.stride, personas)
+        selected_personas = personas
+        if args.agents:
+            selected_personas = [a.strip() for a in args.agents.split(",") if a.strip()]
+            unknown_agents = [a for a in selected_personas if a not in personas]
+            if unknown_agents:
+                raise ValueError("Unknown agents: " + ", ".join(unknown_agents))
+        elif args.agent_count > 0:
+            selected_personas = personas[:args.agent_count]
+
+        sim_config = get_config(start_time, args.stride, selected_personas)
         start_step = 0
 
     static_root = "frontend/static"

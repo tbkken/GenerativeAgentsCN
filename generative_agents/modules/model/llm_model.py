@@ -93,20 +93,27 @@ class OllamaLLMModel(LLMModel):
         return None
 
     def ollama_chat(self, messages, temperature, response_format=None):
+        base_url = self._base_url.rstrip("/")
+        if base_url.endswith("/v1"):
+            base_url = base_url[:-3]
+
         headers = {
             "Content-Type": "application/json"
         }
         params = {
             "model": self._model,
             "messages": messages,
-            "temperature": temperature,
             "stream": False,
+            "think": False,
+            "options": {
+                "temperature": temperature,
+            },
         }
         if response_format:
-            params["response_format"] = response_format
+            params["format"] = response_format
 
         response = requests.post(
-            url=f"{self._base_url}/chat/completions",
+            url=f"{base_url}/api/chat",
             headers=headers,
             json=params,
             stream=False,
@@ -122,42 +129,49 @@ class OllamaLLMModel(LLMModel):
         if return_type is not None:
             try:
                 schema = return_type.model_json_schema()
-                response_format = {
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": return_type.__name__,
-                        "strict": True,
-                        "schema": schema
-                    }
-                }
+                response_format = schema
             except Exception:
                 pass
         
         messages = [{"role": "user", "content": prompt}]
         response = self.ollama_chat(messages=messages, temperature=temperature, response_format=response_format)
         
-        if response and len(response.get("choices", [])) > 0:
+        if response and response.get("message"):
+            ret = response["message"]["content"]
+        elif response and len(response.get("choices", [])) > 0:
             ret = response["choices"][0]["message"]["content"]
+        else:
+            ret = ""
+
+        if ret:
             # 从输出结果中过滤掉<think>标签内的文字，以免影响后续逻辑
             ret = re.sub(r"<think>.*</think>", "", ret, flags=re.DOTALL)
             
             # Parse and validate the response using the Pydantic model
             if return_type is not None:
+                def _validate(parsed):
+                    if not isinstance(parsed, dict) or "res" not in parsed:
+                        parsed = {"res": parsed}
+                    validated = return_type.model_validate(parsed)
+                    return validated.res
+
                 try:
                     # Try to parse as JSON and validate with Pydantic
                     parsed = json.loads(ret)
-                    validated = return_type.model_validate(parsed)
-                    return validated.res
+                    return _validate(parsed)
                 except json.JSONDecodeError:
                     # If JSON parsing fails, try to extract JSON from the text
                     json_match = re.search(r'\{.*\}', ret, re.DOTALL)
                     if json_match:
                         try:
                             parsed = json.loads(json_match.group())
-                            validated = return_type.model_validate(parsed)
-                            return validated.res
+                            return _validate(parsed)
                         except (json.JSONDecodeError, Exception):
                             pass
+                    try:
+                        return _validate(ret.strip())
+                    except Exception:
+                        pass
                     # If all parsing fails, return the raw text
                     return ret
                 except Exception as e:
