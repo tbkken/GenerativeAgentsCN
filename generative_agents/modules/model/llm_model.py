@@ -2,6 +2,7 @@
 
 import time
 import re
+import json
 import requests
 from magentic import prompt
 
@@ -167,11 +168,109 @@ class OllamaLLMModel(LLMModel):
         return ""
 
 
+class MiniMaxLLMModel(LLMModel):
+    """适配 MiniMax 的 OpenAI 兼容接口（如 MiniMax-M3）。
+
+    与 Ollama 不同，MiniMax 不支持 `response_format` 的 `json_schema` 模式
+    （实测会被忽略），因此这里改用 `json_object` 模式，并把所需的 JSON Schema
+    直接拼接到提示语中，强制模型输出结构化 JSON。MiniMax-M 系列为推理模型，
+    其思考过程会以 <think>...</think> 形式出现在 content 中，需要过滤。
+    """
+
+    def setup(self, config):
+        # 输出最大 token 数，需足够容纳“思考过程 + 结构化结果”
+        self._max_tokens = config.get("max_tokens", 8192)
+        return None
+
+    def minimax_chat(self, messages, temperature, response_format=None):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self._api_key}",
+        }
+        params = {
+            "model": self._model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": self._max_tokens,
+            "stream": False,
+        }
+        if response_format:
+            params["response_format"] = response_format
+
+        response = requests.post(
+            url=f"{self._base_url}/chat/completions",
+            headers=headers,
+            json=params,
+            stream=False,
+            timeout=300,
+        )
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"MiniMax API returned {response.status_code}: {response.text[:500]}"
+            )
+        return response.json()
+
+    def _completion(self, prompt, return_type, temperature=0.5):
+        response_format = None
+        if return_type is not None:
+            # MiniMax 忽略 json_schema，这里把 schema 写进提示语并启用 json_object
+            try:
+                schema = return_type.model_json_schema()
+                prompt = (
+                    f"{prompt}\n\n"
+                    "请只输出一个符合下面 JSON Schema 的 JSON 对象，"
+                    "不要输出任何解释、思考过程或 markdown 代码块标记，直接输出 JSON：\n"
+                    f"JSON Schema: {json.dumps(schema, ensure_ascii=False)}\n"
+                    "其中结果放在字段 \"res\" 中。"
+                )
+                response_format = {"type": "json_object"}
+            except Exception:
+                pass
+
+        messages = [{"role": "user", "content": prompt}]
+        response = self.minimax_chat(
+            messages=messages,
+            temperature=temperature,
+            response_format=response_format,
+        )
+
+        if response and len(response.get("choices", [])) > 0:
+            ret = response["choices"][0]["message"].get("content") or ""
+            # 过滤掉 <think> 标签内的思考过程，以免影响后续解析
+            ret = re.sub(r"<think>.*?</think>", "", ret, flags=re.DOTALL).strip()
+            return parse_structured_output(ret, return_type)
+        return ""
+
+
+def parse_structured_output(ret, return_type):
+    """将文本解析为 return_type（Pydantic 模型）的 res 字段，失败时返回原始文本。"""
+    if return_type is None:
+        return ret
+    try:
+        parsed = json.loads(ret)
+        return return_type.model_validate(parsed).res
+    except json.JSONDecodeError:
+        json_match = re.search(r"\{.*\}", ret, re.DOTALL)
+        if json_match:
+            try:
+                parsed = json.loads(json_match.group())
+                return return_type.model_validate(parsed).res
+            except Exception:
+                pass
+        return ret
+    except Exception as e:
+        print(f"parse_structured_output: Failed to validate response: {e}")
+        return ret
+
+
 def create_llm_model(llm_config):
     """Create llm model"""
 
     if llm_config["provider"] == "ollama":
         return OllamaLLMModel(llm_config)
+
+    elif llm_config["provider"] == "minimax":
+        return MiniMaxLLMModel(llm_config)
 
     elif llm_config["provider"] == "openai":
         return OpenAILLMModel(llm_config)
