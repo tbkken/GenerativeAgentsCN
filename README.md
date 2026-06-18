@@ -48,6 +48,21 @@ cd GenerativeAgentsCN
 修改配置文件 `generative_agents/data/config.json`:
 1. 默认使用[Ollama](https://ollama.com/)加载本地量化模型，并提供OpenAI兼容API。需要先拉取量化模型（参考[ollama.md](docs/ollama.md)），并确保`base_url`和`model`与Ollama中的配置一致。
 2. 如果希望调用其他OpenAI兼容API，需要将`provider`改为`openai`，并根据API文档修改`model`、`api_key`和`base_url`。
+3. 如果希望使用 [MiniMax](https://platform.minimaxi.com/)（如`MiniMax-M3`），将`think.llm`配置为：
+
+    ```json
+    "llm": {
+        "provider": "minimax",
+        "model": "MiniMax-M3",
+        "base_url": "https://api.minimaxi.com/v1",
+        "api_key": "<你的MiniMax API Key>",
+        "max_tokens": 8192
+    }
+    ```
+
+    > MiniMax-M 系列为推理模型，其OpenAI兼容接口不支持`response_format`的`json_schema`严格模式，因此`minimax` provider会把所需的JSON Schema拼接进提示语并启用`json_object`模式来获得结构化输出，同时自动过滤`<think>`思考过程。
+
+    MiniMax的OpenAI兼容接口**不提供嵌入（embedding）模型**，因此默认将`associate.embedding`配置为本地HuggingFace嵌入模型`BAAI/bge-small-zh-v1.5`（首次运行会自动下载，完全本地、无需额外API）。如需改用Ollama或其他嵌入服务，可相应修改`embedding`配置。
 
 ### 1.3 安装python依赖
 
