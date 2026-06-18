@@ -123,8 +123,6 @@ class OllamaLLMModel(LLMModel):
         return response.json()
 
     def _completion(self, prompt, return_type, temperature=0.5):
-        import json
-        
         # Generate JSON schema from the Pydantic model for structured output
         response_format = None
         if return_type is not None:
@@ -146,39 +144,8 @@ class OllamaLLMModel(LLMModel):
 
         if ret:
             # 从输出结果中过滤掉<think>标签内的文字，以免影响后续逻辑
-            ret = re.sub(r"<think>.*</think>", "", ret, flags=re.DOTALL)
-            
-            # Parse and validate the response using the Pydantic model
-            if return_type is not None:
-                def _validate(parsed):
-                    if not isinstance(parsed, dict) or "res" not in parsed:
-                        parsed = {"res": parsed}
-                    validated = return_type.model_validate(parsed)
-                    return validated.res
-
-                try:
-                    # Try to parse as JSON and validate with Pydantic
-                    parsed = json.loads(ret)
-                    return _validate(parsed)
-                except json.JSONDecodeError:
-                    # If JSON parsing fails, try to extract JSON from the text
-                    json_match = re.search(r'\{.*\}', ret, re.DOTALL)
-                    if json_match:
-                        try:
-                            parsed = json.loads(json_match.group())
-                            return _validate(parsed)
-                        except (json.JSONDecodeError, Exception):
-                            pass
-                    try:
-                        return _validate(ret.strip())
-                    except Exception:
-                        pass
-                    # If all parsing fails, return the raw text
-                    return ret
-                except Exception as e:
-                    print(f"OllamaLLMModel: Failed to validate response: {e}")
-                    return ret
-            return ret
+            ret = re.sub(r"<think>.*?</think>", "", ret, flags=re.DOTALL).strip()
+            return parse_structured_output(ret, return_type, "OllamaLLMModel")
         return ""
 
 
@@ -252,28 +219,38 @@ class MiniMaxLLMModel(LLMModel):
             ret = response["choices"][0]["message"].get("content") or ""
             # 过滤掉 <think> 标签内的思考过程，以免影响后续解析
             ret = re.sub(r"<think>.*?</think>", "", ret, flags=re.DOTALL).strip()
-            return parse_structured_output(ret, return_type)
+            return parse_structured_output(ret, return_type, "MiniMaxLLMModel")
         return ""
 
 
-def parse_structured_output(ret, return_type):
+def parse_structured_output(ret, return_type, context="parse_structured_output"):
     """将文本解析为 return_type（Pydantic 模型）的 res 字段，失败时返回原始文本。"""
     if return_type is None:
         return ret
+
+    def _validate(parsed):
+        if not isinstance(parsed, dict) or "res" not in parsed:
+            parsed = {"res": parsed}
+        return return_type.model_validate(parsed).res
+
     try:
         parsed = json.loads(ret)
-        return return_type.model_validate(parsed).res
+        return _validate(parsed)
     except json.JSONDecodeError:
         json_match = re.search(r"\{.*\}", ret, re.DOTALL)
         if json_match:
             try:
                 parsed = json.loads(json_match.group())
-                return return_type.model_validate(parsed).res
+                return _validate(parsed)
             except Exception:
                 pass
+        try:
+            return _validate(ret.strip())
+        except Exception:
+            pass
         return ret
     except Exception as e:
-        print(f"parse_structured_output: Failed to validate response: {e}")
+        print(f"{context}: Failed to validate response: {e}")
         return ret
 
 

@@ -11,11 +11,10 @@
         },
         "think": {
             "llm": {
-                "provider": "minimax",
-                "model": "MiniMax-M3",
-                "base_url": "https://api.minimaxi.com/v1",
-                "api_key": "sk-cp-rysmVDtMt3-7XWQRYNHAJKEtsamGuS5QxsnxBiScIlvYCHpjd8J3SJiPf1-YlTdafWTgo9s27IZ2-UBO2XAtaqIWEKp1MKgcW6ysV381inXP1D5uGBMIu0k",
-                "max_tokens": 8192
+                "provider": "ollama",
+                "model": "qwen3.5:4b-q4_K_M",
+                "base_url": "http://127.0.0.1:11434/v1",
+                "api_key": ""
             },
             "interval": 1000,
             "poignancy_max": 150
@@ -23,9 +22,9 @@
         "chat_iter": 4,
         "associate": {
             "embedding": {
-                "provider": "hugging_face",
-                "model": "BAAI/bge-small-zh-v1.5",
-                "base_url": "",
+                "provider": "ollama",
+                "model": "qwen3-embedding:0.6b-q8_0",
+                "base_url": "http://127.0.0.1:11434",
                 "api_key": ""
             },
             "retention": 8
