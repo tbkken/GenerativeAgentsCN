@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="640" viewBox="0 0 1160 640" role="img" aria-labelledby="title desc">
+  <title id="title">图 1-2：Generative Agents 架构闭环</title>
+  <desc id="desc">观察进入记忆流，经检索、反思和规划生成行动与对话，行动改变环境，环境又被继续观察。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#475569"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="1160" height="640" fill="#f8fafc"/>
+  <rect x="48" y="44" width="1064" height="552" rx="28" fill="#ffffff" stroke="#dbe3ef"/>
+  <text x="580" y="98" text-anchor="middle" font-family="Arial, 'PingFang SC', sans-serif" font-size="30" font-weight="700" fill="#102033">从一次观察到持续行为的闭环</text>
+  <text x="580" y="134" text-anchor="middle" font-family="Arial, 'PingFang SC', sans-serif" font-size="17" fill="#64748b">论文真正的贡献，是把 LLM 放进这个循环，而不是只让它回答一句话</text>
+
+  <g font-family="Arial, 'PingFang SC', sans-serif" filter="url(#shadow)">
+    <rect x="90" y="252" width="160" height="86" rx="16" fill="#e0f2fe" stroke="#38bdf8"/>
+    <text x="170" y="289" text-anchor="middle" font-size="22" font-weight="700" fill="#075985">观察</text>
+    <text x="170" y="319" text-anchor="middle" font-size="15" fill="#0f4f6e">环境与他人事件</text>
+
+    <rect x="310" y="190" width="180" height="90" rx="16" fill="#ecfeff" stroke="#22d3ee"/>
+    <text x="400" y="228" text-anchor="middle" font-size="22" font-weight="700" fill="#155e75">记忆流</text>
+    <text x="400" y="258" text-anchor="middle" font-size="15" fill="#155e75">完整经验记录</text>
+
+    <rect x="545" y="150" width="180" height="90" rx="16" fill="#dcfce7" stroke="#4ade80"/>
+    <text x="635" y="188" text-anchor="middle" font-size="22" font-weight="700" fill="#166534">检索</text>
+    <text x="635" y="218" text-anchor="middle" font-size="15" fill="#1f5f38">近期性 重要性 相关性</text>
+
+    <rect x="545" y="360" width="180" height="90" rx="16" fill="#fef3c7" stroke="#fbbf24"/>
+    <text x="635" y="398" text-anchor="middle" font-size="22" font-weight="700" fill="#92400e">反思</text>
+    <text x="635" y="428" text-anchor="middle" font-size="15" fill="#7a3f12">高层想法与认知</text>
+
+    <rect x="780" y="190" width="180" height="90" rx="16" fill="#ede9fe" stroke="#a78bfa"/>
+    <text x="870" y="228" text-anchor="middle" font-size="22" font-weight="700" fill="#5b21b6">规划</text>
+    <text x="870" y="258" text-anchor="middle" font-size="15" fill="#5b21b6">日程与细粒度行动</text>
+
+    <rect x="780" y="360" width="180" height="90" rx="16" fill="#fce7f3" stroke="#f472b6"/>
+    <text x="870" y="398" text-anchor="middle" font-size="22" font-weight="700" fill="#9d174d">行动与对话</text>
+    <text x="870" y="428" text-anchor="middle" font-size="15" fill="#831843">移动 交谈 等待 反应</text>
+
+    <rect x="990" y="252" width="120" height="86" rx="16" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="1050" y="289" text-anchor="middle" font-size="22" font-weight="700" fill="#334155">世界</text>
+    <text x="1050" y="319" text-anchor="middle" font-size="15" fill="#475569">状态变化</text>
+  </g>
+
+  <path d="M250 292 C278 292 286 236 310 236" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M490 236 C520 226 520 198 545 198" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M635 240 C635 278 635 322 635 360" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M725 198 C750 198 756 236 780 236" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M725 405 C750 405 756 405 780 405" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M870 280 C870 310 870 330 870 360" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M960 405 C1010 405 1048 380 1050 338" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M990 294 C825 540 335 540 170 338" fill="none" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" stroke-dasharray="8 8"/>
+  <text x="580" y="535" text-anchor="middle" font-family="Arial, 'PingFang SC', sans-serif" font-size="16" fill="#64748b">虚线表示：行动改变世界，世界被再次观察，新的观察继续进入记忆流</text>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Research origin illustration</title>
+  <desc id="desc">A research lab hologram showing the birth of a virtual society of generative agents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#061014"/>
+      <stop offset="52%" stop-color="#0a1d24"/>
+      <stop offset="100%" stop-color="#020407"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" x2="1">
+      <stop offset="0%" stop-color="#0e2b34" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#53e8ff" stop-opacity=".55"/>
+    </linearGradient>
+    <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1400" height="760" fill="url(#bg)"/>
+  <g opacity=".18" stroke="#70efff" stroke-width="1">
+    <path d="M90 140 H410 M990 140 H1310 M160 610 H520 M870 610 H1240"/>
+    <path d="M190 70 V690 M1210 70 V690"/>
+  </g>
+  <g transform="translate(700 430)" filter="url(#glow)">
+    <ellipse cx="0" cy="110" rx="420" ry="82" fill="#02090d" stroke="#8af7ff" stroke-width="2"/>
+    <ellipse cx="0" cy="82" rx="330" ry="58" fill="none" stroke="#35d5ef" stroke-width="2" opacity=".75"/>
+    <g transform="translate(0 10)">
+      <polygon points="-260,85 0,-45 260,85 0,210" fill="#07171d" stroke="#83f7ff" stroke-width="2"/>
+      <g stroke="#3adff5" stroke-width="1.5" opacity=".85">
+        <path d="M-190 50 L50 170"/>
+        <path d="M-65 -10 L180 110"/>
+        <path d="M-230 70 L15 -50"/>
+        <path d="M-90 140 L155 20"/>
+      </g>
+      <g fill="#102932" stroke="#8cf9ff">
+        <polygon points="-155,45 -110,22 -65,45 -110,68"/>
+        <polygon points="-15,92 35,67 85,92 35,118"/>
+        <polygon points="92,33 142,8 192,33 142,58"/>
+        <polygon points="-10,-12 42,-38 94,-12 42,14"/>
+      </g>
+      <g fill="#ffd166">
+        <circle cx="-110" cy="45" r="6"/>
+        <circle cx="35" cy="92" r="6"/>
+        <circle cx="142" cy="33" r="6"/>
+        <circle cx="42" cy="-12" r="6"/>
+      </g>
+    </g>
+    <g fill="none" stroke="#75f7ff" stroke-width="2" opacity=".9">
+      <path d="M-175 70 C-240 -50 -185 -170 -310 -265"/>
+      <path d="M-10 10 C-30 -105 55 -190 -15 -310"/>
+      <path d="M150 65 C235 -48 200 -175 330 -252"/>
+    </g>
+  </g>
+  <g filter="url(#glow)">
+    <g transform="translate(210 260)" opacity=".9">
+      <rect x="0" y="0" width="230" height="140" rx="10" fill="#07171d" stroke="#54e8ff"/>
+      <path d="M25 38 H190 M25 70 H150 M25 102 H205" stroke="#54e8ff" stroke-width="3" opacity=".75"/>
+    </g>
+    <g transform="translate(960 245)" opacity=".9">
+      <rect x="0" y="0" width="250" height="155" rx="10" fill="#07171d" stroke="#ffd166"/>
+      <circle cx="58" cy="72" r="28" fill="none" stroke="#ffd166" stroke-width="3"/>
+      <path d="M105 48 H212 M105 78 H190 M105 108 H220" stroke="#ffd166" stroke-width="3" opacity=".8"/>
+    </g>
+    <g transform="translate(520 72)" opacity=".85">
+      <rect x="0" y="0" width="360" height="96" rx="12" fill="url(#panel)" stroke="#78f7ff"/>
+      <path d="M35 50 C90 15 125 82 180 50 S270 18 325 50" fill="none" stroke="#ffffff" stroke-width="2"/>
+    </g>
+  </g>
+  <g opacity=".72" stroke="#6ef1ff" stroke-width="1.4" fill="none">
+    <path d="M440 330 C520 280 595 285 650 360"/>
+    <path d="M960 320 C875 280 795 285 742 360"/>
+    <path d="M700 168 C700 238 700 282 700 340"/>
+  </g>
+</svg>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Virtual town generative agents cover illustration</title>
+  <desc id="desc">A futuristic virtual town with agent paths, memory streams, and neural connections.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#12343f"/>
+      <stop offset="48%" stop-color="#07171d"/>
+      <stop offset="100%" stop-color="#03070a"/>
+    </radialGradient>
+    <linearGradient id="cyan" x1="0" x2="1">
+      <stop offset="0%" stop-color="#7df9ff" stop-opacity=".15"/>
+      <stop offset="55%" stop-color="#38d5ff" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity=".35"/>
+    </linearGradient>
+    <linearGradient id="amber" x1="0" x2="1">
+      <stop offset="0%" stop-color="#ffd166" stop-opacity=".1"/>
+      <stop offset="100%" stop-color="#ffb347" stop-opacity=".95"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".22">
+    <path d="M0 760 C260 690 360 830 610 760 S1040 690 1600 760" fill="none" stroke="#5ee7ff" stroke-width="2"/>
+    <path d="M0 690 C280 620 420 760 700 700 S1160 620 1600 690" fill="none" stroke="#5ee7ff" stroke-width="1.2"/>
+    <path d="M0 820 C300 760 510 860 800 805 S1190 760 1600 820" fill="none" stroke="#5ee7ff" stroke-width="1"/>
+  </g>
+  <g transform="translate(800 575) scale(1.08)" filter="url(#glow)">
+    <polygon points="-430,110 0,-110 430,110 0,315" fill="#07151b" stroke="#78f7ff" stroke-width="2" opacity=".95"/>
+    <g stroke="#2ccde3" stroke-width="2" opacity=".85">
+      <path d="M-320 55 L40 240"/>
+      <path d="M-170 -20 L205 165"/>
+      <path d="M-20 -92 L350 92"/>
+      <path d="M-375 82 L-8 -102"/>
+      <path d="M-220 160 L150 -25"/>
+      <path d="M-45 250 L325 66"/>
+    </g>
+    <g fill="#102933" stroke="#8dfcff" stroke-width="2">
+      <polygon points="-275,52 -215,20 -156,52 -215,84"/>
+      <polygon points="-88,142 -18,107 52,142 -18,178"/>
+      <polygon points="122,50 194,13 265,50 194,86"/>
+      <polygon points="-42,-18 37,-58 116,-18 37,22"/>
+      <polygon points="-244,184 -174,149 -104,184 -174,220"/>
+      <polygon points="75,224 146,188 218,224 146,260"/>
+    </g>
+    <g fill="#ffd166" opacity=".9">
+      <circle cx="-215" cy="52" r="7"/>
+      <circle cx="-18" cy="142" r="7"/>
+      <circle cx="194" cy="50" r="7"/>
+      <circle cx="37" cy="-18" r="7"/>
+      <circle cx="-174" cy="184" r="7"/>
+      <circle cx="146" cy="224" r="7"/>
+    </g>
+  </g>
+  <g fill="none" filter="url(#glow)">
+    <path d="M565 542 C455 410 505 280 360 160" stroke="url(#cyan)" stroke-width="3"/>
+    <path d="M736 476 C672 350 740 230 642 96" stroke="url(#cyan)" stroke-width="3"/>
+    <path d="M858 476 C928 348 875 238 987 105" stroke="url(#cyan)" stroke-width="3"/>
+    <path d="M1038 545 C1140 420 1090 290 1248 168" stroke="url(#cyan)" stroke-width="3"/>
+    <path d="M650 615 C520 535 430 540 300 452" stroke="url(#amber)" stroke-width="2.2"/>
+    <path d="M942 616 C1090 540 1185 560 1320 460" stroke="url(#amber)" stroke-width="2.2"/>
+  </g>
+  <g filter="url(#glow)">
+    <g fill="#5ee7ff">
+      <circle cx="360" cy="160" r="10"/>
+      <circle cx="642" cy="96" r="8"/>
+      <circle cx="987" cy="105" r="8"/>
+      <circle cx="1248" cy="168" r="10"/>
+      <circle cx="300" cy="452" r="7"/>
+      <circle cx="1320" cy="460" r="7"/>
+    </g>
+    <g stroke="#5ee7ff" stroke-width="1.4" opacity=".55">
+      <path d="M360 160 L642 96 L987 105 L1248 168"/>
+      <path d="M642 96 L987 105"/>
+      <path d="M300 452 L360 160"/>
+      <path d="M1320 460 L1248 168"/>
+    </g>
+  </g>
+  <g opacity=".75">
+    <circle cx="800" cy="450" r="345" fill="none" stroke="#76f7ff" stroke-width="1" stroke-dasharray="4 12"/>
+    <circle cx="800" cy="450" r="255" fill="none" stroke="#76f7ff" stroke-width="1" stroke-dasharray="3 10"/>
+  </g>
+</svg>

@@ -1,0 +1,697 @@
+# 第 33 章 社会仿真升级：从 Smallville 到更大规模实验
+
+## 33.1 本章要解决的问题
+
+Generative Agents 最吸引人的地方，是 Smallville 中出现的社会现象：
+
+- 信息扩散。
+- 关系形成。
+- 群体协同行动。
+
+GenerativeAgentsCN 也能复现这些现象。
+
+但如果只停留在一次回放故事，就还不是严谨的社会仿真。
+
+社会仿真需要进一步回答：
+
+```text
+这个现象是否可重复？
+传播路径能否统计？
+不同模型或参数下结果如何变化？
+群体行为能否量化？
+失败是否有模式？
+```
+
+本章要回答六个问题：
+
+1. Smallville 式小镇实验和社会仿真有什么区别？
+2. GenerativeAgentsCN 当前已经有哪些可用于统计的材料？
+3. Concordia / Generative Agent-Based Modeling 和 AgentSociety 给我们什么启发？
+4. 如何把单次实验升级成批量实验？
+5. 如何统计信息传播、群体聚集和多次运行方差？
+6. 如何避免把小镇仿真误当现实预测？
+
+[图 33-1：从单次回放到批量社会仿真的数据流]
+
+```mermaid
+flowchart TD
+    Config[experiment.json<br/>实验配置] --> Runs[多次运行 start.py]
+    Runs --> CK[checkpoints]
+    Runs --> Conv[conversation.json]
+    CK --> Compress[compress.py]
+    Conv --> Compress
+    Compress --> Sim[simulation.md]
+    Compress --> Move[movement.json]
+    Conv --> Diff[传播统计]
+    Move --> Attend[到场/轨迹统计]
+    Sim --> Evidence[人工证据抽样]
+    Diff --> Report[批量实验报告]
+    Attend --> Report
+    Evidence --> Report
+```
+
+## 33.2 小镇故事不等于社会仿真
+
+一个小镇故事可以很精彩。
+
+例如：
+
+```text
+伊莎贝拉告诉玛丽亚派对消息，玛丽亚又告诉克劳斯，最后几个人出现在咖啡馆。
+```
+
+这说明系统能生成一个传播案例。
+
+但社会仿真还要问：
+
+```text
+这种传播在多少次运行中出现？
+传播平均深度是多少？
+哪些角色总是成为传播节点？
+模型变化是否影响传播？
+参数变化是否影响到场？
+失败是否主要来自路线错开、检索失败，还是计划没有修订？
+```
+
+也就是说，社会仿真需要从个案叙事走向统计分析。
+
+本书不要求读者一步到位做大规模平台。
+
+但可以把 GenerativeAgentsCN 从：
+
+```text
+可回放的小镇 demo
+```
+
+升级为：
+
+```text
+可重复的小规模社会实验环境
+```
+
+## 33.3 当前项目已有的数据基础
+
+GenerativeAgentsCN 已经保存了很多可分析材料。
+
+checkpoint 位于：
+
+```text
+generative_agents/results/checkpoints/<实验名>/
+```
+
+其中保存每一步仿真状态。
+
+对话记录：
+
+```text
+conversation.json
+```
+
+压缩结果：
+
+```text
+generative_agents/results/compressed/<实验名>/
+```
+
+包括：
+
+```text
+simulation.md
+movement.json
+```
+
+`simulation.md` 适合人工阅读。
+
+它包含基础人设、活动时间线和对话。
+
+`conversation.json` 适合分析信息传播。
+
+它能告诉我们：
+
+- 哪个时间。
+- 哪些角色。
+- 在哪里。
+- 说了什么。
+
+`movement.json` 适合分析位置和聚集。
+
+它能告诉我们：
+
+- 每个 frame 角色的位置。
+- 当前地点。
+- 当前行动。
+- 对话文本。
+
+这些材料已经足以做第一版统计分析。
+
+## 33.4 `compress.py` 的作用
+
+项目中的：
+
+```text
+generative_agents/compress.py
+```
+
+做了两件事。
+
+第一，生成 Markdown 报告：
+
+```text
+simulation.md
+```
+
+第二，生成回放数据：
+
+```text
+movement.json
+```
+
+`generate_movement()` 会读取 checkpoint，结合 Maze 路径，把 agent 在每一步的位置转成回放帧。
+
+`generate_report()` 会读取角色状态和 conversation，生成可读时间线。
+
+这说明当前项目已经具备社会仿真的关键材料：
+
+```text
+行动轨迹 + 对话记录 + 角色状态
+```
+
+缺少的是批量实验和指标统计。
+
+## 33.5 Concordia 的启发
+
+Concordia / Generative Agent-Based Modeling 方向强调：
+
+```text
+用 LLM 构建 grounded agent-based models，让行动发生在物理、数字或社会空间中，并由环境解释和约束。
+```
+
+对 GenerativeAgentsCN 来说，最重要的启发有三点。
+
+第一，环境不是背景。
+
+Maze、Tile、地址树和对象状态应该参与判断行动是否可行。
+
+第二，社会仿真不是单个 agent 的问答集合。
+
+它需要环境、角色、行动、互动和记录共同构成。
+
+第三，实验要可重复和可解释。
+
+每次运行必须清楚：
+
+- 初始条件是什么。
+- 角色如何设定。
+- 环境如何约束。
+- 行动如何记录。
+- 指标如何计算。
+
+GenerativeAgentsCN 已经有地图和回放。
+
+下一步是把实验配置和指标系统补上。
+
+## 33.6 AgentSociety 的启发
+
+AgentSociety 关注更大规模 LLM-driven generative agents，用于理解人类行为和社会现象。
+
+它提醒我们：
+
+```text
+当 agent 数量变多时，问题不只是 prompt，而是系统工程。
+```
+
+大规模社会仿真需要：
+
+- agent profile 管理。
+- 环境建模。
+- 交互机制。
+- 运行调度。
+- 指标统计。
+- 可视化。
+- 成本控制。
+
+GenerativeAgentsCN 不需要直接追求大规模。
+
+但它可以吸收实验方法。
+
+尤其是：
+
+```text
+把小规模实验做成可重复、可比较、可统计。
+```
+
+这比盲目增加 agent 数量更重要。
+
+## 33.7 升级方向一：实验配置文件
+
+当前运行命令通常写成：
+
+```bash
+python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
+```
+
+如果要做社会仿真，建议把实验条件写入配置文件。
+
+例如：
+
+```text
+experiments/party_small.json
+```
+
+内容：
+
+```json
+{
+  "name": "party_small",
+  "description": "情人节派对传播小规模实验",
+  "start": "20240214-08:00",
+  "step": 72,
+  "stride": 10,
+  "agents": ["伊莎贝拉", "亚当", "阿伊莎", "埃迪", "玛丽亚", "克劳斯"],
+  "event_keywords": ["情人节", "派对", "霍布斯咖啡馆"],
+  "metrics": ["diffusion", "attendance", "conversation"]
+}
+```
+
+实验配置有三个好处。
+
+第一，减少命令行记录错误。
+
+第二，方便批量运行。
+
+第三，让实验条件进入版本管理。
+
+## 33.8 升级方向二：批量运行
+
+单次运行不能支撑强结论。
+
+可以新增脚本：
+
+```text
+tools/run_experiment_batch.py
+```
+
+功能：
+
+```text
+读取 experiment json
+生成多个 run name
+依次运行 start.py
+运行 compress.py
+调用指标脚本
+汇总结果
+```
+
+运行结果示例：
+
+```text
+party_small_run_01
+party_small_run_02
+party_small_run_03
+party_small_run_04
+party_small_run_05
+```
+
+每次运行都保留独立目录。
+
+不要覆盖旧结果。
+
+批量运行之后，才能说：
+
+```text
+在 5 次运行中，3 次出现间接传播，2 次没有出现。
+```
+
+这比单次成功更有价值。
+
+## 33.9 升级方向三：传播统计
+
+传播统计主要基于：
+
+```text
+conversation.json
+simulation.md
+```
+
+第一步是定义事件关键词。
+
+例如派对：
+
+```text
+情人节
+派对
+聚会
+霍布斯咖啡馆
+下午5点
+17:00
+```
+
+第二步是抽取提及。
+
+记录：
+
+- 时间。
+- 说话者。
+- 听话者。
+- 地点。
+- 命中关键词。
+- 句子内容。
+
+第三步是构建传播图。
+
+例如：
+
+```text
+伊莎贝拉 -> 玛丽亚
+玛丽亚 -> 克劳斯
+```
+
+第四步是计算指标：
+
+```text
+unique_informed_agents
+direct_mentions
+indirect_mentions
+diffusion_depth
+fact_preservation_score
+```
+
+这能把“好像传播了”变成可检查数据。
+
+## 33.10 传播统计的注意事项
+
+关键词统计不等于真正传播。
+
+例如角色说：
+
+```text
+我喜欢情人节。
+```
+
+不一定说明它知道派对。
+
+因此需要分层判断。
+
+第一层，关键词命中。
+
+第二层，事件事实命中。
+
+例如时间、地点、发起者。
+
+第三层，对话关系成立。
+
+说话者和听话者是否在同一段对话中。
+
+第四层，后续引用。
+
+听话者是否在后续主动提及。
+
+第五层，行动影响。
+
+听话者是否改变计划或到场。
+
+自动脚本可以先做前两层。
+
+后面几层可以人工抽样。
+
+不要把关键词命中直接等同于认知传播。
+
+## 33.11 升级方向四：群体轨迹统计
+
+群体轨迹统计主要基于：
+
+```text
+movement.json
+```
+
+可以统计：
+
+```text
+某时间窗内某地点人数
+```
+
+例如派对实验：
+
+```text
+17:00-19:00，霍布斯咖啡馆内有哪些角色？
+```
+
+指标：
+
+```text
+attendance_count
+```
+
+到场人数。
+
+```text
+arrival_time_distribution
+```
+
+到达时间分布。
+
+```text
+co_location_duration
+```
+
+多人共处时长。
+
+```text
+peak_gathering_size
+```
+
+聚集峰值人数。
+
+```text
+route_efficiency
+```
+
+路线是否绕远或异常。
+
+这些指标能评价行动落地。
+
+如果角色口头接受派对，但 movement 没有到咖啡馆，说明传播没有转化为行动。
+
+## 33.12 升级方向五：多次运行方差
+
+生成式系统有随机性。
+
+所以社会仿真必须关注方差。
+
+例如 5 次派对实验：
+
+| run | direct mentions | indirect mentions | attendance | diffusion depth |
+| --- | --- | --- | --- | --- |
+| 01 | 2 | 1 | 2 | 2 |
+| 02 | 1 | 0 | 1 | 1 |
+| 03 | 3 | 2 | 3 | 3 |
+| 04 | 2 | 0 | 1 | 1 |
+| 05 | 2 | 1 | 2 | 2 |
+
+这张表能说明：
+
+```text
+派对传播在多数运行中出现，但间接传播不稳定。
+```
+
+如果只展示 run 03，读者会以为系统很强。
+
+如果只展示 run 02，读者会以为系统很弱。
+
+多次运行能避免选择性展示。
+
+## 33.13 升级方向六：实验对照
+
+社会仿真需要对照组。
+
+例如派对实验可以比较：
+
+```text
+默认模型
+更强模型
+本地小模型
+关系记忆升级版
+目标规划升级版
+协作事件板升级版
+```
+
+也可以做模块对照：
+
+```text
+有 reflection
+弱 reflection
+无 relationship memory
+有 relationship memory
+```
+
+每次对照只改一个主要变量。
+
+否则无法归因。
+
+实验报告要写明：
+
+- 改了什么。
+- 没改什么。
+- 预期影响什么指标。
+- 实际指标如何变化。
+
+这能把项目升级和社会仿真连接起来。
+
+## 33.14 升级方向七：事件级数据集
+
+为了让实验可复用，可以建立事件级数据集。
+
+例如：
+
+```text
+experiments/events/valentine_party.json
+experiments/events/mayor_election.json
+experiments/events/sociology_discussion.json
+```
+
+每个事件包含：
+
+```json
+{
+  "event_id": "valentine_party",
+  "source_agent": "伊莎贝拉",
+  "time": "2024-02-14 17:00",
+  "location": "霍布斯咖啡馆",
+  "core_facts": ["发起者", "时间", "地点"],
+  "keywords": ["情人节", "派对", "霍布斯咖啡馆"],
+  "success_criteria": [
+    "至少三人知道事件",
+    "至少两人到场"
+  ]
+}
+```
+
+这样不同读者可以在同一事件定义下比较结果。
+
+这也是从 demo 走向 benchmark 的第一步。
+
+## 33.15 升级方向八：仿真报告自动生成
+
+批量实验后，需要自动生成报告。
+
+报告包括：
+
+```markdown
+# 实验批次报告
+
+- 实验名：
+- 模型：
+- agent 数量：
+- 运行次数：
+- 主要变量：
+
+## 指标汇总
+
+| run | diffusion_depth | attendance_count | failures |
+| --- | --- | --- | --- |
+
+## 传播图
+
+## 聚集曲线
+
+## 失败样例
+
+## 结论
+```
+
+自动报告不是替代人工分析。
+
+它是减少遗漏。
+
+尤其是失败样例、成本、运行参数这些信息，很容易在手工记录中丢失。
+
+## 33.16 与现实社会的边界
+
+社会仿真越像样，越要强调边界。
+
+GenerativeAgentsCN 的小镇实验不能直接预测现实社会。
+
+原因包括：
+
+- 角色是虚构的。
+- 环境高度简化。
+- 模型生成存在偏差。
+- 社会结构不完整。
+- 没有真实制度、经济和媒体系统。
+- agent 数量远小于真实社会。
+
+因此，正确结论应该是：
+
+```text
+在当前配置下，某类信息传播机制可以在小镇中被生成和观察。
+```
+
+而不是：
+
+```text
+现实人群会这样传播信息。
+```
+
+社会仿真的价值在于研究机制、测试系统、比较架构。
+
+不是代替真实社会调查。
+
+## 33.17 最小可行升级方案
+
+建议从三个脚本开始。
+
+第一：
+
+```text
+tools/analyze_conversation_keywords.py
+```
+
+输入 `conversation.json`，输出关键词提及、角色对、时间和传播链。
+
+第二：
+
+```text
+tools/analyze_location_window.py
+```
+
+输入 `movement.json`，输出某地点某时间窗内的到场人数和角色列表。
+
+第三：
+
+```text
+tools/summarize_experiment_runs.py
+```
+
+汇总多个 run 的指标，生成 Markdown 表格。
+
+这三个脚本不需要改核心仿真逻辑。
+
+但能显著提升实验严谨性。
+
+## 33.18 本章小结
+
+本章讨论了社会仿真从单次小镇故事到可重复实验的升级路线：
+
+1. Smallville 式故事展示现象，但社会仿真需要可重复、可统计、可比较。
+2. GenerativeAgentsCN 已经保存 checkpoint、conversation.json、simulation.md 和 movement.json，具备统计基础。
+3. `compress.py` 把 checkpoint 转成报告和回放数据，是实验分析入口。
+4. Concordia 启发我们把环境作为 grounded agent-based modeling 的核心组成。
+5. AgentSociety 启发我们重视大规模仿真的 profile、环境、交互、指标和可视化。
+6. GenerativeAgentsCN 的务实升级方向不是直接追求万级 agent，而是先做小规模批量实验。
+7. 可落地升级包括实验配置文件、批量运行、传播统计、群体轨迹统计、多次运行方差、对照实验、事件级数据集和自动报告。
+8. 关键词命中不等于传播，必须分层判断事实保持、路径和行动影响。
+9. 社会仿真结论必须限定在实验条件内，不能直接外推到现实社会。
+
+下一章讨论评价体系升级。社会仿真需要指标，而 agent 领域过去几年最大的教训之一，就是演示效果并不等于可复现能力。
+
+## 参考资料
+
+- Generative Agents: https://arxiv.org/abs/2304.03442
+- Concordia / Generative Agent-Based Modeling: https://arxiv.org/abs/2312.03664
+- AgentSociety: https://arxiv.org/abs/2502.08691
+- Local source: `generative_agents/compress.py`
+- Local source: `generative_agents/replay.py`
+- Local source: `generative_agents/modules/game.py`
+- Local output: `generative_agents/results/checkpoints/<实验名>/conversation.json`
+- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`
+- Local output: `generative_agents/results/compressed/<实验名>/movement.json`
