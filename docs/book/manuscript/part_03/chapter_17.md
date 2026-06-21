@@ -26,7 +26,7 @@ self.reflect()
   -> 得到 self.concepts
 ```
 
-本章聚焦七个问题：
+本章重点聚焦以下七个问题：
 
 1. `Agent.percept()` 在整体循环中处于什么位置？
 2. 视野范围如何计算？
@@ -67,7 +67,7 @@ flowchart LR
 generative_agents/modules/agent.py
 ```
 
-源码结构如下：
+对应的源码结构如下：
 
 ```python
 def percept(self):
@@ -88,7 +88,7 @@ def percept(self):
     self.concepts = [c for c in self.concepts if c.event.subject != self.name]
 ```
 
-可以分成五段：
+可以分成下面五段，可以这样处理：
 
 1. 获取视野范围。
 2. 更新空间记忆。
@@ -100,7 +100,7 @@ def percept(self):
 
 ## 17.4 视野范围：Maze.get_scope()
 
-感知第一步：
+感知流程的第一步如下：
 
 ```python
 scope = self.maze.get_scope(self.coord, self.percept_config)
@@ -207,7 +207,7 @@ subject、predicate、object、describe、address 都相同，才认为是同一
 
 ## 17.9 距离排序与注意力带宽
 
-收集完成后：
+收集完成后会继续处理：
 
 ```python
 events = list(sorted(events.keys(), key=lambda k: events[k]))
@@ -232,7 +232,7 @@ recent_nodes = (
 recent_nodes = set(n.describe for n in recent_nodes)
 ```
 
-然后判断：
+然后进行下面判断，可以这样处理：
 
 ```python
 if event.get_describe() not in recent_nodes:
@@ -295,13 +295,13 @@ self.associate.add_node(...)
 poignancy_chat
 ```
 
-其他事件使用：
+其他事件使用下面方法：
 
 ```python
 poignancy_event
 ```
 
-代码：
+对应代码可以这样定位：
 
 ```python
 elif e_type == "chat":
@@ -337,7 +337,7 @@ return self.associate.add_node(
 self.concepts.append(node)
 ```
 
-最后过滤自身事件：
+最后会过滤自身事件：
 
 ```python
 self.concepts = [c for c in self.concepts if c.event.subject != self.name]
@@ -353,7 +353,7 @@ priority = [i for i in self.concepts if i.event.subject in agents]
 
 ## 17.15 过滤自身事件
 
-最后过滤：
+最后会执行下面过滤：
 
 ```python
 c.event.subject != self.name
@@ -444,7 +444,7 @@ if self.status["poignancy"] < self.think_config["poignancy_max"]:
     return
 ```
 
-这说明：
+这说明下面这个问题：
 
 ```text
 重要事件积累
@@ -482,7 +482,7 @@ att_bandwidth
 mode
 ```
 
-第四，查看日志：
+第四步是查看日志，可以这样处理：
 
 ```text
 <agent> percept <valid>/<concepts> concepts

@@ -69,7 +69,7 @@ daily schedule -> decomposed plan -> concrete action
 generative_agents/modules/memory/schedule.py
 ```
 
-它保存：
+它会保存下面这些内容：
 
 ```python
 self.daily_schedule = daily_schedule or []
@@ -140,7 +140,7 @@ address = self.spatial.find_address(describes[0], as_list=True)
 - arena。
 - object。
 
-最后生成：
+最后生成下面结果，用于验证前文判断：
 
 ```python
 memory.Action(...)
@@ -154,13 +154,13 @@ memory.Action(...)
 
 ## 34.7 日程规划和目标规划的区别
 
-日程规划的问题是：
+日程规划需要回答的问题是：
 
 ```text
 今天什么时间做什么？
 ```
 
-目标规划的问题是：
+目标规划需要回答的问题是：
 
 ```text
 为了达成某个目标，我应该采取哪些行动，并根据反馈调整？
@@ -172,7 +172,7 @@ memory.Action(...)
 15:00-16:00 准备情人节派对。
 ```
 
-目标规划要问：
+目标规划需要追问，可以这样处理：
 
 ```text
 还差几个人知道派对？
@@ -271,13 +271,13 @@ LATS 将语言推理、行动和规划放到树搜索框架中。对小镇项目
 先找支持者詹妮弗 -> 再通过她接触邻居。
 ```
 
-路径 B：
+第二条实现路径如下：
 
 ```text
 直接去公共场所和陌生居民交流。
 ```
 
-路径 C：
+第三条实现路径如下：
 
 ```text
 先找汤姆，尝试化解反对。
@@ -357,14 +357,14 @@ generative_agents/modules/memory/goal.py
 goal_influence_schedule.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - persona。
 - currently。
 - active goals。
 - recent memories。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```text
 今天哪些日程应服务于这些目标？
@@ -382,7 +382,7 @@ goal_influence_schedule.txt
   -> 生成 Action
 ```
 
-升级后可以增加：
+升级后可以增加下面内容：
 
 ```text
 generate_candidate_actions
@@ -390,7 +390,7 @@ generate_candidate_actions
   -> choose_action
 ```
 
-候选行动示例：
+候选行动示例可以这样写：
 
 ```json
 [
@@ -430,14 +430,14 @@ generate_candidate_actions
 goal_evaluate_progress.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - goal。
 - 最近对话。
 - 最近行动。
 - movement 或地点记录。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```json
 {
@@ -497,7 +497,7 @@ progress_delta
 lesson
 ```
 
-例如：
+可以看一个具体例子：
 
 ```json
 {
@@ -522,13 +522,13 @@ lesson
 伊莎贝拉希望在 17:00 前让至少三位居民知道派对，并让至少两人表示愿意参加。
 ```
 
-升级前：
+升级前的写法通常是这样：
 
 ```text
 伊莎贝拉依赖 currently、日程和偶遇自然传播。
 ```
 
-升级后：
+升级后的写法可以调整为：
 
 ```text
 伊莎贝拉拥有 active goal；
@@ -536,7 +536,7 @@ lesson
 每次邀请后更新 goal progress。
 ```
 
-评价：
+这一项可以这样评价：
 
 - 信息传播覆盖率是否提升。
 - 邀请是否更有针对性。

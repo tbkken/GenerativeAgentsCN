@@ -20,7 +20,7 @@
   -> 结果评价
 ```
 
-示例事件如下：
+示例事件可以这样写：
 
 ```text
 克劳斯组织一场关于低收入社区中产阶级化影响的小型讨论会。
@@ -61,7 +61,7 @@ flowchart LR
 
 ## 26.3 示例事件设定
 
-本章示例：
+本章会使用下面这个示例：
 
 ```text
 克劳斯计划在 2 月 13 日下午 4 点，于奥克山学院图书馆组织一次关于低收入社区中产阶级化影响的小型讨论会。他正在邀请对社会议题感兴趣的同学和居民参加。
@@ -73,31 +73,31 @@ flowchart LR
 克劳斯
 ```
 
-时间：
+事件时间可以这样写：
 
 ```text
 2 月 13 日 16:00
 ```
 
-地点：
+事件地点可以这样写：
 
 ```text
 奥克山学院图书馆
 ```
 
-传播方式：
+传播方式可以这样设计：
 
 ```text
 克劳斯通过对话邀请其他角色。
 ```
 
-可能参与者：
+可能参与者可以这样设定：
 
 ```text
 玛丽亚、阿伊莎、沃尔夫冈、梅、伊莎贝拉
 ```
 
-评价指标：
+评价指标可以这样设计：
 
 ```text
 知道人数、邀请路径、到场人数、讨论内容、后续关系变化。
@@ -111,13 +111,13 @@ flowchart LR
 generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 ```
 
-将：
+将原内容调整为下面这样：
 
 ```json
 "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。"
 ```
 
-改成：
+改成下面这样的写法：
 
 ```json
 "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。他计划在2月13日下午4点于奥克山学院图书馆组织一次小型讨论会，并正在邀请对社会议题感兴趣的同学和居民参加。"
@@ -133,7 +133,7 @@ generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 
 ## 26.5 选择参与角色
 
-建议小规模角色：
+建议先使用小规模角色：
 
 ```text
 克劳斯
@@ -143,7 +143,7 @@ generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 伊莎贝拉
 ```
 
-理由：
+这样设计的理由如下：
 
 克劳斯是发起者。玛丽亚适合观察共同兴趣和关系形成。阿伊莎和沃尔夫冈是学生社交节点。伊莎贝拉在咖啡馆，适合观察事件是否传播到学院外。如果想增加多样性，可以加入：
 
@@ -158,26 +158,26 @@ generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 
 ## 26.6 运行命令
 
-建议起始时间：
+建议起始时间可以这样设定：
 
 ```text
 20240213-08:00
 ```
 
-运行：
+运行命令可以直接照着执行：
 
 ```bash
 cd generative_agents
 python start.py --name book-custom-discussion --start "20240213-08:00" --step 72 --stride 10 --agents "克劳斯,玛丽亚,阿伊莎,沃尔夫冈,伊莎贝拉"
 ```
 
-压缩：
+压缩命令可以直接照着执行：
 
 ```bash
 python compress.py --name book-custom-discussion
 ```
 
-查看：
+查看命令可以直接照着执行：
 
 ```text
 results/compressed/book-custom-discussion/simulation.md
@@ -189,7 +189,7 @@ results/compressed/book-custom-discussion/movement.json
 
 ## 26.7 观察关键词
 
-在输出中搜索：
+在输出中搜索下面内容：
 
 ```text
 讨论会
@@ -201,7 +201,7 @@ results/compressed/book-custom-discussion/movement.json
 克劳斯
 ```
 
-记录：
+建议记录下面信息，用于后续复盘：
 
 - 克劳斯是否提到讨论会。
 - 谁听到了。
@@ -212,7 +212,7 @@ results/compressed/book-custom-discussion/movement.json
 
 ## 26.8 事件传播表
 
-建议记录：
+建议记录这些信息，用于后续复盘：
 
 | 时间 | 来源 | 接收者 | 地点 | 内容 | 是否含时间地点 |
 |---|---|---|---|---|---|
@@ -225,7 +225,7 @@ results/compressed/book-custom-discussion/movement.json
 克劳斯邀请某人参加。
 ```
 
-转述：
+转述内容可以这样判断：
 
 ```text
 某人告诉另一个人克劳斯有讨论会。
@@ -235,19 +235,19 @@ results/compressed/book-custom-discussion/movement.json
 
 ## 26.9 到场判断
 
-讨论会发生地点是：
+讨论会发生地点可以记录为：
 
 ```text
 奥克山学院，图书馆
 ```
 
-时间是：
+时间可以记录为下面这种形式：
 
 ```text
 16:00
 ```
 
-判断到场时看：
+判断到场时重点查看：
 
 - 15:50 到 17:00 之间角色是否在图书馆。
 - action 是否与讨论、学习、参加活动、与克劳斯交流相关。

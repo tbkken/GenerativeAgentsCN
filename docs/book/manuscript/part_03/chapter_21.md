@@ -29,7 +29,7 @@ Agent.reflect()
   -> 处理聊天带来的计划和记忆影响
 ```
 
-本章聚焦八个问题：
+本章重点聚焦以下八个问题：
 
 1. `reflect()` 什么时候会触发？
 2. 它读取哪些记忆？
@@ -100,7 +100,7 @@ self.status["poignancy"] += node.poignancy
 nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
 ```
 
-反思基于两类记忆：
+反思主要基于两类记忆：
 
 - event。
 - thought。
@@ -180,13 +180,13 @@ focus = self.completion("reflect_focus", nodes, 3)
 retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
 ```
 
-注意：
+这里需要注意的可以这样理解：
 
 ```text
 reduce_all=False
 ```
 
-这会保留：
+这会保留下面这些内容：
 
 ```text
 每个 focus -> 对应检索节点
@@ -196,7 +196,7 @@ reduce_all=False
 
 ## 21.10 第三步：生成 insights
 
-对每组检索节点：
+对每组检索节点会继续处理：
 
 ```python
 for r_nodes in retrieved.values():
@@ -211,7 +211,7 @@ for r_nodes in retrieved.values():
 洞察内容 + 相关节点编号
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 ("克劳斯认为玛丽亚愿意讨论开放性问题", "1,2,3")
@@ -289,7 +289,7 @@ if self.chats:
 schedule_chat()
 ```
 
-对话发生后：
+对话发生后会写入下面内容：
 
 ```python
 self.chats.extend(chats)
@@ -299,7 +299,7 @@ self.chats.extend(chats)
 
 ## 21.16 状态清零
 
-反思末尾：
+反思末尾会执行下面动作：
 
 ```python
 self.status["poignancy"] = 0
@@ -320,7 +320,7 @@ insight
   -> planning / dialogue / relation summary / future reflection
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 克劳斯认为玛丽亚愿意讨论开放性问题。
@@ -359,7 +359,7 @@ reflection on
 reflection off
 ```
 
-然后比较：
+然后比较下面两个结果：
 
 - 两人是否相遇。
 - 是否对话。

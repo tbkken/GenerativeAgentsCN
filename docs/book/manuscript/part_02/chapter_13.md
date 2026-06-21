@@ -142,7 +142,7 @@ generative_agents/frontend/templates/
 - 从一个坐标到另一个坐标怎么寻路。
 - agent 能看到哪些附近 tile。
 
-前端关心的是：
+前端主要关心这些内容：
 
 - 地图怎么渲染。
 - 角色 sprite 怎么显示。
@@ -293,7 +293,7 @@ scope = self.maze.get_scope(self.coord, self.percept_config)
 generative_agents/modules/memory/event.py
 ```
 
-它通常包含：
+它通常包含这些内容：
 
 - subject。
 - predicate。
@@ -302,7 +302,7 @@ generative_agents/modules/memory/event.py
 - address。
 - emoji。
 
-例如：
+可以看一个具体例子：
 
 ```text
 伊莎贝拉 对话 阿伊莎
@@ -337,7 +337,7 @@ generative_agents/modules/storage/index.py
 self.memory = {"event": [], "thought": [], "chat": []}
 ```
 
-这三类分别对应：
+这三类可以分别对应：
 
 - event：观察和行为事件。
 - thought：反思、计划等高层想法。
@@ -387,7 +387,7 @@ importance_scores
 final_scores = recency + relevance + importance
 ```
 
-对应配置包括：
+对应配置主要包括，需要逐项查看：
 
 ```text
 recency_decay
@@ -497,7 +497,7 @@ decide_wait.txt
 Agent._chat_with()
 ```
 
-它的步骤是：
+它的执行步骤可以这样读：
 
 ```text
 检查双方是否可聊天
@@ -585,7 +585,7 @@ results/compressed/<name>/simulation.md
 generative_agents/modules/model/llm_model.py
 ```
 
-核心类包括：
+核心类主要包括，需要逐项查看：
 
 | 类名 | 中文意思 | 负责什么 |
 | --- | --- | --- |
@@ -618,21 +618,21 @@ generative_agents/modules/prompt/scratch.py
 - failsafe。
 - return_type。
 
-例如，起床时间：
+例如，起床时间可以这样表示：
 
 ```python
 class wakeupResponse(BaseModel):
     res: int
 ```
 
-日程：
+对应的日程内容如下：
 
 ```python
 class schedule_dailyResponse(BaseModel):
     res: dict[str, str]
 ```
 
-反思洞察：
+对应的反思洞察如下：
 
 ```python
 class reflect_insightsResponse(BaseModel):
@@ -706,9 +706,7 @@ flowchart LR
 
 ## 13.27 第三部分源码深读路线
 
-基于本章映射，第三部分会按下面顺序展开。第 14 章：世界模型。讲 `Maze`、`Tile`、地址树、空间记忆、地图数据和前端地图关系。第 15 章：智能体初始化。讲 `agent.json`、`Agent.__init__()`、`Scratch`、`Spatial`、`Schedule`、`Associate`。第 16 章：仿真循环。讲 `start.py`、`Game`、`Agent.think()`、checkpoint。第 17 章：感知。讲 `Agent.percept()`、视野、事件去重、memory 写入。第 18 章：记忆。讲 `Associate`、`Concept`、`LlamaIndex`、retrieval 和 poignancy。第 19 章：日程。讲 `Schedule`、`make_schedule()`、日计划、拆解、重规划。第 20 章：社交。讲 `_reaction()`、`_chat_with()`、`_wait_other()`、对话传播。第 21 章：反思。讲 `reflect()`、focus、insights、evidence、thought 写回。
-
-第 22 章：模型适配。讲 `LLMModel`、Ollama、MiniMax、OpenAI、Pydantic 输出。第 23 章：回放系统。讲 checkpoint、compress、movement、simulation.md 和 Phaser。这就是本书从论文进入源码的路线。
+基于本章映射，第三部分会按下面顺序展开。第 14 章：世界模型。讲 `Maze`、`Tile`、地址树、空间记忆、地图数据和前端地图关系。第 15 章：智能体初始化。讲 `agent.json`、`Agent.__init__()`、`Scratch`、`Spatial`、`Schedule`、`Associate`。第 16 章：仿真循环。讲 `start.py`、`Game`、`Agent.think()`、checkpoint。第 17 章：感知。讲 `Agent.percept()`、视野、事件去重、memory 写入。第 18 章：记忆。讲 `Associate`、`Concept`、`LlamaIndex`、retrieval 和 poignancy。第 19 章：日程。讲 `Schedule`、`make_schedule()`、日计划、拆解、重规划。第 20 章：社交。讲 `_reaction()`、`_chat_with()`、`_wait_other()`、对话传播。第 21 章：反思。讲 `reflect()`、focus、insights、evidence、thought 写回。第 22 章：模型适配。讲 `LLMModel`、Ollama、MiniMax、OpenAI、Pydantic 输出。第 23 章：回放系统。讲 checkpoint、compress、movement、simulation.md 和 Phaser。这就是本书从论文进入源码的路线。
 
 ## 13.28 本章小结
 

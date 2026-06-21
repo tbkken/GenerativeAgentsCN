@@ -8,7 +8,7 @@
 智能体经历过什么？
 ```
 
-反思回答的是：
+反思回答的是下面问题：
 
 ```text
 智能体如何理解这些经历？
@@ -32,7 +32,7 @@
 反思能不能不只是总结过去，而是帮助智能体下次做得更好？
 ```
 
-本章聚焦六个问题：
+本章重点聚焦以下六个问题：
 
 1. Generative Agents 当前如何实现 reflection？
 2. 当前 reflection 的优势和局限是什么？
@@ -63,13 +63,13 @@ Generative Agents 的反思逻辑在：
 generative_agents/modules/agent.py
 ```
 
-核心函数是：
+核心函数可以定位到：
 
 ```python
 Agent.reflect()
 ```
 
-它的触发条件是：
+它的触发条件可以概括为：
 
 ```python
 if self.status["poignancy"] < self.think_config["poignancy_max"]:
@@ -82,7 +82,7 @@ if self.status["poignancy"] < self.think_config["poignancy_max"]:
 generative_agents/data/config.json
 ```
 
-对应字段：
+对应字段可以这样定义：
 
 ```json
 "poignancy_max": 150
@@ -126,7 +126,7 @@ for r_nodes in retrieved.values():
 _add_thought(thought, evidence)
 ```
 
-这条链非常清晰：
+这条链路可以这样理解：
 
 ```text
 重要事件积累
@@ -153,7 +153,7 @@ _add_thought(thought, evidence)
 根据给定记忆节点，生成需要深入思考的问题。
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 凯莉今天的生活重点是什么？
@@ -222,7 +222,7 @@ Reflexion 更关注：
 伊莎贝拉邀请失败后，下次先询问对方是否有空，而不是直接发出邀请。
 ```
 
-或者：
+也可以写成下面这样：
 
 ```text
 山姆发现汤姆不信任自己后，下次先回应汤姆关心的社区问题，而不是泛泛宣传竞选。
@@ -272,7 +272,7 @@ repair_relationship
 plan -> action -> observation -> memory -> reflection
 ```
 
-升级后增加：
+升级后可以增加，可以这样处理：
 
 ```text
 plan -> action -> outcome -> self_evaluate -> lesson -> future_strategy
@@ -284,7 +284,7 @@ plan -> action -> outcome -> self_evaluate -> lesson -> future_strategy
 亚当接受。
 ```
 
-也可能是：
+也可能出现下面情况：
 
 ```text
 亚当拒绝，因为他要写作。
@@ -309,7 +309,7 @@ failed
 unknown
 ```
 
-示例：
+可以参考下面这个示例：
 
 ```text
 success：对方明确接受邀请。
@@ -318,7 +318,7 @@ failed：对方拒绝或话题没有传达。
 unknown：无法判断结果。
 ```
 
-这些标签可以用于：
+这些标签可以用于下面场景：
 
 - 邀请。
 - 竞选宣传。
@@ -336,14 +336,14 @@ unknown：无法判断结果。
 self_evaluate_action.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - 行动目标。
 - 行动过程。
 - 对方反应。
 - 当前角色设定。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```json
 {
@@ -353,19 +353,19 @@ self_evaluate_action.txt
 }
 ```
 
-第二：
+第二个环节可以这样处理：
 
 ```text
 extract_lesson.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - 行动目标。
 - outcome。
 - 对话或事件证据。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```json
 {
@@ -375,19 +375,19 @@ extract_lesson.txt
 }
 ```
 
-第三：
+第三个环节可以这样处理：
 
 ```text
 apply_lesson_to_plan.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - 当前目标。
 - 可用 lesson。
 - 当前对象。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```json
 {
@@ -406,7 +406,7 @@ apply_lesson_to_plan.txt
 skill
 ```
 
-结构示例：
+结构示例可以这样写：
 
 ```json
 {
@@ -441,13 +441,13 @@ skill
 如果遇到 A，就说固定句子 B。
 ```
 
-技能库是：
+技能库可以定义为下面这种形式：
 
 ```text
 给模型提供经过经验沉淀的策略，让它结合当前场景生成具体行动。
 ```
 
-例如技能可以说：
+例如，技能可以这样描述：
 
 ```text
 邀请忙碌的人时，要给出短时间参与选项。
@@ -504,7 +504,7 @@ skill
 伊莎贝拉根据上次邀请失败经验，决定先找熟悉顾客，而不是随机邀请陌生人。
 ```
 
-这要求检索：
+这要求检索能够返回：
 
 ```text
 goal + relevant lesson + relationship + recent thought
@@ -550,14 +550,14 @@ impact
 伊莎贝拉应该更加努力与大家交流。
 ```
 
-问题：
+需要回答的问题如下：
 
 - 太泛。
 - 没有对象。
 - 没有策略。
 - 不容易评价。
 
-示例高质量反思：
+示例高质量反思如下：
 
 ```text
 伊莎贝拉发现亚当在写作时不愿长时间参加活动；下次邀请亚当时，应强调他可以短暂停留，并选择他休息时再提。
@@ -573,7 +573,7 @@ impact
 邀请任务失败复盘
 ```
 
-步骤：
+执行步骤可以这样设计：
 
 1. 在对话后判断是否传达了邀请。
 2. 如果对方拒绝或未表态，生成 `lesson`。
@@ -581,13 +581,13 @@ impact
 4. 下一次邀请前检索 lesson。
 5. 比较升级前后邀请成功率和对话质量。
 
-实验对象：
+实验对象可以这样选择：
 
 ```text
 伊莎贝拉的情人节派对。
 ```
 
-评价：
+这一项可以这样评价：
 
 - 邀请是否更自然。
 - 是否减少重复邀请。

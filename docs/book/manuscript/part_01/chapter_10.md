@@ -262,7 +262,7 @@ ${another_status}
 根据上述背景判断，${agent} 是否有可能主动与 ${another} 对话？只用“是”或“否”回答：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Background:
@@ -292,7 +292,7 @@ ${context}
 参考上述背景描述和输出示例，用一句话总结 ${agent} 和 ${another} 之间的关系：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Background description:
@@ -335,7 +335,7 @@ ${conversation}
 基于以上<对话记录>和<对话原则>，现在 ${agent} 会对 ${another} 说：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Here is a brief description of ${agent}:
@@ -378,7 +378,7 @@ ${content}
 ${agent} 在<新对话>中所说的内容，是否在<对话记录>中出现过？只用“是”或“否”回答：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 <conversation record>
@@ -409,7 +409,7 @@ ${conversation}
 根据以上<对话记录>和<判断逻辑>分析，${agent} 和 ${another} 的对话是否已经告一段落。只用“是”或“否”回答：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 <conversation record>
@@ -437,7 +437,7 @@ ${conversation}
 用不超过100字的短句总结上述对话：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Conversation:

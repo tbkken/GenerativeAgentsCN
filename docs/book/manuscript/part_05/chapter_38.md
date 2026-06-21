@@ -2,7 +2,7 @@
 
 ## 38.1 核心问题
 
-前七章分别讨论了：
+前七章已经分别讨论了：
 
 - 记忆系统升级。
 - 反思系统升级。
@@ -27,7 +27,7 @@
 - 是否方便读者学习。
 - 是否容易回滚。
 
-本章聚焦六个问题：
+本章重点聚焦以下六个问题：
 
 1. Generative Agents 前沿升级应该遵守什么原则？
 2. 哪些升级应该先做，哪些应该后做？
@@ -74,7 +74,7 @@ flowchart LR
 让项目从“能看回放”升级到“能生成评价报告”。
 ```
 
-建议改造：
+建议改造方向可以这样安排：
 
 1. 增加实验配置文件。
 2. 增加对话关键词统计。
@@ -83,7 +83,7 @@ flowchart LR
 5. 增加统一 `metrics.json`。
 6. 增加统一 `report.md`。
 
-涉及新增文件：
+涉及的新增文件如下：
 
 ```text
 experiments/*.json
@@ -92,7 +92,7 @@ tools/analyze_attendance.py
 tools/export_experiment_report.py
 ```
 
-涉及现有材料：
+涉及的现有材料如下：
 
 ```text
 conversation.json
@@ -112,7 +112,7 @@ LLM summary
 book-party-small-run-01
 ```
 
-然后运行：
+然后运行下面这个命令：
 
 ```text
 conversation keyword analysis
@@ -120,7 +120,7 @@ attendance analysis
 experiment report export
 ```
 
-成功标准：
+成功标准可以这样定义：
 
 - 能统计派对相关提及。
 - 能列出参与对话的角色。
@@ -138,7 +138,7 @@ experiment report export
 让角色关系和关键事实更稳定。
 ```
 
-建议改造：
+建议改造方向可以这样安排：
 
 1. 扩展 memory type。
 2. 增加 `relationship` 记忆。
@@ -146,7 +146,7 @@ experiment report export
 4. 增加记忆来源和 evidence 字段。
 5. 增加简单冲突检测。
 
-涉及文件：
+涉及的文件可以这样定位：
 
 ```text
 generative_agents/modules/memory/associate.py
@@ -166,55 +166,55 @@ generative_agents/data/prompts/memory_conflict_check.txt
 
 ## 38.6 阶段二的验证实验
 
-验证实验一：
+第一个验证实验设计如下：
 
 ```text
 汤姆与山姆的竞选态度稳定性。
 ```
 
-问题：
+需要回答的问题如下：
 
 ```text
 汤姆是否更稳定地体现对山姆的不信任？
 ```
 
-指标：
+需要记录的指标如下：
 
 - opposing_mentions。
 - relationship_consistency_score。
 - fact_preservation_score。
 
-验证实验二：
+第二个验证实验设计如下：
 
 ```text
 玛丽亚与克劳斯的关系形成。
 ```
 
-问题：
+需要回答的问题如下：
 
 ```text
 多次对话后，两人关系是否有证据支撑的变化？
 ```
 
-指标：
+需要记录的指标如下：
 
 - relationship_update_count。
 - evidence_trace_rate。
 - 后续对话是否引用关系记忆。
 
-验证实验三：
+第三个验证实验设计如下：
 
 ```text
 派对时间地点保真度。
 ```
 
-问题：
+需要回答的问题如下：
 
 ```text
 派对传播过程中时间和地点是否更稳定？
 ```
 
-指标：
+需要记录的指标如下：
 
 - fact_preservation_score。
 - conflict_detection_count。
@@ -227,7 +227,7 @@ generative_agents/data/prompts/memory_conflict_check.txt
 让角色从失败中形成可复用策略。
 ```
 
-建议改造：
+建议改造方向可以这样安排：
 
 1. 增加 action outcome。
 2. 增加 self-evaluation prompt。
@@ -235,7 +235,7 @@ generative_agents/data/prompts/memory_conflict_check.txt
 4. 增加 skill 记忆。
 5. 在对话和计划前检索相关 skill。
 
-涉及文件：
+涉及的文件可以这样定位：
 
 ```text
 generative_agents/modules/agent.py
@@ -255,13 +255,13 @@ generative_agents/data/prompts/apply_lesson_to_plan.txt
 
 ## 38.8 阶段三的验证实验
 
-验证实验：
+验证实验可以这样设计：
 
 ```text
 伊莎贝拉连续邀请任务。
 ```
 
-设计：
+实验设计可以这样写：
 
 第一轮中，伊莎贝拉邀请一个忙碌角色，对方拒绝或没有明确表态。系统生成 lesson：
 
@@ -276,7 +276,7 @@ generative_agents/data/prompts/apply_lesson_to_plan.txt
 - 是否减少重复话术。
 - 是否更好处理拒绝。
 
-指标：
+需要记录的指标如下：
 
 - lesson_generated_count。
 - lesson_used_count。
@@ -294,7 +294,7 @@ generative_agents/data/prompts/apply_lesson_to_plan.txt
 让角色在日程生活之外，能够围绕明确目标持续行动。
 ```
 
-建议改造：
+建议改造方向可以这样安排：
 
 1. 增加 Goal 数据结构。
 2. 给角色增加 active goals。
@@ -303,7 +303,7 @@ generative_agents/data/prompts/apply_lesson_to_plan.txt
 5. 增加 goal progress evaluation。
 6. 将 goal 结果写回记忆。
 
-涉及文件：
+涉及的文件可以这样定位：
 
 ```text
 generative_agents/modules/memory/goal.py
@@ -327,19 +327,19 @@ generative_agents/data/prompts/goal_evaluate_progress.txt
 
 ## 38.10 阶段四的验证实验
 
-验证实验一：
+第一个验证实验设计如下：
 
 ```text
 目标驱动派对传播。
 ```
 
-目标：
+实验目标可以这样写：
 
 ```text
 17:00 前至少三人知道派对，至少两人表示愿意参加。
 ```
 
-指标：
+需要记录的指标如下：
 
 - goal_completion_rate。
 - unique_informed_agents。
@@ -347,25 +347,25 @@ generative_agents/data/prompts/goal_evaluate_progress.txt
 - attendance_count。
 - naturalness_score。
 
-验证实验二：
+第二个验证实验设计如下：
 
 ```text
 目标驱动竞选传播。
 ```
 
-目标：
+实验目标可以这样写：
 
 ```text
 山姆向至少三位居民介绍竞选，并记录至少两类居民关心的问题。
 ```
 
-指标：
+需要记录的指标如下：
 
 - policy_topic_count。
 - attitude_diversity_score。
 - goal_progress_accuracy。
 
-注意：
+这里需要注意的可以这样理解：
 
 目标完成率提升不一定代表更可信。如果角色为了目标强行打断所有人，就要扣自然性分。
 
@@ -377,7 +377,7 @@ generative_agents/data/prompts/goal_evaluate_progress.txt
 让小镇角色从自然社交扩展到团队协作。
 ```
 
-建议改造：
+建议改造方向可以这样安排：
 
 1. 增加公共事件板。
 2. 增加任务列表。
@@ -386,7 +386,7 @@ generative_agents/data/prompts/goal_evaluate_progress.txt
 5. 增加协作对话协议。
 6. 增加团队进度总结。
 
-涉及文件：
+涉及的文件可以这样定位：
 
 ```text
 generative_agents/modules/memory/shared.py
@@ -406,13 +406,13 @@ generative_agents/data/prompts/team_summarize_progress.txt
 
 ## 38.12 阶段五的验证实验
 
-验证实验：
+验证实验可以这样设计：
 
 ```text
 多人协作筹备情人节派对。
 ```
 
-设计：
+实验设计可以这样写：
 
 - 伊莎贝拉是 organizer。
 - 埃迪可能负责音乐。
@@ -426,7 +426,7 @@ generative_agents/data/prompts/team_summarize_progress.txt
 - 邀请朋友。
 - 布置咖啡馆。
 
-指标：
+需要记录的指标如下：
 
 - team_task_completion_rate。
 - role_assignment_clarity。
@@ -488,7 +488,7 @@ generate_chat -> daily model
 poignancy_event -> daily model
 ```
 
-评价指标：
+评价指标可以这样设计：
 
 - 每类调用次数。
 - 每类失败率。
@@ -500,7 +500,7 @@ poignancy_event -> daily model
 
 ## 38.15 阶段顺序总表
 
-建议升级顺序如下：
+建议升级顺序如下所示：
 
 | 阶段 | 名称 | 风险 | 是否改变行为 | 首选实验 |
 | --- | --- | --- | --- | --- |
@@ -538,7 +538,7 @@ poignancy_event -> daily model
 | Smallville | Maze / Phaser replay | 批量实验、统计指标 |
 | Evaluation | simulation / movement | metrics、report、基线、成本 |
 
-这张表说明：
+这张表说明下面问题：
 
 ```text
 前沿升级不是抛弃 Generative Agents，而是沿着它的模块继续生长。
@@ -588,7 +588,7 @@ poignancy_event -> daily model
 Generative Agents 怎么运行。
 ```
 
-还应该知道：
+读者还应该知道下面内容：
 
 ```text
 Generative Agents 论文为什么重要。

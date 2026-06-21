@@ -148,7 +148,7 @@ utils.set_timer(**config.get("time", {}))
 timer.forward(stride)
 ```
 
-获取时间使用：
+获取时间时使用下面方法：
 
 ```python
 utils.get_timer().get_date()
@@ -233,7 +233,7 @@ if plan.get("path"):
 
 ## 16.9 SimulateServer.simulate()
 
-核心仿真循环是：
+核心仿真循环可以这样概括：
 
 ```python
 for i in range(self.start_step, self.start_step + step):
@@ -335,7 +335,7 @@ events = self.move(status["coord"], status.get("path"))
 
 ## 16.13 第二步：生成或读取日程
 
-接下来：
+接下来执行下面步骤：
 
 ```python
 plan, _ = self.make_schedule()
@@ -372,13 +372,13 @@ sleep action 包含角色事件：
 角色 正在 睡觉
 ```
 
-以及对象事件：
+以及对应的对象事件：
 
 ```text
 床 被占用 角色
 ```
 
-emoji 是：
+对应的 emoji 表示如下：
 
 ```text
 😴
@@ -398,7 +398,7 @@ if self.is_awake():
     self.reflect()
 ```
 
-顺序是：
+执行顺序可以这样理解：
 
 1. 先感知当前环境中的事件。
 2. 再根据感知结果制定计划或作出反应。
@@ -436,7 +436,7 @@ for eve, coord in events.items():
 
 ## 16.18 第七步：寻找路径并返回 plan
 
-最后：
+最后执行下面步骤，可以按顺序阅读：
 
 ```python
 self.plan = {
@@ -478,7 +478,7 @@ def make_plan(self, agents):
 simulate-{sim_time.replace(':', '')}.json
 ```
 
-路径是：
+对应的调用路径如下：
 
 ```text
 results/checkpoints/<name>/simulate-<time>.json
@@ -504,13 +504,13 @@ self.config["agents"][name].update({"coord": status["coord"]})
 
 ## 16.21 conversation 写入
 
-同一步还会保存：
+同一步还会保存下面内容：
 
 ```python
 conversation.json
 ```
 
-路径是：
+对应的调用路径如下：
 
 ```text
 results/checkpoints/<name>/conversation.json

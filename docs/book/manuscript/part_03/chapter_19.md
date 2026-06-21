@@ -11,7 +11,7 @@
 | `generative_agents/modules/prompt/scratch.py` | prompt 组装器。 | 如何把角色设定、当前状态和日程需求整理成模型可读的输入。 |
 | `generative_agents/data/prompts/schedule_*.txt` | 日程相关提示词模板。 | 让模型生成起床时间、一天计划、细粒度子计划和修订计划。 |
 
-本章聚焦八个问题：
+本章重点聚焦以下八个问题：
 
 1. `Schedule` 数据结构如何表示一天计划？
 2. `make_schedule()` 如何生成新一天日程？
@@ -60,7 +60,7 @@ flowchart TD
 generative_agents/modules/memory/schedule.py
 ```
 
-初始化：
+初始化逻辑可以这样读：
 
 ```python
 class Schedule:
@@ -68,7 +68,7 @@ class Schedule:
         ...
 ```
 
-核心字段是：
+核心字段可以定位到：
 
 | 字段 | 中文意思 | 对系统行为的影响 |
 | --- | --- | --- |
@@ -93,7 +93,7 @@ class Schedule:
 
 ## 19.4 add_plan()
 
-添加计划使用：
+添加计划时使用下面方法：
 
 ```python
 add_plan(describe, duration, decompose=None)
@@ -156,7 +156,7 @@ focus = [
 retrieved = self.associate.retrieve_focus(focus)
 ```
 
-然后：
+然后继续执行下面步骤：
 
 ```python
 plan = self.completion("retrieve_plan", retrieved)
@@ -174,7 +174,7 @@ self.scratch.currently = self.completion("retrieve_currently", plan, thought)
 
 ## 19.8 wake_up：生成起床时间
 
-接下来：
+接下来执行下面步骤：
 
 ```python
 wake_up = self.completion("wake_up")
@@ -196,7 +196,7 @@ res: int
 
 ## 19.9 schedule_init：生成日程大纲
 
-起床时间之后：
+起床时间之后会生成下面内容：
 
 ```python
 init_schedule = self.completion("schedule_init", wake_up)
@@ -258,7 +258,7 @@ def _to_duration(date_str):
     return utils.daily_duration(utils.to_date(date_str, "%H:%M"))
 ```
 
-然后：
+然后继续执行下面步骤：
 
 ```python
 schedule = {_to_duration(k): v for k, v in schedule.items()}
@@ -268,7 +268,7 @@ for idx, start in enumerate(starts):
     self.schedule.add_plan(schedule[start], end - start)
 ```
 
-如果时间点是：
+如果时间点写成下面这样：
 
 ```text
 8:00 -> 读书
@@ -276,7 +276,7 @@ for idx, start in enumerate(starts):
 13:00 -> 小睡
 ```
 
-就会转成：
+就会转换成下面结果：
 
 ```text
 8:00-12:00 读书
@@ -341,19 +341,19 @@ if "睡" not in describe and "床" not in describe:
 ...
 ```
 
-本质目标是：
+本质目标可以概括为：
 
 ```text
 睡觉不必细拆，其他长活动需要细拆。
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 上午写论文
 ```
 
-可以拆成：
+可以拆成下面几类来理解：
 
 ```text
 整理资料
@@ -364,7 +364,7 @@ if "睡" not in describe and "床" not in describe:
 
 ## 19.15 schedule_decompose：粗计划变子计划
 
-如果需要拆解：
+如果需要拆解计划，可以这样处理：
 
 ```python
 decompose_schedule = self.completion(
@@ -392,7 +392,7 @@ increment = max(int(plan["duration"] / 100) * 5, 5)
 List[Tuple[str, int]]
 ```
 
-每项是：
+每一项可以理解为下面这种形式：
 
 ```text
 活动描述 + 持续分钟数
@@ -427,7 +427,7 @@ for describe, duration in decompose_schedule:
 plan["decompose"] = decompose
 ```
 
-每个子计划也有：
+每个子计划也包含，需要逐项查看：
 
 - idx。
 - describe。
@@ -462,7 +462,7 @@ memory.Action(
 )
 ```
 
-职责分工是：
+职责分工可以这样理解：
 
 ```text
 Schedule 决定做什么和持续多久。
@@ -509,19 +509,19 @@ plan["decompose"] = self.completion(
 
 ## 19.19 schedule_chat()
 
-对话结束后调用：
+对话结束后会调用下面这些材料：
 
 ```python
 self.schedule_chat(chats, chat_summary, start, duration, other)
 ```
 
-它会：
+它会继续执行下面动作：
 
 1. 把 chats 加入 `self.chats`。
 2. 创建对话 Event。
 3. 调用 `revise_schedule()`。
 
-对话 Event：
+对话 Event 的内容如下：
 
 ```python
 memory.Event(
@@ -544,7 +544,7 @@ memory.Event(
 self.revise_schedule(event, start, duration)
 ```
 
-等待事件：
+等待事件的内容如下：
 
 ```python
 memory.Event(

@@ -41,7 +41,7 @@ flowchart LR
 python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
 ```
 
-输出：
+对应的输出结果应该类似这样：
 
 ```text
 results/checkpoints/sim-test/
@@ -53,7 +53,7 @@ results/checkpoints/sim-test/
 python compress.py --name sim-test
 ```
 
-输出：
+对应的输出结果应该类似这样：
 
 ```text
 results/compressed/sim-test/movement.json
@@ -66,13 +66,13 @@ results/compressed/sim-test/simulation.md
 python replay.py
 ```
 
-浏览器访问：
+浏览器访问下面地址：
 
 ```text
 http://127.0.0.1:5000/?name=sim-test
 ```
 
-这三阶段对应：
+这三个阶段分别对应：
 
 ```text
 生成数据
@@ -90,7 +90,7 @@ http://127.0.0.1:5000/?name=sim-test
 results/checkpoints/<name>/simulate-<time>.json
 ```
 
-还会保存：
+同时还会保存下面内容：
 
 ```text
 results/checkpoints/<name>/conversation.json
@@ -143,7 +143,7 @@ file_movement = "movement.json"
 frames_per_step = 60
 ```
 
-它有两个主函数：
+它有两个主要函数，需要结合源码查看：
 
 ```python
 generate_report(...)
@@ -170,7 +170,7 @@ result = {
 }
 ```
 
-字段含义：
+字段含义可以这样理解：
 
 `start_datetime` 是回放起始时间。`stride` 是每个仿真 step 对应多少分钟。`sec_per_step` 是回放时每一帧对应秒数。`persona_init_pos` 保存每个角色初始位置。`all_movement` 保存每一帧的角色移动、位置和动作。其中 `all_movement` 还包含：
 
@@ -189,14 +189,14 @@ conversation
 json_path = f"frontend/static/assets/village/agents/{agent_name}/agent.json"
 ```
 
-然后取：
+然后取出下面这些内容：
 
 - living_area。
 - 初始 coord。
 - currently。
 - scratch。
 
-并写入：
+并写入下面这些内容：
 
 ```python
 movement["0"][agent_name] = {
@@ -251,7 +251,7 @@ agent 不是每一帧都思考。agent 每 step 思考一次，前端只是把 s
 action = f"前往 {location}"
 ```
 
-如果不移动：
+如果角色没有移动，可以这样处理：
 
 ```python
 action = agent_data["action"]["event"]["describe"]
@@ -263,7 +263,7 @@ action = agent_data["action"]["event"]["describe"]
 predicate + object
 ```
 
-睡觉会加：
+睡觉动作会增加，可以这样处理：
 
 ```text
 😴
@@ -287,7 +287,7 @@ for c in chat:
     step_conversation += f"{agent}：{text}\n"
 ```
 
-然后写入：
+然后写入下面这些内容：
 
 ```python
 all_movement["conversation"][step_time] = step_conversation
@@ -331,7 +331,7 @@ all_movement["conversation"][step_time] = step_conversation
 
 ## 23.15 replay.py：Flask 服务
 
-回放服务入口是：
+回放服务入口可以定位到：
 
 ```text
 generative_agents/replay.py
@@ -357,19 +357,19 @@ speed
 zoom
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 http://127.0.0.1:5000/?name=sim-test&step=0&speed=2&zoom=0.8
 ```
 
-它加载：
+它会加载下面这些内容：
 
 ```text
 results/compressed/<name>/movement.json
 ```
 
-然后渲染：
+然后渲染下面这些内容：
 
 ```text
 frontend/templates/index.html
@@ -393,7 +393,7 @@ speed = 2 ** speed
 - 角色头像列表。
 - 点击角色显示详情面板。
 
-每个角色详情包含：
+每个角色详情主要包含：
 
 ```text
 当前活动

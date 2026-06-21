@@ -43,7 +43,7 @@ flowchart LR
   -> 新地点
 ```
 
-原因是：
+原因可以从下面几个方面解释：
 
 新关系只需要改自然语言设定和实验设计。新事件只需要改 currently 和可能的 daily_plan。新角色需要新增资源和配置。新地点需要改地图数据，风险最高。如果刚开始学习项目，不建议直接改地图。先在现有地点中设计新事件，效果更稳定。
 
@@ -58,13 +58,13 @@ generative_agents/frontend/static/assets/village/agents/<角色名>/
   texture.png
 ```
 
-新增角色至少需要：
+新增角色至少需要这些材料：
 
 - `agent.json`
 - `portrait.png`
 - `texture.png`
 
-此外，还需要在：
+此外，还需要修改下面位置：
 
 ```text
 generative_agents/start.py
@@ -160,7 +160,7 @@ personas = [
 "林晓"
 ```
 
-否则运行：
+否则运行时会出现下面问题：
 
 ```bash
 python start.py --agents "林晓"
@@ -176,7 +176,7 @@ python start.py --agents "林晓"
 林晓经常采访伊莎贝拉，两人关系友好。
 ```
 
-或者：
+也可以写成下面这样：
 
 ```text
 汤姆不太信任山姆，认为山姆的竞选承诺过于理想化。
@@ -198,7 +198,7 @@ python start.py --agents "林晓"
 克劳斯和玛丽亚一定会在今天成为亲密朋友。
 ```
 
-推荐：
+推荐优先采用下面方案：
 
 ```text
 克劳斯觉得玛丽亚乐于探索新想法，愿意有机会继续和她交流。
@@ -228,7 +228,7 @@ python start.py --agents "林晓"
 社区论坛
 ```
 
-可以设在：
+可以设置在下面位置：
 
 ```text
 霍布斯咖啡馆
@@ -257,7 +257,7 @@ python start.py --agents "林晓"
 python start.py --name test-new-agent --start "20240213-09:30" --step 1 --stride 10 --agents "林晓"
 ```
 
-检查：
+检查时重点看下面这些内容：
 
 - 是否成功加载 agent.json。
 - checkpoint 是否生成。
@@ -275,13 +275,13 @@ python start.py --name test-new-agent --start "20240213-09:30" --step 1 --stride
 克劳斯、玛丽亚
 ```
 
-或：
+也可以写成下面这样：
 
 ```text
 山姆、汤姆
 ```
 
-观察：
+观察下面这些现象，用于判断实验结果：
 
 - 是否相遇。
 - 是否对话。

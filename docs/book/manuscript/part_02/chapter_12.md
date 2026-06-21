@@ -270,7 +270,7 @@ class schedule_dailyResponse(BaseModel):
     res: dict[str, str]
 ```
 
-又如：
+再看一个更完整的具体例子：
 
 ```python
 class reflect_insightsResponse(BaseModel):
@@ -289,7 +289,7 @@ Agent 会反思。
 Agent 会传播信息。
 ```
 
-我们要能拿出证据：
+我们需要拿出这些证据：
 
 - 什么时间谁在哪里。
 - 谁看到了谁。
@@ -336,7 +336,7 @@ replay.py
 live.py
 ```
 
-第二，世界与仿真：
+第二类内容是世界与仿真：
 
 ```text
 modules/game.py
@@ -344,7 +344,7 @@ modules/maze.py
 frontend/static/assets/village/
 ```
 
-第三，智能体核心：
+第三类内容是智能体核心：
 
 ```text
 modules/agent.py
@@ -352,7 +352,7 @@ modules/memory/
 modules/prompt/
 ```
 
-第四，模型与存储：
+第四类内容是模型与存储：
 
 ```text
 modules/model/
@@ -360,7 +360,7 @@ modules/storage/
 data/config.json
 ```
 
-第五，结果与回放：
+第五类内容是结果与回放：
 
 ```text
 results/checkpoints/

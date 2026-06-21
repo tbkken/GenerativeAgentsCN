@@ -103,9 +103,7 @@ Reflection 不是独立模块。它和 Memory Stream、Retrieval、Planning、Di
 | Dialogue | 让对话主题、语气、邀请和回避依赖长期判断。 |
 | Social Simulation | 让关系网络通过观察、对话和反思逐步变化。 |
 
-*表 7-1：Reflection 与其他架构模块的关系。Reflection 的位置不是独立总结器，而是记忆、检索、计划和对话之间的认知转换层。*
-
-Reflection 让小镇中的角色出现“经历之后的改变”。没有它，智能体可以看起来忙碌，但不容易成长。
+*表 7-1：Reflection 与其他架构模块的关系。Reflection 的位置不是独立总结器，而是记忆、检索、计划和对话之间的认知转换层。*Reflection 让小镇中的角色出现“经历之后的改变”。没有它，智能体可以看起来忙碌，但不容易成长。
 
 ```mermaid
 flowchart TD
@@ -180,9 +178,7 @@ flowchart TD
     Focus --> Next["围绕问题检索证据"]
 ```
 
-*图 7-3：Reflection 的输入筛选路径。常规反思先筛 event 和 thought，对话再通过单独分支写成 thought。*
-
-Reflection 的输入边界决定了它不是“总览全部历史”，也不是“只看最后一件事”。它先从近期事件和已有 thought 中提出问题，再把问题交给 Retrieval 寻找证据。
+*图 7-3：Reflection 的输入筛选路径。常规反思先筛 event 和 thought，对话再通过单独分支写成 thought。*Reflection 的输入边界决定了它不是“总览全部历史”，也不是“只看最后一件事”。它先从近期事件和已有 thought 中提出问题，再把问题交给 Retrieval 寻找证据。
 
 ## 7.7 从候选记忆到焦点问题
 
@@ -201,7 +197,7 @@ focus = self.completion("reflect_focus", nodes, 3)
 玛丽亚认真回应了克劳斯的研究话题。
 ```
 
-系统可能生成：
+系统可能生成下面这样的内容：
 
 ```text
 克劳斯与玛丽亚是否有共同兴趣？
@@ -253,7 +249,7 @@ ${reference}
 - 确保遵守返回的格式schema
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Generate reflection focus questions based on the given memory nodes.
@@ -312,9 +308,7 @@ retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
 | 把所有记忆混在一起总结。 | 容易得到宽泛判断。 | `克劳斯是一个关心社会议题的人。` |
 | 按焦点问题分别检索证据。 | 更容易得到可用 insight。 | `克劳斯可能愿意继续与玛丽亚交流，因为她认真回应了他的研究话题。` |
 
-*表 7-3：焦点问题与证据结构。Reflection 的质量取决于问题和证据是否对应。*
-
-Reflection 仍然遵循 `memory stream -> retrieval -> reasoning`。它不是绕过检索机制的全量总结。
+*表 7-3：焦点问题与证据结构。Reflection 的质量取决于问题和证据是否对应。*Reflection 仍然遵循 `memory stream -> retrieval -> reasoning`。它不是绕过检索机制的全量总结。
 
 ## 7.9 生成有证据的 insight
 
@@ -386,7 +380,7 @@ ${reference}
 - 确保返回的数据格式遵守schema
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Generate reflection insights based on the given memory nodes.
@@ -482,7 +476,7 @@ Klaus 与 Maria 的案例展示了 Reflection 如何改变社交选择。
 
 *表 7-6：Klaus 与 Maria 的反思链路。关系不是静态标签，而是由事件、问题、证据和 insight 逐步生成。*
 
-脚本会直接写：
+脚本会直接写出如下内容：
 
 ```text
 Klaus 喜欢 Maria。
@@ -507,9 +501,7 @@ Reflection 的价值要看 thought 是否进入后续行为链路。
 | 计划更新 | 山姆认为居民更关心实际生活问题。 | 他后续竞选对话更可能询问居民需求。 |
 | 社交选择 | Klaus 认为 Maria 适合继续交流。 | Klaus 更可能主动找 Maria 聊天。 |
 
-*表 7-7：Reflection 对行为链路的影响。Thought 必须被后续检索和使用，否则只是日志。*
-
-在项目中，thought 写入 `Associate` 后，可以被 `retrieve_thoughts()` 和 `retrieve_focus()` 取出。计划、对话、反应相关 prompt 都可能读到这些记忆。
+*表 7-7：Reflection 对行为链路的影响。Thought 必须被后续检索和使用，否则只是日志。*在项目中，thought 写入 `Associate` 后，可以被 `retrieve_thoughts()` 和 `retrieve_focus()` 取出。计划、对话、反应相关 prompt 都可能读到这些记忆。
 
 ## 7.13 对话后的 Reflection
 
@@ -551,7 +543,7 @@ ${conversation}
 根据以上对话记录，以 ${agent} 的视角，用一句话描述 ${agent} 是否需要记住自己的计划。
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Conversation record:
@@ -573,7 +565,7 @@ ${conversation}
 以 ${agent} 的视角，用一句话描述对话中最有趣的地方。
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Conversation record:

@@ -63,7 +63,7 @@ flowchart LR
 伊莎贝拉
 ```
 
-选择理由：
+这样选择的理由如下：
 
 山姆是信息源。汤姆是关键反对或怀疑节点。项目设定中，汤姆对山姆并不友好，适合观察负面态度。约翰、拉托亚、乔治适合观察信息传播。伊莎贝拉在咖啡馆，容易成为社交枢纽。如果成本允许，可以加入：
 
@@ -85,13 +85,13 @@ cd generative_agents
 python start.py --name book-election-small --start "20240213-08:00" --step 72 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉"
 ```
 
-压缩：
+压缩命令可以直接照着执行：
 
 ```bash
 python compress.py --name book-election-small
 ```
 
-查看：
+查看命令可以直接照着执行：
 
 ```text
 results/compressed/book-election-small/simulation.md
@@ -99,7 +99,7 @@ results/checkpoints/book-election-small/conversation.json
 results/compressed/book-election-small/movement.json
 ```
 
-扩展实验：
+扩展实验可以这样设计：
 
 ```bash
 python start.py --name book-election-extended --start "20240213-08:00" --step 96 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉,阿伊莎,亚当,玛丽亚,克劳斯"
@@ -133,7 +133,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 ## 25.6 信息扩散记录表
 
-建议记录：
+建议记录这些信息，用于后续复盘：
 
 | 时间 | 来源 | 接收者 | 地点 | 内容摘要 | 证据文件 |
 |---|---|---|---|---|---|
@@ -172,19 +172,19 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 角色提到山姆、镇长、竞选等关键词。
 ```
 
-中标准：
+中等标准可以这样写：
 
 ```text
 角色对话或记忆中有明确来源。
 ```
 
-强标准：
+较强标准可以这样写：
 
 ```text
 角色能在后续对话中正确转述山姆竞选，并表达态度或问题。
 ```
 
-例如，约翰说：
+例如，约翰可能会这样说：
 
 ```text
 我听说山姆在考虑竞选镇长。
@@ -238,14 +238,14 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 ## 25.12 常见失败一：山姆不谈竞选
 
-可能原因：
+可能原因包括下面几类：
 
 - 山姆日程没有竞选相关活动。
 - `currently` 没被 prompt 使用。
 - 山姆没有遇到其他人。
 - decide_chat 返回 False。
 
-排查：
+可以按下面步骤排查：
 
 1. 看山姆 `agent.json` 的 currently。
 2. 看山姆 schedule。
@@ -255,7 +255,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 ## 25.13 常见失败二：竞选信息传播但态度单一
 
-如果所有人都说：
+如果所有人都说下面这句话：
 
 ```text
 祝你好运，我支持你。
@@ -289,20 +289,20 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 - 二跳传播人数。
 - 无证据知道人数。
 
-社交指标：
+社交指标可以这样设计：
 
 - 山姆发起竞选相关对话次数。
 - 其他人转述竞选次数。
 - 涉及政策或社区问题的对话次数。
 
-态度指标：
+态度指标可以这样设计：
 
 - 支持人数。
 - 怀疑人数。
 - 反对人数。
 - 观望人数。
 
-行为指标：
+行为指标可以这样设计：
 
 - 山姆是否调整后续对话策略。
 - 是否出现竞选相关计划。

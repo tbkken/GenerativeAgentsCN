@@ -22,7 +22,7 @@
   -> 角色到达霍布斯咖啡馆
 ```
 
-本章聚焦七个问题：
+本章重点聚焦以下七个问题：
 
 1. 派对传播实验验证哪些模块？
 2. 应该选择哪些角色？
@@ -65,7 +65,7 @@ flowchart LR
 克劳斯
 ```
 
-选择理由：
+这样选择的理由如下：
 
 伊莎贝拉是派对源头。阿伊莎和埃迪适合作为咖啡馆、学院和社区互动中的传播节点。亚当是论文中常见角色，也适合观察是否因为个人计划拒绝或错过。玛丽亚和克劳斯常去霍布斯咖啡馆或学院附近，适合作为派对传播和关系形成交叉观察对象。小规模实验的好处是成本低、日志短、容易追踪传播路径。等小规模跑通后，再扩展到更多角色。
 
@@ -95,25 +95,25 @@ flowchart LR
 
 ## 24.5 小规模运行命令
 
-进入项目目录：
+先进入项目目录，后续命令都在这里执行：
 
 ```bash
 cd generative_agents
 ```
 
-运行：
+运行命令可以直接照着执行：
 
 ```bash
 python start.py --name book-party-small --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,阿伊莎,埃迪,亚当,玛丽亚,克劳斯"
 ```
 
-运行结束后压缩：
+运行结束后执行压缩：
 
 ```bash
 python compress.py --name book-party-small
 ```
 
-查看结果：
+查看结果时关注下面文件：
 
 ```text
 results/compressed/book-party-small/simulation.md
@@ -121,13 +121,13 @@ results/compressed/book-party-small/movement.json
 results/checkpoints/book-party-small/conversation.json
 ```
 
-如果要看前端回放：
+如果要查看前端回放：
 
 ```bash
 python replay.py
 ```
 
-浏览器打开：
+用浏览器打开下面地址：
 
 ```text
 http://127.0.0.1:5000/?name=book-party-small&speed=3&zoom=0.6
@@ -150,13 +150,13 @@ python start.py --name book-party-extended --start "20240214-08:00" --step 84 --
 
 ## 24.7 观察文件一：simulation.md
 
-首先打开：
+首先打开下面文件，可以这样处理：
 
 ```text
 results/compressed/book-party-small/simulation.md
 ```
 
-搜索关键词：
+搜索下面这些关键词：
 
 ```text
 情人节
@@ -167,7 +167,7 @@ results/compressed/book-party-small/simulation.md
 下午5点
 ```
 
-重点观察：
+重点观察下面现象，用于判断实验结果：
 
 1. 伊莎贝拉早上是否提到派对准备。
 2. 她是否与其他角色对话。
@@ -179,13 +179,13 @@ results/compressed/book-party-small/simulation.md
 
 ## 24.8 观察文件二：conversation.json
 
-打开：
+打开下面文件，可以这样处理：
 
 ```text
 results/checkpoints/book-party-small/conversation.json
 ```
 
-搜索：
+搜索下面关键词，可以这样处理：
 
 ```text
 情人节
@@ -241,19 +241,19 @@ results/compressed/book-party-small/movement.json
 角色对话或行动中提到情人节派对。
 ```
 
-中标准：
+中等标准可以这样写：
 
 ```text
 角色 memory 或 conversation 中有明确信息来源。
 ```
 
-强标准：
+较强标准可以这样写：
 
 ```text
 角色知道时间、地点，并在后续计划或对话中使用该信息。
 ```
 
-例如，阿伊莎说：
+例如，阿伊莎可能会这样说：
 
 ```text
 我听伊莎贝拉说今晚咖啡馆有派对。
@@ -276,13 +276,13 @@ results/compressed/book-party-small/movement.json
   + 信息来源可追溯
 ```
 
-更强的传播成功是：
+更强的传播成功可以表现为：
 
 ```text
 非源头角色把派对信息告诉第三人
 ```
 
-例如：
+可以看一个具体例子：
 
 ```text
 伊莎贝拉 -> 阿伊莎 -> 克劳斯
@@ -323,7 +323,7 @@ results/compressed/book-party-small/movement.json
 - 她日程没有安排社交或邀请。
 - 她在咖啡馆，其他角色不来。
 
-排查方法：
+可以按下面方法排查：
 
 1. 看 `simulation.md` 中伊莎贝拉位置。
 2. 看其他角色是否经过霍布斯咖啡馆。
@@ -339,7 +339,7 @@ results/compressed/book-party-small/movement.json
 - `generate_chat` 没检索到派对记忆。
 - 对话摘要丢失时间地点。
 
-排查方法：
+可以按下面方法排查：
 
 1. 看伊莎贝拉 `currently`。
 2. 看 prompt 日志中 `generate_chat` 是否包含派对信息。

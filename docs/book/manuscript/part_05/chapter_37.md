@@ -24,7 +24,7 @@ demo 很精彩，但评价不够稳。
 - 换模型后是否仍有效。
 - 指标是否真的衡量了目标能力。
 
-本章聚焦六个问题：
+本章重点聚焦以下六个问题：
 
 1. 为什么 agent 评价不能只看演示？
 2. AgentBench、WebArena、GAIA、SWE-bench 和 AI Agents That Matter 给我们什么启发？
@@ -56,7 +56,7 @@ Generative Agents 的魅力来自故事。Smallville 中，派对传播、竞选
 这个案例看起来是否合理？
 ```
 
-实验可信回答的是：
+实验可信性需要回答的是：
 
 ```text
 在明确条件下，这个系统是否稳定地产生某类可验证行为？
@@ -102,13 +102,13 @@ Agent 评价必须看环境 grounding。
 - 对象占用。
 - 回放位置。
 
-例如角色说：
+例如，角色可能会这样说：
 
 ```text
 我会在 17:00 去霍布斯咖啡馆。
 ```
 
-评价时必须检查：
+评价时必须检查下面证据：
 
 ```text
 movement.json 中它是否真的到达霍布斯咖啡馆？
@@ -218,7 +218,7 @@ info["llm"] = agent._llm.get_summary()
 
 ## 37.10 升级方向一：指标脚本
 
-建议增加以下工具：
+建议增加下面这些工具：
 
 ```text
 tools/analyze_conversation_keywords.py
@@ -228,7 +228,7 @@ tools/compare_experiment_runs.py
 tools/export_experiment_report.py
 ```
 
-它们分别负责：
+它们分别负责下面任务：
 
 - 对话关键词和传播路径。
 - 指定地点和时间窗到场统计。
@@ -240,13 +240,13 @@ tools/export_experiment_report.py
 
 ## 37.11 升级方向二：统一 metrics.json
 
-每次实验可以生成：
+每次实验可以生成下面材料：
 
 ```text
 generative_agents/results/evaluations/<实验名>/metrics.json
 ```
 
-示例：
+可以参考下面这个示例：
 
 ```json
 {
@@ -291,7 +291,7 @@ generative_agents/results/evaluations/<实验名>/metrics.json
 generative_agents/results/evaluations/<实验名>/report.md
 ```
 
-报告结构：
+报告结构可以这样设计：
 
 ```markdown
 # 实验评价报告
@@ -337,7 +337,7 @@ Agent 系统评价必须记录成本。成本包括：
 S:成功数,F:失败数/R:请求数
 ```
 
-可以把它汇总成：
+可以把它汇总成下面表格：
 
 ```json
 {
@@ -413,7 +413,7 @@ max
 standard deviation
 ```
 
-例如：
+可以看一个具体例子：
 
 ```json
 {
@@ -446,7 +446,7 @@ standard deviation
 evaluations/configs/party_diffusion_v1.json
 ```
 
-内容：
+可以直接参考下面内容：
 
 ```json
 {
@@ -465,7 +465,7 @@ evaluations/configs/party_diffusion_v1.json
 
 ## 37.18 不要为了指标牺牲可信行为
 
-指标有一个危险：
+指标设计有一个危险：
 
 ```text
 系统可能为了指标优化，而不是为了可信行为优化。

@@ -62,7 +62,7 @@ flowchart TD
 
 ## 29.3 对话之外的可信证据
 
-最常见的误判是：
+最常见的误判来自这里：
 
 ```text
 这个智能体说话很自然，所以它很可信。
@@ -74,7 +74,7 @@ flowchart TD
 你今天过得怎么样？
 ```
 
-模型可能回答：
+模型可能会这样回答：
 
 ```text
 今天挺充实的，我上午工作，下午和朋友聊了聊，晚上打算休息。
@@ -156,7 +156,7 @@ generative_agents/results/compressed/<实验名>/simulation.md
 generative_agents/results/checkpoints/<实验名>/conversation.json
 ```
 
-评分时可以问：
+评分时可以提出下面问题：
 
 ```text
 角色说的话是否符合人设？
@@ -165,7 +165,7 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
 有没有与人设直接冲突的内容？
 ```
 
-常见扣分点包括：
+常见扣分点主要包括：
 
 - 职业错乱。
 - 家庭关系错乱。
@@ -208,7 +208,7 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
   -> 角色表达或行动使用该信息
 ```
 
-以派对为例：
+以派对传播实验为例：
 
 ```text
 伊莎贝拉邀请玛丽亚参加派对。
@@ -291,7 +291,7 @@ sleep_consistency_score
 计划还可以。
 ```
 
-要写：
+应该写成下面这种带证据的表述：
 
 ```text
 山姆在 09:00-12:00 三次出现与竞选相关的社区沟通行为；
@@ -387,7 +387,7 @@ attitude_diversity_score
 - 到场。
 - 准备行为。
 
-竞选实验更关注：
+竞选实验更关注这些结果：
 
 - 谁知道候选人。
 - 谁支持。
@@ -416,7 +416,7 @@ attitude_diversity_score
 generative_agents/results/compressed/<实验名>/movement.json
 ```
 
-以及：
+同时还需要关注下面内容：
 
 ```text
 generative_agents/results/compressed/<实验名>/simulation.md
@@ -452,7 +452,7 @@ generative_agents/results/compressed/<实验名>/simulation.md
 记忆连续性 4 分。
 ```
 
-要写：
+应该写成下面这种带证据的表述：
 
 ```text
 记忆连续性 4 分：
@@ -461,7 +461,7 @@ generative_agents/results/compressed/<实验名>/simulation.md
 但 16:00 的计划中没有出现参加或准备行为，因此未给 5 分。
 ```
 
-证据格式建议包括：
+证据格式建议包括下面内容：
 
 - 时间。
 - 角色。
@@ -471,7 +471,7 @@ generative_agents/results/compressed/<实验名>/simulation.md
 
 ## 29.15 可信行为评分表模板
 
-可以使用下面模板：
+可以使用下面这个模板：
 
 ```markdown
 | 维度 | 分数 | 证据 | 问题 | 改进方向 |
@@ -507,7 +507,7 @@ local-qwen-party-2h
 remote-strong-party-2h
 ```
 
-可以得到：
+可以得到下面结果，用于验证前文判断：
 
 | 维度 | 本地模型 | 远程强模型 | 差异解释 |
 | --- | --- | --- | --- |
@@ -622,7 +622,7 @@ remote-strong-party-2h
 改进方向：检查 AssociateRetriever；提高相关性权重；在事件 prompt 中强化时间地点。
 ```
 
-再例如：
+再看一个更完整的具体例子：
 
 ```text
 失败：角色口头答应参加派对，但没有到场。
@@ -630,7 +630,7 @@ remote-strong-party-2h
 改进方向：在接受邀请后写入更高重要性的记忆；增加 schedule 更新逻辑。
 ```
 
-再例如：
+再看一个更完整的具体例子：
 
 ```text
 失败：汤姆明明不喜欢山姆，却表达强烈支持。
@@ -711,7 +711,7 @@ remote-strong-party-2h
 它们能提升可信行为的哪个维度？
 ```
 
-例如：
+可以看一个具体例子：
 
 - MemGPT / Mem0 主要改进记忆连续性。
 - Reflexion 主要改进失败后的经验学习。

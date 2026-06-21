@@ -26,7 +26,7 @@
 | `reflect_chat_planing` | 总结聊天对计划的影响。 | 聊天之后，角色接下来要不要改计划。 |
 | `reflect_chat_memory` | 总结聊天对记忆的影响。 | 聊天之后，哪些信息应该进入长期记忆。 |
 
-本章聚焦八个问题：
+本章重点聚焦以下八个问题：
 
 1. 社交行为如何从感知触发？
 2. `_reaction()` 如何选择关注对象？
@@ -105,7 +105,7 @@ concept.event.subject in agents
 priority = [i for i in self.concepts if not _ignore(i)]
 ```
 
-默认忽略词是：
+默认忽略词可以看到：
 
 ```text
 空闲
@@ -160,7 +160,7 @@ return False
 - 自己或对方正在睡觉。
 - 事件处于待开始状态。
 
-代码中：
+在代码中可以看到下面位置：
 
 ```python
 if utils.get_timer().daily_duration(mode="hour") >= 23:
@@ -272,7 +272,7 @@ nodes = agent.associate.retrieve_focus([other_name], 50)
 
 ## 20.12 generate_chat：生成一句话
 
-多轮对话核心是：
+多轮对话的核心逻辑是：
 
 ```python
 text = self.completion("generate_chat", self, other, relations[0], chats)
@@ -289,7 +289,7 @@ text = self.completion("generate_chat", self, other, relations[0], chats)
 - 已有对话记录。
 - 对话原则。
 
-对话原则包括：
+对话原则主要包括，需要逐项查看：
 
 - 不重复已有内容。
 - 符合性格和当前情境。
@@ -361,7 +361,7 @@ generate_chat_check_repeat
 
 ## 20.16 decide_chat_terminate：判断话题结束
 
-系统还会调用：
+系统还会调用下面函数：
 
 ```python
 decide_chat_terminate
@@ -380,7 +380,7 @@ self.conversation[key].append({
 })
 ```
 
-这个结构记录：
+这个结构会记录下面内容：
 
 - 时间。
 - 发起者。
@@ -398,7 +398,7 @@ self.conversation[key].append({
 chat_summary = self.completion("summarize_chats", chats)
 ```
 
-摘要用于：
+摘要主要用于下面场景：
 
 - 对话事件 describe。
 - chat memory。
@@ -409,7 +409,7 @@ chat_summary = self.completion("summarize_chats", chats)
 
 ## 20.19 schedule_chat：写回双方
 
-对话摘要生成后：
+对话摘要生成后会继续处理：
 
 ```python
 self.schedule_chat(chats, chat_summary, start, duration, other)
@@ -482,7 +482,7 @@ memory.Event(
 )
 ```
 
-然后调用：
+然后调用下面函数，需要结合源码查看：
 
 ```python
 self.revise_schedule(event, start, duration)

@@ -243,7 +243,7 @@ ${task}
 不要输出推理过程，直接输出答案：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Example 1:
@@ -274,7 +274,7 @@ ${agent} 看到 ${another_status}
 ${reason}${answer}
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Background:
@@ -337,7 +337,7 @@ ${new_plan}
 续写时间表中剩余的部分（必须在 ${end} 前结束）：
 ```
 
-英文对照如下：
+完整的英文对照如下：
 
 ```text
 Adjust the schedule based on the new activity.

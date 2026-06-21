@@ -70,7 +70,7 @@ chat
 thought
 ```
 
-这三类分别对应：
+这三类可以分别对应：
 
 - 观察事件。
 - 对话记忆。
@@ -86,7 +86,7 @@ Generative Agents 的记忆核心在：
 generative_agents/modules/memory/associate.py
 ```
 
-底层向量索引在：
+底层向量索引可以定位到：
 
 ```text
 generative_agents/modules/storage/index.py
@@ -134,7 +134,7 @@ relevance
 importance
 ```
 
-在源码中对应：
+在源码中可以对应到：
 
 ```python
 recency_scores
@@ -142,13 +142,13 @@ relevance_scores
 importance_scores
 ```
 
-最终分数是：
+最终分数计算公式是：
 
 ```python
 final_score = recency + relevance + importance
 ```
 
-其中：
+其中需要注意的可以这样理解：
 
 - recency 根据访问时间排序和衰减系数计算。
 - relevance 来自向量检索相似度。
@@ -257,7 +257,7 @@ chat
 thought
 ```
 
-建议扩展为：
+建议扩展为下面结构：
 
 ```text
 event
@@ -312,7 +312,7 @@ DEFAULT_MEMORY_TYPES = [
 ]
 ```
 
-然后初始化：
+然后初始化下面内容：
 
 ```python
 self.memory = memory or {t: [] for t in DEFAULT_MEMORY_TYPES}
@@ -358,7 +358,7 @@ retrieve_by_type(node_type, text=None, limit=None)
 }
 ```
 
-字段含义：
+字段含义可以这样理解：
 
 - `target`：关系对象。
 - `affinity`：好感度。
@@ -378,13 +378,13 @@ retrieve_by_type(node_type, text=None, limit=None)
 relationship_update.txt
 ```
 
-输入：
+对应的输入内容可以这样写：
 
 - 当前关系状态。
 - 最近互动摘要。
 - 相关记忆。
 
-输出：
+对应的输出结果应该类似这样：
 
 ```json
 {
@@ -419,7 +419,7 @@ relationship_update.txt
   -> 保留原始证据节点
 ```
 
-合并后生成：
+合并后生成下面内容：
 
 ```text
 过去几小时，伊莎贝拉一直围绕霍布斯咖啡馆营业和派对准备工作展开行动。
@@ -437,7 +437,7 @@ relationship_update.txt
 - 包含拒绝、反对或失败。
 - 是低频但高重要性事件。
 
-例如：
+可以看一个具体例子：
 
 ```text
 玛丽亚答应 17:00 去咖啡馆参加派对。
@@ -460,7 +460,7 @@ relationship_update.txt
 派对时间是 19:00。
 ```
 
-或者：
+也可以写成下面这样：
 
 ```text
 汤姆不信任山姆。
@@ -505,7 +505,7 @@ generative_agents/results/checkpoints/<实验名>/
 generative_agents/results/long_term_memory/<角色名>/
 ```
 
-或：
+也可以写成下面这样：
 
 ```text
 generative_agents/data/long_term_memory/<角色名>/
@@ -555,19 +555,19 @@ python start.py --name sim-2 --load-long-term-memory baseline-1
 relationship + recent chat + relevant event
 ```
 
-生成计划时：
+生成计划时会使用下面这些材料：
 
 ```text
 goal + summary + relevant event
 ```
 
-反思时：
+反思时会使用下面这些材料：
 
 ```text
 high poignancy event + thought + recent conflict
 ```
 
-失败复盘时：
+失败复盘时会使用下面这些材料：
 
 ```text
 skill + failed action + similar past attempts

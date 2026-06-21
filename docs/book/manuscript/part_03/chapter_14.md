@@ -115,7 +115,7 @@ def __init__(
 ):
 ```
 
-核心字段包括：
+核心字段主要包括，需要逐项查看：
 
 | 字段 | 中文意思 | 对系统行为的影响 |
 | --- | --- | --- |
@@ -132,7 +132,7 @@ def __init__(
 ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
 ```
 
-它的层级含义是：
+它的层级含义可以这样理解：
 
 ```text
 world: the Ville
@@ -151,7 +151,7 @@ Tile 不只是地图格子。它还保存事件。`Tile` 中有：
 self._events = {}
 ```
 
-以及相关方法：
+以及这些相关方法，可以这样处理：
 
 ```python
 add_event()
@@ -386,7 +386,7 @@ return random.choice(self.address_tiles.values())
 generative_agents/modules/memory/spatial.py
 ```
 
-初始化参数包括：
+初始化参数主要包括：
 
 ```python
 def __init__(self, tree, address=None):
