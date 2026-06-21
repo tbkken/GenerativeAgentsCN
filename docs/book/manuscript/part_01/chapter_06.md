@@ -1,786 +1,483 @@
-# 第 6 章 论文架构三：Reflection
+# 第 6 章 论文架构三：Retrieval
 
-## 6.1 本章要解决的问题
+## 核心问题
 
-上一章讲 Retrieval，解决的是“智能体在需要行动时，应该想起哪些过去经历”。
+> Memory Stream 让智能体拥有过去，Retrieval 决定智能体此刻想起哪一部分过去。
 
-但是，对一个可信的人类行为代理来说，只会想起过去仍然不够。人并不是每次都从原始经历重新推理一遍。人会总结，会归纳，会形成对自己、他人、关系、环境和未来的较稳定判断。
+保存记忆只是第一步。真正做决定时，智能体不能把全部记忆都塞进 prompt。记忆越多，问题越明显：
 
-例如，一个人不是只记得：
+- 上下文窗口有限。
+- 无关记忆会干扰判断。
+- 相似记忆会互相混淆。
+- 重要信息可能被日常琐事淹没。
+- 关键记忆检索不到，行为就会断裂。
 
-- 昨天和某人聊过学业。
-- 今天在咖啡馆又遇到这个人。
-- 对方也喜欢探索新想法。
-- 对方愿意继续交流。
+Retrieval 解决的是一个很具体的问题：
 
-他可能会进一步形成一个高层判断：
+> 当前情境下，哪几条记忆最应该进入模型上下文？
 
-> 我与这个人有共同兴趣，未来可以更主动地交流。
+Generative Agents 没有只做简单向量搜索，而是把三种因素合在一起：近期性、重要性、相关性。这个选择决定了它更像“人在当前情境下想起相关经历”，而不是“数据库按关键词返回文本”。
 
-这个高层判断不是直接观察到的物理事件，而是从多个观察中归纳出来的。Generative Agents 论文把这种机制称为 Reflection。
+## 6.1 不能读取全部记忆
 
-Reflection 是这篇论文最重要的设计之一。它让智能体不只是记录世界，而是解释世界；不只是保存过去，而是把过去压缩成能够影响未来的认知结构。
+把所有记忆都放进 prompt，是最直接也最容易失败的方案。
 
-本章要回答七个问题：
+| 问题 | 表现 | 对行为的影响 |
+| --- | --- | --- |
+| 上下文有限 | 单个角色一天就可能产生几十到几百条记忆。 | 长期运行后，全部记忆无法进入 prompt。 |
+| 噪声过多 | 起床、吃饭、移动、看见空椅子等日常记忆数量很多。 | 模型容易抓错重点。 |
+| 关键事件被稀释 | 派对邀请、竞选声明、关系变化被琐事包围。 | 角色会忘记承诺或错过社会事件。 |
+| 记忆互相冲突 | 同一活动时间、地点、态度可能出现不一致说法。 | 模型可能混淆事实，生成错误行为。 |
+| 缺少当前目标 | “全部记忆”没有告诉模型此刻应该关注什么。 | 对话、计划和反应会变得散。 |
 
-1. 为什么原始 observation 不够？
-2. Reflection 在论文架构中处于什么位置？
-3. 高层 thought 是如何从记忆中生成的？
-4. 为什么 Reflection 必须带证据？
-5. Klaus 与 Maria 案例为什么重要？
-6. GenerativeAgentsCN 如何实现 Reflection？
-7. Reflection 的失败模式是什么？
+*表 6-1：不能读取全部记忆的原因。Retrieval 的目标不是拿到更多记忆，而是拿到当前最有用的少量记忆。*
 
-[图 6-1：observation -> focus question -> retrieved memories -> insight -> memory stream]
+人也不会完整读取过去。一个人听到“今天晚上的安排”，会想起最近的邀请、未完成的约定、和当前对话对象有关的事，而不是回忆一生所有细节。Generative Agents 的 Retrieval 就是在系统层面实现这种“情境化回忆”。
 
-## 6.2 原始观察为什么不够
+## 6.2 Retrieval 的三个维度
 
-如果一个智能体只保存 observation，它仍然会遇到几个问题。
+论文提出的检索分数由三个维度组成：recency、importance、relevance。
 
-第一个问题是记忆太碎。
+| 维度 | 中文意思 | 回答的问题 | 如果缺失会怎样 |
+| --- | --- | --- | --- |
+| recency | 近期性 | 这条记忆最近是否发生或被想起？ | 角色会忽略刚发生的事，行为缺少即时连续性。 |
+| importance | 重要性 | 这条记忆对角色是否重要？ | 派对、竞选、关系变化会被日常琐事淹没。 |
+| relevance | 相关性 | 这条记忆是否和当前情境有关？ | 角色会想起重要但不合时宜的事，回答跑题。 |
 
-真实生活中的经验大多是碎片化的。一个人一天可能看到几十个事件，听到几段对话，执行许多动作。这些记录单独看都很小：
+*表 6-2：Retrieval 的三个维度。可信行为需要三者平衡，而不是只看语义相似度。*
 
-- 在厨房吃早餐。
-- 在咖啡馆看到某人。
-- 听说有人要参加派对。
-- 和朋友聊了几句作业。
-- 计划下午去图书馆。
+### 近期性
 
-如果智能体每次决策都从这些碎片直接推理，它会非常依赖当次 prompt 的临场能力。只要检索少了一两条关键记忆，高层判断就会断裂。
+近期性对应 recency。刚刚发生过的事情，通常更容易影响当前行动。阿伊莎五分钟前接受了伊莎贝拉的派对邀请。她下午遇到克劳斯时，这条记忆应该更容易被想起。如果邀请发生在很久以前，除非它特别重要或特别相关，否则当前影响会降低。在项目中，近期性主要依赖 `Concept.access`。`AssociateRetriever` 会先按 `access` 排序，再给越靠前的候选记忆更高的 recency 分数。
 
-第二个问题是低层事件不等于长期认知。
+### 重要性
 
-“克劳斯和玛丽亚在咖啡馆聊天”是一条事件。“克劳斯认为玛丽亚也喜欢探索新想法”是一个认知。“克劳斯愿意继续和玛丽亚交流”则是一个可能影响未来行为的社交倾向。
+重要性对应 importance。有些事件不一定最近，但仍然应该被想起：
 
-这三者不是同一层东西。
+- 山姆打算竞选市长。
+- 伊莎贝拉计划举办情人节派对。
+- 汤姆不喜欢山姆。
+- 克劳斯和玛丽亚发现彼此有共同兴趣。
 
-Memory stream 保存低层事件，但可信行为需要高层认知。Reflection 的作用，就是在低层记忆和高层行为之间建立一层解释结构。
+这些信息应该比“看见一个空椅子”更容易进入上下文。项目中用 `poignancy` 表示重要性。它来自上一章讲过的 `poignancy_event.txt` 和 `poignancy_chat.txt`，并保存在 `Concept` 的 metadata 中。
 
-第三个问题是行为连续性需要抽象。
+### 相关性
 
-如果智能体没有抽象能力，它的行为连续性只能依赖重复检索过去事件。这样很脆弱。比如克劳斯再次遇到玛丽亚时，系统可能检索到“在咖啡馆聊天”，但没有检索到“共同兴趣”。于是他只会寒暄，而不会表现出“上次交流改变了我对你的认识”。
+相关性对应 relevance。同一个角色，在不同情境下应该想起不同记忆。伊莎贝拉准备派对时，应该想起派对时间、材料、已经邀请过谁；她决定是否和亚当聊天时，应该想起亚当最近在写书、常在咖啡馆工作、之前是否愿意参加活动。项目中，相关性来自向量检索分数。`LlamaIndex.retrieve()` 会把当前查询和记忆文本放到 embedding 空间里比较，返回语义上更接近的候选记忆。
 
-有了 Reflection，系统可以把一组碎片经验变成 thought：
+```mermaid
+flowchart LR
+    Query["当前情境 / focus"] --> Relevance["relevance<br/>语义相关性"]
+    Memory["候选记忆 Concept"] --> Relevance
+    Memory --> Recency["recency<br/>最近是否发生/访问"]
+    Memory --> Importance["importance<br/>poignancy"]
 
-```text
-克劳斯发现玛丽亚虽然专业不同，但同样喜欢探索新想法，未来可以继续和她交流。
+    Relevance --> Score["综合得分"]
+    Recency --> Score
+    Importance --> Score
+    Score --> TopK["Top-K 记忆"]
+    TopK --> Prompt["进入计划/对话/反思 prompt"]
 ```
 
-这条 thought 之后会像事件一样被保存、检索和使用。智能体不需要每次从零归纳。
+*图 6-1：Recency、Importance、Relevance 三因素检索模型。Retrieval 决定的是当前 prompt 里出现哪几条过去经验。*
 
-## 6.3 Reflection 不是总结聊天记录
+## 6.3 三个维度缺一不可
 
-很多人在第一次读 Generative Agents 时，会把 Reflection 理解成“记忆总结”。这个理解太浅。
+只看相关性，系统会变成普通语义搜索。它可能找到很多“咖啡馆”相关记忆，却错过今天下午的派对。只看近期性，系统会被刚刚发生的小事带跑。角色刚看见一把空椅子，检索结果就可能被这个无意义事件占据。只看重要性，系统会反复想起重大事件。山姆可能一直谈竞选，却忘记眼前的人正在问咖啡口味。这三个维度的分工可以再看得直接一点。
 
-总结通常是压缩。
+| 当前情境 | 只看相关性的问题 | 只看近期性的问题 | 只看重要性的问题 | 三因素平衡后的结果 |
+| --- | --- | --- | --- | --- |
+| 阿伊莎和克劳斯聊今晚安排 | 可能找出很多“图书馆”“学习”记忆。 | 可能只想起刚才看见的家具或路人。 | 可能想起很重要但和今晚无关的学业压力。 | 更容易想起伊莎贝拉刚邀请她参加派对。 |
+| 汤姆谈地方选举 | 可能只找出“选举”事实。 | 可能被刚刚的商店事件干扰。 | 可能反复想起对山姆的不满。 | 同时想起山姆竞选和自己不喜欢山姆。 |
+| 伊莎贝拉决定是否邀请亚当 | 可能只找出亚当在咖啡馆的所有记录。 | 可能只看见亚当此刻在写作。 | 可能只想起派对很重要。 | 同时考虑派对目标、亚当状态和过去互动。 |
 
-Reflection 是解释。
+*表 6-3：三个维度如何互相补足。Retrieval 的质量直接决定行为是否自然。*
 
-压缩关心的是更短地表达已有信息。解释关心的是从已有信息中得出新的高层判断。
+## 6.4 系统中如何完成一次检索
 
-例如，下面是一段压缩：
+在项目里，检索不是一个抽象概念。它由 `Associate`、`LlamaIndex` 和 `AssociateRetriever` 共同完成。
 
-```text
-克劳斯和玛丽亚在咖啡馆聊了学习、兴趣和近期计划。
+| 系统模块 | 负责什么 | 对 Retrieval 的作用 |
+| --- | --- | --- |
+| `Associate` | 管理角色自己的 `event`、`thought`、`chat` 记忆列表。 | 提供检索入口，决定查哪类记忆。 |
+| `LlamaIndex` | 保存 TextNode、metadata 和向量索引。 | 先按语义相似度召回候选记忆。 |
+| `AssociateRetriever` | 对候选记忆重新打分。 | 合并 recency、relevance、importance。 |
+| `Concept` | 统一封装记忆文本、时间、类型、重要性。 | 提供排序和回填 prompt 所需字段。 |
+| `Agent.make_schedule()` | 新一天计划前检索近期重要经验。 | 用过去经验更新 `currently` 和当天安排。 |
+| `Agent.reflect()` | 反思时按问题检索相关记忆。 | 为 insight 提供证据。 |
+| `_reaction()` / `_chat_with()` | 社交反应和对话前检索关系背景。 | 让对话不只是现场寒暄。 |
+
+*表 6-4：Retrieval 涉及的系统模块。检索不是单个函数，而是记忆容器、向量索引、重排序器和行为模块的协作。*
+
+```mermaid
+flowchart TD
+    Focus["focus / query<br/>当前要解决的问题"] --> Associate["Associate.retrieve_focus()"]
+    Associate --> NodeIDs["候选范围<br/>event + thought"]
+    NodeIDs --> Llama["LlamaIndex.retrieve()<br/>向量召回"]
+    Llama --> Candidates["候选 Concept 节点"]
+    Candidates --> Retriever["AssociateRetriever._retrieve()"]
+    Retriever --> R1["recency<br/>access 排序"]
+    Retriever --> R2["relevance<br/>向量分数"]
+    Retriever --> R3["importance<br/>poignancy"]
+    R1 --> Final["final score"]
+    R2 --> Final
+    R3 --> Final
+    Final --> TopK["Top-K Concept"]
+    TopK --> Prompt["计划/对话/反思 prompt"]
 ```
 
-下面是一段 Reflection：
+*图 6-2：项目中 `retrieve_focus()` 的检索流程。先由向量索引召回候选，再由 `AssociateRetriever` 用三因素重排。*
 
-```text
-克劳斯认为玛丽亚愿意讨论开放性问题，这让他觉得她可能是适合深入交流的人。
-```
+## 6.5 检索接口和输入输出
 
-两者差别很大。
+`Associate` 提供了几类检索入口。它们不是完全等价的。
 
-前者回答“发生了什么”。后者回答“这件事意味着什么”。
+| 接口 | 查询范围 | 典型用途 | 注意点 |
+| --- | --- | --- | --- |
+| `retrieve_events(text=None)` | `event` 记忆。 | 查最近事件，或按文本查相关事件。 | 不传文本时主要取最近事件。 |
+| `retrieve_thoughts(text=None)` | `thought` 记忆。 | 查反思产生的高层想法。 | thought 往往比 event 更抽象。 |
+| `retrieve_chats(name=None)` | `chat` 记忆。 | 查与某个人的历史对话。 | 传入名字时会构造“对话 某人”的查询文本。 |
+| `retrieve_focus(focus, retrieve_max=30, reduce_all=True)` | `event + thought`。 | 计划、反思、关系总结等多焦点检索。 | 默认不直接查 `chat`，对话通常单独通过 `retrieve_chats()` 查。 |
+| `get_relation(node)` | 与某个 node 描述相关的 events 和 thoughts。 | 社交反应前理解“我和这个人/事件有什么关系”。 | 返回的是关系上下文，不只是单条记忆。 |
 
-论文中的 Reflection 不是为了省 token，也不是为了替代完整记忆流。它的关键价值在于生成更抽象的 thought，并把这些 thought 重新放入 memory stream。这样，后续 Retrieval 可以同时检索到事件和洞察。
+*表 6-5：项目中的检索接口。不同接口回答不同问题，不能把 Retrieval 简化成一个向量搜索调用。*
 
-这也是 Generative Agents 与普通聊天机器人记忆总结的差别。
-
-普通总结往往是外部维护的上下文压缩。
-
-Generative Agents 的 Reflection 是智能体内部认知状态的一部分。
-
-## 6.4 Reflection 在整体架构中的位置
-
-论文的架构可以简化为下面这条链：
-
-```text
-观察世界
-  -> 写入 memory stream
-  -> 根据当前任务 retrieval
-  -> 生成计划、反应、对话
-  -> 重要记忆积累到阈值
-  -> reflection 生成 thought
-  -> thought 再写回 memory stream
-```
-
-Reflection 不是独立模块。它和 Memory Stream、Retrieval、Planning、Dialogue 都连接在一起。
-
-它依赖 Memory Stream，因为它要从已有经历中生成洞察。
-
-它依赖 Retrieval，因为它不可能每次读取全部历史，而是围绕焦点问题检索相关记忆。
-
-它影响 Planning，因为计划不是只由当前环境决定，也由角色对自身目标和关系的理解决定。
-
-它影响 Dialogue，因为对话中的话题、语气、邀请和回避，都可能依赖智能体对对方的长期判断。
-
-它还影响社会仿真，因为多智能体系统中的关系网络不是固定表，而是通过观察、对话和反思逐步变化。
-
-这一点非常关键：Reflection 让小镇中的角色有了“经历之后的改变”。
-
-没有 Reflection，智能体可以看起来忙碌，但不容易成长。
-
-有了 Reflection，智能体才可能因为一段对话、一场活动、一次冲突或一个计划失败而改变后续行为。
-
-[图 6-2：Reflection 与 Memory、Retrieval、Planning、Dialogue 的连接]
-
-## 6.5 何时触发 Reflection
-
-论文并不是每发生一件事就反思一次。这样会非常昂贵，也不符合人类行为。
-
-人通常不会因为刷牙、倒水、走路而产生深刻反思。反思更可能发生在重要事情积累到一定程度之后。
-
-因此，论文为每条 memory record 赋予 importance score。当最近积累的重要性超过阈值后，智能体触发 Reflection。
-
-GenerativeAgentsCN 使用的名字是 `poignancy`。这个词可以理解为“触动程度”或“重要程度”。
-
-事件写入记忆时，系统会调用重要性评分：
-
-```text
-poignancy_event
-poignancy_chat
-```
-
-项目中的 prompt 要求模型在 1 到 10 之间打分。普通日常事件得分低，分手、录取、争吵等强烈事件得分高。
-
-在源码中，Reflection 的触发条件位于 `Agent.reflect()`：
+一次计划前的检索输入可以长这样：
 
 ```python
-if self.status["poignancy"] < self.think_config["poignancy_max"]:
-    return
+focus = [
+    "伊莎贝拉 在 2024年02月14日（星期三） 的计划。",
+    "在 伊莎贝拉 的生活中，重要的近期事件。",
+]
+retrieved = associate.retrieve_focus(focus)
 ```
 
-这意味着，只要累计触动程度还没有达到阈值，智能体就不会反思。
+这段代码的含义很直白：系统不是凭空问“给我一些记忆”，而是在问两件事：
 
-这个设计很重要。
+- 今天计划需要哪些过去经验？
+- 最近有哪些重要事件会影响伊莎贝拉？
 
-它让 Reflection 成为稀缺操作，而不是每步执行的常规操作。稀缺性使它更像“阶段性内省”，也节省模型调用成本。
-
-在 GenerativeAgentsCN 的配置中，`poignancy_max` 出现在 `generative_agents/data/config.json`。当累计重要性达到这个上限后，`reflect()` 会进入后续流程。
-
-## 6.6 Reflection 的输入：事件与想法
-
-触发后，系统不会只看刚刚发生的一件事。它会取出一批近期相关的 memory concepts。
-
-GenerativeAgentsCN 中的实现是：
-
-```python
-nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
-```
-
-也就是说，Reflection 的输入包括两类内容：
-
-- event：观察、行动、对话等低层事件。
-- thought：过去已经形成的高层想法。
-
-这很关键。
-
-如果 Reflection 只能基于 event，它只能做一层抽象。
-
-如果 Reflection 也能基于 thought，它就可以递归。
-
-低层 observation 可以生成第一层 thought。第一层 thought 又可以参与下一次 Reflection，生成更高层、更稳定的判断。
-
-这就是论文中 reflection tree 的含义。
-
-它不是简单的一次总结，而是一棵由记忆证据向上生成的认知树：
+检索输出不是纯字符串，而是一组 `Concept`。进入 prompt 前，系统通常会使用每条记忆的时间和描述：
 
 ```text
-observation
-  -> insight
-    -> higher-level insight
-      -> self / relation / goal understanding
+2024-02-13 09:30: 伊莎贝拉邀请阿伊莎参加 2 月 14 日下午 5 点的情人节派对。
+2024-02-13 11:10: 阿伊莎表示她可能会带一段莎士比亚戏剧选段来分享。
+2024-02-13 15:00: 山姆告诉伊莎贝拉，他准备参加下个月的地方市长选举。
 ```
 
-例如：
+这样的输出才是后续 `retrieve_plan`、`retrieve_thought`、`retrieve_currently` 能使用的材料。这里有三份真实 prompt。它们不是 Retrieval 排序算法本身，而是“检索结果进入 Planning 前”的压缩层。`retrieve_plan.txt` 会把记忆节点整理成计划描述：
 
 ```text
-克劳斯在咖啡馆遇到玛丽亚。
-玛丽亚提到自己喜欢探索新想法。
-克劳斯谈到自己的社会学研究。
-    -> 克劳斯认为玛丽亚对开放性讨论感兴趣。
-        -> 克劳斯觉得玛丽亚可能是适合深入交流的人。
+根据给定的记忆节点，生成智能体的计划描述。
+
+示例：
+"""
+记忆节点：
+2023-12-15 08:00: 凯莉在厨房做早餐
+2023-12-15 09:00: 凯莉计划今天去超市购物
+2023-12-15 14:00: 凯莉昨天和朋友聊天很愉快
+
+生成5个计划描述：
+
+[
+  "凯莉今天早上准备了营养早餐",
+  "凯莉计划去超市购买生活用品",
+  "凯莉重视与朋友的社交关系",
+  "凯莉的生活很有规律",
+  "凯莉注重健康饮食"
+]
+
+参考示例，为以下记忆节点生成计划描述：
+"""
+记忆节点：
+${description}
+
+智能体：${agent}
+当前日期：${date}
+"""
+
+确保返回的数据格式遵守schema：
+[
+  "计划描述1",
+  "计划描述2",
+  "计划描述3",
+  ...
+]
+
+要求：
+- 计划描述要基于给定的记忆节点
+- 描述要简洁明了，符合智能体的生活习惯
+- 确保返回的数据格式遵守schema
 ```
 
-这类递归结构使角色的“人格状态”不再只来自初始 persona，而是来自仿真过程中的经验沉淀。
-
-[图 6-3：Klaus reflection tree]
-
-## 6.7 从记忆到焦点问题
-
-Reflection 不是直接把一堆 memory nodes 扔给模型说“请总结”。论文的设计更细。
-
-它先让模型提出高层问题。
-
-也就是说，智能体先问：
+英文对照如下：
 
 ```text
-基于这些记忆，我现在最应该思考什么问题？
+Generate plan descriptions for the agent based on the given memory nodes.
+
+Example:
+"""
+Memory nodes:
+2023-12-15 08:00: Kelly made breakfast in the kitchen.
+2023-12-15 09:00: Kelly planned to go grocery shopping today.
+2023-12-15 14:00: Kelly had a pleasant conversation with a friend yesterday.
+
+Generate 5 plan descriptions:
+
+[
+  "Kelly prepared a nutritious breakfast this morning",
+  "Kelly plans to buy daily supplies at the supermarket",
+  "Kelly values her social relationships with friends",
+  "Kelly has a regular lifestyle",
+  "Kelly pays attention to healthy eating"
+]
+
+Following the example, generate plan descriptions for the following memory nodes:
+"""
+Memory nodes:
+${description}
+
+Agent: ${agent}
+Current date: ${date}
+"""
+
+Make sure the returned data follows the schema:
+[
+  "plan description 1",
+  "plan description 2",
+  "plan description 3",
+  ...
+]
+
+Requirements:
+- The plan descriptions must be based on the given memory nodes.
+- The descriptions should be concise and fit the agent's lifestyle.
+- Make sure the returned data follows the schema.
 ```
 
-GenerativeAgentsCN 对应的 prompt 是 `reflect_focus.txt`。它要求模型根据给定记忆节点生成若干反思焦点问题。
-
-在代码中：
-
-```python
-focus = self.completion("reflect_focus", nodes, 3)
-```
-
-这个步骤的价值在于，它把 Reflection 从“泛泛总结”变成“问题驱动的思考”。
-
-例如，给定下面的记忆：
+`retrieve_thought.txt` 会把检索结果压成一句当前想法：
 
 ```text
-克劳斯今天在咖啡馆遇到玛丽亚。
-玛丽亚说她喜欢探索新想法。
-克劳斯提到自己正在研究低收入社区中产阶级化。
-玛丽亚认真回应了克劳斯的研究话题。
+"""
+${description}
+"""
+
+根据以上内容，以 ${agent} 的视角，用一句话总结 ${agent} 此刻的想法和感受：
 ```
 
-系统可能生成焦点问题：
+英文对照如下：
 
 ```text
-克劳斯与玛丽亚是否有共同兴趣？
-克劳斯今天的研究计划受到了哪些社交互动影响？
-克劳斯未来是否应该继续与玛丽亚交流？
+"""
+${description}
+"""
+
+Based on the content above, summarize ${agent}'s current thoughts and feelings in one sentence from ${agent}'s perspective:
 ```
 
-这些问题决定了后续检索方向。
-
-这和人类思考也更接近。人不是对全部经历平均总结，而是围绕某些问题回忆材料。
-
-## 6.8 围绕焦点问题检索证据
-
-生成焦点问题后，系统会用每个问题作为 query，再去 memory stream 中检索证据。
-
-GenerativeAgentsCN 中的代码是：
-
-```python
-retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
-```
-
-这里有两个关键点。
-
-第一，Reflection 使用 Retrieval。
-
-这说明 Reflection 不是绕过检索机制的全量总结。它依然遵循 memory stream -> retrieval -> reasoning 的基本架构。
-
-第二，`reduce_all=False`。
-
-这意味着系统保留“每个焦点问题对应哪些检索结果”的结构，而不是把所有结果混在一起。
-
-这对生成有证据的 insight 很重要。
-
-如果所有结果混在一起，模型很容易产生宽泛判断：
+`retrieve_currently.txt` 会把旧的 `currently`、计划描述和想法合成为新一天状态：
 
 ```text
-克劳斯是一个关心社会议题的人。
+${agent} 在 ${time} 的状态：
+${currently}
+
+${agent} 在 ${time} 结束时记得这些事情：
+${plan}
+
+${agent} 在 ${time} 结束时的想法和感受：
+${thought}
+
+现在是 ${current_time}。根据上述情况，以第三人称，用一句话描述 ${agent} 在 ${current_time} 的状态，以反映 ${agent} 在 ${time} 结束时的想法和感受。
 ```
 
-如果每个问题对应一组证据，模型更容易生成贴合问题的洞察：
+英文对照如下：
 
 ```text
-克劳斯可能愿意继续与玛丽亚交流，因为她认真回应了他的研究话题，并表现出对新想法的兴趣。
+${agent}'s state on ${time}:
+${currently}
+
+At the end of ${time}, ${agent} remembered these things:
+${plan}
+
+At the end of ${time}, ${agent}'s thoughts and feelings were:
+${thought}
+
+It is now ${current_time}. Based on the information above, describe ${agent}'s state on ${current_time} in one sentence, in the third person, so that it reflects ${agent}'s thoughts and feelings at the end of ${time}.
 ```
 
-后者才是能影响后续社交行为的 thought。
+这三份 prompt 的输出 schema 分别是：
 
-## 6.9 生成 insight：有证据的高层想法
+| Prompt | 返回字段 | 类型 | 用途 |
+| --- | --- | --- | --- |
+| `retrieve_plan.txt` | `res` | `list[str]` | 从记忆中提炼与计划有关的描述。 |
+| `retrieve_thought.txt` | `res` | `str` | 用一句话总结角色此刻的想法和感受。 |
+| `retrieve_currently.txt` | `res` | `str` | 更新角色的新一天当前状态。 |
 
-检索到相关记忆后，系统会调用 `reflect_insights` 生成洞察。
+## 6.6 三因素在代码中如何合成
 
-GenerativeAgentsCN 中的代码是：
+`AssociateRetriever._retrieve()` 的核心逻辑可以概括为五步。
 
-```python
-for r_nodes in retrieved.values():
-    thoughts = self.completion("reflect_insights", r_nodes, 5)
-    for thought, evidence in thoughts:
-        _add_thought(thought, evidence)
-```
+| 步骤 | 代码中的来源 | 中文意思 |
+| --- | --- | --- |
+| 1. 向量召回 | `VectorIndexRetriever.retrieve()` | 先找语义相似的候选记忆。 |
+| 2. 按访问时间排序 | `metadata["access"]` | 越最近访问的记忆，recency 基础越高。 |
+| 3. 计算三类分数 | `recency_decay`、`node.score`、`metadata["poignancy"]` | 分别得到近期性、相关性、重要性。 |
+| 4. 归一化并加权 | `_normalize(..., weight)` | 把不同量纲的分数放到可相加区间。 |
+| 5. 合成最终分数 | `final = recency + relevance + importance` | 按 final score 排序，取前 `retrieve_max`。 |
 
-`reflect_insights.txt` 要求返回两部分：
+*表 6-6：`AssociateRetriever` 的重排序步骤。向量召回只是第一步，最终进入 prompt 的记忆由三因素合成决定。*
 
-- 洞察内容。
-- 相关节点编号。
-
-例如：
+可以把项目里的打分过程写成教学版公式：
 
 ```text
-("克劳斯认为玛丽亚愿意讨论开放性问题，未来可以继续交流", "1,2,3")
+final_score =
+  normalize(recency, recency_weight)
++ normalize(relevance, relevance_weight)
++ normalize(importance, importance_weight)
 ```
 
-这不是形式主义。
+当前项目默认参数是：
 
-证据编号让每条 insight 能够追溯到原始 memory nodes。在 `prompt_reflect_insights()` 中，项目会把这些编号转换成真实的 `node_id`：
+| 参数 | 默认值 | 中文意思 | 行为倾向 |
+| --- | --- | --- | --- |
+| `recency_decay` | `0.995` | 近期性衰减系数。 | 候选越靠后，近期性越低。 |
+| `recency_weight` | `0.5` | 近期性权重。 | 近期性有影响，但不是主导因素。 |
+| `relevance_weight` | `3` | 相关性权重。 | 当前语境匹配度最重要。 |
+| `importance_weight` | `2` | 重要性权重。 | 重大事件会明显抬高排名。 |
+| `retrieve_max` | 调用时设置，`retrieve_focus()` 默认 `30`。 | 最多返回多少条重排后的记忆。 | 控制进入后续 prompt 的记忆数量。 |
 
-```python
-node_ids = [nodes[i].node_id for i in indices if i < len(nodes)]
-insights.append([insight.strip(), node_ids])
-```
+*表 6-7：Retrieval 默认参数。这个实现明显偏向“先贴合当前问题，再保留重要事件，最后参考近期性”。*
 
-这样，thought 不只是生成文本，也保留了 evidence。
+举一个教学化的排序例子。阿伊莎下午遇到克劳斯，当前 focus 是“今晚安排”和“社交活动”。
 
-对可信代理来说，证据非常重要。
+| 候选记忆 | recency | relevance | importance | 综合判断 |
+| --- | --- | --- | --- | --- |
+| 上午伊莎贝拉邀请阿伊莎参加情人节派对。 | 高 | 高 | 高 | 最应该被检索出来。 |
+| 阿伊莎刚刚看见图书馆里有一张空桌子。 | 高 | 低 | 低 | 很近，但不该主导对话。 |
+| 阿伊莎上周完成了一篇莎士比亚论文。 | 低 | 中 | 中 | 和文学有关，但不如派对贴近当前社交活动。 |
+| 山姆准备竞选地方市长。 | 中 | 低 | 高 | 重要，但当前话题不一定需要。 |
 
-没有证据的 Reflection 容易变成幻觉：
+*表 6-8：三因素排序示例。Retrieval 不是选择“最重要的一条”，而是选择当前情境下综合最合适的记忆。*
+
+## 6.7 Focus：检索必须带着问题发生
+
+检索需要问题。没有 focus，系统不知道要找什么。项目中的 focus 可以来自不同认知任务。
+
+| 任务 | focus 从哪里来 | 检索用途 |
+| --- | --- | --- |
+| 生成日程 | `make_schedule()` 构造“某人在某日的计划”“重要的近期事件”。 | 更新 `currently`，再生成当天计划。 |
+| 反思 | `reflect_focus` 先根据近期记忆生成问题。 | 按问题检索证据，再生成 insight。 |
+| 社交反应 | `_reaction()` 根据当前感知到的人或事件调用 `get_relation()`。 | 判断是否聊天、等待或忽略。 |
+| 生成对话 | `prompt_generate_chat()` 用关系、对方当前事件、最近对话构造 focus。 | 找回相关记忆，让对话接上过去。 |
+| 关系总结 | `prompt_summarize_relation()` 用对方名字检索。 | 总结两个角色之间的关系。 |
+
+*表 6-9：Retrieval 的触发场景。检索不是孤立模块，而是计划、反思、社交和对话的共同入口。*
+
+Retrieval 必须放在 Reflection、Planning、Reacting 和 Dialogue 之前理解。后面所有模块都依赖它：不是“有记忆”就够了，而是“关键时刻能想起正确记忆”。
+
+## 6.8 两个小镇案例
+
+### 情人节派对
+
+阿伊莎上午遇到伊莎贝拉。伊莎贝拉邀请她参加 2 月 14 日下午 5 点的情人节派对。这条对话被总结后写入阿伊莎的记忆。下午，阿伊莎在图书馆遇到克劳斯。她是否会提到派对，取决于三因素检索。
+
+| 因素 | 派对记忆的表现 | 结果 |
+| --- | --- | --- |
+| recency | 邀请刚发生不久。 | 容易被想起。 |
+| importance | 派对是一次具体社交活动。 | 比日常学习更值得进入上下文。 |
+| relevance | 当前对话如果涉及今晚安排、文学分享或社交活动，就高度相关。 | 可能自然提到派对。 |
+
+*表 6-10：派对邀请的检索路径。信息传播不是自动发生的，它依赖被邀请者后续能在合适情境下想起这件事。*
+
+如果派对记忆被检索出来，阿伊莎可能说：
 
 ```text
-玛丽亚已经爱上了克劳斯。
+对了，伊莎贝拉下午在霍布斯咖啡馆办情人节派对，我可能会去，还想带一些文学故事分享。
 ```
 
-但如果原始记忆只是“玛丽亚认真听克劳斯讲话”，这种结论就过度推断了。
+如果没有被检索出来，她可能完全不提这件事。信息传播链就会断。
 
-更合理的 insight 应该是：
+### 镇长竞选
+
+山姆的竞选意图可能通过对话写入其他角色的 Memory Stream。汤姆谈地方选举时，系统需要同时检索事实和立场。
+
+| 记忆 | 作用 |
+| --- | --- |
+| 山姆正在竞选地方市长。 | 提供事实背景。 |
+| 汤姆关注地方市长选举。 | 说明汤姆有理由谈这件事。 |
+| 汤姆不喜欢山姆。 | 决定汤姆说话时不会完全中性。 |
+| 汤姆经营市场和药店，关心社区服务。 | 让选举话题和他的生活有关。 |
+
+*表 6-11：竞选话题需要同时检索事实和立场。可信行为不只是想起事实，还要想起角色如何看待事实。*
+
+如果这些记忆都被检索出来，汤姆的表达可能带有态度：
 
 ```text
-克劳斯认为玛丽亚愿意倾听自己的研究想法，因此可能适合继续交流。
+我看到候选人都在谈社区服务，这对商店也许有好处。不过我对山姆这个人还是不太感冒。
 ```
 
-这类表述把认知强度控制在证据允许的范围内。
+这就是 Retrieval 对角色差异的影响。同样谈选举，不同角色会想起不同记忆，也会说出不同的话。
 
-## 6.10 thought 如何写回 Memory Stream
+## 6.9 检索失败的后果
 
-Reflection 生成的 insight 不会停留在临时上下文里。它会被写回 memory stream，成为 `thought` 类型的 concept。
+检索失败会直接变成行为失败。
 
-GenerativeAgentsCN 中的 `_add_thought()` 做了这件事：
+| 失败类型 | 表现 | 读者在实验中应该观察什么 |
+| --- | --- | --- |
+| 忘记承诺 | 接受派对邀请后没有到场，也不再提起。 | 被邀请者后续日程和对话是否出现派对。 |
+| 重复寒暄 | 两个角色第二次见面仍像第一次认识。 | 对话是否接续过去交流。 |
+| 忽略关系 | 汤姆谈山姆时突然变得中性或友好。 | 角色立场是否和过去记忆一致。 |
+| 反思变浅 | insight 没有证据，只是泛泛总结。 | 反思是否引用了关键经历。 |
+| 社会传播中断 | 一个角色听到消息后没有继续传播。 | 消息是否跨角色级联扩散。 |
+| 幻觉补全 | 模型说“你答应过”，但记忆里没有证据。 | 对话中的事实是否能追溯到记忆。 |
 
-```python
-event = self.make_event(self.name, thought, self.get_tile().get_address())
-return self._add_concept("thought", event, filling=evidence)
-```
+*表 6-12：检索失败的常见后果。评价智能体不能只看“有没有存记忆”，还要看关键场景下“有没有想起正确记忆”。*
 
-这里有一个很有意思的工程选择：thought 也被包装成 event-like structure。
+Retrieval 也能降低幻觉，但不能彻底消除幻觉。如果检索系统提供了准确记忆，模型更可能基于真实上下文说话；如果检索召回了错误记忆，或者记忆本身来自错误摘要，模型也会把错误继续传播。因此，Retrieval 同时是防幻觉机制，也是风险入口。第五部分讨论记忆冲突检测和事实保真度时，会继续回到这个问题。
 
-也就是说，系统用统一的 `Concept` 和 `Event` 结构保存事件、对话和想法。
+## 6.10 检索权重是一种行为设计
 
-这带来三个好处。
+`recency_weight`、`relevance_weight`、`importance_weight` 不是纯技术细节。它们会改变角色像什么样的人。
 
-第一，检索统一。
+| 调整方向 | 角色表现 | 风险 |
+| --- | --- | --- |
+| 提高 recency | 更容易受刚发生的事影响。 | 容易被琐碎新事件带跑。 |
+| 提高 relevance | 更贴合当前问题。 | 可能错过长期重要背景。 |
+| 提高 importance | 更重视重大事件和关系变化。 | 可能反复提大事，忽略眼前场景。 |
+| 降低 retrieve_max | prompt 更干净。 | 关键证据可能进不来。 |
+| 提高 retrieve_max | 证据更充分。 | 噪声增加，模型更容易混淆。 |
 
-事件和想法都能被向量索引检索，也都能带有时间、地址、重要性等元数据。
+*表 6-13：检索参数对行为风格的影响。Retrieval 权重本质上是系统对“什么值得被想起”的设计。*
 
-第二，后续推理统一。
+不同应用会需要不同权重。游戏 NPC 可能更重视当前场景。心理陪伴类智能体可能更重视长期重要记忆。社会仿真实验则需要在近期传播、重要公共事件和当前语境之间取得平衡。
 
-Planning、Reaction、Dialogue 不需要区分“这是观察还是反思”。它们只需要从 memory stream 中拿到相关 concept。
+## 6.11 本章小结
 
-第三，Reflection 可以递归。
+Retrieval 是“角色此刻想起什么”的系统机制。Memory Stream 保存过去，Retrieval 选择当前能进入 prompt 的过去。真正影响行为的，不是全部记忆，而是被检索出来的那一小组记忆。
 
-因为 thought 也进入 memory stream，下一次 Reflection 可以再次读取 thought。
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 不能读取全部记忆 | 全量记忆会带来上下文限制、噪声、冲突和重点丢失。 |
+| 三因素模型 | recency、importance、relevance 分别解决“近不近”“重不重要”“相不相关”。 |
+| 三者缺一不可 | 只看一个维度都会导致行为偏差。 |
+| 系统实现 | `Associate`、`LlamaIndex`、`AssociateRetriever` 共同完成检索和重排序。 |
+| 检索接口 | `retrieve_focus()`、`retrieve_events()`、`retrieve_thoughts()`、`retrieve_chats()` 和 `get_relation()` 服务不同场景。 |
+| 打分公式 | final score 由近期性、相关性和重要性归一化加权后相加。 |
+| Focus | 检索必须带着问题发生，问题来自计划、反思、社交和对话。 |
+| 小镇案例 | 派对传播和镇长竞选都依赖关键记忆在合适情境下被想起。 |
+| 失败后果 | 检索失败会导致忘记承诺、重复寒暄、忽略关系、反思变浅和幻觉补全。 |
+| 行为设计 | 权重参数决定角色更容易想起近期事件、相关事件还是重要事件。 |
 
-因此，Reflection 的最终输出不是一个外部摘要文件，而是角色内部记忆的一部分。
-
-这也是本书一直强调的核心：Generative Agents 的记忆不是聊天历史，而是行为连续性的基础设施。
-
-## 6.11 Klaus 与 Maria 案例为什么重要
-
-论文中的 Klaus 与 Maria 案例非常值得放在 Reflection 章节讲，而不是放到“社交功能”里一笔带过。
-
-原因是，这个案例展示的不是普通对话，而是反思如何改变社交选择。
-
-没有 Reflection 时，Klaus 可能只记得自己和 Maria 聊过几句。下次见面时，他也许会继续礼貌寒暄，但不一定表现出明确倾向。
-
-有了 Reflection 后，他可以形成更抽象的判断：
-
-```text
-Maria 对新想法感兴趣。
-Maria 愿意听 Klaus 谈自己的研究。
-Klaus 与 Maria 有继续交流的基础。
-```
-
-这类 thought 会影响后续行为。
-
-例如，他可能更愿意主动找 Maria 说话，更可能邀请她参加活动，也更可能在选择对话对象时优先考虑她。
-
-这就是 believable behavior 的关键：角色的行为看起来不是随机的，而是有经历、有理解、有延续。
-
-在 GenerativeAgentsCN 中，克劳斯和玛丽亚的初始设定也适合复现这个机制：
-
-- 克劳斯是奥克山学院社会学学生，正在写关于低收入社区中产阶级化影响的研究论文。
-- 玛丽亚是物理专业学生，也做 Twitch 游戏直播，喜欢与他人建立联系并探索新想法。
-
-这两个角色并不是被硬编码成“必然亲近”。他们只是具备可能形成关系的条件。真正的关系倾向需要通过相遇、对话、记忆检索和 Reflection 逐步生成。
-
-这就是论文比普通 NPC 脚本高级的地方。
-
-脚本会写：
-
-```text
-Klaus 喜欢 Maria。
-```
-
-Generative Agents 更希望系统通过经历生成：
-
-```text
-Klaus 发现 Maria 与自己有共同兴趣，因此更愿意继续交流。
-```
-
-前者是设定。
-
-后者是涌现。
-
-## 6.12 Reflection 与角色自我认知
-
-Reflection 不只用于理解别人，也用于理解自己。
-
-一个智能体每天会经历许多行动：
-
-- 完成工作。
-- 推迟计划。
-- 参加活动。
-- 与朋友聊天。
-- 遇到冲突。
-- 做出承诺。
-
-这些事件会逐渐形成自我认知。
-
-例如：
-
-```text
-伊莎贝拉发现自己今天多次主动邀请居民参加情人节派对。
-```
-
-进一步反思可能变成：
-
-```text
-伊莎贝拉重视社区活动，并愿意主动组织居民参与。
-```
-
-这个 thought 之后会影响她如何解释自己的行为。下一次需要选择行动时，她更可能继续承担组织者角色。
-
-山姆的镇长竞选也是类似逻辑。
-
-如果山姆不断与居民讨论选举，他可能形成：
-
-```text
-山姆认为自己需要更多了解居民关心的问题，才能成为有说服力的候选人。
-```
-
-这个 thought 会影响后续对话。山姆不只是重复“请支持我”，而会更可能询问居民需求。
-
-这类变化让智能体不像一次性角色卡，而像在仿真中被经历塑造的角色。
-
-## 6.13 Reflection 与关系记忆
-
-关系不是一条静态字段。
-
-在可信人工社会里，关系至少包含四层：
-
-1. 我是否认识这个人。
-2. 我和这个人发生过什么。
-3. 我如何解释这些经历。
-4. 我未来打算如何与这个人互动。
-
-Memory stream 主要保存第二层。
-
-Reflection 负责把第二层推向第三层和第四层。
-
-例如：
-
-```text
-阿伊莎今天听伊莎贝拉介绍情人节派对。
-伊莎贝拉提醒阿伊莎可以邀请朋友。
-阿伊莎后来又听别人提到这个派对。
-```
-
-Reflection 可能生成：
-
-```text
-阿伊莎认为伊莎贝拉正在认真组织一场社区活动，并希望更多人参与。
-```
-
-这条 thought 会影响阿伊莎后续是否帮忙传播消息。
-
-再比如：
-
-```text
-汤姆多次听到山姆谈竞选。
-汤姆本来不喜欢山姆。
-山姆试图解释自己的政策。
-```
-
-Reflection 可能生成：
-
-```text
-汤姆仍然对山姆的竞选保持怀疑，但他知道山姆正在积极争取居民支持。
-```
-
-这比“汤姆听说山姆竞选”更有行为解释力。它保留了汤姆的原有态度，也吸收了新事件。
-
-## 6.14 Reflection 与计划更新
-
-Reflection 生成的 thought 会被后续 planning 使用。
-
-如果一个角色形成了新判断，它的计划应该可能改变。
-
-例如，伊莎贝拉在筹备派对时不断邀请别人。如果她反思后认为：
-
-```text
-很多居民还不知道情人节派对的具体时间。
-```
-
-她后续计划可能会更偏向传播信息。
-
-如果山姆反思后认为：
-
-```text
-居民更关心实际生活问题，而不是抽象竞选口号。
-```
-
-他后续对话可能会更具体。
-
-如果克劳斯反思后认为：
-
-```text
-玛丽亚可能对自己的研究话题感兴趣。
-```
-
-他后续行动可能会更愿意与玛丽亚交流。
-
-这说明 Reflection 不是“写在日志里的感想”。它应该进入行为生成链路。
-
-在 GenerativeAgentsCN 中，thought 写回 `Associate` 后，就可以被 `retrieve_thoughts()` 和 `retrieve_focus()` 取出。计划、对话、反应相关 prompt 在构造上下文时，也能使用这些记忆。
-
-## 6.15 Reflection 与对话后处理
-
-GenerativeAgentsCN 的 `reflect()` 还有一个与对话相关的处理。
-
-除了从 event 和 thought 生成 insight，它还会处理 `self.chats`：
-
-```python
-if self.chats:
-    recorded, evidence = set(), []
-    for name, _ in self.chats:
-        if name == self.name or name in recorded:
-            continue
-        res = self.associate.retrieve_chats(name)
-        if res and len(res) > 0:
-            node = res[-1]
-            evidence.append(node.node_id)
-    thought = self.completion("reflect_chat_planing", self.chats)
-    _add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
-    thought = self.completion("reflect_chat_memory", self.chats)
-    _add_thought(f"{self.name} {thought}", evidence)
-```
-
-这段代码说明，项目把对话反思拆成两类结果：
-
-- 对计划的影响。
-- 对记忆和关系的影响。
-
-这是非常实用的工程增强。
-
-对话不仅是文本交换。对话可能改变日程、承诺、关系和认知。
-
-例如，伊莎贝拉邀请阿伊莎参加派对。对话结束后，系统不应该只保存“她们聊过天”。更重要的是：
-
-```text
-阿伊莎知道了派对时间。
-阿伊莎可能计划参加派对。
-伊莎贝拉认为阿伊莎可能会帮忙传播消息。
-```
-
-对话后处理就是把这些影响显式写入 thought。
-
-这会提高后续计划的一致性。
-
-## 6.16 Reflection 的成本
-
-Reflection 很强，但不是免费的。
-
-它至少有四类成本。
-
-第一，模型调用成本。
-
-一次 Reflection 通常包含焦点问题生成、围绕问题检索、洞察生成，可能还包含对话反思。每个步骤都可能调用大模型。
-
-第二，错误传播成本。
-
-如果 Reflection 生成了错误 thought，这条 thought 会进入 memory stream。后续检索会把它当成记忆使用。错误不再只是一次输出错误，而会污染角色长期认知。
-
-第三，抽象过度成本。
-
-如果模型从很弱的证据中生成很强的结论，角色就会显得跳跃。
-
-例如，一次礼貌回应不应该变成“对方非常信任我”。
-
-第四，记忆膨胀成本。
-
-如果每次 Reflection 生成太多 thought，memory stream 会越来越大。检索会更复杂，噪声也会变多。
-
-因此，Reflection 的工程实现需要控制：
-
-- 触发频率。
-- 输入节点数量。
-- 每次生成的焦点问题数量。
-- 每个焦点问题生成的 insight 数量。
-- thought 的重要性评分和过期策略。
-
-GenerativeAgentsCN 中的 `poignancy_max`、`max_importance`、`retention`、`max_memory` 等参数，就是控制这些成本的入口。
-
-## 6.17 Reflection 的失败模式
-
-写书时不能只讲机制优雅，也要讲它会怎样坏掉。
-
-Reflection 常见失败模式有六类。
-
-第一，触发过少。
-
-如果重要性阈值太高，角色很久不反思。它会保存很多事件，但高层认知更新很慢。结果是行为看起来像短期反应，而不是长期成长。
-
-第二，触发过多。
-
-如果阈值太低，角色会频繁反思。这样会增加成本，也可能让角色对小事过度解读。
-
-第三，焦点问题太泛。
-
-例如：
-
-```text
-克劳斯今天怎么样？
-```
-
-这种问题会导致检索和 insight 都很泛，难以影响具体行为。
-
-更好的问题是：
-
-```text
-克劳斯今天与玛丽亚的交流是否改变了他对她的看法？
-```
-
-第四，检索证据不准。
-
-如果围绕焦点问题检索到无关记忆，Reflection 会在错误材料上推理。
-
-第五，洞察过度推断。
-
-这是最危险的失败。模型可能把普通事件解释成强烈关系、强烈承诺或强烈态度。
-
-第六，thought 写回后没有被使用。
-
-如果后续 planning 和 dialogue 没有检索到 thought，Reflection 就变成日志装饰。它存在于系统里，但不改变行为。
-
-对读者来说，调试 Reflection 时要关注的不只是“有没有生成 thought”，而是：
-
-```text
-thought 是否基于正确证据？
-thought 是否足够具体？
-thought 是否在后续行为中被检索和使用？
-```
-
-## 6.18 如何在 GenerativeAgentsCN 中观察 Reflection
-
-读者可以从三个层面观察 Reflection。
-
-第一，看日志。
-
-`Agent.reflect()` 中有日志：
-
-```python
-self.logger.info(
-    "{} reflect(P{}/{}) with {} concepts...".format(
-        self.name,
-        self.status["poignancy"],
-        self.think_config["poignancy_max"],
-        len(nodes),
-    )
-)
-```
-
-当某个角色触发反思时，日志会显示角色名、累计 poignancy、阈值和参与反思的 concept 数量。
-
-第二，看 memory。
-
-Reflection 生成的 thought 会进入 `Associate.memory["thought"]`。如果运行后保存 checkpoint，可以检查角色记忆中是否新增 thought。
-
-第三，看行为。
-
-真正重要的是行为是否改变。
-
-例如，在 Klaus/Maria 实验中，不要只看系统有没有生成“克劳斯觉得玛丽亚有趣”。还要看后续：
-
-- 克劳斯是否更常接近玛丽亚。
-- 克劳斯是否在对话中引用共同兴趣。
-- 克劳斯是否邀请玛丽亚参加活动。
-- 玛丽亚是否形成对应的关系记忆。
-
-如果 thought 没有进入行为链路，说明 Reflection 只完成了写入，没有完成闭环。
-
-## 6.19 本项目的实现与论文的差异
-
-GenerativeAgentsCN 继承了论文 Reflection 的核心思想，但实现上有一些工程化差异。
-
-第一，中文 prompt。
-
-项目使用中文 prompt，例如 `reflect_focus.txt` 和 `reflect_insights.txt`。这让中文本地模型更容易直接运行，但也要求 prompt 对格式约束更严格。
-
-第二，结构化输出。
-
-`prompt_reflect_focus()` 和 `prompt_reflect_insights()` 使用 Pydantic schema 约束输出。这样比纯文本解析稳定。
-
-第三，thought 通过 `make_event()` 包装。
-
-项目把 thought 也转换成带 subject、predicate、object、address 的事件结构。这简化了存储与检索。
-
-第四，对话反思被显式纳入。
-
-`reflect_chat_planing` 和 `reflect_chat_memory` 让聊天影响计划和记忆，而不仅是保存对话摘要。
-
-第五，证据以 node id 形式保留。
-
-`reflect_insights` 返回相关节点编号，代码转换为 `node_id`。这为后续审计和可解释性提供基础。
-
-这些差异说明，GenerativeAgentsCN 不是简单翻译论文，而是在中文、多模型、结构化输出和工程可运行性上做了实际改造。
-
-## 6.20 对后续章节的影响
-
-理解 Reflection 后，后面几章会更清楚。
-
-第 7 章讲 Planning、Reacting 与 Dialogue。那里会看到，计划和对话不是只依赖当前场景，也会依赖记忆与 thought。
-
-第 8 章讲论文评价方法。消融实验中，去掉 Reflection 会显著影响智能体形成高层认知的能力。
-
-第三部分源码深读中，第 18 章会专门拆 GenerativeAgentsCN 的反思实现，包括触发阈值、prompt、证据、thought 写回和可调参数。
-
-第四部分复现实验中，我们会设计 Klaus/Maria 关系形成实验和 Reflection 消融实验。
-
-第五部分前沿演进中，我们会把 Reflection 与 2023 年后的 Reflexion、自我改进、长期记忆管理、经验压缩等方向对比，说明如何基于当前项目继续升级。
-
-所以，本章不是一个孤立概念章节。它是全书后半部分的关键支点。
-
-## 6.21 本章小结
-
-本章讲清了 Reflection 的作用：
-
-1. 原始 observation 太碎，不能直接支撑长期认知。
-2. Reflection 不是普通摘要，而是从经历中生成高层解释。
-3. Generative Agents 通过 importance 累积触发阶段性反思。
-4. GenerativeAgentsCN 使用 `poignancy` 和 `poignancy_max` 实现触发控制。
-5. Reflection 的输入包括 event 和 thought，因此可以递归形成 reflection tree。
-6. 系统先生成焦点问题，再围绕问题检索证据。
-7. insight 必须带证据，否则容易变成幻觉。
-8. 生成的 thought 会写回 memory stream，参与后续检索和行为生成。
-9. Klaus 与 Maria 案例体现了 Reflection 如何影响关系形成。
-10. Reflection 的价值最终要看它是否改变后续计划、对话和行动。
-
-下一章进入 Planning、Reacting 与 Dialogue。到那里，我们会看到 memory、retrieval 和 reflection 如何真正落到角色每天要做什么、遇到别人如何反应、如何展开对话。
+下一章进入 Reflection。Retrieval 可以让智能体想起相关过去，但只想起过去还不够。智能体还需要把零散经历归纳成更高层的判断。
 
 ## 参考资料
 
 - Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. *Generative Agents: Interactive Simulacra of Human Behavior*. arXiv: https://arxiv.org/abs/2304.03442
 - ar5iv full text: https://ar5iv.labs.arxiv.org/html/2304.03442
-- GenerativeAgentsCN local source: `generative_agents/modules/agent.py`
-- GenerativeAgentsCN local source: `generative_agents/modules/prompt/scratch.py`
-- GenerativeAgentsCN local prompts: `generative_agents/data/prompts/reflect_focus.txt`, `generative_agents/data/prompts/reflect_insights.txt`, `generative_agents/data/prompts/poignancy_event.txt`, `generative_agents/data/prompts/poignancy_chat.txt`
+- Local source: `generative_agents/modules/memory/associate.py`
+- Local source: `generative_agents/modules/storage/index.py`
+- Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
+- Local prompt: `generative_agents/data/prompts/retrieve_plan.txt`
+- Local prompt: `generative_agents/data/prompts/retrieve_thought.txt`
+- Local prompt: `generative_agents/data/prompts/retrieve_currently.txt`

@@ -1,761 +1,691 @@
-# 第 32 章 多智能体协作升级：从自然偶遇到组织化协作
+# 第 32 章 记忆系统升级：从 Memory Stream 到可管理长期记忆
 
-## 32.1 本章要解决的问题
+## 32.1 核心问题
 
-GenerativeAgentsCN 已经是多智能体系统。
-
-小镇里有多个角色。
-
-他们能感知彼此、聊天、等待、形成记忆，并通过对话传播信息。
-
-但这类多智能体互动主要是：
+Generative Agents 的第一块基石是 Memory Stream。没有记忆，智能体只能对当前 prompt 做反应。有了记忆，它才可能保持连续性：
 
 ```text
-自然偶遇型互动
+我经历过什么
+我和谁说过话
+我对谁有什么印象
+我接下来为什么这么行动
 ```
 
-也就是：
+但 Memory Stream 只是起点。到了 2026 年，长期智能体系统已经不能只满足于“把事情记下来，再用向量检索找回来”。本章聚焦六个问题：
 
-```text
-角色在地图中相遇
-  -> 判断是否聊天
-  -> 生成对话
-  -> 写入记忆
-  -> 影响后续计划
-```
-
-这种机制很适合复现论文中的社会涌现。
-
-例如派对传播、竞选信息扩散、关系形成。
-
-但它不擅长组织化协作。
-
-例如：
-
-```text
-多人分工筹备派对。
-多人协作竞选宣传。
-多人共同组织社区讨论会。
-```
-
-这些任务需要共享目标、角色分工、任务状态和协作协议。
-
-本章要回答六个问题：
-
-1. 当前项目的多智能体互动如何工作？
-2. 自然偶遇型多智能体有什么优势和局限？
-3. CAMEL、AutoGen、MetaGPT、AgentScope 给我们什么启发？
-4. 如何在 GenerativeAgentsCN 中引入公共事件板和临时工作组？
-5. 如何设计共享记忆和协作对话协议？
-6. 如何评价组织化协作是否有效？
-
-[图 32-1：自然社交型多智能体与组织协作型多智能体对比]
+1. Generative Agents 的 Memory Stream 解决了什么问题？
+2. Generative Agents 当前如何实现记忆？
+3. 当前实现有什么长期运行瓶颈？
+4. MemGPT 和 Mem0 给我们什么启发？
+5. 如何把这些启发落到 Generative Agents 的代码结构中？
+6. 如何评价记忆升级是否真的有效？
 
 ```mermaid
 flowchart LR
-    subgraph Natural[自然偶遇型]
-      A1[空间相遇] --> A2[decide_chat]
-      A2 --> A3[自由对话]
-      A3 --> A4[个人记忆]
-      A4 --> A5[社会涌现]
-    end
-    subgraph Organized[组织协作型]
-      B1[公共事件板] --> B2[角色分工]
-      B2 --> B3[任务状态]
-      B3 --> B4[协作对话协议]
-      B4 --> B5[共享记忆/进度报告]
-    end
-    A5 -.升级.-> B1
+    MS[Memory Stream<br/>event/chat/thought] --> MT[扩展记忆类型]
+    MT --> RG[关系记忆<br/>relationship]
+    MT --> GO[目标记忆<br/>goal]
+    MT --> SM[摘要记忆<br/>summary]
+    MT --> SK[技能记忆<br/>skill]
+    RG --> GOV[记忆治理层]
+    GO --> GOV
+    SM --> GOV
+    SK --> GOV
+    GOV --> C[合并/冲突检测/来源追踪]
+    C --> RET[场景化检索]
+    RET --> ACT[计划/对话/反思]
 ```
 
-## 32.2 当前项目的社交链路
+*图 32-1：从 Memory Stream 到记忆治理层的演进。长期智能体需要的不只是保存记忆，还要能合并、追踪来源、处理冲突并控制风险。*
 
-当前项目的社交逻辑集中在：
+## 32.2 Memory Stream 的价值
+
+在原论文中，Memory Stream 的核心价值是：
 
 ```text
-generative_agents/modules/agent.py
+把智能体的经验以自然语言形式持续保存。
 ```
 
-核心函数包括：
+它不是简单聊天历史。它保存的是角色在小镇中的连续经验。例如：
+
+- 看到了什么。
+- 做了什么。
+- 和谁说过话。
+- 听到了什么消息。
+- 形成了什么想法。
+
+这些记忆让 agent 能够：
+
+- 回答过去经历。
+- 维持关系。
+- 调整计划。
+- 在对话中引用旧信息。
+- 通过反思形成高层理解。
+
+Generative Agents 继承了这个思想。它把记忆分为三类：
 
 ```text
-_reaction()
-_chat_with()
-_wait_other()
-schedule_chat()
+event
+chat
+thought
 ```
 
-对话 prompt 和辅助判断在：
+这三类分别对应：
+
+- 观察事件。
+- 对话记忆。
+- 反思想法。
+
+这是非常清晰的教学结构。但如果要长期运行，就会遇到新的问题。
+
+## 32.3 当前项目的记忆入口
+
+Generative Agents 的记忆核心在：
 
 ```text
-generative_agents/modules/prompt/scratch.py
-generative_agents/data/prompts/
+generative_agents/modules/memory/associate.py
 ```
 
-包括：
+底层向量索引在：
 
 ```text
-decide_chat
-generate_chat
-generate_chat_check_repeat
-decide_chat_terminate
-summarize_chats
-summarize_relation
+generative_agents/modules/storage/index.py
 ```
 
-整体流程是：
-
-```text
-感知附近事件
-  -> 选择关注对象
-  -> 判断是否聊天
-  -> 检索关系和记忆
-  -> 多轮生成对话
-  -> 判断重复和结束
-  -> 总结对话
-  -> 写入双方日程和记忆
-```
-
-这条链已经足以支撑自然社交。
-
-## 32.3 `_chat_with()` 做了什么
-
-`Agent._chat_with()` 首先排除不适合聊天的情况。
-
-例如：
-
-- 日程未初始化。
-- 任一角色正在睡觉。
-- 对方正在移动。
-- 任一角色已经在对话。
-- 两人刚聊过，间隔小于 60 分钟。
-
-然后调用：
-
-```text
-decide_chat
-```
-
-判断是否要聊天。
-
-如果决定聊天，会先生成双方关系摘要：
+`Associate` 初始化时，默认记忆结构是：
 
 ```python
-summarize_relation
+self.memory = memory or {"event": [], "thought": [], "chat": []}
 ```
 
-然后交替生成对话：
+这说明当前项目有三类节点：
+
+```text
+event
+thought
+chat
+```
+
+每条记忆会被包装成 `Concept`。`Concept` 中包含：
+
+- `node_id`
+- `node_type`
+- `event`
+- `poignancy`
+- `create`
+- `expire`
+- `access`
+
+其中 `event` 又由 subject、predicate、object、address 和 describe 构成。这套设计的优点是：
+
+```text
+自然语言描述 + 结构化元数据
+```
+
+自然语言适合 LLM 使用。结构化元数据适合检索、排序和过期清理。
+
+## 32.4 当前检索机制
+
+`AssociateRetriever` 的检索逻辑非常接近论文思想。它综合三类分数：
+
+```text
+recency
+relevance
+importance
+```
+
+在源码中对应：
 
 ```python
-generate_chat
+recency_scores
+relevance_scores
+importance_scores
 ```
 
-中途检查：
+最终分数是：
+
+```python
+final_score = recency + relevance + importance
+```
+
+其中：
+
+- recency 根据访问时间排序和衰减系数计算。
+- relevance 来自向量检索相似度。
+- importance 来自 `poignancy`。
+
+这比单纯向量检索更贴近“人会想起什么”。人并不总是想起最相似的事。有时候近期发生的事更容易想起。有时候重要事件会压过普通相似事件。有时候和当前问题相关的旧事件会被重新激活。当前实现已经保留了 Generative Agents 的核心判断。
+
+## 32.5 当前实现的局限
+
+但当前记忆系统仍有局限。第一，记忆类型太少。只有：
 
 ```text
-generate_chat_check_repeat
-decide_chat_terminate
+event
+chat
+thought
 ```
 
-最后总结对话：
+这能覆盖基础实验，但很难表达：
+
+- 关系状态。
+- 长期目标。
+- 技能经验。
+- 周期摘要。
+- 冲突事实。
+- 个人偏好。
+
+第二，记忆没有明确分层。所有记忆都进入同一个 `Associate` 结构。短期工作记忆、长期情景记忆、语义记忆、关系记忆没有区分。第三，记忆没有合并机制。如果角色每天都去咖啡馆，系统可能反复保存类似事件。久而久之，检索噪声会变大。第四，记忆冲突没有显式处理。例如派对时间被说成 17:00，又被说成 19:00。系统没有专门机制判断哪个更可信。第五，关系记忆不够稳定。`Associate.get_relation()` 会基于某个 node 的描述检索 events 和 thoughts。这很灵活，但关系状态不是显式对象。例如“汤姆不信任山姆”这种长期关系，最好有稳定结构。第六，跨实验记忆没有清晰策略。当前项目适合单次仿真。如果希望角色跨多个实验成长，就需要更明确的长期记忆库。
+
+## 32.6 MemGPT 的启发
+
+MemGPT 的核心启发是：
 
 ```text
-summarize_chats
+LLM 的上下文窗口像主存，长期记忆像外存，系统需要主动管理记忆的调入和调出。
 ```
 
-并调用：
+这和 Generative Agents 的 Memory Stream 有明显区别。Memory Stream 更像：
 
 ```text
-schedule_chat()
+把经历放进一条流，需要时检索。
 ```
 
-把对话作为行动写入双方日程。
-
-这套机制很完整。
-
-但它仍然是两两对话。
-
-没有团队目标。
-
-没有共享任务板。
-
-没有组织流程。
-
-## 32.4 自然偶遇型多智能体的优势
-
-自然偶遇型多智能体有三个优势。
-
-第一，涌现感强。
-
-角色不是被中央调度强行安排对话，而是在地图中自然相遇。
-
-第二，贴近论文思想。
-
-Generative Agents 关注的就是局部互动如何导致社会级联。
-
-第三，适合可信生活仿真。
-
-普通居民的一天确实不是一直围绕任务协作。
-
-很多信息就是通过偶遇、闲聊、关系和记忆传播。
-
-因此当前机制不应该被替换掉。
-
-它是小镇的生命力。
-
-组织化协作应该是在此基础上的扩展，而不是重写。
-
-## 32.5 当前机制的局限
-
-自然偶遇型机制也有明显局限。
-
-第一，协作效率低。
-
-如果伊莎贝拉需要找埃迪帮忙布置派对，她可能一直遇不到他。
-
-第二，缺少共享状态。
-
-每个人只知道自己的记忆。
-
-活动任务没有公共状态。
-
-第三，分工不稳定。
-
-即使有人说“我来帮忙”，系统也没有明确把任务分配给他。
-
-第四，冲突难以协商。
-
-如果两个人对任务理解不同，缺少团队层面的解决机制。
-
-第五，协作结果难以评价。
-
-因为任务没有结构化状态，很难判断：
+MemGPT 更强调：
 
 ```text
-谁负责了什么？
-做到了哪一步？
-为什么失败？
+记忆管理本身是一项系统能力。
 ```
 
-这些局限正是多智能体框架研究可以补足的地方。
+这对 Generative Agents 的启发非常直接。当前 `Associate.retrieve_focus()` 可以取回相关记忆。但系统还没有明确回答：
 
-## 32.6 CAMEL 的启发
+- 哪些记忆应该长期保存？
+- 哪些记忆应该压缩？
+- 哪些记忆应该被遗忘？
+- 哪些记忆应该进入当前工作上下文？
+- 哪些记忆冲突需要解决？
 
-CAMEL 关注 role-playing communicative agents。
-
-它的启发是：
+如果把 `Associate` 看成“记忆流”，那么升级方向是：
 
 ```text
-多智能体对话不只是闲聊，也可以通过角色设定推动任务协作。
+把 Associate 扩展为记忆管理器。
 ```
 
-在 GenerativeAgentsCN 中，角色本来就有 persona。
+## 32.7 Mem0 的启发
 
-但这些 persona 主要服务生活和社交。
+Mem0 面向生产级 AI agent 的长期记忆。它强调的不是小镇仿真，而是更通用的 agent 场景：
 
-如果要做协作任务，可以进一步引入临时协作角色。
+- 可扩展。
+- 低延迟。
+- 个性化。
+- 跨会话记忆。
+- 长期用户或角色画像。
 
-例如派对筹备：
+对 Generative Agents 来说，Mem0 的启发是：
 
 ```text
-organizer：伊莎贝拉
-music_helper：埃迪
-guest_messenger：玛丽亚
-venue_helper：亚当
+记忆不应该只服务一次仿真。
 ```
 
-这些不是永久身份。
+一个小镇居民可以跨实验成长。例如：
 
-它们是某个事件下的临时角色。
+- 第一次实验中，玛丽亚认识克劳斯。
+- 第二次实验中，她仍然记得两人曾讨论过社会学论文。
+- 第三次实验中，两人的关系继续发展。
 
-这样既保留原 persona，又能组织任务。
-
-## 32.7 AutoGen 的启发
-
-AutoGen 强调多 agent conversation framework。
-
-它的重点不是让角色自然生活，而是让多个可配置 agent 通过对话完成任务。
-
-对本项目的启发是：
+这会把项目从“单次小镇故事生成器”推进到：
 
 ```text
-协作任务需要对话协议。
+长期角色实验平台。
 ```
 
-例如：
+但这也带来风险。错误记忆如果跨实验保存，会污染更久。因此跨实验记忆必须配套：
 
-- 谁提出任务？
-- 谁接受任务？
-- 谁报告进度？
-- 谁确认完成？
-- 谁处理冲突？
+- 来源记录。
+- 置信度。
+- 过期策略。
+- 冲突检测。
+- 可回滚机制。
 
-当前 `_chat_with()` 是自由对话。
+## 32.8 升级方向一：扩展记忆类型
 
-协作升级可以增加一些结构化对话类型：
+第一步升级不需要大改架构。可以先扩展 `node_type`。当前：
 
 ```text
-assign_task
-accept_task
-decline_task
-report_progress
-request_help
-resolve_conflict
-confirm_completion
+event
+chat
+thought
 ```
 
-这些类型不需要替代自然语言。
+建议扩展为：
 
-它们可以作为对话后的结构化摘要。
+```text
+event
+chat
+thought
+relationship
+goal
+summary
+skill
+```
 
-例如：
+含义如下。`event`：
+
+原始观察或行动事件。`chat`：
+
+对话摘要或对话片段。`thought`：
+
+反思生成的想法。`relationship`：
+
+对另一个角色的稳定认知。`goal`：
+
+长期目标或阶段目标。`summary`：
+
+一段时间内的压缩记忆。`skill`：
+
+从成功或失败经验中提取的可复用策略。这一步改动看似简单，但会改变系统语义。因为不同记忆类型应该有不同检索和使用方式。例如：
+
+- 生成对话时更需要 relationship 和 chat。
+- 生成计划时更需要 goal 和 event。
+- 反思时更需要 thought、summary 和高重要性 event。
+- 失败复盘时更需要 skill。
+
+## 32.9 代码改动建议：类型扩展
+
+当前 `Associate.abstract()` 写死了三类：
+
+```python
+for t in ["event", "chat", "thought"]:
+```
+
+如果要扩展类型，应该避免到处硬编码。可以定义：
+
+```python
+DEFAULT_MEMORY_TYPES = [
+    "event",
+    "chat",
+    "thought",
+    "relationship",
+    "goal",
+    "summary",
+    "skill",
+]
+```
+
+然后初始化：
+
+```python
+self.memory = memory or {t: [] for t in DEFAULT_MEMORY_TYPES}
+```
+
+为了兼容旧 checkpoint，还需要补齐缺失键：
+
+```python
+for t in DEFAULT_MEMORY_TYPES:
+    self.memory.setdefault(t, [])
+```
+
+这类兼容很重要。否则旧实验结果无法 resume。另外，`retrieve_events()`、`retrieve_thoughts()`、`retrieve_chats()` 可以保留。新增：
+
+```python
+retrieve_relationships()
+retrieve_goals()
+retrieve_summaries()
+retrieve_skills()
+```
+
+但更好的做法是增加通用接口：
+
+```python
+retrieve_by_type(node_type, text=None, limit=None)
+```
+
+这样后续扩展不会继续增加大量重复方法。
+
+## 32.10 升级方向二：关系记忆结构化
+
+当前关系更多依赖文本记忆。例如汤姆不喜欢山姆，这可能写在 `agent.json` 的 learned 或 currently 中，也可能进入 thought。但如果希望长期关系稳定，最好引入结构化关系记忆。示例：
 
 ```json
 {
-  "speech": "如果你愿意的话，可以帮我确认一下音乐安排吗？",
-  "dialogue_act": "assign_task",
-  "task": "确认派对音乐安排",
-  "assignee": "埃迪"
+  "target": "山姆",
+  "affinity": -2,
+  "trust": 1,
+  "familiarity": 4,
+  "last_interaction": "2024-02-13 10:30",
+  "summary": "汤姆对山姆竞选市长持怀疑态度。",
+  "evidence": ["node_12", "node_45"]
 }
 ```
 
-这样对话既自然，又能进入任务系统。
+字段含义：
 
-## 32.8 MetaGPT 的启发
+- `target`：关系对象。
+- `affinity`：好感度。
+- `trust`：信任程度。
+- `familiarity`：熟悉度。
+- `last_interaction`：最近互动时间。
+- `summary`：自然语言摘要。
+- `evidence`：支撑该关系判断的记忆节点。
 
-MetaGPT 的核心启发是：
+这比单纯文本检索更稳定。当汤姆与山姆对话时，系统可以明确把这条关系放进上下文。这样汤姆不容易突然变成无条件支持者。
+
+## 32.11 关系记忆的更新方式
+
+关系记忆不能随便改。否则会变成情绪随机数。更新关系时，建议遵守三条原则。第一，必须有证据。例如一次对话、一件共同事件或一次反思。第二，变化要有幅度限制。一次普通寒暄不应让 affinity 从 -3 变成 +5。第三，必须保留历史。关系状态可以更新，但旧证据不能丢。可以新增 prompt：
 
 ```text
-复杂协作需要 SOP 和角色分工。
+relationship_update.txt
 ```
 
-它主要面向软件开发任务。
+输入：
 
-但小镇任务也可以有轻量 SOP。
+- 当前关系状态。
+- 最近互动摘要。
+- 相关记忆。
 
-例如情人节派对 SOP：
-
-1. 明确时间地点。
-2. 准备食物和饮品。
-3. 邀请顾客和朋友。
-4. 确认音乐或活动内容。
-5. 派对前回到咖啡馆。
-6. 活动后总结反馈。
-
-镇长竞选 SOP：
-
-1. 明确竞选主题。
-2. 找支持者讨论。
-3. 向中立居民介绍。
-4. 回应反对意见。
-5. 记录居民关心的问题。
-6. 调整宣传重点。
-
-SOP 不应把故事写死。
-
-它只是提供协作骨架。
-
-角色仍然可以失败、拒绝、变更计划。
-
-## 32.9 AgentScope 的启发
-
-AgentScope 强调多智能体平台的灵活性、鲁棒性和可扩展性。
-
-对 GenerativeAgentsCN 来说，它的启发主要是工程层面。
-
-如果要支持组织化协作，需要：
-
-- 可配置实验。
-- 可观察协作状态。
-- 可复盘任务流。
-- 可扩展 agent 数量。
-- 清晰日志和指标。
-
-也就是说，协作不是只改 prompt。
-
-还要改数据结构和观测工具。
-
-否则读者只能看到对话，看不到协作是否真的发生。
-
-## 32.10 升级方向一：公共事件板
-
-第一项可落地升级是公共事件板。
-
-示例：
+输出：
 
 ```json
 {
-  "event_id": "valentine_party",
-  "owner": "伊莎贝拉",
-  "title": "情人节派对",
-  "time": "2024-02-14 17:00",
-  "location": "霍布斯咖啡馆",
-  "status": "active",
-  "participants": [],
-  "tasks": [
-    {
-      "name": "准备饮品",
-      "assignee": "伊莎贝拉",
-      "status": "active"
-    },
-    {
-      "name": "确认音乐安排",
-      "assignee": "埃迪",
-      "status": "todo"
-    }
-  ]
+  "affinity_delta": 1,
+  "trust_delta": 0,
+  "familiarity_delta": 1,
+  "summary_update": "汤姆仍然不信任山姆，但承认他愿意倾听居民意见。",
+  "evidence": ["node_88"]
 }
 ```
 
-公共事件板解决两个问题。
+这样关系变化可解释、可追踪。
 
-第一，活动不再只存在于某个人的记忆中。
+## 32.12 升级方向三：记忆合并
 
-第二，协作状态可以被记录和评价。
-
-注意，公共事件板不是让所有角色自动知道所有信息。
-
-角色是否知道某个事件，仍然要通过记忆和传播判断。
-
-公共事件板更多是实验环境和协作任务的结构化表示。
-
-## 32.11 升级方向二：临时工作组
-
-有了公共事件后，可以为事件创建临时工作组。
-
-角色类型示例：
+长期运行中，重复记忆会快速增加。例如：
 
 ```text
-organizer
-helper
-messenger
-critic
-participant
-observer
+伊莎贝拉在咖啡馆工作。
+伊莎贝拉整理咖啡馆柜台。
+伊莎贝拉准备咖啡馆营业。
+伊莎贝拉招待顾客。
 ```
 
-以派对为例：
+这些都重要，但不需要永远以同等粒度保存。可以设计记忆合并机制。流程：
 
 ```text
-伊莎贝拉：organizer
-埃迪：helper
-玛丽亚：messenger
-亚当：participant
-汤姆：observer 或 critic
+新记忆写入前
+  -> 检索相似旧记忆
+  -> 判断是否可合并
+  -> 生成 summary
+  -> 保留原始证据节点
 ```
 
-角色分工应来自对话或设定。
-
-不要一开始直接给所有人分工。
-
-例如伊莎贝拉和埃迪对话后，埃迪才成为 helper。
-
-这样协作仍然从社会互动中生长出来。
-
-## 32.12 升级方向三：共享记忆
-
-当前记忆主要是个人记忆。
-
-组织化协作需要共享记忆。
-
-可以为事件增加共享存储：
+合并后生成：
 
 ```text
-generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
+过去几小时，伊莎贝拉一直围绕霍布斯咖啡馆营业和派对准备工作展开行动。
 ```
 
-共享记忆保存：
+这个 summary 可以用于后续计划和反思。原始节点仍然保留一段时间，防止摘要损失细节。
 
-- 活动目标。
-- 任务列表。
-- 参与者确认。
-- 进度更新。
-- 冲突记录。
-- 结果总结。
+## 32.13 记忆合并的边界
 
-但共享记忆也有边界。
+不是所有记忆都应该合并。以下情况不适合合并：
 
-不是每个角色都能读全部共享记忆。
-
-可以设置访问规则：
-
-```text
-owner 可读写全部。
-assignee 可读写自己的任务。
-participant 可读事件基本信息。
-observer 只能通过对话获知。
-```
-
-这能避免角色获得不该知道的信息。
-
-## 32.13 升级方向四：协作对话协议
-
-协作对话协议可以通过 prompt 实现。
-
-建议新增：
-
-```text
-team_assign_role.txt
-team_update_task.txt
-team_report_progress.txt
-team_resolve_conflict.txt
-team_summarize_progress.txt
-```
-
-对话后可以抽取结构化结果：
-
-```json
-{
-  "event_id": "valentine_party",
-  "dialogue_act": "accept_task",
-  "task": "确认音乐安排",
-  "assignee": "埃迪",
-  "status": "accepted",
-  "evidence": ["conversation_20240214_1030"]
-}
-```
-
-这条结构化结果可以更新公共事件板。
-
-不要让模型直接随意改公共状态。
-
-最好通过：
-
-```text
-自然对话 -> 结构化抽取 -> 状态更新
-```
-
-这样更可控。
-
-## 32.14 升级方向五：协作冲突处理
-
-协作系统必须允许冲突。
+- 包含具体承诺。
+- 包含事件时间地点。
+- 包含关系冲突。
+- 包含拒绝、反对或失败。
+- 是低频但高重要性事件。
 
 例如：
 
-- 埃迪没有时间帮忙。
-- 玛丽亚愿意邀请人，但不想负责布置。
-- 山姆希望宣传竞选，汤姆公开反对。
-- 两个角色对活动时间记忆不同。
+```text
+玛丽亚答应 17:00 去咖啡馆参加派对。
+```
 
-可以设计冲突类型：
+这不应该被简单合并成：
 
 ```text
-time_conflict
-interest_conflict
-belief_conflict
-resource_conflict
-relationship_conflict
+玛丽亚和伊莎贝拉聊了派对。
 ```
 
-冲突处理 prompt 可以问：
+因为承诺时间和行动意图很关键。记忆合并要服务行为，不是为了压缩而压缩。
+
+## 32.14 升级方向四：记忆冲突检测
+
+长期记忆最大的风险之一是冲突。例如：
 
 ```text
-冲突是什么？
-涉及哪些角色？
-各自立场是什么？
-是否需要修改任务、换人或放弃？
+派对时间是 17:00。
+派对时间是 19:00。
 ```
 
-组织化协作不等于所有人合作。
-
-它意味着系统能记录和处理协作中的分歧。
-
-## 32.15 升级方向六：协作可视化
-
-如果有公共事件板和共享任务，就应该在回放或报告中展示。
-
-可以在 `simulation.md` 中增加一节：
-
-```markdown
-## 事件板：情人节派对
-
-- owner：伊莎贝拉
-- time：2024-02-14 17:00
-- location：霍布斯咖啡馆
-- participants：玛丽亚、克劳斯
-
-### Tasks
-
-- 准备饮品：伊莎贝拉，done
-- 确认音乐安排：埃迪，accepted
-- 邀请学生：玛丽亚，partial
-```
-
-也可以生成：
+或者：
 
 ```text
-team_tasks.json
+汤姆不信任山姆。
+汤姆非常支持山姆。
 ```
 
-供后续分析。
-
-没有可视化，协作很容易只停留在对话里。
-
-可视化让读者看清：
+如果系统不处理冲突，后续行为会摇摆。可以增加冲突检测流程：
 
 ```text
-谁承担了什么，完成了什么，失败在哪里。
+写入新记忆
+  -> 检索同主题旧记忆
+  -> 判断是否冲突
+  -> 生成冲突记录或澄清想法
+  -> 决定是否覆盖、并存或等待确认
 ```
 
-## 32.16 最小可行升级实验
-
-建议第一个协作升级实验仍然使用派对。
-
-目标：
+冲突记录可以是新的 node_type：
 
 ```text
-让情人节派对从伊莎贝拉个人事件，升级成多人协作事件。
+conflict
 ```
 
-新增公共事件板：
+也可以先作为 `thought` 保存。示例：
 
 ```text
-valentine_party
+我听到关于派对时间的两个不同说法：伊莎贝拉最初说是下午5点，但后来有人提到晚上7点。我需要再次确认。
 ```
 
-初始任务：
+这比直接采用错误信息更可信。
 
-- 准备饮品。
-- 邀请顾客。
-- 确认音乐。
-- 17:00 前布置咖啡馆。
+## 32.15 升级方向五：跨实验长期记忆
 
-角色：
-
-- 伊莎贝拉。
-- 埃迪。
-- 玛丽亚。
-- 克劳斯。
-- 亚当。
-
-实验观察：
-
-- 是否有人接受协作任务。
-- 是否出现任务状态更新。
-- 是否有人拒绝或忘记任务。
-- 是否多人在派对前集中到咖啡馆。
-- 协作是否比原始传播实验更稳定。
-
-这个实验足够直观。
-
-也能展示组织化协作和自然社交的区别。
-
-## 32.17 评价指标
-
-协作升级可以用以下指标评价：
+如果要把 Generative Agents 变成长期角色平台，可以引入跨实验记忆。当前实验结果通常保存在：
 
 ```text
-team_task_completion_rate
+generative_agents/results/checkpoints/<实验名>/
 ```
 
-团队任务完成率。
+跨实验记忆可以设计为：
 
 ```text
-role_assignment_clarity
+generative_agents/results/long_term_memory/<角色名>/
 ```
 
-角色分工是否清楚。
+或：
 
 ```text
-shared_state_consistency
+generative_agents/data/long_term_memory/<角色名>/
 ```
 
-公共事件板状态是否与对话和行动一致。
+但这里要非常谨慎。因为跨实验记忆会改变实验可重复性。如果读者不知道角色带着旧记忆进入新实验，就无法解释结果。因此建议默认关闭。只有在明确设置时启用：
+
+```bash
+python start.py --name sim-2 --load-long-term-memory baseline-1
+```
+
+并在 `simulation.md` 中写明：
 
 ```text
-coordination_dialogue_efficiency
+本实验加载了上一轮长期记忆。
 ```
 
-协作对话是否有效，而不是空泛寒暄。
+## 32.16 升级方向六：记忆来源与置信度
+
+为了降低记忆幻觉，建议每条高级记忆增加来源和置信度。例如：
+
+```json
+{
+  "source_nodes": ["node_12", "node_19"],
+  "source_type": "conversation",
+  "confidence": 0.82,
+  "generated_by": "relationship_update",
+  "created_at": "2024-02-13 10:30"
+}
+```
+
+特别是以下类型应记录来源：
+
+- relationship。
+- summary。
+- thought。
+- skill。
+- conflict。
+
+原始 event 可以来自环境观察。但高级记忆是模型生成的。模型生成的记忆必须知道依据是什么。否则它很容易变成“被系统正式保存的幻觉”。
+
+## 32.17 检索也要分场景
+
+当前 `retrieve_focus()` 主要按 focus 文本检索 event 和 thought。但不同任务需要不同记忆。生成对话时：
 
 ```text
-conflict_resolution_count
+relationship + recent chat + relevant event
 ```
 
-冲突是否被发现和处理。
+生成计划时：
 
 ```text
-collaboration_naturalness_score
+goal + summary + relevant event
 ```
 
-协作是否仍符合角色生活，而不是变成流程机器人。
+反思时：
 
 ```text
-multi_agent_credit_traceability
+high poignancy event + thought + recent conflict
 ```
 
-能否追踪每个角色对结果的贡献。
-
-最后一个指标很重要。
-
-多智能体系统经常出现：
+失败复盘时：
 
 ```text
-结果看似成功，但不知道是谁推动的。
+skill + failed action + similar past attempts
 ```
 
-可追踪贡献能让评价更严谨。
+因此可以增加场景化检索：
 
-## 32.18 风险与边界
+```python
+retrieve_for_dialogue(target_name, context)
+retrieve_for_planning(goal)
+retrieve_for_reflection(focus)
+retrieve_for_reaction(observation)
+```
 
-组织化协作也有风险。
+这些方法内部仍可调用通用向量检索。但它们的记忆类型、权重和数量应该不同。这就是从“一个检索器”走向“记忆治理”的关键。
 
-第一，破坏生活感。
+## 32.18 升级后的评价指标
 
-如果每个居民都像公司员工一样执行任务，小镇会失去社会仿真味道。
+记忆系统升级不能只看实现是否漂亮。必须评价。建议指标包括：
 
-第二，中心化过强。
+```text
+memory_reference_accuracy
+```
 
-公共事件板可能让所有行为围绕任务转，削弱偶遇和涌现。
+角色引用过去经历时，事实是否正确。
 
-第三，上帝视角。
+```text
+source_trace_rate
+```
 
-共享状态如果不限制访问，会让角色知道不该知道的信息。
+高级记忆中有来源证据的比例。
 
-第四，过度合作。
+```text
+relationship_consistency_score
+```
 
-团队系统可能进一步放大“所有人都接受任务”的问题。
+关系状态是否跨对话稳定。
 
-第五，评价偏任务成功。
+```text
+memory_redundancy_rate
+```
 
-团队任务完成率高，不一定代表可信。
+相似低价值记忆重复比例。
 
-因此，组织化协作要遵守两条原则。
+```text
+conflict_detection_count
+```
 
-第一，只在明确事件或目标上启用。
+检测到的事实冲突数量。
 
-日常生活仍由原始机制驱动。
+```text
+conflict_resolution_quality
+```
 
-第二，允许拒绝和冲突。
+该项检查冲突处理是否合理。
 
-组织化协作不是让所有角色听话，而是让协作过程可记录、可解释、可评价。
+```text
+retrieval_precision_sampled
+```
 
-## 32.19 本章小结
+人工抽样检查召回记忆是否相关。
 
-本章讨论了多智能体协作从自然偶遇到组织化协作的升级路线：
+```text
+long_term_transfer_success
+```
 
-1. GenerativeAgentsCN 当前已经支持多智能体自然社交，核心链路是感知、判断聊天、生成对话、总结并写入记忆。
-2. `_chat_with()` 支持关系摘要、多轮对话、重复检查、结束判断和对话总结。
-3. 当前机制适合社会涌现，但缺少共享目标、角色分工、公共任务状态和协作协议。
-4. CAMEL 启发我们使用临时协作角色。
-5. AutoGen 启发我们为协作任务设计对话协议。
-6. MetaGPT 启发我们用轻量 SOP 组织复杂任务。
-7. AgentScope 启发我们重视多智能体平台的可配置、可观察和可扩展。
-8. 可落地升级包括公共事件板、临时工作组、共享记忆、协作对话协议、冲突处理和协作可视化。
-9. 最小实验可以从多人协作筹备情人节派对开始。
-10. 协作评价必须同时看任务完成、分工清晰、状态一致、贡献可追踪和行为自然性。
+跨实验记忆是否正确影响后续行为。这些指标不一定一开始全部自动化。可以先人工抽样。重要的是形成评价意识。
 
-下一章讨论社会仿真升级。协作让多个角色围绕事件组织起来；社会仿真则要进一步从单次故事走向可重复、可统计、可比较的群体现象研究。
+## 32.19 最小可行升级方案
+
+如果读者想真正动手升级，不建议一开始做完整长期记忆系统。可以按三步走。第一步，增加 `relationship` 记忆类型。理由：
+
+关系记忆和小镇社会行为直接相关，最容易观察价值。第二步，增加 relationship update prompt。每次关键对话后，根据对话结果更新双方关系摘要。第三步，在生成对话时显式检索 relationship。让角色对话受到关系状态影响。这三步就能做一个很好的实验：
+
+```text
+汤姆是否更稳定地表现出对山姆的不信任？
+玛丽亚和克劳斯的互动是否更容易形成连续关系？
+伊莎贝拉多次邀请某人后，关系是否变化？
+```
+
+这比一次性实现 MemGPT 或 Mem0 全部思想更务实。
+
+## 32.20 风险与边界
+
+记忆越强，风险越高。第一，错误记忆会保存更久。第二，关系标签可能固化偏见。第三，跨实验记忆会降低可复现性。第四，记忆来源不清会增强幻觉可信度。第五，长期记忆可能包含敏感内容。因此，每一次记忆升级都要同时增加：
+
+- 来源记录。
+- 删除能力。
+- 可视化检查。
+- 实验配置记录。
+- 隐私边界。
+
+不要只追求“记得更多”。长期 agent 需要的不是无限记忆，而是可治理记忆。
+
+## 32.21 本章小结
+
+记忆升级的目标不是“存更多”，而是“管得住”。论文中的 Memory Stream、当前项目实现和长期运行需要的记忆治理层，必须分开理解。
+
+| 本章内容 | 核心结论 |
+| --- | --- |
+| Memory Stream 价值 | 它让智能体拥有行为连续性，是长期 agent 的起点。 |
+| 当前实现 | Generative Agents 通过 `Associate`、`Concept` 和 LlamaIndex 保存 event/chat/thought。 |
+| 当前检索 | recency、relevance 和 importance 保留了论文核心思想。 |
+| 长期问题 | 类型不足、无分层、重复记忆、冲突记忆、关系不稳定和跨实验记忆缺失都会出现。 |
+| MemGPT 启发 | 上下文窗口和长期记忆可以看作主存与外存，需要主动管理。 |
+| Mem0 启发 | 生产级长期记忆要关注跨会话、个性化和可维护性。 |
+| 类型扩展 | relationship、goal、summary、skill 等记忆类型是务实起点。 |
+| 可落地方向 | 关系记忆、记忆合并、冲突检测、跨实验记忆和来源置信度都适合渐进实现。 |
+| 评价指标 | 引用准确率、来源追踪率、关系一致性、冗余率和冲突处理质量必须进入实验。 |
+| 风险边界 | 记忆越强，越要重视幻觉、偏见、隐私和可复现性。 |
+
+下一章讨论反思系统升级。记忆让角色保存经历，反思让角色从经历中总结意义；而 2023-2026 年的新方向进一步要求 agent 能从失败中学习，并把经验变成可复用策略。
 
 ## 参考资料
 
-- CAMEL: https://arxiv.org/abs/2303.17760
-- AutoGen: https://arxiv.org/abs/2308.08155
-- MetaGPT: https://arxiv.org/abs/2308.00352
-- AgentScope: https://arxiv.org/abs/2402.14034
 - Generative Agents: https://arxiv.org/abs/2304.03442
-- Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/prompt/scratch.py`
-- Local prompts: `generative_agents/data/prompts/generate_chat.txt`
-- Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
+- MemGPT: https://arxiv.org/abs/2310.08560
+- Mem0: https://arxiv.org/abs/2504.19413
+- Local source: `generative_agents/modules/memory/associate.py`
+- Local source: `generative_agents/modules/storage/index.py`
+- Local config: `generative_agents/data/config.json`

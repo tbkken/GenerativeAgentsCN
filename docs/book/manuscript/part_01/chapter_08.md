@@ -1,850 +1,800 @@
-# 第 8 章 论文的评价方法
+# 第 8 章 论文架构五：Planning
 
-## 8.1 本章要解决的问题
+## 8.1 Planning 解决什么
 
-到这里，我们已经讲完了 Generative Agents 论文的核心架构：
+Memory Stream、Retrieval 和 Reflection 让智能体能够保存经历、想起经历、解释经历。Planning 要解决下一步：角色如何把这些内部状态变成一天的生活。在 Generative Agents 中，智能体不是等用户提问的聊天窗口。它们生活在 Smallville 里，要醒来、吃饭、上学、工作、去咖啡馆、遇见别人、回家睡觉。用户不应该逐条指定这些动作，系统必须自己生成合理日程。Planning 的目标可以说得很直接：
 
-- Memory Stream 保存完整经验。
-- Retrieval 从记忆中取回相关内容。
-- Reflection 从经验中生成高层认知。
-- Planning 把认知和环境转成计划。
-- Reacting 与 Dialogue 让角色在现场中行动和交互。
+| Planning 要解决的问题 | 没有它会怎样 | 有了它以后 |
+| --- | --- | --- |
+| 今天做什么 | 角色每一步都临时决定，行为漂浮 | 角色有一天的生活骨架 |
+| 每件事做多久 | 行动频繁跳变，缺少稳定性 | 行动有开始、持续和结束 |
+| 去哪里做 | 文本计划无法落到地图 | 行为能绑定到具体地点和对象 |
+| 计划如何细化 | “写论文三小时”太粗 | 系统能拆成整理资料、阅读、写作等动作 |
+| 过去如何影响今天 | 每天像重启 | 新一天会接上昨天的记忆和目标 |
 
-接下来必须回答一个更难的问题：
+所以，Planning 不是给角色写一张漂亮的时间表。它是把 persona、currently、记忆、空间和时间连起来，让角色能够持续生活。
 
-```text
-我们怎么知道这些智能体真的更可信？
+```mermaid
+flowchart LR
+    Persona["角色设定"] --> Current["当前状态 currently"]
+    Memory["近期记忆"] --> Current
+    Current --> Day["一天大纲"]
+    Day --> Hour["小时级日程"]
+    Hour --> Detail["细粒度拆解"]
+    Detail --> Action["当前行动"]
+    Action --> Space["地图地点与对象"]
 ```
 
-这是论文最容易被读者略过、但非常重要的一部分。
+*图 8-1：Planning 的基本链路。角色不是直接生成一个动作，而是从长期设定和近期经历出发，逐层生成可执行的生活安排。*
 
-很多开源项目会展示一个好看的 demo，然后说“看，智能体很真实”。但 Generative Agents 论文没有只停在演示层面。它做了两类评价：
+## 8.2 从“会聊天”到“会生活”
 
-1. Controlled Evaluation：受控评价，单独考察智能体能力。
-2. End-to-End Evaluation：端到端评价，观察 25 个智能体在小镇中连续互动两天后的社会行为。
+普通 LLM 应用通常围绕一次输入生成一次输出。用户问一句，模型答一句。这个结构适合问答、摘要、改写和客服，但不适合虚拟小镇。Smallville 中的居民即使没有用户输入，也要继续行动。早上到了要起床，白天要去工作或学习，晚上要休息；路上遇到熟人，可能会停下来聊天；听到派对消息，后续计划可能发生变化。这就是 agent 和 chatbot 的分界。
 
-这两类评价对应两个问题。
+| 对比项 | 聊天机器人 | 生成式智能体 |
+| --- | --- | --- |
+| 触发方式 | 用户输入触发 | 时间、位置、记忆、事件共同触发 |
+| 行为单位 | 一段回复 | 一段持续行动 |
+| 时间意识 | 通常很弱 | 必须知道现在几点、今天要做什么 |
+| 空间意识 | 通常没有 | 必须知道自己在哪里、要去哪里 |
+| 状态延续 | 依赖聊天历史 | 依赖 persona、memory、schedule、action |
+| 核心问题 | 怎么回答 | 怎么生活 |
 
-Controlled Evaluation 问：
+Planning 让智能体从“会说话”进入“会生活”。后面的 Reacting 和 Dialogue 都建立在这个基础上：角色先有自己的生活安排，现场事件和对话才有东西可以打断、修改和继承。
 
-```text
-单个智能体是否能可信地记住、计划、反应和反思？
+## 8.3 新一天不是从空白开始
+
+Generative Agents 在生成新一天日程前，会先更新 `currently`。这一步容易被忽略，但它决定角色是否有连续性。初始 persona 只描述角色一开始是谁；仿真运行一天以后，角色已经经历了新的对话、计划、事件和想法。新一天的计划如果只看原始角色卡，角色就像每天早上被格式化。项目中，系统会围绕两个焦点检索记忆：
+
+```python
+focus = [
+    f"{self.name} 在 {utils.get_timer().daily_format_cn()} 的计划。",
+    f"在 {self.name} 的生活中，重要的近期事件。",
+]
+retrieved = self.associate.retrieve_focus(focus)
 ```
 
-End-to-End Evaluation 问：
+这段代码的中文意思很简单：
 
-```text
-一群智能体放在一起，是否会产生可信的社会现象？
+| 代码元素 | 中文意思 | 对 Planning 的影响 |
+| --- | --- | --- |
+| `focus` | 检索记忆时使用的关注点 | 告诉系统“今天计划”和“近期重要事件”最重要 |
+| `retrieve_focus()` | 围绕关注点召回相关记忆 | 把昨天和最近发生的事带入新一天 |
+| `retrieve_plan` | 与计划有关的记忆 | 帮助角色延续未完成目标 |
+| `retrieve_thought` | 与想法有关的记忆 | 帮助角色延续关系判断和自我理解 |
+| `retrieve_currently` | 更新后的当前状态 | 成为生成日程的直接上下文 |
+
+例如，伊莎贝拉前一天已经开始准备情人节派对，第二天的 `currently` 就不能还停留在“她想办派对”。更合理的状态是：她已经邀请了一些人，还需要继续准备咖啡馆和提醒朋友。
+
+```mermaid
+flowchart TD
+    Yesterday["昨天的事件、对话、想法"] --> Retrieve["按今天计划和近期事件检索"]
+    Persona["长期角色设定"] --> Update["更新 currently"]
+    Retrieve --> Update
+    Update --> Schedule["生成新一天日程"]
+    Schedule --> Memory["把计划写回记忆"]
 ```
 
-这两个问题必须分开。
+*图 8-2：新一天日程生成前的状态接续。Planning 不是从空白开始，而是把过去经历接到今天。*
 
-单个智能体答得像人，不代表多个智能体能形成社会。
+## 8.4 起床时间
 
-多个智能体看起来热闹，也不代表每个个体能力扎实。
+Planning 的第一步是确定角色什么时候醒来。
 
-本章会详细讲论文如何评价，并解释这些评价对 GenerativeAgentsCN 和本书后续实验意味着什么。
+```python
+wake_up = self.completion("wake_up")
+```
 
-[图 8-1：Generative Agents 的两层评价结构]
+`wake_up.txt` 会根据角色的基础描述和生活习惯生成起床时间。项目用 schema 把输出约束为 0 到 11 之间的整数。这看似是小细节，实际很关键。不同角色应该有不同作息。早起的店主、晚睡的学生、通宵工作的艺术家，如果都在同一时间醒来，小镇会显得很假。起床时间还会影响一天后面的全部活动。醒得早，上午就有更多空间；醒得晚，上午的行动自然减少。可信行为往往不是靠一句宏大的设定，而是靠这些小约束累计出来的。
 
-## 8.2 为什么不能只看演示
+## 8.5 一天大纲
 
-生成式智能体很容易被演示效果迷惑。
+确定起床时间后，系统生成初始日程：
 
-只要有一个可视化小镇、几个角色走来走去、偶尔对话，观众就会觉得“很像真的”。
+```python
+init_schedule = self.completion("schedule_init", wake_up)
+```
 
-但这种直觉不够可靠。
+这一步生成的是一天的叙事大纲，不是严格的 24 小时时间表。它通常像这样：
 
-因为演示很容易掩盖问题。
+```text
+早上起床并吃早餐。
+上午去学院学习。
+中午在咖啡馆吃饭。
+下午继续写论文。
+晚上回宿舍休息。
+```
+
+这个大纲有三个作用：
+
+| 作用 | 说明 |
+| --- | --- |
+| 给一天定主题 | 角色今天主要是在工作、学习、休息，还是准备活动 |
+| 保留角色差异 | 学生、店主、艺术家、政治候选人的一天不应该一样 |
+| 为细化留空间 | 后续可以再拆成小时级活动和更短时间块 |
+
+如果一上来就让模型输出 24 小时细表，容易出现两类问题：活动太碎，缺少主线；或者活动太机械，像填表。先生成一天大纲，再细化，是更稳的做法。
+
+## 8.6 小时级日程
+
+一天大纲之后，Generative Agents 用 `schedule_daily` 生成 24 小时日程。代码中先构造时间模板：
+
+```python
+hours = [f"{i}:00" for i in range(24)]
+seed = [(h, "睡觉") for h in hours[:wake_up]]
+seed += [(h, "") for h in hours[wake_up:]]
+```
+
+起床前默认是睡觉，起床后由模型填活动。输出类似：
+
+```json
+{
+  "6:00": "起床并完成早晨的例行工作",
+  "7:00": "吃早餐",
+  "8:00": "读书",
+  "9:00": "读书",
+  "12:00": "吃午饭",
+  "18:00": "回家",
+  "23:00": "睡觉"
+}
+```
+
+项目还会检查活动是否过于单调：
+
+```python
+if len(set(schedule.values())) >= self.schedule.diversity:
+    break
+```
+
+这段逻辑的意思是：一天不能全是同一个动作。角色可以长时间学习或工作，但仍然应该有吃饭、移动、休息、社交等节奏变化。生成后，系统把小时转换为一天中的分钟数，并计算每段活动持续多久：
+
+```python
+schedule = {_to_duration(k): v for k, v in schedule.items()}
+starts = list(sorted(schedule.keys()))
+for idx, start in enumerate(starts):
+    end = starts[idx + 1] if idx + 1 < len(starts) else 24 * 60
+    self.schedule.add_plan(schedule[start], end - start)
+```
+
+最终 `Schedule.daily_schedule` 中的每个计划项都带有时间边界。
+
+| 字段 | 中文意思 | 行为影响 |
+| --- | --- | --- |
+| `idx` | 计划项编号 | 帮助系统定位当前计划 |
+| `describe` | 活动描述 | 说明这段时间要做什么 |
+| `start` | 开始时间 | 决定什么时候进入该计划 |
+| `duration` | 持续时间 | 决定行动稳定多久 |
+| `decompose` | 子计划列表 | 承载更细粒度动作 |
+
+## 8.7 计划也要写入记忆
+
+Generative Agents 生成日计划后，会把“今天计划”作为 thought 写入记忆。
+
+```python
+thought = "这是 {} 在 {} 的计划：{}".format(
+    self.name, schedule_time, "；".join(init_schedule)
+)
+event = memory.Event(
+    self.name,
+    "计划",
+    schedule_time,
+    describe=thought,
+    address=self.get_tile().get_address(),
+)
+self._add_concept("thought", event, expire=self.schedule.create + datetime.timedelta(days=30))
+```
+
+这一步让计划不只是 scheduler 的内部数据，也成为角色可回忆的内容。别人问伊莎贝拉今天忙什么，她可以说自己在准备派对。别人问克劳斯下午有没有空，他可以参考自己的日程。后续 Reflection 也可以把计划和实际经历放在一起，形成更高层的判断。这符合论文的核心思想：memory stream 不只记录外部事件，也记录智能体自己的计划、想法和解释。
+
+## 8.8 递归拆解
+
+小时级计划仍然太粗。“上午写论文”不是一个可执行动作。角色还需要知道这段时间里具体做什么。论文中，计划会被递归拆成更细的行为。Generative Agents 中对应逻辑是：
+
+```python
+plan, _ = self.schedule.current_plan()
+if self.schedule.decompose(plan):
+    decompose_schedule = self.completion("schedule_decompose", plan, self.schedule)
+```
 
 例如：
 
-- 角色可能只是随机移动。
-- 对话可能看似自然，但没有进入长期记忆。
-- 角色可能知道信息，但其实是幻觉。
-- 派对可能有人参加，但不是因为听到邀请。
-- 关系可能看似形成，但只是 prompt 里说得亲密。
-- 计划可能合理，但与过去经历无关。
-
-因此，评价 generative agents 时不能只问“看起来像不像”，而要追问：
-
 ```text
-行为背后有没有可追踪的记忆、计划、关系和因果链？
+9:00-12:00 写研究论文
 ```
 
-论文的评价方法正是围绕这个问题设计的。
-
-## 8.3 论文的两阶段评价
-
-论文明确把评价分成两阶段。
-
-第一阶段是受控评价。
-
-研究者通过自然语言“采访”智能体，让它回答关于自身、记忆、计划、反应和反思的问题。然后让人类评估者比较不同架构条件下的回答，判断哪个更可信。
-
-第二阶段是端到端评价。
-
-研究者让 25 个智能体在 Smallville 中连续互动两个游戏日，观察是否出现信息扩散、关系形成和群体协同行动。
-
-这两个阶段有不同优势。
-
-受控评价的优势是可比较。
-
-因为同一个问题可以交给不同架构版本回答，所以能做消融对比。
-
-端到端评价的优势是真实。
-
-因为智能体在开放环境中连续运行，所以能观察复杂社会行为是否自然出现。
-
-但它们也各有不足。
-
-受控评价是访谈，不等于真实行动。
-
-端到端评价更接近真实仿真，但变量复杂，不容易严格归因。
-
-论文同时使用二者，是比较稳妥的设计。
-
-## 8.4 Controlled Evaluation：采访智能体
-
-论文利用了一个很巧妙的方法：既然智能体能用自然语言对话，那就直接采访它。
-
-研究者不是只看后台日志，而是向智能体提问：
+可以拆成：
 
 ```text
-你是谁？
-你记得某个人吗？
-你明天 10 点会做什么？
-早餐烧焦了你会怎么办？
-你最近最想和谁相处，为什么？
+9:00-9:30 整理资料
+9:30-10:30 阅读论文
+10:30-11:15 写引言
+11:15-12:00 修改段落
 ```
 
-这些问题不是随便问的。它们分别对应架构中的核心能力。
+这让角色的行动更像真实过程。前端不只是显示“写论文三小时”，而是能看到角色在一个大目标下连续做不同小事。
 
-如果智能体回答得好，说明它能从 memory stream 中取回信息，并把这些信息综合成合理回答。
+```mermaid
+flowchart TD
+    Day["一天大纲"] --> Hour["小时级活动"]
+    Hour --> Block["更短时间块"]
+    Block --> Action["当前行动"]
+    Action --> Duration["开始、持续、结束"]
+```
 
-如果回答失败，就可以进一步分析失败原因。
+*图 8-3：Planning 的递归拆解。大计划负责方向，小计划负责执行粒度。*
 
-这是一种非常适合 LLM agent 的评价方法。
+## 8.9 当前计划如何被取出
 
-传统软件模块可以写单元测试。
-
-生成式智能体的行为空间很大，无法简单断言“输出必须等于某个字符串”。但可以通过访谈和人类排序来评价“可信程度”。
-
-## 8.5 五类访谈能力
-
-论文的访谈问题分为五类，每类五个问题。
-
-总共 25 个问题。
-
-### 8.5.1 Self-Knowledge
-
-Self-knowledge 测试智能体是否保持对自身设定的理解。
-
-典型问题包括：
+`Schedule.current_plan()` 根据当前时间选择正在执行的计划。它先找到当前小时级 plan，再检查这个 plan 下面有没有尚未结束的 decompose plan。简化理解是：
 
 ```text
-请介绍你自己。
-你的职业是什么？
-你的兴趣是什么？
-你和谁住在一起？
-概括描述你平常工作日的日程。
+当前时间
+  -> 找到当前小时级 plan
+  -> 如果有子计划，找到当前子计划
+  -> 返回 plan 与 de_plan
 ```
 
-这类问题看似简单，但它测的是角色一致性。
+所以 `make_schedule()` 最后返回：
 
-如果克劳斯是社会学学生，却说自己是医生，说明 persona 没有稳定进入系统。
+```python
+return self.schedule.current_plan()
+```
 
-如果角色不能描述自己的日常作息，说明 planning 与 persona 的连接薄弱。
+后续行为生成通常会同时使用大计划和小计划：
 
-Self-knowledge 是可信行为的底座。一个连自己是谁都不稳定的角色，不可能在长期仿真中可信。
+```python
+plan, de_plan = self.schedule.current_plan()
+describes = [plan["describe"], de_plan["describe"]]
+```
 
-### 8.5.2 Memory
+大计划给出方向，小计划给出动作。例如，大计划是“在学院学习”，小计划是“阅读物理教材”。系统据此更容易把角色放到学院、图书馆或书桌，而不是随机地点。
 
-Memory 测试智能体能否记住过去经历。
+## 8.10 计划落到空间
 
-论文中的问题包括：
+Planning 不能停在文本。一个角色不能只“计划吃午饭”，还要知道去哪里吃，坐在哪里，使用什么对象。Generative Agents 中，这一步由 `_determine_action()` 完成。它先取当前计划：
+
+```python
+plan, de_plan = self.schedule.current_plan()
+describes = [plan["describe"], de_plan["describe"]]
+```
+
+然后尝试从空间记忆中找地址：
+
+```python
+address = self.spatial.find_address(describes[0], as_list=True)
+```
+
+如果找不到，就调用模型逐层决定：
+
+| Prompt | 决定什么 | 例子 |
+| --- | --- | --- |
+| `determine_sector` | 大区域 | 奥克山学院 |
+| `determine_arena` | 区域内场所 | 图书馆 |
+| `determine_object` | 具体对象 | 书桌 |
+
+这样，计划会落到类似下面的地址：
 
 ```text
-某某是谁？
-谁正在竞选镇长？
-是否有情人节派对？
+世界：Smallville
+区域：奥克山学院
+场所：图书馆
+对象：书桌
 ```
 
-这类问题考察的是 retrieval。
+生成地址后，系统创建两个事件：
 
-智能体需要从 memory stream 中找出相关事件或对话。
+```python
+event = self.make_event(self.name, describes[-1], address)
+obj_describe = self.completion("describe_object", address[-1], describes[-1])
+obj_event = self.make_event(address[-1], obj_describe, address)
+```
 
-关键不是它能不能编出一个顺口回答，而是回答是否能追溯到真实记忆。
+第一个事件描述角色在做什么，第二个事件描述对象正在被如何使用。
 
-例如，一个角色说“我知道 Sam 在考虑竞选镇长”，必须能在它的记忆中找到对应信息来源。
+| 事件 | 含义 |
+| --- | --- |
+| 角色事件 | 克劳斯此时阅读研究资料 |
+| 对象事件 | 书桌此时被克劳斯用于阅读研究资料 |
 
-否则就是幻觉。
+其他角色感知附近 tile 时，就能看到这些事件。Planning 由此进入世界模型，而不是停留在文本计划里。
 
-### 8.5.3 Plans
+## 8.11 Action 的时间边界
 
-Plans 测试智能体能否记住和维持计划。
+Generative Agents 用 `Action` 表示当前行为。`Action` 包含：
 
-典型问题包括：
+| 字段 | 中文意思 |
+| --- | --- |
+| `event` | 角色当前行为事件 |
+| `obj_event` | 被使用对象的事件 |
+| `start` | 行动开始时间 |
+| `duration` | 行动持续时间 |
+| `end` | 行动结束时间 |
+
+`finished()` 用于判断行为是否结束：
+
+```python
+if not self.duration:
+    return True
+if not self.event.address:
+    return True
+return utils.get_timer().get_date() > self.end
+```
+
+只要当前 action 没结束，角色就继续执行。它不会每一步都重新决定动作。这对可信行为很重要。如果角色每 10 分钟都重新问模型“我现在该做什么”，行为会像抖动的状态机。Action 的持续时间让生活有稳定性。
+
+## 8.12 Planning 的真实 prompt
+
+Planning 不是一个单独 prompt，而是一组连续 prompt。读者可以按下面顺序理解：先决定作息，再生成一天安排，再细化到小时和子任务，最后把文字计划落到空间对象。
+
+| 阶段 | Prompt | 输出 |
+| --- | --- | --- |
+| 起床时间 | `wake_up.txt` | `res: int`，0 到 11 的小时数。 |
+| 初始日程 | `schedule_init.txt` | `res: list[str]`，按时间顺序排列的活动列表。 |
+| 小时日程 | `schedule_daily.txt` | `res: dict[str, str]`，24 小时活动表。 |
+| 递归拆解 | `schedule_decompose.txt` | `res: list[tuple[str, int]]`，活动与时长。 |
+| 选择区域 | `determine_sector.txt` | `res: str`，必须来自候选 sector。 |
+| 选择场所 | `determine_arena.txt` | `res: str`，必须来自候选 arena。 |
+| 选择对象 | `determine_object.txt` | `res: str`，必须来自候选 object。 |
+| 对象状态 | `describe_object.txt` | `res: str`，不超过 10 个字的对象状态。 |
+
+`wake_up.txt` 的完整模板如下：
 
 ```text
-今天早上 6 点你会做什么？
-今天下午 6 点你会做什么？
-今天中午 1 点你刚刚做完什么？
-今天晚上 10 点你会做什么？
+${base_desc}
+
+通常，${lifestyle}
+
+根据上述提示，输出 ${agent} 的起床时间。只输出小时（24小时制），不要包含其他内容。
 ```
 
-这类问题考察日程系统。
-
-如果角色已经有 schedule，它应该能回答具体时间段的计划。
-
-如果回答与日程冲突，说明计划没有稳定进入可访问上下文。
-
-这类评价对本项目尤其重要，因为 GenerativeAgentsCN 的 `Schedule`、`make_schedule()`、`schedule_decompose()` 都是可观察的工程模块。
-
-### 8.5.4 Reactions
-
-Reactions 测试智能体遇到意外时是否反应合理。
-
-论文中的示例问题包括：
+英文对照如下：
 
 ```text
-你的早餐烧焦了，你会怎么办？
-浴室被占用了，你会怎么办？
-你需要做晚饭，但冰箱是空的，你会怎么办？
-你看到朋友从街上走过，会怎么做或说什么？
-你看到街上有火，会怎么办？
+${base_desc}
+
+Usually, ${lifestyle}
+
+Based on the prompt above, output ${agent}'s wake-up time. Output only the hour in 24-hour format, and do not include anything else.
 ```
 
-这类问题考察的是常识、情境理解和计划调整能力。
-
-它不一定要求智能体引用某条具体记忆，但要求行为符合人类常识和角色状态。
-
-例如，早餐烧焦时应该关火，而不是继续吃饭。
-
-浴室被占用时应该等待或找替代方案，而不是直接进入。
-
-### 8.5.5 Reflections
-
-Reflections 测试智能体是否能基于过去经历形成高层认知。
-
-典型问题包括：
+`schedule_init.txt` 的完整模板如下：
 
 ```text
-你现在最受什么启发，为什么？
-根据你对某人的了解，你觉得他会喜欢什么书？
-如果给某人买生日礼物，你会买什么？
-你会如何称赞某人？
-如果你能和最近聊过的人共处，你会选谁，为什么？
+请根据以下信息生成一个初始日程列表：
+
+"""
+${base_desc}
+生活方式：${lifestyle}
+智能体：${agent}
+起床时间：${wake_up}点
+"""
+
+确保返回的数据格式遵守schema：
+示例：
+[
+  "早上6点起床并完成早餐的例行工作",
+  "早上7点吃早餐",
+  "早上8点看书",
+  "中午12点吃午饭",
+  "下午1点小睡一会儿",
+  "晚上7点放松一下，看电视",
+  "晚上11点睡觉"
+]
+
+要求：
+- 每个活动简洁明了
+- 按时间顺序排列
+- 确保返回的数据格式遵守schema
 ```
 
-这类问题最能体现 Reflection 的价值。
-
-它要求智能体不只是记住事实，还要综合多条经历，形成对别人兴趣、关系和偏好的判断。
-
-没有 Reflection 的智能体往往会说“我不确定”。有 Reflection 的智能体更可能结合过去互动给出具体判断。
-
-[表 8-1：五类访谈问题与对应架构能力]
-
-## 8.6 消融条件：到底哪个模块有用
-
-论文评价最重要的部分之一是消融实验。
-
-消融实验的逻辑很简单：
+英文对照如下：
 
 ```text
-如果我们去掉某个模块，行为可信度是否下降？
+Generate an initial schedule list based on the following information:
+
+"""
+${base_desc}
+Lifestyle: ${lifestyle}
+Agent: ${agent}
+Wake-up time: ${wake_up}:00
+"""
+
+Make sure the returned data follows the schema:
+Example:
+[
+  "wake up at 6 AM and complete the breakfast routine",
+  "eat breakfast at 7 AM",
+  "read at 8 AM",
+  "eat lunch at noon",
+  "take a short nap at 1 PM",
+  "relax and watch TV at 7 PM",
+  "go to sleep at 11 PM"
+]
+
+Requirements:
+- Each activity should be concise and clear.
+- Activities should be in chronological order.
+- Make sure the returned data follows the schema.
 ```
 
-论文比较了完整架构与三个削弱版本，再加一个人类 crowdworker 编写的基线。
-
-三个削弱版本是：
-
-1. 无 Reflection：有 observation 和 planning，但不能使用 reflection memory。
-2. 无 Reflection、无 Planning：只能访问 observation，不能访问计划和反思。
-3. 无 Observation、无 Reflection、无 Planning：不能访问 memory stream 中的 observations、plans、reflections。
-
-第三个条件相当于更接近早期“只用 LLM persona 临场回答”的方式。
-
-论文还加入了 human crowdworker-authored condition。
-
-这个人类基线不是为了代表专家级人类表现，而是提供一个基本行为能力参照。也就是说，研究者不希望只在几个架构版本之间相互比较，而希望知道完整架构是否达到一个基本可信水平。
-
-## 8.7 为什么消融设计要小心
-
-论文在消融设计上做了一个重要选择：
-
-不同消融条件回答问题时，访问的是同一批仿真中积累的记忆。
-
-也就是说，研究者没有为每个架构重新跑一次两天仿真。
-
-原因是，如果每个架构重新仿真，小镇状态会分叉。不同角色可能遇到不同人、形成不同关系、听到不同信息，这样就很难比较同一个问题下的回答差异。
-
-因此，论文让所有条件在访谈时面对同一个 agent 历史，只是限制它能访问哪些类型的记忆。
-
-这让比较更可控。
-
-但它也意味着结果是保守估计。
-
-因为如果真的让没有 memory、planning、reflection 的架构从头运行两天，它可能根本不会走出同样丰富的经历。
-
-这点对我们复现 GenerativeAgentsCN 很重要。
-
-如果后面做消融实验，也要决定：
-
-- 是复用同一条仿真轨迹，只限制访问记忆？
-- 还是每个消融版本重新运行？
-
-前者可比性强，后者更接近真实系统差异。
-
-## 8.8 人类评估者如何比较
-
-论文招募了 100 名人类评估者。
-
-每位评估者会看到同一个 agent 在不同条件下对问题的回答，并按可信度从高到低排序。
-
-他们不是凭空评估。论文让评估者观看某个 agent 的生活回放，并能够访问该 agent memory stream 中的信息。
-
-这点很重要。
-
-如果评估者不知道 agent 经历过什么，就无法判断回答是否可信。
-
-例如，一个角色说自己知道情人节派对，这句话本身看起来合理。但只有查看记忆，才能知道它是否真的听人说过派对。
-
-论文把排序数据转为 TrueSkill 评分，再用统计检验分析条件差异。具体包括：
-
-- TrueSkill：把排序结果转为可比较评分。
-- Kruskal-Wallis test：检验总体排序差异。
-- Dunn post-hoc test：做条件间两两比较。
-- Holm-Bonferroni：校正多重比较的 p 值。
-- 定性开放编码：分析不同条件回答的差异主题。
-
-对读者来说，不必把统计方法背下来，但要理解评价逻辑：
+`schedule_daily.txt` 的完整模板如下：
 
 ```text
-不是研究者自己说完整架构更好，而是让外部评估者在相同问题和相同背景下比较多个条件。
+请根据以下信息生成详细的24小时日程表：
+
+"""
+${base_desc}
+智能体：${agent}
+初始日程：${daily_schedule}
+时间模板：
+${hourly_schedule}
+"""
+
+确保返回的数据格式遵守schema：
+示例：
+{
+  "6:00": "起床并完成早晨的例行工作",
+  "7:00": "吃早餐",
+  "8:00": "读书",
+  "9:00": "读书",
+  "10:00": "读书",
+  "11:00": "读书",
+  "12:00": "吃午饭",
+  "13:00": "小睡一会儿",
+  "14:00": "小睡一会儿",
+  "15:00": "小睡一会儿",
+  "16:00": "继续工作",
+  "17:00": "继续工作",
+  "18:00": "回家",
+  "19:00": "放松，看电视",
+  "20:00": "放松，看电视",
+  "21:00": "睡前看书",
+  "22:00": "准备睡觉",
+  "23:00": "睡觉"
+}
+
+要求：
+- 为每个小时填写具体活动
+- 活动描述要具体且符合人物设定
+- 至少包含5个不同的活动类型
+- 确保返回的数据格式遵守schema
 ```
 
-## 8.9 受控评价的主要结论
-
-论文结论很明确：完整架构最可信。
-
-随着模块被移除，表现逐步下降。
-
-大致排序是：
+英文对照如下：
 
 ```text
-完整架构
-  > 无 Reflection
-  > 无 Reflection + 无 Planning
-  > 人类 crowdworker 基线
-  > 无 Observation + 无 Reflection + 无 Planning
+Generate a detailed 24-hour schedule based on the following information:
+
+"""
+${base_desc}
+Agent: ${agent}
+Initial schedule: ${daily_schedule}
+Time template:
+${hourly_schedule}
+"""
+
+Make sure the returned data follows the schema:
+Example:
+{
+  "6:00": "wake up and complete the morning routine",
+  "7:00": "eat breakfast",
+  "8:00": "read",
+  "9:00": "read",
+  "10:00": "read",
+  "11:00": "read",
+  "12:00": "eat lunch",
+  "13:00": "take a short nap",
+  "14:00": "take a short nap",
+  "15:00": "take a short nap",
+  "16:00": "continue working",
+  "17:00": "continue working",
+  "18:00": "go home",
+  "19:00": "relax and watch TV",
+  "20:00": "relax and watch TV",
+  "21:00": "read before bed",
+  "22:00": "get ready for sleep",
+  "23:00": "sleep"
+}
+
+Requirements:
+- Fill in a specific activity for each hour.
+- Activity descriptions should be specific and fit the character setting.
+- Include at least 5 different activity types.
+- Make sure the returned data follows the schema.
 ```
 
-这里最值得注意的不是“完整架构赢了”，而是每个模块的贡献方向。
-
-Memory 让智能体能回答与过去经历有关的问题。
-
-Planning 让智能体能回答自己未来和当前日程。
-
-Reflection 让智能体能基于经历做综合判断。
-
-如果只用 LLM persona，不接入这些结构，回答可能语言流畅，但缺少与真实经历的连接。
-
-这也是本书后面要一直强调的判断标准：
+`schedule_decompose.txt` 的完整模板如下：
 
 ```text
-语言流畅不是可信行为。
-与经历、计划和关系一致的行动才是可信行为。
+示例：
+"""
+姓名：凯莉
+年龄：35岁
+日常计划：凯莉计划上午上课，下午在家工作
+凯莉是一名幼儿园教师。她在家里制定课程计划。她目前独自住在一套单卧室公寓里。
+
+凯莉的计划是：08:00 至 09:00，凯莉计划吃早餐；09:00 至 10:00，凯莉计划制定第二天的幼儿园课程。
+
+以5分钟为增量，列出凯丽在 9:00 至 10:00 期间的所有子任务（总时长为60分钟）：
+[
+  ("审查幼儿园课程标准", 15),
+  ("为这节课集思广益", 10),
+  ("制定课程计划", 20),
+  ("打印教案", 10),
+  ("把教案放进包里", 5)
+]
+"""
+
+确保返回的数据格式遵守schema：
+
+参考示例，为以下计划列出子任务。
+"""
+${base_desc}
+${agent} 现在的计划是：${plan}
+"""
+
+子任务总数不超过10个，确保返回的数据格式遵守schema：
+[
+  ("活动描述", 时长分钟数),
+  ("活动描述", 时长分钟数),
+  ...
+]
+
+以 ${increment} 分钟为增量，列出 ${agent} 在 ${start} 至 ${end} 期间的所有子任务（总时长为60分钟）：
 ```
 
-## 8.10 论文承认的记忆问题
-
-论文没有把结果写成完美无缺。
-
-它明确指出，完整架构虽然能记住许多过去经历，但仍然会出错。
-
-第一类错误是检索失败。
-
-角色明明听过某个信息，但回答时没有检索到相关记忆，于是说自己不知道。
-
-论文中提到，Rajiv 听过 Sam 的候选人信息，但回答地方选举问题时却表现得不清楚。
-
-第二类错误是检索到不完整记忆。
-
-角色可能只想起了一部分信息，于是回答含糊。
-
-例如，Tom 被问到 Isabella 的情人节派对时，回答不确定，尽管记忆中可能有相关片段。
-
-第三类错误是记忆修饰。
-
-智能体可能在真实记忆基础上添加额外细节。
-
-这很危险，因为听起来更自然，但不一定真实。
-
-论文中给了一个典型例子：角色把同名人物与历史上的 Adam Smith 混淆，产生了错误身份联想。
-
-这些错误告诉我们，memory stream 不是万能的。
-
-保存记忆只是第一步，能否正确检索、正确引用、不过度补全，才是关键。
-
-## 8.11 Reflection 的实验证据
-
-论文特别指出，Reflection 对“综合经验”很关键。
-
-没有 Reflection 的角色，面对需要综合判断的问题时可能回答“不知道”。
-
-有 Reflection 的角色，则能基于过去互动推断对方兴趣。
-
-例如，Maria 需要判断 Wolfgang 可能喜欢什么生日礼物。如果没有 Reflection，她可能不知道 Wolfgang 喜欢什么。加入 Reflection 后，她能根据过去形成的高层认知，推断他可能喜欢与数学音乐创作相关的礼物。
-
-这个例子说明：
+英文对照如下：
 
 ```text
-Reflection 的价值不是让回答更长，而是让回答能跨越多条经历，形成对人的稳定理解。
+Example:
+"""
+Name: Kelly
+Age: 35
+Daily plan: Kelly plans to teach in the morning and work from home in the afternoon.
+Kelly is a kindergarten teacher. She prepares lesson plans at home. She currently lives alone in a one-bedroom apartment.
+
+Kelly's plan is: from 08:00 to 09:00, Kelly plans to eat breakfast; from 09:00 to 10:00, Kelly plans to prepare tomorrow's kindergarten lesson.
+
+List all subtasks Kelly will perform from 9:00 to 10:00 in 5-minute increments, for a total duration of 60 minutes:
+[
+  ("review kindergarten curriculum standards", 15),
+  ("brainstorm ideas for the lesson", 10),
+  ("draft the lesson plan", 20),
+  ("print the lesson plan", 10),
+  ("put the lesson plan into the bag", 5)
+]
+"""
+
+Make sure the returned data follows the schema:
+
+Following the example, list subtasks for the following plan.
+"""
+${base_desc}
+${agent}'s current plan is: ${plan}
+"""
+
+The total number of subtasks should not exceed 10. Make sure the returned data follows the schema:
+[
+  ("activity description", duration in minutes),
+  ("activity description", duration in minutes),
+  ...
+]
+
+In ${increment}-minute increments, list all subtasks ${agent} will perform from ${start} to ${end}, for a total duration of 60 minutes:
 ```
 
-这也解释了为什么第 6 章要把 Reflection 当作核心，而不是“推荐阅读”或“附属功能”。
-
-在 GenerativeAgentsCN 中，如果我们做类似实验，可以问：
+空间落地的三个 prompt 负责从地图层级中选位置。`determine_sector.txt` 的完整模板如下：
 
 ```text
-克劳斯最近更想和谁交流，为什么？
-玛丽亚觉得克劳斯是什么样的人？
-伊莎贝拉认为谁可能帮助她组织派对？
-汤姆如何看待山姆竞选？
+在区域选项中，为当前任务选择一个合适的区域。
+
+${agent} 住在 <${live_sector}>，里面有 ${live_arenas}。
+${agent} 目前的位置是 <${current_sector}>，里面有 ${current_arenas}。
+${daily_plan}
+问题：
+${agent} 正在 ${complete_plan}。为了 ${decomposed_plan}，${agent} 应该去哪里？
+
+要求：
+1. 必须在这个列表中选择一个区域，列表：[${areas}]。
+2. 如果现在正位于列表中的区域，并且计划的活动可以在这里进行，最好留在当前区域。
+3. 不要选择列表以外的区域。
+4. 直接输出选中的结果。
+
+${agent} 应该去：
 ```
 
-这些问题不是测事实记忆，而是测 thought 是否真正参与回答。
-
-## 8.12 End-to-End Evaluation：两天小镇仿真
-
-受控评价之后，论文做了端到端评价。
-
-研究者让 25 个智能体在 Smallville 中连续互动两个完整游戏日。
-
-他们关注的不是单个问答，而是社会层面的涌现行为。
-
-论文重点观察三类结果：
-
-1. 信息扩散。
-2. 关系形成。
-3. 群体协同行动。
-
-这三类结果对应我们前面讲过的 Smallville 经典现象。
-
-信息扩散看派对和竞选信息是否传播。
-
-关系形成看居民是否通过互动认识彼此。
-
-群体协同行动看被邀请者是否能在正确时间地点参加活动。
-
-这才是 Generative Agents 论文最吸引人的地方：
-
-它不是只让一个 agent 表演，而是让多个 agent 在共享环境中产生社会行为。
-
-## 8.13 信息扩散的测量
-
-论文选择了两条信息：
-
-- Sam 竞选镇长。
-- Isabella 在 Hobbs Cafe 举办情人节派对。
-
-仿真开始时，这两条信息只被各自源头角色知道：
-
-- Sam 知道自己的竞选意向。
-- Isabella 知道自己要办派对。
-
-两天结束后，研究者采访 25 个智能体：
+英文对照如下：
 
 ```text
-你知道有情人节派对吗？
-你知道谁在竞选镇长吗？
+Choose an appropriate sector from the sector options for the current task.
+
+${agent} lives in <${live_sector}>, which contains ${live_arenas}.
+${agent}'s current location is <${current_sector}>, which contains ${current_arenas}.
+${daily_plan}
+Question:
+${agent} is currently ${complete_plan}. To ${decomposed_plan}, where should ${agent} go?
+
+Requirements:
+1. You must choose one sector from this list: [${areas}].
+2. If the agent is already in a sector from the list and the planned activity can be done there, it is better to stay in the current sector.
+3. Do not choose a sector outside the list.
+4. Output the chosen result directly.
+
+${agent} should go to:
 ```
 
-如果智能体回答知道，就标为 yes；如果不知道，就标为 no。
-
-但论文没有只看回答，还会检查记忆流，确认回答 yes 的角色确实有信息来源。
-
-这一步非常重要。
-
-否则，一个 agent 可能只是幻觉说“我知道”，而不是真的通过社会传播得知。
-
-论文结果是：
-
-- Sam 的竞选信息从 1 个智能体传播到 8 个智能体，即 4% 到 32%。
-- Isabella 的派对信息从 1 个智能体传播到 13 个智能体，即 4% 到 52%。
-- 对这两类信息，声称知道的智能体没有被发现是幻觉得知。
-
-这说明信息确实通过小镇互动扩散了。
-
-[图 8-2：情人节派对邀请扩散路径]
-
-## 8.14 关系形成的测量
-
-关系形成不能只看“谁和谁聊过天”。
-
-论文采用了访谈方法。
-
-研究者问每个 agent：
+`determine_arena.txt` 的完整模板如下：
 
 ```text
-你知道某某吗？
+在区域选项中，为当前任务选择一个合适的区域。
+
+${agent} 正去往 <${target_sector}>，里面有 ${target_arenas}。
+${daily_plan}
+问题：
+${agent} 正在 ${complete_plan}。为了 ${decomposed_plan}，${agent} 应该去 ${target_sector} 里面的哪个区域？
+
+要求：
+1. 必须在这个列表中选择一个区域，列表：[${target_arenas}]。
+2. 如果现在正位于列表中的区域，并且计划的活动可以在这里进行，最好留在当前区域。
+3. 不要选择列表以外的区域。
+4. 直接输出选中的结果。
+
+${agent} 应该去：
 ```
 
-然后在仿真前和仿真后分别测量。
-
-如果两个 agent 彼此都表示知道对方，就认为他们之间形成了关系边。
-
-这样可以构建一个无向关系图：
+英文对照如下：
 
 ```text
-节点：25 个智能体
-边：双方都知道彼此
+Choose an appropriate arena from the arena options for the current task.
+
+${agent} is going to <${target_sector}>, which contains ${target_arenas}.
+${daily_plan}
+Question:
+${agent} is currently ${complete_plan}. To ${decomposed_plan}, which arena inside ${target_sector} should ${agent} go to?
+
+Requirements:
+1. You must choose one arena from this list: [${target_arenas}].
+2. If the agent is already in an arena from the list and the planned activity can be done there, it is better to stay in the current arena.
+3. Do not choose an arena outside the list.
+4. Output the chosen result directly.
+
+${agent} should go to:
 ```
 
-论文用 network density 衡量关系网络密度变化。
-
-结果是，网络密度从 0.167 增加到 0.74。
-
-这说明两天仿真后，居民之间的互相认识显著增加。
-
-但论文也指出，在 453 个关于是否知道其他人的回答中，有 6 个被发现是幻觉，占 1.3%。
-
-这个细节非常重要。
-
-它说明关系形成确实存在，但并非零错误。
-
-一个严谨的系统评估不能只报成功扩散和关系增长，也要报幻觉率。
-
-## 8.15 群体协同行动的测量
-
-群体协同行动的评价围绕情人节派对。
-
-派对是很好的测试，因为它需要多个环节同时成功：
-
-1. Isabella 有办派对的意图。
-2. 她需要邀请别人。
-3. 被邀请者需要记住时间和地点。
-4. 被邀请者需要决定是否参加。
-5. 被邀请者需要把计划调整到正确时间。
-6. 被邀请者需要在正确地点出现。
-
-只要其中某个环节断掉，最后就不会到场。
-
-论文结果是：
-
-- 有 12 个 agent 被邀请。
-- 情人节当天，5 个 agent 到达 Hobbs Cafe 参加派对。
-- 另外 7 个未到场者中，3 个表示有计划冲突。
-- 剩下 4 个表示有兴趣，但当天没有形成到场计划。
-
-这个结果很有价值，因为它不是 100% 成功。
-
-如果所有人都被邀请后必然到场，反而像脚本。
-
-有的人参加，有的人因为冲突缺席，有的人有兴趣但没有计划成功，这更接近开放仿真系统。
-
-当然，这也暴露了系统限制：有兴趣不等于能自动形成计划。
-
-这正是后续项目升级可以改进的地方。
-
-## 8.16 端到端评价的三个社会现象
-
-把信息扩散、关系形成、协同行动放在一起看，会发现论文真正想证明的是：
+`determine_object.txt` 的完整模板如下：
 
 ```text
-多个局部可信行为可以累积成群体社会现象。
+从选项列表中，为当前活动选择最相关的对象。
+
+当前活动：${activity}
+
+要求：
+1. 必须在这个列表中选择一个对象：[${objects}]。
+2. 不要选择列表以外的对象。
+3. 直接输出选中的结果。
+
+与当前活动最相关的对象是：
 ```
 
-信息扩散来自局部对话。
-
-关系形成来自反复相遇、对话和记忆。
-
-协同行动来自记忆、计划、时间、地点和日程调整。
-
-这些都不是一个中心控制器直接编排出来的。
-
-这也是 Generative Agents 的核心价值。
-
-它不是手写社会规则，而是让每个 agent 根据自己的记忆和计划行动，再观察局部互动能否累积成宏观结果。
-
-这对本书后续实验很重要。
-
-我们复现派对和竞选时，不应该只检查最终人数，还要检查路径：
+英文对照如下：
 
 ```text
-谁告诉了谁？
-谁记住了？
-谁改变了计划？
-谁到达了地点？
-谁声称知道但没有证据？
+Choose the most relevant object for the current activity from the option list.
+
+Current activity: ${activity}
+
+Requirements:
+1. You must choose one object from this list: [${objects}].
+2. Do not choose an object outside the list.
+3. Output the chosen result directly.
+
+The object most relevant to the current activity is:
 ```
 
-路径比结果更重要。
-
-## 8.17 论文承认的端到端失败边界
-
-论文第 7.2 节专门讨论了边界和错误。
-
-这部分非常重要，因为它告诉我们当前架构哪里还不够。
-
-论文总结了三类常见问题。
-
-第一类是记忆和空间选择问题。
-
-随着 agent 学到的地点越来越多，系统不仅要检索相关记忆，还要选择正确地点执行动作。地点变多后，角色可能选择不典型地点。
-
-论文举了午饭地点的例子：一些角色原本常去咖啡馆，但后来知道了酒吧，可能把午饭地点选到酒吧。这不一定完全不可能，但在小镇设定中显得不典型。
-
-第二类是物理规范误判。
-
-有些环境规范很难只靠自然语言传达。
-
-例如，某个宿舍浴室虽然叫 dorm bathroom，但设定上只能容纳一个人。有些 agent 可能根据常识认为宿舍浴室可以多人同时使用，从而做出不合理行为。
-
-再例如，商店下午 5 点关门，但 agent 可能仍然在关门后进入商店。
-
-第三类是 instruction tuning 带来的过度礼貌和过度合作。
-
-语言模型经过指令调优后，往往倾向于礼貌、配合、积极回应。
-
-这会让角色对话显得过于正式，也可能让角色不太会拒绝别人。
-
-论文提到 Isabella 收到许多与自己兴趣不一致的派对建议，但她很少拒绝。这会使角色兴趣逐渐被别人带偏。
-
-这类失败对我们非常有启发。
-
-可信代理不仅要会合作，也要会拒绝。
-
-不仅要会说话，也要遵守空间、时间和社会规范。
-
-## 8.18 失败不是坏事，而是评价资产
-
-写这本书时，我们不能把失败案例删掉。
-
-失败案例是理解系统边界的入口。
-
-一个严肃的开源项目介绍，不应该只展示成功路径，还应该告诉读者：
-
-- 检索会失败。
-- 记忆会被修饰。
-- 角色会过度礼貌。
-- 地点选择会不合理。
-- 计划不会总是兑现。
-- 长期运行成本很高。
-- 小模型可能更容易格式失控。
-
-这些问题不是否定项目，而是说明读者应该如何使用和改进项目。
-
-GenerativeAgentsCN 的价值也不在于它“完美复刻人类社会”，而在于它把一个可运行、可观察、可修改的生成式智能体社会框架带到中文环境中。
-
-## 8.19 从论文评价到 GenerativeAgentsCN 评价
-
-论文评价方法可以直接转化为本项目的实验设计。
-
-对 GenerativeAgentsCN，我们可以建立两类评价。
-
-第一类是中文 controlled evaluation。
-
-例如对克劳斯提问：
+`describe_object.txt` 的完整模板如下：
 
 ```text
-请介绍你自己。
-你正在写什么论文？
-你今天下午 6 点打算做什么？
-你知道伊莎贝拉的情人节派对吗？
-你最近更想和谁交流，为什么？
+任务：用不超过10个字的短句，描述某人身边物品的状态。注意：只输出物品的状态描述，不要包含物品名称。
+
+示例：
+
+一步一步地思考 烤箱 的状态：
+步骤1：山姆正在 烤箱 旁边吃早餐。
+步骤2：描述 烤箱 的状态。
+输出：正在加热以烹饪早餐
+
+一步一步地思考 电脑 的状态：
+步骤1：迈克正在用 电脑 写电子邮件。
+步骤2：描述 电脑 的状态。
+输出：正在用于编写电子邮件
+
+一步一步地思考 水槽 的状态：
+步骤1：汤姆正在用 水槽 洗脸。
+步骤2：描述 水槽 的状态。
+输出：正在进水
+
+根据上述示例，一步一步思考 ${object} 的状态：
+步骤1：${agent} 正在 ${action}，身边是 ${object}
+步骤2：描述 ${object} 的状态。
+输出：
 ```
 
-然后检查回答是否与 `agent.json`、memory stream、schedule、conversation 记录一致。
-
-第二类是中文 end-to-end evaluation。
-
-例如运行两天仿真后，统计：
-
-- 有多少人知道派对。
-- 有多少人知道山姆竞选。
-- 谁和谁形成了双向关系。
-- 被邀请者中有多少人到场。
-- 哪些回答有记忆证据。
-- 哪些回答是幻觉。
-
-这会成为第四部分复现实验的基础。
-
-[表 8-2：论文评价指标到 GenerativeAgentsCN 评价指标的映射]
-
-## 8.20 GenerativeAgentsCN 中可以观察哪些证据
-
-本项目比论文复现更适合教学的一点是，很多中间产物可以直接看。
-
-读者可以观察：
-
-- `simulation.md`：压缩后的仿真叙事。
-- `movement.json`：每一步角色位置、动作、表情。
-- conversation 记录：角色之间的对话。
-- checkpoint：角色状态、记忆、日程。
-- 日志：LLM 调用、反思触发、感知数量等。
-
-这些文件可以帮助我们做论文式评价。
-
-例如，判断某个角色是否“知道派对”，不能只看它回答“知道”。还要查：
+英文对照如下：
 
 ```text
-它是否与伊莎贝拉或其他知情者对话？
-对话摘要是否进入记忆？
-该记忆是否在回答时被检索？
-它是否据此改变计划？
+Task: In a short phrase of no more than 10 Chinese characters, describe the state of an object near someone. Note: output only the object's state description. Do not include the object name.
+
+Examples:
+
+Think step by step about the state of the oven:
+Step 1: Sam is eating breakfast near the oven.
+Step 2: Describe the state of the oven.
+Output: heating to cook breakfast
+
+Think step by step about the state of the computer:
+Step 1: Mike is using the computer to write an email.
+Step 2: Describe the state of the computer.
+Output: being used to write an email
+
+Think step by step about the state of the sink:
+Step 1: Tom is using the sink to wash his face.
+Step 2: Describe the state of the sink.
+Output: running water
+
+Following the examples above, think step by step about the state of ${object}:
+Step 1: ${agent} is ${action}, and ${object} is nearby.
+Step 2: Describe the state of ${object}.
+Output:
 ```
 
-如果链路完整，才算真正传播成功。
+这些 prompt 的共同特点是：都要求模型在给定候选空间或 schema 内输出，而不是自由写作。Planning 能稳定运行，靠的正是这种“生成 + 约束”的组合。
 
-## 8.21 本书后续实验应遵守的原则
+## 8.13 Planning 的常见失败
 
-基于论文评价方法，本书后续实验要遵守五个原则。
+Planning 失败通常不是一句 prompt 写得不好，而是链路上某个环节丢了信息。
 
-第一，结果要有证据。
+| 失败现象 | 常见原因 | 检查位置 |
+| --- | --- | --- |
+| 计划漂移 | `currently` 没有保留关键目标 | `retrieve_currently`、`schedule_init` |
+| 一天过于单调 | 活动多样性不足 | `schedule_daily`、`schedule.diversity` |
+| 行动太粗 | 没有拆解到可执行粒度 | `schedule_decompose` |
+| 地点不合理 | 空间记忆或地址选择错误 | `Spatial`、`determine_sector`、`determine_arena`、`determine_object` |
+| 行动频繁跳变 | 当前 action 没有稳定持续 | `Action.duration`、`Action.finished()` |
 
-不能只说“看起来传播了”。要给出对话路径、记忆节点和到场记录。
-
-第二，区分知道、记住、计划和行动。
-
-一个角色知道派对，不代表它会参加。
-
-一个角色想参加，不代表它会把计划改对。
-
-第三，记录失败。
-
-如果角色忘记派对、错过时间、去了错误地点，这些都要写出来。
-
-第四，做对照。
-
-尽量设计无 reflection、低检索权重、本地小模型等对照组。
-
-第五，避免把幻觉当涌现。
-
-只要角色声称知道某事，就要回查 memory stream。
-
-这五个原则会贯穿第四部分。
-
-## 8.22 评价“可信”时要避免的误区
-
-评价 believable behavior 很容易走偏。
-
-第一个误区是把“像人说话”当成“像人行动”。
-
-语言模型很擅长说出自然语言，但可信代理要求行动、记忆和计划一致。
-
-第二个误区是把“成功完成任务”当成“可信”。
-
-如果所有被邀请者都准时到场，这可能是任务成功，但未必可信。真实社会里会有人忘记、拒绝、冲突、迟到。
-
-第三个误区是只看宏观统计。
-
-派对信息传播到 13 个人很重要，但更重要的是它怎么传播。
-
-第四个误区是忽略负样本。
-
-不知道的人、没到场的人、拒绝的人、回答错误的人，都提供系统边界信息。
-
-第五个误区是用一次运行下结论。
-
-生成式系统随机性强，一次仿真只能作为案例。更严谨的评价需要多次运行、不同种子、不同模型和不同参数。
-
-这些误区也会影响读者如何使用 GenerativeAgentsCN。
-
-## 8.23 与 2023-2026 前沿评价的连接
-
-论文的评价方法在 2023 年是非常有启发性的，但到了 2026 年，我们还需要更进一步。
-
-后来的 agent 研究越来越强调：
-
-- 可复现实验。
-- 标准化 benchmark。
-- 真实任务成功率。
-- 成本与延迟。
-- 多轮长期一致性。
-- 工具调用正确性。
-- 记忆污染与鲁棒性。
-- 可审计日志。
-
-因此，本书第五部分会把 Generative Agents 的评价方法与 AgentBench、WebArena、GAIA、SWE-bench、AI Agents That Matter 等后续研究连接起来。
-
-但这不意味着要否定原论文。
-
-相反，原论文提供了一个非常好的起点：先把 believable behavior 拆成可观察能力，再把小镇社会行为拆成可测现象。
-
-后续前沿评价是在这个基础上继续严谨化。
-
-## 8.24 第一部分总结：论文到底贡献了什么
-
-到本章为止，第一部分结束。
-
-我们可以重新概括 Generative Agents 论文的贡献。
-
-它不是“用 ChatGPT 做 NPC”。
-
-它提出的是一套让 LLM 代理长期运行的认知架构：
+例如，伊莎贝拉明明在 `currently` 中要准备情人节派对，但日程里完全没有派对相关行动，就要沿着这条链路检查：
 
 ```text
-Memory Stream
-  -> Retrieval
-  -> Reflection
-  -> Planning
-  -> Reaction
-  -> Dialogue
-  -> New Memory
+persona/currently
+  -> retrieve_plan/retrieve_thought
+  -> retrieve_currently
+  -> schedule_init
+  -> schedule_daily
+  -> schedule_decompose
 ```
 
-它展示了一个可运行的小镇：
+目标在哪一步丢失，就从哪一步修。
 
-- 25 个智能体。
-- The Sims 式沙盒环境。
-- 用户可以观察和干预。
-- 角色有日程、记忆、关系和对话。
+## 8.14 本章小结
 
-它展示了三个典型社会现象：
+Planning 把角色从“能回答”推向“能生活”。它从长期设定和近期记忆出发，生成新一天状态、起床时间、一天大纲、小时级日程、细粒度子计划，再把计划落到地图位置和对象事件上。
 
-- 信息扩散。
-- 关系形成。
-- 群体协同行动。
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 新一天状态 | 角色每天不是重启，而是从近期记忆接续到新的 `currently`。 |
+| 起床时间 | 作息差异让小镇居民拥有不同生活节奏。 |
+| 一天大纲 | 先定主线，再细化时间表，能减少机械填表感。 |
+| 小时级日程 | `Schedule.daily_schedule` 给角色一天的时间骨架。 |
+| 递归拆解 | 大计划负责方向，小计划负责可执行动作。 |
+| 空间落地 | `_determine_action()` 把文字计划绑定到地图地址和对象事件。 |
+| Action 边界 | `start`、`duration`、`end` 防止角色每一步都随机重来。 |
 
-它也诚实地展示了失败边界：
-
-- 检索失败。
-- 记忆修饰。
-- 空间规范误判。
-- 语言过度正式。
-- 过度合作。
-- 成本高。
-- 长期鲁棒性未知。
-
-这就是为什么这篇论文必须放在书的第一部分，而不是作为推荐阅读。
-
-它是 GenerativeAgentsCN 的思想源头，也是后面源码深读、复现实验和前沿升级的根。
-
-## 8.25 本章小结
-
-本章讲清了论文的评价方法：
-
-1. 论文用 controlled evaluation 和 end-to-end evaluation 两阶段评价智能体。
-2. Controlled evaluation 通过自然语言采访测试五类能力。
-3. 五类能力是 self-knowledge、memory、plans、reactions、reflections。
-4. 消融实验比较完整架构、无 reflection、无 reflection/planning、无 memory/planning/reflection，以及人类 crowdworker 基线。
-5. 人类评估者根据 agent 回放和 memory stream 对回答可信度排序。
-6. 完整架构表现最好，移除模块会降低可信度。
-7. End-to-End Evaluation 让 25 个智能体连续互动两个游戏日。
-8. 信息扩散结果包括镇长竞选从 1 人到 8 人，派对信息从 1 人到 13 人。
-9. 关系网络密度从 0.167 增至 0.74，但仍有少量关系幻觉。
-10. 情人节派对中 12 个被邀请者有 5 个到场，显示协同行动存在但并不完美。
-11. 论文明确承认检索、记忆、空间规范、过度礼貌和过度合作等失败边界。
-12. 本书后续会把这些评价方法转化为 GenerativeAgentsCN 的中文复现实验。
-
-下一部分进入“从论文到 GenerativeAgentsCN”。我们会先讲项目谱系：Stanford 原始项目、wounderland 重构、GenerativeAgentsCN 的中文化与工程化。然后把论文概念逐一映射到源码模块。
+下一章进入 Reacting。Planning 让角色有自己的生活，但真实生活不会完全按计划发生。遇到人、遇到冲突、遇到新信息时，系统必须决定是否打断原计划。
 
 ## 参考资料
 
 - Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. *Generative Agents: Interactive Simulacra of Human Behavior*. arXiv: https://arxiv.org/abs/2304.03442
-- ar5iv full text, Controlled Evaluation and End-To-End Evaluation: https://ar5iv.labs.arxiv.org/html/2304.03442
-- Stanford original repository: https://github.com/joonspk-research/generative_agents
-- GenerativeAgentsCN local source: `generative_agents/results/compressed/*/simulation.md`
-- GenerativeAgentsCN local source: `generative_agents/results/compressed/*/movement.json`
+- ar5iv full text: https://ar5iv.labs.arxiv.org/html/2304.03442
+- Generative Agents local source: `generative_agents/modules/agent.py`
+- Generative Agents local source: `generative_agents/modules/memory/schedule.py`
+- Generative Agents local source: `generative_agents/modules/memory/action.py`
+- Generative Agents local prompts: `generative_agents/data/prompts/wake_up.txt`, `generative_agents/data/prompts/schedule_init.txt`, `generative_agents/data/prompts/schedule_daily.txt`, `generative_agents/data/prompts/schedule_decompose.txt`, `generative_agents/data/prompts/determine_sector.txt`, `generative_agents/data/prompts/determine_arena.txt`, `generative_agents/data/prompts/determine_object.txt`, `generative_agents/data/prompts/describe_object.txt`

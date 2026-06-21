@@ -1,724 +1,591 @@
-# 第 20 章 回放系统：checkpoint、movement.json、simulation.md 与 Phaser 前端
+# 第 20 章 社交：聊天、等待与关系传播
 
-## 20.1 本章要解决的问题
+## 20.1 核心问题
 
-第三部分最后一章讲回放系统。
+世界、初始化、仿真循环、感知、记忆和日程，解决了“角色如何独立生活”的问题。社交机制进一步解决“角色如何互相影响”的问题。在 Generative Agents 中，社交不是“两个角色随机聊天”。它是由感知触发、记忆约束、模型判断、对话生成、日程改写和记忆写回共同组成的行为闭环。社交逻辑主要写在 `generative_agents/modules/agent.py`。第一次看这些函数名时，可以先按中文含义理解：
 
-GenerativeAgentsCN 的仿真结果不是只存在日志里。
+| 函数 | 中文意思 | 对社交行为的影响 |
+| --- | --- | --- |
+| `_reaction()` | 现场反应入口。 | 从附近事件和附近角色中选择当前要不要关注某个人。 |
+| `_chat_with()` | 与某个角色聊天。 | 判断是否聊天，生成多轮对话，并把对话写回双方状态。 |
+| `_wait_other()` | 等待另一个角色。 | 当地点或对象被别人占用时，决定是否等待对方。 |
+| `schedule_chat()` | 把聊天写入日程。 | 让“刚刚聊过天”进入当前行动记录，而不是只停留在文本里。 |
+| `revise_schedule()` | 修订日程。 | 当聊天或等待打断原计划时，重新安排后续行动。 |
 
-运行后，项目会生成 checkpoint。
+社交相关 prompt 则负责把不同判断交给模型：
 
-然后 `compress.py` 把 checkpoint 转换成：
+| prompt | 中文意思 | 它解决的问题 |
+| --- | --- | --- |
+| `decide_chat` | 判断是否聊天。 | 两个角色见面后，是开口聊天还是继续原计划。 |
+| `summarize_relation` | 总结双方关系。 | 聊天前先让模型知道两人是什么关系、过去有什么交集。 |
+| `generate_chat` | 生成对话。 | 按双方记忆和关系生成一轮自然对话。 |
+| `generate_chat_check_repeat` | 检查复读。 | 防止多轮对话一直重复同一类句子。 |
+| `decide_chat_terminate` | 判断是否结束聊天。 | 决定对话是否已经自然结束。 |
+| `summarize_chats` | 总结整段对话。 | 把多轮对话压缩成可写入记忆的摘要。 |
+| `decide_wait` | 判断是否等待。 | 处理对象占用和空间冲突。 |
+| `reflect_chat_planing` | 总结聊天对计划的影响。 | 聊天之后，角色接下来要不要改计划。 |
+| `reflect_chat_memory` | 总结聊天对记忆的影响。 | 聊天之后，哪些信息应该进入长期记忆。 |
 
-```text
-movement.json
-simulation.md
-```
+本章聚焦八个问题：
 
-`replay.py` 再通过 Flask 和 Phaser 前端展示小镇动画。
-
-这个系统有三个价值。
-
-第一，可视化。
-
-读者可以看角色在小镇中移动、睡觉、聊天、行动。
-
-第二，可复盘。
-
-`simulation.md` 记录人物活动和对话，适合阅读和写书。
-
-第三，可评价。
-
-`movement.json`、`simulation.md` 和 `conversation.json` 可以作为实验数据，支撑派对传播、竞选扩散、关系形成等分析。
-
-本章要回答八个问题：
-
-1. checkpoint 保存了什么？
-2. `compress.py` 如何生成 `movement.json`？
-3. `simulation.md` 如何生成？
-4. `movement.json` 的结构是什么？
-5. `replay.py` 如何启动回放？
-6. 前端模板如何展示角色？
-7. 回放系统与实验评价有什么关系？
-8. 当前回放系统有哪些边界和升级方向？
-
-[图 20-1：checkpoint -> compress -> replay 的数据流]
+1. 社交行为如何从感知触发？
+2. `_reaction()` 如何选择关注对象？
+3. `_chat_with()` 如何决定是否聊天？
+4. 对话为什么需要双方关系摘要？
+5. 多轮对话如何生成、终止和防复读？
+6. 对话如何写回双方日程和记忆？
+7. `_wait_other()` 如何处理空间冲突？
+8. 社交模块如何支撑信息扩散和关系形成？
 
 ```mermaid
-flowchart LR
-    C[results/checkpoints/name<br/>逐步状态 JSON] --> CP[compress.py]
-    Conv[conversation.json] --> CP
-    Maze[maze.json] --> CP
-    CP --> MD[simulation.md<br/>可读时间线]
-    CP --> MV[movement.json<br/>回放帧数据]
-    MV --> RP[replay.py]
-    RP --> UI[Phaser 前端回放]
+flowchart TD
+    O[感知附近角色] --> F[选择 focus]
+    F --> J{decide_chat?}
+    J -- 否 --> W{decide_wait?}
+    J -- 是 --> Rel[检索关系与记忆]
+    Rel --> Chat[多轮 generate_chat]
+    Chat --> End{结束/重复检查}
+    End -- 继续 --> Chat
+    End -- 结束 --> Sum[summarize_chats]
+    Sum --> S[schedule_chat]
+    S --> M[双方写入 chat 记忆]
+    W -- 是 --> Rev[revise_schedule 等待]
+    W -- 否 --> A[继续原行动]
 ```
 
-## 20.2 从仿真到回放的三阶段
+*图 20-1：社交行为闭环。聊天不是孤立文本生成，而是从感知、关系检索、对话生成到记忆写回的完整链路。*
 
-整个流程分三阶段。
+## 20.2 社交从 reaction 开始
 
-第一阶段，运行仿真：
+`Agent.think()` 中，醒着的 agent 会执行：
 
-```bash
-python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
+```python
+self.percept()
+self.make_plan(agents)
+self.reflect()
 ```
 
-输出：
+`make_plan()` 首先尝试 reaction：
+
+```python
+if self._reaction(agents):
+    return
+```
+
+所以社交行为不是无条件发生。它必须先由感知产生 `self.concepts`，再由 `_reaction()` 判断。这条链路是：
 
 ```text
-results/checkpoints/sim-test/
+看到附近事件
+  -> self.concepts
+  -> _reaction()
+  -> _chat_with() 或 _wait_other()
 ```
 
-第二阶段，压缩结果：
+如果没有看到其他角色或重要事件，agent 会继续执行原计划。这让社交建立在空间相遇之上。
 
-```bash
-python compress.py --name sim-test
+## 20.3 _reaction() 如何选择 focus
+
+`_reaction()` 的第一步是从 `self.concepts` 中选 focus。如果有其他 agent 相关 concept，优先选择：
+
+```python
+priority = [i for i in self.concepts if _focus(i)]
+if priority:
+    focus = random.choice(priority)
 ```
 
-输出：
+`_focus()` 判断：
+
+```python
+concept.event.subject in agents
+```
+
+看到人优先于看到物。如果没有看到 agent，就从非空闲事件中选：
+
+```python
+priority = [i for i in self.concepts if not _ignore(i)]
+```
+
+默认忽略词是：
 
 ```text
-results/compressed/sim-test/movement.json
-results/compressed/sim-test/simulation.md
+空闲
 ```
 
-第三阶段，启动回放：
+这避免角色对空闲对象过度反应。如果最终 focus 不是另一个 agent，`_reaction()` 返回 None。当前项目的 reaction 主要围绕 agent-agent 互动。
 
-```bash
-python replay.py
+## 20.4 关系上下文：get_relation()
+
+选中 focus 后：
+
+```python
+other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
 ```
 
-浏览器访问：
+`get_relation()` 会返回：
 
-```text
-http://127.0.0.1:5000/?name=sim-test
-```
-
-这三阶段对应：
-
-```text
-生成数据
-  -> 整理数据
-  -> 展示数据
-```
-
-理解这条链路后，读者就能知道实验结果存在哪里。
-
-## 20.3 checkpoint 是原始仿真状态
-
-`start.py` 每个 step 写 checkpoint：
-
-```text
-results/checkpoints/<name>/simulate-<time>.json
-```
-
-还会保存：
-
-```text
-results/checkpoints/<name>/conversation.json
-```
-
-checkpoint JSON 保存的是仿真状态。
-
-包括：
-
-- 当前 time。
-- step。
-- stride。
-- maze path。
-- agent_base。
-- 每个 agent 的配置和状态。
-- agent 当前 coord。
-- status。
-- schedule。
-- associate memory ids。
-- chats。
-- currently。
-- action。
-
-它适合断点恢复。
-
-但它不适合直接给人读。
-
-因此需要 `compress.py` 转换。
-
-## 20.4 conversation.json
-
-`conversation.json` 保存全局对话。
-
-结构大致是：
-
-```json
+```python
 {
-  "20250213-10:20": [
-    {
-      "伊莎贝拉 -> 阿伊莎 @ the Ville，霍布斯咖啡馆，咖啡馆": [
-        ["伊莎贝拉", "..."],
-        ["阿伊莎", "..."]
-      ]
-    }
-  ]
+    "node": node,
+    "events": self.retrieve_events(node.describe),
+    "thoughts": self.retrieve_thoughts(node.describe),
 }
 ```
 
-这个文件由 `_chat_with()` 写入内存，由 `SimulateServer.simulate()` 每步写盘。
+这说明当前 focus 会触发一次关系检索。例如，克劳斯看到玛丽亚，系统不会只把“玛丽亚在这里”交给聊天 prompt。它还会检索：
 
-它是信息扩散实验的重要证据。
+- 与玛丽亚相关的事件。
+- 与玛丽亚相关的想法。
 
-如果我们要证明阿伊莎知道派对，是因为伊莎贝拉告诉她，不能只看阿伊莎后来说“我知道”。
+社交行为因此具有历史感。角色是否聊天、说什么、如何称呼对方，都可以受过往关系影响。
 
-还要能在 `conversation.json` 或 `simulation.md` 中找到这次对话。
+## 20.5 reaction 的两条路径
 
-## 20.5 compress.py 的两个输出
-
-`compress.py` 定义：
-
-```python
-file_markdown = "simulation.md"
-file_movement = "movement.json"
-frames_per_step = 60
-```
-
-它有两个主函数：
+`_reaction()` 尝试两条路径：
 
 ```python
-generate_report(...)
-generate_movement(...)
+if self._chat_with(other, focus):
+    return True
+if self._wait_other(other, focus):
+    return True
+return False
 ```
 
-`generate_report()` 生成 `simulation.md`。
+第一条是聊天。第二条是等待。聊天处理社会信息交换。等待处理空间资源冲突。这两种 reaction 都可能打断原日程。如果聊天成功，当前计划被对话 action 替代。如果等待成功，当前计划被等待 action 替代。如果都不成功，agent 继续原计划。
 
-`generate_movement()` 生成 `movement.json`。
+## 20.6 _skip_react()：何时不反应
 
-这两个输出面向不同用途。
+社交不应该随时发生。`_skip_react()` 过滤不合适场景。它会跳过：
 
-`simulation.md` 面向人阅读。
+- 深夜 23 点后。
+- 自己或对方正在睡觉。
+- 事件处于待开始状态。
 
-`movement.json` 面向前端回放。
-
-后续复现实验会同时使用二者。
-
-## 20.6 generate_movement() 总览
-
-`generate_movement()` 做几件事。
-
-第一，读取 conversation。
-
-第二，收集 checkpoint JSON 文件。
-
-第三，读取 stride。
-
-第四，加载 maze，用于计算移动路径。
-
-第五，为 step 1 插入第 0 帧初始状态。
-
-第六，遍历每个 checkpoint 中的 agent。
-
-第七，根据 source_coord 和 target_coord 计算 path。
-
-第八，把每个 step 展开成 60 帧。
-
-第九，把结果保存为 `movement.json`。
-
-这一步把离散 checkpoint 变成前端可播放帧数据。
-
-## 20.7 movement.json 的顶层结构
-
-`generate_movement()` 最终输出：
+代码中：
 
 ```python
-result = {
-    "start_datetime": "",
-    "stride": stride,
-    "sec_per_step": sec_per_step,
-    "persona_init_pos": persona_init_pos,
-    "all_movement": all_movement,
-}
+if utils.get_timer().daily_duration(mode="hour") >= 23:
+    return True
+if _skip(self.get_event()) or _skip(other.get_event()):
+    return True
 ```
 
-字段含义：
+这让角色不会半夜频繁社交，也不会和睡觉的人聊天。可信社交不仅要会说话，也要知道什么时候不说话。
 
-`start_datetime` 是回放起始时间。
+## 20.7 _chat_with() 的前置条件
 
-`stride` 是每个仿真 step 对应多少分钟。
+`_chat_with()` 先做多项检查。第一，双方日程必须已初始化：
 
-`sec_per_step` 是回放时每一帧对应秒数。
+```python
+if len(self.schedule.daily_schedule) < 1 or len(other.schedule.daily_schedule) < 1:
+    return False
+```
 
-`persona_init_pos` 保存每个角色初始位置。
+第二，不适合 reaction 时返回 False。第三，对方不能正在移动：
 
-`all_movement` 保存每一帧的角色移动、位置和动作。
+```python
+if other.path:
+    return False
+```
 
-其中 `all_movement` 还包含：
+第四，双方不能已经在对话：
+
+```python
+if self.get_event().fit(predicate="对话") or other.get_event().fit(predicate="对话"):
+    return False
+```
+
+这些检查防止社交过度触发。它们让对话发生在更稳定的场景中。
+
+## 20.8 最近聊天冷却
+
+`_chat_with()` 会检索最近与对方的聊天记录：
+
+```python
+chats = self.associate.retrieve_chats(other.name)
+```
+
+如果有聊天记录，会计算距离现在多久：
+
+```python
+delta = utils.get_timer().get_delta(chats[0].create)
+if delta < 60:
+    return False
+```
+
+一小时内聊过就不再聊。否则两个角色在同一个地点可能每个 step 都重新对话。冷却机制让对话更像真实社交，而不是循环触发器。
+
+## 20.9 decide_chat：是否应该主动聊天
+
+通过前置条件后，系统调用：
+
+```python
+if not self.completion("decide_chat", self, other, focus, chats):
+    return False
+```
+
+`decide_chat` prompt 会基于：
+
+- 上下文事件。
+- 关系 thoughts。
+- 当前时间。
+- 上次聊天历史。
+- 自己当前状态。
+- 对方当前状态。
+
+判断是否主动聊天。输出是 bool。这一步把“是否聊天”从“看见人就聊”升级为情境判断。例如：
+
+- 正在赶去睡觉，不一定聊天。
+- 刚刚聊过，不聊天。
+- 对方正在做重要事情，不一定打扰。
+- 有共同活动或邀请事项，可能聊天。
+
+这就是 believable behavior。
+
+## 20.10 summarize_relation：双方视角不同
+
+决定聊天后，系统生成双方关系摘要：
+
+```python
+relations = [
+    self.completion("summarize_relation", self, other.name),
+    other.completion("summarize_relation", other, self.name),
+]
+```
+
+这里生成两个摘要，而不是一个全局关系。这很关键。克劳斯怎么看玛丽亚，不一定等于玛丽亚怎么看克劳斯。山姆怎么看汤姆，也不等于汤姆怎么看山姆。对话生成时，双方各用自己的关系摘要。这让对话具有不对称性。如果所有角色共享一份关系状态，对话会更像剧本，而不是个体社会互动。
+
+## 20.11 summarize_relation 如何检索
+
+`prompt_summarize_relation()` 会围绕对方名字检索记忆：
+
+```python
+nodes = agent.associate.retrieve_focus([other_name], 50)
+```
+
+然后把检索结果放进 prompt。如果没有有效结果，failsafe 是：
 
 ```text
-description
-conversation
+<agent> 正在看着 <other_name>
 ```
 
-用于展示角色基础信息和对话内容。
+这说明关系摘要来自记忆，而不是全局关系表。角色越多次与某人互动，关系摘要越可能具体。这支撑关系形成。
 
-## 20.8 第 0 帧：insert_frame0()
+## 20.12 generate_chat：生成一句话
 
-`insert_frame0()` 插入角色初始状态。
-
-它读取每个角色的 `agent.json`：
+多轮对话核心是：
 
 ```python
-json_path = f"frontend/static/assets/village/agents/{agent_name}/agent.json"
+text = self.completion("generate_chat", self, other, relations[0], chats)
 ```
 
-然后取：
+`generate_chat` prompt 包含：
 
-- living_area。
-- 初始 coord。
-- currently。
-- scratch。
+- 角色基础描述。
+- 当前检索记忆。
+- 当前地点。
+- 当前时间。
+- 最近对话背景。
+- 当前场景。
+- 已有对话记录。
+- 对话原则。
 
-并写入：
+对话原则包括：
+
+- 不重复已有内容。
+- 符合性格和当前情境。
+- 语言自然。
+- 1 到 3 句话。
+- 直接输出角色对话内容。
+
+这比单纯“让 A 和 B 对话”要稳得多。因为每次生成都带上关系、记忆和当前场景。
+
+## 20.13 对话记忆检索
+
+`prompt_generate_chat()` 内部还会检索相关记忆：
 
 ```python
-movement["0"][agent_name] = {
-    "location": location,
-    "movement": coord,
-    "description": "正在睡觉",
-}
+focus = [relation, other.get_event().get_describe()]
+if len(chats) > 4:
+    focus.append("; ".join("{}: {}".format(n, t) for n, t in chats[-4:]))
+nodes = agent.associate.retrieve_focus(focus, 15)
 ```
 
-第 0 帧主要给前端初始化角色位置和基础信息。
+生成一句话时会围绕：
 
-注意这里 description 默认是“正在睡觉”，这是一种初始显示简化，不一定代表角色真实 action。
+- 双方关系。
+- 对方当前行为。
+- 最近对话内容。
 
-## 20.9 从 checkpoint 到 path
-
-对每个 checkpoint，`generate_movement()` 取：
+检索记忆。此外，它还检索最近 480 分钟内与对方的聊天：
 
 ```python
-source_coord = last_location.get(agent_name, all_movement["0"][agent_name])["movement"]
-target_coord = agent_data["coord"]
-location = get_location(agent_data["action"]["event"]["address"])
-path = maze.find_path(source_coord, target_coord)
+chat_nodes = agent.associate.retrieve_chats(other.name)
 ```
 
-也就是说，回放路径不是 checkpoint 直接保存的 path，而是根据上一位置和当前 checkpoint 坐标重新计算。
+这让角色能避免重复，也能延续近期话题。
 
-这样可以让前端播放移动过程。
+## 20.14 多轮对话循环
 
-如果找不到 location，则使用上一位置。
-
-这说明 movement.json 是派生数据，不是原始仿真状态。
-
-原始状态仍然在 checkpoint。
-
-## 20.10 frames_per_step
-
-`compress.py` 中：
+`_chat_with()` 中：
 
 ```python
-frames_per_step = 60
+for i in range(self.chat_iter):
+    text = self.completion("generate_chat", self, other, relations[0], chats)
+    ...
+    text = other.completion("generate_chat", other, self, relations[1], chats)
 ```
 
-每个仿真 step 被展开成 60 帧。
-
-对于每一帧：
+`chat_iter` 默认是 4。一轮中，发起者说一句，对方说一句。每次说话后，内容加入：
 
 ```python
-step_key = "%d" % ((step-1) * frames_per_step + 1 + i)
+chats.append((name, text))
 ```
 
-如果 path 有剩余坐标，就每帧取一个点。
+这使下一句生成能看到已有对话。对话不是一次性生成整段，而是逐轮生成。这更像真实互动，也更容易在中途结束。
 
-如果 path 结束，movement 为 None。
+## 20.15 防复读
 
-这让前端可以平滑播放角色移动。
+从第二轮开始，系统检查复读：
 
-不过它也意味着：
+```python
+generate_chat_check_repeat
+```
+
+如果判断重复，就结束。这针对 LLM 常见问题：
+
+- 重复上一轮意思。
+- 客套话循环。
+- 继续确认同一件事。
+
+多智能体长对话很容易陷入复读。防复读 prompt 是工程上非常实用的补丁。它不属于论文核心模块，但对项目可运行性很关键。
+
+## 20.16 decide_chat_terminate：判断话题结束
+
+系统还会调用：
+
+```python
+decide_chat_terminate
+```
+
+判断对话是否已告一段落。如果结束，就 break。这让对话长度由内容决定，而不是固定轮数。例如，简单问候可能一两轮结束。派对邀请可能需要多轮。争论或协商可能更长。当前项目仍然有最大轮数 `chat_iter`，避免无限对话。
+
+## 20.17 保存 conversation
+
+对话结束后，系统写入全局 conversation：
+
+```python
+key = utils.get_timer().get_date("%Y%m%d-%H:%M")
+self.conversation[key].append({
+    f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats
+})
+```
+
+这个结构记录：
+
+- 时间。
+- 发起者。
+- 接收者。
+- 地点。
+- 对话内容。
+
+它会被 `SimulateServer.simulate()` 每步写入 `conversation.json`。后续 `compress.py` 会用它生成 `simulation.md`。这让社交行为可复盘。
+
+## 20.18 summarize_chats：对话摘要
+
+系统不会把完整对话直接作为当前 action。它会先生成摘要：
+
+```python
+chat_summary = self.completion("summarize_chats", chats)
+```
+
+摘要用于：
+
+- 对话事件 describe。
+- chat memory。
+- 日程修订。
+- 后续 reflection。
+
+完整对话适合日志。摘要适合记忆和检索。如果摘要质量差，后续社交记忆会变差。例如，派对邀请摘要必须包含时间、地点和邀请意图，否则后续无法传播。
+
+## 20.19 schedule_chat：写回双方
+
+对话摘要生成后：
+
+```python
+self.schedule_chat(chats, chat_summary, start, duration, other)
+other.schedule_chat(chats, chat_summary, start, duration, self)
+```
+
+对话会写回双方。这符合现实。聊天不是只有发起者记得。双方都要：
+
+- 把对话加入 `chats`。
+- 创建对话 event。
+- 修订当前 schedule。
+
+这也是信息传播的关键。如果只有发起者记录对话，被邀请者就不会知道派对。
+
+## 20.20 对话时长如何估算
+
+对话 duration 由文本长度估算：
+
+```python
+duration = int(sum([len(c[1]) for c in chats]) / 240)
+```
+
+这是一种简单估计。对话越长，占用时间越久。但它有边界。中文字符长度与真实说话时间不是严格线性。短对话可能 duration 为 0。更精细的系统可以设置最小时长，或按词速估算。当前实现足够支持日程占用的基本效果。
+
+## 20.21 对话如何进入反思
+
+`schedule_chat()` 会把 chats 加入：
+
+```python
+self.chats.extend(chats)
+```
+
+之后 `Agent.reflect()` 会处理 `self.chats`：
+
+```python
+thought = self.completion("reflect_chat_planing", self.chats)
+_add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
+thought = self.completion("reflect_chat_memory", self.chats)
+_add_thought(f"{self.name} {thought}", evidence)
+```
+
+所以对话不仅影响当前日程，也会影响高层 thought。例如：
 
 ```text
-回放帧数不等于仿真认知步数。
+阿伊莎知道伊莎贝拉邀请她参加情人节派对。
+克劳斯觉得玛丽亚愿意讨论开放性问题。
+山姆发现汤姆对竞选保持怀疑。
 ```
 
-agent 不是每一帧都思考。
+这些 thought 会影响后续行为。
 
-agent 每 step 思考一次，前端只是把 step 展开成动画。
+## 20.22 _wait_other()：等待机制
 
-## 20.11 action 文本
+社交章节还要讲等待，因为它也是 reaction 的一部分。`_wait_other()` 处理空间冲突。前置条件包括：
 
-回放中每帧会保存 action。
+- 不跳过 reaction。
+- 自己必须在 path 上。
+- 自己 action 地址必须等于对方当前 tile 地址。
+- `decide_wait` 判断应该等待。
 
-如果正在移动：
+如果决定等待，会创建 event：
 
 ```python
-action = f"前往 {location}"
-```
-
-如果不移动：
-
-```python
-action = agent_data["action"]["event"]["describe"]
-```
-
-如果 describe 为空，就用：
-
-```python
-predicate + object
-```
-
-睡觉会加：
-
-```text
-😴
-```
-
-如果该 step 有对话，会加：
-
-```text
-💬
-```
-
-这些 action 主要用于前端显示。
-
-它不一定包含完整行为上下文。
-
-完整上下文需要看 checkpoint 和 simulation.md。
-
-## 20.12 对话如何进入 movement.json
-
-`generate_movement()` 会读取 conversation。
-
-如果某个 step_time 有对话，会生成文本：
-
-```python
-step_conversation += f"\n地点：{...}\n\n"
-for c in chat:
-    step_conversation += f"{agent}：{text}\n"
-```
-
-然后写入：
-
-```python
-all_movement["conversation"][step_time] = step_conversation
-```
-
-前端可以根据时间显示对话。
-
-这让回放不仅是角色移动，也能看到聊天内容。
-
-## 20.13 generate_report()：生成 simulation.md
-
-`generate_report()` 生成 Markdown 报告。
-
-它首先写基础人设：
-
-```markdown
-# 基础人设
-
-## 克劳斯
-
-年龄：20岁
-先天：善良、好奇、热情
-后天：...
-生活习惯：...
-当前状态：...
-```
-
-然后遍历 checkpoint，提取活动变化。
-
-如果角色位置和 action 与上次一样，就跳过。
-
-这避免 Markdown 被重复状态刷屏。
-
-当有变化时，写入：
-
-```markdown
-# 20250213-10:20
-
-## 活动记录：
-
-### 克劳斯
-位置：...
-活动：...
-```
-
-如果该时间有对话，再写对话记录。
-
-## 20.14 simulation.md 的价值
-
-`simulation.md` 是写书和实验非常重要的文件。
-
-它有三类价值。
-
-第一，人类可读。
-
-不用打开前端，也能按时间线阅读小镇发生了什么。
-
-第二，可引用。
-
-写实验报告时，可以引用某个时间点某个角色的活动和对话。
-
-第三，可审计。
-
-如果某个角色声称知道派对，我们可以回查时间线，看它什么时候听到。
-
-这使 GenerativeAgentsCN 不只是演示项目，而是可分析项目。
-
-## 20.15 replay.py：Flask 服务
-
-回放服务入口是：
-
-```text
-generative_agents/replay.py
-```
-
-它创建 Flask app：
-
-```python
-app = Flask(
-    __name__,
-    template_folder="frontend/templates",
-    static_folder="frontend/static",
-    static_url_path="/static",
+memory.Event(
+    self.name,
+    "waiting to start",
+    self.get_event().get_describe(False),
+    address=self.get_event().address,
+    emoji=f"⌛",
 )
 ```
 
-首页路由读取 query 参数：
-
-```text
-name
-step
-speed
-zoom
-```
-
-例如：
-
-```text
-http://127.0.0.1:5000/?name=sim-test&step=0&speed=2&zoom=0.8
-```
-
-它加载：
-
-```text
-results/compressed/<name>/movement.json
-```
-
-然后渲染：
-
-```text
-frontend/templates/index.html
-```
-
-## 20.16 step、speed、zoom
-
-`replay.py` 对参数做处理。
-
-`step` 决定从第几个仿真 step 开始回放。
-
-如果 step > 1，会调整 `start_datetime` 和 agent 初始位置。
-
-`speed` 限制在 0 到 5，然后转换为：
+然后调用：
 
 ```python
-speed = 2 ** speed
+self.revise_schedule(event, start, duration)
 ```
 
-也就是指数级速度。
+等待是社交的边界场景。它不是对话，但它处理人与人之间的空间协调。
 
-`zoom` 控制画面缩放。
+## 20.23 decide_wait 的常识示例
 
-这些参数让读者可以快速跳到某段仿真。
-
-例如派对实验中，可以直接跳到下午 5 点前后。
-
-## 20.17 index.html 与角色面板
-
-`frontend/templates/index.html` 继承 `base.html`。
-
-它包含：
-
-- `game-container`：Phaser 游戏容器。
-- 角色头像列表。
-- 点击角色显示详情面板。
-
-每个角色详情包含：
+`decide_wait` prompt 中有示例。一个例子是两人都要使用浴室。如果浴室已被占用，后到者应该等待。另一个例子是一人吃午饭，一人洗衣服。两者不冲突，继续行动。这些例子告诉模型：
 
 ```text
-当前活动
-目标地址
+不是看到别人就等待。
+要判断行动是否争用同一空间或对象。
 ```
 
-脚本中引入 Phaser：
+这让等待机制更接近常识。
 
-```html
-<script src='https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js'></script>
-```
+## 20.24 社交如何支撑信息扩散
 
-并 include：
+情人节派对信息扩散依赖社交闭环。流程：
 
 ```text
-main_script.html
+伊莎贝拉 currently 有派对目标
+  -> 计划中可能安排邀请居民
+  -> 遇到阿伊莎
+  -> decide_chat 成功
+  -> generate_chat 提到派对
+  -> summarize_chats 保存派对摘要
+  -> schedule_chat 写入双方
+  -> 阿伊莎后续检索到派对
+  -> 阿伊莎可能告诉别人
 ```
 
-真正地图和角色动画逻辑在 `main_script.html` 中。
+这个传播不是全局变量。它需要每一步都成功。如果 decide_chat 返回 False，传播断。如果 generate_chat 没提派对，传播断。如果 summarize_chats 丢了时间地点，传播质量下降。如果 chat memory 后续检索失败，传播不会继续。这就是为什么社交模块是复现实验核心。
 
-本书不需要逐行讲 Phaser 细节，但要知道前端消费的是 `movement.json`。
+## 20.25 社交如何支撑关系形成
 
-## 20.18 回放与 checkpoint 的区别
-
-回放数据不是原始真相。
-
-原始真相是 checkpoint 和 storage。
-
-`movement.json` 是为了前端展示而生成的派生数据。
-
-`simulation.md` 是为了人读而生成的摘要数据。
-
-这点很重要。
-
-如果要做严谨评价，应优先查：
+关系形成也依赖社交闭环。以克劳斯和玛丽亚为例：
 
 ```text
-checkpoint
-conversation.json
-agent memory storage
+相遇
+  -> 触发聊天
+  -> 对话中交换兴趣
+  -> 摘要写入双方记忆
+  -> reflection 生成高层 thought
+  -> 下一次 summarize_relation 更具体
+  -> 后续对话更有历史感
 ```
 
-如果要快速理解故事线，可以看：
+关系不是固定字段。它是多次对话、记忆检索和反思积累出来的。这也是 Generative Agents 区别于传统 NPC 关系表的地方。传统 NPC 可能有：
 
 ```text
-simulation.md
-movement.json
+friendship_score = 70
 ```
 
-两类数据用途不同。
+Generative Agents 更接近：
 
-## 20.19 回放系统如何服务复现实验
+```text
+我记得我们聊过什么。
+我对这些经历有什么理解。
+我下次见你时会基于这些理解说话。
+```
 
-第四部分会大量用到回放系统。
+## 20.26 社交失败模式
 
-情人节派对实验需要看：
+社交模块常见失败有七类。第一，触发不足。角色看到了人，但 decide_chat 经常返回 False，信息无法传播。第二，触发过度。角色频繁聊天，日程被打断，小镇像聊天大厅。第三，对话泛化。角色只是寒暄，没有提到当前目标或记忆。第四，摘要丢失关键信息。派对时间、地点、承诺没有进入 chat summary。第五，关系摘要错误。检索到无关记忆，导致对话语气不合理。第六，复读或过度礼貌。模型反复客套，缺少真实推进。第七，对话不改变后续行为。虽然生成了文本，但没有影响日程、记忆或反思。调试社交时，要沿闭环逐步检查。
 
-- 伊莎贝拉什么时候邀请谁。
-- 被邀请者是否在正确时间到达咖啡馆。
-- 对话中是否包含时间和地点。
+## 20.27 如何调试一次对话
 
-镇长竞选实验需要看：
+建议按下面顺序。第一，确认两人是否同一 arena 且互相可感知。第二，看 `percept` 日志，确认 concept 数量。第三，看 `_reaction()` 是否选中对方。第四，看最近聊天记录，是否因 60 分钟冷却跳过。第五，看 `decide_chat` prompt 和输出。第六，看 `summarize_relation` 是否合理。第七，看每轮 `generate_chat`。第八，看是否被 repeat check 或 terminate 提前结束。第九，看 `summarize_chats` 是否保留关键内容。第十，看双方 schedule 和 chat memory 是否写入。这条调试链路能定位大多数社交问题。
 
-- 山姆是否谈到竞选。
-- 谁听到了。
-- 谁又告诉别人。
+## 20.28 可改进方向
 
-关系形成实验需要看：
+社交模块可以从几个方向升级。第一，增加社交意图。区分寒暄、邀请、询问、争论、求助、协商。第二，增加关系状态结构化表示。把自然语言关系摘要与结构化关系图结合。第三，增加承诺系统。如果对话中承诺参加派对，应自动生成候选计划。第四，增加拒绝能力。减少模型过度合作，让角色能合理拒绝不符合兴趣或时间的请求。第五，增加对话事件抽取。从对话中抽取 facts、commitments、preferences，分别写入不同记忆。第六，增加群聊。当前 `_chat_with()` 是两人对话。派对、会议、课堂更适合多人对话。这些升级会让小镇社会更复杂，也更接近 2026 年多智能体协作研究。
 
-- 克劳斯和玛丽亚是否相遇。
-- 是否多次对话。
-- 后续活动是否更接近。
+## 20.29 本章小结
 
-这些都可以从 `simulation.md` 和 `conversation.json` 开始分析。
+社交机制把个体行为变成社会行为。一次聊天不是简单生成几句话，而是从感知、关系检索、聊天决策、逐轮生成、总结写回到日程修改的一整条链路。
 
-如果要统计位置和到场，则看 `movement.json` 或 checkpoint 中 coord/action。
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 社交入口 | 社交从 `percept()` 后的 `_reaction()` 开始。 |
+| focus 选择 | `_reaction()` 优先选择其他 agent 作为 focus。 |
+| 关系检索 | `get_relation()` 会检索与 focus 相关的 events 和 thoughts。 |
+| 两条反应路径 | reaction 主要有聊天和等待两种形式。 |
+| 聊天前置条件 | `_chat_with()` 会检查日程、睡眠、移动、已有对话和冷却时间。 |
+| 聊天决策 | `decide_chat` 判断是否应该主动聊天。 |
+| 关系摘要 | `summarize_relation` 为双方分别生成关系背景。 |
+| 多轮生成 | `generate_chat` 使用记忆、地点、时间和已有对话逐轮生成。 |
+| 结束控制 | `generate_chat_check_repeat` 和 `decide_chat_terminate` 控制复读和终止。 |
+| 写回机制 | `summarize_chats` 和 `schedule_chat` 会把对话写回记忆、日程和反思材料。 |
+| 等待机制 | `_wait_other()` 处理空间冲突下的等待。 |
+| 社会意义 | 社交闭环支撑信息扩散、关系形成和协同行动。 |
 
-## 20.20 回放系统边界
-
-当前回放系统有几个边界。
-
-第一，压缩是离线的。
-
-运行仿真后需要手动执行 `compress.py`。
-
-第二，movement 路径重新计算。
-
-它根据 checkpoint 坐标和 Maze 重新生成 path，不一定完全等同于运行时返回 path。
-
-第三，`simulation.md` 只记录变化。
-
-如果状态不变，会跳过，因此不是每一步完整日志。
-
-第四，对话显示依赖 conversation 时间匹配。
-
-如果时间 key 不一致，对话可能无法显示。
-
-第五，前端更偏回放，不是实时交互编辑器。
-
-第六，Phaser 从 CDN 加载。
-
-离线环境可能需要本地化依赖。
-
-这些边界不会影响基本使用，但做严谨实验时要知道。
-
-## 20.21 可改进方向
-
-回放系统可以从五个方向升级。
-
-第一，自动压缩。
-
-仿真结束后自动生成 compressed 结果。
-
-第二，交互式时间线。
-
-在前端按角色、地点、事件筛选。
-
-第三，证据链接。
-
-从 `simulation.md` 的某条对话跳到对应 checkpoint 和 memory node。
-
-第四，实验指标导出。
-
-自动统计信息传播、到场率、对话次数、关系网络。
-
-第五，本地化前端依赖。
-
-避免 CDN 影响离线教学。
-
-这些升级会让项目更适合写实验报告和教学。
-
-## 20.22 第三部分总结
-
-到这里，第三部分源码深读结束。
-
-我们已经从底层到上层讲完：
-
-- 世界模型。
-- 智能体初始化。
-- 仿真循环。
-- 感知。
-- 记忆。
-- 日程。
-- 社交。
-- 反思。
-- 模型适配。
-- 回放系统。
-
-现在读者应该能把论文概念和源码模块对应起来。
-
-下一部分开始，我们不再只读源码，而是设计实验。
-
-我们会用当前项目复现论文中的情人节派对传播、镇长竞选信息扩散、角色关系形成，并设计自己的小镇事件。
-
-## 20.23 本章小结
-
-本章讲清了 GenerativeAgentsCN 的回放系统：
-
-1. `start.py` 每步生成 checkpoint 和 `conversation.json`。
-2. checkpoint 适合断点恢复和严谨审计，但不适合直接阅读。
-3. `compress.py` 生成 `movement.json` 和 `simulation.md`。
-4. `movement.json` 面向 Phaser 前端回放。
-5. `simulation.md` 面向人类阅读和实验复盘。
-6. `generate_movement()` 会把 checkpoint 展开成每 step 60 帧。
-7. `generate_report()` 会写基础人设、活动记录和对话记录。
-8. `replay.py` 用 Flask 加载 compressed 数据并渲染前端。
-9. `index.html` 展示角色头像、当前活动和 Phaser 画面。
-10. 回放数据是派生数据，严谨评价仍要回查 checkpoint、conversation 和 memory。
-11. 第四部分复现实验会以这些输出作为证据基础。
-
-下一章进入复现实验：我们先复现论文中的情人节派对传播。
+下一章讲反思：深入 `Agent.reflect()`，看重要事件如何触发高层 thought，聊天如何变成计划影响和关系记忆，以及这些 thought 如何重新进入 memory stream。
 
 ## 参考资料
 
-- Local source: `generative_agents/compress.py`
-- Local source: `generative_agents/replay.py`
-- Local source: `generative_agents/frontend/templates/index.html`
-- Local source: `generative_agents/frontend/templates/main_script.html`
-- Local output: `generative_agents/results/checkpoints/`
-- Local output: `generative_agents/results/compressed/`
+- Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
+- Local prompts: `generative_agents/data/prompts/decide_chat.txt`
+- Local prompts: `generative_agents/data/prompts/generate_chat.txt`
+- Local prompts: `generative_agents/data/prompts/summarize_relation.txt`
+- Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
+- Local prompts: `generative_agents/data/prompts/decide_wait.txt`

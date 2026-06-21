@@ -1,920 +1,791 @@
-# 第 15 章 记忆：事件、对话、想法如何存储和检索
+# 第 15 章 智能体初始化：角色设定如何进入系统
 
-## 15.1 本章要解决的问题
+## 15.1 核心问题
 
-第 14 章讲感知。
-
-感知到的事件如果不存下来，只能影响当前 step。
-
-Generative Agents 的关键是让经历进入长期行为链路。
-
-在 GenerativeAgentsCN 中，这个长期记忆系统主要由四个对象组成：
+世界模型解释了小镇如何承载角色行动。角色进入世界之前，需要先被装配成可运行的智能体状态。在 Generative Agents 中，一个智能体不是只靠一份 `agent.json` 就能运行。`agent.json` 只是角色种子。真正可运行的 `Agent` 要把多类信息装配在一起：
 
 ```text
-Event
-  -> Concept
-  -> Associate
-  -> LlamaIndex
+角色设定
+  + 全局 agent 基础配置
+  + 地图对象
+  + 对话日志
+  + 空间记忆
+  + 日程系统
+  + 关联记忆
+  + prompt scratch
+  + 当前状态
+  + 当前 action
+  + 坐标与 tile event
 ```
 
-还有一个负责检索重排的对象：
+这个装配过程发生在：
 
 ```text
-AssociateRetriever
+start.py
+  -> get_config()
+  -> Game.__init__()
+  -> Agent.__init__()
 ```
 
-本章要回答九个问题：
+本章聚焦八个问题：
 
-1. Event 与 Concept 有什么区别？
-2. 记忆为什么分成 event、chat、thought 三类？
-3. `Associate.add_node()` 如何写入记忆？
-4. 记忆 metadata 中保存了哪些信息？
-5. LlamaIndex 在项目中承担什么职责？
-6. `retrieve_events()`、`retrieve_chats()`、`retrieve_thoughts()` 怎么工作？
-7. `retrieve_focus()` 如何实现论文三因素检索？
-8. 记忆如何过期、清理和持久化？
-9. 当前记忆系统有哪些边界和升级方向？
-
-[图 15-1：Event -> Concept -> Associate -> LlamaIndex 的记忆链路]
+1. `agent.json` 里有哪些角色设定？
+2. `data/config.json` 提供哪些公共配置？
+3. `Game` 如何合并公共配置和角色配置？
+4. `Agent.__init__()` 如何装配智能体？
+5. `Scratch` 如何把角色设定变成 prompt 上下文？
+6. 初始 action 和坐标如何进入 Maze？
+7. checkpoint 恢复时初始化有什么不同？
+8. 初始化阶段有哪些容易踩坑的地方？
 
 ```mermaid
 flowchart LR
-    E[Event<br/>subject/predicate/object/address] --> C[Concept<br/>node_type/poignancy/time]
-    C --> A[Associate.add_node]
-    A --> I[LlamaIndex VectorStore]
-    I --> R[AssociateRetriever]
-    R --> X[检索结果 Concept]
-    X --> P[Prompt 上下文]
+    JSON["agent.json<br/>角色设定"] --> Config["运行配置合并"]
+    Config --> Scratch["Scratch<br/>人设、当前状态、参数"]
+    Config --> Spatial["Spatial<br/>已知地点"]
+    Config --> Schedule["Schedule<br/>日程"]
+    Config --> Associate["Associate<br/>记忆"]
+    Scratch --> Agent["Agent 对象"]
+    Spatial --> Agent
+    Schedule --> Agent
+    Associate --> Agent
 ```
 
-## 15.2 记忆模块的源码位置
+*图 15-1：从 agent.json 到 Agent 对象的装配流程。初始化不是简单读取角色卡，而是把角色设定拆进状态、空间、日程和记忆四条链路。*
 
-本章主要涉及三个文件：
+## 15.2 角色配置不是单一来源
+
+读源码前要先明确一点：
+
+Generative Agents 中的 agent 配置来自两个地方。第一，公共配置：
 
 ```text
-generative_agents/modules/memory/event.py
-generative_agents/modules/memory/associate.py
-generative_agents/modules/storage/index.py
+generative_agents/data/config.json
 ```
 
-`event.py` 定义 Event。
-
-`associate.py` 定义 Concept、AssociateRetriever 和 Associate。
-
-`index.py` 封装 LlamaIndex 和 embedding provider。
-
-它们的职责不同：
+第二，角色配置：
 
 ```text
-Event：描述发生了什么。
-Concept：把 Event 包装成记忆节点。
-Associate：管理一个 agent 的记忆列表和检索。
-LlamaIndex：底层向量索引与持久化。
-AssociateRetriever：按 recency、importance、relevance 重新排序。
+generative_agents/frontend/static/assets/village/agents/<角色名>/agent.json
 ```
 
-读记忆模块时，要先分清这几个层次。
-
-否则很容易把“事件结构”“记忆节点”和“向量索引”混在一起。
-
-## 15.3 Event：世界事实的最小表达
-
-`Event` 在第 14 章已经出现过。
-
-它保存：
+公共配置描述所有 agent 共用的运行参数。角色配置描述某个 agent 的身份、生活和初始空间记忆。在 `Game.__init__()` 中，两者会合并：
 
 ```python
-subject
-predicate
-object
-address
-describe
-emoji
-```
-
-默认 predicate 是：
-
-```text
-此时
-```
-
-默认 object 是：
-
-```text
-空闲
-```
-
-Event 是世界事实的最小表达。
-
-例如：
-
-```text
-克劳斯 此时 阅读研究资料
-伊莎贝拉 对话 阿伊莎
-咖啡馆顾客座位 此时 被占用
-```
-
-Event 本身还不是长期记忆。
-
-它只是描述“发生了什么”。
-
-要进入记忆系统，它还需要被包装成 Concept，并写入 Associate。
-
-## 15.4 Concept：记忆节点包装
-
-`Concept` 定义在 `associate.py`。
-
-它包含：
-
-```python
-describe
-node_id
-node_type
-subject
-predicate
-object
-address
-poignancy
-create
-expire
-access
-```
-
-Concept 是 memory stream 中的一条记录。
-
-它比 Event 多了几类信息。
-
-第一，节点身份。
-
-`node_id` 用于索引定位。
-
-第二，节点类型。
-
-`node_type` 可以是：
-
-```text
-event
-chat
-thought
-```
-
-第三，重要性。
-
-`poignancy` 对应论文 importance。
-
-第四，时间。
-
-`create` 是创建时间。
-
-`expire` 是过期时间。
-
-`access` 是最近访问时间。
-
-这些字段让记忆不只是文本，而是带元数据的可检索节点。
-
-## 15.5 Concept 与 Event 的关系
-
-Concept 内部仍然包含 Event。
-
-初始化时：
-
-```python
-self.event = Event(
-    subject, predicate, object, describe=describe, address=address.split(":")
+agent_config = utils.update_dict(
+    copy.deepcopy(agent_base), self.load_static(agent["config_path"])
 )
+agent_config = utils.update_dict(agent_config, agent)
 ```
 
-也就是说，Concept 是 Event 的带元数据版本。
-
-可以这样理解：
+装配顺序是：
 
 ```text
-Event：发生了什么。
-Concept：这个事件作为记忆节点，何时发生、重要性多少、何时过期、最近何时被访问。
+agent_base
+  -> agent.json
+  -> checkpoint/resume 中的 agent 状态
 ```
 
-这也是为什么 `Concept.describe` 会返回：
+后面的配置会覆盖前面的配置。这对断点恢复非常关键。如果从 checkpoint 恢复，角色不能回到初始 `agent.json` 状态，而要带着已有记忆、日程、action 和 currently 继续运行。
 
-```python
-self.event.get_describe()
-```
+## 15.3 data/config.json：所有 agent 的运行底座
 
-后续 prompt 和检索主要使用自然语言 describe。
-
-metadata 则用于过滤、排序和持久化。
-
-## 15.6 三类记忆：event、chat、thought
-
-`Associate` 初始化时：
-
-```python
-self.memory = memory or {"event": [], "thought": [], "chat": []}
-```
-
-这三类记忆对应不同来源。
-
-`event` 是普通观察和行为事件。
-
-例如：
-
-```text
-克劳斯在图书馆写论文。
-伊莎贝拉正在准备派对。
-山姆在咖啡馆谈竞选。
-```
-
-`chat` 是对话摘要。
-
-例如：
-
-```text
-伊莎贝拉邀请阿伊莎参加情人节派对。
-```
-
-`thought` 是反思、计划或高层想法。
-
-例如：
-
-```text
-克劳斯认为玛丽亚愿意讨论开放性问题。
-```
-
-这三类记忆都进入同一个向量索引，但在 `memory` 字典中分别维护 node id 列表。
-
-这样做兼顾统一检索和类型过滤。
-
-## 15.7 Associate：一个 agent 的记忆管理器
-
-每个 agent 有自己的 `Associate`。
-
-初始化：
-
-```python
-self.associate = memory.Associate(
-    os.path.join(config["storage_root"], "associate"), **config["associate"]
-)
-```
-
-`Associate.__init__()` 中：
-
-```python
-self._index = LlamaIndex(embedding, path)
-self.memory = memory or {"event": [], "thought": [], "chat": []}
-self.cleanup_index()
-```
-
-也就是说，Associate 包含两个层面。
-
-第一，Python 层 memory 列表。
-
-它保存每类记忆的 node_id 顺序。
-
-第二，底层 LlamaIndex。
-
-它保存节点文本、metadata、embedding 和向量索引。
-
-这两个层面必须保持一致。
-
-因此初始化时会调用 `cleanup_index()`，删除过期或无效节点，并同步 memory 列表。
-
-## 15.8 add_node()：写入记忆
-
-记忆写入入口是：
-
-```python
-Associate.add_node()
-```
-
-参数包括：
-
-```python
-node_type
-event
-poignancy
-create
-expire
-filling
-```
-
-写入时会创建 metadata：
-
-```python
-metadata = {
-    "node_type": node_type,
-    "subject": event.subject,
-    "predicate": event.predicate,
-    "object": event.object,
-    "address": ":".join(event.address),
-    "poignancy": poignancy,
-    "create": create.strftime("%Y%m%d-%H:%M:%S"),
-    "expire": expire.strftime("%Y%m%d-%H:%M:%S"),
-    "access": create.strftime("%Y%m%d-%H:%M:%S"),
-}
-```
-
-然后写入 index：
-
-```python
-node = self._index.add_node(event.get_describe(), metadata)
-```
-
-最后把 node id 插入对应 memory 列表头部：
-
-```python
-memory = self.memory[node_type]
-memory.insert(0, node.id_)
-```
-
-注意是插入头部。
-
-因此 memory 列表天然按新到旧排列。
-
-## 15.9 记忆过期
-
-Concept 默认过期时间是创建后 30 天：
-
-```python
-self.expire = self.create + datetime.timedelta(days=30)
-```
-
-`Associate.add_node()` 中也默认：
-
-```python
-expire = expire or (create + datetime.timedelta(days=30))
-```
-
-这说明项目并不无限保留所有记忆。
-
-过期机制有两个目的。
-
-第一，限制索引规模。
-
-第二，模拟记忆遗忘。
-
-不过，当前过期策略比较简单。
-
-它是统一 30 天，而不是根据重要性动态决定。
-
-例如，普通早餐和重要承诺都默认 30 天。
-
-这在小规模仿真中可以接受，但如果要长时间运行，可能需要更精细的生命周期管理。
-
-## 15.10 max_memory：记忆数量限制
-
-`Associate` 支持 `max_memory`。
-
-如果设置了正数，`add_node()` 会限制某类记忆数量：
-
-```python
-if len(memory) >= self.max_memory > 0:
-    self._index.remove_nodes(memory[self.max_memory:])
-    self.memory[node_type] = memory[: self.max_memory - 1]
-```
-
-当前配置中默认没有显式设置 `max_memory`，构造函数默认是 -1，代表不按数量限制。
-
-但这个参数为后续实验提供了入口。
-
-例如，我们可以设计短记忆 agent：
-
-```text
-max_memory = 20
-```
-
-观察派对传播和关系形成是否下降。
-
-这也是第四部分消融实验可以使用的参数。
-
-## 15.11 cleanup_index()
-
-`cleanup_index()` 用于清理过期或未来时间节点。
-
-底层 `LlamaIndex.cleanup()` 会遍历 docstore：
-
-```python
-if create > now or expire < now:
-    remove_ids.append(node_id)
-```
-
-然后删除这些节点。
-
-`Associate.cleanup_index()` 再同步 memory 列表：
-
-```python
-self.memory = {
-    n_type: [n for n in nodes if n not in node_ids]
-    for n_type, nodes in self.memory.items()
-}
-```
-
-这保证 Python memory 列表不会引用已经删除的 index nodes。
-
-这一步很重要。
-
-否则 `find_concept()` 可能找不到 node，导致运行错误。
-
-## 15.12 LlamaIndex：底层向量索引
-
-`LlamaIndex` 封装在：
-
-```text
-generative_agents/modules/storage/index.py
-```
-
-它不是论文概念，而是当前项目的存储实现。
-
-它负责：
-
-- 创建 embedding model。
-- 创建或加载 VectorStoreIndex。
-- 添加节点。
-- 删除节点。
-- 检索节点。
-- 保存索引。
-
-支持的 embedding provider 包括：
-
-- HuggingFace。
-- Ollama。
-- OpenAI。
-
-当前 `data/config.json` 默认是 Ollama embedding。
-
-这意味着记忆检索可以完全本地化。
-
-## 15.13 add_node() 的索引写入
-
-`LlamaIndex.add_node()` 会创建 `TextNode`：
-
-```python
-node = TextNode(
-    text=text,
-    id_=id,
-    metadata=metadata,
-    excluded_llm_metadata_keys=exclude_llm_keys,
-    excluded_embed_metadata_keys=exclude_embedding_keys,
-)
-```
-
-注意这里：
-
-```python
-exclude_embedding_keys = list(metadata.keys())
-```
-
-也就是说，默认 metadata 不进入 embedding。
-
-embedding 主要基于 `text`，也就是 event describe。
-
-metadata 用于过滤和排序，而不是语义向量。
-
-这是合理的。
-
-因为 address、create、expire 等字段不应该污染语义向量。
-
-## 15.14 retrieve_events()、retrieve_thoughts()、retrieve_chats()
-
-`Associate` 提供三类基础检索：
-
-```python
-retrieve_events(text=None)
-retrieve_thoughts(text=None)
-retrieve_chats(name=None)
-```
-
-它们都调用 `_retrieve_nodes()`。
-
-如果传入 text，会使用向量检索并按 node_type 过滤。
-
-如果不传 text，就按 memory 列表顺序取最近节点。
-
-代码逻辑：
-
-```python
-if text:
-    filters = MetadataFilters(
-        filters=[ExactMatchFilter(key="node_type", value=node_type)]
-    )
-    nodes = self._index.retrieve(text, filters=filters, node_ids=self.memory[node_type])
-else:
-    nodes = [self._index.find_node(n) for n in self.memory[node_type]]
-return [self.to_concept(n) for n in nodes[: self.retention]]
-```
-
-`retention` 默认来自配置：
+`data/config.json` 中的核心结构是：
 
 ```json
-"retention": 8
-```
-
-也就是说，不传 query 时只取最近 8 条。
-
-这常用于近期记忆和去重。
-
-## 15.15 retrieve_chats() 的特殊查询
-
-`retrieve_chats(name=None)` 如果传入 name，会构造：
-
-```python
-text = ("对话 " + name) if name else None
-```
-
-这让检索更偏向与某人相关的对话。
-
-例如：
-
-```python
-self.associate.retrieve_chats("玛丽亚")
-```
-
-会检索关于“对话 玛丽亚”的 chat nodes。
-
-这个设计简单，但有效。
-
-对话记忆通常包含双方名字和摘要，使用“对话 + 人名”可以取回相关对话。
-
-不过，它依赖中文摘要中包含对方信息。
-
-如果摘要生成质量差，检索也会受影响。
-
-## 15.16 retrieve_focus()：多焦点检索
-
-Reflection 和很多 prompt 需要围绕多个问题检索记忆。
-
-`retrieve_focus()` 用于这个场景。
-
-参数：
-
-```python
-retrieve_focus(focus, retrieve_max=30, reduce_all=True)
-```
-
-`focus` 是一个问题或关键词列表。
-
-例如：
-
-```text
-克劳斯今天的计划
-克劳斯与玛丽亚的关系
-近期重要事件
-```
-
-函数会对每个 focus text 检索 event 和 thought：
-
-```python
-node_ids = self.memory["event"] + self.memory["thought"]
-```
-
-注意，它不检索 chat。
-
-chat 通常通过 `retrieve_chats()` 单独处理。
-
-检索时使用自定义 retriever：
-
-```python
-retriever_creator=_create_retriever
-```
-
-也就是 `AssociateRetriever`。
-
-## 15.17 reduce_all 参数
-
-`retrieve_focus()` 有一个关键参数：
-
-```python
-reduce_all=True
-```
-
-如果为 True，所有 focus 的结果会合并去重：
-
-```python
-retrieved.update({n.id_: n for n in nodes})
-return [self.to_concept(v) for v in retrieved.values()]
-```
-
-如果为 False，会保留每个 focus 对应的结果：
-
-```python
-return {
-    text: [self.to_concept(n) for n in nodes]
-    for text, nodes in retrieved.items()
-}
-```
-
-Reflection 中使用：
-
-```python
-reduce_all=False
-```
-
-因为它需要知道每个反思问题对应哪些证据。
-
-计划更新中常用合并结果，因为只需要一组相关记忆。
-
-这个参数体现了不同场景的检索需求。
-
-## 15.18 AssociateRetriever：三因素重排
-
-`AssociateRetriever` 是论文 Retrieval 的核心实现。
-
-它先调用向量检索：
-
-```python
-nodes = self._vector_retriever.retrieve(query_bundle)
-```
-
-然后按 access 时间倒序排序：
-
-```python
-nodes = sorted(nodes, key=lambda n: utils.to_date(n.metadata["access"]), reverse=True)
-```
-
-接着计算三类分数：
-
-```python
-recency_scores
-relevance_scores
-importance_scores
-```
-
-最终分数：
-
-```python
-final_scores = r1 + r2 + i
-```
-
-然后按 final score 重新排序，取前 `retrieve_max`。
-
-这就是论文三因素：
-
-```text
-recency + relevance + importance
-```
-
-在项目中的直接实现。
-
-## 15.19 recency 分数
-
-recency 使用指数衰减：
-
-```python
-fac = self._config["recency_decay"]
-recency_scores = self._normalize(
-    [fac**i for i in range(1, len(nodes) + 1)],
-    self._config["recency_weight"]
-)
-```
-
-越靠前的节点越新。
-
-`recency_decay` 默认 0.995。
-
-`recency_weight` 默认 0.5。
-
-这让新近访问的记忆更容易被想起。
-
-注意这里使用的是 access 排序，而不只是 create。
-
-这意味着被检索过的记忆会更新 access，之后更可能再次被想起。
-
-这类似人类记忆中的“最近想起过”效应。
-
-## 15.20 relevance 分数
-
-relevance 来自向量检索 score：
-
-```python
-relevance_scores = self._normalize(
-    [n.score for n in nodes], self._config["relevance_weight"]
-)
-```
-
-默认权重是 3。
-
-这说明语义相关性是最重要的分量。
-
-如果查询是“玛丽亚”，与玛丽亚相关的记忆应该优先。
-
-但 relevance 不是唯一标准。
-
-一个非常相关但很普通、很久远的记忆，可能不如一个稍微相关但重要且新近的记忆。
-
-这就是三因素检索的意义。
-
-## 15.21 importance 分数
-
-importance 对应 metadata 中的 `poignancy`：
-
-```python
-importance_scores = self._normalize(
-    [n.metadata["poignancy"] for n in nodes],
-    self._config["importance_weight"]
-)
-```
-
-默认权重是 2。
-
-重要事件更容易被想起。
-
-例如，普通早餐、走路、整理床铺，即使语义相关，也不应该总是压过派对邀请、竞选对话、关系冲突。
-
-`poignancy` 让记忆检索更接近“人会想起什么”。
-
-## 15.22 更新 access
-
-检索后，`AssociateRetriever` 会更新 access：
-
-```python
-for n in nodes:
-    n.metadata["access"] = utils.get_timer().get_date("%Y%m%d-%H:%M:%S")
-```
-
-这一步很关键。
-
-被检索出来的记忆，未来会因为 recency 更容易再次被检索。
-
-这可能带来正向效果：
-
-```text
-近期持续关注的事情，会在记忆中保持活跃。
-```
-
-也可能带来风险：
-
-```text
-某些记忆被反复检索后，过度主导角色行为。
-```
-
-这就是记忆系统中常见的“注意力回音室”问题。
-
-后续高级升级可以考虑 access decay 或检索多样性约束。
-
-## 15.23 to_dict()：记忆持久化
-
-`Associate.to_dict()` 很短：
-
-```python
-def to_dict(self):
-    self._index.save()
-    return {"memory": self.memory}
-```
-
-它做两件事。
-
-第一，保存 LlamaIndex。
-
-第二，返回 memory 列表。
-
-checkpoint JSON 中保存的是：
-
-```json
-"associate": {
-  "memory": {
-    "event": [...],
-    "thought": [...],
-    "chat": [...]
+{
+  "agent": {
+    "percept": { ... },
+    "schedule": { ... },
+    "think": { ... },
+    "chat_iter": 4,
+    "associate": { ... }
   }
 }
 ```
 
-具体 node 文本和 embedding 存在 storage 目录。
+它不是角色个性，而是运行参数。`percept` 控制感知：
 
-这解释了为什么 checkpoint 不是单文件完整状态。
-
-它还依赖：
-
-```text
-results/checkpoints/<sim>/storage/<agent>/associate/
+```json
+{
+  "mode": "box",
+  "vision_r": 8,
+  "att_bandwidth": 8
+}
 ```
 
-如果只复制 checkpoint JSON，不复制 storage，记忆索引会丢。
+含义是：
 
-## 15.24 记忆系统如何影响行为
+- 使用 box 视野。
+- 视野半径为 8。
+- 每次最多关注 8 个事件。
 
-记忆系统影响几乎所有行为。
+`schedule` 控制日程生成：
 
-日程生成前，`make_schedule()` 检索近期重要事件，更新 currently。
+```json
+{
+  "max_try": 5,
+  "diversity": 5
+}
+```
 
-感知去重时，`percept()` 检索近期 event 和 chat。
+含义是：
 
-对话前，`_chat_with()` 检索与对方的聊天记录。
+- 最多尝试 5 次生成日程。
+- 至少要求一定活动多样性。
 
-关系摘要时，`summarize_relation()` 围绕对方名字检索记忆。
+`think` 控制思考相关配置：
 
-对话生成时，`generate_chat()` 检索当前关系和相关记忆。
+```json
+{
+  "llm": { ... },
+  "interval": 1000,
+  "poignancy_max": 150
+}
+```
 
-反思时，`reflect()` 检索 event 和 thought。
+其中 `llm` 是模型配置，`poignancy_max` 是反思触发阈值。`chat_iter` 控制每次对话最大轮数。`associate` 控制记忆系统和 embedding。这些公共配置决定所有智能体的底层行为边界。
 
-计划、对话、反应和反思都依赖 memory。
+## 15.4 agent.json：角色种子
 
-因此，记忆模块不是附属功能。
+每个角色目录下都有 `agent.json`。以克劳斯为例：
 
-它是 agent 行为连续性的核心。
+```text
+generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
+```
 
-## 15.25 记忆失败模式
+它包含：
 
-记忆系统常见失败模式有六类。
+```json
+{
+  "name": "克劳斯",
+  "portrait": "...",
+  "coord": [126, 46],
+  "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。",
+  "scratch": {
+    "age": 20,
+    "innate": "善良、好奇、热情",
+    "learned": "...",
+    "lifestyle": "...",
+    "daily_plan": "..."
+  },
+  "spatial": {
+    "address": { ... },
+    "tree": { ... }
+  }
+}
+```
 
-第一，写入失败。
+这里有三类信息。第一，前端和初始位置：
 
-事件没有进入 Associate，后续无法检索。
+- `portrait`
+- `coord`
 
-第二，评分失败。
+第二，角色自然语言设定：
 
-重要事件被打低分，后续不容易被想起，也不容易触发反思。
+- `currently`
+- `scratch.age`
+- `scratch.innate`
+- `scratch.learned`
+- `scratch.lifestyle`
+- `scratch.daily_plan`
 
-第三，检索失败。
+第三，角色空间知识：
 
-记忆存在，但 query 没有取回。
+- `spatial.address`
+- `spatial.tree`
 
-第四，重排偏差。
+这些信息共同定义一个角色的初始状态。
 
-recency、importance、relevance 权重不合适，导致不该想起的记忆排前面。
+## 15.5 scratch 字段：人格与生活习惯
 
-第五，过期或清理过早。
+`scratch` 是角色自然语言设定的主要来源。字段包括：
 
-关键记忆被删除。
+| 字段 | 中文意思 | 对角色行为的影响 |
+| --- | --- | --- |
+| `age` | 年龄。 | 影响角色身份、生活阶段和说话方式。 |
+| `innate` | 先天特质，例如善良、好奇、热情。 | 决定角色比较稳定的性格底色。 |
+| `learned` | 后天经历，例如克劳斯是社会学专业学生，关注社会正义。 | 让角色的知识、职业和价值判断有背景来源。 |
+| `lifestyle` | 生活习惯，例如晚上 11 点睡觉，早上 7 点醒来。 | 影响日程生成和日常行动节奏。 |
+| `daily_plan` | 通常一天的计划，例如去图书馆写作、在咖啡馆吃饭。 | 给每天的具体日程生成提供初始参考。 |
 
-第六，记忆污染。
+这些字段不是仅用于展示。它们会进入 `Scratch._base_desc()`，成为几乎所有 prompt 的共同基础。角色个性不是硬编码在 Python 逻辑里，而是通过自然语言进入 LLM 调用。
 
-错误 reflection 或幻觉对话摘要写入 memory stream，之后被当成事实使用。
+## 15.6 currently：角色当前关注点
 
-调试 agent 行为时，要按这六类排查。
+`currently` 表示角色当前正在关注或推进的事情。例如，克劳斯：
 
-## 15.26 如何检查一个 agent 的记忆
+```text
+克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。
+```
 
-检查记忆可以从三个层次入手。
+伊莎贝拉的 `currently` 包含情人节派对。山姆的 `currently` 包含竞选镇长。`currently` 对行为影响很大。它会进入基础描述：
 
-第一，看 `agent.associate.abstract()`。
+```text
+今天是 ${date}。${currently}
+```
 
-它会列出每类记忆的 describe。
+因此它会影响：
 
-第二，看 checkpoint JSON。
+- 起床和日程生成。
+- 对话主题。
+- 行动地点选择。
+- 反思焦点。
+- 新一天计划更新。
 
-检查 `associate.memory` 中 node ids 是否存在。
+`currently` 不是固定不变的。`Agent.make_schedule()` 在新一天开始时，会基于 memory 更新 `self.scratch.currently`。所以它是角色初始设定与仿真记忆之间的动态连接点。
 
-第三，看 storage index。
+## 15.7 spatial 字段：角色知道哪里
 
-确认底层 LlamaIndex 是否保存了节点。
+`agent.json` 中的 `spatial` 包含两个部分。第一，快捷地址映射：
 
-如果要快速理解仿真结果，先看 `simulation.md`。
+```json
+"address": {
+  "living_area": [
+    "the Ville",
+    "奥克山学院宿舍",
+    "克劳斯的房间"
+  ]
+}
+```
 
-如果要查具体记忆是否存在，就看 checkpoint 和 storage。
+第二，地点树：
 
-如果要查某条记忆是否被检索，就看日志中的 prompt 和 retrieved concepts。
+```json
+"tree": {
+  "the Ville": {
+    "奥克山学院": {
+      "图书馆": ["图书馆沙发", "图书馆桌子", "书架"],
+      "教室": ["黑板", "教室讲台", "教室学生座位"]
+    },
+    ...
+  }
+}
+```
 
-## 15.27 可改进方向
+快捷地址用于高频行为匹配。地点树用于模型选择地点。例如，角色要“睡觉”，`Spatial` 会把它映射到 living area + 床。角色要“写论文”，系统可能让模型在空间树中选择奥克山学院、图书馆、桌子。这就是角色自己的空间知识。不同角色可以知道不同地点。这使得空间不是全知的，而是带有角色视角。
 
-当前记忆系统已经能支撑论文式实验，但还有升级空间。
+## 15.8 start.py 如何创建配置
 
-第一，动态记忆生命周期。
+新仿真从 `start.py` 开始。核心函数是：
 
-重要记忆保留更久，普通记忆更快过期。
+```python
+get_config(start_time="20240213-09:30", stride=15, agents=None)
+```
 
-第二，分层记忆。
+它读取：
 
-把 episodic memory、semantic memory、procedural memory 分开。
+```text
+data/config.json
+```
 
-第三，证据链增强。
+取出：
 
-为 thought 保存更完整 evidence graph。
+```python
+agent_config = json_data["agent"]
+```
 
-第四，记忆写入审计。
+然后生成 simulation config：
 
-记录每条记忆来源于感知、对话、反思还是计划。
+```python
+config = {
+    "stride": stride,
+    "time": {"start": start_time},
+    "maze": {"path": os.path.join(assets_root, "maze.json")},
+    "agent_base": agent_config,
+    "agents": {},
+}
+```
 
-第五，检索多样性。
+每个 agent 只先放入 `config_path`：
 
-避免同一主题记忆过度占据上下文。
+```python
+config["agents"][a] = {
+    "config_path": os.path.join(
+        assets_root, "agents", a.replace(" ", "_"), "agent.json"
+    ),
+}
+```
 
-第六，记忆压缩。
+注意，这里还没有加载完整角色配置。真正加载发生在 `Game.__init__()`。`start.py` 只负责组装仿真配置骨架。
 
-长时间仿真中，需要把大量低层事件压缩成稳定知识。
+## 15.9 Game 如何创建 Agent
 
-这些方向会在第五部分前沿演进中结合 MemGPT、Mem0、Reflexion 等研究再讲。
+`Game.__init__()` 位于：
+
+```text
+generative_agents/modules/game.py
+```
+
+它先加载地图：
+
+```python
+self.maze = Maze(self.load_static(config["maze"]["path"]), self.logger)
+```
+
+然后创建 agent 存储根目录：
+
+```python
+storage_root = os.path.join(f"results/checkpoints/{name}", "storage")
+```
+
+接着遍历所有 agent：
+
+```python
+for name, agent in config["agents"].items():
+    agent_config = utils.update_dict(
+        copy.deepcopy(agent_base), self.load_static(agent["config_path"])
+    )
+    agent_config = utils.update_dict(agent_config, agent)
+    agent_config["storage_root"] = os.path.join(storage_root, name)
+    self.agents[name] = Agent(agent_config, self.maze, self.conversation, self.logger)
+```
+
+这段代码做了四件事。第一，合并公共配置和角色配置。第二，再合并 checkpoint 或命令行选择产生的 agent 状态。第三，为每个 agent 设置独立 storage root。第四，创建 `Agent` 对象。因此，`Agent.__init__()` 收到的 config 已经不是纯 `agent.json`，而是完整运行配置。
+
+## 15.10 Agent.__init__() 的输入
+
+`Agent.__init__()` 签名是：
+
+```python
+def __init__(self, config, maze, conversation, logger):
+```
+
+四个输入分别是：
+
+- `config`：完整 agent 配置。
+- `maze`：共享世界地图。
+- `conversation`：全局对话记录。
+- `logger`：日志对象。
+
+这说明 agent 初始化不是孤立的。它一开始就拿到共享世界、共享对话日志和日志系统。`maze` 是所有 agent 共用的。`conversation` 也是所有 agent 共用的。但每个 agent 的 memory、schedule、scratch、status 是自己的。多智能体系统的基本结构是：
+
+```text
+共享环境
+  + 个体状态
+  + 共享互动记录
+```
+
+## 15.11 第一组字段：身份与环境引用
+
+`Agent.__init__()` 首先设置：
+
+```python
+self.name = config["name"]
+self.maze = maze
+self.conversation = conversation
+self._llm = None
+self.logger = logger
+```
+
+`name` 是角色名。`maze` 是共享世界。`conversation` 是共享对话日志。`_llm` 初始化为 None，后面在 `reset()` 中创建。`logger` 用于记录 prompt、状态和仿真信息。这里有个细节：LLM 不是在 `__init__()` 中立刻创建。创建 agent 对象和初始化 LLM 是分开的。`Game.reset_game()` 会调用每个 agent 的 `reset()`：
+
+```python
+agent.reset()
+```
+
+而 `reset()` 中才会：
+
+```python
+self._llm = create_llm_model(self.think_config["llm"])
+```
+
+这样做可以让对象装配和模型连接分离。
+
+## 15.12 第二组字段：运行配置
+
+接着设置：
+
+```python
+self.percept_config = config["percept"]
+self.think_config = config["think"]
+self.chat_iter = config["chat_iter"]
+```
+
+这三项来自 `data/config.json`。`percept_config` 决定视野和注意力带宽。`think_config` 决定 LLM、interval、poignancy threshold。`chat_iter` 决定每次对话最大轮次。这些不是角色个性，而是运行机制参数。如果所有 agent 共用同一套参数，小镇整体行为更一致。如果未来想让不同角色具有不同感知半径或聊天倾向，也可以在某个 `agent.json` 或 checkpoint 中覆盖这些配置。
+
+## 15.13 第三组字段：记忆系统
+
+Agent 初始化记忆系统：
+
+```python
+self.spatial = memory.Spatial(**config["spatial"])
+self.schedule = memory.Schedule(**config["schedule"])
+self.associate = memory.Associate(
+    os.path.join(config["storage_root"], "associate"), **config["associate"]
+)
+self.concepts, self.chats = [], config.get("chats", [])
+```
+
+这里有三种记忆或状态。第一，`Spatial`。角色知道哪些地点。第二，`Schedule`。角色今天的日程。第三，`Associate`。角色的事件、对话和想法记忆。`concepts` 是本 step 感知到的新 concepts。`chats` 是待反思的近期聊天内容。这说明“记忆”在项目中不是一个单一模块，而是多层结构。空间知识、日程、关联记忆、当前感知、对话暂存各自负责不同部分。
+
+## 15.14 Associate 的 storage_root
+
+每个 agent 的 `Associate` 都有独立存储目录。`Game.__init__()` 设置：
+
+```python
+agent_config["storage_root"] = os.path.join(storage_root, name)
+```
+
+`Agent.__init__()` 再传给：
+
+```python
+os.path.join(config["storage_root"], "associate")
+```
+
+最终路径类似：
+
+```text
+results/checkpoints/<sim-name>/storage/克劳斯/associate
+```
+
+每个 agent 的 memory index 是分开的。克劳斯的记忆不会直接写进玛丽亚的向量索引。信息传播必须通过对话、感知和记忆写入发生，而不是共享一个全局 memory。这符合论文中的个体记忆设定。
+
+## 15.15 第四组字段：prompt Scratch
+
+Prompt 状态由 `Scratch` 管理：
+
+```python
+self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
+```
+
+`Scratch` 保存：
+
+- `name`
+- `currently`
+- `config`
+- `template_path`
+
+其中 `config` 就是 `agent.json` 中的 scratch 字段。`Scratch._base_desc()` 会填充 `base_desc.txt`：
+
+```text
+姓名: ${name}
+年龄：${age}
+先天特质：${innate}
+后天特质：${learned}
+生活习惯：${lifestyle}
+日常计划：${daily_plan}
+
+今天是 ${date}。${currently}
+```
+
+这段基础描述会进入许多 prompt。例如：
+
+- 起床时间。
+- 日程生成。
+- 重要性评分。
+- 对话生成。
+- 反思。
+
+`Scratch` 是角色设定进入 LLM 的主要通道。
+
+## 15.16 Scratch.build_prompt()
+
+`Scratch.build_prompt()` 很简单：
+
+```python
+with open(f"{self.template_path}/{template}.txt", "r", encoding="utf-8") as file:
+    file_content = file.read()
+
+template = Template(file_content)
+filled_content = template.substitute(data)
+```
+
+它从 `data/prompts` 读取模板，并使用 `string.Template` 替换变量。这带来两个好处。第一，prompt 可维护。修改 prompt 不需要改 Python 主逻辑。第二，prompt 可审计。读者可以直接打开 `.txt` 文件，看模型到底收到什么任务。但也有一个风险。`Template.substitute()` 要求变量必须齐全，否则会报错。所以每个 `prompt_*` 方法都必须提供模板需要的字段。prompt 与 Python 方法必须成对维护。
+
+## 15.17 第五组字段：状态与 plan
+
+Agent 初始化状态：
+
+```python
+status = {"poignancy": 0}
+self.status = utils.update_dict(status, config.get("status", {}))
+self.plan = config.get("plan", {})
+```
+
+`poignancy` 是反思触发计数。新 agent 从 0 开始。从 checkpoint 恢复时，会用已有 `status` 覆盖默认值。`plan` 是前端或上一步返回的移动计划缓存。这两个字段虽然小，但很关键。如果断点恢复丢失 `status["poignancy"]`，反思触发时机会改变。如果丢失 `plan` 或 action，角色的当前位置和行为连续性会断。
+
+## 15.18 第六组字段：record 时间
+
+初始化中还有：
+
+```python
+self.last_record = utils.get_timer().daily_duration()
+```
+
+这个字段用于控制记录频率。`Game.agent_think()` 中会判断：
+
+```python
+if (utils.get_timer().daily_duration() - agent.last_record) > self.record_iterval:
+    info["record"] = True
+    agent.last_record = utils.get_timer().daily_duration()
+else:
+    info["record"] = False
+```
+
+这影响哪些 step 会被标记为记录点。虽然它不是 agent 认知核心，但它影响回放和结果压缩。
+
+## 15.19 第七组字段：初始 action
+
+Agent 初始化必须给角色一个当前 action。有两种情况。第一，从 checkpoint 恢复。如果 config 中有 `action`：
+
+```python
+self.action = memory.Action.from_dict(config["action"])
+tiles = self.maze.get_address_tiles(self.get_event().address)
+config["coord"] = random.choice(list(tiles))
+```
+
+恢复时会使用保存的 action，并根据 action 地址重新选择坐标。第二，新仿真初始化。如果没有 action：
+
+```python
+tile = self.maze.tile_at(config["coord"])
+address = tile.get_address("game_object", as_list=True)
+self.action = memory.Action(
+    memory.Event(self.name, address=address),
+    memory.Event(address[-1], address=address),
+)
+```
+
+系统根据初始坐标所在 tile 的 game_object 地址创建默认 action。这里的 action 还没有具体 predicate/object，更多是占位状态。随后 `move()` 会把它更新到地图上。
+
+## 15.20 初始化时更新 Maze
+
+Agent 初始化最后做：
+
+```python
+self.coord, self.path = None, None
+self.move(config["coord"], config.get("path"))
+if self.coord is None:
+    self.coord = config["coord"]
+```
+
+`move()` 会更新 tile 上的事件。如果角色从一个坐标移动到另一个坐标，会移除旧 tile 上该角色事件，并在新 tile 更新事件。初始化时 `self.coord` 是 None，所以主要是把角色当前 action 放到初始 tile。这一步使角色真正进入世界。否则 `Agent` 只是 Python 对象，地图上还没有它的事件。
+
+## 15.21 reset()：创建模型连接
+
+`Agent.__init__()` 不创建 LLM。LLM 创建发生在：
+
+```python
+def reset(self):
+    if not self._llm:
+        self._llm = create_llm_model(self.think_config["llm"])
+```
+
+`Game.reset_game()` 会遍历所有 agent 调用 reset。这一步根据 `think_config["llm"]` 创建具体模型。例如：
+
+- Ollama。
+- OpenAI。
+- MiniMax。
+
+模型创建与 agent 初始化分离，有助于：
+
+- 先完成对象装配。
+- 再统一初始化模型。
+- 断点恢复时复用同一逻辑。
+
+第 20 章会详细讲模型适配。
+
+## 15.22 completion()：prompt 调用入口
+
+`Agent.completion()` 是所有 LLM prompt 调用的统一入口。它根据 `func_hint` 找 `Scratch` 中对应方法：
+
+```python
+func = getattr(self.scratch, "prompt_" + func_hint)
+res = func(*args, **kwargs)._asdict()
+```
+
+例如：
+
+```python
+self.completion("wake_up")
+```
+
+会调用：
+
+```python
+self.scratch.prompt_wake_up()
+```
+
+`prompt_wake_up()` 返回 `Result`：
+
+```text
+prompt
+callback
+failsafe
+return_type
+```
+
+然后 `LLMModel.completion()` 根据这些信息调用模型、解析结果、执行 callback、失败时返回 failsafe。这条链路是：
+
+```text
+Agent.completion("xxx")
+  -> Scratch.prompt_xxx()
+  -> prompt template
+  -> return_type schema
+  -> LLMModel.completion()
+  -> callback/failsafe
+```
+
+这就是角色设定、prompt 和模型之间的桥。
+
+## 15.23 abstract()：初始化后怎么看 agent 状态
+
+`Agent.abstract()` 用于生成 agent 当前状态摘要。它包含：
+
+```python
+{
+    "name": self.name,
+    "currently": self.scratch.currently,
+    "tile": self.maze.tile_at(self.coord).abstract(),
+    "status": self.status,
+    "concepts": ...,
+    "chats": self.chats,
+    "action": self.action.abstract(),
+    "associate": self.associate.abstract(),
+}
+```
+
+如果已有 schedule，也会加入 schedule。如果 LLM 可用，也会加入 llm summary。这对调试很有用。`Game.agent_think()` 会在日志中输出 agent 摘要。读者要理解 agent 当前状态时，可以看：
+
+- currently。
+- tile。
+- status。
+- action。
+- schedule。
+- associate。
+
+这些字段比只看前端动画更可靠。
+
+## 15.24 to_dict()：保存状态
+
+`Agent.to_dict()` 用于 checkpoint。它保存：
+
+```python
+info = {
+    "status": self.status,
+    "schedule": self.schedule.to_dict(),
+    "associate": self.associate.to_dict(),
+    "chats": self.chats,
+    "currently": self.scratch.currently,
+}
+if with_action:
+    info.update({"action": self.action.to_dict()})
+```
+
+注意，它会调用：
+
+```python
+self.associate.to_dict()
+```
+
+而 `Associate.to_dict()` 会保存索引：
+
+```python
+self._index.save()
+```
+
+这意味着 checkpoint 不只是 JSON，也伴随向量索引持久化。断点恢复时，`Associate` 会从 storage path 加载已有 index。这就是角色长期记忆能跨运行保存的原因。
+
+## 15.25 断点恢复时发生什么
+
+如果使用：
+
+```bash
+python start.py --name sim-test --resume --step 10
+```
+
+`start.py` 会调用：
+
+```python
+get_config_from_log(checkpoints_folder)
+```
+
+它读取最后一个 checkpoint JSON，恢复 config。然后把时间推进一个 stride：
+
+```python
+start_time += datetime.timedelta(minutes=config["stride"])
+```
+
+并为每个 agent 重新设置 `config_path`。之后进入与新仿真相同的 `SimulateServer` 和 `Game` 初始化流程。差别在于，此时 agent config 中已经包含：
+
+- status。
+- schedule。
+- associate。
+- chats。
+- currently。
+- action。
+- coord。
+
+这些会覆盖初始 `agent.json`。所以恢复后的角色不是重新开始，而是继续过去状态。
+
+## 15.26 初始化阶段的常见问题
+
+初始化阶段常见问题有六类。第一，角色名不在 `personas` 列表里。如果命令行 `--agents` 传入未知角色，`start.py` 会报错。第二，`agent.json` 坐标不对应有效 game_object。新 agent 初始化时会从初始 tile 取 game_object 地址。如果坐标位置不合理，初始 action 可能异常。第三，`spatial.tree` 不包含角色需要的地点。角色知道的地点不足，计划落地时更依赖模型随机选择。第四，`currently` 太弱。如果 `currently` 没有明确目标，角色日程可能过于普通。第五，模型配置不可用。Ollama 没启动、模型名不对、embedding 模型不存在，都会导致运行失败。第六，断点恢复时 storage 不一致。如果 checkpoint JSON 和 storage index 不匹配，记忆可能恢复异常。这些问题很多看起来像 agent 行为问题，其实源自初始化。
+
+## 15.27 如何检查一个 agent 是否初始化正确
+
+建议按下面顺序检查。第一，看 `agent.json`。确认：
+
+- name。
+- coord。
+- currently。
+- scratch。
+- spatial。
+
+第二，看 `data/config.json`。确认：
+
+- LLM provider。
+- embedding provider。
+- percept。
+- schedule。
+- associate。
+
+第三，运行短仿真。例如：
+
+```bash
+python start.py --name init-check --start "20250213-09:30" --step 1 --stride 10 --agents "克劳斯"
+```
+
+第四，看日志中的 agent summary。检查：
+
+- tile 地址是否正确。
+- action 是否合理。
+- associate 是否初始化。
+- schedule 是否生成。
+
+第五，看 checkpoint。确认结果写入：
+
+```text
+results/checkpoints/init-check/
+```
+
+如果这些都正常，说明 agent 初始化链路基本没问题。
 
 ## 15.28 本章小结
 
-本章讲清了 GenerativeAgentsCN 的记忆系统：
+智能体初始化决定了角色后续能不能稳定行动。一个角色不是从 `agent.json` 直接变成一句 prompt，而是被装配成 Scratch、Spatial、Schedule、Associate 和当前 Action 的组合。
 
-1. Event 描述事实，Concept 是带元数据的记忆节点。
-2. Associate 管理每个 agent 的 event、chat、thought 三类记忆。
-3. LlamaIndex 负责底层向量索引、节点存储和持久化。
-4. 记忆 metadata 包括 node_type、subject、predicate、object、address、poignancy、create、expire、access。
-5. `add_node()` 把事件文本和 metadata 写入索引，并把 node id 插入对应 memory 列表。
-6. `retrieve_events()`、`retrieve_chats()`、`retrieve_thoughts()` 支持按类型取近期或语义相关记忆。
-7. `retrieve_focus()` 支持多焦点检索，是 planning 和 reflection 的重要入口。
-8. `AssociateRetriever` 实现 recency、relevance、importance 三因素重排。
-9. 检索后会更新 access，影响未来 recency。
-10. `to_dict()` 会保存 index 并返回 memory 列表，是 checkpoint 的一部分。
-11. 记忆系统影响日程、对话、关系、反思和社会传播。
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 配置来源 | Agent 配置来自 `data/config.json`、角色 `agent.json` 和 checkpoint。 |
+| 配置合并 | `Game.__init__()` 会合并公共配置、角色配置和恢复状态。 |
+| `agent.json` | 它是角色种子，包含身份、currently、scratch 和 spatial。 |
+| `Scratch` | Scratch 把角色设定转成 prompt 基础上下文。 |
+| 三类子系统 | Spatial、Schedule、Associate 分别管理空间记忆、日程和关联记忆。 |
+| 独立记忆 | 每个 agent 有自己的 associate storage，记忆不会自动全局共享。 |
+| Action 恢复 | 初始化会创建或恢复当前 action，并通过 `move()` 写入 Maze。 |
+| 模型入口 | LLM 在 `reset()` 中创建，`Agent.completion()` 是 prompt 调用统一入口。 |
+| checkpoint | `to_dict()` 和 checkpoint 让角色状态可以跨运行恢复。 |
+| 调试重点 | 初始化问题会影响后续行为，不能只盯 prompt。 |
 
-下一章讲日程。我们会深入 `Schedule`、`make_schedule()`、`schedule_init`、`schedule_daily`、`schedule_decompose` 和 `schedule_revise`，看一天计划如何生成、拆解和被对话打断。
+下一章讲仿真循环：从 `start.py`、`SimulateServer.simulate()`、`Game.agent_think()` 到 `Agent.think()`，把每一步时间推进和 agent 思考过程讲清楚。
 
 ## 参考资料
 
-- Local source: `generative_agents/modules/memory/event.py`
-- Local source: `generative_agents/modules/memory/associate.py`
-- Local source: `generative_agents/modules/storage/index.py`
+- Local source: `generative_agents/start.py`
+- Local source: `generative_agents/modules/game.py`
 - Local source: `generative_agents/modules/agent.py`
-- Local config: `generative_agents/data/config.json`
+- Local source: `generative_agents/modules/prompt/scratch.py`
+- Local source: `generative_agents/data/config.json`
+- Local prompt: `generative_agents/data/prompts/base_desc.txt`
+- Local data: `generative_agents/frontend/static/assets/village/agents/*/agent.json`

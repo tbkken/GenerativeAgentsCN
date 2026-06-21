@@ -6,7 +6,7 @@
 
 第四部分不是随便做几个演示，而是要完成三件事：
 
-1. 用 GenerativeAgentsCN 复现论文中的经典现象。
+1. 用 Generative Agents 复现论文中的经典现象。
 2. 把复现实验转化成教学可操作的实验任务。
 3. 为后续“前沿演进与项目升级”提供可评价的基线。
 
@@ -109,7 +109,7 @@ generative_agents/results/compressed/<实验名>/movement.json
 
 ### 对应章节
 
-第 21 章：复现论文中的情人节派对传播。
+第 24 章：复现论文中的情人节派对传播。
 
 ### 对应论文现象
 
@@ -309,7 +309,7 @@ python compress.py --name book-party-full
 
 ### 对应章节
 
-第 22 章：复现镇长竞选信息扩散。
+第 25 章：复现镇长竞选信息扩散。
 
 ### 对应论文现象
 
@@ -504,9 +504,9 @@ python compress.py --name book-election-full
 
 ### 对应章节
 
-第 23 章：设计自己的小镇事件。
+第 26 章：设计自己的小镇事件。
 
-也可在第 26 章中作为“可信行为评价”的案例。
+也可在第 29 章中作为“可信行为评价”的案例。
 
 ### 对应论文现象
 
@@ -647,9 +647,9 @@ Twitch
 
 ### 对应章节
 
-第 26 章：如何评价一个智能体是否“可信”。
+第 29 章：如何评价一个智能体是否“可信”。
 
-也可作为源码扩展实验放在第 30 章，如果后续增加章节。
+也可作为源码扩展实验放在第 33 章，如果后续增加章节。
 
 ### 对应论文现象
 
@@ -809,7 +809,7 @@ python compress.py --name book-reflection-off
 
 ### 对应章节
 
-第 23 章：设计自己的小镇事件。
+第 26 章：设计自己的小镇事件。
 
 ### 实验目标
 
@@ -940,7 +940,7 @@ python compress.py --name book-custom-event
 
 ### 对应章节
 
-第 24 章：增加新角色、新地点、新关系。
+第 27 章：增加新角色、新地点、新关系。
 
 ### 实验目标
 
@@ -1029,7 +1029,7 @@ python compress.py --name book-custom-event
 
 ### 对应章节
 
-第 25 章：用中文本地模型重跑论文思想。
+第 28 章：用中文本地模型重跑论文思想。
 
 ### 实验目标
 
@@ -1117,7 +1117,7 @@ python compress.py --name book-model-test-<model>
 
 ### 对应章节
 
-第 26 章：如何评价一个智能体是否“可信”。
+第 29 章：如何评价一个智能体是否“可信”。
 
 ### 实验目标
 
@@ -1173,7 +1173,7 @@ python compress.py --name book-model-test-<model>
 - `schedule_conflict_count`
 - `sleep_consistency_score`
 
-#### 4. 反应合理性
+#### 5. 反应合理性
 
 问题：
 
@@ -1190,7 +1190,7 @@ python compress.py --name book-model-test-<model>
 - `appropriate_reaction_count`
 - `unnecessary_chat_count`
 
-#### 5. 社会传播
+#### 6. 社会传播
 
 问题：
 
@@ -1207,7 +1207,7 @@ python compress.py --name book-model-test-<model>
 - `diffusion_depth`
 - `fact_preservation_score`
 
-#### 6. 行动落地
+#### 7. 行动落地
 
 问题：
 
@@ -1251,7 +1251,7 @@ python compress.py --name book-model-test-<model>
 
 ### 对应章节
 
-第 27 章：风险、伦理与边界。
+第 30 章：风险、伦理与边界。
 
 ### 实验目标
 
@@ -1290,7 +1290,7 @@ python compress.py --name book-model-test-<model>
 
 - 对照 `conversation.json` 和 `simulation.md`。
 
-#### 4. 过度合作
+#### 5. 过度合作
 
 表现：
 
@@ -1302,7 +1302,7 @@ python compress.py --name book-model-test-<model>
 - 汤姆和山姆相关对话。
 - 派对邀请接受率。
 
-#### 5. 价值偏差
+#### 6. 价值偏差
 
 表现：
 
@@ -1442,4 +1442,4 @@ python compress.py --name book-model-test-<model>
 
 - `05_frontier_upgrade_notes.md`
 
-该文件用于记录 2023-2026 年生成式智能体领域前沿演进，并明确如何基于 GenerativeAgentsCN 做升级实现。它只作为第五部分追加，不改动前四部分主结构。
+该文件用于记录 2023-2026 年生成式智能体领域前沿演进，并明确如何基于 Generative Agents 做升级实现。它只作为第五部分追加，不改动前四部分主结构。

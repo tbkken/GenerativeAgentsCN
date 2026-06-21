@@ -1,697 +1,646 @@
-# 第 33 章 社会仿真升级：从 Smallville 到更大规模实验
+# 第 33 章 反思系统升级：从事件反思到经验学习
 
-## 33.1 本章要解决的问题
+## 33.1 核心问题
 
-Generative Agents 最吸引人的地方，是 Smallville 中出现的社会现象：
-
-- 信息扩散。
-- 关系形成。
-- 群体协同行动。
-
-GenerativeAgentsCN 也能复现这些现象。
-
-但如果只停留在一次回放故事，就还不是严谨的社会仿真。
-
-社会仿真需要进一步回答：
+上一章讨论记忆系统升级。记忆回答的是：
 
 ```text
-这个现象是否可重复？
-传播路径能否统计？
-不同模型或参数下结果如何变化？
-群体行为能否量化？
-失败是否有模式？
+智能体经历过什么？
 ```
 
-本章要回答六个问题：
+反思回答的是：
 
-1. Smallville 式小镇实验和社会仿真有什么区别？
-2. GenerativeAgentsCN 当前已经有哪些可用于统计的材料？
-3. Concordia / Generative Agent-Based Modeling 和 AgentSociety 给我们什么启发？
-4. 如何把单次实验升级成批量实验？
-5. 如何统计信息传播、群体聚集和多次运行方差？
-6. 如何避免把小镇仿真误当现实预测？
+```text
+智能体如何理解这些经历？
+```
 
-[图 33-1：从单次回放到批量社会仿真的数据流]
+在 Generative Agents 中，reflection 是让角色行为变得可信的关键。如果只有原始观察，角色会被大量细节淹没。有了反思，角色才能从事件中形成高层认知。例如：
+
+```text
+玛丽亚对克劳斯的研究表现出兴趣。
+```
+
+比下面这句更有行为意义：
+
+```text
+玛丽亚和克劳斯在图书馆聊了几句话。
+```
+
+但 2023-2026 年的前沿研究进一步推动了一个问题：
+
+```text
+反思能不能不只是总结过去，而是帮助智能体下次做得更好？
+```
+
+本章聚焦六个问题：
+
+1. Generative Agents 当前如何实现 reflection？
+2. 当前 reflection 的优势和局限是什么？
+3. Reflexion 给我们什么启发？
+4. Voyager 的技能库思想如何迁移到小镇智能体？
+5. 如何把事件反思升级成行动后复盘和经验学习？
+6. 如何评价反思升级是否有效？
 
 ```mermaid
 flowchart TD
-    Config[experiment.json<br/>实验配置] --> Runs[多次运行 start.py]
-    Runs --> CK[checkpoints]
-    Runs --> Conv[conversation.json]
-    CK --> Compress[compress.py]
-    Conv --> Compress
-    Compress --> Sim[simulation.md]
-    Compress --> Move[movement.json]
-    Conv --> Diff[传播统计]
-    Move --> Attend[到场/轨迹统计]
-    Sim --> Evidence[人工证据抽样]
-    Diff --> Report[批量实验报告]
-    Attend --> Report
-    Evidence --> Report
+    A[Action<br/>行动/对话] --> O[Outcome<br/>结果标签]
+    O --> E[Self Evaluation<br/>自我评估]
+    E --> L[Lesson<br/>失败经验/成功经验]
+    L --> S[Skill Memory<br/>可复用策略]
+    S --> P[下一次 Planning/Dialogue]
+    P --> A
+    O --> R[Reflection<br/>高层认知]
+    R --> S
 ```
 
-## 33.2 小镇故事不等于社会仿真
+*图 33-1：从 reflection 到 reflexion-style learning 的闭环。反思升级的关键是让失败和成功经验进入后续行动，而不是只生成一段总结。*
 
-一个小镇故事可以很精彩。
+## 33.2 当前项目的反思入口
+
+Generative Agents 的反思逻辑在：
+
+```text
+generative_agents/modules/agent.py
+```
+
+核心函数是：
+
+```python
+Agent.reflect()
+```
+
+它的触发条件是：
+
+```python
+if self.status["poignancy"] < self.think_config["poignancy_max"]:
+    return
+```
+
+只有当重要性累积到阈值时，角色才会反思。当前配置中阈值来自：
+
+```text
+generative_agents/data/config.json
+```
+
+对应字段：
+
+```json
+"poignancy_max": 150
+```
+
+这符合论文思想。人不会对每件小事都深度反思。只有足够重要的经历积累后，才值得生成高层认知。
+
+## 33.3 当前反思的四个步骤
+
+`Agent.reflect()` 大致分为四步。第一，取出近期事件和想法。
+
+```python
+nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
+```
+
+第二，按访问时间排序，保留一定数量。
+
+```python
+nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
+    : self.associate.max_importance
+]
+```
+
+第三，生成反思焦点问题。
+
+```python
+focus = self.completion("reflect_focus", nodes, 3)
+```
+
+第四，围绕焦点检索相关记忆，生成 insight。
+
+```python
+retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
+for r_nodes in retrieved.values():
+    thoughts = self.completion("reflect_insights", r_nodes, 5)
+```
+
+生成的 insight 会被写回记忆：
+
+```python
+_add_thought(thought, evidence)
+```
+
+这条链非常清晰：
+
+```text
+重要事件积累
+  -> 生成反思问题
+  -> 检索相关记忆
+  -> 生成洞察
+  -> 写入 thought
+```
+
+## 33.4 当前反思 prompt 做了什么
+
+反思相关 prompt 在 `generative_agents/data/prompts/` 下。主要包括：
+
+| prompt 文件 | 中文意思 | 它解决的问题 |
+| --- | --- | --- |
+| `reflect_focus.txt` | 生成反思焦点。 | 从近期记忆中提出值得深入思考的问题。 |
+| `reflect_insights.txt` | 生成反思洞察。 | 围绕焦点问题，把证据压缩成高层 thought。 |
+| `reflect_chat_planing.txt` | 反思聊天对计划的影响。 | 判断一段聊天是否应该改变后续日程。 |
+| `reflect_chat_memory.txt` | 反思聊天对记忆的影响。 | 判断一段聊天中哪些关系、承诺或事实应该写入记忆。 |
+
+`reflect_focus.txt` 的作用是：
+
+```text
+根据给定记忆节点，生成需要深入思考的问题。
+```
 
 例如：
 
 ```text
-伊莎贝拉告诉玛丽亚派对消息，玛丽亚又告诉克劳斯，最后几个人出现在咖啡馆。
+凯莉今天的生活重点是什么？
+凯莉最近的社交活动如何？
+凯莉的日常习惯有什么变化？
 ```
 
-这说明系统能生成一个传播案例。
-
-但社会仿真还要问：
+`reflect_insights.txt` 的作用是：
 
 ```text
-这种传播在多少次运行中出现？
-传播平均深度是多少？
-哪些角色总是成为传播节点？
-模型变化是否影响传播？
-参数变化是否影响到场？
-失败是否主要来自路线错开、检索失败，还是计划没有修订？
+根据记忆节点生成反思洞察，并标注相关节点编号。
 ```
 
-也就是说，社会仿真需要从个案叙事走向统计分析。
-
-本书不要求读者一步到位做大规模平台。
-
-但可以把 GenerativeAgentsCN 从：
+当前项目不是只让模型随便写感想，而是要求 insight 绑定证据节点。`reflect_chat_planing.txt` 和 `reflect_chat_memory.txt` 则处理聊天后的计划影响和记忆内容。这说明 Generative Agents 已经比“单纯总结器”更进一步。它已经在问：
 
 ```text
-可回放的小镇 demo
+这次对话是否影响我的计划？
+这次对话有什么值得记住？
 ```
 
-升级为：
+## 33.5 当前反思的优势
+
+当前 reflection 有四个优点。第一，它有触发阈值。避免每一步都反思，降低成本。第二，它基于记忆证据。`reflect_insights` 输出 insight 时会绑定相关节点。第三，它把反思写回 memory stream。生成的 thought 会影响后续检索和行为。第四，它处理对话影响。聊天不仅生成对话记录，还会生成计划和记忆层面的总结。这四点说明当前项目已经保留了 Generative Agents 论文的精华。但它仍然不是完整的“经验学习”系统。
+
+## 33.6 当前反思的局限
+
+当前 reflection 的主要局限有五个。第一，反思不一定针对失败。它根据重要性触发，但不关心某个行动是否成功。第二，反思不一定形成可执行策略。例如：
 
 ```text
-可重复的小规模社会实验环境
+伊莎贝拉应该更关注顾客的需求。
 ```
 
-## 33.3 当前项目已有的数据基础
-
-GenerativeAgentsCN 已经保存了很多可分析材料。
-
-checkpoint 位于：
+这句话是想法，但不一定能转成下次行动。第三，缺少结果标签。系统没有明确记录：
 
 ```text
-generative_agents/results/checkpoints/<实验名>/
+这次邀请成功了吗？
+这次竞选宣传有效吗？
+这次讨论会有人参加吗？
 ```
 
-其中保存每一步仿真状态。
+第四，缺少技能库。成功经验不会被沉淀成可复用方法。第五，缺少反思质量评价。系统会保存 thought，但不会判断 thought 是否真的改善后续行为。这些局限正是 Reflexion 和 Voyager 思想可以补足的地方。
 
-对话记录：
+## 33.7 Reflexion 的启发
+
+Reflexion 的关键思想是：
 
 ```text
-conversation.json
+让语言反馈成为 agent 自我改进的材料。
 ```
 
-压缩结果：
+它不是通过修改模型参数来学习。而是让 agent 在失败后生成 verbal reflection，并在下一次尝试中使用。这和 Generative Agents 的 reflection 有相似之处。两者都使用自然语言反思。但侧重点不同。Generative Agents 更关注：
 
 ```text
-generative_agents/results/compressed/<实验名>/
+我从近期经历中理解到了什么？
 ```
 
-包括：
+Reflexion 更关注：
 
 ```text
-simulation.md
-movement.json
+我上次为什么失败，下次该怎么改？
 ```
 
-`simulation.md` 适合人工阅读。
-
-它包含基础人设、活动时间线和对话。
-
-`conversation.json` 适合分析信息传播。
-
-它能告诉我们：
-
-- 哪个时间。
-- 哪些角色。
-- 在哪里。
-- 说了什么。
-
-`movement.json` 适合分析位置和聚集。
-
-它能告诉我们：
-
-- 每个 frame 角色的位置。
-- 当前地点。
-- 当前行动。
-- 对话文本。
-
-这些材料已经足以做第一版统计分析。
-
-## 33.4 `compress.py` 的作用
-
-项目中的：
+对 Generative Agents 来说，这个差异很重要。小镇角色不只要知道过去，还要能调整策略。例如：
 
 ```text
-generative_agents/compress.py
+伊莎贝拉邀请失败后，下次先询问对方是否有空，而不是直接发出邀请。
 ```
 
-做了两件事。
-
-第一，生成 Markdown 报告：
+或者：
 
 ```text
-simulation.md
+山姆发现汤姆不信任自己后，下次先回应汤姆关心的社区问题，而不是泛泛宣传竞选。
 ```
 
-第二，生成回放数据：
+这就是从 reflection 到经验学习的升级。
+
+## 33.8 Voyager 的启发
+
+Voyager 的启发来自另一个方向：
 
 ```text
-movement.json
+把成功经验沉淀为可复用技能。
 ```
 
-`generate_movement()` 会读取 checkpoint，结合 Maze 路径，把 agent 在每一步的位置转成回放帧。
-
-`generate_report()` 会读取角色状态和 conversation，生成可读时间线。
-
-这说明当前项目已经具备社会仿真的关键材料：
+在 Minecraft 环境中，Voyager 通过探索、反馈和技能库不断扩展能力。小镇智能体不需要挖矿或建造工具。但它同样可以拥有“社交技能”和“组织技能”。例如：
 
 ```text
-行动轨迹 + 对话记录 + 角色状态
+invite_to_event
 ```
 
-缺少的是批量实验和指标统计。
-
-## 33.5 Concordia 的启发
-
-Concordia / Generative Agent-Based Modeling 方向强调：
+用于邀请别人参加活动。
 
 ```text
-用 LLM 构建 grounded agent-based models，让行动发生在物理、数字或社会空间中，并由环境解释和约束。
+campaign_conversation
 ```
 
-对 GenerativeAgentsCN 来说，最重要的启发有三点。
-
-第一，环境不是背景。
-
-Maze、Tile、地址树和对象状态应该参与判断行动是否可行。
-
-第二，社会仿真不是单个 agent 的问答集合。
-
-它需要环境、角色、行动、互动和记录共同构成。
-
-第三，实验要可重复和可解释。
-
-每次运行必须清楚：
-
-- 初始条件是什么。
-- 角色如何设定。
-- 环境如何约束。
-- 行动如何记录。
-- 指标如何计算。
-
-GenerativeAgentsCN 已经有地图和回放。
-
-下一步是把实验配置和指标系统补上。
-
-## 33.6 AgentSociety 的启发
-
-AgentSociety 关注更大规模 LLM-driven generative agents，用于理解人类行为和社会现象。
-
-它提醒我们：
+该技能用于和居民讨论竞选。
 
 ```text
-当 agent 数量变多时，问题不只是 prompt，而是系统工程。
+host_discussion
 ```
 
-大规模社会仿真需要：
-
-- agent profile 管理。
-- 环境建模。
-- 交互机制。
-- 运行调度。
-- 指标统计。
-- 可视化。
-- 成本控制。
-
-GenerativeAgentsCN 不需要直接追求大规模。
-
-但它可以吸收实验方法。
-
-尤其是：
+该技能用于组织小型讨论会。
 
 ```text
-把小规模实验做成可重复、可比较、可统计。
+repair_relationship
 ```
 
-这比盲目增加 agent 数量更重要。
+用于缓和紧张关系。这些技能不是写死的脚本。而是从经验中抽取的自然语言策略。它们可以作为 memory type 保存，供后续对话和计划使用。
 
-## 33.7 升级方向一：实验配置文件
+## 33.9 升级方向一：行动后复盘
 
-当前运行命令通常写成：
-
-```bash
-python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
-```
-
-如果要做社会仿真，建议把实验条件写入配置文件。
-
-例如：
+第一项可实现升级是行动后复盘。当前行为链大致是：
 
 ```text
-experiments/party_small.json
+plan -> action -> observation -> memory -> reflection
 ```
 
-内容：
+升级后增加：
+
+```text
+plan -> action -> outcome -> self_evaluate -> lesson -> future_strategy
+```
+
+例如伊莎贝拉邀请亚当参加派对。结果可能是：
+
+```text
+亚当接受。
+```
+
+也可能是：
+
+```text
+亚当拒绝，因为他要写作。
+```
+
+系统应记录 outcome。然后生成复盘：
+
+```text
+亚当正在专注写作，直接邀请他参加长时间派对效果不好。以后可以邀请他短暂停留，或选择他休息时再提。
+```
+
+这条 lesson 比普通反思更可执行。
+
+## 33.10 结果标签设计
+
+行动后复盘需要先知道结果。建议引入简单结果标签：
+
+```text
+success
+partial
+failed
+unknown
+```
+
+示例：
+
+```text
+success：对方明确接受邀请。
+partial：对方表示有兴趣但不确定。
+failed：对方拒绝或话题没有传达。
+unknown：无法判断结果。
+```
+
+这些标签可以用于：
+
+- 邀请。
+- 竞选宣传。
+- 讨论会组织。
+- 关系修复。
+- 协作任务。
+
+不要一开始追求复杂奖励函数。先用可解释标签。这样读者能理解结果，也能在 `simulation.md` 中核对。
+
+## 33.11 建议新增 prompt
+
+可以新增三个 prompt。第一：
+
+```text
+self_evaluate_action.txt
+```
+
+输入：
+
+- 行动目标。
+- 行动过程。
+- 对方反应。
+- 当前角色设定。
+
+输出：
 
 ```json
 {
-  "name": "party_small",
-  "description": "情人节派对传播小规模实验",
-  "start": "20240214-08:00",
-  "step": 72,
-  "stride": 10,
-  "agents": ["伊莎贝拉", "亚当", "阿伊莎", "埃迪", "玛丽亚", "克劳斯"],
-  "event_keywords": ["情人节", "派对", "霍布斯咖啡馆"],
-  "metrics": ["diffusion", "attendance", "conversation"]
+  "outcome": "partial",
+  "reason": "对方表示感兴趣，但没有明确承诺参加。",
+  "evidence": ["node_31"]
 }
 ```
-
-实验配置有三个好处。
-
-第一，减少命令行记录错误。
-
-第二，方便批量运行。
-
-第三，让实验条件进入版本管理。
-
-## 33.8 升级方向二：批量运行
-
-单次运行不能支撑强结论。
-
-可以新增脚本：
-
-```text
-tools/run_experiment_batch.py
-```
-
-功能：
-
-```text
-读取 experiment json
-生成多个 run name
-依次运行 start.py
-运行 compress.py
-调用指标脚本
-汇总结果
-```
-
-运行结果示例：
-
-```text
-party_small_run_01
-party_small_run_02
-party_small_run_03
-party_small_run_04
-party_small_run_05
-```
-
-每次运行都保留独立目录。
-
-不要覆盖旧结果。
-
-批量运行之后，才能说：
-
-```text
-在 5 次运行中，3 次出现间接传播，2 次没有出现。
-```
-
-这比单次成功更有价值。
-
-## 33.9 升级方向三：传播统计
-
-传播统计主要基于：
-
-```text
-conversation.json
-simulation.md
-```
-
-第一步是定义事件关键词。
-
-例如派对：
-
-```text
-情人节
-派对
-聚会
-霍布斯咖啡馆
-下午5点
-17:00
-```
-
-第二步是抽取提及。
-
-记录：
-
-- 时间。
-- 说话者。
-- 听话者。
-- 地点。
-- 命中关键词。
-- 句子内容。
-
-第三步是构建传播图。
-
-例如：
-
-```text
-伊莎贝拉 -> 玛丽亚
-玛丽亚 -> 克劳斯
-```
-
-第四步是计算指标：
-
-```text
-unique_informed_agents
-direct_mentions
-indirect_mentions
-diffusion_depth
-fact_preservation_score
-```
-
-这能把“好像传播了”变成可检查数据。
-
-## 33.10 传播统计的注意事项
-
-关键词统计不等于真正传播。
-
-例如角色说：
-
-```text
-我喜欢情人节。
-```
-
-不一定说明它知道派对。
-
-因此需要分层判断。
-
-第一层，关键词命中。
-
-第二层，事件事实命中。
-
-例如时间、地点、发起者。
-
-第三层，对话关系成立。
-
-说话者和听话者是否在同一段对话中。
-
-第四层，后续引用。
-
-听话者是否在后续主动提及。
-
-第五层，行动影响。
-
-听话者是否改变计划或到场。
-
-自动脚本可以先做前两层。
-
-后面几层可以人工抽样。
-
-不要把关键词命中直接等同于认知传播。
-
-## 33.11 升级方向四：群体轨迹统计
-
-群体轨迹统计主要基于：
-
-```text
-movement.json
-```
-
-可以统计：
-
-```text
-某时间窗内某地点人数
-```
-
-例如派对实验：
-
-```text
-17:00-19:00，霍布斯咖啡馆内有哪些角色？
-```
-
-指标：
-
-```text
-attendance_count
-```
-
-到场人数。
-
-```text
-arrival_time_distribution
-```
-
-到达时间分布。
-
-```text
-co_location_duration
-```
-
-多人共处时长。
-
-```text
-peak_gathering_size
-```
-
-聚集峰值人数。
-
-```text
-route_efficiency
-```
-
-路线是否绕远或异常。
-
-这些指标能评价行动落地。
-
-如果角色口头接受派对，但 movement 没有到咖啡馆，说明传播没有转化为行动。
-
-## 33.12 升级方向五：多次运行方差
-
-生成式系统有随机性。
-
-所以社会仿真必须关注方差。
-
-例如 5 次派对实验：
-
-| run | direct mentions | indirect mentions | attendance | diffusion depth |
-| --- | --- | --- | --- | --- |
-| 01 | 2 | 1 | 2 | 2 |
-| 02 | 1 | 0 | 1 | 1 |
-| 03 | 3 | 2 | 3 | 3 |
-| 04 | 2 | 0 | 1 | 1 |
-| 05 | 2 | 1 | 2 | 2 |
-
-这张表能说明：
-
-```text
-派对传播在多数运行中出现，但间接传播不稳定。
-```
-
-如果只展示 run 03，读者会以为系统很强。
-
-如果只展示 run 02，读者会以为系统很弱。
-
-多次运行能避免选择性展示。
-
-## 33.13 升级方向六：实验对照
-
-社会仿真需要对照组。
-
-例如派对实验可以比较：
-
-```text
-默认模型
-更强模型
-本地小模型
-关系记忆升级版
-目标规划升级版
-协作事件板升级版
-```
-
-也可以做模块对照：
-
-```text
-有 reflection
-弱 reflection
-无 relationship memory
-有 relationship memory
-```
-
-每次对照只改一个主要变量。
-
-否则无法归因。
-
-实验报告要写明：
-
-- 改了什么。
-- 没改什么。
-- 预期影响什么指标。
-- 实际指标如何变化。
-
-这能把项目升级和社会仿真连接起来。
-
-## 33.14 升级方向七：事件级数据集
-
-为了让实验可复用，可以建立事件级数据集。
-
-例如：
-
-```text
-experiments/events/valentine_party.json
-experiments/events/mayor_election.json
-experiments/events/sociology_discussion.json
-```
-
-每个事件包含：
-
-```json
-{
-  "event_id": "valentine_party",
-  "source_agent": "伊莎贝拉",
-  "time": "2024-02-14 17:00",
-  "location": "霍布斯咖啡馆",
-  "core_facts": ["发起者", "时间", "地点"],
-  "keywords": ["情人节", "派对", "霍布斯咖啡馆"],
-  "success_criteria": [
-    "至少三人知道事件",
-    "至少两人到场"
-  ]
-}
-```
-
-这样不同读者可以在同一事件定义下比较结果。
-
-这也是从 demo 走向 benchmark 的第一步。
-
-## 33.15 升级方向八：仿真报告自动生成
-
-批量实验后，需要自动生成报告。
-
-报告包括：
-
-```markdown
-# 实验批次报告
-
-- 实验名：
-- 模型：
-- agent 数量：
-- 运行次数：
-- 主要变量：
-
-## 指标汇总
-
-| run | diffusion_depth | attendance_count | failures |
-| --- | --- | --- | --- |
-
-## 传播图
-
-## 聚集曲线
-
-## 失败样例
-
-## 结论
-```
-
-自动报告不是替代人工分析。
-
-它是减少遗漏。
-
-尤其是失败样例、成本、运行参数这些信息，很容易在手工记录中丢失。
-
-## 33.16 与现实社会的边界
-
-社会仿真越像样，越要强调边界。
-
-GenerativeAgentsCN 的小镇实验不能直接预测现实社会。
-
-原因包括：
-
-- 角色是虚构的。
-- 环境高度简化。
-- 模型生成存在偏差。
-- 社会结构不完整。
-- 没有真实制度、经济和媒体系统。
-- agent 数量远小于真实社会。
-
-因此，正确结论应该是：
-
-```text
-在当前配置下，某类信息传播机制可以在小镇中被生成和观察。
-```
-
-而不是：
-
-```text
-现实人群会这样传播信息。
-```
-
-社会仿真的价值在于研究机制、测试系统、比较架构。
-
-不是代替真实社会调查。
-
-## 33.17 最小可行升级方案
-
-建议从三个脚本开始。
-
-第一：
-
-```text
-tools/analyze_conversation_keywords.py
-```
-
-输入 `conversation.json`，输出关键词提及、角色对、时间和传播链。
 
 第二：
 
 ```text
-tools/analyze_location_window.py
+extract_lesson.txt
 ```
 
-输入 `movement.json`，输出某地点某时间窗内的到场人数和角色列表。
+输入：
+
+- 行动目标。
+- outcome。
+- 对话或事件证据。
+
+输出：
+
+```json
+{
+  "lesson": "邀请忙碌的人时，应先询问时间安排，再给出灵活参与方式。",
+  "applies_to": "invite_to_event",
+  "confidence": 0.7
+}
+```
 
 第三：
 
 ```text
-tools/summarize_experiment_runs.py
+apply_lesson_to_plan.txt
 ```
 
-汇总多个 run 的指标，生成 Markdown 表格。
+输入：
 
-这三个脚本不需要改核心仿真逻辑。
+- 当前目标。
+- 可用 lesson。
+- 当前对象。
 
-但能显著提升实验严谨性。
+输出：
 
-## 33.18 本章小结
+```json
+{
+  "strategy": "先询问对方是否有空，再简短介绍派对，并说明可以只来十分钟。",
+  "reason": "目标人物最近忙于写作，不适合直接要求长时间参加。"
+}
+```
 
-本章讨论了社会仿真从单次小镇故事到可重复实验的升级路线：
+这三个 prompt 构成最小经验学习闭环。
 
-1. Smallville 式故事展示现象，但社会仿真需要可重复、可统计、可比较。
-2. GenerativeAgentsCN 已经保存 checkpoint、conversation.json、simulation.md 和 movement.json，具备统计基础。
-3. `compress.py` 把 checkpoint 转成报告和回放数据，是实验分析入口。
-4. Concordia 启发我们把环境作为 grounded agent-based modeling 的核心组成。
-5. AgentSociety 启发我们重视大规模仿真的 profile、环境、交互、指标和可视化。
-6. GenerativeAgentsCN 的务实升级方向不是直接追求万级 agent，而是先做小规模批量实验。
-7. 可落地升级包括实验配置文件、批量运行、传播统计、群体轨迹统计、多次运行方差、对照实验、事件级数据集和自动报告。
-8. 关键词命中不等于传播，必须分层判断事实保持、路径和行动影响。
-9. 社会仿真结论必须限定在实验条件内，不能直接外推到现实社会。
+## 33.12 升级方向二：技能库
 
-下一章讨论评价体系升级。社会仿真需要指标，而 agent 领域过去几年最大的教训之一，就是演示效果并不等于可复现能力。
+经验学习如果只保存单条 lesson，长期会变散。更好的方式是技能库。技能可以作为记忆类型：
+
+```text
+skill
+```
+
+结构示例：
+
+```json
+{
+  "name": "invite_to_event",
+  "condition": "需要邀请别人参加活动",
+  "steps": [
+    "先根据关系和场景判断对方是否适合邀请",
+    "简短说明活动时间、地点和主题",
+    "给对方留下拒绝或稍后决定的空间",
+    "如果对方感兴趣，记录承诺和时间"
+  ],
+  "evidence": ["node_31", "node_42"],
+  "success_count": 2,
+  "failure_count": 1
+}
+```
+
+技能不是函数。它是自然语言策略。它可以进入 prompt，帮助模型生成更好的对话或计划。例如对话前检索：
+
+```text
+当前目标是邀请克劳斯参加讨论会。
+检索 skill: invite_to_event。
+```
+
+模型就能使用过去经验。
+
+## 33.13 技能库和硬编码的区别
+
+技能库容易被误解成硬编码脚本。两者不同。硬编码脚本是：
+
+```text
+如果遇到 A，就说固定句子 B。
+```
+
+技能库是：
+
+```text
+给模型提供经过经验沉淀的策略，让它结合当前场景生成具体行动。
+```
+
+例如技能可以说：
+
+```text
+邀请忙碌的人时，要给出短时间参与选项。
+```
+
+但不规定必须说哪一句话。这样保留了生成式系统的灵活性。技能库应该影响行为，不应替代模型判断。
+
+## 33.14 升级方向三：失败驱动反思
+
+当前 reflection 主要由 poignancy 触发。可以增加失败触发。例如：
+
+```text
+如果 outcome == failed，并且目标重要性高，则触发 self_reflection。
+```
+
+这样一些低频但关键的失败不会被忽略。例如：
+
+- 伊莎贝拉连续三次没有传播派对消息。
+- 山姆连续遇到反对意见。
+- 克劳斯组织讨论会没人回应。
+- 角色口头答应活动但没有到场。
+
+这些都是值得反思的失败。失败反思 prompt 可以问：
+
+```text
+这次行动原本目标是什么？
+结果为什么没有达成？
+哪些因素来自对方状态？
+哪些因素来自我的表达方式？
+下次可以采取什么不同策略？
+```
+
+这比普通 insight 更具体。
+
+## 33.15 升级方向四：把反思连接到计划
+
+反思如果不影响计划，就只是漂亮文本。因此需要把 lesson 和 skill 放入计划生成上下文。当前项目中，计划相关逻辑包括：
+
+- wake up。
+- daily schedule。
+- schedule decompose。
+- schedule revise。
+- determine action。
+
+升级时可以在两个位置使用反思结果。第一，生成日程时。例如：
+
+```text
+山姆昨天发现居民更关心公园安全，因此今天上午安排去公园附近与居民交流。
+```
+
+第二，生成当前行动时。例如：
+
+```text
+伊莎贝拉根据上次邀请失败经验，决定先找熟悉顾客，而不是随机邀请陌生人。
+```
+
+这要求检索：
+
+```text
+goal + relevant lesson + relationship + recent thought
+```
+
+反思只有进入计划上下文，才真正改变行为。
+
+## 33.16 升级方向五：反思质量评分
+
+不是所有反思都有价值。可以给反思打分。维度包括：
+
+```text
+groundedness
+```
+
+该项检查反思是否基于真实证据。
+
+```text
+specificity
+```
+
+是否具体，而不是空话。
+
+```text
+actionability
+```
+
+该项检查反思是否能指导后续行动。
+
+```text
+consistency
+```
+
+是否与角色设定和已有记忆一致。
+
+```text
+impact
+```
+
+后续是否真的影响行为。示例低质量反思：
+
+```text
+伊莎贝拉应该更加努力与大家交流。
+```
+
+问题：
+
+- 太泛。
+- 没有对象。
+- 没有策略。
+- 不容易评价。
+
+示例高质量反思：
+
+```text
+伊莎贝拉发现亚当在写作时不愿长时间参加活动；下次邀请亚当时，应强调他可以短暂停留，并选择他休息时再提。
+```
+
+这条反思更好，因为它有对象、原因和行动策略。
+
+## 33.17 最小可行升级方案
+
+建议读者从一个最小升级开始：
+
+```text
+邀请任务失败复盘
+```
+
+步骤：
+
+1. 在对话后判断是否传达了邀请。
+2. 如果对方拒绝或未表态，生成 `lesson`。
+3. 将 lesson 写入 `thought` 或新增 `skill`。
+4. 下一次邀请前检索 lesson。
+5. 比较升级前后邀请成功率和对话质量。
+
+实验对象：
+
+```text
+伊莎贝拉的情人节派对。
+```
+
+评价：
+
+- 邀请是否更自然。
+- 是否减少重复邀请。
+- 是否更好处理拒绝。
+- 是否能针对不同关系调整话术。
+- 是否出现过度策略化、不像生活的行为。
+
+这个实验足够小，但能体现 Reflexion-style learning 的价值。
+
+## 33.18 风险与边界
+
+反思增强会带来风险。第一，反思可能变成伪内心。越深刻的反思越容易让人误以为角色有真实意识。第二，失败标签可能过度简化社会行为。一次拒绝不一定是失败，可能是合理选择。第三，技能库可能让角色行为过度工具化。如果每次社交都像执行任务，会失去生活感。第四，错误 lesson 会长期影响行为。例如模型错误总结：
+
+```text
+汤姆拒绝山姆是因为汤姆讨厌所有社区活动。
+```
+
+这种错误会污染后续关系。因此反思升级必须保留：
+
+- 证据节点。
+- 置信度。
+- 可删除机制。
+- 人工抽样检查。
+- 行为影响评价。
+
+反思不是越多越好。好的反思应该少而准，并能被证据支撑。
+
+## 33.19 本章小结
+
+反思升级要从“想明白发生了什么”走向“下次能做得更好”。Reflexion、Voyager 这类工作能给 Generative Agents 带来改进，但反思不能写成漂亮却无用的文本。
+
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 当前反思入口 | `Agent.reflect()` 在 poignancy 达到阈值后触发。 |
+| 当前流程 | 生成 focus、检索相关记忆、生成 insights，并把 thought 写回记忆。 |
+| 当前局限 | 已有证据节点和对话总结，但不一定针对失败，也不一定形成可执行策略。 |
+| Reflexion 启发 | 失败后的语言反馈可以成为下一次行动的改进材料。 |
+| Voyager 启发 | 成功经验可以沉淀为可复用技能库。 |
+| 升级方向 | 行动后复盘、结果标签、lesson 提取、技能库、失败驱动反思和反思质量评分都可落地。 |
+| 行为连接 | 反思必须连接到计划和对话上下文，否则只是漂亮文本。 |
+| 最小实验 | 可以从伊莎贝拉派对邀请失败复盘开始。 |
+| 风险边界 | 反思增强会提高拟人化、错误经验固化和行为工具化风险，必须配套证据、置信度和评价。 |
+
+下一章讨论规划系统升级。记忆和反思让角色知道过去、理解过去；规划系统要解决的是：面对目标和不确定环境，角色下一步应该怎么做。
 
 ## 参考资料
 
 - Generative Agents: https://arxiv.org/abs/2304.03442
-- Concordia / Generative Agent-Based Modeling: https://arxiv.org/abs/2312.03664
-- AgentSociety: https://arxiv.org/abs/2502.08691
-- Local source: `generative_agents/compress.py`
-- Local source: `generative_agents/replay.py`
-- Local source: `generative_agents/modules/game.py`
-- Local output: `generative_agents/results/checkpoints/<实验名>/conversation.json`
-- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`
-- Local output: `generative_agents/results/compressed/<实验名>/movement.json`
+- Reflexion: https://arxiv.org/abs/2303.11366
+- Voyager: https://arxiv.org/abs/2305.16291
+- Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
+- Local prompts: `generative_agents/data/prompts/reflect_focus.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_chat_planing.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_chat_memory.txt`

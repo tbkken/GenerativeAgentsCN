@@ -1,75 +1,8 @@
-# 第 17 章 社交：聊天、等待与关系传播
+# 第 17 章 感知：智能体如何看见附近事件
 
-## 17.1 本章要解决的问题
+## 17.1 核心问题
 
-前面几章讲了世界、初始化、仿真循环、感知、记忆和日程。
-
-这一章讲社交。
-
-在 GenerativeAgentsCN 中，社交不是“两个角色随机聊天”。它是由感知触发、记忆约束、模型判断、对话生成、日程改写和记忆写回共同组成的行为闭环。
-
-核心源码在：
-
-```text
-generative_agents/modules/agent.py
-```
-
-主要函数：
-
-```text
-_reaction()
-_chat_with()
-_wait_other()
-schedule_chat()
-revise_schedule()
-```
-
-相关 prompt：
-
-```text
-decide_chat
-summarize_relation
-generate_chat
-generate_chat_check_repeat
-decide_chat_terminate
-summarize_chats
-decide_wait
-reflect_chat_planing
-reflect_chat_memory
-```
-
-本章要回答八个问题：
-
-1. 社交行为如何从感知触发？
-2. `_reaction()` 如何选择关注对象？
-3. `_chat_with()` 如何决定是否聊天？
-4. 对话为什么需要双方关系摘要？
-5. 多轮对话如何生成、终止和防复读？
-6. 对话如何写回双方日程和记忆？
-7. `_wait_other()` 如何处理空间冲突？
-8. 社交模块如何支撑信息扩散和关系形成？
-
-[图 17-1：社交行为闭环]
-
-```mermaid
-flowchart TD
-    O[感知附近角色] --> F[选择 focus]
-    F --> J{decide_chat?}
-    J -- 否 --> W{decide_wait?}
-    J -- 是 --> Rel[检索关系与记忆]
-    Rel --> Chat[多轮 generate_chat]
-    Chat --> End{结束/重复检查}
-    End -- 继续 --> Chat
-    End -- 结束 --> Sum[summarize_chats]
-    Sum --> S[schedule_chat]
-    S --> M[双方写入 chat 记忆]
-    W -- 是 --> Rev[revise_schedule 等待]
-    W -- 否 --> A[继续原行动]
-```
-
-## 17.2 社交从 reaction 开始
-
-`Agent.think()` 中，醒着的 agent 会执行：
+仿真循环解释了时间如何推进、智能体如何逐步思考。在 `Agent.think()` 中，醒着的智能体每一步会执行：
 
 ```python
 self.percept()
@@ -77,784 +10,509 @@ self.make_plan(agents)
 self.reflect()
 ```
 
-`make_plan()` 首先尝试 reaction：
-
-```python
-if self._reaction(agents):
-    return
-```
-
-所以社交行为不是无条件发生。
-
-它必须先由感知产生 `self.concepts`，再由 `_reaction()` 判断。
-
-这条链路是：
+本章专门讲第一步：`percept()`。感知是整个生成式智能体系统的入口。如果 agent 看不到世界，它就无法形成记忆。如果看到了错误事件，后续计划和对话也会错。如果它能看到全局世界，信息扩散和偶遇就失去意义。所以，感知机制的目标不是“看得越多越好”，而是“在合理限制下看到当前附近发生的事”。Generative Agents 的感知链路是：
 
 ```text
-看到附近事件
-  -> self.concepts
-  -> _reaction()
-  -> _chat_with() 或 _wait_other()
+当前坐标
+  -> Maze.get_scope()
+  -> 附近 tiles
+  -> 同 arena 过滤
+  -> 收集 tile events
+  -> 距离排序
+  -> attention bandwidth 截断
+  -> 去重
+  -> 写入 memory stream
+  -> 更新 poignancy
+  -> 得到 self.concepts
 ```
 
-如果没有看到其他角色或重要事件，agent 会继续执行原计划。
+本章聚焦七个问题：
 
-这让社交建立在空间相遇之上。
+1. `Agent.percept()` 在整体循环中处于什么位置？
+2. 视野范围如何计算？
+3. 为什么要限制同一 arena？
+4. tile events 如何变成 concepts？
+5. 哪些事件会写入长期记忆？
+6. 感知结果如何影响 reaction 和 reflection？
+7. 当前感知机制有哪些边界？
 
-## 17.3 _reaction() 如何选择 focus
-
-`_reaction()` 的第一步是从 `self.concepts` 中选 focus。
-
-如果有其他 agent 相关 concept，优先选择：
-
-```python
-priority = [i for i in self.concepts if _focus(i)]
-if priority:
-    focus = random.choice(priority)
+```mermaid
+flowchart LR
+    Position["当前坐标"] --> Scope["Maze.get_scope()<br/>附近 tile"]
+    Scope --> Events["收集 tile events"]
+    Events --> Filter["过滤自身事件和重复事件"]
+    Filter --> New["识别新观察"]
+    New --> Memory["写入 Associate"]
+    New --> Reaction["为 reaction 提供现场材料"]
 ```
 
-`_focus()` 判断：
+*图 17-1：Agent.percept() 数据流。感知不是读取全局世界，而是在空间范围内把附近事件转成角色自己的观察。*
 
-```python
-concept.event.subject in agents
-```
+## 17.2 感知不是全局读取
 
-也就是说，看到人优先于看到物。
+在多智能体仿真中，感知必须受限。如果每个 agent 都能读取全局状态，那么：
 
-如果没有看到 agent，就从非空闲事件中选：
+- 伊莎贝拉不用邀请别人，所有人都能知道派对。
+- 山姆不用竞选传播，所有人都能知道他参选。
+- 克劳斯和玛丽亚不用相遇，也能知道彼此状态。
+- 信息扩散不再是社会现象，而是全局共享变量。
 
-```python
-priority = [i for i in self.concepts if not _ignore(i)]
-```
+因此，Generative Agents 让 agent 只感知附近区域。这一点对应论文中的观察机制：agent 只能根据自身所在环境观察到局部事件。局部感知是社会涌现的前提。信息之所以能扩散，是因为它一开始不在每个人那里。关系之所以能形成，是因为角色需要相遇、对话和记忆。
 
-默认忽略词是：
+## 17.3 percept() 的入口
+
+`Agent.percept()` 位于：
 
 ```text
-空闲
+generative_agents/modules/agent.py
 ```
 
-这避免角色对空闲对象过度反应。
-
-如果最终 focus 不是另一个 agent，`_reaction()` 返回 None。
-
-当前项目的 reaction 主要围绕 agent-agent 互动。
-
-## 17.4 关系上下文：get_relation()
-
-选中 focus 后：
+源码结构如下：
 
 ```python
-other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
+def percept(self):
+    scope = self.maze.get_scope(self.coord, self.percept_config)
+    # add spatial memory
+    for tile in scope:
+        if tile.has_address("game_object"):
+            self.spatial.add_leaf(tile.address)
+    events, arena = {}, self.get_tile().get_address("arena")
+    # gather events in scope
+    for tile in scope:
+        ...
+    events = list(sorted(events.keys(), key=lambda k: events[k]))
+    # get concepts
+    self.concepts, valid_num = [], 0
+    for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
+        ...
+    self.concepts = [c for c in self.concepts if c.event.subject != self.name]
 ```
 
-`get_relation()` 会返回：
+可以分成五段：
+
+1. 获取视野范围。
+2. 更新空间记忆。
+3. 收集附近事件。
+4. 转成 concepts。
+5. 过滤自身事件。
+
+每一段都影响后续行为。
+
+## 17.4 视野范围：Maze.get_scope()
+
+感知第一步：
 
 ```python
+scope = self.maze.get_scope(self.coord, self.percept_config)
+```
+
+`percept_config` 来自 `data/config.json`：
+
+```json
 {
-    "node": node,
-    "events": self.retrieve_events(node.describe),
-    "thoughts": self.retrieve_thoughts(node.describe),
+  "mode": "box",
+  "vision_r": 8,
+  "att_bandwidth": 8
 }
 ```
 
-这说明当前 focus 会触发一次关系检索。
-
-例如，克劳斯看到玛丽亚，系统不会只把“玛丽亚在这里”交给聊天 prompt。
-
-它还会检索：
-
-- 与玛丽亚相关的事件。
-- 与玛丽亚相关的想法。
-
-社交行为因此具有历史感。
-
-角色是否聊天、说什么、如何称呼对方，都可以受过往关系影响。
-
-## 17.5 reaction 的两条路径
-
-`_reaction()` 尝试两条路径：
-
-```python
-if self._chat_with(other, focus):
-    return True
-if self._wait_other(other, focus):
-    return True
-return False
-```
-
-第一条是聊天。
-
-第二条是等待。
-
-聊天处理社会信息交换。
-
-等待处理空间资源冲突。
-
-这两种 reaction 都可能打断原日程。
-
-如果聊天成功，当前计划被对话 action 替代。
-
-如果等待成功，当前计划被等待 action 替代。
-
-如果都不成功，agent 继续原计划。
-
-## 17.6 _skip_react()：何时不反应
-
-社交不应该随时发生。
-
-`_skip_react()` 过滤不合适场景。
-
-它会跳过：
-
-- 深夜 23 点后。
-- 自己或对方正在睡觉。
-- 事件处于待开始状态。
-
-代码中：
-
-```python
-if utils.get_timer().daily_duration(mode="hour") >= 23:
-    return True
-if _skip(self.get_event()) or _skip(other.get_event()):
-    return True
-```
-
-这让角色不会半夜频繁社交，也不会和睡觉的人聊天。
-
-可信社交不仅要会说话，也要知道什么时候不说话。
-
-## 17.7 _chat_with() 的前置条件
-
-`_chat_with()` 先做多项检查。
-
-第一，双方日程必须已初始化：
-
-```python
-if len(self.schedule.daily_schedule) < 1 or len(other.schedule.daily_schedule) < 1:
-    return False
-```
-
-第二，不适合 reaction 时返回 False。
-
-第三，对方不能正在移动：
-
-```python
-if other.path:
-    return False
-```
-
-第四，双方不能已经在对话：
-
-```python
-if self.get_event().fit(predicate="对话") or other.get_event().fit(predicate="对话"):
-    return False
-```
-
-这些检查防止社交过度触发。
-
-它们让对话发生在更稳定的场景中。
-
-## 17.8 最近聊天冷却
-
-`_chat_with()` 会检索最近与对方的聊天记录：
-
-```python
-chats = self.associate.retrieve_chats(other.name)
-```
-
-如果有聊天记录，会计算距离现在多久：
-
-```python
-delta = utils.get_timer().get_delta(chats[0].create)
-if delta < 60:
-    return False
-```
-
-也就是说，一小时内聊过就不再聊。
-
-这很重要。
-
-否则两个角色在同一个地点可能每个 step 都重新对话。
-
-冷却机制让对话更像真实社交，而不是循环触发器。
-
-## 17.9 decide_chat：是否应该主动聊天
-
-通过前置条件后，系统调用：
-
-```python
-if not self.completion("decide_chat", self, other, focus, chats):
-    return False
-```
-
-`decide_chat` prompt 会基于：
-
-- 上下文事件。
-- 关系 thoughts。
-- 当前时间。
-- 上次聊天历史。
-- 自己当前状态。
-- 对方当前状态。
-
-判断是否主动聊天。
-
-输出是 bool。
-
-这一步把“是否聊天”从“看见人就聊”升级为情境判断。
-
-例如：
-
-- 正在赶去睡觉，不一定聊天。
-- 刚刚聊过，不聊天。
-- 对方正在做重要事情，不一定打扰。
-- 有共同活动或邀请事项，可能聊天。
-
-这就是 believable behavior。
-
-## 17.10 summarize_relation：双方视角不同
-
-决定聊天后，系统生成双方关系摘要：
-
-```python
-relations = [
-    self.completion("summarize_relation", self, other.name),
-    other.completion("summarize_relation", other, self.name),
-]
-```
-
-这里生成两个摘要，而不是一个全局关系。
-
-这很关键。
-
-克劳斯怎么看玛丽亚，不一定等于玛丽亚怎么看克劳斯。
-
-山姆怎么看汤姆，也不等于汤姆怎么看山姆。
-
-对话生成时，双方各用自己的关系摘要。
-
-这让对话具有不对称性。
-
-如果所有角色共享一份关系状态，对话会更像剧本，而不是个体社会互动。
-
-## 17.11 summarize_relation 如何检索
-
-`prompt_summarize_relation()` 会围绕对方名字检索记忆：
-
-```python
-nodes = agent.associate.retrieve_focus([other_name], 50)
-```
-
-然后把检索结果放进 prompt。
-
-如果没有有效结果，failsafe 是：
+当前实现支持 `box` 模式。`Maze.get_scope()` 会取当前坐标周围一个方形区域。如果 `vision_r = 8`，理论上视野是：
 
 ```text
-<agent> 正在看着 <other_name>
+(2 * 8 + 1) x (2 * 8 + 1)
 ```
 
-这说明关系摘要来自记忆，而不是全局关系表。
+也就是 17 x 17 个 tile。同时会裁剪地图边界，避免坐标越界。这只是候选范围。后面还会根据 arena 和 attention bandwidth 继续过滤。
 
-角色越多次与某人互动，关系摘要越可能具体。
+## 17.5 方形视野的工程取舍
 
-这支撑关系形成。
+当前视野是 box，不是圆形。这是一种工程简化。方形视野实现简单，计算成本低，也足够支持小镇仿真。但它并不等于真实视觉。真实视觉会受方向、遮挡、墙、距离衰减、光线等影响。当前项目没有模拟这些。这意味着：
 
-## 17.12 generate_chat：生成一句话
+- agent 可能看到方形边角处的事件。
+- agent 不区分正前方和身后。
+- agent 不做视线遮挡。
 
-多轮对话核心是：
+这些都是可接受的简化。因为项目重点不是物理感知，而是记忆、计划、反思和社会互动。
+
+## 17.6 感知顺便更新空间记忆
+
+拿到 scope 后，`percept()` 会先更新 `Spatial`：
 
 ```python
-text = self.completion("generate_chat", self, other, relations[0], chats)
+for tile in scope:
+    if tile.has_address("game_object"):
+        self.spatial.add_leaf(tile.address)
 ```
 
-`generate_chat` prompt 包含：
-
-- 角色基础描述。
-- 当前检索记忆。
-- 当前地点。
-- 当前时间。
-- 最近对话背景。
-- 当前场景。
-- 已有对话记录。
-- 对话原则。
-
-对话原则包括：
-
-- 不重复已有内容。
-- 符合性格和当前情境。
-- 语言自然。
-- 1 到 3 句话。
-- 直接输出角色对话内容。
-
-这比单纯“让 A 和 B 对话”要稳得多。
-
-因为每次生成都带上关系、记忆和当前场景。
-
-## 17.13 对话记忆检索
-
-`prompt_generate_chat()` 内部还会检索相关记忆：
-
-```python
-focus = [relation, other.get_event().get_describe()]
-if len(chats) > 4:
-    focus.append("; ".join("{}: {}".format(n, t) for n, t in chats[-4:]))
-nodes = agent.associate.retrieve_focus(focus, 15)
-```
-
-也就是说，生成一句话时会围绕：
-
-- 双方关系。
-- 对方当前行为。
-- 最近对话内容。
-
-检索记忆。
-
-此外，它还检索最近 480 分钟内与对方的聊天：
-
-```python
-chat_nodes = agent.associate.retrieve_chats(other.name)
-```
-
-这让角色能避免重复，也能延续近期话题。
-
-## 17.14 多轮对话循环
-
-`_chat_with()` 中：
-
-```python
-for i in range(self.chat_iter):
-    text = self.completion("generate_chat", self, other, relations[0], chats)
-    ...
-    text = other.completion("generate_chat", other, self, relations[1], chats)
-```
-
-`chat_iter` 默认是 4。
-
-一轮中，发起者说一句，对方说一句。
-
-每次说话后，内容加入：
-
-```python
-chats.append((name, text))
-```
-
-这使下一句生成能看到已有对话。
-
-对话不是一次性生成整段，而是逐轮生成。
-
-这更像真实互动，也更容易在中途结束。
-
-## 17.15 防复读
-
-从第二轮开始，系统检查复读：
-
-```python
-generate_chat_check_repeat
-```
-
-如果判断重复，就结束。
-
-这针对 LLM 常见问题：
-
-- 重复上一轮意思。
-- 客套话循环。
-- 继续确认同一件事。
-
-多智能体长对话很容易陷入复读。
-
-防复读 prompt 是工程上非常实用的补丁。
-
-它不属于论文核心模块，但对项目可运行性很关键。
-
-## 17.16 decide_chat_terminate：判断话题结束
-
-系统还会调用：
-
-```python
-decide_chat_terminate
-```
-
-判断对话是否已告一段落。
-
-如果结束，就 break。
-
-这让对话长度由内容决定，而不是固定轮数。
-
-例如，简单问候可能一两轮结束。
-
-派对邀请可能需要多轮。
-
-争论或协商可能更长。
-
-当前项目仍然有最大轮数 `chat_iter`，避免无限对话。
-
-## 17.17 保存 conversation
-
-对话结束后，系统写入全局 conversation：
-
-```python
-key = utils.get_timer().get_date("%Y%m%d-%H:%M")
-self.conversation[key].append({
-    f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats
-})
-```
-
-这个结构记录：
-
-- 时间。
-- 发起者。
-- 接收者。
-- 地点。
-- 对话内容。
-
-它会被 `SimulateServer.simulate()` 每步写入 `conversation.json`。
-
-后续 `compress.py` 会用它生成 `simulation.md`。
-
-这让社交行为可复盘。
-
-## 17.18 summarize_chats：对话摘要
-
-系统不会把完整对话直接作为当前 action。
-
-它会先生成摘要：
-
-```python
-chat_summary = self.completion("summarize_chats", chats)
-```
-
-摘要用于：
-
-- 对话事件 describe。
-- chat memory。
-- 日程修订。
-- 后续 reflection。
-
-这很重要。
-
-完整对话适合日志。
-
-摘要适合记忆和检索。
-
-如果摘要质量差，后续社交记忆会变差。
-
-例如，派对邀请摘要必须包含时间、地点和邀请意图，否则后续无法传播。
-
-## 17.19 schedule_chat：写回双方
-
-对话摘要生成后：
-
-```python
-self.schedule_chat(chats, chat_summary, start, duration, other)
-other.schedule_chat(chats, chat_summary, start, duration, self)
-```
-
-也就是说，对话会写回双方。
-
-这符合现实。
-
-聊天不是只有发起者记得。
-
-双方都要：
-
-- 把对话加入 `chats`。
-- 创建对话 event。
-- 修订当前 schedule。
-
-这也是信息传播的关键。
-
-如果只有发起者记录对话，被邀请者就不会知道派对。
-
-## 17.20 对话时长如何估算
-
-对话 duration 由文本长度估算：
-
-```python
-duration = int(sum([len(c[1]) for c in chats]) / 240)
-```
-
-这是一种简单估计。
-
-对话越长，占用时间越久。
-
-但它有边界。
-
-中文字符长度与真实说话时间不是严格线性。
-
-短对话可能 duration 为 0。
-
-更精细的系统可以设置最小时长，或按词速估算。
-
-当前实现足够支持日程占用的基本效果。
-
-## 17.21 对话如何进入反思
-
-`schedule_chat()` 会把 chats 加入：
-
-```python
-self.chats.extend(chats)
-```
-
-之后 `Agent.reflect()` 会处理 `self.chats`：
-
-```python
-thought = self.completion("reflect_chat_planing", self.chats)
-_add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
-thought = self.completion("reflect_chat_memory", self.chats)
-_add_thought(f"{self.name} {thought}", evidence)
-```
-
-所以对话不仅影响当前日程，也会影响高层 thought。
-
-例如：
+这一步很容易被忽略。它说明感知不仅产生事件记忆，也会扩展空间记忆。如果 agent 看到某个 game object，它就把该对象地址加入自己的 spatial tree。例如，角色进入霍布斯咖啡馆附近，看到：
 
 ```text
-阿伊莎知道伊莎贝拉邀请她参加情人节派对。
-克劳斯觉得玛丽亚愿意讨论开放性问题。
-山姆发现汤姆对竞选保持怀疑。
+the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
 ```
 
-这些 thought 会影响后续行为。
+它后续就知道咖啡馆里有钢琴。这类空间学习不进入 `Associate`，而是进入 `Spatial`。这再次说明项目中的“记忆”有多层：
 
-## 17.22 _wait_other()：等待机制
+```text
+Spatial：哪里有什么。
+Associate：发生了什么、聊了什么、想到了什么。
+Schedule：今天要做什么。
+```
 
-社交章节还要讲等待，因为它也是 reaction 的一部分。
+## 17.7 arena 过滤
 
-`_wait_other()` 处理空间冲突。
-
-前置条件包括：
-
-- 不跳过 reaction。
-- 自己必须在 path 上。
-- 自己 action 地址必须等于对方当前 tile 地址。
-- `decide_wait` 判断应该等待。
-
-如果决定等待，会创建 event：
+收集事件前，代码先取当前 arena：
 
 ```python
-memory.Event(
-    self.name,
-    "waiting to start",
-    self.get_event().get_describe(False),
-    address=self.get_event().address,
-    emoji=f"⌛",
+events, arena = {}, self.get_tile().get_address("arena")
+```
+
+然后遍历 scope：
+
+```python
+for tile in scope:
+    if not tile.events or tile.get_address("arena") != arena:
+        continue
+```
+
+这意味着，即使某个 tile 在视野方框内，如果它不属于当前 arena，也不会被感知。它避免隔墙感知。例如，角色站在宿舍房间里，方形视野可能覆盖隔壁房间或走廊。如果只按距离，角色可能看到墙后的人。arena 过滤用语义区域限制感知。它不是完美视线模拟，但比单纯距离更合理。
+
+## 17.8 收集 tile events
+
+通过 arena 过滤后，系统读取 tile events：
+
+```python
+dist = math.dist(tile.coord, self.coord)
+for event in tile.get_events():
+    if dist < events.get(event, float("inf")):
+        events[event] = dist
+```
+
+这里 `events` 是一个 dict：
+
+```text
+Event -> 最近距离
+```
+
+如果同一个 event 出现在多个 tile 上，只保留最近距离。这很合理。例如，同一个 game object 可能对应多个 tile，同一个对象事件可能出现在多个坐标上。agent 只需要知道这个事件存在，不需要重复记录多次。使用 Event 作为 dict key，依赖 `Event.__hash__()` 和 `Event.__eq__()`。`Event.__hash__()` 包含：
+
+```python
+self.subject
+self.predicate
+self.object
+self._describe
+":".join(self.address)
+```
+
+subject、predicate、object、describe、address 都相同，才认为是同一事件。
+
+## 17.9 距离排序与注意力带宽
+
+收集完成后：
+
+```python
+events = list(sorted(events.keys(), key=lambda k: events[k]))
+```
+
+事件按距离排序。越近越先处理。然后只处理前 `att_bandwidth` 个：
+
+```python
+for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
+```
+
+当前默认 `att_bandwidth = 8`。这代表 agent 的注意力有限。即使附近有很多事件，它也只能关注一部分。这很符合论文思想。如果 agent 每一步都记住视野中所有事件，记忆流会膨胀，角色也会过度敏感。注意力带宽让感知更接近人类有限注意。
+
+## 17.10 去重：避免重复写入记忆
+
+对每个候选 event，代码先取近期记忆：
+
+```python
+recent_nodes = (
+    self.associate.retrieve_events() + self.associate.retrieve_chats()
+)
+recent_nodes = set(n.describe for n in recent_nodes)
+```
+
+然后判断：
+
+```python
+if event.get_describe() not in recent_nodes:
+```
+
+如果近期已经有同样描述，就不重复处理。这避免 agent 每一步都把同一个附近事件重复写入 memory stream。例如，克劳斯连续几步坐在书桌前读书。玛丽亚每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
+
+```text
+克劳斯正在读书。
+克劳斯正在读书。
+克劳斯正在读书。
+```
+
+去重让记忆更干净。不过，这里是基于 `describe` 文本去重，不是基于 event id。如果同一事件描述略有变化，仍然可能重复。这是一个工程边界。
+
+## 17.11 空闲事件如何处理
+
+如果 event 是空闲：
+
+```python
+if event.object == "idle" or event.object == "空闲":
+    node = Concept.from_event(
+        "idle_" + str(idx), "event", event, poignancy=1
+    )
+```
+
+这类 event 会被转成临时 Concept，但不会写入 `Associate`。它仍然可以出现在 `self.concepts` 中，供当前 step 使用。但它不会成为长期记忆。这很合理。空闲状态通常没有长期记忆价值。如果每个空闲对象都写入 memory stream，记忆会迅速膨胀。因此，项目区分了：
+
+```text
+临时感知 concept
+长期 memory concept
+```
+
+空闲事件属于临时感知 concept。
+
+## 17.12 非空闲事件如何写入记忆
+
+非空闲事件会进入 `_add_concept()`：
+
+```python
+valid_num += 1
+node_type = "chat" if event.fit(self.name, "对话") else "event"
+node = self._add_concept(node_type, event)
+self.status["poignancy"] += node.poignancy
+```
+
+这里有三个动作。第一，判断 node_type。如果事件是当前 agent 与别人对话，类型是 chat。否则是 event。第二，写入 associate memory。`_add_concept()` 会调用：
+
+```python
+self.associate.add_node(...)
+```
+
+第三，累积 poignancy。重要事件会推动 reflection 触发。这就是感知与反思之间的连接。agent 不是凭空反思，而是因为看到、听到、经历了一些重要事件。
+
+## 17.13 _add_concept() 与重要性评分
+
+`_add_concept()` 根据事件类型给 poignancy。空闲事件给 1。chat 使用：
+
+```python
+poignancy_chat
+```
+
+其他事件使用：
+
+```python
+poignancy_event
+```
+
+代码：
+
+```python
+elif e_type == "chat":
+    poignancy = self.completion("poignancy_chat", event)
+else:
+    poignancy = self.completion("poignancy_event", event)
+```
+
+然后写入 Associate：
+
+```python
+return self.associate.add_node(
+    e_type,
+    event,
+    poignancy,
+    create=create,
+    expire=expire,
+    filling=filling,
 )
 ```
 
-然后调用：
+这说明感知不是简单记录。每条进入 memory stream 的事件都会带重要性分数。这个分数后续影响：
+
+- retrieval 排序。
+- reflection 触发。
+- 记忆解释。
+
+## 17.14 self.concepts 的作用
+
+处理完事件后，concept 会加入：
 
 ```python
-self.revise_schedule(event, start, duration)
+self.concepts.append(node)
 ```
 
-等待是社交的边界场景。
+最后过滤自身事件：
 
-它不是对话，但它处理人与人之间的空间协调。
+```python
+self.concepts = [c for c in self.concepts if c.event.subject != self.name]
+```
 
-## 17.23 decide_wait 的常识示例
+`self.concepts` 是当前 step 感知结果。它不是长期记忆本身。长期记忆在 `Associate` 中。`self.concepts` 主要服务当前 step 的 reaction。例如 `_reaction()` 会从 `self.concepts` 中选 focus：
 
-`decide_wait` prompt 中有示例。
+```python
+priority = [i for i in self.concepts if i.event.subject in agents]
+```
 
-一个例子是两人都要使用浴室。
+因此，感知结果马上影响当前行为。如果看到别人，可能聊天。如果看到对象占用，可能等待。如果没看到重要事件，就继续按计划行动。
 
-如果浴室已被占用，后到者应该等待。
+## 17.15 过滤自身事件
 
-另一个例子是一人吃午饭，一人洗衣服。
+最后过滤：
 
-两者不冲突，继续行动。
+```python
+c.event.subject != self.name
+```
 
-这些例子告诉模型：
+因为 agent 自己的事件也在 tile 上。如果不滤掉，它可能把自己当前行为当成外部事件来反应。例如，克劳斯正在读书。他的 tile 上有：
 
 ```text
-不是看到别人就等待。
-要判断行动是否争用同一空间或对象。
+克劳斯此时读书
 ```
 
-这让等待机制更接近常识。
+如果不排除，克劳斯可能“感知到克劳斯正在读书”，再把它作为 reaction focus。这没有意义。过滤自身事件让 reaction 主要面向外部世界。
 
-## 17.24 社交如何支撑信息扩散
+## 17.16 感知日志
 
-情人节派对信息扩散依赖社交闭环。
+`percept()` 最后记录：
 
-流程：
+```python
+self.logger.info(
+    "{} percept {}/{} concepts".format(self.name, valid_num, len(self.concepts))
+)
+```
+
+这里有两个数字。`valid_num` 是写入长期记忆的非空闲事件数量。`len(self.concepts)` 是当前 step 可用于反应的 concepts 数量。两者可能不同。例如，空闲事件不会写入长期记忆，但可能进入 `self.concepts`。调试时，如果看到：
 
 ```text
-伊莎贝拉 currently 有派对目标
-  -> 计划中可能安排邀请居民
-  -> 遇到阿伊莎
-  -> decide_chat 成功
-  -> generate_chat 提到派对
-  -> summarize_chats 保存派对摘要
-  -> schedule_chat 写入双方
-  -> 阿伊莎后续检索到派对
-  -> 阿伊莎可能告诉别人
+克劳斯 percept 0/3 concepts
 ```
 
-这个传播不是全局变量。
-
-它需要每一步都成功。
-
-如果 decide_chat 返回 False，传播断。
-
-如果 generate_chat 没提派对，传播断。
-
-如果 summarize_chats 丢了时间地点，传播质量下降。
-
-如果 chat memory 后续检索失败，传播不会继续。
-
-这就是为什么社交模块是复现实验核心。
-
-## 17.25 社交如何支撑关系形成
-
-关系形成也依赖社交闭环。
-
-以克劳斯和玛丽亚为例：
+说明他看到 3 个 concepts，但没有新的非空闲事件写入长期记忆。如果看到：
 
 ```text
-相遇
-  -> 触发聊天
-  -> 对话中交换兴趣
-  -> 摘要写入双方记忆
-  -> reflection 生成高层 thought
-  -> 下一次 summarize_relation 更具体
-  -> 后续对话更有历史感
+玛丽亚 percept 2/2 concepts
 ```
 
-关系不是固定字段。
+说明她看到并写入了 2 个新事件。
 
-它是多次对话、记忆检索和反思积累出来的。
+## 17.17 感知如何驱动信息扩散
 
-这也是 Generative Agents 区别于传统 NPC 关系表的地方。
-
-传统 NPC 可能有：
+信息扩散依赖感知。以情人节派对为例。伊莎贝拉与阿伊莎对话后，tile 上可能出现对话事件。附近角色如果在同一 arena 且注意力范围内，就可能感知到：
 
 ```text
-friendship_score = 70
+伊莎贝拉 对话 阿伊莎
 ```
 
-GenerativeAgentsCN 更接近：
+该事件进入 memory stream 后，角色可能在后续对话中提到派对。这条链路是：
 
 ```text
-我记得我们聊过什么。
-我对这些经历有什么理解。
-我下次见你时会基于这些理解说话。
+对话发生
+  -> tile event
+  -> nearby agent percept
+  -> chat/event memory
+  -> retrieval
+  -> later dialogue
+  -> further spread
 ```
 
-## 17.26 社交失败模式
+如果感知失败，传播链就会断。因此，复现实验时，不只要看谁说了什么，还要看旁观者是否在正确时间和地点感知到事件。
 
-社交模块常见失败有七类。
+## 17.18 感知如何驱动关系形成
 
-第一，触发不足。
+关系形成也依赖感知。克劳斯和玛丽亚形成关系，首先必须相遇或互相观察。如果克劳斯看到了玛丽亚：
 
-角色看到了人，但 decide_chat 经常返回 False，信息无法传播。
+```text
+玛丽亚此时在咖啡馆学习
+```
 
-第二，触发过度。
+这个 event 可能进入克劳斯的 memory。如果随后触发对话，对话摘要会进入 chat memory。之后 reflection 可能生成 thought：
 
-角色频繁聊天，日程被打断，小镇像聊天大厅。
+```text
+克劳斯认为玛丽亚喜欢探索新想法。
+```
 
-第三，对话泛化。
+这一切的入口是感知。没有感知，就没有 shared experience。没有 shared experience，关系只能来自初始设定，而不是仿真涌现。
 
-角色只是寒暄，没有提到当前目标或记忆。
+## 17.19 感知如何驱动反思
 
-第四，摘要丢失关键信息。
+反思触发依赖 `status["poignancy"]`。而 `poignancy` 的主要来源之一就是感知到的新事件。`percept()` 中：
 
-派对时间、地点、承诺没有进入 chat summary。
+```python
+self.status["poignancy"] += node.poignancy
+```
 
-第五，关系摘要错误。
+`reflect()` 中：
 
-检索到无关记忆，导致对话语气不合理。
+```python
+if self.status["poignancy"] < self.think_config["poignancy_max"]:
+    return
+```
 
-第六，复读或过度礼貌。
+这说明：
 
-模型反复客套，缺少真实推进。
+```text
+重要事件积累
+  -> poignancy 上升
+  -> 达到阈值
+  -> reflection
+```
 
-第七，对话不改变后续行为。
+如果 agent 一直只看到空闲事件，就不会触发深层反思。如果 agent 经历密集社交、冲突、邀请、计划变化，poignancy 会更快累积。这让反思与经历强度相关。
 
-虽然生成了文本，但没有影响日程、记忆或反思。
+## 17.20 当前感知机制的边界
 
-调试社交时，要沿闭环逐步检查。
+当前感知机制有几个边界。第一，视野是方形。它不模拟方向、遮挡和真实视线。第二，arena 过滤是语义近似。它避免隔墙感知，但不处理门、窗、开放空间和声音传播。第三，事件去重基于 describe。描述变化会导致重复，描述相同但语义时间不同也可能被忽略。第四，attention bandwidth 固定。不同角色没有不同注意力能力。第五，感知写入缺少显式证据链。虽然 memory node 有 metadata，但当前没有单独记录“我是在哪个 tile、以什么距离感知到的”。第六，旁观对话的语义有限。如果 tile 上只有对话摘要，旁观者不一定能得到完整对话内容。这些边界会影响实验解释。
 
-## 17.27 如何调试一次对话
+## 17.21 可改进方向
 
-建议按下面顺序。
+如果要升级感知模块，可以考虑五个方向。第一，加入视线遮挡。根据 collision、墙体和房间边界计算 line-of-sight。第二，区分视觉和听觉。对话可以在一定距离内被听到，但对象动作可能只能看到。第三，记录感知证据。为每条 memory 增加 source：
 
-第一，确认两人是否同一 arena 且互相可感知。
+```text
+seen_at_coord
+distance
+arena
+step
+```
 
-第二，看 `percept` 日志，确认 concept 数量。
+第四，角色差异化感知。不同角色可以有不同 vision_r、att_bandwidth 或社交注意力。第五，事件摘要层次化。旁观者看到“有人在聊天”与参与者记录完整对话，应有不同记忆粒度。这些方向会在第五部分前沿升级中再次出现。
 
-第三，看 `_reaction()` 是否选中对方。
+## 17.22 如何调试感知
 
-第四，看最近聊天记录，是否因 60 分钟冷却跳过。
+调试感知时建议按下面步骤。第一，确认 agent 坐标。看 checkpoint 中 `coord`。第二，确认当前 tile 地址。看 `Game.agent_think()` 的 summary 中 `address`。第三，检查 `percept_config`。特别是：
 
-第五，看 `decide_chat` prompt 和输出。
+```text
+vision_r
+att_bandwidth
+mode
+```
 
-第六，看 `summarize_relation` 是否合理。
+第四，查看日志：
 
-第七，看每轮 `generate_chat`。
+```text
+<agent> percept <valid>/<concepts> concepts
+```
 
-第八，看是否被 repeat check 或 terminate 提前结束。
+第五，查看 agent memory。看 `associate.event` 和 `associate.chat` 是否新增。第六，确认 events 是否在同一 arena。如果两个角色很近但不在同一 arena，当前实现不会感知对方。第七，检查是否被去重。如果事件已经存在于 recent memory，就不会重复写入。
 
-第九，看 `summarize_chats` 是否保留关键内容。
+## 17.23 本章小结
 
-第十，看双方 schedule 和 chat memory 是否写入。
+感知是智能体和世界发生关系的入口。agent 不是全知地读取所有状态，而是在有限空间范围内看到附近事件，并把有意义的观察写入记忆。
 
-这条调试链路能定位大多数社交问题。
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 调用位置 | 感知发生在 `Agent.think()` 中，先于计划和反思。 |
+| 视野范围 | `Maze.get_scope()` 根据坐标和 `percept_config` 取得方形视野。 |
+| 空间学习 | 感知会把 game object 地址加入 `Spatial`。 |
+| arena 限制 | 系统只收集同一 arena 内的 tile events。 |
+| 注意力带宽 | 事件按距离排序，并受 `att_bandwidth` 限制。 |
+| 去重机制 | Event 通过 hash 去重，同一事件只保留最近距离。 |
+| 写入规则 | 空闲事件只生成临时 Concept，非空闲事件才写入 `Associate`。 |
+| 反思触发 | 新事件会累积 `status["poignancy"]`，推动 reflection。 |
+| reaction 材料 | `self.concepts` 保存当前 step 的感知结果，主要服务现场反应。 |
+| 工程边界 | 当前感知是简化模型，不是完整物理视觉系统。 |
 
-## 17.28 可改进方向
-
-社交模块可以从几个方向升级。
-
-第一，增加社交意图。
-
-区分寒暄、邀请、询问、争论、求助、协商。
-
-第二，增加关系状态结构化表示。
-
-把自然语言关系摘要与结构化关系图结合。
-
-第三，增加承诺系统。
-
-如果对话中承诺参加派对，应自动生成候选计划。
-
-第四，增加拒绝能力。
-
-减少模型过度合作，让角色能合理拒绝不符合兴趣或时间的请求。
-
-第五，增加对话事件抽取。
-
-从对话中抽取 facts、commitments、preferences，分别写入不同记忆。
-
-第六，增加群聊。
-
-当前 `_chat_with()` 是两人对话。派对、会议、课堂更适合多人对话。
-
-这些升级会让小镇社会更复杂，也更接近 2026 年多智能体协作研究。
-
-## 17.29 本章小结
-
-本章讲清了 GenerativeAgentsCN 的社交机制：
-
-1. 社交从 `percept()` 后的 `_reaction()` 开始。
-2. `_reaction()` 优先选择其他 agent 作为 focus。
-3. `get_relation()` 会检索与 focus 相关的 events 和 thoughts。
-4. reaction 主要有聊天和等待两条路径。
-5. `_chat_with()` 有日程、睡眠、移动、已有对话和冷却时间等前置条件。
-6. `decide_chat` 判断是否应该主动聊天。
-7. `summarize_relation` 为双方分别生成关系摘要。
-8. `generate_chat` 逐轮生成对话，并使用记忆、地点、时间和已有对话。
-9. `generate_chat_check_repeat` 与 `decide_chat_terminate` 控制复读和结束。
-10. `summarize_chats` 把完整对话变成可存储摘要。
-11. `schedule_chat` 会把对话写回双方日程和待反思聊天。
-12. `_wait_other()` 处理空间冲突下的等待。
-13. 社交闭环支撑信息扩散、关系形成和协同行动。
-
-下一章讲反思。我们会深入 `Agent.reflect()`，看重要事件如何触发高层 thought，聊天如何变成计划影响和关系记忆，以及这些 thought 如何重新进入 memory stream。
+下一章讲记忆：深入 `Associate`、`Concept`、`LlamaIndex`、`AssociateRetriever`，看事件、对话、想法如何存储、检索、过期和参与行为生成。
 
 ## 参考资料
 
 - Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/prompt/scratch.py`
-- Local prompts: `generative_agents/data/prompts/decide_chat.txt`
-- Local prompts: `generative_agents/data/prompts/generate_chat.txt`
-- Local prompts: `generative_agents/data/prompts/summarize_relation.txt`
-- Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
-- Local prompts: `generative_agents/data/prompts/decide_wait.txt`
+- Local source: `generative_agents/modules/maze.py`
+- Local source: `generative_agents/modules/memory/event.py`
+- Local source: `generative_agents/modules/memory/associate.py`
+- Local config: `generative_agents/data/config.json`

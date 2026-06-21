@@ -1,813 +1,573 @@
-# 第 35 章 基于 GenerativeAgentsCN 的前沿升级路线图
+# 第 35 章 多智能体协作升级：从自然偶遇到组织化协作
 
-## 35.1 本章要解决的问题
+## 35.1 核心问题
 
-前七章分别讨论了：
-
-- 记忆系统升级。
-- 反思系统升级。
-- 规划系统升级。
-- 多智能体协作升级。
-- 社会仿真升级。
-- 评价体系升级。
-- 中文、本地和推理模型带来的新条件。
-
-这一章要把它们收束成一条可执行路线。
-
-否则第五部分很容易变成：
+Generative Agents 已经是多智能体系统。小镇里有多个角色。他们能感知彼此、聊天、等待、形成记忆，并通过对话传播信息。但这类多智能体互动主要是：
 
 ```text
-每个方向都很重要，但不知道先做什么。
+自然偶遇型互动
 ```
 
-工程上不能这样。
+也就是：
 
-一个开源项目的升级要考虑：
+```text
+角色在地图中相遇
+  -> 判断是否聊天
+  -> 生成对话
+  -> 写入记忆
+  -> 影响后续计划
+```
 
-- 当前代码结构。
-- 改动风险。
-- 可验证收益。
-- 与原论文思想的关系。
-- 是否方便读者学习。
-- 是否容易回滚。
+这种机制很适合复现论文中的社会涌现。例如派对传播、竞选信息扩散、关系形成。但它不擅长组织化协作。例如：
 
-本章要回答六个问题：
+```text
+多人分工筹备派对。
+多人协作竞选宣传。
+多人共同组织社区讨论会。
+```
 
-1. GenerativeAgentsCN 前沿升级应该遵守什么原则？
-2. 哪些升级应该先做，哪些应该后做？
-3. 如何把观测、记忆、反思、规划、协作和评价串起来？
-4. 中文本地模型和推理模型应该如何纳入路线图？
-5. 每个阶段应该用什么实验验证？
-6. 这条路线如何保持和原论文思想的一致性？
+这些任务需要共享目标、角色分工、任务状态和协作协议。本章聚焦六个问题：
 
-[图 35-1：GenerativeAgentsCN 前沿升级路线图]
+1. 当前项目的多智能体互动如何工作？
+2. 自然偶遇型多智能体有什么优势和局限？
+3. CAMEL、AutoGen、MetaGPT、AgentScope 给我们什么启发？
+4. 如何在 Generative Agents 中引入公共事件板和临时工作组？
+5. 如何设计共享记忆和协作对话协议？
+6. 如何评价组织化协作是否有效？
 
 ```mermaid
 flowchart LR
-    A[阶段一<br/>观测与评价增强<br/>低风险] --> B[阶段二<br/>关系记忆与来源追踪<br/>中风险]
-    B --> C[阶段三<br/>反思学习与技能库<br/>中高风险]
-    C --> D[阶段四<br/>目标驱动规划<br/>高风险]
-    D --> E[阶段五<br/>组织化多智能体协作<br/>很高风险]
-    E --> F[阶段六<br/>模型路由与成本优化<br/>持续优化]
-    A -.提供指标.-> C
-    A -.提供指标.-> D
-    A -.提供指标.-> E
+    subgraph Natural[自然偶遇型]
+      A1[空间相遇] --> A2[decide_chat]
+      A2 --> A3[自由对话]
+      A3 --> A4[个人记忆]
+      A4 --> A5[社会涌现]
+    end
+    subgraph Organized[组织协作型]
+      B1[公共事件板] --> B2[角色分工]
+      B2 --> B3[任务状态]
+      B3 --> B4[协作对话协议]
+      B4 --> B5[共享记忆/进度报告]
+    end
+    A5 -.升级.-> B1
 ```
 
-## 35.2 路线图的基本原则
+*图 35-1：自然社交型多智能体与组织协作型多智能体对比。自然偶遇适合社会涌现，组织协作则需要共享目标、状态和协议。*
 
-本章路线图遵守五个原则。
+## 35.2 当前项目的社交链路
 
-第一，先观测，后改行为。
-
-如果没有指标和报告，改动后很难判断是否真的变好。
-
-第二，先低风险，后高风险。
-
-例如增加统计脚本风险低。
-
-修改 `Agent.make_plan()` 风险高。
-
-第三，先局部增强，后系统重构。
-
-例如增加 `relationship` 记忆类型，比重写整个 memory system 更适合第一步。
-
-第四，每个阶段都要有实验验证。
-
-不能只说“架构更先进”。
-
-第五，保留 Generative Agents 的核心思想。
-
-升级不是把项目改成完全不同的工作流框架。
-
-小镇仍然应该保留：
-
-```text
-记忆流
-检索
-反思
-计划
-行动
-对话
-社会涌现
-```
-
-前沿升级是在这条链上增强，而不是另起炉灶。
-
-## 35.3 阶段一：观测与评价增强
-
-第一阶段不改 agent 行为。
-
-只增强实验观测能力。
-
-目标是：
-
-```text
-让项目从“能看回放”升级到“能生成评价报告”。
-```
-
-建议改造：
-
-1. 增加实验配置文件。
-2. 增加对话关键词统计。
-3. 增加到场统计。
-4. 增加 LLM 调用统计汇总。
-5. 增加统一 `metrics.json`。
-6. 增加统一 `report.md`。
-
-涉及新增文件：
-
-```text
-experiments/*.json
-tools/analyze_conversation_keywords.py
-tools/analyze_attendance.py
-tools/export_experiment_report.py
-```
-
-涉及现有材料：
-
-```text
-conversation.json
-movement.json
-simulation.md
-checkpoint
-LLM summary
-```
-
-这一阶段风险最低。
-
-即使脚本写错，也不会改变仿真行为。
-
-但收益很大。
-
-它会为后续所有升级提供评价基础。
-
-## 35.4 阶段一的验证实验
-
-验证实验建议使用情人节派对。
-
-运行默认系统，生成：
-
-```text
-book-party-small-run-01
-```
-
-然后运行：
-
-```text
-conversation keyword analysis
-attendance analysis
-experiment report export
-```
-
-成功标准：
-
-- 能统计派对相关提及。
-- 能列出参与对话的角色。
-- 能统计 17:00-19:00 霍布斯咖啡馆到场角色。
-- 能输出 `metrics.json` 和 `report.md`。
-- 报告能链接到 `simulation.md` 和 `movement.json` 证据。
-
-这一阶段不要求指标完美。
-
-目标是建立评价流水线。
-
-## 35.5 阶段二：记忆系统增强
-
-第二阶段改记忆系统，但尽量不改主行为循环。
-
-目标是：
-
-```text
-让角色关系和关键事实更稳定。
-```
-
-建议改造：
-
-1. 扩展 memory type。
-2. 增加 `relationship` 记忆。
-3. 增加关系更新 prompt。
-4. 增加记忆来源和 evidence 字段。
-5. 增加简单冲突检测。
-
-涉及文件：
-
-```text
-generative_agents/modules/memory/associate.py
-generative_agents/modules/agent.py
-generative_agents/modules/prompt/scratch.py
-generative_agents/data/prompts/relationship_update.txt
-generative_agents/data/prompts/memory_conflict_check.txt
-```
-
-这一步不建议先做完整 MemGPT 或 Mem0。
-
-原因是：
-
-```text
-完整长期记忆管理会牵动太多模块。
-```
-
-更稳妥的第一步是关系记忆。
-
-它和论文中的社会行为最直接相关，也最容易评价。
-
-## 35.6 阶段二的验证实验
-
-验证实验一：
-
-```text
-汤姆与山姆的竞选态度稳定性。
-```
-
-问题：
-
-```text
-汤姆是否更稳定地体现对山姆的不信任？
-```
-
-指标：
-
-- opposing_mentions。
-- relationship_consistency_score。
-- fact_preservation_score。
-
-验证实验二：
-
-```text
-玛丽亚与克劳斯的关系形成。
-```
-
-问题：
-
-```text
-多次对话后，两人关系是否有证据支撑的变化？
-```
-
-指标：
-
-- relationship_update_count。
-- evidence_trace_rate。
-- 后续对话是否引用关系记忆。
-
-验证实验三：
-
-```text
-派对时间地点保真度。
-```
-
-问题：
-
-```text
-派对传播过程中时间和地点是否更稳定？
-```
-
-指标：
-
-- fact_preservation_score。
-- conflict_detection_count。
-
-## 35.7 阶段三：反思学习与技能库
-
-第三阶段把反思从“总结”升级为“经验学习”。
-
-目标是：
-
-```text
-让角色从失败中形成可复用策略。
-```
-
-建议改造：
-
-1. 增加 action outcome。
-2. 增加 self-evaluation prompt。
-3. 增加 lesson 记忆。
-4. 增加 skill 记忆。
-5. 在对话和计划前检索相关 skill。
-
-涉及文件：
+当前项目的社交逻辑集中在：
 
 ```text
 generative_agents/modules/agent.py
-generative_agents/modules/memory/associate.py
+```
+
+核心函数包括：
+
+| 函数 | 中文意思 | 当前能力 |
+| --- | --- | --- |
+| `_reaction()` | 现场反应入口。 | 角色看到附近事件或他人后，决定是否要产生反应。 |
+| `_chat_with()` | 发起或参与聊天。 | 判断是否聊天，生成多轮对话，并写回对话结果。 |
+| `_wait_other()` | 等待他人。 | 当目标地点或对象被占用时，让角色选择等待而不是穿插执行。 |
+| `schedule_chat()` | 把聊天写入日程。 | 让聊天占用时间，并改变当前行动记录。 |
+
+对话 prompt 和辅助判断在：
+
+```text
 generative_agents/modules/prompt/scratch.py
-generative_agents/data/prompts/self_evaluate_action.txt
-generative_agents/data/prompts/extract_lesson.txt
-generative_agents/data/prompts/apply_lesson_to_plan.txt
+generative_agents/data/prompts/
 ```
 
-这阶段风险比记忆增强更高。
+包括：
 
-因为错误 lesson 会影响后续行为。
+| prompt | 中文意思 | 当前能力 |
+| --- | --- | --- |
+| `decide_chat` | 判断是否聊天。 | 让角色根据关系、地点和当前计划决定是否开口。 |
+| `generate_chat` | 生成对话内容。 | 让双方围绕当前情境和记忆进行多轮交流。 |
+| `generate_chat_check_repeat` | 检查对话重复。 | 避免角色不断重复同一句话或同一个意思。 |
+| `decide_chat_terminate` | 判断是否结束。 | 让对话在自然时机收束。 |
+| `summarize_chats` | 总结对话。 | 把多轮聊天压缩成可写入记忆的摘要。 |
+| `summarize_relation` | 总结关系。 | 聊天前提取两人的关系背景，避免对话像陌生人随机寒暄。 |
 
-因此必须保留：
-
-- evidence。
-- confidence。
-- 可删除机制。
-- 反思质量评分。
-
-## 35.8 阶段三的验证实验
-
-验证实验：
+整体流程是：
 
 ```text
-伊莎贝拉连续邀请任务。
+感知附近事件
+  -> 选择关注对象
+  -> 判断是否聊天
+  -> 检索关系和记忆
+  -> 多轮生成对话
+  -> 判断重复和结束
+  -> 总结对话
+  -> 写入双方日程和记忆
 ```
 
-设计：
+这条链已经足以支撑自然社交。
 
-第一轮中，伊莎贝拉邀请一个忙碌角色，对方拒绝或没有明确表态。
+## 35.3 `_chat_with()` 做了什么
 
-系统生成 lesson：
+`Agent._chat_with()` 首先排除不适合聊天的情况。例如：
+
+- 日程未初始化。
+- 任一角色正在睡觉。
+- 对方正在移动。
+- 任一角色已经在对话。
+- 两人刚聊过，间隔小于 60 分钟。
+
+然后调用：
 
 ```text
-邀请忙碌的人时，应先询问时间安排，并提供短时间参与选项。
+decide_chat
 ```
 
-第二轮中，伊莎贝拉再次邀请类似角色。
+判断是否要聊天。如果决定聊天，会先生成双方关系摘要：
 
-观察：
+```python
+summarize_relation
+```
 
-- 是否检索 lesson。
-- 对话策略是否变化。
-- 是否减少重复话术。
-- 是否更好处理拒绝。
+然后交替生成对话：
 
-指标：
+```python
+generate_chat
+```
 
-- lesson_generated_count。
-- lesson_used_count。
-- repeated_failure_rate。
-- invitation_quality_score。
-- behavior_naturalness_score。
-
-这能检验 Reflexion-style learning 是否真的影响行为。
-
-## 35.9 阶段四：目标驱动规划
-
-第四阶段改规划系统。
-
-目标是：
+中途检查：
 
 ```text
-让角色在日程生活之外，能够围绕明确目标持续行动。
+generate_chat_check_repeat
+decide_chat_terminate
 ```
 
-建议改造：
-
-1. 增加 Goal 数据结构。
-2. 给角色增加 active goals。
-3. 增加 goal decomposition。
-4. 增加 candidate action generation。
-5. 增加 goal progress evaluation。
-6. 将 goal 结果写回记忆。
-
-涉及文件：
+最后总结对话：
 
 ```text
-generative_agents/modules/memory/goal.py
-generative_agents/modules/agent.py
-generative_agents/modules/memory/schedule.py
-generative_agents/modules/prompt/scratch.py
-generative_agents/data/prompts/goal_decompose.txt
-generative_agents/data/prompts/goal_select_next_step.txt
-generative_agents/data/prompts/goal_evaluate_progress.txt
+summarize_chats
 ```
 
-这一步风险高。
+并调用：
 
-因为它会改变 agent 行动选择。
+```text
+schedule_chat()
+```
 
-因此建议只对明确事件启用。
+把对话作为行动写入双方日程。这套机制很完整。但它仍然是两两对话。没有团队目标。没有共享任务板。没有组织流程。
+
+## 35.4 自然偶遇型多智能体的优势
+
+自然偶遇型多智能体有三个优势。第一，涌现感强。角色不是被中央调度强行安排对话，而是在地图中自然相遇。第二，贴近论文思想。Generative Agents 关注的就是局部互动如何导致社会级联。第三，适合可信生活仿真。普通居民的一天确实不是一直围绕任务协作。很多信息就是通过偶遇、闲聊、关系和记忆传播。因此当前机制不应该被替换掉。它是小镇的生命力。组织化协作应该是在此基础上的扩展，而不是重写。
+
+## 35.5 当前机制的局限
+
+自然偶遇型机制也有明显局限。第一，协作效率低。如果伊莎贝拉需要找埃迪帮忙布置派对，她可能一直遇不到他。第二，缺少共享状态。每个人只知道自己的记忆。活动任务没有公共状态。第三，分工不稳定。即使有人说“我来帮忙”，系统也没有明确把任务分配给他。第四，冲突难以协商。如果两个人对任务理解不同，缺少团队层面的解决机制。第五，协作结果难以评价。因为任务没有结构化状态，很难判断：
+
+```text
+谁负责了什么？
+做到了哪一步？
+为什么失败？
+```
+
+这些局限正是多智能体框架研究可以补足的地方。
+
+## 35.6 CAMEL 的启发
+
+CAMEL 关注 role-playing communicative agents。它的启发是：
+
+```text
+多智能体对话不只是闲聊，也可以通过角色设定推动任务协作。
+```
+
+在 Generative Agents 中，角色本来就有 persona。但这些 persona 主要服务生活和社交。如果要做协作任务，可以进一步引入临时协作角色。例如派对筹备：
+
+```text
+organizer：伊莎贝拉
+music_helper：埃迪
+guest_messenger：玛丽亚
+venue_helper：亚当
+```
+
+这些不是永久身份。它们是某个事件下的临时角色。这样既保留原 persona，又能组织任务。
+
+## 35.7 AutoGen 的启发
+
+AutoGen 强调多 agent conversation framework。它的重点不是让角色自然生活，而是让多个可配置 agent 通过对话完成任务。对本项目的启发是：
+
+```text
+协作任务需要对话协议。
+```
 
 例如：
 
-```text
-伊莎贝拉的派对目标
-山姆的竞选目标
-克劳斯的讨论会目标
-```
+- 谁提出任务？
+- 谁接受任务？
+- 谁报告进度？
+- 谁确认完成？
+- 谁处理冲突？
 
-不要让所有日常行为都进入目标优化。
-
-小镇居民仍然需要生活感。
-
-## 35.10 阶段四的验证实验
-
-验证实验一：
+当前 `_chat_with()` 是自由对话。协作升级可以增加一些结构化对话类型：
 
 ```text
-目标驱动派对传播。
+assign_task
+accept_task
+decline_task
+report_progress
+request_help
+resolve_conflict
+confirm_completion
 ```
 
-目标：
-
-```text
-17:00 前至少三人知道派对，至少两人表示愿意参加。
-```
-
-指标：
-
-- goal_completion_rate。
-- unique_informed_agents。
-- accepted_count。
-- attendance_count。
-- naturalness_score。
-
-验证实验二：
-
-```text
-目标驱动竞选传播。
-```
-
-目标：
-
-```text
-山姆向至少三位居民介绍竞选，并记录至少两类居民关心的问题。
-```
-
-指标：
-
-- policy_topic_count。
-- attitude_diversity_score。
-- goal_progress_accuracy。
-
-注意：
-
-目标完成率提升不一定代表更可信。
-
-如果角色为了目标强行打断所有人，就要扣自然性分。
-
-## 35.11 阶段五：组织化多智能体协作
-
-第五阶段是高风险升级。
-
-目标是：
-
-```text
-让小镇角色从自然社交扩展到团队协作。
-```
-
-建议改造：
-
-1. 增加公共事件板。
-2. 增加任务列表。
-3. 增加团队角色。
-4. 增加共享记忆。
-5. 增加协作对话协议。
-6. 增加团队进度总结。
-
-涉及文件：
-
-```text
-generative_agents/modules/memory/shared.py
-generative_agents/modules/memory/team.py
-generative_agents/modules/game.py
-generative_agents/modules/agent.py
-generative_agents/data/prompts/team_assign_role.txt
-generative_agents/data/prompts/team_update_task.txt
-generative_agents/data/prompts/team_summarize_progress.txt
-```
-
-这阶段最容易破坏原有系统味道。
-
-因此要遵守：
-
-```text
-组织化协作只用于明确事件，不接管日常生活。
-```
-
-## 35.12 阶段五的验证实验
-
-验证实验：
-
-```text
-多人协作筹备情人节派对。
-```
-
-设计：
-
-- 伊莎贝拉是 organizer。
-- 埃迪可能负责音乐。
-- 玛丽亚可能负责邀请学生。
-- 克劳斯可能参与讨论或协助宣传。
-
-公共事件板记录任务：
-
-- 准备饮品。
-- 确认音乐。
-- 邀请朋友。
-- 布置咖啡馆。
-
-指标：
-
-- team_task_completion_rate。
-- role_assignment_clarity。
-- shared_state_consistency。
-- multi_agent_credit_traceability。
-- collaboration_naturalness_score。
-
-成功不是所有任务都完成。
-
-成功是协作过程可追踪、合理，并符合角色设定。
-
-有人拒绝或忘记任务，也可以是可信结果。
-
-## 35.13 阶段六：模型路由与成本优化
-
-前面几个阶段会增加 LLM 调用。
-
-如果全部使用强模型，成本会很高。
-
-如果全部使用小模型，结构化输出和反思质量可能不稳。
-
-因此需要模型路由。
-
-当前项目配置是：
-
-```text
-provider: ollama
-model: qwen3.5:4b-q4_K_M
-embedding: qwen3-embedding:0.6b-q8_0
-```
-
-这适合低成本本地实验。
-
-但升级后可以考虑多模型分工：
-
-```text
-本地小模型：日常对话、普通行动、简单判断。
-本地 embedding：记忆检索。
-强模型或推理模型：高重要性反思、目标规划、失败复盘、复杂协作总结。
-```
-
-DeepSeek-R1 这类推理模型的价值在于复杂推理和复盘。
-
-Qwen3 这类中文模型的价值在于中文对话、本地部署和 thinking / non-thinking 模式选择。
-
-但不要迷信推理模型。
-
-小镇中很多行为不需要深度推理。
-
-如果每句寒暄都用强推理模型，系统会又慢又贵，还可能让对话过度正式。
-
-## 35.14 模型路由的实现建议
-
-可以先不重构 provider。
-
-最小方案是扩展配置：
+这些类型不需要替代自然语言。它们可以作为对话后的结构化摘要。例如：
 
 ```json
 {
-  "models": {
-    "daily": {
-      "provider": "ollama",
-      "model": "qwen3.5:4b-q4_K_M"
-    },
-    "reflection": {
-      "provider": "openai",
-      "model": "<strong-model>"
-    },
-    "planning": {
-      "provider": "openai",
-      "model": "<reasoning-model>"
-    }
-  }
+  "speech": "如果你愿意的话，可以帮我确认一下音乐安排吗？",
+  "dialogue_act": "assign_task",
+  "task": "确认派对音乐安排",
+  "assignee": "埃迪"
 }
 ```
 
-然后在 `completion()` 调用处增加 caller 类型映射。
+这样对话既自然，又能进入任务系统。
 
-例如：
+## 35.8 MetaGPT 的启发
 
-```text
-reflect_insights -> reflection model
-goal_select_next_step -> planning model
-generate_chat -> daily model
-poignancy_event -> daily model
-```
-
-评价指标：
-
-- 每类调用次数。
-- 每类失败率。
-- 每类耗时。
-- 行为质量变化。
-- 成本变化。
-
-模型路由必须和第 34 章的成本记录一起做。
-
-否则无法判断是否值得。
-
-## 35.15 阶段顺序总表
-
-建议升级顺序如下：
-
-| 阶段 | 名称 | 风险 | 是否改变行为 | 首选实验 |
-| --- | --- | --- | --- | --- |
-| 1 | 观测与评价增强 | 低 | 否 | 派对统计报告 |
-| 2 | 记忆系统增强 | 中 | 轻度 | 关系与事实保真 |
-| 3 | 反思学习与技能库 | 中高 | 是 | 邀请失败复盘 |
-| 4 | 目标驱动规划 | 高 | 是 | 目标驱动派对 |
-| 5 | 组织化多智能体协作 | 很高 | 是 | 协作筹备派对 |
-| 6 | 模型路由与成本优化 | 中高 | 间接 | 多模型对比 |
-
-这个顺序不是唯一的。
-
-但它有一个好处：
+MetaGPT 的核心启发是：
 
 ```text
-每一步都有前一步的评价工具支撑。
+复杂协作需要 SOP 和角色分工。
 ```
 
-如果没有阶段一，后续每一步都很难证明价值。
+它主要面向软件开发任务。但小镇任务也可以有轻量 SOP。例如情人节派对 SOP：
 
-## 35.16 不建议一开始做什么
+1. 明确时间地点。
+2. 准备食物和饮品。
+3. 邀请顾客和朋友。
+4. 确认音乐或活动内容。
+5. 派对前回到咖啡馆。
+6. 活动后总结反馈。
 
-有些事听起来高级，但不适合一开始做。
+镇长竞选 SOP：
 
-第一，不建议一开始重写整个 Agent 架构。
+1. 明确竞选主题。
+2. 找支持者讨论。
+3. 向中立居民介绍。
+4. 回应反对意见。
+5. 记录居民关心的问题。
+6. 调整宣传重点。
 
-会破坏读者对原论文结构的理解。
+SOP 不应把故事写死。它只是提供协作骨架。角色仍然可以失败、拒绝、变更计划。
 
-第二，不建议一开始引入复杂工作流框架。
+## 35.9 AgentScope 的启发
 
-GenerativeAgentsCN 的价值在于小镇社会仿真，不是企业流程编排。
+AgentScope 强调多智能体平台的灵活性、鲁棒性和可扩展性。对 Generative Agents 来说，它的启发主要是工程层面。如果要支持组织化协作，需要：
 
-第三，不建议一开始追求大规模 agent 数量。
+- 可配置实验。
+- 可观察协作状态。
+- 可复盘任务流。
+- 可扩展 agent 数量。
+- 清晰日志和指标。
 
-如果 5 个角色都评价不清，25 个或 100 个只会更乱。
+协作不是只改 prompt。还要改数据结构和观测工具。否则读者只能看到对话，看不到协作是否真的发生。
 
-第四，不建议一开始做跨实验长期记忆。
+## 35.10 升级方向一：公共事件板
 
-这会显著影响可复现性。
+第一项可落地升级是公共事件板。示例：
 
-第五，不建议只换强模型。
+```json
+{
+  "event_id": "valentine_party",
+  "owner": "伊莎贝拉",
+  "title": "情人节派对",
+  "time": "2024-02-14 17:00",
+  "location": "霍布斯咖啡馆",
+  "status": "active",
+  "participants": [],
+  "tasks": [
+    {
+      "name": "准备饮品",
+      "assignee": "伊莎贝拉",
+      "status": "active"
+    },
+    {
+      "name": "确认音乐安排",
+      "assignee": "埃迪",
+      "status": "todo"
+    }
+  ]
+}
+```
 
-强模型可能提高输出质量，但不能替代记忆、评价和环境约束。
+公共事件板解决两个问题。第一，活动不再只存在于某个人的记忆中。第二，协作状态可以被记录和评价。注意，公共事件板不是让所有角色自动知道所有信息。角色是否知道某个事件，仍然要通过记忆和传播判断。公共事件板更多是实验环境和协作任务的结构化表示。
 
-路线图要务实。
+## 35.11 升级方向二：临时工作组
 
-先让系统可观测，再让能力增强。
-
-## 35.17 与原论文思想的一致性
-
-这条路线虽然引入很多前沿思想，但仍然围绕 Generative Agents 原始架构。
-
-对应关系如下：
-
-| 原论文模块 | 当前项目 | 升级方向 |
-| --- | --- | --- |
-| Memory Stream | Associate / Concept | 记忆治理、关系记忆、冲突检测 |
-| Retrieval | AssociateRetriever | 场景化检索、来源追踪 |
-| Reflection | Agent.reflect() | 失败复盘、lesson、skill |
-| Planning | Schedule / make_schedule | Goal、候选行动、进度评估 |
-| Reacting | _reaction() | 目标感知反应、冲突处理 |
-| Dialogue | _chat_with() / generate_chat | 协作对话协议、关系驱动对话 |
-| Smallville | Maze / Phaser replay | 批量实验、统计指标 |
-| Evaluation | simulation / movement | metrics、report、基线、成本 |
-
-这张表说明：
+有了公共事件后，可以为事件创建临时工作组。角色类型示例：
 
 ```text
-前沿升级不是抛弃 Generative Agents，而是沿着它的模块继续生长。
+organizer
+helper
+messenger
+critic
+participant
+observer
 ```
 
-这也是本书写法的核心原则。
-
-## 35.18 最终推荐实践路径
-
-如果读者只有两周时间，建议做：
+以派对为例：
 
 ```text
-阶段一：观测与评价增强。
+伊莎贝拉：organizer
+埃迪：helper
+玛丽亚：messenger
+亚当：participant
+汤姆：observer 或 critic
 ```
 
-目标是能生成实验报告。
+角色分工应来自对话或设定。不要一开始直接给所有人分工。例如伊莎贝拉和埃迪对话后，埃迪才成为 helper。这样协作仍然从社会互动中生长出来。
 
-如果读者有一个月时间，建议做：
+## 35.12 升级方向三：共享记忆
+
+当前记忆主要是个人记忆。组织化协作需要共享记忆。可以为事件增加共享存储：
 
 ```text
-阶段一 + 阶段二。
+generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
 ```
 
-也就是评价工具加关系记忆。
+共享记忆保存：
 
-如果读者有两到三个月时间，建议做：
+- 活动目标。
+- 任务列表。
+- 参与者确认。
+- 进度更新。
+- 冲突记录。
+- 结果总结。
+
+但共享记忆也有边界。不是每个角色都能读全部共享记忆。可以设置访问规则：
 
 ```text
-阶段一 + 阶段二 + 阶段三。
+owner 可读写全部。
+assignee 可读写自己的任务。
+participant 可读事件基本信息。
+observer 只能通过对话获知。
 ```
 
-加入失败复盘和技能库。
+这能避免角色获得不该知道的信息。
 
-如果读者要做研究项目，可以继续做：
+## 35.13 升级方向四：协作对话协议
+
+协作对话协议可以通过 prompt 实现。建议新增：
 
 ```text
-阶段四和阶段五。
+team_assign_role.txt
+team_update_task.txt
+team_report_progress.txt
+team_resolve_conflict.txt
+team_summarize_progress.txt
 ```
 
-但必须配套基线和多次运行统计。
+对话后可以抽取结构化结果：
 
-如果读者要做长期维护的开源项目，应同时做：
+```json
+{
+  "event_id": "valentine_party",
+  "dialogue_act": "accept_task",
+  "task": "确认音乐安排",
+  "assignee": "埃迪",
+  "status": "accepted",
+  "evidence": ["conversation_20240214_1030"]
+}
+```
+
+这条结构化结果可以更新公共事件板。不要让模型直接随意改公共状态。最好通过：
 
 ```text
-阶段六：模型路由与成本优化。
+自然对话 -> 结构化抽取 -> 状态更新
 ```
 
-否则系统会随着能力增强变得越来越贵、越来越慢。
+这种链路比直接改 prompt 更可控。
 
-## 35.19 这本书最终希望读者获得什么
+## 35.14 升级方向五：协作冲突处理
 
-到这一章，全书已经完成。
+协作系统必须允许冲突。例如：
 
-读者应该不只是知道：
+- 埃迪没有时间帮忙。
+- 玛丽亚愿意邀请人，但不想负责布置。
+- 山姆希望宣传竞选，汤姆公开反对。
+- 两个角色对活动时间记忆不同。
+
+可以设计冲突类型：
 
 ```text
-GenerativeAgentsCN 怎么运行。
+time_conflict
+interest_conflict
+belief_conflict
+resource_conflict
+relationship_conflict
 ```
 
-还应该知道：
+冲突处理 prompt 可以问：
 
 ```text
-Generative Agents 论文为什么重要。
+冲突是什么？
+涉及哪些角色？
+各自立场是什么？
+是否需要修改任务、换人或放弃？
 ```
+
+组织化协作不等于所有人合作。它意味着系统能记录和处理协作中的分歧。
+
+## 35.15 升级方向六：协作可视化
+
+如果有公共事件板和共享任务，就应该在回放或报告中展示。可以在 `simulation.md` 中增加一节：
+
+```markdown
+## 事件板：情人节派对
+
+- owner：伊莎贝拉
+- time：2024-02-14 17:00
+- location：霍布斯咖啡馆
+- participants：玛丽亚、克劳斯
+
+### Tasks
+
+- 准备饮品：伊莎贝拉，done
+- 确认音乐安排：埃迪，accepted
+- 邀请学生：玛丽亚，partial
+```
+
+也可以生成：
 
 ```text
-当前项目如何把论文思想工程化和中文化。
+team_tasks.json
 ```
+
+供后续分析。没有可视化，协作很容易只停留在对话里。可视化让读者看清：
 
 ```text
-源码中每个核心模块如何协作。
+谁承担了什么，完成了什么，失败在哪里。
 ```
+
+## 35.16 最小可行升级实验
+
+建议第一个协作升级实验仍然使用派对。目标：
 
 ```text
-如何复现论文经典现象。
+让情人节派对从伊莎贝拉个人事件，升级成多人协作事件。
 ```
+
+新增公共事件板：
 
 ```text
-如何评价智能体是否可信。
+valentine_party
 ```
+
+初始任务：
+
+- 准备饮品。
+- 邀请顾客。
+- 确认音乐。
+- 17:00 前布置咖啡馆。
+
+角色：
+
+- 伊莎贝拉。
+- 埃迪。
+- 玛丽亚。
+- 克劳斯。
+- 亚当。
+
+实验观察：
+
+- 是否有人接受协作任务。
+- 是否出现任务状态更新。
+- 是否有人拒绝或忘记任务。
+- 是否多人在派对前集中到咖啡馆。
+- 协作是否比原始传播实验更稳定。
+
+这个实验足够直观。也能展示组织化协作和自然社交的区别。
+
+## 35.17 评价指标
+
+协作升级可以用以下指标评价：
 
 ```text
-如何面对风险、幻觉和社会仿真边界。
+team_task_completion_rate
 ```
+
+该指标记录团队任务完成率。
 
 ```text
-如何基于 2023-2026 年前沿研究继续升级项目。
+role_assignment_clarity
 ```
 
-这比单纯写一本项目说明书更重要。
-
-本书真正要交给读者的是一种方法：
+该项检查角色分工是否清楚。
 
 ```text
-从论文问题出发，读懂项目实现，用实验验证行为，再基于前沿研究做可评价的升级。
+shared_state_consistency
 ```
 
-## 35.20 本章小结
+公共事件板状态是否与对话和行动一致。
 
-本章给出了 GenerativeAgentsCN 的前沿升级路线图：
+```text
+coordination_dialogue_efficiency
+```
 
-1. 升级原则是先观测后改行为、先低风险后高风险、先局部增强后系统重构。
-2. 第一阶段做观测与评价增强，不改变 agent 行为，但建立 `metrics.json` 和 `report.md`。
-3. 第二阶段做记忆系统增强，优先增加关系记忆、来源追踪和冲突检测。
-4. 第三阶段做反思学习与技能库，让角色从失败中形成可复用经验。
-5. 第四阶段做目标驱动规划，在日程之上增加 Goal、候选行动和进度评估。
-6. 第五阶段做组织化多智能体协作，引入公共事件板、任务列表和共享记忆。
-7. 第六阶段做模型路由与成本优化，让不同任务使用不同模型能力。
-8. 每个阶段都必须有验证实验、评价指标和风险边界。
-9. 不建议一开始大重构、追求大规模或只换强模型。
-10. 整条路线仍然围绕 Generative Agents 的原始模块继续生长。
+协作对话是否有效，而不是空泛寒暄。
 
-这也是全书的收束：真正理解一个开源智能体项目，不是只会运行它，而是能解释它、评价它、复现它、扩展它，并知道它的边界在哪里。
+```text
+conflict_resolution_count
+```
+
+冲突是否被发现和处理。
+
+```text
+collaboration_naturalness_score
+```
+
+协作是否仍符合角色生活，而不是变成流程机器人。
+
+```text
+multi_agent_credit_traceability
+```
+
+能否追踪每个角色对结果的贡献。最后一个指标很重要。多智能体系统经常出现：
+
+```text
+结果看似成功，但不知道是谁推动的。
+```
+
+可追踪贡献能让评价更严谨。
+
+## 35.18 风险与边界
+
+组织化协作也有风险。第一，破坏生活感。如果每个居民都像公司员工一样执行任务，小镇会失去社会仿真味道。第二，中心化过强。公共事件板可能让所有行为围绕任务转，削弱偶遇和涌现。第三，上帝视角。共享状态如果不限制访问，会让角色知道不该知道的信息。第四，过度合作。团队系统可能进一步放大“所有人都接受任务”的问题。第五，评价偏任务成功。团队任务完成率高，不一定代表可信。因此，组织化协作要遵守两条原则。第一，只在明确事件或目标上启用。日常生活仍由原始机制驱动。第二，允许拒绝和冲突。组织化协作不是让所有角色听话，而是让协作过程可记录、可解释、可评价。
+
+## 35.19 本章小结
+
+多智能体协作升级要从“自然偶遇”走向“有目标的协作”，但不能把小镇居民变成机械任务机器人。合理做法是在自然社交之上加轻量组织结构。
+
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 当前社交基础 | Generative Agents 已支持感知、聊天决策、对话生成、总结和记忆写回。 |
+| `_chat_with()` | 它支持关系摘要、多轮对话、重复检查、结束判断和对话总结。 |
+| 当前局限 | 自然社交适合涌现，但缺少共享目标、角色分工、公共任务状态和协作协议。 |
+| CAMEL 启发 | 可以使用临时协作角色。 |
+| AutoGen 启发 | 协作任务需要设计对话协议。 |
+| MetaGPT 启发 | 复杂任务可以使用轻量 SOP。 |
+| AgentScope 启发 | 多智能体平台要重视可配置、可观察和可扩展。 |
+| 可落地升级 | 公共事件板、临时工作组、共享记忆、协作对话协议、冲突处理和协作可视化。 |
+| 最小实验 | 可以从多人协作筹备情人节派对开始。 |
+| 评价要求 | 协作评价要同时看任务完成、分工清晰、状态一致、贡献可追踪和行为自然性。 |
+
+下一章讨论社会仿真升级。协作让多个角色围绕事件组织起来；社会仿真则要进一步从单次故事走向可重复、可统计、可比较的群体现象研究。
 
 ## 参考资料
 
-- Generative Agents: https://arxiv.org/abs/2304.03442
-- MemGPT: https://arxiv.org/abs/2310.08560
-- Mem0: https://arxiv.org/abs/2504.19413
-- Reflexion: https://arxiv.org/abs/2303.11366
-- Voyager: https://arxiv.org/abs/2305.16291
-- ReAct: https://arxiv.org/abs/2210.03629
-- Tree of Thoughts: https://arxiv.org/abs/2305.10601
-- LATS: https://arxiv.org/abs/2310.04406
 - CAMEL: https://arxiv.org/abs/2303.17760
 - AutoGen: https://arxiv.org/abs/2308.08155
 - MetaGPT: https://arxiv.org/abs/2308.00352
 - AgentScope: https://arxiv.org/abs/2402.14034
-- AgentBench: https://arxiv.org/abs/2308.03688
-- WebArena: https://arxiv.org/abs/2307.13854
-- GAIA: https://arxiv.org/abs/2311.12983
-- SWE-bench: https://arxiv.org/abs/2310.06770
-- AI Agents That Matter: https://arxiv.org/abs/2407.01502
-- DeepSeek-R1: https://arxiv.org/abs/2501.12948
-- DeepSeek-R1 official repository: https://github.com/deepseek-ai/DeepSeek-R1
-- Qwen3: https://arxiv.org/abs/2505.09388
-- Qwen3 official blog: https://qwenlm.github.io/blog/qwen3/
-- Local config: `generative_agents/data/config.json`
+- Generative Agents: https://arxiv.org/abs/2304.03442
 - Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/memory/associate.py`
-- Local source: `generative_agents/modules/memory/schedule.py`
-- Local source: `generative_agents/modules/model/llm_model.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
+- Local prompts: `generative_agents/data/prompts/generate_chat.txt`
+- Local prompts: `generative_agents/data/prompts/summarize_chats.txt`

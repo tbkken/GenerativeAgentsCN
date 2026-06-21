@@ -1,778 +1,683 @@
-# 第 14 章 感知：智能体如何看见附近事件
+# 第 14 章 世界模型：地图、Tile、地址树与空间记忆
 
-## 14.1 本章要解决的问题
+## 14.1 核心问题
 
-上一章讲仿真循环。
+第三部分开始源码深读。我们先不讲 LLM，也不讲记忆。先讲世界。Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
 
-在 `Agent.think()` 中，醒着的智能体每一步会执行：
+- 克劳斯现在在哪里？
+- 玛丽亚能不能看到克劳斯？
+- 伊莎贝拉说的霍布斯咖啡馆在地图上哪里？
+- 角色计划睡觉时应该去哪个房间？
+- 角色准备吃饭时应该选择哪个地点？
+- 某个对象是否正在被占用？
+- 两个角色是否会在同一地点相遇？
 
-```python
-self.percept()
-self.make_plan(agents)
-self.reflect()
-```
-
-本章专门讲第一步：`percept()`。
-
-感知是整个生成式智能体系统的入口。
-
-如果 agent 看不到世界，它就无法形成记忆。
-
-如果看到了错误事件，后续计划和对话也会错。
-
-如果它能看到全局世界，信息扩散和偶遇就失去意义。
-
-所以，感知机制的目标不是“看得越多越好”，而是“在合理限制下看到当前附近发生的事”。
-
-GenerativeAgentsCN 的感知链路是：
+论文中的 Smallville 是一个实验小镇。Generative Agents 中，这个小镇由四层组成：
 
 ```text
-当前坐标
-  -> Maze.get_scope()
-  -> 附近 tiles
-  -> 同 arena 过滤
-  -> 收集 tile events
-  -> 距离排序
-  -> attention bandwidth 截断
-  -> 去重
-  -> 写入 memory stream
-  -> 更新 poignancy
-  -> 得到 self.concepts
+地图数据：maze.json、tilemap 资源
+后端模型：Maze、Tile
+角色空间记忆：Spatial
+前端回放：Phaser 读取 movement.json
 ```
 
-本章要回答七个问题：
+本章只讲前三层，前端回放放到第 21 章。本章聚焦七个问题：
 
-1. `Agent.percept()` 在整体循环中处于什么位置？
-2. 视野范围如何计算？
-3. 为什么要限制同一 arena？
-4. tile events 如何变成 concepts？
-5. 哪些事件会写入长期记忆？
-6. 感知结果如何影响 reaction 和 reflection？
-7. 当前感知机制有哪些边界？
+1. `maze.json` 存了什么？
+2. `Tile` 如何表示一个地图格子？
+3. `Maze` 如何组织 tile、地址和寻路？
+4. 地址树 `world/sector/arena/game_object` 有什么作用？
+5. `Spatial` 和 `Maze` 的区别是什么？
+6. 空间模型如何服务感知、计划、行动和回放？
+7. 当前地图系统有哪些边界？
 
-[图 14-1：`Agent.percept()` 数据流]
+```mermaid
+flowchart TD
+    Assets["前端地图资源<br/>tileset / village assets"] --> MazeJson["maze.json / tilemap 数据"]
+    MazeJson --> Maze["Maze<br/>后端地图总控"]
+    Maze --> Tile["Tile<br/>格子、地址、事件、碰撞"]
+    Tile --> Spatial["Spatial<br/>角色自己的空间记忆"]
+    Spatial --> Agent["Agent<br/>感知、计划、移动"]
+```
 
-## 14.2 感知不是全局读取
+*图 14-1：世界模型四层结构。地图不是一张背景图，而是从资源、数据、后端对象到角色空间记忆的一整套约束。*
 
-在多智能体仿真中，感知必须受限。
+## 14.2 世界模型的优先位置
 
-如果每个 agent 都能读取全局状态，那么：
+很多读者会想先看 `Agent`，因为智能体看起来是系统核心。但在 Generative Agents 中，`Agent` 离不开世界。它的每一步都要依赖世界模型。初始化时，agent 要根据坐标找到自己所在 tile。计划行动时，agent 要把文字计划落到地址。感知时，agent 要从附近 tile 获取事件。移动时，agent 要通过 `Maze.find_path()` 找路。对话时，agent 要知道自己和对方是否在同一可交互空间。回放时，系统要把 agent 坐标和动作转成前端可展示数据。所以，世界模型不是背景资源，而是 agent 行为的地基。如果世界模型错了，LLM 再强也会表现奇怪。例如：
 
-- 伊莎贝拉不用邀请别人，所有人都能知道派对。
-- 山姆不用竞选传播，所有人都能知道他参选。
-- 克劳斯和玛丽亚不用相遇，也能知道彼此状态。
-- 信息扩散不再是社会现象，而是全局共享变量。
+- 计划去咖啡馆，却走到宿舍。
+- 在墙里穿行。
+- 在不同房间却能看到对方。
+- 睡觉时找不到床。
+- 洗澡时去厨房水槽。
 
-因此，GenerativeAgentsCN 让 agent 只感知附近区域。
+这些问题都不是 prompt 能单独解决的。它们首先是空间 grounding 问题。
 
-这一点对应论文中的观察机制：agent 只能根据自身所在环境观察到局部事件。
+## 14.3 地图数据入口：maze.json
 
-局部感知是社会涌现的前提。
-
-信息之所以能扩散，是因为它一开始不在每个人那里。
-
-关系之所以能形成，是因为角色需要相遇、对话和记忆。
-
-## 14.3 percept() 的入口
-
-`Agent.percept()` 位于：
+Generative Agents 的后端地图数据在：
 
 ```text
-generative_agents/modules/agent.py
+generative_agents/frontend/static/assets/village/maze.json
 ```
 
-源码结构如下：
-
-```python
-def percept(self):
-    scope = self.maze.get_scope(self.coord, self.percept_config)
-    # add spatial memory
-    for tile in scope:
-        if tile.has_address("game_object"):
-            self.spatial.add_leaf(tile.address)
-    events, arena = {}, self.get_tile().get_address("arena")
-    # gather events in scope
-    for tile in scope:
-        ...
-    events = list(sorted(events.keys(), key=lambda k: events[k]))
-    # get concepts
-    self.concepts, valid_num = [], 0
-    for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
-        ...
-    self.concepts = [c for c in self.concepts if c.event.subject != self.name]
-```
-
-可以分成五段：
-
-1. 获取视野范围。
-2. 更新空间记忆。
-3. 收集附近事件。
-4. 转成 concepts。
-5. 过滤自身事件。
-
-每一段都影响后续行为。
-
-## 14.4 视野范围：Maze.get_scope()
-
-感知第一步：
-
-```python
-scope = self.maze.get_scope(self.coord, self.percept_config)
-```
-
-`percept_config` 来自 `data/config.json`：
+这个文件同时包含视觉地图相关配置和后端空间信息。开头可以看到：
 
 ```json
 {
-  "mode": "box",
-  "vision_r": 8,
-  "att_bandwidth": 8
+  "world": "the Ville",
+  "tile_size": 32,
+  "size": [100, 140],
+  "map": { ... },
+  "tile_address_keys": [
+    "world",
+    "sector",
+    "arena",
+    "game_object"
+  ],
+  "tiles": [...]
 }
 ```
 
-当前实现支持 `box` 模式。
-
-`Maze.get_scope()` 会取当前坐标周围一个方形区域。
-
-如果 `vision_r = 8`，理论上视野是：
+几个字段要重点理解。`world` 是世界名称。当前项目里仍然是：
 
 ```text
-(2 * 8 + 1) x (2 * 8 + 1)
+the Ville
 ```
 
-也就是 17 x 17 个 tile。
-
-同时会裁剪地图边界，避免坐标越界。
-
-这只是候选范围。
-
-后面还会根据 arena 和 attention bandwidth 继续过滤。
-
-## 14.5 为什么不是圆形视野
-
-当前视野是 box，不是圆形。
-
-这是一种工程简化。
-
-方形视野实现简单，计算成本低，也足够支持小镇仿真。
-
-但它并不等于真实视觉。
-
-真实视觉会受方向、遮挡、墙、距离衰减、光线等影响。
-
-当前项目没有模拟这些。
-
-这意味着：
-
-- agent 可能看到方形边角处的事件。
-- agent 不区分正前方和身后。
-- agent 不做视线遮挡。
-
-这些都是可接受的简化。
-
-因为项目重点不是物理感知，而是记忆、计划、反思和社会互动。
-
-## 14.6 感知顺便更新空间记忆
-
-拿到 scope 后，`percept()` 会先更新 `Spatial`：
+虽然很多地点和角色已经中文化，但 world 名称保留了英文。这不影响后端逻辑，因为它只是地址层级中的根。`tile_size` 是前端 tile 像素大小。当前是 32。`size` 表示地图尺寸。源码中：
 
 ```python
-for tile in scope:
-    if tile.has_address("game_object"):
-        self.spatial.add_leaf(tile.address)
+self.maze_height, self.maze_width = config["size"]
 ```
 
-这一步很容易被忽略。
+因此当前地图高度是 100，宽度是 140。`tile_address_keys` 定义地址层级。这是后端空间语义的核心。`tiles` 是所有特殊 tile 的列表。每个 tile 可能包含坐标、地址、碰撞信息等。
 
-它说明感知不仅产生事件记忆，也会扩展空间记忆。
+## 14.4 Tile：地图格子的后端表示
 
-如果 agent 看到某个 game object，它就把该对象地址加入自己的 spatial tree。
-
-例如，角色进入霍布斯咖啡馆附近，看到：
+`Tile` 定义在：
 
 ```text
-the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
+generative_agents/modules/maze.py
 ```
 
-它后续就知道咖啡馆里有钢琴。
+它表示地图上的一个格子。初始化参数包括：
 
-这类空间学习不进入 `Associate`，而是进入 `Spatial`。
+```python
+def __init__(
+    self,
+    coord,
+    world,
+    address_keys,
+    address=None,
+    collision=False,
+):
+```
 
-这再次说明项目中的“记忆”有多层：
+核心字段包括：
+
+| 字段 | 中文意思 | 对系统行为的影响 |
+| --- | --- | --- |
+| `coord` | 地图坐标。 | 决定这个格子在二维小镇中的位置。 |
+| `address` | 地址路径。 | 表示这个格子属于哪个世界、区域、房间或对象。 |
+| `address_keys` | 地址层级名称。 | 说明 `address` 中每一层分别代表 `world`、`sector`、`arena` 还是 `game_object`。 |
+| `address_map` | 地址层级映射。 | 方便代码直接按层级名取地址值，例如取当前 `arena`。 |
+| `collision` | 是否阻挡移动。 | 控制角色能不能走过这个格子，避免穿墙或走进不可达区域。 |
+| `_events` | 当前格子上的事件。 | 让感知系统知道这里发生了什么、谁在这里、对象是否被占用。 |
+
+例如，一个 tile 的地址可能是：
 
 ```text
-Spatial：哪里有什么。
-Associate：发生了什么、聊了什么、想到了什么。
-Schedule：今天要做什么。
+["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
 ```
 
-## 14.7 arena 过滤
+它的层级含义是：
 
-收集事件前，代码先取当前 arena：
+```text
+world: the Ville
+sector: 霍布斯咖啡馆
+arena: 咖啡馆
+game_object: 咖啡馆顾客座位
+```
+
+如果一个 tile 没有详细地址，它只有 world。如果它有四层地址，说明它绑定到具体 game object。
+
+## 14.5 Tile 上的事件
+
+Tile 不只是地图格子。它还保存事件。`Tile` 中有：
+
+```python
+self._events = {}
+```
+
+以及相关方法：
+
+```python
+add_event()
+remove_events()
+update_events()
+get_events()
+```
+
+这让 tile 成为世界状态的一部分。例如，角色在某个 tile 上读书，tile 会保存这个角色的 event。如果 tile 上有 game object，初始化时也会给它添加一个默认事件：
+
+```python
+if len(self.address) == 4:
+    self.add_event(Event(self.address[-1], address=self.address))
+```
+
+带对象的 tile 一开始就有一个对象事件。其他 agent 感知附近时，不是直接读取抽象坐标，而是读取 tile 上的 events。世界通过事件变得可观察。
+
+```mermaid
+flowchart LR
+    Address["地址<br/>world/sector/arena/object"] --> Tile["Tile"]
+    Tile --> Event["Event<br/>对象状态或角色行为"]
+    Event --> Percept["Agent.percept()"]
+    Percept --> Memory["写入 Memory Stream"]
+    Tile --> Path["寻路与碰撞"]
+    Path --> Action["行动落地"]
+```
+
+*图 14-2：Tile、地址与事件关系。Tile 把空间地址、可感知事件和行动落地连接在一起。*
+
+## 14.6 Event 让空间变成可感知状态
+
+地图本身只是几何结构。Event 让地图变成可感知世界。一个 tile 可能包含：
+
+```text
+咖啡馆顾客座位
+伊莎贝拉此时准备情人节派对材料
+阿伊莎此时与伊莎贝拉对话
+```
+
+这些 event 会被 `Agent.percept()` 收集。如果某个 agent 看到了它们，它会把新事件写入 memory stream。这条链路是：
+
+```text
+Tile.events
+  -> Maze.get_scope()
+  -> Agent.percept()
+  -> Concept
+  -> Associate.add_node()
+```
+
+所以，世界模型不是只服务移动，也服务记忆。没有 tile event，智能体无法观察世界发生了什么。
+
+## 14.7 Maze：地图总控对象
+
+`Maze` 也是在：
+
+```text
+generative_agents/modules/maze.py
+```
+
+它负责组织全部 tile。初始化时，`Maze` 做三件关键事情。第一，创建默认 tile 网格：
+
+```python
+self.tiles = [
+    [
+        Tile((x, y), config["world"], address_keys)
+        for x in range(self.maze_width)
+    ]
+    for y in range(self.maze_height)
+]
+```
+
+第二，用 `maze.json` 中的特殊 tile 覆盖默认 tile：
+
+```python
+for tile in config["tiles"]:
+    x, y = tile.pop("coord")
+    self.tiles[y][x] = Tile((x, y), config["world"], address_keys, **tile)
+```
+
+第三，建立地址索引：
+
+```python
+self.address_tiles = dict()
+for i in range(self.maze_height):
+    for j in range(self.maze_width):
+        for add in self.tile_at([j, i]).get_addresses():
+            self.address_tiles.setdefault(add, set()).add((j, i))
+```
+
+它让系统能够从地址反查坐标。例如：
+
+```text
+"the Ville:霍布斯咖啡馆:咖啡馆"
+  -> 一组 tile 坐标
+```
+
+角色计划去咖啡馆时，最终必须通过这个索引找到可走坐标。
+
+## 14.8 地址层级：world、sector、arena、game_object
+
+`tile_address_keys` 定义了地址层级：
+
+```json
+[
+  "world",
+  "sector",
+  "arena",
+  "game_object"
+]
+```
+
+这四层分别解决不同粒度的问题。`world` 是根。当前是：
+
+```text
+the Ville
+```
+
+`sector` 是较大地点。例如：
+
+```text
+奥克山学院
+奥克山学院宿舍
+霍布斯咖啡馆
+玫瑰酒吧
+约翰逊公园
+柳树市场和药店
+```
+
+`arena` 是 sector 中的具体区域。例如：
+
+```text
+图书馆
+教室
+咖啡馆
+克劳斯的房间
+公共休息室
+```
+
+`game_object` 是可交互对象。例如：
+
+```text
+书桌
+床
+咖啡馆顾客座位
+厨房水槽
+钢琴
+黑板
+```
+
+这个层级让系统能在不同粒度上推理。日程可能只说“去奥克山学院学习”。空间选择可能进一步落到“图书馆”。具体 action 可能落到“图书馆桌子”或“书架”。
+
+## 14.9 多层级地址的作用
+
+如果地址只有一个字符串，会很难推理。例如：
+
+```text
+霍布斯咖啡馆咖啡馆顾客座位
+```
+
+这个字符串可以用，但系统无法轻易知道它属于哪个地点、哪个区域、哪个对象。分层地址能支持三类操作。第一，地点选择。模型可以先选 sector，再选 arena，再选 object。这比一次性让模型选完整地址更稳定。第二，感知过滤。`Agent.percept()` 会限制同一 arena 内的事件：
 
 ```python
 events, arena = {}, self.get_tile().get_address("arena")
-```
-
-然后遍历 scope：
-
-```python
 for tile in scope:
     if not tile.events or tile.get_address("arena") != arena:
         continue
 ```
 
-这意味着，即使某个 tile 在视野方框内，如果它不属于当前 arena，也不会被感知。
+同一视野范围内，不同 arena 的事件不会被直接感知。这避免隔墙感知。第三，前端与后端对齐。前端显示的是地图，后端推理的是地址。层级地址让两者能保持语义联系。
 
-这一步非常重要。
+## 14.10 碰撞与寻路
 
-它避免隔墙感知。
-
-例如，角色站在宿舍房间里，方形视野可能覆盖隔壁房间或走廊。如果只按距离，角色可能看到墙后的人。
-
-arena 过滤用语义区域限制感知。
-
-它不是完美视线模拟，但比单纯距离更合理。
-
-## 14.8 收集 tile events
-
-通过 arena 过滤后，系统读取 tile events：
+地图中并不是所有 tile 都能走。`Tile` 有：
 
 ```python
-dist = math.dist(tile.coord, self.coord)
-for event in tile.get_events():
-    if dist < events.get(event, float("inf")):
-        events[event] = dist
+self.collision = collision
 ```
 
-这里 `events` 是一个 dict：
+`Maze.get_around()` 默认会排除 collision tile：
+
+```python
+if no_collision:
+    coords = [c for c in coords if not self.tile_at(c).collision]
+```
+
+`Maze.find_path()` 使用类似广度优先搜索的方式，从起点扩展到终点。它只考虑上下左右四个方向：
+
+```python
+(x-1, y)
+(x+1, y)
+(x, y-1)
+(x, y+1)
+```
+
+如果找不到路径，返回空列表。这说明移动不是 LLM 直接决定每一步坐标。LLM 决定的是目标行为和目标地址，寻路由后端确定。这是正确的职责划分。大模型适合决定“去哪儿做什么”，不适合每步规划像素级路径。
+
+## 14.11 从地址到目标 tile
+
+当 agent 需要移动到某个地址时，系统会调用：
+
+```python
+Maze.get_address_tiles(address)
+```
+
+它把地址 list 拼成字符串：
+
+```python
+addr = ":".join(address)
+```
+
+然后查 `address_tiles`。如果找到，返回这一地址对应的 tile 集合。如果找不到，当前实现会随机返回一个地址集合：
+
+```python
+return random.choice(self.address_tiles.values())
+```
+
+这个 fallback 很危险，也很现实。它能避免系统直接崩溃，但可能导致角色去到奇怪地点。后续如果要提升项目可靠性，可以把这里改成更可解释的失败策略：
+
+- 记录错误日志。
+- 回退到当前 tile。
+- 回退到角色已知随机地址。
+- 让模型重新选择地址。
+- 在实验中标记为 spatial grounding failure。
+
+当前实现的好处是仿真能继续跑。坏处是错误可能被隐藏。
+
+## 14.12 Spatial：角色自己的空间记忆
+
+`Maze` 是全局地图。`Spatial` 是角色自己的空间记忆。它定义在：
 
 ```text
-Event -> 最近距离
+generative_agents/modules/memory/spatial.py
 ```
 
-如果同一个 event 出现在多个 tile 上，只保留最近距离。
-
-这很合理。
-
-例如，同一个 game object 可能对应多个 tile，同一个对象事件可能出现在多个坐标上。agent 只需要知道这个事件存在，不需要重复记录多次。
-
-使用 Event 作为 dict key，依赖 `Event.__hash__()` 和 `Event.__eq__()`。
-
-`Event.__hash__()` 包含：
+初始化参数包括：
 
 ```python
-self.subject
-self.predicate
-self.object
-self._describe
-":".join(self.address)
+def __init__(self, tree, address=None):
 ```
 
-也就是说，subject、predicate、object、describe、address 都相同，才认为是同一事件。
+`tree` 是角色知道的地点树。`address` 是一些常用行为到地址的快捷映射。例如克劳斯的 `agent.json` 中：
 
-## 14.9 距离排序与注意力带宽
+```json
+"spatial": {
+  "address": {
+    "living_area": [
+      "the Ville",
+      "奥克山学院宿舍",
+      "克劳斯的房间"
+    ]
+  },
+  "tree": {
+    "the Ville": {
+      "奥克山学院": { ... },
+      "奥克山学院宿舍": { ... },
+      "霍布斯咖啡馆": { ... }
+    }
+  }
+}
+```
 
-收集完成后：
+`Spatial` 初始化时还会补一个睡觉地址：
 
 ```python
-events = list(sorted(events.keys(), key=lambda k: events[k]))
+if "睡觉" not in self.address and "living_area" in self.address:
+    self.address["睡觉"] = self.address["living_area"] + ["床"]
 ```
 
-事件按距离排序。
+这让“睡觉”可以直接映射到角色房间里的床。
 
-越近越先处理。
+## 14.13 Spatial 与 Maze 的区别
 
-然后只处理前 `att_bandwidth` 个：
-
-```python
-for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
-```
-
-当前默认 `att_bandwidth = 8`。
-
-这代表 agent 的注意力有限。
-
-即使附近有很多事件，它也只能关注一部分。
-
-这很符合论文思想。
-
-如果 agent 每一步都记住视野中所有事件，记忆流会膨胀，角色也会过度敏感。
-
-注意力带宽让感知更接近人类有限注意。
-
-## 14.10 去重：避免重复写入记忆
-
-对每个候选 event，代码先取近期记忆：
-
-```python
-recent_nodes = (
-    self.associate.retrieve_events() + self.associate.retrieve_chats()
-)
-recent_nodes = set(n.describe for n in recent_nodes)
-```
-
-然后判断：
-
-```python
-if event.get_describe() not in recent_nodes:
-```
-
-如果近期已经有同样描述，就不重复处理。
-
-这避免 agent 每一步都把同一个附近事件重复写入 memory stream。
-
-例如，克劳斯连续几步坐在书桌前读书。玛丽亚每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
+`Maze` 和 `Spatial` 很容易混淆。它们都和地点有关，但职责不同。`Maze` 是客观世界。它知道地图上所有 tile、地址、碰撞和事件。`Spatial` 是主观记忆。它表示某个 agent 知道哪些地点，以及某些行为应该去哪里。这对应现实世界中的差别：
 
 ```text
-克劳斯正在读书。
-克劳斯正在读书。
-克劳斯正在读书。
+城市客观存在很多地方。
+但某个人不一定知道所有地方。
 ```
 
-去重让记忆更干净。
-
-不过，这里是基于 `describe` 文本去重，不是基于 event id。
-
-如果同一事件描述略有变化，仍然可能重复。
-
-这是一个工程边界。
-
-## 14.11 空闲事件如何处理
-
-如果 event 是空闲：
+代码中也体现了这一点。`Agent.percept()` 会把看到的对象地址加入 spatial memory：
 
 ```python
-if event.object == "idle" or event.object == "空闲":
-    node = Concept.from_event(
-        "idle_" + str(idx), "event", event, poignancy=1
-    )
+if tile.has_address("game_object"):
+    self.spatial.add_leaf(tile.address)
 ```
 
-这类 event 会被转成临时 Concept，但不会写入 `Associate`。
+角色会通过探索逐步知道更多地点。这让空间记忆可以成长。
 
-它仍然可以出现在 `self.concepts` 中，供当前 step 使用。
+## 14.14 Spatial.find_address()
 
-但它不会成为长期记忆。
+当 agent 计划执行某个活动时，系统会先尝试用 `Spatial.find_address()` 找地址。代码很简单：
 
-这很合理。
+```python
+def find_address(self, hint, as_list=True):
+    address = []
+    for key, path in self.address.items():
+        if key in hint:
+            address = path
+            break
+    if as_list:
+        return address
+    return ":".join(address)
+```
 
-空闲状态通常没有长期记忆价值。
+它不是复杂语义匹配，而是关键词匹配。例如，如果 hint 包含“睡觉”，就会返回睡觉地址。这说明当前项目的空间 grounding 分两级。第一，简单行为用规则映射。第二，找不到时再让 LLM 从空间树中选择 sector、arena、object。这种设计很务实。高频行为如睡觉不需要每次调用 LLM。复杂行为再交给模型选择。
 
-如果每个空闲对象都写入 memory stream，记忆会迅速膨胀。
+## 14.15 Spatial.add_leaf()
 
-因此，项目区分了：
+`Spatial.add_leaf()` 用来更新角色空间记忆。当角色感知到一个带 game_object 的 tile，会把这个地址加入自己的 tree。这意味着角色“知道了”这个地方。例如，角色进入霍布斯咖啡馆后，可能看到：
 
 ```text
-临时感知 concept
-长期 memory concept
+the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
 ```
 
-空闲事件属于前者。
+于是它的空间记忆中加入这个叶子。这样，后续计划“弹钢琴”或“去咖啡馆”时，角色更可能选择正确地点。这与论文中的 memory stream 不同。Spatial memory 不是事件记忆，而是地点知识。它不回答“发生了什么”，而回答“哪里有什么”。
 
-## 14.12 非空闲事件如何写入记忆
+## 14.16 世界模型如何服务感知
 
-非空闲事件会进入 `_add_concept()`：
+感知链路从 `Maze.get_scope()` 开始。`get_scope()` 根据当前位置和感知配置返回附近 tile。当前实现支持 `box` 模式：
 
 ```python
-valid_num += 1
-node_type = "chat" if event.fit(self.name, "对话") else "event"
-node = self._add_concept(node_type, event)
-self.status["poignancy"] += node.poignancy
+vision_r = config["vision_r"]
+x_range = [
+    max(coord[0] - vision_r, 0),
+    min(coord[0] + vision_r + 1, self.maze_width),
+]
+y_range = [
+    max(coord[1] - vision_r, 0),
+    min(coord[1] + vision_r + 1, self.maze_height),
+]
+coords = product(x_range, y_range)
 ```
 
-这里有三个动作。
-
-第一，判断 node_type。
-
-如果事件是当前 agent 与别人对话，类型是 chat。
-
-否则是 event。
-
-第二，写入 associate memory。
-
-`_add_concept()` 会调用：
-
-```python
-self.associate.add_node(...)
-```
-
-第三，累积 poignancy。
-
-重要事件会推动 reflection 触发。
-
-这就是感知与反思之间的连接。
-
-agent 不是凭空反思，而是因为看到、听到、经历了一些重要事件。
-
-## 14.13 _add_concept() 与重要性评分
-
-`_add_concept()` 根据事件类型给 poignancy。
-
-空闲事件给 1。
-
-chat 使用：
-
-```python
-poignancy_chat
-```
-
-其他事件使用：
-
-```python
-poignancy_event
-```
-
-代码：
-
-```python
-elif e_type == "chat":
-    poignancy = self.completion("poignancy_chat", event)
-else:
-    poignancy = self.completion("poignancy_event", event)
-```
-
-然后写入 Associate：
-
-```python
-return self.associate.add_node(
-    e_type,
-    event,
-    poignancy,
-    create=create,
-    expire=expire,
-    filling=filling,
-)
-```
-
-这说明感知不是简单记录。
-
-每条进入 memory stream 的事件都会带重要性分数。
-
-这个分数后续影响：
-
-- retrieval 排序。
-- reflection 触发。
-- 记忆解释。
-
-## 14.14 self.concepts 的作用
-
-处理完事件后，concept 会加入：
-
-```python
-self.concepts.append(node)
-```
-
-最后过滤自身事件：
-
-```python
-self.concepts = [c for c in self.concepts if c.event.subject != self.name]
-```
-
-`self.concepts` 是当前 step 感知结果。
-
-它不是长期记忆本身。
-
-长期记忆在 `Associate` 中。
-
-`self.concepts` 主要服务当前 step 的 reaction。
-
-例如 `_reaction()` 会从 `self.concepts` 中选 focus：
-
-```python
-priority = [i for i in self.concepts if i.event.subject in agents]
-```
-
-因此，感知结果马上影响当前行为。
-
-如果看到别人，可能聊天。
-
-如果看到对象占用，可能等待。
-
-如果没看到重要事件，就继续按计划行动。
-
-## 14.15 为什么过滤自身事件
-
-最后过滤：
-
-```python
-c.event.subject != self.name
-```
-
-因为 agent 自己的事件也在 tile 上。
-
-如果不滤掉，它可能把自己当前行为当成外部事件来反应。
-
-例如，克劳斯正在读书。
-
-他的 tile 上有：
+然后 `Agent.percept()` 在这些 tile 中筛选同一 arena 的 events。这说明感知由三个条件共同决定：
 
 ```text
-克劳斯此时读书
+空间距离
+  + arena 限制
+  + attention bandwidth
 ```
 
-如果不排除，克劳斯可能“感知到克劳斯正在读书”，再把它作为 reaction focus。
+这让角色不会拥有全知视角。信息扩散、关系形成和偶遇都依赖这种有限感知。
 
-这没有意义。
+## 14.17 世界模型如何服务计划
 
-过滤自身事件让 reaction 主要面向外部世界。
-
-## 14.16 感知日志
-
-`percept()` 最后记录：
+计划是文字。世界模型把文字计划变成地点行动。在 `Agent._determine_action()` 中：
 
 ```python
-self.logger.info(
-    "{} percept {}/{} concepts".format(self.name, valid_num, len(self.concepts))
-)
+plan, de_plan = self.schedule.current_plan()
+describes = [plan["describe"], de_plan["describe"]]
+address = self.spatial.find_address(describes[0], as_list=True)
 ```
 
-这里有两个数字。
-
-`valid_num` 是写入长期记忆的非空闲事件数量。
-
-`len(self.concepts)` 是当前 step 可用于反应的 concepts 数量。
-
-两者可能不同。
-
-例如，空闲事件不会写入长期记忆，但可能进入 `self.concepts`。
-
-调试时，如果看到：
+如果 `Spatial` 找不到地址，系统会构造可选空间树，让模型选择：
 
 ```text
-克劳斯 percept 0/3 concepts
+determine_sector
+determine_arena
+determine_object
 ```
 
-说明他看到 3 个 concepts，但没有新的非空闲事件写入长期记忆。
-
-如果看到：
+然后 `Maze.get_address_tiles()` 把地址转成候选 tile。`Maze.find_path()` 决定移动路径。这条链路是：
 
 ```text
-玛丽亚 percept 2/2 concepts
+plan text
+  -> spatial hint
+  -> address
+  -> tiles
+  -> path
+  -> action
 ```
 
-说明她看到并写入了 2 个新事件。
+没有世界模型，Planning 无法变成行动。
 
-## 14.17 感知如何驱动信息扩散
+## 14.18 世界模型如何服务社交
 
-信息扩散依赖感知。
-
-以情人节派对为例。
-
-伊莎贝拉与阿伊莎对话后，tile 上可能出现对话事件。
-
-附近角色如果在同一 arena 且注意力范围内，就可能感知到：
-
-```text
-伊莎贝拉 对话 阿伊莎
-```
-
-该事件进入 memory stream 后，角色可能在后续对话中提到派对。
-
-这条链路是：
-
-```text
-对话发生
-  -> tile event
-  -> nearby agent percept
-  -> chat/event memory
-  -> retrieval
-  -> later dialogue
-  -> further spread
-```
-
-如果感知失败，传播链就会断。
-
-因此，复现实验时，不只要看谁说了什么，还要看旁观者是否在正确时间和地点感知到事件。
-
-## 14.18 感知如何驱动关系形成
-
-关系形成也依赖感知。
-
-克劳斯和玛丽亚形成关系，首先必须相遇或互相观察。
-
-如果克劳斯看到了玛丽亚：
-
-```text
-玛丽亚此时在咖啡馆学习
-```
-
-这个 event 可能进入克劳斯的 memory。
-
-如果随后触发对话，对话摘要会进入 chat memory。
-
-之后 reflection 可能生成 thought：
-
-```text
-克劳斯认为玛丽亚喜欢探索新想法。
-```
-
-这一切的入口是感知。
-
-没有感知，就没有 shared experience。
-
-没有 shared experience，关系只能来自初始设定，而不是仿真涌现。
-
-## 14.19 感知如何驱动反思
-
-反思触发依赖 `status["poignancy"]`。
-
-而 `poignancy` 的主要来源之一就是感知到的新事件。
-
-`percept()` 中：
+社交也依赖空间。角色要先看见别人，才可能对话。`Agent.percept()` 会收集附近事件，其中 subject 是其他 agent 的事件优先级更高。`_reaction()` 会优先选择与其他 agent 相关的 concept：
 
 ```python
-self.status["poignancy"] += node.poignancy
+priority = [i for i in self.concepts if concept.event.subject in agents]
 ```
 
-`reflect()` 中：
+如果选中另一个 agent，就可能进入 `_chat_with()`。这意味着对话不是全局随机发生，而是由空间相遇触发。情人节派对信息之所以会扩散，是因为居民在咖啡馆、学院、宿舍等空间中相遇并对话。如果世界模型不限制相遇，对话传播就会变成广播。
+
+## 14.19 世界模型如何服务对象占用
+
+`Action` 不只包含角色事件，还可以包含对象事件 `obj_event`。在 `_determine_action()` 中：
 
 ```python
-if self.status["poignancy"] < self.think_config["poignancy_max"]:
-    return
+obj_describe = self.completion("describe_object", address[-1], describes[-1])
+obj_event = self.make_event(address[-1], obj_describe, address)
 ```
 
-这说明：
+之后 `move()` 会更新 tile 上的对象事件：
+
+```python
+obj_event = self.get_event(False)
+if obj_event:
+    self.maze.update_obj(coord, obj_event)
+```
+
+`Maze.update_obj()` 会找到同一 game_object 地址对应的所有 tile，并更新对象事件。这让对象状态成为可感知内容。例如，床、书桌、厨房水槽、咖啡馆座位都可以显示正在被如何使用。这对等待机制也很重要。如果两个角色对同一对象产生冲突，`_wait_other()` 才有依据判断是否等待。
+
+## 14.20 世界模型如何服务回放
+
+回放依赖坐标和动作。`Agent.think()` 最终返回：
+
+```python
+self.plan = {
+    "name": self.name,
+    "path": self.find_path(agents),
+    "emojis": emojis,
+}
+```
+
+`path` 是角色接下来要走的坐标序列。`emojis` 描述角色或对象当前状态。这些信息进入 checkpoint，再被 `compress.py` 处理为 `movement.json`。前端 Phaser 根据 `movement.json` 播放角色移动和状态变化。所以，前端动画不是独立制作的，而是后端世界模型和 agent action 的结果。这就是“可解释回放”的基础。
+
+## 14.21 世界模型的边界：地图生成困难
+
+README 中提到一个现实问题：
+
+wounderland 原作者没有提供 `maze.json` 的生成代码。因此，如果要创建新地图，需要：
+
+1. 参考原始项目 `maze.py` 逻辑，兼容 Tiled 导出的 JSON 和 CSV。
+2. 参考现有 `maze.json` 格式，自行合并地图元数据和 collision/sector/arena/object 数据。
+3. 使用外部工具，例如 `jiejieje/tiled_to_maze.json`。
+
+这说明当前项目的地图系统可运行，但地图生产链路还不够完善。修改角色和事件比修改地图容易。如果要新增地点，需要特别小心：
+
+- 前端 tilemap 是否有视觉资源。
+- 后端 `maze.json` 是否有地址。
+- `Spatial.tree` 是否让角色知道新地点。
+- prompt 是否能理解新地点用途。
+- 对象是否有合理名称。
+
+## 14.22 世界模型的边界：地址 fallback
+
+前面讲过，`Maze.get_address_tiles()` 找不到地址时会随机返回一个地址集合。这会隐藏空间错误。例如，模型输出了一个不存在的地址：
 
 ```text
-重要事件积累
-  -> poignancy 上升
-  -> 达到阈值
-  -> reflection
+the Ville:不存在的地点:大厅
 ```
 
-如果 agent 一直只看到空闲事件，就不会触发深层反思。
+系统不会立刻报错，而可能随机给一个可用地址。仿真会继续，但角色行为可能变奇怪。写实验时要注意这种情况。如果发现角色突然去不合理地点，要检查：
 
-如果 agent 经历密集社交、冲突、邀请、计划变化，poignancy 会更快累积。
+- LLM 选择的地址是否存在。
+- `Spatial.tree` 是否包含该地点。
+- `maze.address_tiles` 是否有对应地址。
+- `get_address_tiles()` 是否触发 fallback。
 
-这让反思与经历强度相关。
+后续如果改进项目，可以把 fallback 改为显式记录 warning。
 
-## 14.20 当前感知机制的边界
+## 14.23 世界模型的边界：arena 感知简化
 
-当前感知机制有几个边界。
+当前感知限制使用同一 arena。这比完全基于距离更合理，但仍然是简化。现实中，视线、墙、门、声音、开放空间、遮挡都会影响感知。当前项目没有复杂视线模拟。例如：
 
-第一，视野是方形。
+- 同一 arena 中可能隔着家具。
+- 不同 arena 中可能相邻但开门可见。
+- 声音传播与视觉不同。
 
-它不模拟方向、遮挡和真实视线。
-
-第二，arena 过滤是语义近似。
-
-它避免隔墙感知，但不处理门、窗、开放空间和声音传播。
-
-第三，事件去重基于 describe。
-
-描述变化会导致重复，描述相同但语义时间不同也可能被忽略。
-
-第四，attention bandwidth 固定。
-
-不同角色没有不同注意力能力。
-
-第五，感知写入缺少显式证据链。
-
-虽然 memory node 有 metadata，但当前没有单独记录“我是在哪个 tile、以什么距离感知到的”。
-
-第六，旁观对话的语义有限。
-
-如果 tile 上只有对话摘要，旁观者不一定能得到完整对话内容。
-
-这些边界会影响实验解释。
-
-## 14.21 可改进方向
-
-如果要升级感知模块，可以考虑五个方向。
-
-第一，加入视线遮挡。
-
-根据 collision、墙体和房间边界计算 line-of-sight。
-
-第二，区分视觉和听觉。
-
-对话可以在一定距离内被听到，但对象动作可能只能看到。
-
-第三，记录感知证据。
-
-为每条 memory 增加 source：
+这些都没有细分。但对教学和实验来说，当前设计已经足够表达核心思想：
 
 ```text
-seen_at_coord
-distance
-arena
-step
+agent 只能看到附近、同一语义区域内的事件。
 ```
 
-第四，角色差异化感知。
+这比全局感知更接近社会仿真。
 
-不同角色可以有不同 vision_r、att_bandwidth 或社交注意力。
+## 14.24 世界模型的边界：对象语义依赖 prompt
 
-第五，事件摘要层次化。
-
-旁观者看到“有人在聊天”与参与者记录完整对话，应有不同记忆粒度。
-
-这些方向会在第五部分前沿升级中再次出现。
-
-## 14.22 如何调试感知
-
-调试感知时建议按下面步骤。
-
-第一，确认 agent 坐标。
-
-看 checkpoint 中 `coord`。
-
-第二，确认当前 tile 地址。
-
-看 `Game.agent_think()` 的 summary 中 `address`。
-
-第三，检查 `percept_config`。
-
-特别是：
+地图知道对象名称，但不真正知道对象用途。例如：
 
 ```text
-vision_r
-att_bandwidth
-mode
+钢琴
+厨房水槽
+咖啡馆顾客座位
+图书馆桌子
 ```
 
-第四，查看日志：
+这些对象用途主要靠 LLM 根据名称理解。系统没有一个显式 ontology 说明：
 
 ```text
-<agent> percept <valid>/<concepts> concepts
+钢琴可以演奏。
+床可以睡觉。
+厨房水槽可以洗东西。
+咖啡馆顾客座位可以坐下喝咖啡。
 ```
 
-第五，查看 agent memory。
+这带来灵活性，也带来风险。灵活性是：新增对象时，只要名字清楚，模型可能理解。风险是：模型可能误解对象用途，或者做出不符合场所规范的行为。如果要做更严谨的 agent world，可以考虑为对象增加 affordance：
 
-看 `associate.event` 和 `associate.chat` 是否新增。
+```json
+{
+  "object": "床",
+  "affordances": ["睡觉", "休息"],
+  "capacity": 1
+}
+```
 
-第六，确认 events 是否在同一 arena。
+这属于第五部分前沿升级可以讨论的方向。
 
-如果两个角色很近但不在同一 arena，当前实现不会感知对方。
+## 14.25 如何读世界模型源码
 
-第七，检查是否被去重。
+读这一部分源码时，建议按下面顺序。第一，先看 `maze.json`。理解 world、tile_size、size、tile_address_keys 和 tiles。第二，看 `Tile`。理解 coord、address、collision、events。第三，看 `Maze.__init__()`。理解 tile 网格和 address_tiles 如何建立。第四，看 `Maze.get_scope()`。理解感知范围。第五，看 `Maze.find_path()`。理解移动路径。第六，看 `Spatial`。理解角色主观空间记忆。第七，回到 `Agent.percept()` 和 `_determine_action()`。看世界模型如何进入感知和计划。这样读，世界模型就不会只是“地图文件”，而是整个 agent 行为链路的一部分。
 
-如果事件已经存在于 recent memory，就不会重复写入。
+## 14.26 本章小结
 
-## 14.23 本章小结
+世界模型是源码深读的第一站。地图不是前端背景，而是感知、计划、社交、对象占用和回放共同依赖的底层结构。
 
-本章讲清了 GenerativeAgentsCN 的感知机制：
+| 本章内容 | 核心结论 |
+| --- | --- |
+| `maze.json` | 它是后端世界数据入口，不只是地图资源文件。 |
+| `Tile` | Tile 保存坐标、地址、碰撞和事件，是世界状态的基本单位。 |
+| `Maze` | Maze 组织所有 tile，建立地址索引，并提供视野和寻路能力。 |
+| 地址层级 | `world -> sector -> arena -> game_object` 让行动可以落到具体地点和对象。 |
+| Tile events | 事件让世界状态可被 agent 感知，而不是只存在于画面上。 |
+| `Spatial` | Spatial 是角色自己的空间记忆，不等于全局地图。 |
+| 感知和计划 | `Agent.percept()` 用 Maze 读取附近事件，`_determine_action()` 把计划落到地址和路径。 |
+| 系统作用 | 世界模型同时服务感知、计划、社交、对象占用和回放。 |
+| 当前边界 | 地图生成、地址 fallback、arena 感知简化和对象语义依赖 prompt，都是后续扩展风险。 |
 
-1. 感知发生在 `Agent.think()` 中，先于计划和反思。
-2. `Maze.get_scope()` 根据坐标和 `percept_config` 取得方形视野。
-3. 感知会顺便把 game object 地址加入 `Spatial`。
-4. 系统只收集同一 arena 内的 tile events。
-5. 事件按距离排序，并受 `att_bandwidth` 限制。
-6. Event 通过 hash 去重，同一事件只保留最近距离。
-7. 近期记忆中已有的描述不会重复写入。
-8. 空闲事件只生成临时 Concept，不写入长期记忆。
-9. 非空闲事件通过 `_add_concept()` 写入 `Associate`。
-10. 新事件会累积 `status["poignancy"]`，推动 reflection。
-11. `self.concepts` 是当前 step 的感知结果，主要服务 reaction。
-12. 当前感知是工程简化，不是完整物理视觉模型。
-
-下一章讲记忆。我们会深入 `Associate`、`Concept`、`LlamaIndex`、`AssociateRetriever`，看事件、对话、想法如何存储、检索、过期和参与行为生成。
+下一章讲智能体初始化：从 `agent.json` 进入 `Agent.__init__()`，看角色设定如何进入 `Scratch`、`Spatial`、`Schedule`、`Associate` 和当前 action。
 
 ## 参考资料
 
-- Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/maze.py`
-- Local source: `generative_agents/modules/memory/event.py`
-- Local source: `generative_agents/modules/memory/associate.py`
-- Local config: `generative_agents/data/config.json`
+- Local source: `generative_agents/modules/memory/spatial.py`
+- Local data: `generative_agents/frontend/static/assets/village/maze.json`
+- Local data: `generative_agents/frontend/static/assets/village/agents/*/agent.json`
+- Local README map notes: `README.md`

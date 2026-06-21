@@ -1,843 +1,390 @@
-# 第 31 章 规划系统升级：从日程拆解到目标驱动行动
+# 第 31 章 2023-2026：生成式智能体领域发生了什么
 
-## 31.1 本章要解决的问题
+![2023-2026 前沿升级插画](../../assets/frontier-upgrade-roadmap.svg)
 
-记忆让智能体知道过去。
+## 31.1 核心问题
 
-反思让智能体理解过去。
-
-规划决定智能体接下来做什么。
-
-Generative Agents 的 planning 很有启发性，因为它不是只生成下一句话，而是生成一天的生活节奏，并把粗计划拆成具体行动。
-
-GenerativeAgentsCN 继承了这套机制。
-
-但到了 2026 年，只靠日程拆解已经不能覆盖更复杂的 agent 行为。
-
-例如：
+前四部分已经完成一条完整主线：
 
 ```text
-伊莎贝拉希望至少三位居民知道派对，并让两位居民实际到场。
+论文思想 -> 项目实现 -> 源码机制 -> 复现实验 -> 可信评价与风险边界
 ```
 
-这不是普通日程问题。
+如果这本书到第 28 章结束，它已经能帮助读者理解 Generative Agents。但还不够。Generative Agents 是 2023 年的经典工作。到 2026 年，智能体领域已经沿着多个方向快速演进。如果只讲 2023 年的架构，读者会掌握一个重要起点，但看不到后续三年的发展。本章聚焦三个问题：
 
-它是目标驱动问题。
+1. Generative Agents 在 2023 年解决了什么关键问题？
+2. 2023-2026 年，智能体研究分别沿着哪些方向前进？
+3. 这些前沿进展如何反过来升级 Generative Agents？
 
-本章要回答六个问题：
+本章不是论文综述大全。它只选择和本书最相关的方向：
 
-1. 当前 GenerativeAgentsCN 的 planning 如何工作？
-2. 日程规划和目标规划有什么区别？
-3. ReAct、Tree of Thoughts 和 LATS 给我们什么启发？
-4. 如何给当前项目增加 Goal 对象？
-5. 如何实现多候选行动选择和轻量工具调用？
-6. 如何评价规划升级是否真的有效？
-
-[图 31-1：从日程规划到目标驱动行动的升级结构]
+- 长期记忆。
+- 反思与经验学习。
+- 规划、推理与行动。
+- 多智能体协作。
+- 社会仿真。
+- 评价体系。
+- 中文、本地和推理模型。
+- 工程化可观测性。
 
 ```mermaid
 flowchart TD
-    G[Goal<br/>目标与成功标准] --> DS[Daily Schedule<br/>当天日程]
-    DS --> DP[Decompose<br/>细粒度子计划]
-    DP --> CA[Candidate Actions<br/>候选行动]
-    CA --> SC[Score<br/>目标贡献/自然性/可行性]
-    SC --> AC[Action<br/>执行]
-    AC --> OB[Observation<br/>反馈]
-    OB --> PR[Progress Evaluation<br/>目标进度]
-    PR --> G
-    OB --> LE[Lesson/Reflection]
-    LE --> CA
+    GA[Generative Agents 2023] --> M[长期记忆<br/>MemGPT / Mem0]
+    GA --> R[反思学习<br/>Reflexion / Voyager]
+    GA --> P[规划行动<br/>ReAct / ToT / LATS]
+    GA --> C[多智能体协作<br/>CAMEL / AutoGen / MetaGPT / AgentScope]
+    GA --> S[社会仿真<br/>Concordia / AgentSociety]
+    GA --> E[评价体系<br/>AgentBench / WebArena / GAIA / SWE-bench]
+    M --> U[Generative Agents 升级路线]
+    R --> U
+    P --> U
+    C --> U
+    S --> U
+    E --> U
 ```
 
-## 31.2 当前规划系统的三层
+*图 31-1：从 Generative Agents 到 2026 前沿智能体的演进地图。后续升级不是抛弃原论文，而是沿着记忆、反思、规划、协作、仿真和评价继续推进。*
 
-GenerativeAgentsCN 当前规划系统可以分成三层。
+## 31.2 Generative Agents 不是终点
 
-第一层，日程生成。
+Generative Agents 的贡献很大。它把大语言模型放进一个持续运行的虚拟环境，让角色拥有：
 
-对应：
+- 自然语言记忆。
+- 基于记忆的检索。
+- 高层反思。
+- 日程规划。
+- 环境感知。
+- 对话互动。
+- 多智能体社会涌现。
+
+这套架构证明了一个重要观点：
 
 ```text
-Agent.make_schedule()
+LLM 不只是聊天模型，也可以成为长期行为代理的认知核心。
 ```
 
-它负责生成当天计划。
+但 Generative Agents 也有明显边界。第一，记忆只是开始具备长期性，还没有完整记忆治理。第二，反思主要是总结经历，不是失败后的持续学习。第三，规划更像日程拆解，不是搜索式任务求解。第四，多智能体互动主要依赖空间偶遇，不是组织化协作。第五，社会仿真偏演示性，缺少大规模统计实验。第六，评价方法虽然启发性很强，但还不够自动化、可复现和成本敏感。第七，模型环境已经变化，2026 年的本地模型、推理模型和中文模型能力都和 2023 年不同。因此，Generative Agents 更像一个地基。后续研究不是推翻它，而是在不同方向上补足它。
 
-第二层，日程分解。
+## 31.3 2023 年的起点：可信行为代理
 
-对应：
+2023 年 Generative Agents 最重要的创新，不是“让 25 个角色聊天”。更准确地说，它建立了一条可信行为链：
 
 ```text
-schedule_decompose
+观察进入记忆
+  -> 记忆被检索
+  -> 重要经历触发反思
+  -> 反思影响计划
+  -> 计划生成行动
+  -> 行动产生新观察
+  -> 多个智能体互相影响
 ```
 
-它把当前时间段的粗计划拆成更细行动。
-
-第三层，行动落地。
-
-对应：
+这条链让 agent 不再只是单轮回答者。它开始具备行为连续性。在本书前面，我们已经反复强调：
 
 ```text
-Agent._determine_action()
+可信行为不是语言流畅，而是记忆、计划、反应和环境约束的一致性。
 ```
 
-它把当前子计划映射到地址、对象和事件。
+2023-2026 年的许多工作，本质上都在增强这条链的某一段。例如：
 
-这三层构成：
+- MemGPT 和 Mem0 增强记忆管理。
+- Reflexion 和 Voyager 增强反思与经验学习。
+- ReAct、Tree of Thoughts、LATS 增强推理、规划和行动闭环。
+- CAMEL、AutoGen、MetaGPT、AgentScope 增强多智能体协作。
+- Concordia、AgentSociety 增强社会仿真规模和实验方法。
+- AgentBench、WebArena、GAIA、SWE-bench、AI Agents That Matter 推动评价严谨化。
+- DeepSeek-R1、Qwen3 等模型改变了中文、本地和推理模型的可用性。
+
+这就是第五部分的基本结构。
+
+## 31.4 第一条线：记忆从检索走向治理
+
+Generative Agents 的 memory stream 已经很重要。它把角色经历以自然语言保存下来，再通过 recency、importance、relevance 检索。但长期运行时，简单“写入 + 检索”会遇到问题。例如：
+
+- 记忆越来越多，检索噪声增加。
+- 重复事件不断堆积。
+- 错误记忆或幻觉被长期保存。
+- 关系记忆没有结构化表达。
+- 短期工作记忆、长期情景记忆、语义记忆没有分层。
+
+MemGPT 的启发是：
 
 ```text
-daily schedule -> decomposed plan -> concrete action
+上下文窗口像主存，长期记忆像外存，agent 需要主动管理记忆。
 ```
 
-这就是角色能在小镇里持续行动的基础。
-
-## 31.3 Schedule 的数据结构
-
-`Schedule` 位于：
+Mem0 的启发是：
 
 ```text
-generative_agents/modules/memory/schedule.py
+面向生产 agent 的记忆需要可扩展、低延迟、可个性化，并能跨会话复用。
 ```
 
-它保存：
-
-```python
-self.daily_schedule = daily_schedule or []
-self.diversity = diversity
-self.max_try = max_try
-```
-
-每个 plan 包含：
-
-```python
-{
-    "idx": ...,
-    "describe": ...,
-    "start": ...,
-    "duration": ...,
-    "decompose": ...
-}
-```
-
-这里的 `start` 和 `duration` 都是分钟数。
-
-`current_plan()` 会根据当前虚拟时间找到正在执行的计划。
-
-如果有 decompose，就返回当前子计划。
-
-否则返回粗计划本身。
-
-这套结构简单、清晰、适合教学。
-
-它让读者可以在 checkpoint 中看到角色当天怎么安排。
-
-## 31.4 当前日程生成流程
-
-`Agent.make_schedule()` 会做几件事。
-
-第一，如果当天还没有 schedule，就生成新日程。
-
-第二，如果已有记忆，会先检索近期重要内容，更新 `scratch.currently`。
-
-第三，生成起床时间。
-
-```python
-wake_up = self.completion("wake_up")
-```
-
-第四，生成初始日程。
-
-```python
-init_schedule = self.completion("schedule_init", wake_up)
-```
-
-第五，生成全天 schedule。
-
-```python
-schedule_daily
-```
-
-第六，检查日程多样性。
-
-```python
-if len(set(schedule.values())) >= self.schedule.diversity:
-    break
-```
-
-第七，把 schedule 写入 `daily_schedule`。
-
-第八，把当天计划作为 thought 写入记忆。
-
-这说明当前规划已经不是无状态生成。
-
-它会用近期记忆更新角色当前状态，再生成日程。
-
-## 31.5 当前行动落地流程
-
-`Agent._determine_action()` 做的是从计划到环境行动的映射。
-
-它先取当前 plan 和 de_plan：
-
-```python
-plan, de_plan = self.schedule.current_plan()
-```
-
-然后根据 plan 描述查找地址：
-
-```python
-address = self.spatial.find_address(describes[0], as_list=True)
-```
-
-如果找不到，就逐层判断：
-
-- sector。
-- arena。
-- object。
-
-最后生成：
-
-```python
-memory.Action(...)
-```
-
-这一步非常关键。
-
-因为规划如果不能落到空间，就只是文本。
-
-可信小镇要求角色真的走向某个地点，占用某个对象，并在 movement 中留下轨迹。
-
-## 31.6 当前规划系统的优势
-
-当前规划系统有四个明显优势。
-
-第一，它符合日常生活结构。
-
-角色不是每一步随机决定，而是围绕一天计划行动。
-
-第二，它支持细粒度行动。
-
-粗计划可以被拆成子任务。
-
-第三，它能被打断和修订。
-
-`schedule_revise` 可以根据行动修改后续计划。
-
-第四，它与空间系统连接。
-
-行动不是纯文本，而会落到 Maze 地址树。
-
-这些能力足以支撑小镇生活仿真。
-
-但它们不等于复杂目标规划。
-
-## 31.7 日程规划和目标规划的区别
-
-日程规划的问题是：
+对 Generative Agents 来说，这意味着：
 
 ```text
-今天什么时间做什么？
+Associate 不应该只是一个记忆容器，还应该成为记忆治理层。
 ```
 
-目标规划的问题是：
+第 30 章会详细讨论这一点。
+
+## 31.5 第二条线：反思从总结走向学习
+
+Generative Agents 的 reflection 会从近期重要记忆中生成高层 insight。这非常关键。它让角色能从事件中形成更抽象的理解。但它仍然偏向：
 
 ```text
-为了达成某个目标，我应该采取哪些行动，并根据反馈调整？
+我经历了什么，因此我有什么想法。
 ```
 
-举例。
-
-日程规划可以生成：
+后续研究进一步追问：
 
 ```text
-15:00-16:00 准备情人节派对。
+我哪里失败了？
+我下次应该怎么做？
+我能否把成功经验沉淀成技能？
 ```
 
-目标规划要问：
+Reflexion 将语言反馈作为一种 verbal reinforcement，让 agent 在失败后生成经验，并在下一次尝试中使用。Voyager 在 Minecraft 环境中结合自动课程、技能库和迭代提示，使 agent 能持续探索并积累可复用技能。对 Generative Agents 来说，这条线的意义是：
 
 ```text
-还差几个人知道派对？
-谁最适合邀请？
-现在去哪里最可能遇到他们？
-如果对方拒绝怎么办？
-是否需要改变邀请策略？
-```
-
-日程规划让角色“像人在生活”。
-
-目标规划让角色“能围绕目标持续行动”。
-
-两者不是替代关系。
-
-更合理的结构是：
-
-```text
-长期目标
-  -> 当天日程
-  -> 当前子计划
-  -> 候选行动
-  -> 行动反馈
-  -> 目标进度更新
-```
-
-## 31.8 ReAct 的启发
-
-ReAct 强调 reasoning 和 acting 的交替。
-
-也就是：
-
-```text
-思考
-行动
-观察
-再思考
-再行动
-```
-
-GenerativeAgentsCN 当前已经有类似循环：
-
-```text
-percept -> make_plan -> act -> percept
-```
-
-但 reasoning trace 没有显式保存。
-
-例如角色决定去咖啡馆，并不会保存：
-
-```text
-我选择去咖啡馆，是因为伊莎贝拉可能在那里，我想邀请她参加讨论会。
-```
-
-这对日常生活没问题。
-
-但对复杂目标，缺少 reasoning trace 会影响可解释性和复盘。
-
-升级方向是：
-
-```text
-为目标驱动行动保存 reasoning / action / observation 记录。
-```
-
-这可以成为新的记忆类型：
-
-```text
-trace
-```
-
-或保存在 goal 进度中。
-
-## 31.9 Tree of Thoughts 的启发
-
-Tree of Thoughts 的核心启发是：
-
-```text
-不要一次生成唯一答案，而是生成多个候选思路并评估。
-```
-
-在小镇中，很多决策都适合多候选。
-
-例如伊莎贝拉要传播派对消息。
-
-候选行动可能是：
-
-1. 去咖啡馆等待常客。
-2. 主动找玛丽亚聊天。
-3. 先和埃迪确认音乐安排。
-4. 去公园寻找更多居民。
-
-单次生成可能选到一个普通行动。
-
-多候选评估可以问：
-
-```text
-哪个行动最有助于目标？
-哪个行动成本最低？
-哪个行动符合当前时间和地点？
-哪个行动最符合角色性格？
-```
-
-这不是让 agent 变成计算器。
-
-而是让复杂决策多一步比较。
-
-## 31.10 LATS 的启发
-
-LATS 将语言推理、行动和规划放到树搜索框架中。
-
-对小镇项目来说，不必完整实现复杂搜索。
-
-但可以借鉴一个思想：
-
-```text
-规划可以探索多条行动路径，并根据反馈更新选择。
-```
-
-例如山姆竞选宣传。
-
-路径 A：
-
-```text
-先找支持者詹妮弗 -> 再通过她接触邻居。
-```
-
-路径 B：
-
-```text
-直接去公共场所和陌生居民交流。
-```
-
-路径 C：
-
-```text
-先找汤姆，尝试化解反对。
-```
-
-每条路径都有不同风险。
-
-LATS 的启发是：
-
-```text
-复杂目标不应只靠当前一步生成，而应保留候选路径和反馈。
-```
-
-## 31.11 升级方向一：Goal 对象
-
-第一项可落地升级是引入 Goal 对象。
-
-示例：
-
-```json
-{
-  "goal_id": "goal_party_001",
-  "owner": "伊莎贝拉",
-  "description": "让至少三位居民知道并参加情人节派对",
-  "deadline": "2024-02-14 17:00",
-  "status": "active",
-  "success_criteria": [
-    "至少三位居民被邀请",
-    "至少两位居民到达霍布斯咖啡馆"
-  ],
-  "progress": {
-    "invited": ["玛丽亚"],
-    "accepted": [],
-    "arrived": []
-  }
-}
-```
-
-Goal 对象解决三个问题。
-
-第一，把长期目标显式化。
-
-第二，把成功标准写清楚。
-
-第三，把进度从自然语言中抽出来。
-
-这不是替代 persona。
-
-persona 是角色是谁。
-
-goal 是角色当前要达成什么。
-
-## 31.12 Goal 应该放在哪里
-
-有三种实现方式。
-
-第一，作为新的 memory node_type：
-
-```text
-goal
-```
-
-优点是改动小。
-
-缺点是结构化进度不方便。
-
-第二，新增模块：
-
-```text
-generative_agents/modules/memory/goal.py
-```
-
-定义 `Goal` 类。
-
-优点是结构清晰。
-
-缺点是需要修改 agent 序列化。
-
-第三，作为 `Scratch` 的扩展。
-
-把当前目标放入 scratch。
-
-优点是 prompt 使用方便。
-
-缺点是长期证据和进度管理较弱。
-
-本书建议：
-
-```text
-先以 memory node_type 实验，再逐步独立成 Goal 类。
-```
-
-这样能降低第一步实现成本。
-
-## 31.13 升级方向二：目标驱动日程
-
-有了 Goal 后，生成日程时就不应只看 persona 和 currently。
-
-还应看当前目标。
-
-例如：
-
-```text
-伊莎贝拉有一个 active goal：让至少三位居民知道派对。
-```
-
-那么当天日程中应出现：
-
-- 准备派对。
-- 邀请居民。
-- 确认参加者。
-- 17:00 前回到咖啡馆。
-
-可以新增 prompt：
-
-```text
-goal_influence_schedule.txt
-```
-
-输入：
-
-- persona。
-- currently。
-- active goals。
-- recent memories。
-
-输出：
-
-```text
-今天哪些日程应服务于这些目标？
-```
-
-然后再进入 `schedule_daily` 或作为其上下文。
-
-这样目标不会只停留在记忆里。
-
-它会影响当天计划。
-
-## 31.14 升级方向三：多候选行动选择
-
-当前 `_determine_action()` 基本是：
-
-```text
-取当前 de_plan
-  -> 找地址
-  -> 生成 Action
-```
-
-升级后可以增加：
-
-```text
-generate_candidate_actions
-  -> score_candidate_actions
-  -> choose_action
-```
-
-候选行动示例：
-
-```json
-[
-  {
-    "action": "去霍布斯咖啡馆整理派对材料",
-    "goal_contribution": 0.6,
-    "reason": "有助于派对准备，但不能传播信息"
-  },
-  {
-    "action": "去找玛丽亚并邀请她参加派对",
-    "goal_contribution": 0.8,
-    "reason": "玛丽亚可能会传播给克劳斯"
-  },
-  {
-    "action": "去公园寻找居民宣传派对",
-    "goal_contribution": 0.5,
-    "reason": "可能接触更多人，但不确定能遇到谁"
-  }
-]
-```
-
-选择时不只看 goal contribution。
-
-还要看：
-
-- 是否符合当前时间。
-- 是否符合当前位置。
-- 是否符合角色性格。
-- 是否有空间路径。
-- 是否过度工具化。
-
-这一步是 Tree of Thoughts 思想的轻量版本。
-
-## 31.15 升级方向四：目标进度评估
-
-目标驱动规划必须知道进度。
-
-否则 agent 无法判断下一步。
-
-可以新增：
-
-```text
-goal_evaluate_progress.txt
-```
-
-输入：
-
-- goal。
-- 最近对话。
-- 最近行动。
-- movement 或地点记录。
-
-输出：
-
-```json
-{
-  "invited": ["玛丽亚", "克劳斯"],
-  "accepted": ["玛丽亚"],
-  "arrived": [],
-  "missing": ["还需要至少一位居民明确知道派对"],
-  "next_suggestion": "优先邀请与玛丽亚关系较近的人。"
-}
-```
-
-这会让计划更闭环。
-
-当前日程系统知道时间到了该做什么。
-
-目标系统还要知道：
-
-```text
-目标还差什么？
-```
-
-## 31.16 升级方向五：轻量工具调用
-
-复杂 agent 框架常常引入工具调用。
-
-GenerativeAgentsCN 不必一开始接复杂外部工具。
-
-可以先做小镇内部工具。
-
-例如：
-
-```python
-get_current_time()
-get_agents_near(location)
-get_recent_conversations(agent_name)
-get_event_spread(keyword)
-get_current_plan(agent_name)
-```
-
-这些工具不改变世界，只读取状态。
-
-它们能帮助 agent 做更合理规划。
-
-例如伊莎贝拉想邀请更多人，可以查询：
-
-```text
-谁现在可能在咖啡馆附近？
-```
-
-山姆想传播竞选消息，可以查询：
-
-```text
-哪些居民已经听过竞选？
-```
-
-工具调用要谨慎。
-
-如果 agent 直接获得全局上帝视角，社会仿真会失真。
-
-因此工具应该区分：
-
-- agent 可知工具。
-- 实验分析工具。
-
-角色自己不应随便知道所有人的位置。
-
-除非这是环境设定允许的。
-
-## 31.17 升级方向六：行动反馈闭环
-
-目标规划需要反馈。
-
-行动执行后，应记录：
-
-```text
-expected_outcome
-actual_outcome
-progress_delta
-lesson
+反思不应只解释过去，也应改变未来策略。
 ```
 
 例如：
 
-```json
-{
-  "action": "邀请玛丽亚参加派对",
-  "expected_outcome": "玛丽亚知道并可能参加派对",
-  "actual_outcome": "玛丽亚表示感兴趣，但未明确承诺",
-  "progress_delta": {
-    "informed": ["玛丽亚"],
-    "accepted": []
-  },
-  "lesson": "下次需要确认对方是否能在17:00到场。"
-}
-```
+- 伊莎贝拉邀请失败后，反思如何更自然地邀请对方。
+- 山姆竞选宣传效果不好后，反思哪些居民更关心哪些议题。
+- 克劳斯讨论会没人参加后，反思邀请对象和时间安排。
 
-这把第 30 章的经验学习和本章目标规划连接起来。
+第 31 章会把 reflection 扩展为经验学习和技能库。
 
-规划不是一次性生成。
+## 31.6 第三条线：规划从日程走向目标搜索
 
-它应该持续根据反馈更新。
-
-## 31.18 最小可行升级实验
-
-建议第一个实验仍然用情人节派对。
-
-目标：
+Generative Agents 的 planning 主要负责日程和行动拆解。这让角色能像人在一天中生活。但它不是复杂任务规划器。例如：
 
 ```text
-伊莎贝拉希望在 17:00 前让至少三位居民知道派对，并让至少两人表示愿意参加。
+让至少三个人知道派对，并确保两个人到场。
 ```
 
-升级前：
+这个目标需要：
+
+- 选择邀请对象。
+- 选择合适时间。
+- 规划路线。
+- 遇到失败后换策略。
+- 跟踪谁已经知道。
+- 判断是否达到目标。
+
+单纯日程拆解不够。ReAct 的启发是 reasoning 和 acting 交替推进。Tree of Thoughts 的启发是生成多个候选思路并评估。LATS 的启发是把推理、行动和规划统一到搜索框架中。对 Generative Agents 来说，这意味着：
 
 ```text
-伊莎贝拉依赖 currently、日程和偶遇自然传播。
+在日程之上增加显式 goal、候选行动和反馈评估。
 ```
 
-升级后：
+第 32 章会讨论如何从 `Schedule` 升级到目标驱动行动。
+
+## 31.7 第四条线：多智能体从偶遇走向组织
+
+Generative Agents 中的多智能体互动主要依赖：
+
+- 同一地图。
+- 感知范围。
+- 偶遇。
+- 对话。
+- 记忆传播。
+
+这非常适合研究社会涌现。但它不适合组织化任务。例如：
 
 ```text
-伊莎贝拉拥有 active goal；
-系统在日程和行动选择时考虑目标进度；
-每次邀请后更新 goal progress。
+多人协作筹备派对。
+多人分工做竞选宣传。
+多人共同组织社区讨论会。
 ```
 
-评价：
+这些任务需要：
 
-- 信息传播覆盖率是否提升。
-- 邀请是否更有针对性。
-- 是否出现过度工具化行为。
-- 是否更容易形成到场行动。
-- 失败后是否调整策略。
+- 共享目标。
+- 角色分工。
+- 任务状态。
+- 协作协议。
+- 冲突解决。
 
-这个实验能清楚显示目标规划的价值和风险。
-
-## 31.19 评价指标
-
-规划升级可以用以下指标评价：
+CAMEL 强调角色扮演式 communicative agents。AutoGen 强调多 agent conversation framework。MetaGPT 用 SOP 和角色分工组织软件开发任务。AgentScope 强调可扩展、可配置、可观察的多智能体平台。对 Generative Agents 来说，这条线的意义是：
 
 ```text
-goal_completion_rate
+在自然社交小镇之外，增加组织化协作能力。
 ```
 
-目标完成率。
+第 33 章会讨论公共事件板、临时工作组和共享记忆。
+
+## 31.8 第五条线：社会仿真从故事走向统计
+
+Smallville 的 25 个角色已经很精彩。但作为社会仿真，它仍然偏小、偏演示、偏故事。如果要研究更严肃的社会现象，需要进一步回答：
+
+- 多次运行结果是否稳定？
+- 信息传播路径能否统计？
+- 群体聚集能否量化？
+- 角色设定能否系统生成？
+- 环境规则是否足够明确？
+- 是否可以比较不同条件下的结果？
+
+Concordia / Generative Agent-Based Modeling 强调用 LLM 构建 grounded agent-based models，并把行动放到物理、数字或社会空间中解释。AgentSociety 则面向更大规模 LLM-driven generative agents，用于理解人类行为和社会现象。对 Generative Agents 来说，这不是要求立刻做万级 agent。更务实的方向是：
 
 ```text
-plan_step_completion_rate
+把小镇实验从单次故事，升级成可重复、可统计、可比较的小规模社会仿真实验。
 ```
 
-计划步骤完成率。
+第 34 章会讨论实验配置、批量运行、传播统计和群体轨迹统计。
+
+## 31.9 第六条线：评价从演示走向严谨
+
+第 27 章已经建立了可信行为评价框架。但 2023-2026 年 agent 领域进一步暴露出更大的评价问题。AI Agents That Matter 强调，很多 agent 论文和 demo 在评价上存在可复现性、成本、基线、公平比较等问题。AgentBench 试图系统评价 LLM 作为 agent 的能力。WebArena 让 agent 在真实感更强的网站环境中完成任务。GAIA 关注通用 AI assistant 的现实复杂任务。SWE-bench 则用真实 GitHub issue 检验模型解决软件工程任务的能力。这些 benchmark 方向共同说明：
 
 ```text
-invalid_action_rate
+agent 评价不能只看一段好看的演示。
 ```
 
-无效行动比例。
+对 Generative Agents 来说，这意味着：
+
+- 实验要有配置。
+- 结果要能复现。
+- 成本要记录。
+- 失败要统计。
+- 对照组要明确。
+- 指标要和任务目标匹配。
+
+第 35 章会把这些前沿评价思想转化为小镇实验指标。
+
+## 31.10 第七条线：模型基础发生变化
+
+2023 年的 Generative Agents 主要建立在远程通用大模型能力上。到了 2026 年，模型条件已经发生变化。第一，本地模型更可用。Generative Agents 当前默认使用 Ollama 接入本地中文模型和本地 embedding。这让低成本复现实验成为可能。第二，中文模型更强。Qwen 系列、DeepSeek 系列等模型让中文 prompt、中文对话和本地部署更现实。第三，推理模型改变了 agent 设计。DeepSeek-R1 这类工作强化了 reasoning 能力。Qwen3 官方资料也强调 thinking / non-thinking 模式等能力形态。这带来一个新问题：
 
 ```text
-replan_count
+小镇智能体是不是每一步都需要强推理？
 ```
 
-重规划次数。
+答案通常是否定的。日常闲聊、普通行动和简单重要性评分可以使用便宜模型。复杂反思、目标规划、失败复盘可以使用更强模型。这会推动多模型路由。第 38 章会把模型能力变化纳入 Generative Agents 的升级路线图。
+
+## 31.11 第八条线：工程从 demo 走向可观测系统
+
+最后一条线常被忽略，但对开源项目最重要。一个 agent demo 能跑起来，不等于系统可维护。长期研究需要：
+
+- 运行日志。
+- 调用统计。
+- 成本统计。
+- 实验配置。
+- 失败样例。
+- checkpoint。
+- replay。
+- 指标脚本。
+- prompt 版本。
+- 模型版本。
+
+Generative Agents 已经比原始项目更工程化：
+
+- 提供中文 prompt。
+- 支持 Ollama、MiniMax、OpenAI。
+- 接入本地 embedding。
+- 提供 checkpoint 和 resume。
+- 提供 compress 和 replay。
+- 生成 `simulation.md`。
+
+但第五部分会进一步提出：
 
 ```text
-candidate_selection_quality
+把 Generative Agents 从可运行项目，升级成可实验项目。
 ```
 
-候选行动选择是否合理。
+这意味着不仅要能看故事，还要能比较、统计、复现、定位问题。
+
+## 31.12 五部分之间的关系
+
+现在可以把全书结构重新看一遍。第一部分讲思想源头。回答：
 
 ```text
-goal_progress_accuracy
+Generative Agents 为什么重要？
 ```
 
-系统记录的目标进度是否与真实对话和 movement 一致。
+第二部分讲项目谱系。回答：
 
 ```text
-naturalness_score
+Generative Agents 从哪里来，继承和改写了什么？
 ```
 
-目标驱动是否破坏生活感。
+第三部分讲源码。回答：
 
-最后一个指标很重要。
+```text
+当前项目如何实现论文思想？
+```
 
-目标规划越强，角色越容易变成任务机器。
+第四部分讲实验。回答：
 
-小镇智能体仍然应该像居民，而不是流程机器人。
+```text
+如何复现、扩展和评价当前项目？
+```
 
-## 31.20 风险与边界
+第五部分讲前沿升级。回答：
 
-规划升级的主要风险有四类。
+```text
+站在 2026 年，如何把这个项目继续向前推进？
+```
 
-第一，过度工具化。
+这五部分不是并列资料。它们形成一个递进关系。没有第一部分，读者不知道为什么这样设计。没有第三部分，读者无法修改项目。没有第四部分，读者无法判断修改是否有效。没有第五部分，读者只是在复刻 2023 年，而不是面向 2026 年继续发展。
 
-角色为了完成目标频繁打断日常生活。
+## 31.13 本书采用的前沿判断原则
 
-第二，上帝视角。
+第五部分不会把每篇论文都讲成“必须实现”。本书采用四个判断原则。第一，是否能补足 Generative Agents 的真实短板。如果某个前沿概念很流行，但和当前项目关系不大，就少讲。第二，是否能转化为可实现模块。例如关系记忆、目标对象、公共事件板、批量实验脚本。第三，是否能被评价。如果一个升级无法用第 27 章的框架评价，就很难证明价值。第四，是否保留风险意识。能力增强不能脱离第 28 章的风险边界。每章都会尽量按这个结构写：
 
-如果工具让角色知道不该知道的信息，社会仿真会失真。
+```text
+经典架构的局限
+  -> 前沿研究给出的启发
+  -> Generative Agents 当前实现
+  -> 可以落地的升级方案
+  -> 评价指标
+  -> 风险与边界
+```
 
-第三，指标驱动。
+这样第五部分就不是论文摘抄，而是项目升级路线。
 
-如果只优化目标完成率，角色可能做出不符合人设的行为。
+## 31.14 本章小结
 
-第四，成本上升。
+第五部分不是追热点，而是把 2023-2026 年的智能体进展重新落回 Generative Agents。前沿的价值不在名词新，而在能否改进当前项目的记忆、反思、规划、协作、仿真和评价。
 
-多候选行动和评分会显著增加 LLM 调用。
+| 演进方向 | 核心结论 |
+| --- | --- |
+| 经典地基 | Generative Agents 是地基，不是终点。 |
+| 2023 年贡献 | 论文建立了观察、记忆、检索、反思、计划、行动和社会互动组成的可信行为链。 |
+| 记忆系统 | 记忆方向从 memory stream 走向记忆治理。 |
+| 反思系统 | 反思方向从经历总结走向失败复盘、经验学习和技能库。 |
+| 规划系统 | 规划方向从日程拆解走向目标驱动、候选方案和搜索式行动。 |
+| 多智能体 | 多智能体方向从自然偶遇走向组织化协作。 |
+| 社会仿真 | 社会仿真方向从小镇故事走向可重复、可统计、可比较的实验。 |
+| 评价体系 | 评价方向从演示可信走向 benchmark、成本、可复现性和统计比较。 |
+| 本地化落地 | 中文、本地和推理模型改变了 Generative Agents 的可落地方式。 |
+| 工程化要求 | 日志、配置、指标、checkpoint 和可观测性，是前沿升级能否落地的基础。 |
 
-因此建议：
-
-- 只对重要 goal 使用多候选。
-- 日常行动仍使用普通 schedule。
-- 工具调用限制在角色可知范围内。
-- 评价时同时看成功率和可信度。
-
-好的目标规划不是让角色永远高效。
-
-而是让角色在重要目标上表现出合理、可解释、符合人设的持续性。
-
-## 31.21 本章小结
-
-本章讨论了规划系统从日程拆解到目标驱动行动的升级路线：
-
-1. GenerativeAgentsCN 当前规划由日程生成、日程分解和行动落地三层构成。
-2. `Schedule` 保存 daily_schedule，并通过 `current_plan()` 找到当前计划。
-3. `Agent.make_schedule()` 会根据记忆更新 currently，再生成当天日程。
-4. `_determine_action()` 将当前计划映射到 Maze 地址和对象，是行动落地关键。
-5. 日程规划解决“今天什么时候做什么”，目标规划解决“为了达成目标下一步怎么做”。
-6. ReAct 启发我们保存 reasoning / action / observation 闭环。
-7. Tree of Thoughts 启发我们生成多个候选行动并评估。
-8. LATS 启发我们保留候选路径和反馈，而不是只生成当前一步。
-9. 可落地升级包括 Goal 对象、目标驱动日程、多候选行动选择、目标进度评估、轻量工具调用和行动反馈闭环。
-10. 规划升级必须同时评价目标完成率、计划合理性、进度准确性和行为自然性。
-
-下一章讨论多智能体协作升级。目标规划解决单个角色如何围绕目标行动；多智能体协作要解决多个角色如何围绕共享目标分工、同步和协商。
+下一章进入第一条具体升级线：记忆系统：从 Generative Agents 的 memory stream 出发，讨论 MemGPT、Mem0 等工作如何启发 Generative Agents 做长期记忆治理。
 
 ## 参考资料
 
+- Generative Agents: https://arxiv.org/abs/2304.03442
+- MemGPT: https://arxiv.org/abs/2310.08560
+- Mem0: https://arxiv.org/abs/2504.19413
+- Reflexion: https://arxiv.org/abs/2303.11366
+- Voyager: https://arxiv.org/abs/2305.16291
 - ReAct: https://arxiv.org/abs/2210.03629
 - Tree of Thoughts: https://arxiv.org/abs/2305.10601
 - LATS: https://arxiv.org/abs/2310.04406
-- Generative Agents: https://arxiv.org/abs/2304.03442
-- Local source: `generative_agents/modules/memory/schedule.py`
-- Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/prompt/scratch.py`
+- CAMEL: https://arxiv.org/abs/2303.17760
+- AutoGen: https://arxiv.org/abs/2308.08155
+- MetaGPT: https://arxiv.org/abs/2308.00352
+- AgentScope: https://arxiv.org/abs/2402.14034
+- Concordia / Generative Agent-Based Modeling: https://arxiv.org/abs/2312.03664
+- AgentSociety: https://arxiv.org/abs/2502.08691
+- AgentBench: https://arxiv.org/abs/2308.03688
+- WebArena: https://arxiv.org/abs/2307.13854
+- GAIA: https://arxiv.org/abs/2311.12983
+- SWE-bench: https://arxiv.org/abs/2310.06770
+- AI Agents That Matter: https://arxiv.org/abs/2407.01502
+- DeepSeek-R1: https://arxiv.org/abs/2501.12948
+- Qwen3: https://arxiv.org/abs/2505.09388
+- Qwen3 official blog: https://qwenlm.github.io/blog/qwen3/

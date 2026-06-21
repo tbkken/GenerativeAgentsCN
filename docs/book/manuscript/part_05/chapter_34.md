@@ -1,725 +1,633 @@
-# 第 34 章 评价体系升级：从故事可信到可复现实验指标
+# 第 34 章 规划系统升级：从日程拆解到目标驱动行动
 
-## 34.1 本章要解决的问题
+## 34.1 核心问题
 
-第 26 章已经建立了“可信行为”的评价框架。
-
-第 33 章又把单次小镇故事推进到批量社会仿真。
-
-这一章继续向前一步：
+记忆让智能体知道过去。反思让智能体理解过去。规划决定智能体接下来做什么。Generative Agents 的 planning 很有启发性，因为它不是只生成下一句话，而是生成一天的生活节奏，并把粗计划拆成具体行动。Generative Agents 继承了这套机制。但到了 2026 年，只靠日程拆解已经不能覆盖更复杂的 agent 行为。例如：
 
 ```text
-如何让 GenerativeAgentsCN 的实验评价更接近 2023-2026 年 Agent 领域的严谨标准？
+伊莎贝拉希望至少三位居民知道派对，并让两位居民实际到场。
 ```
 
-Agent 领域过去几年有一个很大的问题：
+这不是普通日程问题。它是目标驱动问题。本章聚焦六个问题：
 
-```text
-demo 很精彩，但评价不够稳。
-```
-
-很多系统展示了漂亮轨迹、自然对话或任务成功案例。
-
-但读者很难知道：
-
-- 是否只挑了最好的一次。
-- 是否有强基线对照。
-- 失败率是多少。
-- 成本是多少。
-- 多次运行是否稳定。
-- 换模型后是否仍有效。
-- 指标是否真的衡量了目标能力。
-
-本章要回答六个问题：
-
-1. 为什么 agent 评价不能只看演示？
-2. AgentBench、WebArena、GAIA、SWE-bench 和 AI Agents That Matter 给我们什么启发？
-3. GenerativeAgentsCN 当前已有哪些评价材料？
-4. 如何设计指标脚本和统一报告？
-5. 如何设置基线、成本和多次运行统计？
-6. 如何避免为了指标牺牲可信行为？
-
-[图 34-1：GenerativeAgentsCN 的评价升级流水线]
+1. 当前 Generative Agents 的 planning 如何工作？
+2. 日程规划和目标规划有什么区别？
+3. ReAct、Tree of Thoughts 和 LATS 给我们什么启发？
+4. 如何给当前项目增加 Goal 对象？
+5. 如何实现多候选行动选择和轻量工具调用？
+6. 如何评价规划升级是否真的有效？
 
 ```mermaid
-flowchart LR
-    Run[仿真运行] --> Data[checkpoint/conversation/movement]
-    Data --> Metrics[指标脚本]
-    Metrics --> JSON[metrics.json]
-    Data --> Evidence[证据抽样]
-    Evidence --> Report[report.md]
-    JSON --> Compare[多次运行比较]
-    Compare --> Baseline[基线/成本/失败率]
-    Baseline --> Decision[是否接受升级]
-    Report --> Decision
+flowchart TD
+    G[Goal<br/>目标与成功标准] --> DS[Daily Schedule<br/>当天日程]
+    DS --> DP[Decompose<br/>细粒度子计划]
+    DP --> CA[Candidate Actions<br/>候选行动]
+    CA --> SC[Score<br/>目标贡献/自然性/可行性]
+    SC --> AC[Action<br/>执行]
+    AC --> OB[Observation<br/>反馈]
+    OB --> PR[Progress Evaluation<br/>目标进度]
+    PR --> G
+    OB --> LE[Lesson/Reflection]
+    LE --> CA
 ```
 
-## 34.2 从“故事可信”到“实验可信”
+*图 34-1：从日程规划到目标驱动行动的升级结构。目标驱动规划不是替代日程，而是在日程之上增加目标、候选行动和反馈评估。*
 
-Generative Agents 的魅力来自故事。
+## 34.2 当前规划系统的三层
 
-Smallville 中，派对传播、竞选讨论和关系形成都很有叙事感。
-
-GenerativeAgentsCN 的回放也很容易让读者进入故事。
-
-但研究和工程不能只停在故事。
-
-故事可信回答的是：
+Generative Agents 当前规划系统可以分成三层。第一层，日程生成。对应：
 
 ```text
-这个案例看起来是否合理？
+Agent.make_schedule()
 ```
 
-实验可信回答的是：
+它负责生成当天计划。第二层，日程分解。对应：
 
 ```text
-在明确条件下，这个系统是否稳定地产生某类可验证行为？
+schedule_decompose
 ```
 
-两者都重要。
-
-没有故事，读者难以理解系统。
-
-没有实验，读者无法判断系统能力。
-
-本章目标就是把故事转成实验。
-
-## 34.3 AgentBench 的启发
-
-AgentBench 试图在多种环境中评估 LLM as agents。
-
-它的启发是：
+它把当前时间段的粗计划拆成更细行动。第三层，行动落地。对应：
 
 ```text
-agent 能力不应该只在一个任务、一种环境、一个案例中评价。
+Agent._determine_action()
 ```
 
-对 GenerativeAgentsCN 来说，这意味着：
-
-不要只跑派对实验。
-
-还要跑：
-
-- 竞选传播。
-- 关系形成。
-- 自定义讨论会。
-- 本地模型实验。
-- 反思消融。
-- 目标规划升级。
-
-不同实验考察不同能力。
-
-派对更适合评价传播和协同行动。
-
-竞选更适合评价态度分化和信息保持。
-
-关系形成更适合评价长期记忆和反思。
-
-本地模型实验更适合评价模型适配和结构化输出。
-
-多任务评价比单一 replay 更可靠。
-
-## 34.4 WebArena 的启发
-
-WebArena 强调在真实感更强的网页环境中评价 autonomous agents。
-
-它的启发是：
+它把当前子计划映射到地址、对象和事件。这三层构成：
 
 ```text
-Agent 评价必须看环境 grounding。
+daily schedule -> decomposed plan -> concrete action
 ```
 
-一个 agent 说“我完成了任务”不够。
+这就是角色能在小镇里持续行动的基础。
 
-它必须在环境中真的完成。
+## 34.3 Schedule 的数据结构
 
-对 GenerativeAgentsCN 来说，环境 grounding 对应：
-
-- Maze。
-- Tile。
-- 地址树。
-- movement。
-- 对象占用。
-- 回放位置。
-
-例如角色说：
+`Schedule` 位于：
 
 ```text
-我会在 17:00 去霍布斯咖啡馆。
+generative_agents/modules/memory/schedule.py
 ```
 
-评价时必须检查：
+它保存：
+
+```python
+self.daily_schedule = daily_schedule or []
+self.diversity = diversity
+self.max_try = max_try
+```
+
+每个 plan 包含：
+
+```python
+{
+    "idx": ...,
+    "describe": ...,
+    "start": ...,
+    "duration": ...,
+    "decompose": ...
+}
+```
+
+这里的 `start` 和 `duration` 都是分钟数。`current_plan()` 会根据当前虚拟时间找到正在执行的计划。如果有 decompose，就返回当前子计划。否则返回粗计划本身。这套结构简单、清晰、适合教学。它让读者可以在 checkpoint 中看到角色当天怎么安排。
+
+## 34.4 当前日程生成流程
+
+`Agent.make_schedule()` 会做几件事。第一，如果当天还没有 schedule，就生成新日程。第二，如果已有记忆，会先检索近期重要内容，更新 `scratch.currently`。第三，生成起床时间。
+
+```python
+wake_up = self.completion("wake_up")
+```
+
+第四步生成当天的初始日程。
+
+```python
+init_schedule = self.completion("schedule_init", wake_up)
+```
+
+第五，生成全天 schedule。
+
+```python
+schedule_daily
+```
+
+第六，检查日程多样性。
+
+```python
+if len(set(schedule.values())) >= self.schedule.diversity:
+    break
+```
+
+第七，把 schedule 写入 `daily_schedule`。第八，把当天计划作为 thought 写入记忆。这说明当前规划已经不是无状态生成。它会用近期记忆更新角色当前状态，再生成日程。
+
+## 34.5 当前行动落地流程
+
+`Agent._determine_action()` 做的是从计划到环境行动的映射。它先取当前 plan 和 de_plan：
+
+```python
+plan, de_plan = self.schedule.current_plan()
+```
+
+然后根据 plan 描述查找地址：
+
+```python
+address = self.spatial.find_address(describes[0], as_list=True)
+```
+
+如果找不到，就逐层判断：
+
+- sector。
+- arena。
+- object。
+
+最后生成：
+
+```python
+memory.Action(...)
+```
+
+这一步非常关键。因为规划如果不能落到空间，就只是文本。可信小镇要求角色真的走向某个地点，占用某个对象，并在 movement 中留下轨迹。
+
+## 34.6 当前规划系统的优势
+
+当前规划系统有四个明显优势。第一，它符合日常生活结构。角色不是每一步随机决定，而是围绕一天计划行动。第二，它支持细粒度行动。粗计划可以被拆成子任务。第三，它能被打断和修订。`schedule_revise` 可以根据行动修改后续计划。第四，它与空间系统连接。行动不是纯文本，而会落到 Maze 地址树。这些能力足以支撑小镇生活仿真。但它们不等于复杂目标规划。
+
+## 34.7 日程规划和目标规划的区别
+
+日程规划的问题是：
 
 ```text
-movement.json 中它是否真的到达霍布斯咖啡馆？
+今天什么时间做什么？
 ```
 
-这就是 WebArena 给小镇项目的启发：
+目标规划的问题是：
 
 ```text
-语言承诺必须用环境状态验证。
+为了达成某个目标，我应该采取哪些行动，并根据反馈调整？
 ```
 
-## 34.5 GAIA 的启发
-
-GAIA 关注通用 AI assistant 处理真实复杂任务的能力。
-
-它的启发是：
+举例。日程规划可以生成：
 
 ```text
-评价要关注多步骤任务链。
+15:00-16:00 准备情人节派对。
 ```
 
-很多 agent 失败不是因为单步回答差，而是因为长链路中某一步断了。
-
-小镇实验也是这样。
-
-一个派对传播链包括：
+目标规划要问：
 
 ```text
-伊莎贝拉有派对目标
-  -> 她遇到别人
-  -> 她自然提到派对
-  -> 对方听懂时间地点
-  -> 对方记住
-  -> 对方可能转述
-  -> 有人调整计划
-  -> 有人到场
+还差几个人知道派对？
+谁最适合邀请？
+现在去哪里最可能遇到他们？
+如果对方拒绝怎么办？
+是否需要改变邀请策略？
 ```
 
-如果最后没人到场，不能只说“失败”。
-
-要定位是哪一环断了。
-
-GAIA 式复杂任务评价提醒我们：
+日程规划让角色“像人在生活”。目标规划让角色“能围绕目标持续行动”。两者不是替代关系。更合理的结构是：
 
 ```text
-指标要覆盖任务链路，而不是只看最终结果。
+长期目标
+  -> 当天日程
+  -> 当前子计划
+  -> 候选行动
+  -> 行动反馈
+  -> 目标进度更新
 ```
 
-## 34.6 SWE-bench 的启发
+## 34.8 ReAct 的启发
 
-SWE-bench 用真实 GitHub issue 检验模型是否能解决软件工程问题。
-
-它的启发是：
+ReAct 强调 reasoning 和 acting 的交替。也就是：
 
 ```text
-任务完成要有可验证结果。
+思考
+行动
+观察
+再思考
+再行动
 ```
 
-在软件工程里，可验证结果可能是测试通过。
-
-在小镇仿真里，可验证结果可以是：
-
-- 关键词传播路径。
-- 到场记录。
-- 日程变化。
-- 关系记忆变化。
-- 反思节点生成。
-- 多次运行统计。
-
-不要只让模型自评。
-
-不要只让角色说“我做到了”。
-
-要用外部证据判断。
-
-例如：
+Generative Agents 当前已经有类似循环：
 
 ```text
-accepted_count
-attendance_count
-promise_action_match_rate
-fact_preservation_score
+percept -> make_plan -> act -> percept
 ```
 
-这些指标就是小镇任务的“测试”。
-
-## 34.7 AI Agents That Matter 的启发
-
-AI Agents That Matter 对 agent 评价提出了非常直接的批评。
-
-它提醒我们关注：
-
-- 可重复性。
-- 基线。
-- 成本。
-- 统计显著性。
-- 公平比较。
-- 工具和模型带来的混淆。
-
-这对本书非常重要。
-
-如果我们只展示一个好看的回放，就是在重复 agent demo 的老问题。
-
-一本严肃的项目书应该记录：
-
-- 运行了几次。
-- 成功几次。
-- 失败几次。
-- 使用什么模型。
-- 花费多少调用。
-- 和什么基线比。
-- 改动是否只影响一个变量。
-
-这不是为了把小镇变成冷冰冰的 benchmark。
-
-而是为了让读者知道：
+但 reasoning trace 没有显式保存。例如角色决定去咖啡馆，并不会保存：
 
 ```text
-这个系统到底在哪些条件下有效。
+我选择去咖啡馆，是因为伊莎贝拉可能在那里，我想邀请她参加讨论会。
 ```
 
-## 34.8 当前项目已有评价基础
-
-GenerativeAgentsCN 已经提供很多评价材料。
-
-第一，`simulation.md`。
-
-用于人工阅读行为和对话。
-
-第二，`conversation.json`。
-
-用于追踪对话和传播路径。
-
-第三，checkpoint。
-
-用于查看 agent 状态、记忆、日程、行动和 LLM 摘要。
-
-第四，`movement.json`。
-
-用于检查位置和回放。
-
-第五，LLM summary。
-
-`LLMModel.get_summary()` 会记录调用成功、失败和请求数。
-
-在 `Game.agent_think()` 中，如果 agent 的 LLM 可用，会把 summary 写入 info：
+这对日常生活没问题。但对复杂目标，缺少 reasoning trace 会影响可解释性和复盘。升级方向是：
 
 ```text
-info["llm"] = agent._llm.get_summary()
+为目标驱动行动保存 reasoning / action / observation 记录。
 ```
 
-这意味着项目已经有成本和失败率记录的入口。
-
-还缺的是统一收集和报告。
-
-## 34.9 当前评价缺口
-
-当前项目的评价缺口主要有六个。
-
-第一，没有统一 metrics 输出。
-
-每次实验需要人工看文件。
-
-第二，没有批量运行汇总。
-
-多次实验结果不容易比较。
-
-第三，没有标准基线。
-
-读者不知道升级版相对默认系统提升在哪里。
-
-第四，没有成本报告。
-
-LLM 调用统计存在，但没有汇总成实验级指标。
-
-第五，没有失败类型分类。
-
-失败样例需要人工整理。
-
-第六，没有实验配置文件。
-
-运行条件容易散落在命令行和口头说明中。
-
-这些缺口不影响项目作为教学 demo。
-
-但会影响它作为研究实验平台。
-
-## 34.10 升级方向一：指标脚本
-
-建议增加以下工具：
+这可以成为新的记忆类型：
 
 ```text
-tools/analyze_conversation_keywords.py
-tools/analyze_attendance.py
-tools/analyze_memory_references.py
-tools/compare_experiment_runs.py
-tools/export_experiment_report.py
+trace
 ```
 
-它们分别负责：
+或保存在 goal 进度中。
 
-- 对话关键词和传播路径。
-- 指定地点和时间窗到场统计。
-- 记忆引用准确率抽样。
-- 多次运行指标比较。
-- 导出 Markdown 和 JSON 报告。
+## 34.9 Tree of Thoughts 的启发
 
-第一版不需要复杂。
-
-可以先支持派对和竞选两个事件。
-
-工具脚本的价值不是自动取代判断，而是建立标准流程。
-
-## 34.11 升级方向二：统一 metrics.json
-
-每次实验可以生成：
+Tree of Thoughts 的核心启发是：
 
 ```text
-generative_agents/results/evaluations/<实验名>/metrics.json
+不要一次生成唯一答案，而是生成多个候选思路并评估。
 ```
 
-示例：
+在小镇中，很多决策都适合多候选。例如伊莎贝拉要传播派对消息。候选行动可能是：
+
+1. 去咖啡馆等待常客。
+2. 主动找玛丽亚聊天。
+3. 先和埃迪确认音乐安排。
+4. 去公园寻找更多居民。
+
+单次生成可能选到一个普通行动。多候选评估可以问：
+
+```text
+哪个行动最有助于目标？
+哪个行动成本最低？
+哪个行动符合当前时间和地点？
+哪个行动最符合角色性格？
+```
+
+这不是让 agent 变成计算器。而是让复杂决策多一步比较。
+
+## 34.10 LATS 的启发
+
+LATS 将语言推理、行动和规划放到树搜索框架中。对小镇项目来说，不必完整实现复杂搜索。但可以借鉴一个思想：
+
+```text
+规划可以探索多条行动路径，并根据反馈更新选择。
+```
+
+例如山姆竞选宣传。路径 A：
+
+```text
+先找支持者詹妮弗 -> 再通过她接触邻居。
+```
+
+路径 B：
+
+```text
+直接去公共场所和陌生居民交流。
+```
+
+路径 C：
+
+```text
+先找汤姆，尝试化解反对。
+```
+
+每条路径都有不同风险。LATS 的启发是：
+
+```text
+复杂目标不应只靠当前一步生成，而应保留候选路径和反馈。
+```
+
+## 34.11 升级方向一：Goal 对象
+
+第一项可落地升级是引入 Goal 对象。示例：
 
 ```json
 {
-  "experiment": {
-    "name": "book-party-small-run-01",
-    "model": "qwen3.5:4b-q4_K_M",
-    "embedding": "qwen3-embedding:0.6b-q8_0",
-    "start": "20240214-08:00",
-    "step": 72,
-    "stride": 10,
-    "agents": 6
-  },
-  "diffusion": {
-    "unique_informed_agents": 4,
-    "direct_mentions": 2,
-    "indirect_mentions": 1,
-    "diffusion_depth": 2,
-    "fact_preservation_score": 0.75
-  },
-  "attendance": {
-    "target_location": "霍布斯咖啡馆",
-    "window": "17:00-19:00",
-    "arrived_agents": ["伊莎贝拉", "玛丽亚"],
-    "attendance_count": 2
-  },
-  "runtime": {
-    "llm_requests": 320,
-    "llm_success": 305,
-    "llm_failures": 15,
-    "elapsed_minutes": 95
+  "goal_id": "goal_party_001",
+  "owner": "伊莎贝拉",
+  "description": "让至少三位居民知道并参加情人节派对",
+  "deadline": "2024-02-14 17:00",
+  "status": "active",
+  "success_criteria": [
+    "至少三位居民被邀请",
+    "至少两位居民到达霍布斯咖啡馆"
+  ],
+  "progress": {
+    "invited": ["玛丽亚"],
+    "accepted": [],
+    "arrived": []
   }
 }
 ```
 
-这个文件让实验可以被脚本读取、比较和汇总。
+Goal 对象解决三个问题。第一，把长期目标显式化。第二，把成功标准写清楚。第三，把进度从自然语言中抽出来。这不是替代 persona。persona 是角色是谁。goal 是角色当前要达成什么。
 
-## 34.12 升级方向三：统一 report.md
+## 34.12 Goal 应该放在哪里
 
-除了机器可读的 `metrics.json`，还应生成人工可读报告：
-
-```text
-generative_agents/results/evaluations/<实验名>/report.md
-```
-
-报告结构：
-
-```markdown
-# 实验评价报告
-
-## 实验配置
-
-## 指标摘要
-
-## 传播路径
-
-## 到场统计
-
-## 记忆与计划证据
-
-## 失败样例
-
-## 成本与稳定性
-
-## 结论
-```
-
-这能把第 26 章的评分表、第 33 章的统计指标和本章的成本记录连接起来。
-
-## 34.13 升级方向四：基线对照
-
-没有基线，就无法判断升级是否有效。
-
-建议至少设置五类基线。
-
-第一，默认完整系统。
-
-这是当前 GenerativeAgentsCN。
-
-第二，高反思阈值。
-
-把 `poignancy_max` 调高，减少反思，观察关系和传播是否变弱。
-
-第三，低检索保留。
-
-降低 `associate.retention`，观察记忆连续性是否下降。
-
-第四，禁用或减少对话。
-
-观察信息传播是否消失。
-
-第五，小模型 vs 大模型。
-
-观察模型能力对结构化输出、对话和反思的影响。
-
-每次只改一个主要变量。
-
-否则不能归因。
-
-## 34.14 升级方向五：成本记录
-
-Agent 系统评价必须记录成本。
-
-成本包括：
-
-- LLM 请求次数。
-- 成功次数。
-- 失败次数。
-- 重试次数。
-- 运行耗时。
-- 本地模型硬件条件。
-- 远程 API token 成本。
-
-当前 `LLMModel` 已经有 summary：
+有三种实现方式。第一，作为新的 memory node_type：
 
 ```text
-S:成功数,F:失败数/R:请求数
+goal
 ```
 
-可以把它汇总成：
+优点是改动小。缺点是结构化进度不方便。第二，新增模块：
+
+```text
+generative_agents/modules/memory/goal.py
+```
+
+定义 `Goal` 类。优点是结构清晰。缺点是需要修改 agent 序列化。第三，作为 `Scratch` 的扩展。把当前目标放入 scratch。优点是 prompt 使用方便。缺点是长期证据和进度管理较弱。本书建议：
+
+```text
+先以 memory node_type 实验，再逐步独立成 Goal 类。
+```
+
+这样能降低第一步实现成本。
+
+## 34.13 升级方向二：目标驱动日程
+
+有了 Goal 后，生成日程时就不应只看 persona 和 currently。还应看当前目标。例如：
+
+```text
+伊莎贝拉有一个 active goal：让至少三位居民知道派对。
+```
+
+那么当天日程中应出现：
+
+- 准备派对。
+- 邀请居民。
+- 确认参加者。
+- 17:00 前回到咖啡馆。
+
+可以新增 prompt：
+
+```text
+goal_influence_schedule.txt
+```
+
+输入：
+
+- persona。
+- currently。
+- active goals。
+- recent memories。
+
+输出：
+
+```text
+今天哪些日程应服务于这些目标？
+```
+
+然后再进入 `schedule_daily` 或作为其上下文。这样目标不会只停留在记忆里。它会影响当天计划。
+
+## 34.14 升级方向三：多候选行动选择
+
+当前 `_determine_action()` 基本是：
+
+```text
+取当前 de_plan
+  -> 找地址
+  -> 生成 Action
+```
+
+升级后可以增加：
+
+```text
+generate_candidate_actions
+  -> score_candidate_actions
+  -> choose_action
+```
+
+候选行动示例：
 
 ```json
-{
-  "llm_total_requests": 320,
-  "llm_success": 305,
-  "llm_failures": 15,
-  "failure_rate": 0.046875
-}
-```
-
-成本记录会改变我们对系统的判断。
-
-一个升级如果让传播率提升 5%，但 LLM 调用增加 5 倍，不一定值得。
-
-## 34.15 升级方向六：失败分类
-
-失败不是一个类别。
-
-建议把失败分为：
-
-```text
-no_contact
-```
-
-角色没有相遇。
-
-```text
-no_mention
-```
-
-相遇但没有提到目标事件。
-
-```text
-memory_miss
-```
-
-听过但后续想不起。
-
-```text
-fact_drift
-```
-
-时间、地点或人物说错。
-
-```text
-plan_not_updated
-```
-
-口头承诺没有进入计划。
-
-```text
-movement_miss
-```
-
-计划或承诺没有落地到位置。
-
-```text
-llm_format_failure
-```
-
-结构化输出失败。
-
-```text
-over_cooperation
-```
-
-所有角色无条件接受。
-
-分类之后，改进方向才清楚。
-
-例如 `no_contact` 可能是路径和时间问题。
-
-`memory_miss` 是检索问题。
-
-`plan_not_updated` 是日程修订问题。
-
-`llm_format_failure` 是模型适配问题。
-
-## 34.16 升级方向七：多次运行统计
-
-每个实验至少建议运行 3-5 次。
-
-报告中写：
-
-```text
-mean
-min
-max
-standard deviation
-```
-
-例如：
-
-```json
-{
-  "attendance_count": {
-    "mean": 2.2,
-    "min": 1,
-    "max": 3
+[
+  {
+    "action": "去霍布斯咖啡馆整理派对材料",
+    "goal_contribution": 0.6,
+    "reason": "有助于派对准备，但不能传播信息"
   },
-  "diffusion_depth": {
-    "mean": 1.8,
-    "min": 1,
-    "max": 3
+  {
+    "action": "去找玛丽亚并邀请她参加派对",
+    "goal_contribution": 0.8,
+    "reason": "玛丽亚可能会传播给克劳斯"
+  },
+  {
+    "action": "去公园寻找居民宣传派对",
+    "goal_contribution": 0.5,
+    "reason": "可能接触更多人，但不确定能遇到谁"
   }
-}
+]
 ```
 
-如果运行成本太高，可以先少量运行。
+选择时不只看 goal contribution。还要看：
 
-但要明确说明：
+- 是否符合当前时间。
+- 是否符合当前位置。
+- 是否符合角色性格。
+- 是否有空间路径。
+- 是否过度工具化。
+
+这一步是 Tree of Thoughts 思想的轻量版本。
+
+## 34.15 升级方向四：目标进度评估
+
+目标驱动规划必须知道进度。否则 agent 无法判断下一步。可以新增：
 
 ```text
-这是样例结果，不是稳定统计结论。
+goal_evaluate_progress.txt
 ```
 
-透明比夸大更重要。
+输入：
 
-## 34.17 升级方向八：评价配置版本化
+- goal。
+- 最近对话。
+- 最近行动。
+- movement 或地点记录。
 
-指标脚本本身也会变化。
-
-因此评价配置也要版本化。
-
-例如：
-
-```text
-evaluations/configs/party_diffusion_v1.json
-```
-
-内容：
+输出：
 
 ```json
 {
-  "metric_version": "party_diffusion_v1",
-  "keywords": ["情人节", "派对", "霍布斯咖啡馆"],
-  "core_facts": {
-    "source": "伊莎贝拉",
-    "location": "霍布斯咖啡馆",
-    "time": ["17:00", "下午5点"]
-  },
-  "attendance_window": ["17:00", "19:00"]
+  "invited": ["玛丽亚", "克劳斯"],
+  "accepted": ["玛丽亚"],
+  "arrived": [],
+  "missing": ["还需要至少一位居民明确知道派对"],
+  "next_suggestion": "优先邀请与玛丽亚关系较近的人。"
 }
 ```
 
-这样以后指标变化时，旧实验仍能解释。
-
-没有评价版本，实验结果会变得不可追溯。
-
-## 34.18 不要为了指标牺牲可信行为
-
-指标有一个危险：
+这会让计划更闭环。当前日程系统知道时间到了该做什么。目标系统还要知道：
 
 ```text
-系统可能为了指标优化，而不是为了可信行为优化。
+目标还差什么？
 ```
 
-例如只看传播覆盖率，系统可能让角色到处重复广播派对。
+## 34.16 升级方向五：轻量工具调用
 
-只看到场率，系统可能让所有人准时到场，失去拒绝和冲突。
+复杂 agent 框架常常引入工具调用。Generative Agents 不必一开始接复杂外部工具。可以先做小镇内部工具。例如：
 
-只看任务完成率，角色可能做出不符合人设的行为。
+```python
+get_current_time()
+get_agents_near(location)
+get_recent_conversations(agent_name)
+get_event_spread(keyword)
+get_current_plan(agent_name)
+```
 
-因此评价要同时保留：
+这些工具不改变世界，只读取状态。它们能帮助 agent 做更合理规划。例如伊莎贝拉想邀请更多人，可以查询：
 
-- 定量指标。
-- 人工证据。
-- 负样本。
-- 行为自然性评分。
-- 风险说明。
+```text
+谁现在可能在咖啡馆附近？
+```
 
-Agent 评价不是越高越好。
+山姆想传播竞选消息，可以查询：
 
-而是要让指标与目标一致。
+```text
+哪些居民已经听过竞选？
+```
 
-社会仿真尤其需要保留不完美。
+工具调用要谨慎。如果 agent 直接获得全局上帝视角，社会仿真会失真。因此工具应该区分：
 
-合理拒绝、误解、迟到和冲突都可能提升可信度。
+- agent 可知工具。
+- 实验分析工具。
 
-## 34.19 最小可行评价升级
+角色自己不应随便知道所有人的位置。除非这是环境设定允许的。
 
-建议读者按四步实现。
+## 34.17 升级方向六：行动反馈闭环
 
-第一步，输出 `metrics.json`。
+目标规划需要反馈。行动执行后，应记录：
 
-先记录实验配置、模型、agent 数、step、stride。
+```text
+expected_outcome
+actual_outcome
+progress_delta
+lesson
+```
 
-第二步，做派对关键词统计。
+例如：
 
-从 `conversation.json` 抽取提及。
+```json
+{
+  "action": "邀请玛丽亚参加派对",
+  "expected_outcome": "玛丽亚知道并可能参加派对",
+  "actual_outcome": "玛丽亚表示感兴趣，但未明确承诺",
+  "progress_delta": {
+    "informed": ["玛丽亚"],
+    "accepted": []
+  },
+  "lesson": "下次需要确认对方是否能在17:00到场。"
+}
+```
 
-第三步，做派对到场统计。
+这把第 31 章的经验学习和本章目标规划连接起来。规划不是一次性生成。它应该持续根据反馈更新。
 
-从 `movement.json` 统计 17:00-19:00 霍布斯咖啡馆到场。
+## 34.18 最小可行升级实验
 
-第四步，生成 `report.md`。
+建议第一个实验仍然用情人节派对。目标：
 
-把指标、证据和失败样例写成一页报告。
+```text
+伊莎贝拉希望在 17:00 前让至少三位居民知道派对，并让至少两人表示愿意参加。
+```
 
-这四步不改核心 agent 行为。
+升级前：
 
-风险低，但收益高。
+```text
+伊莎贝拉依赖 currently、日程和偶遇自然传播。
+```
 
-它会让整个项目从“能看回放”进入“能做实验”。
+升级后：
 
-## 34.20 本章小结
+```text
+伊莎贝拉拥有 active goal；
+系统在日程和行动选择时考虑目标进度；
+每次邀请后更新 goal progress。
+```
 
-本章讨论了评价体系从故事可信到可复现实验指标的升级路线：
+评价：
 
-1. 故事可信和实验可信不同，前者看案例是否合理，后者看明确条件下系统是否稳定产生可验证行为。
-2. AgentBench 启发我们做多任务、多环境评价。
-3. WebArena 启发我们重视环境 grounding，语言承诺必须落地到位置和行动。
-4. GAIA 启发我们评价多步骤任务链，而不是只看最终结果。
-5. SWE-bench 启发我们设计可验证成功条件。
-6. AI Agents That Matter 提醒我们关注可重复性、基线、成本、统计和公平比较。
-7. GenerativeAgentsCN 已有 `simulation.md`、`conversation.json`、checkpoint、`movement.json` 和 LLM summary。
-8. 可落地升级包括指标脚本、统一 `metrics.json`、统一 `report.md`、基线对照、成本记录、失败分类、多次运行统计和评价配置版本化。
-9. 指标不能替代可信行为判断，必须结合人工证据、负样本和风险边界。
+- 信息传播覆盖率是否提升。
+- 邀请是否更有针对性。
+- 是否出现过度工具化行为。
+- 是否更容易形成到场行动。
+- 失败后是否调整策略。
 
-下一章是第五部分的收束：基于前面所有前沿洞察，给出一条面向 GenerativeAgentsCN 的分阶段升级路线图。
+这个实验能清楚显示目标规划的价值和风险。
+
+## 34.19 评价指标
+
+规划升级可以用以下指标评价：
+
+```text
+goal_completion_rate
+```
+
+该指标记录目标完成率。
+
+```text
+plan_step_completion_rate
+```
+
+该指标记录计划步骤完成率。
+
+```text
+invalid_action_rate
+```
+
+该指标记录无效行动比例。
+
+```text
+replan_count
+```
+
+该指标记录重规划次数。
+
+```text
+candidate_selection_quality
+```
+
+候选行动选择是否合理。
+
+```text
+goal_progress_accuracy
+```
+
+系统记录的目标进度是否与真实对话和 movement 一致。
+
+```text
+naturalness_score
+```
+
+目标驱动是否破坏生活感。最后一个指标很重要。目标规划越强，角色越容易变成任务机器。小镇智能体仍然应该像居民，而不是流程机器人。
+
+## 34.20 风险与边界
+
+规划升级的主要风险有四类。第一，过度工具化。角色为了完成目标频繁打断日常生活。第二，上帝视角。如果工具让角色知道不该知道的信息，社会仿真会失真。第三，指标驱动。如果只优化目标完成率，角色可能做出不符合人设的行为。第四，成本上升。多候选行动和评分会显著增加 LLM 调用。因此建议：
+
+- 只对重要 goal 使用多候选。
+- 日常行动仍使用普通 schedule。
+- 工具调用限制在角色可知范围内。
+- 评价时同时看成功率和可信度。
+
+好的目标规划不是让角色永远高效。而是让角色在重要目标上表现出合理、可解释、符合人设的持续性。
+
+## 34.21 本章小结
+
+规划升级不是推翻日程系统，而是在日程之上补上目标、候选方案和反馈。当前规划强在哪里、目标驱动行动该从哪里开始加，是升级的核心判断。
+
+| 本章内容 | 核心结论 |
+| --- | --- |
+| 当前三层规划 | 当前规划由日程生成、日程分解和行动落地三层构成。 |
+| `Schedule` | `Schedule` 保存 daily_schedule，并通过 `current_plan()` 找到当前计划。 |
+| `make_schedule()` | 它会根据记忆更新 currently，再生成当天日程。 |
+| `_determine_action()` | 它把当前计划映射到 Maze 地址和对象，是行动落地关键。 |
+| 日程 vs 目标 | 日程规划回答“什么时候做什么”，目标规划回答“为了达成目标下一步怎么做”。 |
+| ReAct 启发 | 保存 reasoning / action / observation 闭环。 |
+| Tree of Thoughts 启发 | 生成多个候选行动并评估。 |
+| LATS 启发 | 保留候选路径和反馈，而不是只生成当前一步。 |
+| 可落地升级 | Goal 对象、目标驱动日程、多候选行动选择、目标进度评估、轻量工具调用和行动反馈闭环。 |
+| 评价要求 | 规划升级必须同时评价目标完成率、计划合理性、进度准确性和行为自然性。 |
+
+下一章讨论多智能体协作升级。目标规划解决单个角色如何围绕目标行动；多智能体协作要解决多个角色如何围绕共享目标分工、同步和协商。
 
 ## 参考资料
 
-- AgentBench: https://arxiv.org/abs/2308.03688
-- WebArena: https://arxiv.org/abs/2307.13854
-- GAIA: https://arxiv.org/abs/2311.12983
-- SWE-bench: https://arxiv.org/abs/2310.06770
-- AI Agents That Matter: https://arxiv.org/abs/2407.01502
-- Local source: `generative_agents/modules/model/llm_model.py`
-- Local source: `generative_agents/modules/game.py`
-- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`
-- Local output: `generative_agents/results/checkpoints/<实验名>/conversation.json`
-- Local output: `generative_agents/results/compressed/<实验名>/movement.json`
+- ReAct: https://arxiv.org/abs/2210.03629
+- Tree of Thoughts: https://arxiv.org/abs/2305.10601
+- LATS: https://arxiv.org/abs/2310.04406
+- Generative Agents: https://arxiv.org/abs/2304.03442
+- Local source: `generative_agents/modules/memory/schedule.py`
+- Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
