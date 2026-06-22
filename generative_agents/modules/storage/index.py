@@ -3,7 +3,6 @@
 import os
 import time
 import requests
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.bridge.pydantic import Field
 from llama_index.core.indices.vector_store.retrievers import VectorIndexRetriever
@@ -45,15 +44,81 @@ class OllamaHttpEmbedding(BaseEmbedding):
         return self._get_query_embedding(query)
 
 
+class MiniMaxHttpEmbedding(BaseEmbedding):
+    model_name: str = Field(description="The MiniMax embedding model to use.")
+    base_url: str = Field(default="https://api.minimax.chat/v1")
+    api_key: str = Field(default="")
+    group_id: str = Field(default="")
+
+    def _embedding_url(self):
+        url = f"{self.base_url.rstrip('/')}/embeddings"
+        if self.group_id:
+            url = f"{url}?GroupId={self.group_id}"
+        return url
+
+    def _embed(self, texts, embedding_type):
+        response = requests.post(
+            url=self._embedding_url(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}",
+            },
+            json={
+                "model": self.model_name,
+                "type": embedding_type,
+                "texts": texts,
+            },
+            timeout=300,
+        )
+        response.raise_for_status()
+        data = response.json()
+        base_resp = data.get("base_resp") or {}
+        status_code = base_resp.get("status_code", 0)
+        if status_code not in (0, "0"):
+            raise RuntimeError(f"MiniMax embedding failed: {base_resp}")
+        vectors = data.get("vectors")
+        if vectors is None and "data" in data:
+            vectors = [item["embedding"] for item in data["data"]]
+        if not isinstance(vectors, list):
+            raise RuntimeError(f"MiniMax embedding response missing vectors: {data}")
+        return vectors
+
+    def _get_text_embedding(self, text):
+        return self._embed([text], "db")[0]
+
+    def _get_text_embeddings(self, texts):
+        return self._embed(texts, "db")
+
+    def _get_query_embedding(self, query):
+        return self._embed([query], "query")[0]
+
+    async def _aget_query_embedding(self, query):
+        return self._get_query_embedding(query)
+
+
 class LlamaIndex:
     def __init__(self, embedding_config, path=None):
         self._config = {"max_nodes": 0}
         if embedding_config["provider"] == "hugging_face":
+            from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+
             embed_model = HuggingFaceEmbedding(model_name=embedding_config["model"])
         elif embedding_config["provider"] == "ollama":
             embed_model = OllamaHttpEmbedding(
                 model_name=embedding_config["model"],
                 base_url=embedding_config["base_url"],
+            )
+        elif embedding_config["provider"] == "minimax":
+            api_key = embedding_config.get("api_key") or os.getenv("MINIMAX_API_KEY", "")
+            if not api_key:
+                raise ValueError(
+                    "MiniMax embedding API key is required. Set MINIMAX_API_KEY or embedding.api_key in config.json."
+                )
+            embed_model = MiniMaxHttpEmbedding(
+                model_name=embedding_config["model"],
+                base_url=embedding_config["base_url"],
+                api_key=api_key,
+                group_id=embedding_config.get("group_id") or os.getenv("MINIMAX_GROUP_ID", ""),
             )
         elif embedding_config["provider"] == "openai":
             embed_model = OpenAIEmbedding(

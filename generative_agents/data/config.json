@@ -11,10 +11,11 @@
         },
         "think": {
             "llm": {
-                "provider": "ollama",
-                "model": "qwen3.5:4b-q4_K_M",
-                "base_url": "http://127.0.0.1:11434/v1",
-                "api_key": ""
+                "provider": "minimax",
+                "model": "MiniMax-M3",
+                "base_url": "https://api.minimaxi.com/v1",
+                "api_key": "",
+                "max_tokens": 8192
             },
             "interval": 1000,
             "poignancy_max": 150
@@ -22,10 +23,11 @@
         "chat_iter": 4,
         "associate": {
             "embedding": {
-                "provider": "ollama",
-                "model": "qwen3-embedding:0.6b-q8_0",
-                "base_url": "http://127.0.0.1:11434",
-                "api_key": ""
+                "provider": "minimax",
+                "model": "embo-01",
+                "base_url": "https://api.minimax.chat/v1",
+                "api_key": "",
+                "group_id": ""
             },
             "retention": 8
         }

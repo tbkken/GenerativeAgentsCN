@@ -3,19 +3,27 @@
 import time
 import re
 import json
+import os
 import requests
 from magentic import prompt
 
 
 class LLMModel:
     def __init__(self, config):
-        self._api_key = config["api_key"]
+        self._api_key = self._resolve_api_key(config)
         self._base_url = config["base_url"]
         self._model = config["model"]
         self._summary = {"total": [0, 0, 0]}
 
         self._handle = self.setup(config)
         self._enabled = True
+
+    def _resolve_api_key(self, config):
+        api_key = config.get("api_key", "")
+        if api_key:
+            return api_key
+        provider = config.get("provider", "").upper()
+        return os.getenv(f"{provider}_API_KEY", "")
 
     def setup(self, config):
         raise NotImplementedError(
@@ -159,6 +167,10 @@ class MiniMaxLLMModel(LLMModel):
     """
 
     def setup(self, config):
+        if not self._api_key:
+            raise ValueError(
+                "MiniMax API key is required. Set MINIMAX_API_KEY or llm.api_key in config.json."
+            )
         # 输出最大 token 数，需足够容纳“思考过程 + 结构化结果”
         self._max_tokens = config.get("max_tokens", 8192)
         return None

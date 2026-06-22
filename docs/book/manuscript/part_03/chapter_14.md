@@ -2,13 +2,13 @@
 
 ## 14.1 核心问题
 
-第三部分开始源码深读。我们先不讲 LLM，也不讲记忆。先讲世界。Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
+第三部分进入源码深读。先不讲 LLM，也不讲记忆，先讲世界。Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
 
 - 克劳斯现在在哪里？
 - 玛丽亚能不能看到克劳斯？
 - 伊莎贝拉说的霍布斯咖啡馆在地图上哪里？
-- 角色计划睡觉时应该去哪个房间？
-- 角色准备吃饭时应该选择哪个地点？
+- 角色计划睡觉时会去哪个房间？
+- 角色准备吃饭时会选择哪个地点？
 - 某个对象是否正在被占用？
 - 两个角色是否会在同一地点相遇？
 
@@ -21,7 +21,7 @@
 前端回放：Phaser 读取 movement.json
 ```
 
-本章只讲前三层，前端回放放到第 21 章。本章聚焦七个问题：
+这里先讲前三层，前端回放放到第 23 章。世界模型源码要回答七个问题：
 
 1. `maze.json` 存了什么？
 2. `Tile` 如何表示一个地图格子？
@@ -44,7 +44,7 @@ flowchart TD
 
 ## 14.2 世界模型的优先位置
 
-很多读者会想先看 `Agent`，因为智能体看起来是系统核心。但在 Generative Agents 中，`Agent` 离不开世界。它的每一步都要依赖世界模型。初始化时，agent 要根据坐标找到自己所在 tile。计划行动时，agent 要把文字计划落到地址。感知时，agent 要从附近 tile 获取事件。移动时，agent 要通过 `Maze.find_path()` 找路。对话时，agent 要知道自己和对方是否在同一可交互空间。回放时，系统要把 agent 坐标和动作转成前端可展示数据。所以，世界模型不是背景资源，而是 agent 行为的地基。如果世界模型错了，LLM 再强也会表现奇怪。例如：
+看源码时很容易先盯住 `Agent`，因为智能体看起来是系统核心。但在 Generative Agents 中，`Agent` 离不开世界。它的每一步都要依赖世界模型。初始化时，agent 要根据坐标找到自己所在 tile。计划行动时，agent 要把文字计划落到地址。感知时，agent 要从附近 tile 获取事件。移动时，agent 要通过 `Maze.find_path()` 找路。对话时，agent 要知道自己和对方是否在同一可交互空间。回放时，系统要把 agent 坐标和动作转成前端可展示数据。所以，世界模型不是背景资源，而是 agent 行为的地基。如果世界模型错了，LLM 再强也会表现奇怪。例如：
 
 - 计划去咖啡馆，却走到宿舍。
 - 在墙里穿行。
@@ -53,6 +53,68 @@ flowchart TD
 - 洗澡时去厨房水槽。
 
 这些问题都不是 prompt 能单独解决的。它们首先是空间 grounding 问题。
+
+### 可运行脚手架：先把世界模型跑出来
+
+源码片段只有在运行结果旁边才有意义。第 14 章配套了一个最小脚手架，专门演示 `maze.json`、`Maze`、`Tile`、`Event` 和 `Spatial` 如何一起工作。它不调用 LLM，也不依赖外部 API，只读取项目里的真实地图和伊莎贝拉的真实角色配置。
+
+从仓库根目录运行：
+
+```bash
+.venv/bin/python docs/book/scaffolds/part_03/ch14_world_model_demo.py
+```
+
+本机实际输出如下：
+
+```text
+Chapter 14 world-model scaffold
+======================================
+maze_json: generative_agents/frontend/static/assets/village/maze.json
+world: the Ville
+size: width=140, height=100, tile_size=32
+address_keys: world -> sector -> arena -> game_object
+
+Tile and address
+target_address: the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位
+address_tile_count: 11
+chosen_tile: (72, 23)
+tile_address: the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位
+tile_collision: False
+tile_events:
+  - 咖啡馆顾客座位 此时 空闲 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+  - 伊莎贝拉此时检查咖啡机和研磨设备 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+
+Path and perception
+src_coord: (72, 14)
+path_length: 22
+vision_scope_count: 81
+same_arena_tiles_in_scope: 40
+
+Spatial memory
+find_address('准备睡觉'): the Ville:伊莎贝拉的公寓:主人房:床
+after add_leaf cafe leaves: 冰箱, 咖啡馆顾客座位, 烹饪区, 厨房水槽, 咖啡馆柜台后面, 钢琴
+
+image: docs/book/assets/chapter_14/ch14_world_model_demo.png
+```
+
+![图 14-2：世界模型脚手架输出的路径、视野和地址候选 tile](../../assets/chapter_14/ch14_world_model_demo.png)
+
+*图 14-2：第 14 章脚手架生成的可视化结果。绿色是伊莎贝拉初始坐标，红色是目标对象 tile，蓝色是 `Maze.find_path()` 算出的路径，黄色是 `vision_r=4` 的感知范围，橙色是同一地址对应的候选 tile。*
+
+这段输出把后面的源码片段连成了一个完整链路。
+
+| 输出结果 | 对应源码 | 说明 |
+| --- | --- | --- |
+| `size: width=140, height=100` | `Maze.__init__()` | `maze.json` 中的地图尺寸被加载成后端二维 tile 网格。 |
+| `target_address` 与 `address_tile_count: 11` | `Maze.address_tiles` | 一个语义地址可以对应多个地图格子，角色行动需要在这些候选 tile 中落点。 |
+| `tile_events` | `Tile.add_event()`、`Event.__str__()` | Tile 不只是坐标，还保存对象状态和角色事件，后续感知会读取这些事件。 |
+| `path_length: 22` | `Maze.find_path()` | 从伊莎贝拉初始坐标到咖啡馆顾客座位，需要后端寻路，而不是 LLM 逐格决定移动。 |
+| `vision_scope_count: 81` | `Maze.get_scope()` | `vision_r=4` 会形成 9x9 的方形视野，一共 81 个 tile。 |
+| `same_arena_tiles_in_scope: 40` | `Agent.percept()` 的 arena 过滤 | 视野范围不是全部可感知事件，还要经过同一 arena 过滤。 |
+| `find_address('准备睡觉')` | `Spatial.find_address()` | 角色自己的空间记忆能把“睡觉”这类行为映射到自己的床。 |
+| `after add_leaf cafe leaves` | `Spatial.add_leaf()` | 角色感知到新对象后，空间记忆可以增加新的地点叶子。 |
+
+有了这个脚手架，后面读 `Tile`、`Maze`、`Spatial` 和 `Agent.percept()` 时，就不是在背类名，而是在解释一个已经跑出来的现象。
 
 ## 14.3 地图数据入口：maze.json
 
@@ -179,7 +241,7 @@ flowchart LR
     Path --> Action["行动落地"]
 ```
 
-*图 14-2：Tile、地址与事件关系。Tile 把空间地址、可感知事件和行动落地连接在一起。*
+*图 14-3：Tile、地址与事件关系。Tile 把空间地址、可感知事件和行动落地连接在一起。*
 
 ## 14.6 Event 让空间变成可感知状态
 
@@ -424,7 +486,7 @@ if "睡觉" not in self.address and "living_area" in self.address:
 
 ## 14.13 Spatial 与 Maze 的区别
 
-`Maze` 和 `Spatial` 很容易混淆。它们都和地点有关，但职责不同。`Maze` 是客观世界。它知道地图上所有 tile、地址、碰撞和事件。`Spatial` 是主观记忆。它表示某个 agent 知道哪些地点，以及某些行为应该去哪里。这对应现实世界中的差别：
+`Maze` 和 `Spatial` 很容易混淆。它们都和地点有关，但职责不同。`Maze` 是客观世界。它知道地图上所有 tile、地址、碰撞和事件。`Spatial` 是主观记忆。它表示某个 agent 知道哪些地点，以及某些行为要去哪里。这对应现实世界中的差别：
 
 ```text
 城市客观存在很多地方。
@@ -654,7 +716,7 @@ agent 只能看到附近、同一语义区域内的事件。
 
 ## 14.25 如何读世界模型源码
 
-读这一部分源码时，建议按下面顺序。第一，先看 `maze.json`。理解 world、tile_size、size、tile_address_keys 和 tiles。第二，看 `Tile`。理解 coord、address、collision、events。第三，看 `Maze.__init__()`。理解 tile 网格和 address_tiles 如何建立。第四，看 `Maze.get_scope()`。理解感知范围。第五，看 `Maze.find_path()`。理解移动路径。第六，看 `Spatial`。理解角色主观空间记忆。第七，回到 `Agent.percept()` 和 `_determine_action()`。看世界模型如何进入感知和计划。这样读，世界模型就不会只是“地图文件”，而是整个 agent 行为链路的一部分。
+世界模型源码适合按下面顺序读。第一，先看 `maze.json`，理解 world、tile_size、size、tile_address_keys 和 tiles。第二，看 `Tile`，理解 coord、address、collision、events。第三，看 `Maze.__init__()`，理解 tile 网格和 address_tiles 如何建立。第四，看 `Maze.get_scope()`，理解感知范围。第五，看 `Maze.find_path()`，理解移动路径。第六，看 `Spatial`，理解角色主观空间记忆。第七，回到 `Agent.percept()` 和 `_determine_action()`，看世界模型如何进入感知和计划。按这个顺序读，世界模型就不是“地图文件”，而是整个 agent 行为链路的一部分。
 
 ## 14.26 本章小结
 

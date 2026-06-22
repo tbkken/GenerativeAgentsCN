@@ -304,10 +304,10 @@ Generative Agents 已经比原始项目更工程化：
 Generative Agents 为什么重要？
 ```
 
-第二部分讲项目谱系。回答：
+第二部分讲项目上手与功能体验。回答：
 
 ```text
-Generative Agents 从哪里来，继承和改写了什么？
+Generative Agents 怎么跑起来，每个核心功能应该如何体验？
 ```
 
 第三部分讲源码。回答：

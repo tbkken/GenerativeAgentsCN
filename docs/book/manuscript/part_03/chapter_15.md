@@ -27,7 +27,7 @@ start.py
   -> Agent.__init__()
 ```
 
-本章重点聚焦以下八个问题：
+初始化源码要回答八个问题：
 
 1. `agent.json` 里有哪些角色设定？
 2. `data/config.json` 提供哪些公共配置？
@@ -53,9 +53,69 @@ flowchart LR
 
 *图 15-1：从 agent.json 到 Agent 对象的装配流程。初始化不是简单读取角色卡，而是把角色设定拆进状态、空间、日程和记忆四条链路。*
 
-## 15.2 角色配置不是单一来源
+### 可运行脚手架：实际构造一个 Agent
 
-读源码前要先明确一点：
+第 15 章配套脚手架会加载真实的伊莎贝拉 `agent.json`、公共 `data/config.json` 和真实 `maze.json`，然后实际构造一个 `Agent` 对象。脚本不会调用 `reset()` 和 `think()`，所以不会触发 LLM 或 embedding API；它只演示初始化阶段已经完成了哪些装配。
+
+从仓库根目录运行：
+
+```bash
+.venv/bin/python docs/book/scaffolds/part_03/ch15_agent_init_demo.py
+```
+
+本机实际输出如下：
+
+```text
+Chapter 15 agent-initialization scaffold
+==============================================
+agent_config: generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
+runtime_config: generative_agents/data/config.json
+
+Loaded identity
+name: 伊莎贝拉
+coord: [72, 14]
+tile_address: the Ville:伊莎贝拉的公寓:主人房:床
+currently: 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
+
+Scratch fields
+age: 34
+innate: 友好、外向、好客
+learned: 伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
+lifestyle: 伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
+daily_plan: 伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
+
+Spatial memory
+living_area: the Ville -> 伊莎贝拉的公寓 -> 主人房
+sleep_address: the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床
+
+Runtime modules
+percept_config: {'mode': 'box', 'vision_r': 8, 'att_bandwidth': 8}
+think_provider: minimax
+associate_nodes: 0
+schedule_created: None
+schedule_items: 0
+
+Initial action
+event: 伊莎贝拉 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
+object: 床 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
+```
+
+这段输出说明，`Agent.__init__()` 完成后，角色已经不是一份静态 JSON，而是被拆进多个运行模块。
+
+| 输出结果 | 对应源码 | 说明 |
+| --- | --- | --- |
+| `coord` 与 `tile_address` | `Agent.__init__()`、`Maze.tile_at()` | 初始坐标会立即落到真实 tile，角色从一开始就在小镇空间里。 |
+| `currently` | `Scratch(self.name, currently, scratch)` | 当前关注点进入 `Scratch`，后续 prompt 会把它作为角色状态的一部分。 |
+| `Scratch fields` | `scratch.age/innate/learned/lifestyle/daily_plan` | 角色卡中的身份、性格、经历和生活习惯会进入 base prompt。 |
+| `sleep_address` | `Spatial.__init__()` | `living_area` 会自动补成“睡觉 -> 自己房间里的床”。 |
+| `percept_config` | `config["percept"]` | 感知半径和注意力带宽来自公共运行配置，不是角色个性字段。 |
+| `associate_nodes: 0` | `Associate(...)` | 记忆系统已经初始化，但新角色还没有写入事件、对话或想法。 |
+| `schedule_items: 0` | `Schedule(...)` | 日程系统已经存在，但当天计划还没有生成。 |
+| `Initial action` | `memory.Action(...)`、`memory.Event(...)` | 初始 action 会把角色和对象事件写入 Maze，世界从初始化阶段就有可感知状态。 |
+
+脚手架最后还打印了 `Scratch._base_desc()` 的前几行，能直接看到 `agent.json` 如何变成 prompt 上下文。后面讲 `Scratch` 时，这段输出就是最直观的参照。
+
+## 15.2 角色配置不是单一来源
 
 Generative Agents 中的 agent 配置来自两个地方。第一，公共配置：
 
@@ -491,7 +551,7 @@ template = Template(file_content)
 filled_content = template.substitute(data)
 ```
 
-它从 `data/prompts` 读取模板，并使用 `string.Template` 替换变量。这带来两个好处。第一，prompt 可维护。修改 prompt 不需要改 Python 主逻辑。第二，prompt 可审计。读者可以直接打开 `.txt` 文件，看模型到底收到什么任务。但也有一个风险。`Template.substitute()` 要求变量必须齐全，否则会报错。所以每个 `prompt_*` 方法都必须提供模板需要的字段。prompt 与 Python 方法必须成对维护。
+它从 `data/prompts` 读取模板，并使用 `string.Template` 替换变量。这带来两个好处。第一，prompt 可维护。修改 prompt 不需要改 Python 主逻辑。第二，prompt 可审计。打开 `.txt` 文件，就能看到模型到底收到什么任务。但也有一个风险。`Template.substitute()` 要求变量必须齐全，否则会报错。所以每个 `prompt_*` 方法都必须提供模板需要的字段。prompt 与 Python 方法必须成对维护。
 
 ## 15.17 第五组字段：状态与 plan
 
@@ -645,7 +705,7 @@ Agent.completion("xxx")
 }
 ```
 
-如果已有 schedule，也会加入 schedule。如果 LLM 可用，也会加入 llm summary。这对调试很有用。`Game.agent_think()` 会在日志中输出 agent 摘要。读者要理解 agent 当前状态时，可以看：
+如果已有 schedule，也会加入 schedule。如果 LLM 可用，也会加入 llm summary。这对调试很有用。`Game.agent_think()` 会在日志中输出 agent 摘要。检查 agent 当前状态时，重点看：
 
 - currently。
 - tile。
@@ -724,7 +784,7 @@ start_time += datetime.timedelta(minutes=config["stride"])
 
 ## 15.27 如何检查一个 agent 是否初始化正确
 
-建议按下面顺序检查。第一，看 `agent.json`。确认：
+按下面顺序检查。第一，看 `agent.json`。确认：
 
 - name。
 - coord。

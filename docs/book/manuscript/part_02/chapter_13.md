@@ -1,740 +1,441 @@
-# 第 13 章 论文概念到源码模块的映射
+# 第 13 章 按功能体验 Generative Agents
 
-## 13.1 核心问题
+项目跑通之后，最重要的是看清它到底提供了哪些能力。先看见功能，再理解功能背后的代码；先知道一个行为在项目中长什么样，再去第三部分追源码实现。
 
-第 12 章讲清了项目谱系。本章把论文概念一一映射到 Generative Agents 的源码模块。这是一张源码深读索引。第三部分会进入源码深读。如果缺少这张映射表，读者很容易在文件树中迷路：
-
-```text
-论文说 memory stream，源码里为什么叫 Associate？
-论文说 Smallville，源码里为什么有 Maze 和 Phaser 两套地图数据？
-论文说 reflection，源码里为什么是 reflect_focus、reflect_insights、poignancy？
-论文说 dialogue，源码里为什么要先 decide_chat，再 summarize_relation，再 generate_chat？
-```
-
-本章就是把这些对应关系讲清楚。它不是简单表格，而是一张“读源码地图”。本章需要建立四个映射：
-
-1. 每个论文概念在本项目中对应哪些文件。
-2. 核心类和函数在哪里。
-3. 数据如何流动。
-4. 项目实现与论文思想有哪些差异。
-5. 后续源码深读应该从哪里进入。
+Generative Agents 的功能体验路线如下：
 
 ```mermaid
 flowchart LR
-    subgraph Paper[论文概念]
-      S[Smallville]
-      P[Persona]
-      M[Memory Stream]
-      R[Retrieval]
-      F[Reflection]
-      PL[Planning]
-      D[Dialogue]
-      E[Evaluation]
-    end
-    subgraph Code[Generative Agents]
-      Maze[Maze/Tile/Phaser]
-      JSON[agent.json/scratch/currently]
-      Assoc[Associate/Concept/LlamaIndex]
-      Ret[AssociateRetriever]
-      Ref[Agent.reflect]
-      Sch[Schedule/make_schedule]
-      Chat[_chat_with/generate_chat]
-      Replay[simulation.md/movement.json]
-    end
-    S --> Maze
-    P --> JSON
-    M --> Assoc
-    R --> Ret
-    F --> Ref
-    PL --> Sch
-    D --> Chat
-    E --> Replay
+    Replay["回放小镇"] --> Timeline["阅读时间线"]
+    Timeline --> Persona["查看角色定义"]
+    Persona --> Schedule["观察日程"]
+    Schedule --> Perception["理解感知"]
+    Perception --> Memory["查看记忆与检索"]
+    Memory --> Dialogue["观察对话"]
+    Dialogue --> Reflection["理解反思"]
+    Reflection --> Model["切换模型配置"]
+    Model --> Code["进入源码深读"]
 ```
 
-*图 13-1：论文概念到 Generative Agents 模块的全局映射。读源码前先建立这张地图，后面看到类、函数和数据文件时才知道它们对应论文中的哪个概念。*
+*图 13-1：Generative Agents 的功能体验路线。先从可见结果进入，再逐步理解角色、日程、感知、记忆、对话、反思和模型适配。*
 
-## 13.2 总览映射表
+## 13.1 先把项目当成一个产品体验
 
-先用一张全局表建立论文概念和源码模块的对应关系。
+`AssociateRetriever`、`Agent.think()`、`poignancy` 这些源码名属于第三部分。功能体验阶段先把 Generative Agents 当成一个小型产品：它能播放一个虚拟小镇，能运行一段仿真，能保存角色活动，能把结果压缩成可回放和可阅读的材料。
 
-| 论文概念 | Generative Agents 实现 | 后续深读章节 |
-|---|---|---|
-| Smallville / 沙盒世界 | `Maze`、`Tile`、`maze.json`、Phaser 前端 | 第 14、23 章 |
-| Agent Persona | `agent.json`、`Scratch`、`base_desc.txt` | 第 4、15 章 |
-| Simulation Loop | `start.py`、`Game`、`Agent.think()` | 第 16 章 |
-| Observation / Perception | `Maze.get_scope()`、`Agent.percept()`、`Event` | 第 17 章 |
-| Memory Stream | `Associate`、`Concept`、`Event`、`LlamaIndex` | 第 18 章 |
-| Retrieval | `AssociateRetriever`、`retrieve_focus()` | 第 18 章 |
-| Importance | `poignancy_event`、`poignancy_chat`、`status["poignancy"]` | 第 18、21 章 |
-| Reflection | `Agent.reflect()`、`reflect_focus`、`reflect_insights` | 第 21 章 |
-| Planning | `Schedule`、`make_schedule()`、schedule prompts | 第 19 章 |
-| Reacting | `_reaction()`、`_chat_with()`、`_wait_other()` | 第 20 章 |
-| Dialogue | `decide_chat`、`generate_chat`、`summarize_chats` | 第 20 章 |
-| Spatial Grounding | `Spatial`、`determine_sector/arena/object` | 第 14、19 章 |
-| LLM Interface | `LLMModel`、Ollama、OpenAI、MiniMax、Pydantic schema | 第 22 章 |
-| Checkpoint | `SimulateServer.simulate()`、`agent.to_dict()` | 第 16、23 章 |
-| Replay | `compress.py`、`replay.py`、`movement.json`、`simulation.md` | 第 23 章 |
+体验路径如下。
 
-这张表后面会反复用到。
+| 体验顺序 | 要做什么 | 看什么结果 | 建立的直觉 |
+| --- | --- | --- | --- |
+| 1 | 打开 `example` 回放 | 地图上角色在移动、停留、对话 | 这不是聊天窗口，而是小镇仿真 |
+| 2 | 阅读 `example/simulation.md` | 时间线、行动描述、对话内容 | 小镇行为可以被文本复盘 |
+| 3 | 跑 `book-smoke` 最小仿真 | checkpoint 和 compressed 结果 | 项目能从配置生成新结果 |
+| 4 | 查看一个角色的 `agent.json` | 身份、当前状态、生活习惯、空间记忆 | 角色不是临时 prompt，而是结构化对象 |
+| 5 | 查看 `data/prompts/` | 日程、对话、反思等 prompt 文件 | 行为不是魔法，很多地方由 prompt 驱动 |
+| 6 | 修改运行参数 | `--agent-count`、`--agents`、`--step`、`--stride` | 实验规模和成本可以控制 |
+| 7 | 尝试 `--resume` | checkpoint 延续运行 | 长实验可以分段推进 |
+| 8 | 查看 `config.json` | LLM、embedding、感知、反思阈值 | 模型和配置会改变小镇行为 |
 
-## 13.3 从命令行到智能体行动：项目生命线
+第 12 章已经跑出 `book-smoke`，这里再增加一个 `book-party-pair` 实验。`book-party-pair` 只运行伊莎贝拉和阿伊莎，起始时间设为 2024 年 2 月 14 日 08:00，方便观察咖啡馆老板的派对准备和学生的学习日程如何在同一张地图上并行推进。
 
-先看整个项目的运行生命线。当读者执行：
+## 13.2 体验一：回放系统
+
+回放系统是最适合入门的功能，因为它不要求先理解模型调用。只要有 compressed 结果，就能通过浏览器观看。
+
+先启动本地回放服务：
 
 ```bash
 cd generative_agents
-python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
+python replay.py
 ```
 
-系统会经历下面的链路：
+本机如果没有全局 `python` 命令，可以使用项目虚拟环境执行：
+
+```bash
+../.venv/bin/python replay.py
+```
+
+浏览器打开项目内置示例：
 
 ```text
-start.py
-  -> get_config()
-  -> SimulateServer
-  -> create_game()
-  -> Game
-  -> Agent
-  -> SimulateServer.simulate()
-  -> Game.agent_think()
-  -> Agent.think()
-  -> checkpoint
+http://127.0.0.1:5000/?name=example&step=0&speed=2&zoom=0.6
 ```
 
-这个链路是全书后面所有模块的主干。`start.py` 解析命令行参数，决定仿真名称、起始时间、步数、步长、参与 agent。`get_config()` 读取 `data/config.json` 中的基础 agent 配置，再把每个角色的 `agent.json` 路径填入 simulation config。`SimulateServer` 创建游戏，并维护每个 agent 当前坐标和 path。`Game` 加载地图，创建所有 agent。`simulate()` 每一步调用每个 agent 的 `think()`。每个 step 结束后，系统写入 checkpoint 和 conversation。这个主链路对应论文中的“仿真环境驱动智能体连续行动”。不是用户问一句，智能体答一句。而是时间推进，世界推进，角色持续思考。
+![图 13-2：example 完整小镇回放](../../assets/chapter_13/fig-13-2-example-replay.png)
+
+*图 13-2：`example` 完整小镇回放。顶部显示 2024 年 2 月 13 日 06:00:10，底部列出 25 个角色，左上角显示对话记录。*
+
+回放页面呈现三件事：
+
+| 可见现象 | 背后的系统能力 |
+| --- | --- |
+| 角色在地图上移动 | 行动已经落到坐标和路径上 |
+| 角色停留在某个地点 | 日程和空间 grounding 已经产生作用 |
+| 角色出现对话气泡 | 对话被记录、压缩并进入前端回放 |
+
+如果只看论文，Smallville 很容易停留在想象里；打开回放后可以立刻看出，“小镇”在项目里不是比喻，而是具体的地图、坐标、角色和时间线。
+
+图 13-2 的重点不只是“有地图”。左上角对话记录显示地点、说话人和发言内容，底部角色栏显示完整角色集合，中间地图显示角色分布和行动标签。回放系统把 `movement.json` 中的时间、位置、行动和对话全部还原到同一个界面里。
+
+## 13.3 体验二：Markdown 时间线
+
+同一个示例结果还可以直接阅读：
+
+```text
+generative_agents/results/compressed/example/simulation.md
+```
+
+`simulation.md` 是理解项目行为的关键材料。它比前端动画更适合审稿、复盘和写实验报告。
+
+| 阅读对象 | 关注问题 | 说明 |
+| --- | --- | --- |
+| 时间戳 | 小镇时间是否按 step 和 stride 推进 | 判断仿真节奏是否正常 |
+| 角色行动 | 行动是否符合身份和地点 | 判断行为是否可信 |
+| 对话内容 | 对话是否传播了信息 | 判断社交和信息扩散是否发生 |
+| 地点描述 | 行动是否落在具体空间 | 判断计划是否完成 grounding |
+| 长时间变化 | 角色是否持续保留目标 | 判断记忆、日程和反思是否起作用 |
+
+`simulation.md` 的第一层判断是角色行为是否连续。如果一个角色上午说要参加活动，下午完全忘记；如果两个角色刚聊完，下一步像陌生人一样互动；如果角色不停输出空泛动作，这些都是后续源码和 prompt 需要排查的问题。
+
+`book-party-pair` 的时间线给出了一个更小、更容易检查的样例：
+
+| 小镇时间 | 伊莎贝拉 | 阿伊莎 |
+| --- | --- | --- |
+| `20240214-08:00` | 在霍布斯咖啡馆打开大门和照明设备 | 在宿舍书桌前准备《哈姆雷特》原文和笔记本 |
+| `20240214-08:10` | 检查咖啡机和研磨设备 | 阅读《哈姆雷特》第一幕 |
+| `20240214-08:20` | 到哈维奥克供应店准备烘焙面包的材料 | 继续在宿舍阅读和做笔记 |
+| `20240214-08:30` | 回到霍布斯咖啡馆烘焙新鲜面包 | 标注第一幕中的经典独白与语言技巧 |
+| `20240214-08:50` | 在咖啡馆顾客座位区清洁打扫 | 到奥克山学院图书馆标注第二幕中的双关语、隐喻与意象 |
+
+这张表直接说明两个问题。第一，角色行为不是随机句子，而是贴着身份和日程推进；第二，`simulation.md` 比动画更适合做证据摘录，可以快速看到角色在什么时间、什么地点、做了什么。
+
+## 13.4 体验三：角色定义
+
+角色定义是 Generative Agents 的入口之一。每个角色都有自己的 `agent.json`，路径形如：
+
+```text
+generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
+```
+
+以伊莎贝拉为例，先看这些字段：
+
+| 字段 | 中文意思 | 体验时看什么 |
+| --- | --- | --- |
+| `name` | 角色姓名 | 行动、对话、记忆都以这个名字作为主体 |
+| `coord` | 初始坐标 | 回放第 0 帧中的角色起点 |
+| `currently` | 当前关注状态 | 伊莎贝拉一开始就关心情人节派对 |
+| `scratch.innate` | 先天特质 | 影响角色说话和行动风格 |
+| `scratch.learned` | 后天经历 | 定义职业、背景和长期身份 |
+| `scratch.lifestyle` | 生活习惯 | 影响起床、睡觉和日程节奏 |
+| `scratch.daily_plan` | 日常计划 | 给日程生成提供默认生活结构 |
+| `spatial.address.living_area` | 居住地址 | 决定角色睡觉、回家和生活区域 |
+| `spatial.tree` | 已知地点树 | 限制角色能选择哪些地点和对象 |
+
+这里最重要的结论是：角色不是一段“你扮演某某”的 prompt，而是一组会进入多个系统模块的配置。`currently` 会影响日程和对话，`scratch` 会进入角色基础描述，`spatial` 会影响地点选择。后面读源码时，看到 `Scratch._base_desc()`、`Spatial`、`Schedule` 和 `Associate`，就能把它们和这个角色文件对上。
+
+`book-party-pair` 的两个角色配置可以直接对照运行结果：
+
+| 字段 | 伊莎贝拉 | 阿伊莎 | 行为影响 |
+| --- | --- | --- | --- |
+| `currently` | 计划 2 月 14 日 17:00 在霍布斯咖啡馆举办情人节派对 | 正在研究莎士比亚戏剧中的语言运用 | 伊莎贝拉的日程围绕咖啡馆和派对准备，阿伊莎的日程围绕文学研究 |
+| `scratch.innate` | 友好、外向、好客 | 好奇、坚定、独立 | 影响后续对话和行动风格 |
+| `scratch.learned` | 霍布斯咖啡馆老板 | 热爱文学探索的大学生 | 决定“在哪里活动”和“做什么事” |
+| `scratch.lifestyle` | 晚上 11 点睡觉，早上 6 点醒来 | 晚上 10 点睡觉，早上 6 点醒来，下午 5 点吃晚饭 | 约束日程节奏 |
+| `scratch.daily_plan` | 每天早上 8 点开放咖啡馆，站在柜台前直到晚上 8 点 | 10 点到 14 点去图书馆上课，14 点后在图书馆学习 | 直接影响 08:00 到 09:00 的细粒度计划 |
+| `spatial.address.living_area` | 伊莎贝拉的公寓，主人房 | 奥克山学院宿舍，阿伊莎的房间 | 决定角色初始生活空间 |
+
+## 13.5 体验四：日程和行动
+
+跑完一个仿真后，可以在 `simulation.md` 中观察每个角色的行动节奏。日程结果先从行为文本里看，再进入 `Schedule` 源码。
+
+| 观察点 | 好结果 | 有问题的结果 |
+| --- | --- | --- |
+| 起床和睡觉 | 符合角色生活习惯 | 深夜仍然随机社交，或白天长期睡觉 |
+| 工作和生活 | 咖啡馆老板在咖啡馆，学生在校园或宿舍 | 角色经常出现在和身份无关的地点 |
+| 行动粒度 | 行动有时间、地点和对象 | 行动只是“思考”“继续计划”这类空泛文本 |
+| 计划连续性 | 前后行动有生活节奏 | 每一步像重新随机生成 |
+
+控制日程体验的入口主要有三类：
+
+| 体验入口 | 文件或参数 | 作用 |
+| --- | --- | --- |
+| 角色生活设定 | `agent.json` 中的 `scratch.lifestyle`、`scratch.daily_plan` | 决定日程生成的基础倾向 |
+| 仿真时间 | `start.py --start`、`--step`、`--stride` | 决定能观察到哪段生活 |
+| 日程 prompt | `data/prompts/wake_up.txt`、`schedule_init.txt`、`schedule_daily.txt`、`schedule_decompose.txt` | 决定 LLM 如何生成和拆解计划 |
+
+下面的小实验只运行伊莎贝拉和阿伊莎，观察伊莎贝拉的行动是否围绕咖啡馆和派对展开。
+
+```bash
+python start.py \
+  --name book-party-pair \
+  --start "20240214-08:00" \
+  --step 6 \
+  --stride 10 \
+  --agents "伊莎贝拉,阿伊莎" \
+  --verbose info
+```
+
+本次实际运行使用 MiniMax 配置，生成了 6 个 checkpoint：
+
+| 文件 | 对应小镇时间 |
+| --- | --- |
+| `simulate-20240214-0800.json` | 08:00 |
+| `simulate-20240214-0810.json` | 08:10 |
+| `simulate-20240214-0820.json` | 08:20 |
+| `simulate-20240214-0830.json` | 08:30 |
+| `simulate-20240214-0840.json` | 08:40 |
+| `simulate-20240214-0850.json` | 08:50 |
+
+运行结束后执行压缩：
+
+```bash
+python compress.py --name book-party-pair
+```
+
+压缩成功后，控制台输出：
+
+```text
+Compression completed.
+```
+
+压缩后阅读生成的时间线文件：
+
+```text
+generative_agents/results/compressed/book-party-pair/simulation.md
+```
+
+![图 13-3：book-party-pair 起始回放](../../assets/chapter_13/fig-13-3-party-pair-start.png)
+
+*图 13-3：`book-party-pair` 起始回放。顶部时间是 2024 年 2 月 14 日 08:00:10，底部只有伊莎贝拉和阿伊莎两个角色，伊莎贝拉已经前往霍布斯咖啡馆。*
+
+压缩后的 `movement.json` 包含 363 帧，角色列表只有伊莎贝拉和阿伊莎。图 13-3 证明 `--agents "伊莎贝拉,阿伊莎"` 已经生效，也证明最小实验仍然使用完整小镇地图，只是参与仿真的角色变少。
+
+这个小实验不一定立刻出现精彩故事，但它会展示日程、角色设定和对话机会之间的关系。
+
+## 13.6 体验五：感知和空间
+
+Generative Agents 不是让角色全知全能。角色能不能看到某个事件，取决于位置、视野、arena 和注意力带宽。感知体验主要看两个配置：
+
+```text
+generative_agents/data/config.json
+```
+
+| 配置 | 中文意思 | 体验影响 |
+| --- | --- | --- |
+| `agent.percept.vision_r` | 视野半径 | 数值越大，角色能看到的附近 tile 越多 |
+| `agent.percept.att_bandwidth` | 注意力带宽 | 数值越大，每步能处理的附近事件越多 |
+
+感知能力可以通过回放和 `simulation.md` 间接观察。两个角色距离很远时，通常不会立刻发生对话；两个角色进入同一场所后，才更可能互相感知并触发反应。这一点很关键，因为信息扩散只有在“角色不是全知”的前提下才有意义。
+
+![图 13-4：book-party-pair 的空间分离状态](../../assets/chapter_13/fig-13-4-party-pair-spatial.png)
+
+*图 13-4：`book-party-pair` 在 08:30:10 的回放。伊莎贝拉位于霍布斯咖啡馆附近，阿伊莎仍在学院生活区，两个角色没有进入同一场所。*
+
+本次实验的 `conversation.json` 是空对象：
+
+```json
+{}
+```
+
+这不是运行失败，而是空间和感知限制的结果。伊莎贝拉的行动线在咖啡馆、供应店和咖啡馆烹饪区之间移动，阿伊莎的行动线在宿舍书桌和学院图书馆之间移动；两个人没有在同一场所近距离相遇，所以对话流程没有启动。
+
+感知像一道门：
 
 ```mermaid
 flowchart LR
-    CLI["start.py<br/>启动命令"] --> Server["SimulateServer<br/>加载配置和 checkpoint"]
-    Server --> Game["Game<br/>推进仿真步"]
-    Game --> Agents["逐个 agent_think"]
-    Agents --> Think["Agent.think()"]
-    Think --> Percept["感知"]
-    Think --> Reflect["反思"]
-    Think --> Plan["计划/反应/行动"]
-    Plan --> Checkpoint["保存状态"]
+    World["世界状态<br/>所有角色和对象"] --> Scope["视野范围<br/>vision_r"]
+    Scope --> Arena["同一场所<br/>arena"]
+    Arena --> Bandwidth["注意力带宽<br/>att_bandwidth"]
+    Bandwidth --> Memory["写入角色记忆<br/>event concept"]
 ```
 
-*图 13-2：从 start.py 到 Agent.think() 的运行链路。第三部分源码深读会沿着这条链路展开，而不是孤立解释函数。*
+*图 13-5：感知不是读取全局世界，而是经过视野、场所和注意力带宽过滤后，才进入角色自己的记忆。*
 
-## 13.4 Smallville 对应 Maze、Tile 与前端地图
+## 13.7 体验六：记忆和检索
 
-论文中的 Smallville 是一个沙盒小镇。在 Generative Agents 中，它被拆成两层。第一层是后端世界模型：
+记忆体验的入口不是向量索引，而是两个现象：角色是否记得刚发生的事，角色是否能在后续对话或反思中引用这些事。
 
-```text
-generative_agents/modules/maze.py
-generative_agents/frontend/static/assets/village/maze.json
-```
+记忆相关结果主要出现在：
 
-第二层是前端回放地图：
+| 材料 | 能观察什么 |
+| --- | --- |
+| `simulation.md` | 角色后续行动和对话是否引用过去事件 |
+| `conversation.json` | 对话是否被保存 |
+| checkpoint JSON | agent 的 memory、schedule、action 和状态 |
+| `results/checkpoints/<name>/` 下的存储目录 | 向量索引和 memory 状态 |
 
-```text
-generative_agents/frontend/static/assets/village/tilemap/
-generative_agents/frontend/templates/
-```
+`book-party-pair` 运行结束后，两个角色都有独立记忆索引：
 
-这两层不要混淆。后端关心的是：
-
-- 哪个坐标可以走。
-- 哪个 tile 属于哪个 world/sector/arena/object。
-- 某个地址对应哪些 tile。
-- 某个 tile 上有哪些事件。
-- 从一个坐标到另一个坐标怎么寻路。
-- agent 能看到哪些附近 tile。
-
-前端主要关心这些内容：
-
-- 地图怎么渲染。
-- 角色 sprite 怎么显示。
-- 回放动画怎么播放。
-- 对话和动作怎么展示。
-
-`Maze` 和 `Tile` 是后端世界模型核心。`Tile` 保存坐标、地址、碰撞状态和事件。`Maze` 保存 tile 网格、地址索引、寻路和视野逻辑。论文中的 “environment” 在源码中不是一个单独对象，而是由 `Maze`、`Tile`、前端资源和 simulation loop 共同构成。
-
-## 13.5 地址树：论文中的地点如何落到源码
-
-论文会说角色在家、咖啡馆、学校、房间、对象附近行动。源码必须把这些地点变成可计算结构。Generative Agents 使用地址层级：
-
-```text
-world
-  -> sector
-    -> arena
-      -> game_object
-```
-
-`Tile` 初始化时会构建：
-
-```python
-self.address_map = dict(zip(address_keys[: len(self.address)], self.address))
-```
-
-`Maze` 初始化时会构建 `address_tiles`：
-
-```text
-address string -> set of coordinates
-```
-
-这样，系统就能回答：
-
-```text
-霍布斯咖啡馆在哪里？
-克劳斯的房间有哪些 tile？
-某个书桌对应哪些坐标？
-```
-
-这就是 spatial grounding。如果没有这层地址树，计划只能停在文字层面。角色可以说“我要去咖啡馆”，但系统不知道地图上该走到哪里。
-
-## 13.6 Agent Persona 对应 agent.json 与 Scratch
-
-论文中的 persona 在源码中主要由两部分承载：
-
-```text
-generative_agents/frontend/static/assets/village/agents/*/agent.json
-generative_agents/modules/prompt/scratch.py
-```
-
-`agent.json` 是角色种子。它包含：
-
-- 姓名。
-- 初始坐标。
-- 当前状态。
-- 年龄。
-- 性格。
-- 后天经历。
-- 生活习惯。
-- 日常计划。
-- 空间记忆。
-
-`Scratch` 是 prompt 状态管理器。它负责把角色信息拼进各种 prompt。最核心的是 `base_desc.txt`，它提供每次模型调用的角色基础上下文。可以这样理解：
-
-```text
-agent.json
-  -> 静态角色配置
-Scratch
-  -> 把角色配置转成 LLM 可读上下文
-prompt files
-  -> 在具体任务中使用角色上下文
-```
-
-这对应论文中的“自然语言描述的 agent persona”。
-
-## 13.7 currently：初始设定与仿真状态的连接
-
-`currently` 是理解本项目角色行为的关键字段。它描述角色当前正在关注什么。例如，伊莎贝拉的 `currently` 中包含情人节派对计划，山姆的 `currently` 中包含竞选镇长意图。这类信息会影响：
-
-- 日程生成。
-- 对话主题。
-- 行为优先级。
-- 反思内容。
-
-第 8 章讲过，Generative Agents 在新一天生成日程前，会根据记忆更新 `currently`：
-
-```python
-plan = self.completion("retrieve_plan", retrieved)
-thought = self.completion("retrieve_thought", retrieved)
-self.scratch.currently = self.completion("retrieve_currently", plan, thought)
-```
-
-这说明 `currently` 不只是初始字段，也可以被仿真经历刷新。它是 persona 和 memory stream 之间的桥。
-
-## 13.8 Simulation Loop 对应 start.py、Game 和 Agent.think()
-
-论文中智能体在时间中连续行动。源码中，这个循环由三层组成。第一层：`SimulateServer.simulate()`。它推进 step，调用每个 agent 的思考，并在每一步保存 checkpoint。第二层：`Game.agent_think()`。它调用具体 agent 的 `think()`，并整理 summary 信息，包括：
-
-- currently。
-- associate memory。
-- concepts。
-- chats。
-- action。
-- schedule。
-- address。
-
-第三层：`Agent.think()`。这是智能体每一步行为的核心入口。`think()` 的简化流程是：
-
-```text
-同步移动状态
-  -> 生成或读取当前日程
-  -> 判断睡眠
-  -> 如果醒着：感知、计划/反应、反思
-  -> 如果睡着：必要时确定睡眠动作
-  -> 计算 path 和 emoji
-  -> 返回 plan
-```
-
-这对应论文中的 agent architecture runtime。第三部分第 16 章会逐行拆这个流程。
-
-## 13.9 Observation 对应 Agent.percept()
-
-论文中的 observation，是 agent 对环境的感知。在 Generative Agents 中，感知入口是：
-
-```text
-Agent.percept()
-```
-
-它做四件事。第一，根据当前坐标和感知配置取得视野范围：
-
-```python
-scope = self.maze.get_scope(self.coord, self.percept_config)
-```
-
-第二，把范围内的空间地址加入 spatial memory。第三，收集同一 arena 内的事件，并按距离排序。第四，把未见过的新事件写入 associate memory。这里要注意，perception 不等于直接拿到全局状态。它受三个条件限制：
-
-- 视野范围。
-- 同一 arena。
-- 注意力带宽 `att_bandwidth`。
-
-这对应论文中的“有限观察”。如果 agent 能看到全局世界，信息扩散就没有意义。
-
-## 13.10 Event：统一描述世界变化的结构
-
-论文中的 observation、action、dialogue 都需要某种统一表示。Generative Agents 使用 `Event`。`Event` 位于：
-
-```text
-generative_agents/modules/memory/event.py
-```
-
-它通常包含这些内容：
-
-- subject。
-- predicate。
-- object。
-- describe。
-- address。
-- emoji。
-
-可以看一个具体例子：
-
-```text
-伊莎贝拉 对话 阿伊莎
-克劳斯 此时 阅读研究资料
-书桌 此时 被克劳斯使用
-```
-
-Event 的价值在于统一。角色观察到的事、自己正在做的事、对象状态、对话摘要，都可以被表示成 event-like structure。这让 memory、perception、action、replay 都能共享同一套表达。
-
-## 13.11 Memory Stream 对应 Associate、Concept 与 LlamaIndex
-
-论文中的 Memory Stream 在源码中主要对应：
-
-```text
-generative_agents/modules/memory/associate.py
-generative_agents/modules/storage/index.py
-```
-
-`Concept` 是单条记忆记录的包装。它包含：
-
-- node_id。
-- node_type。
-- event。
-- poignancy。
-- create。
-- expire。
-- access。
-
-`Associate` 是 agent 的关联记忆系统。它维护三类 memory：
-
-```python
-self.memory = {"event": [], "thought": [], "chat": []}
-```
-
-这三类可以分别对应：
-
-- event：观察和行为事件。
-- thought：反思、计划等高层想法。
-- chat：对话摘要。
-
-底层索引由 `LlamaIndex` 封装。`LlamaIndex.add_node()` 把文本和 metadata 写入向量索引。`LlamaIndex.retrieve()` 根据文本检索相关 nodes。这就是论文 memory stream 在当前项目中的工程实现。
-
-## 13.12 Importance 对应 poignancy
-
-论文中每条记忆有 importance score。Generative Agents 使用 `poignancy` 表示记忆触动程度。当事件写入 associate memory 时，`Agent._add_concept()` 会评分：
-
-```python
-if e_type == "chat":
-    poignancy = self.completion("poignancy_chat", event)
-else:
-    poignancy = self.completion("poignancy_event", event)
-```
-
-普通空闲事件直接给 1。非空闲事件和对话则调用模型评分。评分 prompt 要求在 1 到 10 之间输出整数。`poignancy` 有两个作用。第一，参与 Retrieval 排序。重要记忆更容易被想起。第二，触发 Reflection。`Agent.reflect()` 会检查：
-
-```python
-if self.status["poignancy"] < self.think_config["poignancy_max"]:
-    return
-```
-
-这对应论文中“重要性累积达到阈值后反思”。
-
-## 13.13 Retrieval 对应 AssociateRetriever
-
-论文中的 Retrieval 综合三因素：
-
-- recency。
-- importance。
-- relevance。
-
-Generative Agents 对应实现是 `AssociateRetriever`。它先用向量检索取回节点，再按 access 时间排序，然后计算三类分数：
-
-```python
-recency_scores
-relevance_scores
-importance_scores
-```
-
-最终分数是三者加权和：
-
-```python
-final_scores = recency + relevance + importance
-```
-
-对应配置主要包括，需要逐项查看：
-
-```text
-recency_decay
-recency_weight
-relevance_weight
-importance_weight
-retrieve_max
-```
-
-这就是论文 retrieval 在源码中的直接落点。注意，普通向量数据库只解决 relevance。Generative Agents 的 retrieval 更接近“人会想起什么”，所以必须加入近期性和重要性。
-
-## 13.14 Reflection 对应 Agent.reflect()
-
-论文中的 Reflection 在源码中对应：
-
-```text
-Agent.reflect()
-reflect_focus.txt
-reflect_insights.txt
-reflect_chat_planing.txt
-reflect_chat_memory.txt
-```
-
-`Agent.reflect()` 的流程是：
-
-```text
-检查 poignancy 阈值
-  -> 取近期 events + thoughts
-  -> 生成反思焦点问题
-  -> 围绕焦点问题检索相关记忆
-  -> 生成 insights 和 evidence
-  -> 写回 thought
-  -> 处理对话反思
-  -> 清空累计 poignancy 和 chats
-```
-
-这对应论文第 7 章讲过的：
-
-```text
-observation -> question -> retrieved memories -> insight -> memory stream
-```
-
-Generative Agents 的一个工程特点是，insight 会带 evidence node ids。这为后续审计和实验评价提供了基础。
-
-## 13.15 Planning 对应 Schedule 与 make_schedule()
-
-论文中的 Planning 在源码中主要对应：
-
-```text
-generative_agents/modules/memory/schedule.py
-Agent.make_schedule()
-schedule_* prompts
-```
-
-`Schedule` 保存每日计划。`make_schedule()` 生成新一天日程，或读取当前日程。流程包括：
-
-```text
-必要时根据记忆更新 currently
-  -> wake_up
-  -> schedule_init
-  -> schedule_daily
-  -> 写入 daily_schedule
-  -> 把今天计划写入 thought
-  -> 对当前 plan 做 decompose
-```
-
-这对应论文中从日计划到细粒度行为的递归规划。`Schedule.current_plan()` 根据当前时间返回当前 plan 和 de_plan。`Agent._determine_action()` 再把 de_plan 转成空间中的 action。
-
-## 13.16 Spatial Grounding 对应 Spatial、Maze 与 determine prompts
-
-计划要落地，就必须知道地点。Generative Agents 的空间落地由三部分完成：
-
-```text
-Spatial memory
-Maze address index
-determine_sector / determine_arena / determine_object prompts
-```
-
-`Spatial` 保存角色知道的地址树。`Maze` 保存全局地址到 tile 的映射。如果 `spatial.find_address()` 不能直接找到合适地点，系统会调用 LLM 逐层选择 sector、arena、object。这对应论文中的 sandbox grounding。没有这一步，planning 只是文字。有了这一步，planning 才能变成地图移动、对象占用和可观察事件。
-
-## 13.17 Reacting 对应 _reaction()
-
-论文中的 Reacting 对应：
-
-```text
-Agent._reaction()
-Agent._chat_with()
-Agent._wait_other()
-decide_chat.txt
-decide_wait.txt
-```
-
-`_reaction()` 从当前感知到的 concepts 中选择 focus。如果 focus 是另一个 agent，就尝试：
-
-```text
-聊天
-等待
-```
-
-聊天处理社会交互。等待处理空间冲突。这对应论文中“智能体在计划执行过程中对意外事件作出反应”。源码中还有 `_skip_react()`，避免睡觉、深夜、待开始等不合适场景触发反应。这说明反应不是越多越好，而是要符合情境。
-
-## 13.18 Dialogue 对应聊天决策、关系摘要与多轮生成
-
-论文中的 Dialogue 在源码中不是一个单独 prompt，而是一组流程。核心函数是：
-
-```text
-Agent._chat_with()
-```
-
-它的执行步骤可以这样读：
-
-```text
-检查双方是否可聊天
-  -> 检索最近聊天记录
-  -> decide_chat 判断是否发起
-  -> summarize_relation 生成双方关系摘要
-  -> generate_chat 多轮生成
-  -> generate_chat_check_repeat 检查复读
-  -> decide_chat_terminate 判断结束
-  -> summarize_chats 生成摘要
-  -> schedule_chat 写回双方日程
-```
-
-这比“调用一次 LLM 生成对话”复杂得多。原因是对话在 Generative Agents 中承担三种功能：
-
-1. 展示角色之间的自然社交。
-2. 传播派对、竞选这类关键社会信息。
-3. 改变双方后续的记忆和计划。
-
-如果对话不写回日程和记忆，它就只是前端文本，不会成为社会仿真的组成部分。
-
-## 13.19 Action 对应当前行为与对象事件
-
-论文中的 action 在源码中对应：
-
-```text
-generative_agents/modules/memory/action.py
-```
-
-`Action` 保存：
-
-- `event`
-- `obj_event`
-- `start`
-- `duration`
-- `end`
-
-`event` 描述角色正在做什么。`obj_event` 描述对象发生了什么。例如，角色坐在书桌前学习时：
-
-```text
-角色 event：克劳斯此时阅读资料
-对象 event：书桌此时被克劳斯用于阅读资料
-```
-
-这样，其他 agent 感知 nearby tile 时，可以看到角色和对象状态。这让行动进入共享世界。
-
-## 13.20 Checkpoint 对应 SimulateServer.simulate()
-
-论文中的仿真需要可回放。Generative Agents 每个 step 会写 checkpoint。`SimulateServer.simulate()` 中，每一步结束后写：
-
-```text
-results/checkpoints/<name>/simulate-<time>.json
-results/checkpoints/<name>/conversation.json
-```
-
-checkpoint 保存：
-
-- 当前时间。
-- step。
-- agents 状态。
-- 每个 agent 的 memory。
-- 每个 agent 的 action。
-- schedule。
-- 坐标。
-- 存储路径。
-
-conversation 保存对话日志。断点恢复也依赖 checkpoint。`get_config_from_log()` 会读取最后一个 checkpoint，恢复仿真配置，并把时间推进到下一步。这对应项目的工程化增强：长时间仿真可以中断、恢复和复盘。
-
-## 13.21 Replay 对应 compress.py、movement.json 与 simulation.md
-
-checkpoint 文件适合恢复系统，但不适合人阅读。因此项目提供 `compress.py`。它会把 checkpoint 压缩成更适合回放和阅读的结果：
-
-```text
-results/compressed/<name>/movement.json
-results/compressed/<name>/simulation.md
-```
-
-`movement.json` 供 Phaser 前端回放。`simulation.md` 供人类阅读仿真时间线。`replay.py` 启动 Flask 服务，前端读取 compressed 结果并展示小镇回放。这对应论文中的 replay / sandbox visualization。但 Generative Agents 额外强化了 Markdown 输出，使读者不用打开浏览器也能审阅仿真行为。
-
-## 13.22 LLM Interface 对应 llm_model.py
-
-论文默认使用大语言模型生成行为。Generative Agents 将模型调用封装在：
-
-```text
-generative_agents/modules/model/llm_model.py
-```
-
-核心类主要包括，需要逐项查看：
-
-| 类名 | 中文意思 | 负责什么 |
+| 角色 | 记忆目录 | `index_config.json` 中的节点数 |
 | --- | --- | --- |
-| `LLMModel` | 模型调用基类。 | 提供统一的 completion 入口、重试、failsafe 和结果统计。 |
-| `OpenAILLMModel` | OpenAI 兼容接口实现。 | 调用 OpenAI 或兼容 OpenAI 协议的模型服务。 |
-| `OllamaLLMModel` | Ollama 本地模型实现。 | 调用本地模型，并支持用 Pydantic JSON schema 约束返回格式。 |
-| `MiniMaxLLMModel` | MiniMax 模型实现。 | 适配 MiniMax 接口限制，处理 schema 拼接和 `<think>` 标签过滤。 |
+| 伊莎贝拉 | `results/checkpoints/book-party-pair/storage/伊莎贝拉/associate/` | `max_nodes: 9` |
+| 阿伊莎 | `results/checkpoints/book-party-pair/storage/阿伊莎/associate/` | `max_nodes: 9` |
 
-`LLMModel.completion()` 负责：
+项目中的记忆分三类：
 
-- retry。
-- callback。
-- failsafe。
-- 记录成功失败统计。
-
-具体子类负责不同 provider 的调用方式。Ollama 支持把 Pydantic JSON schema 作为 response format。MiniMax 因为接口限制，会把 schema 拼接进 prompt，并过滤 `<think>` 标签。这对应第 22 章说的工程化模型适配。它也是第五部分前沿升级的基础。
-
-## 13.23 Structured Output 对应 Scratch 的 response model
-
-结构化输出的另一半在：
-
-```text
-generative_agents/modules/prompt/scratch.py
-```
-
-每个 `prompt_*` 方法通常返回一个 `Result`，其中包含：
-
-- prompt。
-- callback。
-- failsafe。
-- return_type。
-
-例如，起床时间可以这样表示：
-
-```python
-class wakeupResponse(BaseModel):
-    res: int
-```
-
-对应的日程内容如下：
-
-```python
-class schedule_dailyResponse(BaseModel):
-    res: dict[str, str]
-```
-
-对应的反思洞察如下：
-
-```python
-class reflect_insightsResponse(BaseModel):
-    res: List[Tuple[str, str]]
-```
-
-这让模型输出、解析、失败兜底形成统一模式。论文中没有强调这一点，因为它偏工程实现。但在真实项目中，这是 agent 稳定运行的关键。
-
-## 13.24 Evaluation Material 对应结果文件
-
-论文评价依赖 agent 回放、memory stream 和访谈。Generative Agents 中可用于评价的材料包括：
-
-- checkpoint。
-- conversation.json。
-- movement.json。
-- simulation.md。
-- agent memory storage。
-- 日志文件。
-
-这些材料支持后续实验：
-
-- 信息扩散路径追踪。
-- 关系形成统计。
-- 派对到场率统计。
-- 消融对比。
-- 记忆幻觉检查。
-- 模型输出失败分析。
-
-本项目已经具备论文式评价的基础材料。只是需要我们在第四部分把实验脚本、指标和观察方法系统化。
-
-## 13.25 论文概念到源码的数据流
-
-现在把所有模块串成一条数据流。
-
-```text
-agent.json
-  -> Agent.__init__()
-  -> Scratch / Spatial / Schedule / Associate
-  -> Agent.think()
-  -> make_schedule()
-  -> percept()
-  -> _reaction() / _determine_action()
-  -> reflect()
-  -> Action / Event / Concept
-  -> Associate / LlamaIndex
-  -> checkpoint
-  -> compress.py
-  -> movement.json / simulation.md
-```
-
-这条数据流说明三件事。第一，角色设定不是静态文本，它会通过 Scratch 进入每次 LLM 调用。第二，环境事件不是临时画面，它会通过 Event 和 Concept 进入 memory stream。第三，仿真结果不是黑盒，它会通过 checkpoint 和 compressed results 变成可复盘材料。掌握这条数据流，第三部分源码深读就有了方向。
-
-```mermaid
-flowchart LR
-    Persona["agent.json / currently"] --> Scratch["Scratch<br/>角色状态"]
-    Scratch --> Prompt["Prompt 组装"]
-    Memory["Memory / Retrieval"] --> Prompt
-    World["Maze / Tile / Spatial"] --> Prompt
-    Prompt --> LLM["LLM 输出"]
-    LLM --> Action["Action / Dialogue / Schedule"]
-    Action --> Checkpoint["Checkpoint"]
-    Checkpoint --> Compress["compress.py"]
-    Compress --> Replay["movement.json / simulation.md / Phaser"]
-```
-
-*图 13-3：从 persona 到 replay 的数据流。角色设定不是只影响第一句话，而是一路参与计划、行动、保存和回放。*
-
-## 13.26 当前实现与论文的主要差异
-
-映射不等于完全一致。Generative Agents 与论文原始系统有一些差异。第一，实时用户干预不是当前重点。论文中用户可以用自然语言干预 agent 或环境。当前项目主要提供离线仿真、断点和回放。第二，prompt 全面中文化。这改变了语言环境，也使项目更依赖中文模型的稳定性。第三，结构化输出更工程化。Pydantic schema 是当前项目的重要增强。第四，模型 provider 更丰富。当前项目不仅考虑 OpenAI，也考虑 Ollama、MiniMax、本地 embedding。第五，回放输出更适合阅读。`simulation.md` 是非常适合教学和写作的增强。第六，部分地图编辑链路仍不完整。README 已说明新增地图需要额外工具或自己生成 `maze.json`。这些差异后续都会展开。
-
-## 13.27 第三部分源码深读路线
-
-基于本章映射，第三部分会按下面顺序展开。第 14 章：世界模型。讲 `Maze`、`Tile`、地址树、空间记忆、地图数据和前端地图关系。第 15 章：智能体初始化。讲 `agent.json`、`Agent.__init__()`、`Scratch`、`Spatial`、`Schedule`、`Associate`。第 16 章：仿真循环。讲 `start.py`、`Game`、`Agent.think()`、checkpoint。第 17 章：感知。讲 `Agent.percept()`、视野、事件去重、memory 写入。第 18 章：记忆。讲 `Associate`、`Concept`、`LlamaIndex`、retrieval 和 poignancy。第 19 章：日程。讲 `Schedule`、`make_schedule()`、日计划、拆解、重规划。第 20 章：社交。讲 `_reaction()`、`_chat_with()`、`_wait_other()`、对话传播。第 21 章：反思。讲 `reflect()`、focus、insights、evidence、thought 写回。第 22 章：模型适配。讲 `LLMModel`、Ollama、MiniMax、OpenAI、Pydantic 输出。第 23 章：回放系统。讲 checkpoint、compress、movement、simulation.md 和 Phaser。这就是本书从论文进入源码的路线。
-
-## 13.28 本章小结
-
-这是源码深读前的地图。论文概念在项目中分别落到哪些模块上，比一次记住全部函数名更重要。
-
-| 论文概念 | Generative Agents 中的落点 | 核心结论 |
+| 记忆类型 | 中文意思 | 体验方式 |
 | --- | --- | --- |
-| Smallville | `Maze`、`Tile`、`maze.json`、Phaser 前端 | 小镇环境由后端地图和前端回放共同承接。 |
-| Agent persona | `agent.json`、`Scratch`、`base_desc.txt` | 角色设定会进入 prompt、日程、行动和对话。 |
-| Simulation loop | `start.py`、`Game`、`Agent.think()` | 仿真不是一次调用，而是持续推进的主循环。 |
-| Observation | `Agent.percept()`、`Maze.get_scope()` | 感知把世界事件转成角色自己的观察。 |
-| Memory Stream | `Associate`、`Concept`、`Event`、LlamaIndex | 记忆系统把事件、对话和想法保存为可检索经验。 |
-| Retrieval | `AssociateRetriever`、`retrieve_focus()` | 当前行为依赖被选出的少量关键记忆。 |
-| Reflection | `Agent.reflect()`、`reflect_focus`、`reflect_insights` | 反思把碎片经历转成长期 thought。 |
-| Planning / Reacting / Dialogue | `Schedule`、`make_schedule()`、`_reaction()`、`_chat_with()` | 生活节奏、现场反应和对话共同产生可信行为。 |
-| LLM Interface | `llm_model.py`、Pydantic schema、provider | 模型输出必须被约束成项目可执行的数据。 |
-| Replay / Evaluation | checkpoint、`movement.json`、`simulation.md` | 回放和评价材料让行为结果可检查、可复盘。 |
+| `event` | 观察到或执行过的事件 | 看角色是否记住附近发生的事 |
+| `chat` | 对话摘要 | 看角色后续是否延续谈过的话题 |
+| `thought` | 计划、反思和高层想法 | 看角色是否形成更稳定的判断 |
 
-下一章进入第三部分源码深读。我们先从世界模型开始，因为没有地图、tile、地址树和空间记忆，所有“智能体行动”都只是文字，不可能成为可观察的小镇生活。
+检索细节留到第三部分；此处先确定一个事实：这个项目不是把聊天记录塞回 prompt，而是把事件、对话、想法保存成 memory stream，再按相关性、近期性和重要性检索。
+
+从最终 checkpoint 也能看到记忆在增长。伊莎贝拉记住了“打开咖啡馆大门和照明设备”“检查咖啡机和研磨设备”“准备烘焙面包的材料”“烘焙新鲜面包”等事件；阿伊莎记住了“整理书桌”“阅读《哈姆雷特》第一幕”“标注第一幕”“阅读《哈姆雷特》第二幕”等事件。它们都是后续检索和反思的材料。
+
+## 13.8 体验七：对话
+
+对话是最容易被误解的功能。普通聊天应用通常是“一次用户输入，一次模型回答”；Generative Agents 的对话是一条流程，只有在角色感知到对方、判断有必要交流、生成对话、检查重复、判断结束、总结对话之后，才会写回记忆和日程。
+
+对话结果主要看三个位置：
+
+| 位置 | 能看到什么 |
+| --- | --- |
+| 回放页面 | 是否出现对话气泡 |
+| `simulation.md` | 对话内容和发生地点 |
+| `conversation.json` | 按时间保存的对话记录 |
+
+`book-party-pair` 没有触发对话，`conversation.json` 保持为空。这个结果反而更容易说明对话的边界：对话不是每一步都强行生成，而是要先经过感知、距离、关系和 `decide_chat.txt` 判断。想观察真实对话，可以打开 `example` 回放；图 13-2 的左上角已经显示山姆和詹妮弗的对话记录。
+
+对话相关 prompt 位于：
+
+```text
+generative_agents/data/prompts/
+```
+
+对话相关的重点 prompt 文件如下：
+
+| Prompt | 作用 |
+| --- | --- |
+| `decide_chat.txt` | 判断是否主动发起对话 |
+| `summarize_relation.txt` | 总结双方关系背景 |
+| `generate_chat.txt` | 生成角色发言 |
+| `generate_chat_check_repeat.txt` | 检查是否重复 |
+| `decide_chat_terminate.txt` | 判断对话是否结束 |
+| `summarize_chats.txt` | 总结对话并写入记忆 |
+
+对话的关键判断不是“对话是不是好听”，而是“对话有没有改变后续行为”。如果角色聊完后没有记忆、没有日程影响、没有后续引用，那么对话只是展示文本，不是社会仿真的一部分。
+
+## 13.9 体验八：反思
+
+反思不是每一步都会发生。项目会累积事件和对话的重要性，达到阈值后才触发 reflection。相关配置是：
+
+```text
+agent.think.poignancy_max
+```
+
+当前配置中这个值是 `150`。这意味着小规模、短 step 的烟雾测试通常不容易触发反思，这是正常现象。想体验反思，需要更长仿真、更多事件，或者调低阈值做实验。
+
+`book-party-pair` 只跑了 6 个 step，伊莎贝拉和阿伊莎的记忆节点都还没有达到 `poignancy_max: 150` 的反思阈值，因此没有生成新的 reflection thought。这个结果和配置一致，不是反思功能失效。
+
+反思结果主要看三个位置：
+
+| 观察对象 | 判断问题 |
+| --- | --- |
+| checkpoint 中的 `thought` memory | 是否生成了高层想法 |
+| `simulation.md` 中的后续行动 | 反思是否影响后续计划 |
+| 对话后的摘要和 thought | 对话是否被提炼成长期记忆 |
+
+反思相关 prompt 如下：
+
+| Prompt | 作用 |
+| --- | --- |
+| `reflect_focus.txt` | 从记忆中生成反思焦点问题 |
+| `reflect_insights.txt` | 基于检索记忆生成洞察和证据 |
+| `reflect_chat_planing.txt` | 从对话中提取对计划的影响 |
+| `reflect_chat_memory.txt` | 从对话中提取值得记住的内容 |
+
+源码文件名是 `reflect_chat_planing.txt`，不是 `planning`。书中后续引用会按真实文件名写。
+
+## 13.10 体验九：模型适配
+
+模型适配让这个项目比原始论文 demo 更贴近当前中文使用场景。可以通过 `config.json` 切换模型 provider，但不要把它理解成简单换模型名称。不同 provider 对结构化输出、中文指令、`<think>` 标签和 embedding 的支持都不同。
+
+本次实验使用的实际配置如下：
+
+| 能力 | 当前配置 |
+| --- | --- |
+| 思考模型 provider | `minimax` |
+| 思考模型 | `MiniMax-M3` |
+| LLM 接口 | `https://api.minimaxi.com/v1` |
+| embedding provider | `minimax` |
+| embedding 模型 | `embo-01` |
+| embedding 接口 | `https://api.minimax.chat/v1` |
+| 反思阈值 | `agent.think.poignancy_max = 150` |
+
+| 能力 | 配置位置 | 体验方式 |
+| --- | --- | --- |
+| 思考模型 | `agent.think.llm` | 影响日程、对话、反思和地点选择 |
+| embedding 模型 | `agent.associate.embedding` | 影响记忆检索质量 |
+| 结构化输出 | `Scratch` 中的 Pydantic response model | 影响模型输出能否被系统解析 |
+| provider 特殊处理 | `modules/model/llm_model.py` | 影响 OpenAI、Ollama、MiniMax 的调用差异 |
+
+模型适配一次只改一项。先用默认配置跑通 `book-smoke`，再改模型名称或 provider。每次修改后记录：
+
+| 记录项 | 示例 |
+| --- | --- |
+| provider | `minimax` |
+| model | `MiniMax-M3` |
+| embedding model | `embo-01` |
+| step / stride / agents | `step=6, stride=10, agents=伊莎贝拉,阿伊莎` |
+| 结果路径 | `results/compressed/book-party-pair/simulation.md` |
+| 失败现象 | JSON 解析失败、对话重复、行动空泛、反思不触发 |
+
+有记录，模型对比才有意义；没有记录，只能凭感觉说“这个模型好像更聪明”。
+
+## 13.11 体验十：项目来源和源码入口
+
+功能入口明确后，项目来源和源码入口会更容易对上。当前项目的演化链路可以压缩成一张表：
+
+| 来源 | 给当前项目留下什么 |
+| --- | --- |
+| Generative Agents 论文 | 可信人类行为代理、Smallville、memory、reflection、planning、dialogue |
+| Stanford 原始项目 | 论文 demo 的后端仿真、前端小镇和回放基础 |
+| wounderland | 更清晰的工程重构基础 |
+| Generative Agents 中文工程版 | 中文 prompt、本地模型、多 provider、Pydantic、断点和 Markdown 回放 |
+
+源码入口对应关系如下：
+
+| 体验到的功能 | 后续源码入口 | 深读章节 |
+| --- | --- | --- |
+| 地图和移动 | `modules/maze.py`、`modules/game.py` | 第 14、16 章 |
+| 角色定义 | `agents/*/agent.json`、`modules/prompt/scratch.py` | 第 15 章 |
+| 仿真循环 | `start.py`、`Agent.think()` | 第 16 章 |
+| 感知 | `Agent.percept()` | 第 17 章 |
+| 记忆 | `modules/memory/associate.py` | 第 18 章 |
+| 日程 | `modules/memory/schedule.py`、`Agent.make_schedule()` | 第 19 章 |
+| 对话和反应 | `Agent._reaction()`、`Agent._chat_with()`、`Agent._wait_other()` | 第 20 章 |
+| 反思 | `Agent.reflect()` | 第 21 章 |
+| 模型适配 | `modules/model/llm_model.py` | 第 22 章 |
+| 回放 | `compress.py`、`replay.py`、`frontend/templates/` | 第 23 章 |
+
+这张表用于给第三部分铺路。功能已经体验过，源码入口才有意义。
+
+## 13.12 小结
+
+到这里，Generative Agents 的主要功能已经体验过一遍：它能回放小镇、生成时间线、定义角色、安排日程、处理感知、保存记忆、触发对话、形成反思，并通过模型配置改变系统表现。
+
+| 体验内容 | 核心结论 |
+| --- | --- |
+| 回放系统 | 项目不是聊天窗口，而是可以播放的小镇仿真 |
+| Markdown 时间线 | 行为结果可以被人类阅读和复盘 |
+| 角色定义 | 角色由 `agent.json`、`scratch` 和空间记忆共同定义 |
+| 日程和行动 | 角色行为来自日程、时间、地点和对象约束 |
+| 感知和空间 | 角色不是全知，只能看到有限范围内的事件 |
+| 记忆和检索 | 事件、对话和想法会进入 memory stream |
+| 对话 | 对话会被判断、生成、检查、总结并写回记忆 |
+| 反思 | 重要经历累积后才会形成高层 thought |
+| 模型适配 | LLM 和 embedding 配置会直接改变系统表现 |
+| 源码入口 | 第三部分会把已经体验过的功能逐个拆开 |
+
+第三部分开始进入源码。每个模块都已经在功能体验中对应到具体现象，再看 `Maze`、`Agent`、`Schedule`、`Associate` 和 `Scratch` 时，类名背后就有了地图、角色、日程、记忆和身份定义这些具体对象。
 
 ## 参考资料
 
-- Generative Agents paper: https://arxiv.org/abs/2304.03442
-- Local source: `generative_agents/start.py`
-- Local source: `generative_agents/modules/game.py`
-- Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/maze.py`
-- Local source: `generative_agents/modules/memory/associate.py`
-- Local source: `generative_agents/modules/memory/schedule.py`
-- Local source: `generative_agents/modules/model/llm_model.py`
-- Local source: `generative_agents/modules/storage/index.py`
+- Example replay: `generative_agents/results/compressed/example/`
+- Role config: `generative_agents/frontend/static/assets/village/agents/*/agent.json`
+- Prompt directory: `generative_agents/data/prompts/`
+- Runtime config: `generative_agents/data/config.json`
+- Start entry: `generative_agents/start.py`
+- Compress entry: `generative_agents/compress.py`
+- Replay entry: `generative_agents/replay.py`

@@ -68,4 +68,8 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(
+        host=os.getenv("REPLAY_HOST", "127.0.0.1"),
+        port=int(os.getenv("REPLAY_PORT", "5000")),
+        debug=False,
+    )

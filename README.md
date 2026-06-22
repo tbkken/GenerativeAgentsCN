@@ -55,14 +55,16 @@ cd GenerativeAgentsCN
         "provider": "minimax",
         "model": "MiniMax-M3",
         "base_url": "https://api.minimaxi.com/v1",
-        "api_key": "<你的MiniMax API Key>",
+        "api_key": "",
         "max_tokens": 8192
     }
     ```
 
+    运行前通过环境变量设置密钥：`export MINIMAX_API_KEY="你的 MiniMax API Key"`。
+
     > MiniMax-M 系列为推理模型，其OpenAI兼容接口不支持`response_format`的`json_schema`严格模式，因此`minimax` provider会把所需的JSON Schema拼接进提示语并启用`json_object`模式来获得结构化输出，同时自动过滤`<think>`思考过程。
 
-    MiniMax的OpenAI兼容接口**不提供嵌入（embedding）模型**，因此默认将`associate.embedding`配置为本地HuggingFace嵌入模型`BAAI/bge-small-zh-v1.5`（首次运行会自动下载，完全本地、无需额外API）。如需改用Ollama或其他嵌入服务，可相应修改`embedding`配置。
+    MiniMax 的 embedding 接口使用 `embo-01`，默认将 `associate.embedding` 配置为 `minimax`，请求 `https://api.minimax.chat/v1/embeddings` 并复用 `MINIMAX_API_KEY`。如果你的 MiniMax 账号需要 GroupId，可额外设置环境变量：`export MINIMAX_GROUP_ID="你的 GroupId"`。
 
 ### 1.3 安装python依赖
 

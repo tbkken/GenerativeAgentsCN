@@ -1,4 +1,4 @@
-# 第 1 章：原作者与 Generative Agents 的诞生
+# 第 1 章：Generative Agents 的诞生
 
 ![Generative Agents 思想源头插画](../../assets/origin-research-lab.svg)
 

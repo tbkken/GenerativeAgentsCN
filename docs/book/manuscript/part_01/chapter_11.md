@@ -747,7 +747,7 @@ Memory Stream
 | 评价 prompt | 原始 Stanford 项目用访谈问题、记忆检索和 `summarize_ideas_v1.txt` 生成可评估回答。 |
 | 对本书的影响 | 后续复现实验要把论文评价方法转成 Generative Agents 的证据链、中文评价 prompt 和指标。 |
 
-下一部分进入“从论文到 Generative Agents”：先讲项目谱系：Stanford 原始项目、wounderland 重构、Generative Agents 的中文化与工程化。然后把论文概念逐一映射到源码模块。
+下一部分进入项目上手与功能体验：先把 Generative Agents 跑起来，看到现成回放和自己的最小仿真结果，再按功能体验角色定义、日程、感知、记忆、对话、反思、模型适配和回放系统。
 
 ## 参考资料
 

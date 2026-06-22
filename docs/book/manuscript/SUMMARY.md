@@ -16,10 +16,10 @@
 10. [论文架构七：Dialogue](part_01/chapter_10.md)
 11. [论文的评价方法](part_01/chapter_11.md)
 
-## 第二部分：从论文到 Generative Agents
+## 第二部分：项目上手与功能体验
 
-12. [项目谱系](part_02/chapter_12.md)
-13. [论文概念到源码模块的映射](part_02/chapter_13.md)
+12. [把项目跑起来](part_02/chapter_12.md)
+13. [按功能体验 Generative Agents](part_02/chapter_13.md)
 
 ## 第三部分：源码深读
 
