@@ -112,19 +112,21 @@ checkpoint JSON 保存的是仿真状态。包括：
 - currently。
 - action。
 
-它适合断点恢复。但它不适合直接给人读。因此需要 `compress.py` 转换。
+阅读 checkpoint 时不要从第一行 JSON 机械往下看。更有效的顺序是先看顶层 `time`、`step` 和 `stride`，确认这是哪个仿真时刻；再进入目标 agent，查看 `coord`、`action`、`schedule` 和 `currently`；最后再看 `associate`、`chats` 等记忆相关状态。这样读，checkpoint 就是“某个时间点的小镇快照”，而不是一大团难读的 JSON。
+
+它适合断点恢复和严谨审计。但它不适合直接给人读故事线。因此需要 `compress.py` 转换。
 
 ## 23.4 conversation.json
 
-`conversation.json` 保存全局对话。结构大致是：
+`conversation.json` 保存全局对话。真实结果中的一段对话可以整理成下面这种结构。下面片段来自 `example` 回放中 `20240213-06:00` 的山姆和詹妮弗对话，省略了部分字段外壳：
 
 ```json
 {
-  "20250213-10:20": [
+  "20240213-06:00": [
     {
-      "伊莎贝拉 -> 阿伊莎 @ the Ville，霍布斯咖啡馆，咖啡馆": [
-        ["伊莎贝拉", "..."],
-        ["阿伊莎", "..."]
+      "詹妮弗 -> 山姆 @ the Ville，摩尔家族的房子，主人房，床": [
+        ["詹妮弗", "早上好，山姆。你今天打算去花园里忙活些什么呢？"],
+        ["山姆", "早上好，詹妮弗。我打算去约翰逊公园打理一下花坛和修剪一些灌木。今天也是个宣传我的竞选计划的好机会。"]
       ]
     }
   ]
@@ -132,6 +134,8 @@ checkpoint JSON 保存的是仿真状态。包括：
 ```
 
 这个文件由 `_chat_with()` 写入内存，由 `SimulateServer.simulate()` 每步写盘。它是信息扩散实验的重要证据。如果我们要证明阿伊莎知道派对，是因为伊莎贝拉告诉她，不能只看阿伊莎后来说“我知道”。还要能在 `conversation.json` 或 `simulation.md` 中找到这次对话。
+
+这个结构可以拆成三层阅读。第一层 key 是小镇时间。第二层 key 同时包含“谁对谁说话”和对话地点。第三层列表才是具体轮次。实验记录传播路径时，最重要的是前两层：谁在什么时间、什么地点，把信息传给了谁。具体话术可以再从第三层摘录。
 
 ## 23.5 compress.py 的两个输出
 
@@ -180,6 +184,30 @@ conversation
 ```
 
 用于展示角色基础信息和对话内容。
+
+如果直接打开 `movement.json`，建议先读顶层字段，再抽样看关键帧。以第 12 章生成的 `book-smoke/movement.json` 为例，节选如下：
+
+```json
+{
+  "start_datetime": "2024-02-13T09:30:00",
+  "stride": 10,
+  "persona_init_pos": {
+    "阿伊莎": [118, 61],
+    "克劳斯": [126, 46]
+  },
+  "all_movement": {
+    "1": {
+      "阿伊莎": {
+        "location": "奥克山学院宿舍，阿伊莎的房间，书桌",
+        "movement": [118, 61],
+        "action": "前往 奥克山学院宿舍，阿伊莎的房间，书桌"
+      }
+    }
+  }
+}
+```
+
+这段数据说明三件事。第一，回放起点是 09:30。第二，本次只有两个角色，所以 `persona_init_pos` 只有两个名字。第三，第 1 帧中阿伊莎的 `movement` 仍是坐标，但 `location` 已经是人类可读地点。不要把 `movement.json` 当作最原始事实。它是从 checkpoint 和 maze 重新整理出的回放数据，适合播放和统计位置；如果要判断记忆、计划或 action 的完整上下文，仍然要回查 checkpoint。
 
 ## 23.8 第 0 帧：insert_frame0()
 
@@ -324,6 +352,8 @@ all_movement["conversation"][step_time] = step_conversation
 ```
 
 如果该时间有对话，再写对话记录。
+
+阅读 `simulation.md` 时，先看 `# 基础人设`，确认本次结果包含哪些角色；再看每个时间标题，确认仿真节奏；然后看 `活动记录`，判断角色行为是否连续；最后看对话记录，判断信息是否真的通过角色互动传播。这个阅读顺序和第 12 章的入门读法一致，只是这里进一步说明它由 `generate_report()` 从 checkpoint 和 conversation 派生出来。
 
 ## 23.14 simulation.md 的价值
 

@@ -257,6 +257,14 @@ python start.py --agents "林晓"
 python start.py --name test-new-agent --start "20240213-09:30" --step 1 --stride 10 --agents "林晓"
 ```
 
+这条命令只有在 `林晓` 已经加入 `start.py` 的 `personas` 列表，并且对应 `frontend/static/assets/village/agents/林晓/agent.json` 已经存在时才会成功。当前仓库没有这个角色，直接运行会在启动阶段失败，错误含义是：
+
+```text
+Unknown agents: 林晓
+```
+
+这个失败结果反而很有价值。它说明 `--agents` 不是随便传一个名字给模型，而是先经过本地角色清单校验。新增角色时，第一关不是 LLM，而是文件结构和角色注册。
+
 检查时重点看下面这些内容：
 
 - 是否成功加载 agent.json。
@@ -265,7 +273,25 @@ python start.py --name test-new-agent --start "20240213-09:30" --step 1 --stride
 - 前端是否能显示头像和纹理。
 - action 地址是否合理。
 
-再运行 12 到 24 step，看是否能生成日程和移动。不要一开始就加入 25 人大实验。
+角色注册成功后，1 step 日志应该出现下面几类信息：
+
+```text
+林晓.reset
+coord[...]: the Ville:...
+Simulate Step[1/1, time: ...]
+林晓 -> wake_up
+林晓 -> schedule_init
+林晓 -> schedule_daily
+林晓 -> schedule_decompose
+林晓.summary @ ...
+action:
+  event: ...
+llm:
+  summary:
+    total: S:...,F:.../R:...
+```
+
+`reset` 用来检查初始坐标和地点是否能解析，`schedule_*` 用来检查人设能否生成日程，`summary` 用来检查行动是否落到合法地址，`S/F/R` 用来检查模型调用是否稳定。随后再执行 `compress.py --name test-new-agent`，看 `simulation.md` 是否写出基础人设和第一条活动记录，`movement.json` 中 `persona_init_pos` 是否包含新角色。再运行 12 到 24 step，看是否能生成日程和移动。不要一开始就加入 25 人大实验。
 
 ## 27.15 验证新关系
 

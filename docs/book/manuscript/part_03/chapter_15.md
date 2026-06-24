@@ -803,10 +803,39 @@ start_time += datetime.timedelta(minutes=config["stride"])
 第三，运行短仿真。例如：
 
 ```bash
-python start.py --name init-check --start "20250213-09:30" --step 1 --stride 10 --agents "克劳斯"
+python start.py --name init-check --start "20240213-09:30" --step 1 --stride 10 --agents "克劳斯" --verbose info --log init-check.log
 ```
 
-第四，看日志中的 agent summary。检查：
+第四，看日志中的 agent summary。真实输出不要只看最后有没有报错，先读这几行：
+
+```text
+克劳斯.reset
+coord[126,46]: the Ville:奥克山学院宿舍:克劳斯的房间:床
+associate:
+  nodes: 0
+llm:
+  model: MiniMax-M3
+  summary:
+    total: S:0,F:0/R:0
+
+Simulate Step[1/1, time: 2024-02-13 09:30:00]
+克劳斯 -> wake_up
+克劳斯 -> schedule_init
+克劳斯 -> schedule_daily
+克劳斯 -> schedule_decompose
+克劳斯 percept 0/4 concepts
+克劳斯 is determining action...
+克劳斯.summary @ 20240213-09:30:00
+action:
+  event: 阅读并标记关于绅士化理论的关键学术资料 @ the Ville:奥克山学院:图书馆:图书馆桌子
+llm:
+  summary:
+    total: S:9,F:0/R:9
+```
+
+这段日志把初始化过程拆得很清楚。`reset` 阶段的坐标仍然在宿舍床铺，说明角色从 `agent.json` 的初始状态加载；此时 `associate.nodes: 0`，说明记忆索引还没有写入新节点。进入 `Simulate Step` 后，系统连续调用起床、日程初始化、日程生成和日程拆解 prompt；最后 action 被落到图书馆桌子，说明模型已经把“写中产阶级化论文”的人设转成了具体空间行动。`total: S:9,F:0/R:9` 是初始化检查里最直接的模型健康信号。
+
+检查时重点看：
 
 - tile 地址是否正确。
 - action 是否合理。
@@ -818,6 +847,14 @@ python start.py --name init-check --start "20250213-09:30" --step 1 --stride 10 
 ```text
 results/checkpoints/init-check/
 ```
+
+本次 1 step 会生成 `simulate-20240213-0930.json`、`conversation.json`、`init-check.log` 和 `storage/克劳斯/associate/`。如果再执行：
+
+```bash
+python compress.py --name init-check
+```
+
+压缩结果中 `movement.json` 只有克劳斯一个角色，约 63 帧；`simulation.md` 的活动记录会显示他位于“奥克山学院，图书馆，图书馆桌子”，活动是“阅读并标记关于绅士化理论的关键学术资料”。这说明初始化不是只创建了一个对象，而是已经完成了从角色配置、日程生成、行动落地到结果压缩的最短闭环。
 
 如果这些都正常，说明 agent 初始化链路基本没问题。
 

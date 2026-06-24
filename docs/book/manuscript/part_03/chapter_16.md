@@ -570,10 +570,44 @@ else:
 调试仿真循环时，建议按下面顺序。第一，用少量 agent。例如：
 
 ```bash
-python start.py --name debug-loop --start "20250213-09:30" --step 3 --stride 10 --agents "克劳斯,玛丽亚"
+python start.py --name debug-loop --start "20240213-09:30" --step 3 --stride 10 --agents "克劳斯,玛丽亚" --verbose info --log debug-loop.log
 ```
 
-第二，打开 debug 日志。默认 verbose 是 debug。可以观察：
+第二，打开日志。这个命令会把日志写入：
+
+```text
+results/checkpoints/debug-loop/debug-loop.log
+```
+
+代表性输出如下：
+
+```text
+克劳斯.reset
+玛丽亚.reset
+Simulate Step[1/3, time: 2024-02-13 09:30:00]
+克劳斯 -> wake_up
+克劳斯 -> schedule_init
+克劳斯 -> schedule_daily
+克劳斯 -> schedule_decompose
+克劳斯 percept 0/4 concepts
+克劳斯 is determining action...
+克劳斯.summary @ 20240213-09:30:00
+  action: 阅读并整理文献综述 @ the Ville:奥克山学院:图书馆:图书馆桌子
+  total: S:9,F:0/R:9
+
+玛丽亚 -> wake_up
+玛丽亚 -> schedule_init
+玛丽亚 -> schedule_daily
+玛丽亚 -> schedule_decompose
+玛丽亚 is going to sleep...
+玛丽亚.summary @ 20240213-09:30:00
+  action: 玛丽亚 正在 睡觉 @ the Ville:奥克山学院宿舍:玛丽亚的房间:床
+  total: S:5,F:0/R:5
+```
+
+这不是普通流水账。两名角色都经历了 `reset`，说明配置加载成功；克劳斯完成日程生成、感知、行动选择，最后落到图书馆桌子；玛丽亚也生成日程，但当前 09:30 仍在睡觉，所以日志出现 `is going to sleep...`。这正好说明仿真循环不是让所有角色每一步都“找事做”，而是尊重角色日程。
+
+日志里可以观察：
 
 - 每个 step 时间。
 - 每个 agent 的 prompt 调用。
@@ -581,13 +615,44 @@ python start.py --name debug-loop --start "20250213-09:30" --step 3 --stride 10 
 - action summary。
 - schedule summary。
 
-第三，检查 checkpoint。看每个 step 的 JSON 是否写入。第四，检查 conversation。如果期望有对话，确认是否写入。第五，运行 compress。
+第三，检查 checkpoint。这个短实验会写入：
+
+```text
+simulate-20240213-0930.json
+simulate-20240213-0940.json
+simulate-20240213-0950.json
+conversation.json
+storage/克劳斯/associate/
+storage/玛丽亚/associate/
+```
+
+`conversation.json` 本次仍然是 `{}`。这不是循环失败，而是两个角色没有进入同一社交场景：克劳斯在图书馆推进论文，玛丽亚在宿舍睡觉。调试社交问题时，这个空文件反而很有用，它提醒我们先检查位置和日程，再去怀疑对话 prompt。
+
+第四，运行 compress。
 
 ```bash
 python compress.py --name debug-loop
 ```
 
-第六，看 `simulation.md`。如果前面都正常，压缩结果应该能读出时间线。这条调试链路比直接盯前端更可靠。
+第五，看 `simulation.md`。本次压缩后可以读到：
+
+```text
+# 20240213-09:30
+### 克劳斯
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：阅读并整理文献综述
+
+### 玛丽亚
+位置：the Ville，奥克山学院宿舍，玛丽亚的房间，床
+活动：睡觉
+
+# 20240213-09:50
+### 克劳斯
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：起草论文开头段落
+```
+
+这条调试链路比直接盯前端更可靠：日志判断模块是否运行，checkpoint 判断状态是否保存，`conversation.json` 判断社交是否发生，`simulation.md` 判断时间线是否可读，`movement.json` 再交给前端回放。
 
 ## 16.26 本章小结
 

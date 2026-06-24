@@ -168,8 +168,24 @@ generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 
 ```bash
 cd generative_agents
-python start.py --name book-custom-discussion --start "20240213-08:00" --step 72 --stride 10 --agents "克劳斯,玛丽亚,阿伊莎,沃尔夫冈,伊莎贝拉"
+python start.py --name book-custom-discussion --start "20240213-08:00" --step 72 --stride 10 --agents "克劳斯,玛丽亚,阿伊莎,沃尔夫冈,伊莎贝拉" --verbose info --log book-custom-discussion.log
 ```
+
+自定义事件的控制台输出要分两层读。第一层是系统是否跑通，日志中应该出现 `reset`、`Simulate Step`、`schedule_*`、`percept`、`summary` 和 `S/F/R`。第二层才是事件是否出现。也就是说，看到下面这种链路只能说明仿真正常推进：
+
+```text
+克劳斯 -> wake_up
+克劳斯 -> schedule_init
+克劳斯 -> schedule_daily
+克劳斯 -> schedule_decompose
+克劳斯 percept ... concepts
+克劳斯.summary @ ...
+llm:
+  summary:
+    total: S:...,F:.../R:...
+```
+
+还不能说明“讨论会传播成功”。真正要看的是 `summary` 的 action 是否出现讨论会，`conversation.json` 是否出现别人听到讨论会，后续 `simulation.md` 是否出现到场或转述。自定义事件最容易犯的错误，是把“角色自己计划了事件”误读成“事件已经进入小镇社会网络”。
 
 压缩命令可以直接照着执行：
 
@@ -185,7 +201,31 @@ results/checkpoints/book-custom-discussion/conversation.json
 results/compressed/book-custom-discussion/movement.json
 ```
 
-如果讨论会时间是 16:00，step=72 从 08:00 到 20:00，足够覆盖事件。
+自定义事件跑完后，建议按下面顺序读结果：
+
+| 顺序 | 文件 | 阅读重点 | 判断问题 |
+| --- | --- | --- | --- |
+| 1 | `simulation.md` | 搜索事件关键词，查看时间线和活动记录 | 事件是否进入角色行为 |
+| 2 | `conversation.json` | 查看谁向谁提到事件，是否包含时间地点 | 事件是否发生传播 |
+| 3 | `movement.json` | 检查事件时间附近的角色位置和 action | 角色是否真的到达事件地点 |
+| 4 | checkpoint JSON | 查看相关角色 memory、schedule、action | 如果结果异常，排查信息是否写入状态 |
+
+这个顺序能避免两个常见误判。第一，只看 `simulation.md` 觉得事件出现了，但没有对话来源。第二，只看角色到达地点，就把路过误判成参加。自定义事件要同时满足“有人知道”“有人传播”“有人在正确时间地点行动”，才算真正进入小镇。
+
+注意，这里还没有现成的 `book-custom-discussion` 结果文件。下面不是项目原文，而是读者跑完以后应该能整理出的记录格式：
+
+```text
+时间：20240213-09:30
+来源：克劳斯
+接收者：玛丽亚
+地点：the Ville，霍布斯咖啡馆，咖啡馆
+内容摘要：克劳斯提到下午4点在图书馆举办低收入社区中产阶级化讨论会
+证据文件：conversation.json
+```
+
+如果真实结果里只有“克劳斯准备讨论会”，但没有接收者、时间、地点或后续到场证据，这个事件仍然只是角色个人计划，还不能算完成了一次小镇事件传播。实验章节要鼓励读者把原始片段整理成证据记录，而不是凭感觉判断成败。
+
+有了这张证据记录表之后，再回到运行配置，就能判断实验时间是否足够覆盖事件。如果讨论会时间是 16:00，`step=72` 从 08:00 到 20:00，足够覆盖事件。
 
 ## 26.7 观察关键词
 

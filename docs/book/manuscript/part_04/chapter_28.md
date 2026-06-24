@@ -114,15 +114,16 @@ Generative Agents 的模型配置文件位于：
 generative_agents/data/config.json
 ```
 
-当前配置中，思考模型位于：
+当前工作区实际配置中，思考模型位于：
 
 ```json
 "think": {
   "llm": {
-    "provider": "ollama",
-    "model": "qwen3.5:4b-q4_K_M",
-    "base_url": "http://127.0.0.1:11434/v1",
-    "api_key": ""
+    "provider": "minimax",
+    "model": "MiniMax-M3",
+    "base_url": "https://api.minimaxi.com/v1",
+    "api_key": "",
+    "max_tokens": 8192
   },
   "interval": 1000,
   "poignancy_max": 150
@@ -134,16 +135,17 @@ generative_agents/data/config.json
 ```json
 "associate": {
   "embedding": {
-    "provider": "ollama",
-    "model": "qwen3-embedding:0.6b-q8_0",
-    "base_url": "http://127.0.0.1:11434",
-    "api_key": ""
+    "provider": "minimax",
+    "model": "embo-01",
+    "base_url": "https://api.minimax.chat/v1",
+    "api_key": "",
+    "group_id": ""
   },
   "retention": 8
 }
 ```
 
-这里有两个关键信息。第一，项目把“生成模型”和“嵌入模型”分开配置。生成模型负责：
+这里有两个关键信息。第一，项目把“生成模型”和“嵌入模型”分开配置。当前仓库用 MiniMax 生成行为，也用 MiniMax embedding 检索记忆。生成模型负责：
 
 - 计划。
 - 反应。
@@ -157,7 +159,29 @@ generative_agents/data/config.json
 - 把记忆写入向量索引。
 - 根据上下文召回相关记忆。
 
-第二，Ollama 的两个接口路径不完全一样。LLM 配置中写的是：
+第二，本章讨论的是中文本地模型实验，所以读者要把同一个配置入口切换成 Ollama 或其他本地 provider。一个本地实验配置可以写成下面这样：
+
+```json
+"llm": {
+  "provider": "ollama",
+  "model": "qwen3.5:4b-q4_K_M",
+  "base_url": "http://127.0.0.1:11434/v1",
+  "api_key": ""
+}
+```
+
+embedding 则可以对应改为：
+
+```json
+"embedding": {
+  "provider": "ollama",
+  "model": "qwen3-embedding:0.6b-q8_0",
+  "base_url": "http://127.0.0.1:11434",
+  "api_key": ""
+}
+```
+
+这里要注意，Ollama 的两个接口路径不完全一样。LLM 配置中写的是：
 
 ```text
 http://127.0.0.1:11434/v1
@@ -330,7 +354,7 @@ python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
 
 ```bash
 cd generative_agents
-python start.py --name local-qwen-baseline --start "20250213-09:00" --step 6 --stride 10
+python start.py --name local-qwen-baseline --start "20250213-09:00" --step 6 --stride 10 --verbose info --log local-qwen-baseline.log
 ```
 
 也就是只跑 60 分钟虚拟时间。如果这轮没有明显结构化输出失败，再增加到：
@@ -354,7 +378,7 @@ python start.py --name local-qwen-party-halfday --start "20250213-09:00" --step 
 - 对话越来越空。
 - 结构化输出偶发失败。
 
-短实验用来检查接口。中等实验用来检查机制。长实验才用来观察社会行为。
+短实验用来检查接口。中等实验用来检查机制。长实验才用来观察社会行为。短实验跑完以后，先读 `results/checkpoints/<name>/<name>.log`，再读 checkpoint 和 compressed 结果。如果日志里已经出现大量结构化输出失败，`simulation.md` 写得再顺，也只能说明项目容错帮你把流程撑过去了，不能说明模型适合长仿真。
 
 ## 28.9 实验前检查清单
 
@@ -376,13 +400,13 @@ ollama list
 generative_agents/data/config.json
 ```
 
-模型名可以这样配置：
+本地实验示例里的模型名可以这样配置：
 
 ```text
 qwen3.5:4b-q4_K_M
 ```
 
-这里必须以实际 `ollama list` 输出为准。README、配置文件和本地模型仓库可能随着版本变化出现名称差异。第四，embedding 模型是否已下载。
+这里必须以实际 `ollama list` 输出为准。README、配置文件和本地模型仓库可能随着版本变化出现名称差异。第四，示例中的 embedding 模型是否已下载。
 
 ```text
 qwen3-embedding:0.6b-q8_0
@@ -466,6 +490,26 @@ S:成功数,F:失败数/R:请求数
 - 地点选择。
 - 反应判断。
 
+真实日志要这样读。短实验中常见的健康摘要是：
+
+```text
+llm:
+  model: MiniMax-M3
+  summary:
+    total: S:25,F:0/R:25
+    llm_normal: S:25,F:0/R:25
+```
+
+`S` 是成功 completion 数，`F` 是最终失败数，`R` 是请求尝试数。`F:0/R:25` 说明这 25 次请求没有最终失败；如果 `R` 明显大于 `S`，说明中间发生过重试。模型适配时，最怕的不是偶发重试，而是同一个 caller 长期失败，例如地点选择、对话结束判断或重要性评分一直需要 failsafe。
+
+还要把服务侧错误和模型行为错误分开。实际运行中可能看到：
+
+```text
+LLMModel.completion() caused an error: MiniMax API returned 429
+```
+
+这是速率限制，不是 prompt 写错，也不是角色行为变差。它会影响本次实验稳定性，但不能直接拿来评价模型推理能力。相反，如果没有 429，却反复出现 JSON 解析失败、输出解释性长文、地点不在候选列表里，才是模型适配本身的问题。
+
 评价时不要只写下面这种话：
 
 ```text
@@ -522,7 +566,7 @@ Memory Stream 的价值不在于“存了很多东西”。而在于后续行为
 - embedding 模型。
 - 检索打分逻辑。
 
-Generative Agents 的配置中，embedding 使用：
+本章本地模型实验示例中，embedding 使用：
 
 ```text
 qwen3-embedding:0.6b-q8_0
@@ -827,7 +871,7 @@ Generative Agents 的每个认知模块对模型能力的要求不同。
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 实验目标 | 目标是验证机制可迁移性，不是证明小模型等价于强模型。 |
-| 配置入口 | Generative Agents 通过 `generative_agents/data/config.json` 配置 Ollama LLM 和 embedding。 |
+| 配置入口 | Generative Agents 通过 `generative_agents/data/config.json` 切换 MiniMax、Ollama 等 LLM 和 embedding。 |
 | 第一关卡 | 结构化输出通过率是第一道关，不能只看仿真是否跑完。 |
 | 评价维度 | 日程、对话、记忆、反思、事件传播都要分别评价。 |
 | 实验规模 | 先跑通 5 个角色、短时间窗口，再逐步扩大。 |

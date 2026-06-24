@@ -517,11 +517,23 @@ generative_agents/data/long_term_memory/<角色名>/
 python start.py --name sim-2 --load-long-term-memory baseline-1
 ```
 
+这行命令是接口设计示例，不是当前 `start.py` 已经支持的参数。当前脚本只解析 `--name`、`--start`、`--resume`、`--step`、`--stride`、`--agent-count`、`--agents`、`--verbose` 和 `--log`。如果直接运行上面的命令，应该把报错理解成“功能尚未实现”，而不是长期记忆加载失败。真正实现时，需要同时补三件事：命令行参数、从旧实验读取 memory/storage 的加载逻辑、写入本轮结果的可追溯记录。
+
+实现后，控制台和结果文件都要明确标记长期记忆来源。例如日志可以出现：
+
+```text
+load_long_term_memory: baseline-1
+agent: 克劳斯
+loaded associate nodes: 42
+```
+
 并在 `simulation.md` 中写明：
 
 ```text
 本实验加载了上一轮长期记忆。
 ```
+
+否则角色突然提到上一轮实验的人或事，很容易被误判成模型幻觉。长期记忆一旦跨实验流动，来源记录就和记忆内容一样重要。
 
 ## 32.16 升级方向六：记忆来源与置信度
 

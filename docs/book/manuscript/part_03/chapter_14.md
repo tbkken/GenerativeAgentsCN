@@ -2,13 +2,15 @@
 
 ## 14.1 核心问题
 
-第三部分进入源码深读。先不讲 LLM，也不讲记忆，先讲世界。Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
+从这一章开始进入源码深读。第一站是世界模型。第 13 章已经把阿伊莎和克劳斯放到奥克山学院图书馆桌子旁；第 14 章不另起场景，而是沿着这次回放往下拆：`movement.json` 里的 `[119, 24]` 如何被 `Maze`、`Tile`、`Spatial` 和 `Agent` 解释成地点、视野、记忆与行动。
 
-- 克劳斯现在在哪里？
-- 玛丽亚能不能看到克劳斯？
-- 伊莎贝拉说的霍布斯咖啡馆在地图上哪里？
-- 角色计划睡觉时会去哪个房间？
-- 角色准备吃饭时会选择哪个地点？
+Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
+
+- 阿伊莎和克劳斯为什么都在图书馆桌子旁？
+- `[119, 24]` 对应哪一个 `Tile` 和哪一段地址？
+- 两人为什么在同一 arena 内可以看见彼此？
+- 阿伊莎计划睡觉时会去哪个房间？
+- 图书馆桌子这个语义地址为什么会对应多个候选 tile？
 - 某个对象是否正在被占用？
 - 两个角色是否会在同一地点相遇？
 
@@ -21,7 +23,7 @@
 前端回放：Phaser 读取 movement.json
 ```
 
-这里先讲前三层，前端回放放到第 23 章。世界模型源码要回答七个问题：
+源码阅读从前三层开始：地图数据、后端模型、角色空间记忆。前端回放在第 23 章展开。世界模型源码要回答七个问题：
 
 1. `maze.json` 存了什么？
 2. `Tile` 如何表示一个地图格子？
@@ -44,7 +46,7 @@ flowchart TD
 
 ## 14.2 世界模型的优先位置
 
-看源码时很容易先盯住 `Agent`，因为智能体看起来是系统核心。但在 Generative Agents 中，`Agent` 离不开世界。它的每一步都要依赖世界模型。初始化时，agent 要根据坐标找到自己所在 tile。计划行动时，agent 要把文字计划落到地址。感知时，agent 要从附近 tile 获取事件。移动时，agent 要通过 `Maze.find_path()` 找路。对话时，agent 要知道自己和对方是否在同一可交互空间。回放时，系统要把 agent 坐标和动作转成前端可展示数据。所以，世界模型不是背景资源，而是 agent 行为的地基。如果世界模型错了，LLM 再强也会表现奇怪。例如：
+看源码时很容易先盯住 `Agent`，因为智能体看起来是系统核心。但在 Generative Agents 中，`Agent` 离不开世界。它的每一步都要依赖世界模型。初始化时，agent 要根据坐标找到自己所在 tile。计划行动时，agent 要把文字计划落到地址。感知时，agent 要从附近 tile 获取事件。移动时，agent 要通过 `Maze.find_path()` 找路。对话时，agent 要知道自己和对方是否在同一可交互空间。回放时，系统要把 agent 坐标和动作转成前端可展示数据。世界模型不是背景资源，而是 agent 行为的地基。如果世界模型错了，LLM 再强也会表现奇怪。例如：
 
 - 计划去咖啡馆，却走到宿舍。
 - 在墙里穿行。
@@ -56,63 +58,75 @@ flowchart TD
 
 ### 可运行脚手架：先把世界模型跑出来
 
-源码片段只有在运行结果旁边才有意义。第 14 章配套了一个最小脚手架，专门演示 `maze.json`、`Maze`、`Tile`、`Event` 和 `Spatial` 如何一起工作。它不调用 LLM，也不依赖外部 API，只读取项目里的真实地图和伊莎贝拉的真实角色配置。
+源码片段只有在运行结果旁边才有意义。第 14 章配套了一个最小脚手架，专门把第 13 章的 `book-config-ai-seminar` 回放结果放回世界模型中观察。它不调用 LLM，也不依赖外部 API，只读取项目里的真实地图、真实感知配置、阿伊莎的真实角色配置，以及第 13 章生成的 `movement.json`。
 
 从仓库根目录运行：
 
 ```bash
-.venv/bin/python docs/book/scaffolds/part_03/ch14_world_model_demo.py
+python docs/book/scaffolds/part_03/ch14_world_model_demo.py
 ```
 
-本机实际输出如下：
+输出结构如下：
 
 ```text
 Chapter 14 world-model scaffold
 ======================================
+source_replay: generative_agents/results/compressed/book-config-ai-seminar/movement.json
 maze_json: generative_agents/frontend/static/assets/village/maze.json
+data_config: generative_agents/data/config.json
+agent_json: generative_agents/frontend/static/assets/village/agents/阿伊莎/agent.json
 world: the Ville
 size: width=140, height=100, tile_size=32
 address_keys: world -> sector -> arena -> game_object
 
-Tile and address
-target_address: the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位
-address_tile_count: 11
-chosen_tile: (72, 23)
-tile_address: the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位
+Replay frame -> Maze tile
+frame: 1
+阿伊莎:
+  coord: (119, 24)
+  replay_location: 奥克山学院，图书馆，图书馆桌子
+  replay_action: 💬 整理桌面资料，迎接克劳斯入座
+克劳斯:
+  coord: (119, 24)
+  replay_location: 奥克山学院，图书馆，图书馆桌子
+  replay_action: 💬 克劳斯与阿伊莎以奖学金分配中"参与度评分"为例，用细读方法拆解校园智能体的采集边界、价值偏向与权力预设，探讨是否应量化社区隐形互助活动。
+tile_at_coord: coord[119,24]
+tile_address: the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子
 tile_collision: False
-tile_events:
-  - 咖啡馆顾客座位 此时 空闲 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
-  - 伊莎贝拉此时检查咖啡机和研磨设备 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+address_tile_count: 4
+address_tiles: [(119, 22), (119, 24), (122, 22), (122, 24)]
 
-Path and perception
-src_coord: (72, 14)
-path_length: 22
-vision_scope_count: 81
-same_arena_tiles_in_scope: 40
+Perception from this tile
+percept_config: mode=box, vision_r=8, att_bandwidth=8
+vision_scope_count: 289
+same_arena: the Ville -> 奥克山学院 -> 图书馆
+same_arena_tiles_in_scope: 67
 
 Spatial memory
-find_address('准备睡觉'): the Ville:伊莎贝拉的公寓:主人房:床
-after add_leaf cafe leaves: 冰箱, 咖啡馆顾客座位, 烹饪区, 厨房水槽, 咖啡馆柜台后面, 钢琴
+阿伊莎.find_address('准备睡觉'): the Ville:奥克山学院宿舍:阿伊莎的房间:床
+阿伊莎 known library leaves: 图书馆沙发, 图书馆桌子, 书架
 
 image: docs/book/assets/chapter_14/ch14_world_model_demo.png
 ```
 
-![图 14-2：世界模型脚手架输出的路径、视野和地址候选 tile](../../assets/chapter_14/ch14_world_model_demo.png)
+![图 14-2：第 13 章回放帧在世界模型中的 tile、视野和地址候选范围](../../assets/chapter_14/ch14_world_model_demo.png)
 
-*图 14-2：第 14 章脚手架生成的可视化结果。绿色是伊莎贝拉初始坐标，红色是目标对象 tile，蓝色是 `Maze.find_path()` 算出的路径，黄色是 `vision_r=4` 的感知范围，橙色是同一地址对应的候选 tile。*
+*图 14-2：第 14 章脚手架从第 13 章的 `book-config-ai-seminar` 回放结果下钻世界模型。紫色是阿伊莎和克劳斯所在 tile，橙色是“图书馆桌子”这个地址对应的 4 个候选 tile，黄色是默认 `vision_r=8` 的感知范围，蓝色是同一 arena 内的可感知候选 tile，灰色是 collision tile。*
 
 这段输出把后面的源码片段连成了一个完整链路。
 
 | 输出结果 | 对应源码 | 说明 |
 | --- | --- | --- |
 | `size: width=140, height=100` | `Maze.__init__()` | `maze.json` 中的地图尺寸被加载成后端二维 tile 网格。 |
-| `target_address` 与 `address_tile_count: 11` | `Maze.address_tiles` | 一个语义地址可以对应多个地图格子，角色行动需要在这些候选 tile 中落点。 |
-| `tile_events` | `Tile.add_event()`、`Event.__str__()` | Tile 不只是坐标，还保存对象状态和角色事件，后续感知会读取这些事件。 |
-| `path_length: 22` | `Maze.find_path()` | 从伊莎贝拉初始坐标到咖啡馆顾客座位，需要后端寻路，而不是 LLM 逐格决定移动。 |
-| `vision_scope_count: 81` | `Maze.get_scope()` | `vision_r=4` 会形成 9x9 的方形视野，一共 81 个 tile。 |
-| `same_arena_tiles_in_scope: 40` | `Agent.percept()` 的 arena 过滤 | 视野范围不是全部可感知事件，还要经过同一 arena 过滤。 |
-| `find_address('准备睡觉')` | `Spatial.find_address()` | 角色自己的空间记忆能把“睡觉”这类行为映射到自己的床。 |
-| `after add_leaf cafe leaves` | `Spatial.add_leaf()` | 角色感知到新对象后，空间记忆可以增加新的地点叶子。 |
+| `source_replay` 与 `frame: 1` | `movement.json` | 脚手架读取第 13 章压缩后的真实回放帧，而不是重新构造一个独立示例。 |
+| `coord: (119, 24)` | `movement.json` 中的 `movement` | 回放坐标直接来自阿伊莎和克劳斯在第 13 章的仿真输出。 |
+| `tile_address` | `Maze.tile_at()`、`Tile.address` | `[119, 24]` 被后端解释为 `the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子`。 |
+| `address_tile_count: 4` | `Maze.address_tiles` | 一个语义地址可以对应多个地图格子，“图书馆桌子”在地图上有 4 个候选 tile。 |
+| `percept_config` 与 `vision_scope_count: 289` | `data/config.json`、`Maze.get_scope()` | 项目默认 `vision_r=8`，所以形成 17x17 的方形视野，共 289 个 tile。 |
+| `same_arena_tiles_in_scope: 67` | `Agent.percept()` 的 arena 过滤 | 视野范围不是全部可感知事件，还要经过同一 arena 过滤。 |
+| `阿伊莎.find_address('准备睡觉')` | `Spatial.find_address()` | 角色自己的空间记忆能把“睡觉”这类行为映射到自己的床。 |
+| `阿伊莎 known library leaves` | `Spatial.tree` | 阿伊莎的主观空间记忆中已经知道图书馆沙发、图书馆桌子和书架。 |
+
+这些输出值都有明确来源。`source_replay` 来自第 13 章生成的 `generative_agents/results/compressed/book-config-ai-seminar/movement.json`；`maze_json` 来自项目真实地图；`data_config` 来自项目默认感知配置；`agent_json` 来自阿伊莎的角色配置。脚手架把同一帧回放交给 `Maze`、`Tile` 和 `Spatial` 解释：坐标落在哪个 tile，tile 属于哪个地址，地址有多少候选格，默认视野覆盖多少 tile，同一 arena 中还剩多少可感知候选。
 
 有了这个脚手架，后面读 `Tile`、`Maze`、`Spatial` 和 `Agent.percept()` 时，就不是在背类名，而是在解释一个已经跑出来的现象。
 
@@ -148,13 +162,25 @@ generative_agents/frontend/static/assets/village/maze.json
 the Ville
 ```
 
-虽然很多地点和角色已经中文化，但 world 名称保留了英文。这不影响后端逻辑，因为它只是地址层级中的根。`tile_size` 是前端 tile 像素大小。当前是 32。`size` 表示地图尺寸。源码中：
+虽然很多地点和角色已经中文化，但 world 名称保留了英文。这不影响后端逻辑，因为它只是地址层级中的根。`tile_size` 是前端 tile 像素大小。当前是 32。`size` 表示地图尺寸。可以直接从 `maze.json` 验证这些值：
+
+```bash
+python -c "import json; m=json.load(open('generative_agents/frontend/static/assets/village/maze.json', encoding='utf-8')); print(m['world'], m['tile_size'], m['size'], m['tile_address_keys'])"
+```
+
+输出会显示：
+
+```text
+the Ville 32 [100, 140] ['world', 'sector', 'arena', 'game_object']
+```
+
+源码中：
 
 ```python
 self.maze_height, self.maze_width = config["size"]
 ```
 
-因此当前地图高度是 100，宽度是 140。`tile_address_keys` 定义地址层级。这是后端空间语义的核心。`tiles` 是所有特殊 tile 的列表。每个 tile 可能包含坐标、地址、碰撞信息等。
+因此当前地图高度是 100，宽度是 140。脚手架输出里的 `width=140, height=100` 不是另写了一份配置，而是 `Maze.__init__()` 把 `size: [100, 140]` 拆成 `maze_height=100` 和 `maze_width=140` 后打印出来。`tile_address_keys` 定义地址层级，这是后端空间语义的核心。`tiles` 是所有特殊 tile 的列表。每个 tile 可能包含坐标、地址、碰撞信息等。
 
 ## 14.4 Tile：地图格子的后端表示
 
@@ -188,19 +214,19 @@ def __init__(
 | `collision` | 是否阻挡移动。 | 控制角色能不能走过这个格子，避免穿墙或走进不可达区域。 |
 | `_events` | 当前格子上的事件。 | 让感知系统知道这里发生了什么、谁在这里、对象是否被占用。 |
 
-例如，一个 tile 的地址可能是：
+例如，第 13 章回放中的 `[119, 24]` 这个 tile 地址是：
 
 ```text
-["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
+["the Ville", "奥克山学院", "图书馆", "图书馆桌子"]
 ```
 
 它的层级含义可以这样理解：
 
 ```text
 world: the Ville
-sector: 霍布斯咖啡馆
-arena: 咖啡馆
-game_object: 咖啡馆顾客座位
+sector: 奥克山学院
+arena: 图书馆
+game_object: 图书馆桌子
 ```
 
 如果一个 tile 没有详细地址，它只有 world。如果它有四层地址，说明它绑定到具体 game object。
@@ -248,9 +274,9 @@ flowchart LR
 地图本身只是几何结构。Event 让地图变成可感知世界。一个 tile 可能包含：
 
 ```text
-咖啡馆顾客座位
-伊莎贝拉此时准备情人节派对材料
-阿伊莎此时与伊莎贝拉对话
+图书馆桌子
+阿伊莎此时整理桌面资料
+克劳斯此时与阿伊莎讨论参与度评分
 ```
 
 这些 event 会被 `Agent.percept()` 收集。如果某个 agent 看到了它们，它会把新事件写入 memory stream。这条链路是：
@@ -306,11 +332,11 @@ for i in range(self.maze_height):
 它让系统能够从地址反查坐标。例如：
 
 ```text
-"the Ville:霍布斯咖啡馆:咖啡馆"
+"the Ville:奥克山学院:图书馆"
   -> 一组 tile 坐标
 ```
 
-角色计划去咖啡馆时，最终必须通过这个索引找到可走坐标。
+角色计划去图书馆讨论时，最终必须通过这个索引找到可走坐标。
 
 ## 14.8 地址层级：world、sector、arena、game_object
 
@@ -370,7 +396,7 @@ the Ville
 如果地址只有一个字符串，会很难推理。例如：
 
 ```text
-霍布斯咖啡馆咖啡馆顾客座位
+奥克山学院图书馆图书馆桌子
 ```
 
 这个字符串可以用，但系统无法轻易知道它属于哪个地点、哪个区域、哪个对象。分层地址能支持三类操作。第一，地点选择。模型可以先选 sector，再选 arena，再选 object。这比一次性让模型选完整地址更稳定。第二，感知过滤。`Agent.percept()` 会限制同一 arena 内的事件：
@@ -522,13 +548,13 @@ def find_address(self, hint, as_list=True):
 
 ## 14.15 Spatial.add_leaf()
 
-`Spatial.add_leaf()` 用来更新角色空间记忆。当角色感知到一个带 game_object 的 tile，会把这个地址加入自己的 tree。这意味着角色“知道了”这个地方。例如，角色进入霍布斯咖啡馆后，可能看到：
+`Spatial.add_leaf()` 用来更新角色空间记忆。当角色感知到一个带 game_object 的 tile，会把这个地址加入自己的 tree。这意味着角色“知道了”这个地方。例如，角色进入奥克山学院图书馆后，可能看到：
 
 ```text
-the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
+the Ville -> 奥克山学院 -> 图书馆 -> 书架
 ```
 
-于是它的空间记忆中加入这个叶子。这样，后续计划“弹钢琴”或“去咖啡馆”时，角色更可能选择正确地点。这与论文中的 memory stream 不同。Spatial memory 不是事件记忆，而是地点知识。它不回答“发生了什么”，而回答“哪里有什么”。
+于是它的空间记忆中加入这个叶子。这样，后续计划“查资料”或“去图书馆讨论”时，角色更可能选择正确地点。这与论文中的 memory stream 不同。Spatial memory 不是事件记忆，而是地点知识。它不回答“发生了什么”，而回答“哪里有什么”。
 
 ## 14.16 世界模型如何服务感知
 
@@ -546,6 +572,24 @@ y_range = [
 ]
 coords = product(x_range, y_range)
 ```
+
+`vision_r` 来自感知配置。项目默认值在：
+
+```text
+generative_agents/data/config.json
+```
+
+对应片段是：
+
+```json
+"percept": {
+  "mode": "box",
+  "vision_r": 8,
+  "att_bandwidth": 8
+}
+```
+
+第 14 章脚手架直接读取这个默认配置，所以输出 `percept_config: mode=box, vision_r=8, att_bandwidth=8` 和 `vision_scope_count: 289`。289 来自 17x17 的方形视野。阿伊莎和克劳斯所在的 `[119, 24]` 附近虽然有 289 个 tile 会先进入空间范围，但实际能进入注意力的事件还要继续受 arena 过滤和 `att_bandwidth` 限制。
 
 然后 `Agent.percept()` 在这些 tile 中筛选同一 arena 的 events。这说明感知由三个条件共同决定：
 
@@ -596,7 +640,7 @@ plan text
 priority = [i for i in self.concepts if concept.event.subject in agents]
 ```
 
-如果选中另一个 agent，就可能进入 `_chat_with()`。这意味着对话不是全局随机发生，而是由空间相遇触发。情人节派对信息之所以会扩散，是因为居民在咖啡馆、学院、宿舍等空间中相遇并对话。如果世界模型不限制相遇，对话传播就会变成广播。
+如果选中另一个 agent，就可能进入 `_chat_with()`。这意味着对话不是全局随机发生，而是由空间相遇触发。第 13 章中，阿伊莎和克劳斯能进入对话，第一层条件就是两人同在“奥克山学院 -> 图书馆 -> 图书馆桌子”这个地址附近；后面的 `_reaction()` 再决定是否真正聊天。如果世界模型不限制相遇，对话传播就会变成广播。
 
 ## 14.19 世界模型如何服务对象占用
 

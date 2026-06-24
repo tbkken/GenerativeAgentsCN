@@ -326,9 +326,20 @@ generative_agents/modules/storage/index.py
 
 - HuggingFace。
 - Ollama。
+- MiniMax。
 - OpenAI。
 
-当前 `data/config.json` 默认是 Ollama embedding。这意味着记忆检索可以完全本地化。
+当前 `data/config.json` 使用 MiniMax embedding：
+
+```json
+{
+  "provider": "minimax",
+  "model": "embo-01",
+  "base_url": "https://api.minimax.chat/v1"
+}
+```
+
+这意味着当前工作区的记忆检索依赖远端 embedding 服务。如果读者要做完全本地化实验，可以把 provider 切换到 Ollama 或 HuggingFace，但要同步确认模型名称、接口地址和向量维度是否能被 LlamaIndex 正常加载。
 
 ## 18.13 add_node() 的索引写入
 

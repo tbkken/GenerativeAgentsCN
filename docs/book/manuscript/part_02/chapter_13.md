@@ -1,441 +1,537 @@
-# 第 13 章 按功能体验 Generative Agents
+# 第 13 章 改配置，自定义智能体实验
 
-项目跑通之后，最重要的是看清它到底提供了哪些能力。先看见功能，再理解功能背后的代码；先知道一个行为在项目中长什么样，再去第三部分追源码实现。
+本章节，我们来尝试只改配置，构造一个新的小场景，观察 Generative Agents 如何从角色设定、空间位置和日程目标中生成新的行为。
 
-Generative Agents 的功能体验路线如下：
+场景的实验名为 `book-config-ai-seminar`。已有角色“阿伊莎”和“克劳斯”在这里作为两个配置槽位，临时改成一场“生成式智能体校园应用讨论会”的参与者。整个过程只触碰两个 `agent.json`，不修改 `start.py`、不新增 prompt、不改地图、不改智能体逻辑。
+
+## 13.1 配置迁移
+
+配置层负责定义角色、地点、目标和日程，具体配置和实验的过程如 图13-1 所示。
 
 ```mermaid
 flowchart LR
-    Replay["回放小镇"] --> Timeline["阅读时间线"]
-    Timeline --> Persona["查看角色定义"]
-    Persona --> Schedule["观察日程"]
-    Schedule --> Perception["理解感知"]
-    Perception --> Memory["查看记忆与检索"]
-    Memory --> Dialogue["观察对话"]
-    Dialogue --> Reflection["理解反思"]
-    Reflection --> Model["切换模型配置"]
-    Model --> Code["进入源码深读"]
+    Boundary["确认配置边界"] --> Scene["设计新场景"]
+    Scene --> AgentJson["修改两个 agent.json"]
+    AgentJson --> Run["运行 2 step 短实验"]
+    Run --> Log["解读控制台输出"]
+    Log --> Conversation["阅读 conversation.json"]
+    Conversation --> Compressed["压缩并阅读 simulation.md / movement.json"]
+    Compressed --> Transfer["迁移到自己的场景"]
 ```
 
-*图 13-1：Generative Agents 的功能体验路线。先从可见结果进入，再逐步理解角色、日程、感知、记忆、对话、反思和模型适配。*
+*图 13-1：配置迁移路线，先确认配置边界，再用短实验验证配置是否真的改变了智能体行为。*
 
-## 13.1 先把项目当成一个产品体验
 
-`AssociateRetriever`、`Agent.think()`、`poignancy` 这些源码名属于第三部分。功能体验阶段先把 Generative Agents 当成一个小型产品：它能播放一个虚拟小镇，能运行一段仿真，能保存角色活动，能把结果压缩成可回放和可阅读的材料。
+## 13.2 配置层能做什么，不能做什么
 
-体验路径如下。
+先看启动脚本里和角色选择有关的代表性代码：
 
-| 体验顺序 | 要做什么 | 看什么结果 | 建立的直觉 |
-| --- | --- | --- | --- |
-| 1 | 打开 `example` 回放 | 地图上角色在移动、停留、对话 | 这不是聊天窗口，而是小镇仿真 |
-| 2 | 阅读 `example/simulation.md` | 时间线、行动描述、对话内容 | 小镇行为可以被文本复盘 |
-| 3 | 跑 `book-smoke` 最小仿真 | checkpoint 和 compressed 结果 | 项目能从配置生成新结果 |
-| 4 | 查看一个角色的 `agent.json` | 身份、当前状态、生活习惯、空间记忆 | 角色不是临时 prompt，而是结构化对象 |
-| 5 | 查看 `data/prompts/` | 日程、对话、反思等 prompt 文件 | 行为不是魔法，很多地方由 prompt 驱动 |
-| 6 | 修改运行参数 | `--agent-count`、`--agents`、`--step`、`--stride` | 实验规模和成本可以控制 |
-| 7 | 尝试 `--resume` | checkpoint 延续运行 | 长实验可以分段推进 |
-| 8 | 查看 `config.json` | LLM、embedding、感知、反思阈值 | 模型和配置会改变小镇行为 |
+```python
+personas = [
+    "阿伊莎", "克劳斯", "玛丽亚", "沃尔夫冈",
+    # ...
+]
 
-第 12 章已经跑出 `book-smoke`，这里再增加一个 `book-party-pair` 实验。`book-party-pair` 只运行伊莎贝拉和阿伊莎，起始时间设为 2024 年 2 月 14 日 08:00，方便观察咖啡馆老板的派对准备和学生的学习日程如何在同一张地图上并行推进。
+if args.agents:
+    selected_personas = [a.strip() for a in args.agents.split(",") if a.strip()]
+    unknown_agents = [a for a in selected_personas if a not in personas]
+    if unknown_agents:
+        raise ValueError("Unknown agents: " + ", ".join(unknown_agents))
+```
 
-## 13.2 体验一：回放系统
+这段代码划定角色选择边界。`--agents` 不能随便传入两个全新的名字，例如 `张三`、`李四`，因为 `start.py` 会先检查角色是否在 `personas` 列表中。新增角色名、头像、注册逻辑和资源路径，需要进入源码和资源注册流程。
 
-回放系统是最适合入门的功能，因为它不要求先理解模型调用。只要有 compressed 结果，就能通过浏览器观看。
+尽管如此，配置层仍然可以做很多事。`--agents "阿伊莎,克劳斯"` 选择的是两个已注册角色槽位，而角色的背景、目标、生活习惯、当天计划和初始坐标都来自各自的 `agent.json`。只改这两个 JSON，就能把默认人物临时改造成新的实验人物。
 
-先启动本地回放服务：
+角色名仍然使用“阿伊莎”和“克劳斯”，角色设定改成“生成式智能体校园应用讨论会”的两位参与者。配置迁移的完整链路由此展开。
+
+## 13.3 先设计场景，再写 JSON
+
+写配置之前，把实验设计成一句清楚的话：
+
+> 2024 年 2 月 13 日上午 10 点，阿伊莎和克劳斯在奥克山学院图书馆桌子旁讨论生成式智能体在校园治理和学习公平中的应用。
+
+这句话拆开就是配置目标。
+
+| 设计项 | 实验取值 | 对应配置或命令 |
+| --- | --- | --- |
+| 实验名 | `book-config-ai-seminar` | `--name book-config-ai-seminar` |
+| 时间 | `20240213-10:00` | `--start "20240213-10:00"` |
+| 参与者 | 阿伊莎、克劳斯 | `--agents "阿伊莎,克劳斯"` |
+| 地点 | 奥克山学院，图书馆，图书馆桌子 | `coord: [119, 24]` |
+| 阿伊莎的任务 | 主持生成式智能体校园应用讨论 | `currently`、`scratch.daily_plan` |
+| 克劳斯的任务 | 从社会影响和公平性角度提问 | `currently`、`scratch.daily_plan` |
+| 运行长度 | 2 个 step，每步 10 分钟 | `--step 2 --stride 10` |
+
+场景设计要落在项目已有地图上。地点复用原地图里的奥克山学院图书馆，角色复用已注册的阿伊莎和克劳斯。配置迁移先在现有边界内做出一个新的可信情境。
+
+`coord: [119, 24]` 不是从地图截图里猜出来的，而是从地图配置文件反查出来的。地图文件在：
+
+```text
+generative_agents/frontend/static/assets/village/maze.json
+```
+
+`maze.json` 里的每个 tile 都记录了自己的 `coord` 和 `address`。`coord` 是地图网格坐标，格式是 `[x, y]`，`x` 从左向右增加，`y` 从上向下增加；前端渲染时再按 32 像素的 tile 宽度换算成屏幕位置。`address` 是空间地址，在这个项目里按“区域、房间、对象”组织。例如“奥克山学院，图书馆，图书馆桌子”对应的地址数组是：
+
+```json
+["奥克山学院", "图书馆", "图书馆桌子"]
+```
+
+进入 `generative_agents` 目录后，可以用下面这条命令反查这个地址下有哪些可用坐标：
+
+```bash
+python -c "import json; m=json.load(open('frontend/static/assets/village/maze.json', encoding='utf-8')); print([t['coord'] for t in m['tiles'] if t.get('address') == ['奥克山学院','图书馆','图书馆桌子'] and not t.get('collision')])"
+```
+
+输出如下：
+
+```text
+[[119, 22], [122, 22], [119, 24], [122, 24]]
+```
+
+同一个地点可能覆盖多个 tile。这里的四个坐标都属于“图书馆桌子”，并且都不是碰撞格子，角色可以站在上面。本章选择 `[119, 24]`，是因为它已经能把两个角色放到同一个可交互地点。换成 `[119, 22]`、`[122, 22]` 或 `[122, 24]`，也仍然会落在同一张图书馆桌子附近。
+
+还可以反向验证某个坐标的地址：
+
+```bash
+python -c "import json; m=json.load(open('frontend/static/assets/village/maze.json', encoding='utf-8')); print([t for t in m['tiles'] if t.get('coord') == [119, 24]][0])"
+```
+
+输出结果会显示：
+
+```text
+{'coord': [119, 24], 'address': ['奥克山学院', '图书馆', '图书馆桌子']}
+```
+
+控制台日志里的 `coord[119,24]: the Ville:奥克山学院:图书馆:图书馆桌子`，就是这条地图配置在运行时被后端读入后的结果。以后换场景时，先用 `maze.json` 找到目标地点的坐标，再把其中一个非碰撞坐标填进角色的 `agent.json`。
+
+## 13.4 备份并修改阿伊莎的配置
+
+要改的文件是：
+
+```text
+generative_agents/frontend/static/assets/village/agents/阿伊莎/agent.json
+generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
+```
+
+动手前先备份。下面是 PowerShell 写法；macOS 或 Linux 下用 `cp` 做同样的文件复制即可。
+
+```powershell
+cd generative_agents
+Copy-Item "frontend/static/assets/village/agents/阿伊莎/agent.json" "$env:TEMP/aisha.agent.json"
+Copy-Item "frontend/static/assets/village/agents/克劳斯/agent.json" "$env:TEMP/klaus.agent.json"
+```
+
+阿伊莎的配置不需要整份重写。保留 `name`、`portrait`、`spatial` 等字段，只改三个关键部分：初始坐标、当前状态、角色心理草稿。
+
+```json
+{
+  "name": "阿伊莎",
+  "coord": [119, 24],
+  "currently": "阿伊莎正在组织一次关于生成式智能体如何服务校园学习的讨论会。她约了克劳斯上午10点在奥克山学院图书馆桌子旁交流，准备把文学研究中的细读方法和智能体行为观察结合起来。",
+  "scratch": {
+    "age": 20,
+    "innate": "好奇、善于提问、组织力强",
+    "learned": "阿伊莎是奥克山学院一名关注生成式智能体的学生。她熟悉文学细读，也在尝试把这种方法用于观察智能体的行动、对话和记忆。",
+    "lifestyle": "阿伊莎晚上10点左右上床睡觉，早上6点左右醒来，上午通常在图书馆整理阅读材料，下午参加课程或讨论。",
+    "daily_plan": "阿伊莎上午10点在奥克山学院图书馆桌子旁主持一场关于生成式智能体校园应用的讨论，并请克劳斯从社会影响角度提出问题。"
+  }
+}
+```
+
+这段配置有四个观察点。
+
+`coord` 把阿伊莎放到图书馆桌子旁。它不是自然语言设定，而是前端地图坐标；如果坐标和目标地点不一致，角色会在回放里出现在错误的位置。
+
+`currently` 是角色的当前大目标。它告诉模型阿伊莎此刻关心什么，也把克劳斯和上午 10 点的会面写进上下文。
+
+`scratch.learned` 给角色长期背景。这里把阿伊莎从“莎士比亚语言研究”改成“关注生成式智能体的学生”，但仍保留“细读”这个能力，让新设定和旧人物气质之间有连续性。
+
+`scratch.daily_plan` 把目标压进当天日程。只有 `currently` 还不够，日程字段会影响模型如何拆解一天的计划，也会影响 10 点这一段是否真的围绕讨论会展开。
+
+## 13.5 修改克劳斯的配置
+
+克劳斯的配置要和阿伊莎形成互补。阿伊莎负责“细读智能体行为”，克劳斯负责“社会影响和公平性问题”。两个角色必须有共同主题，也必须有视角差异，否则对话容易变成互相复述。
+
+```json
+{
+  "name": "克劳斯",
+  "coord": [119, 24],
+  "currently": "克劳斯正在准备一场关于生成式智能体社会影响的讨论。他约了阿伊莎上午10点在奥克山学院图书馆桌子旁交流，重点关注智能体系统在校园和社区治理中的公平性问题。",
+  "scratch": {
+    "age": 20,
+    "innate": "善于倾听、关心公平、乐于辩论",
+    "learned": "克劳斯是奥克山学院社会学专业的学生。他关注技术如何改变社区关系，尤其关心生成式智能体系统是否会放大或缓解不平等。",
+    "lifestyle": "克劳斯晚上11点左右睡觉，早上7点左右醒来，上午常在图书馆写作，下午会和同学讨论社会议题。",
+    "daily_plan": "克劳斯上午10点在奥克山学院图书馆桌子旁与阿伊莎讨论生成式智能体的校园应用，并记录其中的社会影响问题。"
+  }
+}
+```
+
+这段配置的重点是“互相指向”。阿伊莎的 `currently` 里写到克劳斯，克劳斯的 `currently` 里写到阿伊莎；两人的 `daily_plan` 都把上午 10 点、奥克山学院图书馆、生成式智能体讨论写清楚。多智能体仿真不是把两个孤立人设扔到地图上，而是要给他们一个足够明确的共同场域。
+
+保存完两个 JSON 后，就可以启动自定义实验了。
+
+## 13.6 运行配置实验
+
+进入项目运行目录：
 
 ```bash
 cd generative_agents
-python replay.py
 ```
 
-本机如果没有全局 `python` 命令，可以使用项目虚拟环境执行：
+启动一个 2 step 的短实验：
 
 ```bash
-../.venv/bin/python replay.py
+python start.py --name book-config-ai-seminar --start "20240213-10:00" --step 2 --stride 10 --agents "阿伊莎,克劳斯" --verbose info --log book-config-ai-seminar.log
 ```
 
-浏览器打开项目内置示例：
+这条命令的含义很直接：从 2024 年 2 月 13 日 10:00 开始，只运行阿伊莎和克劳斯两个角色，连续推进两次，每次推进 10 分钟，并把日志写到 checkpoint 目录下。
+
+如果控制台偶尔出现下面这样的模型调用重试信息，不要立刻判定实验失败：
 
 ```text
-http://127.0.0.1:5000/?name=example&step=0&speed=2&zoom=0.6
+LLMModel.completion() caused an error: not enough values to unpack (expected 3, got 1)
 ```
 
-![图 13-2：example 完整小镇回放](../../assets/chapter_13/fig-13-2-example-replay.png)
+先继续看后续是否进入 `Simulate Step`，是否写出 `simulate-*.json`，以及日志摘要里是否出现 `F:0`。本次实验出现过短暂重试，但随后正常完成两个 step，并生成了 checkpoint 和 compressed 结果。
 
-*图 13-2：`example` 完整小镇回放。顶部显示 2024 年 2 月 13 日 06:00:10，底部列出 25 个角色，左上角显示对话记录。*
+## 13.7 控制台输出不是普通日志
 
-回放页面呈现三件事：
-
-| 可见现象 | 背后的系统能力 |
-| --- | --- |
-| 角色在地图上移动 | 行动已经落到坐标和路径上 |
-| 角色停留在某个地点 | 日程和空间 grounding 已经产生作用 |
-| 角色出现对话气泡 | 对话被记录、压缩并进入前端回放 |
-
-如果只看论文，Smallville 很容易停留在想象里；打开回放后可以立刻看出，“小镇”在项目里不是比喻，而是具体的地图、坐标、角色和时间线。
-
-图 13-2 的重点不只是“有地图”。左上角对话记录显示地点、说话人和发言内容，底部角色栏显示完整角色集合，中间地图显示角色分布和行动标签。回放系统把 `movement.json` 中的时间、位置、行动和对话全部还原到同一个界面里。
-
-## 13.3 体验二：Markdown 时间线
-
-同一个示例结果还可以直接阅读：
+启动仿真后，控制台会先打印两个角色的 reset 摘要。下面是阿伊莎的代表性片段：
 
 ```text
-generative_agents/results/compressed/example/simulation.md
+----------                         阿伊莎.reset                          ----------
+name: 阿伊莎
+currently: 阿伊莎正在组织一次关于生成式智能体如何服务校园学习的讨论会。她约了克劳斯上午10点在奥克山学院图书馆桌子旁交流，准备把文学研究中的细读方法和智能体行为观察结合起来。
+tile:
+  coord[119,24]: the Ville:奥克山学院:图书馆:图书馆桌子
+  events:
+    e_0: 图书馆桌子 此时 空闲 @ the Ville:奥克山学院:图书馆:图书馆桌子
+    e_1: 阿伊莎 此时 空闲 @ the Ville:奥克山学院:图书馆:图书馆桌子
+    e_2: 克劳斯 此时 空闲 @ the Ville:奥克山学院:图书馆:图书馆桌子
 ```
 
-`simulation.md` 是理解项目行为的关键材料。它比前端动画更适合审稿、复盘和写实验报告。
+这段输出先验证配置有没有被加载。`currently` 已经是新场景，`coord[119,24]` 已经落到图书馆桌子，`events` 里同时出现阿伊莎和克劳斯，说明两个角色被放在了同一个可交互空间。读控制台时先看这些硬证据，再看模型生成了什么。
 
-| 阅读对象 | 关注问题 | 说明 |
-| --- | --- | --- |
-| 时间戳 | 小镇时间是否按 step 和 stride 推进 | 判断仿真节奏是否正常 |
-| 角色行动 | 行动是否符合身份和地点 | 判断行为是否可信 |
-| 对话内容 | 对话是否传播了信息 | 判断社交和信息扩散是否发生 |
-| 地点描述 | 行动是否落在具体空间 | 判断计划是否完成 grounding |
-| 长时间变化 | 角色是否持续保留目标 | 判断记忆、日程和反思是否起作用 |
-
-`simulation.md` 的第一层判断是角色行为是否连续。如果一个角色上午说要参加活动，下午完全忘记；如果两个角色刚聊完，下一步像陌生人一样互动；如果角色不停输出空泛动作，这些都是后续源码和 prompt 需要排查的问题。
-
-`book-party-pair` 的时间线给出了一个更小、更容易检查的样例：
-
-| 小镇时间 | 伊莎贝拉 | 阿伊莎 |
-| --- | --- | --- |
-| `20240214-08:00` | 在霍布斯咖啡馆打开大门和照明设备 | 在宿舍书桌前准备《哈姆雷特》原文和笔记本 |
-| `20240214-08:10` | 检查咖啡机和研磨设备 | 阅读《哈姆雷特》第一幕 |
-| `20240214-08:20` | 到哈维奥克供应店准备烘焙面包的材料 | 继续在宿舍阅读和做笔记 |
-| `20240214-08:30` | 回到霍布斯咖啡馆烘焙新鲜面包 | 标注第一幕中的经典独白与语言技巧 |
-| `20240214-08:50` | 在咖啡馆顾客座位区清洁打扫 | 到奥克山学院图书馆标注第二幕中的双关语、隐喻与意象 |
-
-这张表直接说明两个问题。第一，角色行为不是随机句子，而是贴着身份和日程推进；第二，`simulation.md` 比动画更适合做证据摘录，可以快速看到角色在什么时间、什么地点、做了什么。
-
-## 13.4 体验三：角色定义
-
-角色定义是 Generative Agents 的入口之一。每个角色都有自己的 `agent.json`，路径形如：
+接着进入第一个仿真步：
 
 ```text
-generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
+==========       Simulate Step[1/2, time: 2024-02-13 10:00:00]        ==========
+阿伊莎 is making schedule...
+阿伊莎 -> wake_up
+阿伊莎 -> schedule_init
+阿伊莎 -> schedule_daily
+阿伊莎 -> schedule_decompose
+阿伊莎 percept 0/4 concepts
+阿伊莎 is determining action...
+阿伊莎 -> determine_sector
+阿伊莎 -> determine_arena
+阿伊莎 -> determine_object
+阿伊莎 -> describe_object
 ```
 
-以伊莎贝拉为例，先看这些字段：
+这不是普通流水日志。它把一个智能体在一个 step 内经历的关键阶段按顺序摊开：先生成当天日程，再感知周围概念，然后决定行动地点、场所、对象，最后描述对象状态。配置正是在这条推理链条中变成具体行为。
 
-| 字段 | 中文意思 | 体验时看什么 |
-| --- | --- | --- |
-| `name` | 角色姓名 | 行动、对话、记忆都以这个名字作为主体 |
-| `coord` | 初始坐标 | 回放第 0 帧中的角色起点 |
-| `currently` | 当前关注状态 | 伊莎贝拉一开始就关心情人节派对 |
-| `scratch.innate` | 先天特质 | 影响角色说话和行动风格 |
-| `scratch.learned` | 后天经历 | 定义职业、背景和长期身份 |
-| `scratch.lifestyle` | 生活习惯 | 影响起床、睡觉和日程节奏 |
-| `scratch.daily_plan` | 日常计划 | 给日程生成提供默认生活结构 |
-| `spatial.address.living_area` | 居住地址 | 决定角色睡觉、回家和生活区域 |
-| `spatial.tree` | 已知地点树 | 限制角色能选择哪些地点和对象 |
-
-这里最重要的结论是：角色不是一段“你扮演某某”的 prompt，而是一组会进入多个系统模块的配置。`currently` 会影响日程和对话，`scratch` 会进入角色基础描述，`spatial` 会影响地点选择。后面读源码时，看到 `Scratch._base_desc()`、`Spatial`、`Schedule` 和 `Associate`，就能把它们和这个角色文件对上。
-
-`book-party-pair` 的两个角色配置可以直接对照运行结果：
-
-| 字段 | 伊莎贝拉 | 阿伊莎 | 行为影响 |
-| --- | --- | --- | --- |
-| `currently` | 计划 2 月 14 日 17:00 在霍布斯咖啡馆举办情人节派对 | 正在研究莎士比亚戏剧中的语言运用 | 伊莎贝拉的日程围绕咖啡馆和派对准备，阿伊莎的日程围绕文学研究 |
-| `scratch.innate` | 友好、外向、好客 | 好奇、坚定、独立 | 影响后续对话和行动风格 |
-| `scratch.learned` | 霍布斯咖啡馆老板 | 热爱文学探索的大学生 | 决定“在哪里活动”和“做什么事” |
-| `scratch.lifestyle` | 晚上 11 点睡觉，早上 6 点醒来 | 晚上 10 点睡觉，早上 6 点醒来，下午 5 点吃晚饭 | 约束日程节奏 |
-| `scratch.daily_plan` | 每天早上 8 点开放咖啡馆，站在柜台前直到晚上 8 点 | 10 点到 14 点去图书馆上课，14 点后在图书馆学习 | 直接影响 08:00 到 09:00 的细粒度计划 |
-| `spatial.address.living_area` | 伊莎贝拉的公寓，主人房 | 奥克山学院宿舍，阿伊莎的房间 | 决定角色初始生活空间 |
-
-## 13.5 体验四：日程和行动
-
-跑完一个仿真后，可以在 `simulation.md` 中观察每个角色的行动节奏。日程结果先从行为文本里看，再进入 `Schedule` 源码。
-
-| 观察点 | 好结果 | 有问题的结果 |
-| --- | --- | --- |
-| 起床和睡觉 | 符合角色生活习惯 | 深夜仍然随机社交，或白天长期睡觉 |
-| 工作和生活 | 咖啡馆老板在咖啡馆，学生在校园或宿舍 | 角色经常出现在和身份无关的地点 |
-| 行动粒度 | 行动有时间、地点和对象 | 行动只是“思考”“继续计划”这类空泛文本 |
-| 计划连续性 | 前后行动有生活节奏 | 每一步像重新随机生成 |
-
-控制日程体验的入口主要有三类：
-
-| 体验入口 | 文件或参数 | 作用 |
-| --- | --- | --- |
-| 角色生活设定 | `agent.json` 中的 `scratch.lifestyle`、`scratch.daily_plan` | 决定日程生成的基础倾向 |
-| 仿真时间 | `start.py --start`、`--step`、`--stride` | 决定能观察到哪段生活 |
-| 日程 prompt | `data/prompts/wake_up.txt`、`schedule_init.txt`、`schedule_daily.txt`、`schedule_decompose.txt` | 决定 LLM 如何生成和拆解计划 |
-
-下面的小实验只运行伊莎贝拉和阿伊莎，观察伊莎贝拉的行动是否围绕咖啡馆和派对展开。
-
-```bash
-python start.py \
-  --name book-party-pair \
-  --start "20240214-08:00" \
-  --step 6 \
-  --stride 10 \
-  --agents "伊莎贝拉,阿伊莎" \
-  --verbose info
-```
-
-本次实际运行使用 MiniMax 配置，生成了 6 个 checkpoint：
-
-| 文件 | 对应小镇时间 |
-| --- | --- |
-| `simulate-20240214-0800.json` | 08:00 |
-| `simulate-20240214-0810.json` | 08:10 |
-| `simulate-20240214-0820.json` | 08:20 |
-| `simulate-20240214-0830.json` | 08:30 |
-| `simulate-20240214-0840.json` | 08:40 |
-| `simulate-20240214-0850.json` | 08:50 |
-
-运行结束后执行压缩：
-
-```bash
-python compress.py --name book-party-pair
-```
-
-压缩成功后，控制台输出：
+阿伊莎的日程摘要中出现了新设定：
 
 ```text
-Compression completed.
+10:00~11:00: 在奥克山学院图书馆桌子旁主持生成式智能体校园应用讨论会，与克劳斯从社会影响角度交流:
+  10:00~10:05: 整理桌面资料，迎接克劳斯入座
+  10:05~10:10: 介绍本次讨论的主题和议程
+  10:10~10:20: 分享上午整理的关于生成式智能体的阅读笔记
+  10:20~10:30: 讨论如何将文学细读方法应用于智能体行为观察
 ```
 
-压缩后阅读生成的时间线文件：
+这段输出说明 `scratch.daily_plan` 没有停留在静态文本里。模型把“一场讨论会”拆成了可执行的小时间片：整理桌面、介绍议程、分享阅读笔记、讨论细读方法。配置写得越具体，日程拆解越容易落到可观察动作上。
+
+克劳斯的输出继续推进到对话决策：
 
 ```text
-generative_agents/results/compressed/book-party-pair/simulation.md
+克劳斯 percept 0/4 concepts
+克劳斯 -> decide_chat
+克劳斯 decides chat with 阿伊莎
+克劳斯 -> summarize_relation
+阿伊莎 -> summarize_relation
+克劳斯 -> generate_chat
+阿伊莎 -> generate_chat
+...
+克劳斯 and 阿伊莎 has chats
 ```
 
-![图 13-3：book-party-pair 起始回放](../../assets/chapter_13/fig-13-3-party-pair-start.png)
+这段输出证明了配置的作用。两个角色不是因为配置里预写了对话才聊天，而是在同一地点、共同日程和互相指向的目标共同作用下触发了 `decide_chat`，随后进入 `generate_chat`。配置改变仿真的前提，智能体系统把前提展开成行为。
 
-*图 13-3：`book-party-pair` 起始回放。顶部时间是 2024 年 2 月 14 日 08:00:10，底部只有伊莎贝拉和阿伊莎两个角色，伊莎贝拉已经前往霍布斯咖啡馆。*
-
-压缩后的 `movement.json` 包含 363 帧，角色列表只有伊莎贝拉和阿伊莎。图 13-3 证明 `--agents "伊莎贝拉,阿伊莎"` 已经生效，也证明最小实验仍然使用完整小镇地图，只是参与仿真的角色变少。
-
-这个小实验不一定立刻出现精彩故事，但它会展示日程、角色设定和对话机会之间的关系。
-
-## 13.6 体验五：感知和空间
-
-Generative Agents 不是让角色全知全能。角色能不能看到某个事件，取决于位置、视野、arena 和注意力带宽。感知体验主要看两个配置：
+每个角色摘要末尾还有 LLM 调用统计：
 
 ```text
-generative_agents/data/config.json
+llm:
+  model: MiniMax-M3
+  summary:
+    total: S:27,F:0/R:28
+    llm_normal: S:27,F:0/R:28
 ```
 
-| 配置 | 中文意思 | 体验影响 |
-| --- | --- | --- |
-| `agent.percept.vision_r` | 视野半径 | 数值越大，角色能看到的附近 tile 越多 |
-| `agent.percept.att_bandwidth` | 注意力带宽 | 数值越大，每步能处理的附近事件越多 |
+`S` 表示成功次数，`F` 表示失败次数，`R` 表示请求次数。`F:0` 加上结果文件生成，说明这次主链路已经跑通。短实验不追求输出多，而是追求证据链清楚。
 
-感知能力可以通过回放和 `simulation.md` 间接观察。两个角色距离很远时，通常不会立刻发生对话；两个角色进入同一场所后，才更可能互相感知并触发反应。这一点很关键，因为信息扩散只有在“角色不是全知”的前提下才有意义。
+## 13.8 读取 conversation.json
 
-![图 13-4：book-party-pair 的空间分离状态](../../assets/chapter_13/fig-13-4-party-pair-spatial.png)
+运行完成后，先看原始对话文件：
 
-*图 13-4：`book-party-pair` 在 08:30:10 的回放。伊莎贝拉位于霍布斯咖啡馆附近，阿伊莎仍在学院生活区，两个角色没有进入同一场所。*
+```text
+generative_agents/results/checkpoints/book-config-ai-seminar/conversation.json
+```
 
-本次实验的 `conversation.json` 是空对象：
+代表性片段如下：
 
 ```json
-{}
+{
+  "20240213-10:00": [
+    {
+      "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子": [
+        [
+          "克劳斯",
+          "早上好，阿伊莎，谢谢你帮我整理资料。今天我们重点聊聊生成式智能体在校园治理中可能放大的公平性问题吧，我昨晚想到几个案例想和你探讨一下。"
+        ],
+        [
+          "阿伊莎",
+          "早上好，克劳斯！校园治理中的公平性问题确实是个很好的切入点。我昨晚也在想，如果我们用细读的方式来拆解智能体的决策路径，也许能更清楚地看到哪些环节容易出现偏差。你先说说你想到的那几个案例吧？"
+        ]
+      ]
+    }
+  ]
+}
 ```
 
-这不是运行失败，而是空间和感知限制的结果。伊莎贝拉的行动线在咖啡馆、供应店和咖啡馆烹饪区之间移动，阿伊莎的行动线在宿舍书桌和学院图书馆之间移动；两个人没有在同一场所近距离相遇，所以对话流程没有启动。
+这段对话同时命中了两个人设。克劳斯从“公平性问题”切入，阿伊莎用“细读方式拆解决策路径”回应。两个关键词都来自配置：克劳斯的 `learned` 和 `daily_plan` 里有社会影响、公平性；阿伊莎的 `learned` 和 `currently` 里有文学细读、智能体行为观察。
 
-感知像一道门：
-
-```mermaid
-flowchart LR
-    World["世界状态<br/>所有角色和对象"] --> Scope["视野范围<br/>vision_r"]
-    Scope --> Arena["同一场所<br/>arena"]
-    Arena --> Bandwidth["注意力带宽<br/>att_bandwidth"]
-    Bandwidth --> Memory["写入角色记忆<br/>event concept"]
-```
-
-*图 13-5：感知不是读取全局世界，而是经过视野、场所和注意力带宽过滤后，才进入角色自己的记忆。*
-
-## 13.7 体验六：记忆和检索
-
-记忆体验的入口不是向量索引，而是两个现象：角色是否记得刚发生的事，角色是否能在后续对话或反思中引用这些事。
-
-记忆相关结果主要出现在：
-
-| 材料 | 能观察什么 |
-| --- | --- |
-| `simulation.md` | 角色后续行动和对话是否引用过去事件 |
-| `conversation.json` | 对话是否被保存 |
-| checkpoint JSON | agent 的 memory、schedule、action 和状态 |
-| `results/checkpoints/<name>/` 下的存储目录 | 向量索引和 memory 状态 |
-
-`book-party-pair` 运行结束后，两个角色都有独立记忆索引：
-
-| 角色 | 记忆目录 | `index_config.json` 中的节点数 |
-| --- | --- | --- |
-| 伊莎贝拉 | `results/checkpoints/book-party-pair/storage/伊莎贝拉/associate/` | `max_nodes: 9` |
-| 阿伊莎 | `results/checkpoints/book-party-pair/storage/阿伊莎/associate/` | `max_nodes: 9` |
-
-项目中的记忆分三类：
-
-| 记忆类型 | 中文意思 | 体验方式 |
-| --- | --- | --- |
-| `event` | 观察到或执行过的事件 | 看角色是否记住附近发生的事 |
-| `chat` | 对话摘要 | 看角色后续是否延续谈过的话题 |
-| `thought` | 计划、反思和高层想法 | 看角色是否形成更稳定的判断 |
-
-检索细节留到第三部分；此处先确定一个事实：这个项目不是把聊天记录塞回 prompt，而是把事件、对话、想法保存成 memory stream，再按相关性、近期性和重要性检索。
-
-从最终 checkpoint 也能看到记忆在增长。伊莎贝拉记住了“打开咖啡馆大门和照明设备”“检查咖啡机和研磨设备”“准备烘焙面包的材料”“烘焙新鲜面包”等事件；阿伊莎记住了“整理书桌”“阅读《哈姆雷特》第一幕”“标注第一幕”“阅读《哈姆雷特》第二幕”等事件。它们都是后续检索和反思的材料。
-
-## 13.8 体验七：对话
-
-对话是最容易被误解的功能。普通聊天应用通常是“一次用户输入，一次模型回答”；Generative Agents 的对话是一条流程，只有在角色感知到对方、判断有必要交流、生成对话、检查重复、判断结束、总结对话之后，才会写回记忆和日程。
-
-对话结果主要看三个位置：
-
-| 位置 | 能看到什么 |
-| --- | --- |
-| 回放页面 | 是否出现对话气泡 |
-| `simulation.md` | 对话内容和发生地点 |
-| `conversation.json` | 按时间保存的对话记录 |
-
-`book-party-pair` 没有触发对话，`conversation.json` 保持为空。这个结果反而更容易说明对话的边界：对话不是每一步都强行生成，而是要先经过感知、距离、关系和 `decide_chat.txt` 判断。想观察真实对话，可以打开 `example` 回放；图 13-2 的左上角已经显示山姆和詹妮弗的对话记录。
-
-对话相关 prompt 位于：
+对话继续向具体案例展开：
 
 ```text
-generative_agents/data/prompts/
+克劳斯：第一个案例是关于智能体辅助的奖学金分配——系统会基于学生的历史数据和参与度评分，但来自资源较少社区的学生可能因为课外活动少而被低估。
+
+阿伊莎：系统里的"参与度评分"具体是怎么定义的？是从学校活动报名数据里提取，还是也包含了课外的志愿服务这类信息？
 ```
 
-对话相关的重点 prompt 文件如下：
+这里已经不是“两个角色寒暄”。模型把配置中的校园应用、公平性、细读方法组合成了一个可讨论的问题：奖学金分配中的参与度评分。评估自定义智能体时，`conversation.json` 是最干净的证据之一，因为它能直接看到角色是否按设定交换信息。
 
-| Prompt | 作用 |
-| --- | --- |
-| `decide_chat.txt` | 判断是否主动发起对话 |
-| `summarize_relation.txt` | 总结双方关系背景 |
-| `generate_chat.txt` | 生成角色发言 |
-| `generate_chat_check_repeat.txt` | 检查是否重复 |
-| `decide_chat_terminate.txt` | 判断对话是否结束 |
-| `summarize_chats.txt` | 总结对话并写入记忆 |
+## 13.9 压缩结果并阅读 simulation.md
 
-对话的关键判断不是“对话是不是好听”，而是“对话有没有改变后续行为”。如果角色聊完后没有记忆、没有日程影响、没有后续引用，那么对话只是展示文本，不是社会仿真的一部分。
+确认 checkpoint 正常后，再生成前端回放和人工阅读材料：
 
-## 13.9 体验八：反思
+```bash
+python compress.py --name book-config-ai-seminar
+```
 
-反思不是每一步都会发生。项目会累积事件和对话的重要性，达到阈值后才触发 reflection。相关配置是：
+命令完成后会生成：
 
 ```text
-agent.think.poignancy_max
+generative_agents/results/compressed/book-config-ai-seminar/movement.json
+generative_agents/results/compressed/book-config-ai-seminar/simulation.md
 ```
 
-当前配置中这个值是 `150`。这意味着小规模、短 step 的烟雾测试通常不容易触发反思，这是正常现象。想体验反思，需要更长仿真、更多事件，或者调低阈值做实验。
+有了 `movement.json`，回放页面就能把这次配置实验画出来。如果回放服务已经启动，可以打开：
 
-`book-party-pair` 只跑了 6 个 step，伊莎贝拉和阿伊莎的记忆节点都还没有达到 `poignancy_max: 150` 的反思阈值，因此没有生成新的 reflection thought。这个结果和配置一致，不是反思功能失效。
+```text
+http://127.0.0.1:5000/?name=book-config-ai-seminar&step=1&speed=0&zoom=0.75
+```
 
-反思结果主要看三个位置：
+![图 13-2：book-config-ai-seminar 的回放画面](../../assets/chapter_13/fig-13-2-config-ai-seminar-replay.png)
 
-| 观察对象 | 判断问题 |
-| --- | --- |
-| checkpoint 中的 `thought` memory | 是否生成了高层想法 |
-| `simulation.md` 中的后续行动 | 反思是否影响后续计划 |
-| 对话后的摘要和 thought | 对话是否被提炼成长期记忆 |
+*图 13-2：`book-config-ai-seminar` 的回放画面。左上方是 10:00 的对话记录，地点显示为“the Ville，奥克山学院，图书馆，图书馆桌子”；下方地图能看到两个角色落在图书馆区域。配置里的角色目标、坐标和对话，已经被压缩结果还原成可视化画面。*
 
-反思相关 prompt 如下：
+`simulation.md` 前面会列出基础人设。它可能包含项目中的全量角色档案，不要被这部分带偏。本次真正参与仿真的角色，要看后面的活动记录、对话记录，以及 `movement.json` 里的角色列表。
 
-| Prompt | 作用 |
-| --- | --- |
-| `reflect_focus.txt` | 从记忆中生成反思焦点问题 |
-| `reflect_insights.txt` | 基于检索记忆生成洞察和证据 |
-| `reflect_chat_planing.txt` | 从对话中提取对计划的影响 |
-| `reflect_chat_memory.txt` | 从对话中提取值得记住的内容 |
+本次 `simulation.md` 中，阿伊莎的人设已经变成新实验设定：
 
-源码文件名是 `reflect_chat_planing.txt`，不是 `planning`。书中后续引用会按真实文件名写。
+```markdown
+## 阿伊莎
 
-## 13.10 体验九：模型适配
+年龄：20岁
+先天：好奇、善于提问、组织力强
+后天：阿伊莎是奥克山学院一名关注生成式智能体的学生。她熟悉文学细读，也在尝试把这种方法用于观察智能体的行动、对话和记忆。
+生活习惯：阿伊莎晚上10点左右上床睡觉，早上6点左右醒来，上午通常在图书馆整理阅读材料，下午参加课程或讨论。
+当前状态：阿伊莎正在组织一次关于生成式智能体如何服务校园学习的讨论会。她约了克劳斯上午10点在奥克山学院图书馆桌子旁交流，准备把文学研究中的细读方法和智能体行为观察结合起来。
+```
 
-模型适配让这个项目比原始论文 demo 更贴近当前中文使用场景。可以通过 `config.json` 切换模型 provider，但不要把它理解成简单换模型名称。不同 provider 对结构化输出、中文指令、`<think>` 标签和 embedding 的支持都不同。
+克劳斯的人设也同步变成社会影响视角：
 
-本次实验使用的实际配置如下：
+```markdown
+## 克劳斯
 
-| 能力 | 当前配置 |
-| --- | --- |
-| 思考模型 provider | `minimax` |
-| 思考模型 | `MiniMax-M3` |
-| LLM 接口 | `https://api.minimaxi.com/v1` |
-| embedding provider | `minimax` |
-| embedding 模型 | `embo-01` |
-| embedding 接口 | `https://api.minimax.chat/v1` |
-| 反思阈值 | `agent.think.poignancy_max = 150` |
+年龄：20岁
+先天：善于倾听、关心公平、乐于辩论
+后天：克劳斯是奥克山学院社会学专业的学生。他关注技术如何改变社区关系，尤其关心生成式智能体系统是否会放大或缓解不平等。
+生活习惯：克劳斯晚上11点左右睡觉，早上7点左右醒来，上午常在图书馆写作，下午会和同学讨论社会议题。
+当前状态：克劳斯正在准备一场关于生成式智能体社会影响的讨论。他约了阿伊莎上午10点在奥克山学院图书馆桌子旁交流，重点关注智能体系统在校园和社区治理中的公平性问题。
+```
 
-| 能力 | 配置位置 | 体验方式 |
+接着看 10:00 的活动记录：
+
+```markdown
+# 20240213-10:00
+
+## 活动记录：
+
+### 阿伊莎
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：整理桌面资料，迎接克劳斯入座
+
+### 克劳斯
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：克劳斯与阿伊莎以奖学金分配中"参与度评分"为例，用细读方法拆解校园智能体的采集边界、价值偏向与权力预设，探讨是否应量化社区隐形互助活动。
+```
+
+这段时间线告诉我们三件事。第一，两个角色都在同一个具体空间。第二，阿伊莎的行动承担主持者角色，克劳斯的行动承担议题推动者角色。第三，对话结果已经反过来凝结成活动描述，进入了后续状态。
+
+10:10 的活动记录显示状态继续推进：
+
+```markdown
+# 20240213-10:10
+
+## 活动记录：
+
+### 阿伊莎
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：分享上午整理的关于生成式智能体的阅读笔记
+
+### 克劳斯
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：回顾上次关于智能体社会影响的讨论要点
+```
+
+这就是短实验的价值。两个 step 已经足够看出配置是否生效：角色到达了目标地点，生成了符合身份的对话，下一步行动继续沿着讨论会推进。
+
+## 13.10 阅读 movement.json
+
+`simulation.md` 适合人读，`movement.json` 适合前端回放。先看文件开头：
+
+```json
+{
+  "start_datetime": "2024-02-13T10:00:00",
+  "stride": 10,
+  "sec_per_step": 10,
+  "persona_init_pos": {
+    "阿伊莎": [119, 24],
+    "克劳斯": [119, 24]
+  }
+}
+```
+
+`start_datetime` 和 `stride` 对应运行命令里的 `--start` 和 `--stride`。`persona_init_pos` 说明两个角色的初始回放坐标都是 `[119, 24]`，也就是我们在 `agent.json` 中写入的图书馆桌子坐标。
+
+接着看 `description`：
+
+```json
+{
+  "阿伊莎": {
+    "currently": "阿伊莎正在组织一次关于生成式智能体如何服务校园学习的讨论会。她约了克劳斯上午10点在奥克山学院图书馆桌子旁交流，准备把文学研究中的细读方法和智能体行为观察结合起来。",
+    "scratch": {
+      "innate": "好奇、善于提问、组织力强",
+      "daily_plan": "阿伊莎上午10点在奥克山学院图书馆桌子旁主持一场关于生成式智能体校园应用的讨论，并请克劳斯从社会影响角度提出问题。"
+    }
+  }
+}
+```
+
+这部分把配置快照带进了压缩结果。回放不是只保存坐标，它还保留了角色设定。以后做自己的应用场景时，看到 `description` 里的设定不对，就回到 `agent.json` 检查；看到设定正确但行为不对，再继续查调度、感知和 prompt。
+
+再看第一个有效回放帧：
+
+```json
+"1": {
+  "阿伊莎": {
+    "location": "奥克山学院，图书馆，图书馆桌子",
+    "movement": [119, 24],
+    "action": "整理桌面资料，迎接克劳斯入座"
+  },
+  "克劳斯": {
+    "location": "奥克山学院，图书馆，图书馆桌子",
+    "movement": [119, 24],
+    "action": "克劳斯与阿伊莎以奖学金分配中\"参与度评分\"为例，用细读方法拆解校园智能体的采集边界、价值偏向与权力预设，探讨是否应量化社区隐形互助活动。"
+  }
+}
+```
+
+前端回放真正用的是这种帧数据：谁在哪里，坐标是多少，正在做什么。`movement` 让角色落在地图上，`location` 给人读空间地址，`action` 变成角色旁边的行为文本。
+
+再看第二个仿真时间点对应的帧：
+
+```json
+"61": {
+  "阿伊莎": {
+    "location": "奥克山学院，图书馆，图书馆桌子",
+    "movement": [119, 24],
+    "action": "分享上午整理的关于生成式智能体的阅读笔记"
+  },
+  "克劳斯": {
+    "location": "奥克山学院，图书馆，图书馆桌子",
+    "movement": [119, 24],
+    "action": "回顾上次关于智能体社会影响的讨论要点"
+  }
+}
+```
+
+这里的 `"61"` 不是第 61 个仿真 step，而是前端回放用的细粒度帧编号。读 `movement.json` 不要把帧号和 `--step` 混在一起；判断仿真推进，要结合 `start_datetime`、`stride`、`simulation.md` 的时间标题和具体动作。
+
+## 13.11 本次运行生成了哪些文件
+
+这次实验产生两类结果。
+
+| 文件或目录 | 位置 | 用途 |
 | --- | --- | --- |
-| 思考模型 | `agent.think.llm` | 影响日程、对话、反思和地点选择 |
-| embedding 模型 | `agent.associate.embedding` | 影响记忆检索质量 |
-| 结构化输出 | `Scratch` 中的 Pydantic response model | 影响模型输出能否被系统解析 |
-| provider 特殊处理 | `modules/model/llm_model.py` | 影响 OpenAI、Ollama、MiniMax 的调用差异 |
+| `book-config-ai-seminar.log` | `results/checkpoints/book-config-ai-seminar/` | 记录 reset、schedule、percept、chat、summary 等运行过程 |
+| `simulate-20240213-1000.json` | `results/checkpoints/book-config-ai-seminar/` | 第 1 个 step 的完整状态 |
+| `simulate-20240213-1010.json` | `results/checkpoints/book-config-ai-seminar/` | 第 2 个 step 的完整状态 |
+| `conversation.json` | `results/checkpoints/book-config-ai-seminar/` | 原始对话记录 |
+| `storage/阿伊莎/`、`storage/克劳斯/` | `results/checkpoints/book-config-ai-seminar/` | 两个角色运行后的记忆索引和持久化数据 |
+| `movement.json` | `results/compressed/book-config-ai-seminar/` | 前端回放使用的数据 |
+| `simulation.md` | `results/compressed/book-config-ai-seminar/` | 人工阅读的仿真时间线 |
 
-模型适配一次只改一项。先用默认配置跑通 `book-smoke`，再改模型名称或 provider。每次修改后记录：
+检查这类配置实验，不需要先钻进源码。先确认四件事：
 
-| 记录项 | 示例 |
-| --- | --- |
-| provider | `minimax` |
-| model | `MiniMax-M3` |
-| embedding model | `embo-01` |
-| step / stride / agents | `step=6, stride=10, agents=伊莎贝拉,阿伊莎` |
-| 结果路径 | `results/compressed/book-party-pair/simulation.md` |
-| 失败现象 | JSON 解析失败、对话重复、行动空泛、反思不触发 |
+1. `movement.json` 的 `description` 是否出现新的角色设定。
+2. `simulation.md` 的活动记录是否落在新场景里。
+3. `conversation.json` 是否出现符合人设的交互。
+4. 第二个 step 是否延续第一个 step 的对话结果。
 
-有记录，模型对比才有意义；没有记录，只能凭感觉说“这个模型好像更聪明”。
+这四件事成立，配置层迁移已经成功。
 
-## 13.11 体验十：项目来源和源码入口
+## 13.12 恢复配置或保留实验
 
-功能入口明确后，项目来源和源码入口会更容易对上。当前项目的演化链路可以压缩成一张表：
+如果这只是一次读书练习，跑完后把备份文件恢复回去：
 
-| 来源 | 给当前项目留下什么 |
-| --- | --- |
-| Generative Agents 论文 | 可信人类行为代理、Smallville、memory、reflection、planning、dialogue |
-| Stanford 原始项目 | 论文 demo 的后端仿真、前端小镇和回放基础 |
-| wounderland | 更清晰的工程重构基础 |
-| Generative Agents 中文工程版 | 中文 prompt、本地模型、多 provider、Pydantic、断点和 Markdown 回放 |
+```powershell
+Copy-Item "$env:TEMP/aisha.agent.json" "frontend/static/assets/village/agents/阿伊莎/agent.json"
+Copy-Item "$env:TEMP/klaus.agent.json" "frontend/static/assets/village/agents/克劳斯/agent.json"
+```
 
-源码入口对应关系如下：
+如果这是自己的项目实验，就不要急着恢复。可以先看 `git diff`，确认这次真的只改了两个角色配置：
 
-| 体验到的功能 | 后续源码入口 | 深读章节 |
+```bash
+git diff -- frontend/static/assets/village/agents/阿伊莎/agent.json
+git diff -- frontend/static/assets/village/agents/克劳斯/agent.json
+```
+
+配置实验改动范围很窄，结果证据很完整。一个场景是否成立，可以通过 JSON diff、控制台摘要、对话记录和压缩结果一起判断。
+
+## 13.13 迁移到自己的应用场景
+
+把这套方法迁移到自己的项目时，可以按下面顺序来做，迅速将自己的想法跑通：
+
+| 步骤 | 要做的事 | 不要急着做的事 |
 | --- | --- | --- |
-| 地图和移动 | `modules/maze.py`、`modules/game.py` | 第 14、16 章 |
-| 角色定义 | `agents/*/agent.json`、`modules/prompt/scratch.py` | 第 15 章 |
-| 仿真循环 | `start.py`、`Agent.think()` | 第 16 章 |
-| 感知 | `Agent.percept()` | 第 17 章 |
-| 记忆 | `modules/memory/associate.py` | 第 18 章 |
-| 日程 | `modules/memory/schedule.py`、`Agent.make_schedule()` | 第 19 章 |
-| 对话和反应 | `Agent._reaction()`、`Agent._chat_with()`、`Agent._wait_other()` | 第 20 章 |
-| 反思 | `Agent.reflect()` | 第 21 章 |
-| 模型适配 | `modules/model/llm_model.py` | 第 22 章 |
-| 回放 | `compress.py`、`replay.py`、`frontend/templates/` | 第 23 章 |
+| 1 | 选择已有地图里的真实地点 | 先画一张新地图 |
+| 2 | 选择已注册角色作为配置槽位 | 先新增角色注册逻辑 |
+| 3 | 修改 `currently`、`scratch.learned`、`scratch.daily_plan`、`coord` | 先改 prompt 或调度源码 |
+| 4 | 用 2 到 3 个 step 跑短实验 | 一上来跑几十个 step |
+| 5 | 读控制台、`conversation.json`、`simulation.md`、`movement.json` | 只看前端回放是否“动起来” |
+| 6 | 根据结果微调配置 | 把所有问题都归因到模型能力 |
 
-这张表用于给第三部分铺路。功能已经体验过，源码入口才有意义。
+配置层适合回答三个问题：角色是谁，今天要做什么，在哪里和谁发生关系。只要这三个问题写清楚，Generative Agents 就能生成初步可观察的行为。
 
-## 13.12 小结
-
-到这里，Generative Agents 的主要功能已经体验过一遍：它能回放小镇、生成时间线、定义角色、安排日程、处理感知、保存记忆、触发对话、形成反思，并通过模型配置改变系统表现。
-
-| 体验内容 | 核心结论 |
-| --- | --- |
-| 回放系统 | 项目不是聊天窗口，而是可以播放的小镇仿真 |
-| Markdown 时间线 | 行为结果可以被人类阅读和复盘 |
-| 角色定义 | 角色由 `agent.json`、`scratch` 和空间记忆共同定义 |
-| 日程和行动 | 角色行为来自日程、时间、地点和对象约束 |
-| 感知和空间 | 角色不是全知，只能看到有限范围内的事件 |
-| 记忆和检索 | 事件、对话和想法会进入 memory stream |
-| 对话 | 对话会被判断、生成、检查、总结并写回记忆 |
-| 反思 | 重要经历累积后才会形成高层 thought |
-| 模型适配 | LLM 和 embedding 配置会直接改变系统表现 |
-| 源码入口 | 第三部分会把已经体验过的功能逐个拆开 |
-
-第三部分开始进入源码。每个模块都已经在功能体验中对应到具体现象，再看 `Maze`、`Agent`、`Schedule`、`Associate` 和 `Scratch` 时，类名背后就有了地图、角色、日程、记忆和身份定义这些具体对象。
+新角色名、新头像、新地图、新业务对象和新交互逻辑，会把问题推进到源码层。配置层先完成场景迁移：不改代码，也能把原项目从默认小镇情节改造成一个新的实验场景。
 
 ## 参考资料
 
-- Example replay: `generative_agents/results/compressed/example/`
-- Role config: `generative_agents/frontend/static/assets/village/agents/*/agent.json`
-- Prompt directory: `generative_agents/data/prompts/`
-- Runtime config: `generative_agents/data/config.json`
-- Start entry: `generative_agents/start.py`
-- Compress entry: `generative_agents/compress.py`
-- Replay entry: `generative_agents/replay.py`
+- Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. "Generative Agents: Interactive Simulacra of Human Behavior." UIST 2023.
+- 实验结果：`generative_agents/results/compressed/book-config-ai-seminar/`。

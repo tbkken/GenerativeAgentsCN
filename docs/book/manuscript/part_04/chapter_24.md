@@ -104,8 +104,27 @@ cd generative_agents
 运行命令可以直接照着执行：
 
 ```bash
-python start.py --name book-party-small --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,阿伊莎,埃迪,亚当,玛丽亚,克劳斯"
+python start.py --name book-party-small --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,阿伊莎,埃迪,亚当,玛丽亚,克劳斯" --verbose info --log book-party-small.log
 ```
+
+长实验不应该等全部跑完才第一次检查。前几分钟的控制台输出就能判断方向是否正确。可以参考 `book-party-pair` 短实验的真实日志：
+
+```text
+Simulate Step[1/6, time: 2024-02-14 08:00:00]
+伊莎贝拉 -> wake_up
+伊莎贝拉 -> schedule_init
+伊莎贝拉 -> schedule_daily
+伊莎贝拉 -> schedule_decompose
+伊莎贝拉 percept 0/5 concepts
+伊莎贝拉.summary @ 20240214-08:00:00
+action:
+  event: 打开咖啡馆大门并开灯 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆柜台后面
+llm:
+  summary:
+    total: S:8,F:0/R:8
+```
+
+这段日志说明伊莎贝拉已经被派对设定牵引到咖啡馆行动线上。`wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 是日程链路；`percept` 是感知；`summary` 是本 step 的状态快照。若这里的 action 完全没有咖啡馆、派对准备或顾客服务，就先回头检查伊莎贝拉的 `currently` 和运行日期，不要等 72 step 全部结束后才发现实验条件错了。
 
 运行结束后执行压缩：
 
@@ -121,7 +140,30 @@ results/compressed/book-party-small/movement.json
 results/checkpoints/book-party-small/conversation.json
 ```
 
-如果要查看前端回放：
+这三个文件不是平级证据。建议按下面顺序读：
+
+| 文件 | 先看什么 | 在派对实验中回答什么问题 |
+| --- | --- | --- |
+| `simulation.md` | 时间线、活动记录、对话摘录 | 派对故事线是否出现，谁在什么时间提到派对 |
+| `conversation.json` | 对话时间、说话双方、地点、具体话术 | 派对信息是否真的从伊莎贝拉传给别人 |
+| `movement.json` | 17:00-19:00 附近角色位置和 action | 被邀请者是否在派对时段到达并停留在咖啡馆 |
+
+简单说，`simulation.md` 帮你快速发现线索，`conversation.json` 帮你证明传播路径，`movement.json` 帮你验证到场。三者合起来，才比“看起来有人参加了派对”更可靠。
+
+在 `book-party-small` 生成结果之前，可以先用仓库内置 `example` 的真实片段练习读法。`example` 中有这样一段派对邀请：
+
+```text
+地点：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+
+伊莎贝拉：早上好，亚当！我看到你正在写作呢。今天有什么新的灵感吗？
+亚当：早上好，伊莎贝拉！今天我在探讨创造力如何促进个人成长。
+伊莎贝拉：那真是太棒了！创造力确实能带来很多惊喜。对了，今天下午我们有个情人节派对，你有兴趣参加吗？
+亚当：听起来很有趣，伊莎贝拉。不过我可能要婉拒了，因为我需要集中精力完成这本书的一些章节。
+```
+
+这段原文说明了三件事。第一，派对信息有明确来源：伊莎贝拉。第二，接收者是亚当。第三，结果不是“成功参加”，而是“知道但婉拒”。所以做派对传播实验时，不能把“被邀请”直接等同于“会到场”。后面还要看 `movement.json` 中 17:00-19:00 的位置和 action。
+
+理解了这种证据读法之后，再打开前端回放，目标就不是单纯看动画，而是核对时间、地点和到场行为。查看前端回放可以运行：
 
 ```bash
 python replay.py
