@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import json
 import sys
+import types
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -47,9 +49,32 @@ if hasattr(sys.stdout, "reconfigure"):
 
 sys.path.insert(0, str(GENERATIVE_AGENTS))
 
+
+def load_repo_module(module_name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load {module_name} from {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+# Maze only needs Event, and this chapter only needs Spatial. Loading the whole
+# modules.memory package also imports vector-memory dependencies that are not
+# needed for this world-model scaffold.
+memory_pkg = types.ModuleType("modules.memory")
+memory_pkg.__path__ = [str(GENERATIVE_AGENTS / "modules" / "memory")]
+memory_pkg = sys.modules.setdefault("modules.memory", memory_pkg)
+event_module = load_repo_module("modules.memory.event", GENERATIVE_AGENTS / "modules" / "memory" / "event.py")
+spatial_module = load_repo_module("modules.memory.spatial", GENERATIVE_AGENTS / "modules" / "memory" / "spatial.py")
+setattr(memory_pkg, "event", event_module)
+setattr(memory_pkg, "spatial", spatial_module)
+
 from modules.maze import Maze  # noqa: E402
-from modules.memory.spatial import Spatial  # noqa: E402
 from modules.utils.log import create_io_logger  # noqa: E402
+
+Spatial = spatial_module.Spatial
 
 
 def load_json(path: Path) -> dict:
@@ -186,9 +211,9 @@ def draw_world_model_image(
     map_crop = render_tilemap_crop(tilemap_config, min_x, min_y, max_x, max_y)
     tile_w = tilemap_config["tilewidth"]
     tile_h = tilemap_config["tileheight"]
-    legend_h = 150
+    legend_h = 210
     padding_x = 12
-    width = max(map_crop.width + padding_x * 2, 760)
+    width = max(map_crop.width + padding_x * 2, 980)
     map_x = (width - map_crop.width) // 2
     height = map_crop.height + legend_h
     image = Image.new("RGBA", (width, height), "#f7f7f2")
@@ -238,15 +263,21 @@ def draw_world_model_image(
     coord_text = ", ".join(str(tuple(agent["coord"])) for agent in agents.values())
 
     y0 = map_crop.height + 12
-    draw.text((12, y0), "第 14 章脚手架：用 Maze 解读 book-config-ai-seminar 回放", fill="#202020", font=font)
+    draw.text((12, y0), "第 14 章脚手架：用世界地图 Maze 解读 book-config-ai-seminar 回放", fill="#202020", font=font)
     legend = [
         ("角色", colors["agent"], f"{agent_names} @ {coord_text}"),
-        ("地址", colors["address"], f"图书馆桌子候选 tile {len(address_tiles)} 个"),
-        ("视野", colors["scope"], f"默认 vision_r 视野 {len(scope)} 个 tile"),
-        ("同场景", colors["same_arena"], f"同一 arena 可感知候选 {len(same_arena_tiles)} 个 tile"),
-        ("阻挡", colors["collision"], "collision tile 轮廓"),
+        ("语义地址 address", colors["address"], f"图书馆桌子候选地图格子 Tile {len(address_tiles)} 个"),
+        ("视野范围 vision", colors["scope"], f"默认感知范围 {len(scope)} 个地图格子 Tile"),
+        ("场所 arena", colors["same_arena"], f"同一场所可感知候选 {len(same_arena_tiles)} 个地图格子 Tile"),
+        ("碰撞标记 collision", colors["collision"], "不可通行地图格子轮廓"),
     ]
-    positions = [(12, y0 + 38), (300, y0 + 38), (520, y0 + 38), (12, y0 + 80), (300, y0 + 80)]
+    positions = [
+        (12, y0 + 38),
+        (12, y0 + 68),
+        (12, y0 + 98),
+        (12, y0 + 128),
+        (12, y0 + 158),
+    ]
     for (x, y), (label, color, text) in zip(positions, legend):
         draw.rectangle([x, y, x + 18, y + 18], fill=color, outline="#666666")
         draw.text((x + 24, y - 1), f"{label}: {text}", fill="#202020", font=small_font)
@@ -309,7 +340,7 @@ def main() -> int:
     # 6. Render the same evidence as a real-town-map figure for the book.
     draw_world_model_image(maze, agents, scope, same_arena_tiles, address_tiles, args.output)
 
-    print("Chapter 14 world-model scaffold")
+    print("第 14 章世界模型脚手架")
     print("=" * 38)
     print(f"source_replay: {movement_path.relative_to(ROOT)}")
     print(f"maze_json: {maze_config_path.relative_to(ROOT)}")
@@ -319,7 +350,7 @@ def main() -> int:
     print(f"size: width={maze.maze_width}, height={maze.maze_height}, tile_size={maze.tile_size}")
     print(f"address_keys: {' -> '.join(maze_config['tile_address_keys'])}")
     print()
-    print("Replay frame -> Maze tile")
+    print("回放帧 -> 世界地图 Maze / 地图格子 Tile")
     print(f"frame: {frame_key}")
     for name, data in agents.items():
         print(f"{name}:")
@@ -332,7 +363,7 @@ def main() -> int:
     print(f"address_tile_count: {len(address_tiles)}")
     print(f"address_tiles: {sorted(address_tiles)}")
     print()
-    print("Perception from this tile")
+    print("从当前地图格子 Tile 计算感知")
     print(
         "percept_config: "
         f"mode={percept_config['mode']}, "
@@ -343,9 +374,9 @@ def main() -> int:
     print(f"same_arena: {' -> '.join(tile.get_address('arena'))}")
     print(f"same_arena_tiles_in_scope: {len(same_arena_tiles)}")
     print()
-    print("Spatial memory")
+    print("空间记忆 Spatial")
     print(f"阿伊莎.find_address('准备睡觉'): {sleep_address}")
-    print(f"阿伊莎 known library leaves: {', '.join(library_leaves)}")
+    print(f"阿伊莎已知图书馆对象: {', '.join(library_leaves)}")
     print()
     print(f"image: {args.output.relative_to(ROOT)}")
     return 0

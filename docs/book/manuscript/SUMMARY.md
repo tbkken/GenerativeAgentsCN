@@ -23,7 +23,7 @@
 
 ## 第三部分：源码深读
 
-14. [世界模型：地图、Tile、地址树、空间记忆](part_03/chapter_14.md)
+14. [世界模型：地图格子、地址树、空间记忆](part_03/chapter_14.md)
 15. [智能体初始化：角色设定如何进入系统](part_03/chapter_15.md)
 16. [仿真循环：start.py、Game、Agent.think()](part_03/chapter_16.md)
 17. [感知：智能体如何看见附近事件](part_03/chapter_17.md)

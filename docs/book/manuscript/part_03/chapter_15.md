@@ -1,351 +1,47 @@
 # 第 15 章 智能体初始化：角色设定如何进入系统
 
-## 15.1 核心问题
+## 15.1 智能体初始化解决什么
 
-世界模型解释了小镇如何承载角色行动。角色进入世界之前，需要先被装配成可运行的智能体状态。在 Generative Agents 中，一个智能体不是只靠一份 `agent.json` 就能运行。`agent.json` 只是角色种子。真正可运行的 `Agent` 要把多类信息装配在一起：
+世界地图 Maze 决定小镇有什么空间，角色配置决定谁住在这个空间里、知道哪些地点、带着什么身份和目标开始行动。一个可运行的智能体 Agent 不是一张角色卡，也不是一次提示词 prompt 调用，而是公共运行配置、角色种子、空间记忆、日程系统、关联记忆、当前行动和地图事件装配出来的运行对象。
 
-```text
-角色设定
-  + 全局 agent 基础配置
-  + 地图对象
-  + 对话日志
-  + 空间记忆
-  + 日程系统
-  + 关联记忆
-  + prompt scratch
-  + 当前状态
-  + 当前 action
-  + 坐标与 tile event
-```
-
-这个装配过程发生在：
-
-```text
-start.py
-  -> get_config()
-  -> Game.__init__()
-  -> Agent.__init__()
-```
-
-初始化源码要回答八个问题：
-
-1. `agent.json` 里有哪些角色设定？
-2. `data/config.json` 提供哪些公共配置？
-3. `Game` 如何合并公共配置和角色配置？
-4. `Agent.__init__()` 如何装配智能体？
-5. `Scratch` 如何把角色设定变成 prompt 上下文？
-6. 初始 action 和坐标如何进入 Maze？
-7. checkpoint 恢复时初始化有什么不同？
-8. 初始化阶段有哪些容易踩坑的地方？
+| 初始化要解决的问题 | 没处理好会怎样 | 初始化完成后 |
+| --- | --- | --- |
+| 角色身份从哪里来 | 模型只看到临时任务，角色没有稳定个性 | 人格草稿 Scratch 持有年龄、性格、经历、生活习惯和当前关注点 |
+| 角色住在哪里 | 角色有名字但没有空间落点 | 初始坐标 coord 落到地图格子 Tile，并生成当前行动 Action |
+| 角色知道哪些地点 | 后续计划无法稳定选择地点 | 空间记忆 Spatial 保存角色视角下的地点树 tree 和快捷地址 address |
+| 角色如何记住事件 | 每次运行都像重新开始 | 关联记忆 Associate 为每个角色建立独立存储目录 |
+| 角色如何调用模型 | 提示词 prompt 找不到身份上下文 | Scratch._base_desc() 把角色设定写进多类提示词 prompt |
+| 角色如何恢复运行 | 断点 checkpoint 之后状态断裂 | 已保存的 `status`、`schedule`、`associate`、`currently`、`action` 覆盖初始种子 |
 
 ```mermaid
 flowchart LR
-    JSON["agent.json<br/>角色设定"] --> Config["运行配置合并"]
-    Config --> Scratch["Scratch<br/>人设、当前状态、参数"]
-    Config --> Spatial["Spatial<br/>已知地点"]
-    Config --> Schedule["Schedule<br/>日程"]
-    Config --> Associate["Associate<br/>记忆"]
-    Scratch --> Agent["Agent 对象"]
-    Spatial --> Agent
-    Schedule --> Agent
-    Associate --> Agent
+    Base["公共运行配置 data/config.json"] --> Merge["配置合并 update_dict()"]
+    Seed["角色种子 agent.json"] --> Merge
+    Resume["断点状态 checkpoint"] --> Merge
+    Merge --> Init["智能体构造 Agent.__init__()"]
+    Init --> Scratch["人格草稿 Scratch"]
+    Init --> Spatial["空间记忆 Spatial"]
+    Init --> Schedule["日程 Schedule"]
+    Init --> Associate["关联记忆 Associate"]
+    Init --> Action["当前行动 Action"]
+    Action --> Maze["世界地图 Maze"]
 ```
 
-*图 15-1：从 agent.json 到 Agent 对象的装配流程。初始化不是简单读取角色卡，而是把角色设定拆进状态、空间、日程和记忆四条链路。*
+*图 15-1：智能体 Agent 的初始化来源。角色配置先与公共配置合并，断点恢复时再叠加断点 checkpoint 状态，最后由 `Agent.__init__()` 装配成运行对象。*
 
-### 可运行脚手架：实际构造一个 Agent
+初始化的核心结论很简单：`agent.json` 负责给角色一个起点，`data/config.json` 负责给所有角色一套运行机制，`Game.__init__()` 负责合并配置，`Agent.__init__()` 负责把合并后的配置拆进各个运行模块。
 
-第 15 章配套脚手架会加载真实的伊莎贝拉 `agent.json`、公共 `data/config.json` 和真实 `maze.json`，然后实际构造一个 `Agent` 对象。脚本不会调用 `reset()` 和 `think()`，所以不会触发 LLM 或 embedding API；它只演示初始化阶段已经完成了哪些装配。
+## 15.2 角色从哪里定义
 
-从仓库根目录运行：
+角色定义来自三个层次，后面的层次可以覆盖前面的层次。这个覆盖关系非常重要，因为它解释了新仿真和断点恢复为什么能走同一套创建流程。
 
-```bash
-.venv/bin/python docs/book/scaffolds/part_03/ch15_agent_init_demo.py
-```
+| 层次 | 文件或字段 | 中文含义 | 对系统行为的影响 |
+| --- | --- | --- | --- |
+| 公共运行配置 | `generative_agents/data/config.json` 的 `agent` | 所有智能体 Agent 共用的感知、日程、模型、记忆参数 | 决定视野半径、对话轮数、模型提供方、记忆保留数量等运行边界 |
+| 角色种子 | `frontend/static/assets/village/agents/<角色名>/agent.json` | 某个角色的身份、当前位置、当前关注、空间知识 | 决定角色是谁、住在哪里、知道哪些地点、带着什么目标开始 |
+| 断点状态 | `results/checkpoints/<sim>/simulate-*.json` 中的 `agents` | 已运行仿真的角色状态 | 恢复日程 `schedule`、关联记忆 `associate`、当前关注 `currently`、行动 `action` 和坐标 `coord`，让角色继续而不是重生 |
 
-本机实际输出如下：
-
-```text
-Chapter 15 agent-initialization scaffold
-==============================================
-agent_config: generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
-runtime_config: generative_agents/data/config.json
-
-Loaded identity
-name: 伊莎贝拉
-coord: [72, 14]
-tile_address: the Ville:伊莎贝拉的公寓:主人房:床
-currently: 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
-
-Scratch fields
-age: 34
-innate: 友好、外向、好客
-learned: 伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
-lifestyle: 伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
-daily_plan: 伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
-
-Spatial memory
-living_area: the Ville -> 伊莎贝拉的公寓 -> 主人房
-sleep_address: the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床
-
-Runtime modules
-percept_config: {'mode': 'box', 'vision_r': 8, 'att_bandwidth': 8}
-think_provider: minimax
-associate_nodes: 0
-schedule_created: None
-schedule_items: 0
-
-Initial action
-event: 伊莎贝拉 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
-object: 床 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
-```
-
-这段输出说明，`Agent.__init__()` 完成后，角色已经不是一份静态 JSON，而是被拆进多个运行模块。
-
-| 输出结果 | 对应源码 | 说明 |
-| --- | --- | --- |
-| `coord` 与 `tile_address` | `Agent.__init__()`、`Maze.tile_at()` | 初始坐标会立即落到真实 tile，角色从一开始就在小镇空间里。 |
-| `currently` | `Scratch(self.name, currently, scratch)` | 当前关注点进入 `Scratch`，后续 prompt 会把它作为角色状态的一部分。 |
-| `Scratch fields` | `scratch.age/innate/learned/lifestyle/daily_plan` | 角色卡中的身份、性格、经历和生活习惯会进入 base prompt。 |
-| `sleep_address` | `Spatial.__init__()` | `living_area` 会自动补成“睡觉 -> 自己房间里的床”。 |
-| `percept_config` | `config["percept"]` | 感知半径和注意力带宽来自公共运行配置，不是角色个性字段。 |
-| `associate_nodes: 0` | `Associate(...)` | 记忆系统已经初始化，但新角色还没有写入事件、对话或想法。 |
-| `schedule_items: 0` | `Schedule(...)` | 日程系统已经存在，但当天计划还没有生成。 |
-| `Initial action` | `memory.Action(...)`、`memory.Event(...)` | 初始 action 会把角色和对象事件写入 Maze，世界从初始化阶段就有可感知状态。 |
-
-脚手架最后还打印了 `Scratch._base_desc()` 的前几行，能直接看到 `agent.json` 如何变成 prompt 上下文。后面讲 `Scratch` 时，这段输出就是最直观的参照。
-
-## 15.2 角色配置不是单一来源
-
-Generative Agents 中的 agent 配置来自两个地方。第一，公共配置：
-
-```text
-generative_agents/data/config.json
-```
-
-第二类内容是角色配置：
-
-```text
-generative_agents/frontend/static/assets/village/agents/<角色名>/agent.json
-```
-
-公共配置描述所有 agent 共用的运行参数。角色配置描述某个 agent 的身份、生活和初始空间记忆。在 `Game.__init__()` 中，两者会合并：
-
-```python
-agent_config = utils.update_dict(
-    copy.deepcopy(agent_base), self.load_static(agent["config_path"])
-)
-agent_config = utils.update_dict(agent_config, agent)
-```
-
-装配顺序可以这样理解：
-
-```text
-agent_base
-  -> agent.json
-  -> checkpoint/resume 中的 agent 状态
-```
-
-后面的配置会覆盖前面的配置。这对断点恢复非常关键。如果从 checkpoint 恢复，角色不能回到初始 `agent.json` 状态，而要带着已有记忆、日程、action 和 currently 继续运行。
-
-## 15.3 data/config.json：所有 agent 的运行底座
-
-`data/config.json` 中的核心结构是：
-
-```json
-{
-  "agent": {
-    "percept": { ... },
-    "schedule": { ... },
-    "think": { ... },
-    "chat_iter": 4,
-    "associate": { ... }
-  }
-}
-```
-
-它不是角色个性，而是运行参数。`percept` 控制感知：
-
-```json
-{
-  "mode": "box",
-  "vision_r": 8,
-  "att_bandwidth": 8
-}
-```
-
-这段内容的含义可以这样理解：
-
-- 使用 box 视野。
-- 视野半径为 8。
-- 每次最多关注 8 个事件。
-
-`schedule` 控制日程生成：
-
-```json
-{
-  "max_try": 5,
-  "diversity": 5
-}
-```
-
-这段内容的含义可以这样理解：
-
-- 最多尝试 5 次生成日程。
-- 至少要求一定活动多样性。
-
-`think` 控制思考相关配置：
-
-```json
-{
-  "llm": { ... },
-  "interval": 1000,
-  "poignancy_max": 150
-}
-```
-
-其中 `llm` 是模型配置，`poignancy_max` 是反思触发阈值。`chat_iter` 控制每次对话最大轮数。`associate` 控制记忆系统和 embedding。这些公共配置决定所有智能体的底层行为边界。
-
-## 15.4 agent.json：角色种子
-
-每个角色目录下都有 `agent.json`。以克劳斯为例：
-
-```text
-generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
-```
-
-它主要包含这些内容：
-
-```json
-{
-  "name": "克劳斯",
-  "portrait": "...",
-  "coord": [126, 46],
-  "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。",
-  "scratch": {
-    "age": 20,
-    "innate": "善良、好奇、热情",
-    "learned": "...",
-    "lifestyle": "...",
-    "daily_plan": "..."
-  },
-  "spatial": {
-    "address": { ... },
-    "tree": { ... }
-  }
-}
-```
-
-这里有三类信息。第一，前端和初始位置：
-
-- `portrait`
-- `coord`
-
-第二，角色自然语言设定：
-
-- `currently`
-- `scratch.age`
-- `scratch.innate`
-- `scratch.learned`
-- `scratch.lifestyle`
-- `scratch.daily_plan`
-
-第三，角色空间知识：
-
-- `spatial.address`
-- `spatial.tree`
-
-这些信息共同定义一个角色的初始状态。
-
-## 15.5 scratch 字段：人格与生活习惯
-
-`scratch` 是角色自然语言设定的主要来源。字段包括：
-
-| 字段 | 中文意思 | 对角色行为的影响 |
-| --- | --- | --- |
-| `age` | 年龄。 | 影响角色身份、生活阶段和说话方式。 |
-| `innate` | 先天特质，例如善良、好奇、热情。 | 决定角色比较稳定的性格底色。 |
-| `learned` | 后天经历，例如克劳斯是社会学专业学生，关注社会正义。 | 让角色的知识、职业和价值判断有背景来源。 |
-| `lifestyle` | 生活习惯，例如晚上 11 点睡觉，早上 7 点醒来。 | 影响日程生成和日常行动节奏。 |
-| `daily_plan` | 通常一天的计划，例如去图书馆写作、在咖啡馆吃饭。 | 给每天的具体日程生成提供初始参考。 |
-
-这些字段不是仅用于展示。它们会进入 `Scratch._base_desc()`，成为几乎所有 prompt 的共同基础。角色个性不是硬编码在 Python 逻辑里，而是通过自然语言进入 LLM 调用。
-
-## 15.6 currently：角色当前关注点
-
-`currently` 表示角色当前正在关注或推进的事情。例如，克劳斯：
-
-```text
-克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。
-```
-
-伊莎贝拉的 `currently` 包含情人节派对。山姆的 `currently` 包含竞选镇长。`currently` 对行为影响很大。它会进入基础描述：
-
-```text
-今天是 ${date}。${currently}
-```
-
-因此它会影响下面这些生成环节：
-
-- 起床和日程生成。
-- 对话主题。
-- 行动地点选择。
-- 反思焦点。
-- 新一天计划更新。
-
-`currently` 不是固定不变的。`Agent.make_schedule()` 在新一天开始时，会基于 memory 更新 `self.scratch.currently`。所以它是角色初始设定与仿真记忆之间的动态连接点。
-
-## 15.7 spatial 字段：角色知道哪里
-
-`agent.json` 中的 `spatial` 包含两个部分。第一，快捷地址映射：
-
-```json
-"address": {
-  "living_area": [
-    "the Ville",
-    "奥克山学院宿舍",
-    "克劳斯的房间"
-  ]
-}
-```
-
-第二类内容是地点树：
-
-```json
-"tree": {
-  "the Ville": {
-    "奥克山学院": {
-      "图书馆": ["图书馆沙发", "图书馆桌子", "书架"],
-      "教室": ["黑板", "教室讲台", "教室学生座位"]
-    },
-    ...
-  }
-}
-```
-
-快捷地址用于高频行为匹配。地点树用于模型选择地点。例如，角色要“睡觉”，`Spatial` 会把它映射到 living area + 床。角色要“写论文”，系统可能让模型在空间树中选择奥克山学院、图书馆、桌子。这就是角色自己的空间知识。不同角色可以知道不同地点。这使得空间不是全知的，而是带有角色视角。
-
-## 15.8 start.py 如何创建配置
-
-新仿真从 `start.py` 开始。核心函数是：
-
-```python
-get_config(start_time="20240213-09:30", stride=15, agents=None)
-```
-
-它会读取下面这些内容：
-
-```text
-data/config.json
-```
-
-取出的内容主要是这些字段：
-
-```python
-agent_config = json_data["agent"]
-```
-
-然后生成 simulation config：
+`start.py` 中的新仿真配置只先保存每个角色的配置路径：
 
 ```python
 config = {
@@ -355,168 +51,201 @@ config = {
     "agent_base": agent_config,
     "agents": {},
 }
+for a in agents:
+    config["agents"][a] = {
+        "config_path": os.path.join(
+            assets_root, "agents", a.replace(" ", "_"), "agent.json"
+        ),
+    }
 ```
 
-每个 agent 只先放入 `config_path`：
+真正的合并发生在 `Game.__init__()`：
 
 ```python
-config["agents"][a] = {
-    "config_path": os.path.join(
-        assets_root, "agents", a.replace(" ", "_"), "agent.json"
-    ),
+agent_config = utils.update_dict(
+    copy.deepcopy(agent_base), self.load_static(agent["config_path"])
+)
+agent_config = utils.update_dict(agent_config, agent)
+agent_config["storage_root"] = os.path.join(storage_root, name)
+self.agents[name] = Agent(agent_config, self.maze, self.conversation, self.logger)
+```
+
+`utils.update_dict()` 是递归合并。先把公共配置 `agent_base` 与角色的 `agent.json` 合并，再把断点 checkpoint 或命令行选择产生的状态合并进去，因此新仿真会使用初始角色种子，断点恢复会使用已经保存过的角色状态。
+
+## 15.3 公共运行配置
+
+`generative_agents/data/config.json` 的 `agent` 字段是所有角色的运行底座。当前项目中的真实配置如下，接口密钥 API key 字段为空，运行时可由环境变量或本地配置补入：
+
+```json
+{
+  "percept": {
+    "mode": "box",
+    "vision_r": 8,
+    "att_bandwidth": 8
+  },
+  "schedule": {
+    "max_try": 5,
+    "diversity": 5
+  },
+  "think": {
+    "llm": {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "base_url": "https://api.minimaxi.com/v1",
+      "api_key": "",
+      "max_tokens": 8192
+    },
+    "interval": 1000,
+    "poignancy_max": 150
+  },
+  "chat_iter": 4,
+  "associate": {
+    "embedding": {
+      "provider": "minimax",
+      "model": "embo-01",
+      "base_url": "https://api.minimax.chat/v1",
+      "api_key": "",
+      "group_id": ""
+    },
+    "retention": 8
+  }
 }
 ```
 
-注意，这里还没有加载完整角色配置。真正加载发生在 `Game.__init__()`。`start.py` 只负责组装仿真配置骨架。
+| 配置字段 | 中文意思 | 运行时作用 |
+| --- | --- | --- |
+| `percept.mode` | 感知模式 | 当前为盒状视野 box，感知章节会继续展开 |
+| `percept.vision_r` | 视野半径 | 角色每次感知附近 8 格范围内的地图格子 Tile |
+| `percept.att_bandwidth` | 注意力带宽 | 一次最多挑选 8 个事件进入后续判断 |
+| `schedule.max_try` | 日程生成最大尝试次数 | 日程不满足多样性时，最多重新生成 5 次 |
+| `schedule.diversity` | 日程多样性要求 | 避免一天计划只有少数重复活动 |
+| `think.llm` | 思考模型配置 | 决定 `reset()` 创建哪个大语言模型 LLM 连接 |
+| `think.interval` | 思考间隔 | 用于计算小镇中最短的模型思考周期 |
+| `think.poignancy_max` | 反思触发阈值 | 重要性累积达到阈值后触发 Reflection |
+| `chat_iter` | 对话轮数上限 | 控制一次聊天最多持续几轮 |
+| `associate.embedding` | 关联记忆向量模型 | `Associate` 用它创建或加载每个角色的记忆索引 |
+| `associate.retention` | 记忆保留条数 | 检索事件、想法、对话时默认保留最近 8 条 |
 
-## 15.9 Game 如何创建 Agent
+这些字段不是角色个性，而是系统对所有智能体 Agent 的统一约束。某个角色如果需要不同的感知半径、对话轮数或模型配置，也可以在自己的 `agent.json` 或断点 checkpoint 状态中覆盖同名字段。
 
-`Game.__init__()` 位于：
+## 15.4 25 个角色配置清单
 
-```text
-generative_agents/modules/game.py
-```
+项目固定提供 25 个角色。`start.py` 用 `personas` 列表控制默认角色集合，每个角色再对应一个 `agent.json` 文件。这个清单不是背景设定附录，而是初始化系统的入口：命令行 `--agents` 传入的名字必须出现在这里，否则 `start.py` 会直接报错。
 
-它会先加载地图数据：
+| 角色 | 年龄 | 性格底色 innate | 居住地址 living_area |
+| --- | --- | --- | --- |
+| 阿伊莎 | 20 | 好奇、坚定、独立 | the Ville / 奥克山学院宿舍 / 阿伊莎的房间 |
+| 克劳斯 | 20 | 善良、好奇、热情 | the Ville / 奥克山学院宿舍 / 克劳斯的房间 |
+| 玛丽亚 | 21 | 精力充沛、热情、好学 | the Ville / 奥克山学院宿舍 / 玛丽亚的房间 |
+| 沃尔夫冈 | 21 | 勤奋、热情、敬业 | the Ville / 奥克山学院宿舍 / 沃尔夫冈的房间 |
+| 梅 | 44 | 培养、善良、耐心 | the Ville / 林氏家族的房子 / 梅和约翰的卧室 |
+| 约翰 | 45 | 耐心、善良、有条理 | the Ville / 林氏家族的房子 / 梅和约翰的卧室 |
+| 埃迪 | 19 | 好奇、分析、音乐 | the Ville / 林氏家族的房子 / 埃迪的卧室 |
+| 简 | 46 | 友好、乐于助人、有条理 | the Ville / 莫雷诺家族的房子 / 汤姆和简的卧室 |
+| 汤姆 | 52 | 粗鲁、好斗、精力充沛 | the Ville / 莫雷诺家族的房子 / 汤姆和简的卧室 |
+| 卡门 | 33 | 友好、外向、乐于助人 | the Ville / 塔玛拉和卡门的家 / 卡门的房间 |
+| 塔玛拉 | 30 | 富有想象力，耐心，善良 | the Ville / 塔玛拉和卡门的家 / 塔玛拉的房间 |
+| 亚瑟 | 42 | 友好、外向、慷慨 | the Ville / 亚瑟的公寓 / 主人房 |
+| 伊莎贝拉 | 34 | 友好、外向、好客 | the Ville / 伊莎贝拉的公寓 / 主人房 |
+| 山姆 | 65 | 聪明、足智多谋、幽默 | the Ville / 摩尔家族的房子 / 主人房 |
+| 詹妮弗 | 68 | 聪明、有经验、热情 | the Ville / 摩尔家族的房子 / 主人房 |
+| 弗朗西斯科 | 23 | 外向、友好、诚实 | the Ville / 艺术家共居空间 / 弗朗西斯科的房间 |
+| 海莉 | 30 | 富有想象力、精力充沛、足智多谋 | the Ville / 艺术家共居空间 / 海莉的房间 |
+| 拉吉夫 | 27 | 耐心、可靠、开朗 | the Ville / 艺术家共居空间 / 拉吉夫的房间 |
+| 拉托亚 | 25 | 有条理、有逻辑、细心 | the Ville / 艺术家共居空间 / 拉托亚的房间 |
+| 阿比盖尔 | 25 | 思想开放、好奇、坚定 | the Ville / 艺术家共居空间 / 阿比盖尔的房间 |
+| 卡洛斯 | 32 | 直率、狂野、不友好 | the Ville / 卡洛斯的公寓 / 主人房 |
+| 乔治 | 41 | 分析、逻辑、古怪 | the Ville / 乔治的公寓 / 主人房 |
+| 瑞恩 | 29 | 善于分析、务实、有上进心 | the Ville / 瑞恩的公寓 / 主人房 |
+| 山本百合子 | 28 | 有条理、可靠、注重细节 | the Ville / 山本百合子的房子 / 主人房 |
+| 亚当 | 36 | 深思熟虑、善于反思、富有智慧 | the Ville / 亚当的家 / 主人房 |
 
-```python
-self.maze = Maze(self.load_static(config["maze"]["path"]), self.logger)
-```
+表中只列了最适合快速对照的字段。每个角色的完整设定还包括 `currently`、`learned`、`lifestyle`、`daily_plan` 和空间地点树 `spatial.tree`，这些字段决定角色进入提示词 prompt 和空间系统后的具体行为。
 
-然后创建 agent 存储根目录：
+## 15.5 agent.json 的真实结构
 
-```python
-storage_root = os.path.join(f"results/checkpoints/{name}", "storage")
-```
-
-接着遍历所有 agent：
-
-```python
-for name, agent in config["agents"].items():
-    agent_config = utils.update_dict(
-        copy.deepcopy(agent_base), self.load_static(agent["config_path"])
-    )
-    agent_config = utils.update_dict(agent_config, agent)
-    agent_config["storage_root"] = os.path.join(storage_root, name)
-    self.agents[name] = Agent(agent_config, self.maze, self.conversation, self.logger)
-```
-
-这段代码做了四件事。第一，合并公共配置和角色配置。第二，再合并 checkpoint 或命令行选择产生的 agent 状态。第三，为每个 agent 设置独立 storage root。第四，创建 `Agent` 对象。因此，`Agent.__init__()` 收到的 config 已经不是纯 `agent.json`，而是完整运行配置。
-
-## 15.10 Agent.__init__() 的输入
-
-`Agent.__init__()` 签名是：
-
-```python
-def __init__(self, config, maze, conversation, logger):
-```
-
-四个输入可以分别理解为：
-
-- `config`：完整 agent 配置。
-- `maze`：共享世界地图。
-- `conversation`：全局对话记录。
-- `logger`：日志对象。
-
-这说明 agent 初始化不是孤立的。它一开始就拿到共享世界、共享对话日志和日志系统。`maze` 是所有 agent 共用的。`conversation` 也是所有 agent 共用的。但每个 agent 的 memory、schedule、scratch、status 是自己的。多智能体系统的基本结构是：
-
-```text
-共享环境
-  + 个体状态
-  + 共享互动记录
-```
-
-## 15.11 第一组字段：身份与环境引用
-
-`Agent.__init__()` 首先设置：
-
-```python
-self.name = config["name"]
-self.maze = maze
-self.conversation = conversation
-self._llm = None
-self.logger = logger
-```
-
-`name` 是角色名。`maze` 是共享世界。`conversation` 是共享对话日志。`_llm` 初始化为 None，后面在 `reset()` 中创建。`logger` 用于记录 prompt、状态和仿真信息。这里有个细节：LLM 不是在 `__init__()` 中立刻创建。创建 agent 对象和初始化 LLM 是分开的。`Game.reset_game()` 会调用每个 agent 的 `reset()`：
-
-```python
-agent.reset()
-```
-
-而 `reset()` 中才会：
-
-```python
-self._llm = create_llm_model(self.think_config["llm"])
-```
-
-这样做可以让对象装配和模型连接分离。
-
-## 15.12 第二组字段：运行配置
-
-接着设置下面这些内容：
-
-```python
-self.percept_config = config["percept"]
-self.think_config = config["think"]
-self.chat_iter = config["chat_iter"]
-```
-
-这三项来自 `data/config.json`。`percept_config` 决定视野和注意力带宽。`think_config` 决定 LLM、interval、poignancy threshold。`chat_iter` 决定每次对话最大轮次。这些不是角色个性，而是运行机制参数。如果所有 agent 共用同一套参数，小镇整体行为更一致。如果未来想让不同角色具有不同感知半径或聊天倾向，也可以在某个 `agent.json` 或 checkpoint 中覆盖这些配置。
-
-## 15.13 第三组字段：记忆系统
-
-Agent 初始化记忆系统：
-
-```python
-self.spatial = memory.Spatial(**config["spatial"])
-self.schedule = memory.Schedule(**config["schedule"])
-self.associate = memory.Associate(
-    os.path.join(config["storage_root"], "associate"), **config["associate"]
-)
-self.concepts, self.chats = [], config.get("chats", [])
-```
-
-这里有三种记忆或状态。第一，`Spatial`。角色知道哪些地点。第二，`Schedule`。角色今天的日程。第三，`Associate`。角色的事件、对话和想法记忆。`concepts` 是本 step 感知到的新 concepts。`chats` 是待反思的近期聊天内容。这说明“记忆”在项目中不是一个单一模块，而是多层结构。空间知识、日程、关联记忆、当前感知、对话暂存各自负责不同部分。
-
-## 15.14 Associate 的 storage_root
-
-每个 agent 的 `Associate` 都有独立存储目录。`Game.__init__()` 设置：
-
-```python
-agent_config["storage_root"] = os.path.join(storage_root, name)
-```
-
-`Agent.__init__()` 再传给：
-
-```python
-os.path.join(config["storage_root"], "associate")
-```
-
-最终路径通常类似下面这样：
+以伊莎贝拉为例，角色配置文件位于：
 
 ```text
-results/checkpoints/<sim-name>/storage/克劳斯/associate
+generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
 ```
 
-每个 agent 的 memory index 是分开的。克劳斯的记忆不会直接写进玛丽亚的向量索引。信息传播必须通过对话、感知和记忆写入发生，而不是共享一个全局 memory。这符合论文中的个体记忆设定。
+这个文件的核心字段如下：
 
-## 15.15 第四组字段：prompt Scratch
+```json
+{
+  "name": "伊莎贝拉",
+  "portrait": "assets/village/agents/伊莎贝拉/portrait.png",
+  "coord": [72, 14],
+  "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。",
+  "scratch": {
+    "age": 34,
+    "innate": "友好、外向、好客",
+    "learned": "伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。",
+    "lifestyle": "伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。",
+    "daily_plan": "伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。"
+  },
+  "spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "伊莎贝拉的公寓": {
+          "主人房": ["床", "书桌", "冰箱", "壁橱", "架子"]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": ["冰箱", "咖啡馆顾客座位", "烹饪区", "厨房水槽", "咖啡馆柜台后面", "钢琴"]
+        }
+      }
+    }
+  }
+}
+```
 
-Prompt 状态由 `Scratch` 管理：
+| 字段 | 中文意思 | 进入哪个模块 | 对行为的影响 |
+| --- | --- | --- | --- |
+| `name` | 角色名 | 智能体 Agent、人格式提示词 Scratch、事件 Event | 决定日志、事件主体、prompt 中的角色名称 |
+| `portrait` | 角色头像路径 | 前端 Phaser | 决定回放或前端展示时使用哪个角色图像 |
+| `coord` | 初始坐标 | 世界地图 Maze、地图格子 Tile、行动 Action | 决定角色初始化时站在哪个地点 |
+| `currently` | 当前关注点 | 人格草稿 Scratch | 影响日程、对话、反思和下一步行动的主题 |
+| `scratch.age` | 年龄 | 人格草稿 Scratch | 影响身份阶段、作息和语言风格 |
+| `scratch.innate` | 先天特质 | 人格草稿 Scratch | 给角色稳定的性格底色 |
+| `scratch.learned` | 后天经历 | 人格草稿 Scratch | 给角色职业、知识和价值判断提供背景 |
+| `scratch.lifestyle` | 生活习惯 | 人格草稿 Scratch、日程提示词 prompt | 影响起床、睡觉、工作和休息节奏 |
+| `scratch.daily_plan` | 通常一天安排 | 人格草稿 Scratch、日程提示词 prompt | 给当天计划生成提供默认骨架 |
+| `spatial.address.living_area` | 居住地址 | 空间记忆 Spatial | 初始化时自动派生睡觉地址 `睡觉` |
+| `spatial.tree` | 角色知道的地点树 | 空间记忆 Spatial | 让角色在计划落地时拥有自己的空间视角 |
+
+`agent.json` 的关键不是“写得像人物小传”，而是字段最终都要进入运行模块。`currently` 进入人格草稿 Scratch，`coord` 进入世界地图 Maze 和行动 Action，`spatial` 进入空间记忆 Spatial，`scratch` 进入几乎所有大语言模型 LLM 提示词 prompt 的基础上下文。
+
+## 15.6 角色设定如何进入提示词 prompt
+
+角色设定进入大语言模型 LLM 的主入口是人格草稿 Scratch。`Agent.__init__()` 中的代码非常短：
 
 ```python
 self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
 ```
 
-`Scratch` 保存：
+`Scratch` 保存三类信息：
 
-- `name`
-- `currently`
-- `config`
-- `template_path`
+| 代码名 | 中文意思 | 来源 |
+| --- | --- | --- |
+| `name` | 角色名 | `agent.json.name` |
+| `currently` | 当前关注点 | `agent.json.currently` 或断点 checkpoint |
+| `config` | 人格字段集合 | `agent.json.scratch` |
 
-其中 `config` 就是 `agent.json` 中的 scratch 字段。`Scratch._base_desc()` 会填充 `base_desc.txt`：
+基础提示词模板位于：
+
+```text
+generative_agents/data/prompts/base_desc.txt
+```
+
+真实模板如下：
 
 ```text
 姓名: ${name}
@@ -529,73 +258,157 @@ self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
 今天是 ${date}。${currently}
 ```
 
-这段基础描述会进入许多 prompt。例如：
+英文含义可以对应成：
 
-- 起床时间。
-- 日程生成。
-- 重要性评分。
-- 对话生成。
-- 反思。
+```text
+Name: ${name}
+Age: ${age}
+Innate traits: ${innate}
+Learned traits: ${learned}
+Lifestyle: ${lifestyle}
+Daily plan: ${daily_plan}
 
-`Scratch` 是角色设定进入 LLM 的主要通道。
-
-## 15.16 Scratch.build_prompt()
-
-`Scratch.build_prompt()` 很简单：
-
-```python
-with open(f"{self.template_path}/{template}.txt", "r", encoding="utf-8") as file:
-    file_content = file.read()
-
-template = Template(file_content)
-filled_content = template.substitute(data)
+Today is ${date}. ${currently}
 ```
 
-它从 `data/prompts` 读取模板，并使用 `string.Template` 替换变量。这带来两个好处。第一，prompt 可维护。修改 prompt 不需要改 Python 主逻辑。第二，prompt 可审计。打开 `.txt` 文件，就能看到模型到底收到什么任务。但也有一个风险。`Template.substitute()` 要求变量必须齐全，否则会报错。所以每个 `prompt_*` 方法都必须提供模板需要的字段。prompt 与 Python 方法必须成对维护。
-
-## 15.17 第五组字段：状态与 plan
-
-Agent 初始化状态：
+`Scratch._base_desc()` 负责填充模板：
 
 ```python
+def _base_desc(self):
+    return self.build_prompt(
+        "base_desc",
+        {
+            "name": self.name,
+            "age": self.config["age"],
+            "innate": self.config["innate"],
+            "learned": self.config["learned"],
+            "lifestyle": self.config["lifestyle"],
+            "daily_plan": self.config["daily_plan"],
+            "date": utils.get_timer().daily_format_cn(),
+            "currently": self.currently,
+        }
+    )
+```
+
+伊莎贝拉在 `2024-02-14` 早上初始化后，基础提示词会被填成：
+
+```text
+姓名: 伊莎贝拉
+年龄：34
+先天特质：友好、外向、好客
+后天特质：伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
+生活习惯：伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
+日常计划：伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
+
+今天是 2024年02月14日（星期三）。伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
+```
+
+这段文字会被多个提示词 prompt 复用，例如起床时间 `wake_up`、日程初始化 `schedule_init`、小时级日程 `schedule_daily`、重要性评分 `poignancy_event`、对话生成和反思相关提示词 prompt。角色身份连续性主要就来自这里：模型每次被要求生成行为时，都会先看到同一套人物身份、生活习惯和当前关注点。
+
+## 15.7 初始化链路
+
+从命令行启动新仿真时，角色对象按下面的顺序创建：
+
+```mermaid
+flowchart TD
+    CLI["启动命令 start.py"] --> Select["角色名单 personas 或 --agents"]
+    Select --> Config["生成仿真配置 get_config()"]
+    Config --> Game["创建游戏 Game.__init__()"]
+    Game --> Maze["加载世界地图 Maze"]
+    Game --> Merge["合并公共配置与角色配置"]
+    Merge --> Storage["设置角色存储目录 storage_root"]
+    Storage --> Agent["构造智能体 Agent.__init__()"]
+    Agent --> Reset["创建模型连接 reset()"]
+```
+
+*图 15-2：新仿真的智能体创建顺序。`start.py` 只生成配置骨架，真正读取 `agent.json` 并构造 `Agent` 的位置在 `Game.__init__()`。*
+
+| 步骤 | 代码位置 | 输入 | 输出 |
+| --- | --- | --- | --- |
+| 选择角色 | `start.py` 的 `personas`、`--agents`、`--agent-count` | 默认 25 人或命令行指定名单 | `selected_personas` |
+| 生成配置 | `get_config()` | 起始时间、步长、角色名单 | 包含 `agent_base` 和 `config_path` 的仿真配置 |
+| 加载地图 | `Game.__init__()` | `assets/village/maze.json` | 共享世界地图 Maze |
+| 合并配置 | `Game.__init__()` | 公共配置、角色配置、恢复状态 | 完整 `agent_config` |
+| 创建存储 | `Game.__init__()` | 仿真名称、角色名 | `results/checkpoints/<name>/storage/<角色名>` |
+| 构造对象 | `Agent.__init__()` | `agent_config`、Maze、conversation、logger | 可运行的智能体 Agent |
+| 初始化模型 | `Game.reset_game()` 调用 `agent.reset()` | `think.llm` | 大语言模型 LLM 连接对象 |
+
+这个顺序解释了一个常见误会：`start.py` 不是直接创建角色，`agent.json` 也不是直接变成提示词 prompt。它们先进入统一配置，再由 `Game` 和 `Agent` 分层装配。
+
+## 15.8 Agent.__init__ 装配了什么
+
+`Agent.__init__()` 的签名是：
+
+```python
+def __init__(self, config, maze, conversation, logger):
+```
+
+四个参数分别是完整角色配置、共享世界地图 Maze、共享对话日志 conversation 和日志对象 logger。初始化时先保存身份与共享环境：
+
+```python
+self.name = config["name"]
+self.maze = maze
+self.conversation = conversation
+self._llm = None
+self.logger = logger
+```
+
+随后读取公共运行参数：
+
+```python
+self.percept_config = config["percept"]
+self.think_config = config["think"]
+self.chat_iter = config["chat_iter"]
+```
+
+再创建三类长期运行模块：
+
+```python
+self.spatial = memory.Spatial(**config["spatial"])
+self.schedule = memory.Schedule(**config["schedule"])
+self.associate = memory.Associate(
+    os.path.join(config["storage_root"], "associate"), **config["associate"]
+)
+self.concepts, self.chats = [], config.get("chats", [])
+```
+
+最后装配提示词 prompt 状态、反思计数、行动状态和地图位置：
+
+```python
+self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
+
 status = {"poignancy": 0}
 self.status = utils.update_dict(status, config.get("status", {}))
 self.plan = config.get("plan", {})
-```
-
-`poignancy` 是反思触发计数。新 agent 从 0 开始。从 checkpoint 恢复时，会用已有 `status` 覆盖默认值。`plan` 是前端或上一步返回的移动计划缓存。这两个字段虽然小，但很关键。如果断点恢复丢失 `status["poignancy"]`，反思触发时机会改变。如果丢失 `plan` 或 action，角色的当前位置和行为连续性会断。
-
-## 15.18 第六组字段：record 时间
-
-初始化中还会处理这些内容：
-
-```python
 self.last_record = utils.get_timer().daily_duration()
 ```
 
-这个字段用于控制记录频率。`Game.agent_think()` 中会判断：
+把这些代码合起来看，初始化后的智能体 Agent 已经有了七组状态。
+
+| 状态组 | 代码字段 | 中文意思 | 后续影响 |
+| --- | --- | --- | --- |
+| 身份与环境 | `name`、`maze`、`conversation`、`logger` | 角色名、共享地图、共享对话日志、日志系统 | 决定角色在哪里行动，以及如何与全局系统交互 |
+| 运行配置 | `percept_config`、`think_config`、`chat_iter` | 感知、模型、聊天轮数配置 | 控制感知半径、模型连接和对话长度 |
+| 空间记忆 | `spatial` | 角色知道的地点树和快捷地址 | 计划落地、睡觉、随机选址都依赖它 |
+| 日程系统 | `schedule` | 一天计划与细粒度分解 | 决定当前时段应该做什么 |
+| 关联记忆 | `associate`、`concepts`、`chats` | 事件、想法、对话及当前感知缓存 | 支撑检索、反思和关系记忆 |
+| 人格草稿 | `scratch` | 角色设定和当前关注点 | 构造各类大语言模型 LLM 提示词 prompt 的基础上下文 |
+| 当前状态 | `status`、`plan`、`last_record`、`action`、`coord`、`path` | 反思计数、前端移动计划、记录时间、当前行动、坐标、路径 | 支撑连续仿真、回放和断点 checkpoint |
+
+空间记忆 Spatial 初始化时还有一个小动作：如果角色有居住地址 `living_area`，但没有显式配置睡觉地址，系统会自动补出中文键 `睡觉`。
 
 ```python
-if (utils.get_timer().daily_duration() - agent.last_record) > self.record_iterval:
-    info["record"] = True
-    agent.last_record = utils.get_timer().daily_duration()
-else:
-    info["record"] = False
+if "sleeping" not in self.address and "睡觉" not in self.address and "living_area" in self.address:
+    self.address["睡觉"] = self.address["living_area"] + ["床"]
 ```
 
-这影响哪些 step 会被标记为记录点。虽然它不是 agent 认知核心，但它影响回放和结果压缩。
+伊莎贝拉的居住地址是 `the Ville -> 伊莎贝拉的公寓 -> 主人房`，所以睡觉地址会自动变成 `the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床`。这个细节会在后续 `think()` 判断角色睡觉时发挥作用。
 
-## 15.19 第七组字段：初始 action
+## 15.9 初始行动 Action 如何写入世界地图 Maze
 
-Agent 初始化必须给角色一个当前 action。有两种情况。第一，从 checkpoint 恢复。如果 config 中有 `action`：
+角色如果只存在于 Python 对象里，还没有真正进入小镇。进入小镇发生在当前行动 Action 和地图事件 Event 被写入世界地图 Maze 的时候。
 
-```python
-self.action = memory.Action.from_dict(config["action"])
-tiles = self.maze.get_address_tiles(self.get_event().address)
-config["coord"] = random.choice(list(tiles))
-```
-
-恢复时会使用保存的 action，并根据 action 地址重新选择坐标。第二，新仿真初始化。如果没有 action：
+新仿真没有断点 checkpoint 中保存的行动 action，系统会根据初始坐标读取地图格子 Tile 的游戏对象 game_object 地址：
 
 ```python
 tile = self.maze.tile_at(config["coord"])
@@ -606,11 +419,16 @@ self.action = memory.Action(
 )
 ```
 
-系统根据初始坐标所在 tile 的 game_object 地址创建默认 action。这里的 action 还没有具体 predicate/object，更多是占位状态。随后 `move()` 会把它更新到地图上。
+如果是断点恢复，配置中已经有保存过的行动 action：
 
-## 15.20 初始化时更新 Maze
+```python
+if "action" in config:
+    self.action = memory.Action.from_dict(config["action"])
+    tiles = self.maze.get_address_tiles(self.get_event().address)
+    config["coord"] = random.choice(list(tiles))
+```
 
-Agent 初始化最后做：
+无论新建还是恢复，最后都会调用 `move()`：
 
 ```python
 self.coord, self.path = None, None
@@ -619,11 +437,106 @@ if self.coord is None:
     self.coord = config["coord"]
 ```
 
-`move()` 会更新 tile 上的事件。如果角色从一个坐标移动到另一个坐标，会移除旧 tile 上该角色事件，并在新 tile 更新事件。初始化时 `self.coord` 是 None，所以主要是把角色当前 action 放到初始 tile。这一步使角色真正进入世界。否则 `Agent` 只是 Python 对象，地图上还没有它的事件。
+`move()` 会把角色事件写进当前地图格子 Tile，也会把对象事件写到对应的游戏对象 game_object 上：
 
-## 15.21 reset()：创建模型连接
+```python
+if not tile.update_events(self.get_event()):
+    tile.add_event(self.get_event())
+obj_event = self.get_event(False)
+if obj_event:
+    self.maze.update_obj(coord, obj_event)
+```
 
-`Agent.__init__()` 不创建 LLM。LLM 创建发生在：
+| 场景 | 初始化动作 | 地图效果 |
+| --- | --- | --- |
+| 新仿真 | 根据初始 `coord` 找到游戏对象 game_object，创建默认行动 Action | 角色以“此时 空闲”的事件出现在初始地点 |
+| 断点恢复 | 从断点 checkpoint 读取已保存行动 Action，并按 Action 地址重新选坐标 | 角色延续上一轮正在做的事情，而不是回到初始床位 |
+| 移动更新 | `move()` 更新地图格子 Tile 事件和对象事件 | 周围角色后续感知时能看到这个角色或对象状态 |
+
+这就是初始化和世界模型之间的接口。上一章讲的地图格子 Tile、语义地址 address、碰撞 collision 和事件 Event，到这里开始承载具体角色。
+
+## 15.10 可运行脚手架
+
+第 15 章配套脚手架位于：
+
+```text
+docs/book/scaffolds/part_03/ch15_agent_init_demo.py
+```
+
+脚手架加载真实的伊莎贝拉 `agent.json`、公共 `data/config.json` 和真实 `maze.json`，然后实际构造一个 `Agent` 对象。它不会调用 `reset()`、`think()` 或 `completion()`，因此不会触发大语言模型 LLM 或向量嵌入 embedding 请求；脚手架只演示初始化阶段已经完成的对象装配。为了避免读取私密接口密钥 API key，脚手架把 `Associate` 的向量嵌入 embedding 配置改成本地 Ollama 形式，但不插入记忆节点，因此不会发起向量请求。
+
+从仓库根目录运行：
+
+```bash
+.venv/bin/python docs/book/scaffolds/part_03/ch15_agent_init_demo.py
+```
+
+本机实际输出如下：
+
+```text
+第 15 章智能体初始化脚手架 agent-initialization scaffold
+==============================================
+角色配置 agent_config: generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
+运行配置 runtime_config: generative_agents/data/config.json
+
+已加载身份 loaded identity
+角色名 name: 伊莎贝拉
+初始坐标 coord: [72, 14]
+地图地址 tile_address: the Ville:伊莎贝拉的公寓:主人房:床
+当前关注 currently: 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
+
+人格草稿字段 Scratch fields
+age: 34
+innate: 友好、外向、好客
+learned: 伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
+lifestyle: 伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
+daily_plan: 伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
+
+空间记忆 Spatial memory
+居住地址 living_area: the Ville -> 伊莎贝拉的公寓 -> 主人房
+睡觉地址 sleep_address: the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床
+已知世界根节点 known_world_roots: the Ville
+
+运行模块 Runtime modules
+感知配置 percept_config: {'mode': 'box', 'vision_r': 8, 'att_bandwidth': 8}
+思考模型提供方 think_provider: minimax
+关联记忆节点数 associate_nodes: 0
+日程创建时间 schedule_created: None
+日程条目数 schedule_items: 0
+
+初始行动 Initial action
+角色事件 event: 伊莎贝拉 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
+对象事件 object: 床 此时 空闲 @ the Ville:伊莎贝拉的公寓:主人房:床
+
+基础提示词预览 Base prompt preview
+姓名: 伊莎贝拉
+年龄：34
+先天特质：友好、外向、好客
+后天特质：伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
+生活习惯：伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
+日常计划：伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
+
+今天是 2024年02月14日（星期三）。伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
+```
+
+| 输出区域 | 对应源码 | 说明 |
+| --- | --- | --- |
+| `角色配置 agent_config` | `frontend/static/assets/village/agents/伊莎贝拉/agent.json` | 脚手架使用真实角色种子，不是手写样例 |
+| `运行配置 runtime_config` | `generative_agents/data/config.json` | 公共感知、模型、日程和记忆配置来自项目文件 |
+| `初始坐标 coord` | `Agent.__init__()`、`Maze.tile_at()` | `[72, 14]` 落在伊莎贝拉公寓主人房的床上 |
+| `当前关注 currently` | `Scratch(self.name, currently, scratch)` | 情人节派对目标进入人格草稿 Scratch |
+| `人格草稿字段 Scratch fields` | `agent.scratch.config` | 年龄、性格、经历、生活习惯和日常计划已进入 prompt 上下文 |
+| `睡觉地址 sleep_address` | `Spatial.__init__()` | `living_area + ["床"]` 自动派生睡觉地址 |
+| `关联记忆节点数 associate_nodes` | `Associate.index.nodes_num` | 关联记忆系统已初始化，新角色暂时没有记忆节点 |
+| `日程条目数 schedule_items` | `Schedule.daily_schedule` | 日程对象已创建，但还没有调用大语言模型 LLM 生成当天计划 |
+| `初始行动 Initial action` | `memory.Action`、`memory.Event`、`Agent.move()` | 角色事件和床的对象事件已经写入地图格子 Tile |
+| `基础提示词预览` | `Scratch._base_desc()` | 可以直接看到 `agent.json` 如何变成提示词 prompt 文本 |
+
+这段脚手架输出比单独看源码片段更重要。它证明 `Agent.__init__()` 执行完成后，角色已经同时具有身份、坐标、空间记忆、运行配置、关联记忆容器、日程容器、当前行动和基础提示词 prompt。
+
+## 15.11 reset、completion 与断点 checkpoint
+
+`Agent.__init__()` 不创建大语言模型 LLM 连接，模型初始化被放在 `reset()`：
 
 ```python
 def reset(self):
@@ -631,94 +544,43 @@ def reset(self):
         self._llm = create_llm_model(self.think_config["llm"])
 ```
 
-`Game.reset_game()` 会遍历所有 agent 调用 reset。这一步根据 `think_config["llm"]` 创建具体模型。例如：
+`Game.reset_game()` 会遍历所有角色并调用 `agent.reset()`。这样设计有两个好处：对象装配和外部模型连接分开，断点恢复与新仿真可以复用同一条对象创建路径。
 
-- Ollama。
-- OpenAI。
-- MiniMax。
-
-模型创建与 agent 初始化分离，有助于：
-
-- 先完成对象装配。
-- 再统一初始化模型。
-- 断点恢复时复用同一逻辑。
-
-第 20 章会详细讲模型适配。
-
-## 15.22 completion()：prompt 调用入口
-
-`Agent.completion()` 是所有 LLM prompt 调用的统一入口。它根据 `func_hint` 找 `Scratch` 中对应方法：
+大语言模型 LLM 调用统一经过 `Agent.completion()`：
 
 ```python
 func = getattr(self.scratch, "prompt_" + func_hint)
 res = func(*args, **kwargs)._asdict()
+output = self._llm.completion(**res)
 ```
 
-可以看一个具体例子：
+例如：
 
 ```python
 self.completion("wake_up")
 ```
 
-这里会调用下面函数：
+这会调用：
 
 ```python
 self.scratch.prompt_wake_up()
 ```
 
-`prompt_wake_up()` 返回 `Result`：
+提示词 prompt 调用链可以表示为：
 
-```text
-prompt
-callback
-failsafe
-return_type
+```mermaid
+flowchart LR
+    Hint["调用提示 func_hint"] --> Method["人格草稿方法 Scratch.prompt_xxx()"]
+    Method --> Template["提示词模板 data/prompts/*.txt"]
+    Template --> Result["Prompt 结果 Result"]
+    Result --> Model["模型调用 LLMModel.completion()"]
+    Model --> Parsed["结构化输出 callback/failsafe"]
+    Parsed --> Behavior["日程、行动、对话或反思"]
 ```
 
-然后 `LLMModel.completion()` 根据这些信息调用模型、解析结果、执行 callback、失败时返回 failsafe。这条链路是：
+*图 15-3：从 `Agent.completion()` 到行为结果的提示词 prompt 调用链。初始化提供人格草稿 Scratch 和模型配置，真正的行为生成发生在后续 `think()` 循环中。*
 
-```text
-Agent.completion("xxx")
-  -> Scratch.prompt_xxx()
-  -> prompt template
-  -> return_type schema
-  -> LLMModel.completion()
-  -> callback/failsafe
-```
-
-这就是角色设定、prompt 和模型之间的桥。
-
-## 15.23 abstract()：初始化后怎么看 agent 状态
-
-`Agent.abstract()` 用于生成 agent 当前状态摘要。它包含：
-
-```python
-{
-    "name": self.name,
-    "currently": self.scratch.currently,
-    "tile": self.maze.tile_at(self.coord).abstract(),
-    "status": self.status,
-    "concepts": ...,
-    "chats": self.chats,
-    "action": self.action.abstract(),
-    "associate": self.associate.abstract(),
-}
-```
-
-如果已有 schedule，也会加入 schedule。如果 LLM 可用，也会加入 llm summary。这对调试很有用。`Game.agent_think()` 会在日志中输出 agent 摘要。检查 agent 当前状态时，重点看：
-
-- currently。
-- tile。
-- status。
-- action。
-- schedule。
-- associate。
-
-这些字段比只看前端动画更可靠。
-
-## 15.24 to_dict()：保存状态
-
-`Agent.to_dict()` 用于 checkpoint。它保存：
+Checkpoint 保存由 `Agent.to_dict()` 负责：
 
 ```python
 info = {
@@ -732,150 +594,53 @@ if with_action:
     info.update({"action": self.action.to_dict()})
 ```
 
-这里需要注意，它会调用：
+这里最关键的是 `currently`、`schedule`、`associate` 和 `action`。`currently` 可能已经被新一天计划更新，`schedule` 保存当天日程，`associate.to_dict()` 会持久化记忆索引，`action` 保存角色正在做的事情。恢复运行时，这些字段会覆盖初始 `agent.json`，角色才会继续过去状态。
 
-```python
-self.associate.to_dict()
-```
+## 15.12 初始化检查
 
-而 `Associate.to_dict()` 会保存索引：
+初始化问题经常在后面的计划、对话、反思阶段才暴露出来，但根因往往出在角色配置、坐标、空间树或模型配置上。检查时按运行顺序看，效率最高。
 
-```python
-self._index.save()
-```
+| 检查项 | 正常信号 | 常见问题 | 检查位置 |
+| --- | --- | --- | --- |
+| 角色名 | 命令行角色名能在 `personas` 中找到 | `--agents` 传入未知角色 | `generative_agents/start.py` |
+| 角色配置 | `agent.json` 有 `name`、`coord`、`currently`、`scratch`、`spatial` | 字段缺失或路径错误 | `frontend/static/assets/village/agents/<角色名>/agent.json` |
+| 初始坐标 | `coord` 对应有效游戏对象 game_object 地址 | 坐标落在没有对象地址的地图格子 Tile 上 | `maze.json`、`Maze.tile_at()` |
+| 空间记忆 | `living_area` 能派生 `睡觉` 地址 | 睡觉、回家、工作地点无法匹配 | `spatial.address`、`Spatial.find_address()` |
+| 公共配置 | `percept`、`schedule`、`think`、`associate` 都存在 | 大语言模型 LLM 或向量嵌入 embedding 提供方 provider 配置不完整 | `generative_agents/data/config.json` |
+| 关联记忆 | 新角色 `associate_nodes` 为 0，恢复角色能加载已有节点 | 断点 checkpoint JSON 与存储索引 storage index 不一致 | `results/checkpoints/<sim>/storage/<角色名>/associate` |
+| 当前行动 | 初始化后能看到角色事件和对象事件 | 地图上没有角色状态，周围角色感知不到它 | `Agent.move()`、`Tile.events` |
+| 基础提示词 prompt | `_base_desc()` 能看到角色身份和当前关注 | 模型行为泛化、缺少目标感 | `data/prompts/base_desc.txt`、`Scratch._base_desc()` |
 
-这意味着 checkpoint 不只是 JSON，也伴随向量索引持久化。断点恢复时，`Associate` 会从 storage path 加载已有 index。这就是角色长期记忆能跨运行保存的原因。
-
-## 15.25 断点恢复时发生什么
-
-如果使用下面这种写法：
-
-```bash
-python start.py --name sim-test --resume --step 10
-```
-
-`start.py` 会调用：
-
-```python
-get_config_from_log(checkpoints_folder)
-```
-
-它读取最后一个 checkpoint JSON，恢复 config。然后把时间推进一个 stride：
-
-```python
-start_time += datetime.timedelta(minutes=config["stride"])
-```
-
-并为每个 agent 重新设置 `config_path`。之后进入与新仿真相同的 `SimulateServer` 和 `Game` 初始化流程。差别在于，此时 agent config 中已经包含：
-
-- status。
-- schedule。
-- associate。
-- chats。
-- currently。
-- action。
-- coord。
-
-这些会覆盖初始 `agent.json`。所以恢复后的角色不是重新开始，而是继续过去状态。
-
-## 15.26 初始化阶段的常见问题
-
-初始化阶段常见问题有六类。第一，角色名不在 `personas` 列表里。如果命令行 `--agents` 传入未知角色，`start.py` 会报错。第二，`agent.json` 坐标不对应有效 game_object。新 agent 初始化时会从初始 tile 取 game_object 地址。如果坐标位置不合理，初始 action 可能异常。第三，`spatial.tree` 不包含角色需要的地点。角色知道的地点不足，计划落地时更依赖模型随机选择。第四，`currently` 太弱。如果 `currently` 没有明确目标，角色日程可能过于普通。第五，模型配置不可用。Ollama 没启动、模型名不对、embedding 模型不存在，都会导致运行失败。第六，断点恢复时 storage 不一致。如果 checkpoint JSON 和 storage index 不匹配，记忆可能恢复异常。这些问题很多看起来像 agent 行为问题，其实源自初始化。
-
-## 15.27 如何检查一个 agent 是否初始化正确
-
-按下面顺序检查。第一，看 `agent.json`。确认：
-
-- name。
-- coord。
-- currently。
-- scratch。
-- spatial。
-
-第二，看 `data/config.json`。确认：
-
-- LLM provider。
-- embedding provider。
-- percept。
-- schedule。
-- associate。
-
-第三，运行短仿真。例如：
+最短检查命令可以先跑脚手架。脚手架不调用模型，适合确认角色是否能装配成对象：
 
 ```bash
+.venv/bin/python docs/book/scaffolds/part_03/ch15_agent_init_demo.py
+```
+
+需要检查大语言模型 LLM、日程生成和行动落地时，再跑一个单角色、单步仿真：
+
+```bash
+cd generative_agents
 python start.py --name init-check --start "20240213-09:30" --step 1 --stride 10 --agents "克劳斯" --verbose info --log init-check.log
 ```
 
-第四，看日志中的 agent summary。真实输出不要只看最后有没有报错，先读这几行：
+这类运行会真实调用模型。正常日志中应能看到 `克劳斯.reset`、初始地址、`克劳斯 -> wake_up`、`克劳斯 -> schedule_init`、`克劳斯 -> schedule_daily`、`克劳斯 -> schedule_decompose`，以及最后生成的行动 action 摘要。如果这些信号齐全，说明角色已经从配置、提示词 prompt、日程到行动完成了最短闭环。
 
-```text
-克劳斯.reset
-coord[126,46]: the Ville:奥克山学院宿舍:克劳斯的房间:床
-associate:
-  nodes: 0
-llm:
-  model: MiniMax-M3
-  summary:
-    total: S:0,F:0/R:0
-
-Simulate Step[1/1, time: 2024-02-13 09:30:00]
-克劳斯 -> wake_up
-克劳斯 -> schedule_init
-克劳斯 -> schedule_daily
-克劳斯 -> schedule_decompose
-克劳斯 percept 0/4 concepts
-克劳斯 is determining action...
-克劳斯.summary @ 20240213-09:30:00
-action:
-  event: 阅读并标记关于绅士化理论的关键学术资料 @ the Ville:奥克山学院:图书馆:图书馆桌子
-llm:
-  summary:
-    total: S:9,F:0/R:9
-```
-
-这段日志把初始化过程拆得很清楚。`reset` 阶段的坐标仍然在宿舍床铺，说明角色从 `agent.json` 的初始状态加载；此时 `associate.nodes: 0`，说明记忆索引还没有写入新节点。进入 `Simulate Step` 后，系统连续调用起床、日程初始化、日程生成和日程拆解 prompt；最后 action 被落到图书馆桌子，说明模型已经把“写中产阶级化论文”的人设转成了具体空间行动。`total: S:9,F:0/R:9` 是初始化检查里最直接的模型健康信号。
-
-检查时重点看：
-
-- tile 地址是否正确。
-- action 是否合理。
-- associate 是否初始化。
-- schedule 是否生成。
-
-第五，看 checkpoint。确认结果写入：
-
-```text
-results/checkpoints/init-check/
-```
-
-本次 1 step 会生成 `simulate-20240213-0930.json`、`conversation.json`、`init-check.log` 和 `storage/克劳斯/associate/`。如果再执行：
-
-```bash
-python compress.py --name init-check
-```
-
-压缩结果中 `movement.json` 只有克劳斯一个角色，约 63 帧；`simulation.md` 的活动记录会显示他位于“奥克山学院，图书馆，图书馆桌子”，活动是“阅读并标记关于绅士化理论的关键学术资料”。这说明初始化不是只创建了一个对象，而是已经完成了从角色配置、日程生成、行动落地到结果压缩的最短闭环。
-
-如果这些都正常，说明 agent 初始化链路基本没问题。
-
-## 15.28 本章小结
-
-智能体初始化决定了角色后续能不能稳定行动。一个角色不是从 `agent.json` 直接变成一句 prompt，而是被装配成 Scratch、Spatial、Schedule、Associate 和当前 Action 的组合。
+## 15.13 本章小结
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 配置来源 | Agent 配置来自 `data/config.json`、角色 `agent.json` 和 checkpoint。 |
-| 配置合并 | `Game.__init__()` 会合并公共配置、角色配置和恢复状态。 |
-| `agent.json` | 它是角色种子，包含身份、currently、scratch 和 spatial。 |
-| `Scratch` | Scratch 把角色设定转成 prompt 基础上下文。 |
-| 三类子系统 | Spatial、Schedule、Associate 分别管理空间记忆、日程和关联记忆。 |
-| 独立记忆 | 每个 agent 有自己的 associate storage，记忆不会自动全局共享。 |
-| Action 恢复 | 初始化会创建或恢复当前 action，并通过 `move()` 写入 Maze。 |
-| 模型入口 | LLM 在 `reset()` 中创建，`Agent.completion()` 是 prompt 调用统一入口。 |
-| checkpoint | `to_dict()` 和 checkpoint 让角色状态可以跨运行恢复。 |
-| 调试重点 | 初始化问题会影响后续行为，不能只盯 prompt。 |
+| 初始化目标 | 智能体 Agent 不是一份角色卡，而是公共配置、角色种子、记忆、日程、行动和地图事件的组合 |
+| 配置来源 | `data/config.json` 提供公共运行参数，`agent.json` 提供角色种子，断点 checkpoint 提供恢复状态 |
+| 角色清单 | 项目固定提供 25 个角色，`start.py` 的 `personas` 是默认角色入口 |
+| 角色字段 | `currently`、`scratch`、`spatial` 和 `coord` 分别进入提示词 prompt、空间记忆和地图状态 |
+| 基础提示词 | `base_desc.txt` 是角色设定进入大语言模型 LLM 的核心模板，Scratch 会把真实角色字段填进去 |
+| 装配链路 | `start.py` 生成配置骨架，`Game.__init__()` 合并配置，`Agent.__init__()` 创建运行模块 |
+| 当前行动 | 初始行动 Action 会写入世界地图 Maze，让角色真正出现在世界里 |
+| 断点恢复 | 断点 checkpoint 中的 `status`、`schedule`、`associate`、`currently`、`action` 会覆盖初始种子 |
+| 调试方式 | 先跑无模型脚手架检查对象装配，再跑单角色单步仿真检查模型、日程和行动 |
 
-下一章讲仿真循环：从 `start.py`、`SimulateServer.simulate()`、`Game.agent_think()` 到 `Agent.think()`，把每一步时间推进和 agent 思考过程讲清楚。
+下一章进入仿真循环。角色已经被装配出来，接下来要看时间如何推进，`Game.agent_think()` 如何调用 `Agent.think()`，以及一个时间步里感知、计划、行动、反思如何串成完整循环。
 
 ## 参考资料
 
@@ -883,6 +648,13 @@ python compress.py --name init-check
 - Local source: `generative_agents/modules/game.py`
 - Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/prompt/scratch.py`
+- Local source: `generative_agents/modules/memory/spatial.py`
+- Local source: `generative_agents/modules/memory/schedule.py`
+- Local source: `generative_agents/modules/memory/associate.py`
+- Local source: `generative_agents/modules/memory/action.py`
+- Local source: `generative_agents/modules/memory/event.py`
+- Local source: `generative_agents/modules/maze.py`
 - Local source: `generative_agents/data/config.json`
 - Local prompt: `generative_agents/data/prompts/base_desc.txt`
 - Local data: `generative_agents/frontend/static/assets/village/agents/*/agent.json`
+- Scaffold: `docs/book/scaffolds/part_03/ch15_agent_init_demo.py`
