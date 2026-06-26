@@ -1,0 +1,39 @@
+{
+  "source": {
+    "coord": "generative_agents/results/compressed/book-config-ai-seminar/movement.json",
+    "config": "generative_agents/data/config.json",
+    "maze": "generative_agents/frontend/static/assets/village/maze.json",
+    "code": "generative_agents/modules/agent.py"
+  },
+  "coord": [
+    119,
+    24
+  ],
+  "current_arena": [
+    "the Ville",
+    "奥克山学院",
+    "图书馆"
+  ],
+  "percept_config": {
+    "mode": "box",
+    "vision_r": 8,
+    "att_bandwidth": 8
+  },
+  "scope_count": 289,
+  "same_arena_tiles": 67,
+  "game_object_tiles_in_scope": 20,
+  "event_descriptions_in_same_arena": [
+    "书架 此时 空闲",
+    "图书馆桌子 此时 空闲",
+    "图书馆沙发 此时 空闲"
+  ],
+  "agent_percept_order": [
+    "Maze.get_scope(coord, percept_config)",
+    "tile.get_address('arena') == current_arena",
+    "tile.get_events()",
+    "distance sort",
+    "att_bandwidth slice",
+    "recent memory de-dup",
+    "Agent._add_concept()"
+  ]
+}

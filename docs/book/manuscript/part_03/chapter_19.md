@@ -7,8 +7,8 @@
 | 代码位置 | 中文意思 | 本章关注点 |
 | --- | --- | --- |
 | `generative_agents/modules/memory/schedule.py` | 日程表数据结构。 | 一天计划如何保存、追加、拆解和读取。 |
-| `generative_agents/modules/agent.py` | 智能体行为调度。 | `Agent` 如何在每一步选择当前计划，并在聊天、等待后修改日程。 |
-| `generative_agents/modules/prompt/scratch.py` | prompt 组装器。 | 如何把角色设定、当前状态和日程需求整理成模型可读的输入。 |
+| `generative_agents/modules/agent.py` | 智能体行为调度。 | 智能体 `Agent` 如何在每一步选择当前计划，并在聊天、等待后修改日程。 |
+| `generative_agents/modules/prompt/scratch.py` | 提示词 prompt 组装器。 | 如何把角色设定、当前状态和日程需求整理成模型可读的输入。 |
 | `generative_agents/data/prompts/schedule_*.txt` | 日程相关提示词模板。 | 让模型生成起床时间、一天计划、细粒度子计划和修订计划。 |
 
 本章重点聚焦以下八个问题：
@@ -24,19 +24,45 @@
 
 ```mermaid
 flowchart TD
-    Base["角色设定与 currently"] --> Daily["生成一天计划"]
-    Memory["近期记忆"] --> Daily
-    Daily --> Hourly["小时级日程"]
-    Hourly --> Decompose["递归拆解"]
-    Decompose --> Action["当前可执行行动"]
-    Action --> Address["绑定地点与对象"]
-    Percept["现场感知"] --> Revise{"是否需要重规划"}
-    Revise -- 是 --> Revised["修订日程"]
+    Base["角色设定与当前关注 currently"] --> Daily["日程生成提示词 prompt<br/>生成一天计划"]
+    Memory["近期记忆 memory"] --> Daily
+    Daily --> Hourly["小时级日程 Schedule"]
+    Hourly --> Decompose["计划拆解函数 schedule_decompose"]
+    Decompose --> Action["当前可执行行动 Action"]
+    Action --> Address["绑定语义地址 address 与对象 object"]
+    Percept["现场感知 percept"] --> Revise{"是否需要重规划 revise"}
+    Revise -- 是 --> Revised["修订日程 schedule_revise"]
     Revised --> Action
     Revise -- 否 --> Action
 ```
 
 *图 19-1：日程生成、拆解与重规划流程。日程既提供稳定生活节奏，也必须能被现场事件打断和修订。*
+
+本章继续使用 Part 03 证据脚手架。它不会调用模型，而是读取真实 prompt 模板大小、源码路径和一个可解释的样例日程结构：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter19 schedule: prompt_count=5, sample_plan=阅读并整理文献综述, decompose_items=2
+trace: docs/book/assets/chapter_19/ch19_schedule_trace.json
+figure: docs/book/assets/chapter_19/ch19_schedule_pipeline.png
+```
+
+![图 19-2：真实日程 Schedule 如何落到分钟级行动](../../assets/chapter_19/ch19_schedule_pipeline.png)
+
+*图 19-2：真实日程 `Schedule` 如何落到分钟级行动。图中读取的是断点 checkpoint 里的 `daily_schedule`，上半部分展示角色当前目标 currently，下半部分展示日程时间轴与子计划 decompose。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `prompt_count=5` | `data/prompts/wake_up.txt` 等五个日程提示词 prompt | 日程不是一次模型调用，而是由起床时间、粗计划、小时计划、计划拆解和计划修订组成的链。 |
+| `sample_plan=阅读并整理文献综述` | `ch19_schedule_trace.json` | trace 用一个确定性样例展示 `daily_schedule` 中 plan 的字段形状：`idx`、`describe`、`start`、`duration` 和 `decompose`。 |
+| `decompose_items=2` | 计划拆解函数 `schedule_decompose` 与 `Schedule.current_plan()` | 粗粒度一小时计划可以拆成两个 30 分钟子计划，当前行动会从子计划中读取。 |
 
 ## 19.2 日程的核心地位
 
@@ -364,7 +390,7 @@ if "睡" not in describe and "床" not in describe:
 
 ## 19.15 schedule_decompose：粗计划变子计划
 
-如果需要拆解计划，可以这样处理：
+需要拆解计划时，智能体调用日程拆解提示词 prompt：
 
 ```python
 decompose_schedule = self.completion(
@@ -372,7 +398,7 @@ decompose_schedule = self.completion(
 )
 ```
 
-`prompt_schedule_decompose()` 会把当前 plan 前后相邻计划也传入 prompt。这样模型知道上下文：
+日程拆解提示词 `prompt_schedule_decompose()` 会把当前计划 plan 前后相邻计划也传入提示词 prompt。这样模型知道上下文：
 
 ```text
 上一段做什么
@@ -534,7 +560,7 @@ memory.Event(
 )
 ```
 
-这说明对话不是只写日志。它会变成当前 action，并占用日程时间。同时，`self.chats` 后续会进入 reflection，用于生成对话后的计划影响和记忆影响。
+这说明对话不是只写日志。它会变成当前行动 action，并占用日程时间。同时，`self.chats` 后续会进入反思 reflection，用于生成对话后的计划影响和记忆影响。
 
 ## 19.20 等待也会改写日程
 
@@ -604,3 +630,5 @@ memory.Event(
 - Local prompts: `generative_agents/data/prompts/schedule_daily.txt`
 - Local prompts: `generative_agents/data/prompts/schedule_decompose.txt`
 - Local prompts: `generative_agents/data/prompts/schedule_revise.txt`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_19/ch19_schedule_trace.json`

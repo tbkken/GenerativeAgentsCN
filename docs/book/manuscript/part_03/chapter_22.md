@@ -2,48 +2,74 @@
 
 ## 22.1 核心问题
 
-Generative Agents 的智能体行为最终由大语言模型生成。但项目不是简单调用一个 ChatGPT 接口。它需要处理：
+Generative Agents 的智能体行为最终由大语言模型 LLM 生成。但项目不是简单调用一个 ChatGPT 接口。它需要处理：
 
 - 本地 Ollama 模型。
 - OpenAI 兼容接口。
 - MiniMax 推理模型。
-- embedding 模型。
+- 向量嵌入 embedding 模型。
 - Pydantic 结构化输出。
 - `<think>` 思考过程过滤。
-- 失败重试和 failsafe。
+- 失败重试和兜底结果 failsafe。
 
 这就是模型适配层。模型适配层主要看四个位置。先把代码名翻译清楚：
 
 | 代码位置 | 中文意思 | 本章关注点 |
 | --- | --- | --- |
-| `generative_agents/modules/model/llm_model.py` | 大模型统一调用层。 | 把 Ollama、OpenAI、MiniMax 等不同 provider 包装成统一接口。 |
-| `generative_agents/modules/storage/index.py` | 向量索引和 embedding 接入。 | 为记忆检索提供文本向量化和相似度搜索能力。 |
-| `generative_agents/modules/prompt/scratch.py` | prompt 与结构化输出定义。 | 定义每类任务需要什么输入、希望模型返回什么结构。 |
-| `generative_agents/data/config.json` | 模型与运行配置。 | 控制 provider、模型名、embedding、重试、输出解析等运行参数。 |
+| `generative_agents/modules/model/llm_model.py` | 大模型统一调用层。 | 把 Ollama、OpenAI、MiniMax 等不同模型提供方 provider 包装成统一接口。 |
+| `generative_agents/modules/storage/index.py` | 向量索引和向量嵌入 embedding 接入。 | 为记忆检索提供文本向量化和相似度搜索能力。 |
+| `generative_agents/modules/prompt/scratch.py` | 提示词 prompt 与结构化输出定义。 | 定义每类任务需要什么输入、希望模型返回什么结构。 |
+| `generative_agents/data/config.json` | 模型与运行配置。 | 控制模型提供方 provider、模型名、向量嵌入 embedding、重试、输出解析等运行参数。 |
 
 本章重点聚焦以下八个问题：
 
-1. Agent 如何调用模型？
+1. 智能体 Agent 如何调用模型？
 2. `Scratch` 如何定义结构化输出 schema？
 3. `LLMModel.completion()` 做了哪些统一处理？
-4. Ollama、OpenAI、MiniMax 三种 provider 有何差异？
+4. Ollama、OpenAI、MiniMax 三种模型提供方 provider 有何差异？
 5. `<think>` 标签为什么要过滤？
-6. embedding 模型如何接入记忆系统？
+6. 向量嵌入 embedding 模型如何接入记忆系统？
 7. 当前配置如何影响运行成本和质量？
 8. 模型适配层有哪些风险和升级方向？
 
 ```mermaid
 flowchart LR
-    Agent["Agent 业务逻辑"] --> Scratch["Scratch<br/>prompt 与 response schema"]
-    Scratch --> LLMModel["LLMModel<br/>统一调用接口"]
-    LLMModel --> Ollama["Ollama"]
-    LLMModel --> OpenAI["OpenAI"]
-    LLMModel --> MiniMax["MiniMax"]
-    LLMModel --> Parser["结构化输出解析"]
+    Agent["智能体业务逻辑 Agent"] --> Scratch["提示词组装器 Scratch<br/>prompt 与 response schema"]
+    Scratch --> LLMModel["模型统一调用层 LLMModel<br/>重试 retry / 兜底 failsafe / 统计 summary"]
+    LLMModel --> Ollama["模型提供方 provider<br/>Ollama"]
+    LLMModel --> OpenAI["模型提供方 provider<br/>OpenAI"]
+    LLMModel --> MiniMax["模型提供方 provider<br/>MiniMax"]
+    LLMModel --> Parser["结构化输出解析 parse_structured_output()"]
     Parser --> Agent
 ```
 
-*图 22-1：Agent -> Scratch -> LLMModel -> provider 的调用链。模型适配层的价值在于把不同提供商的输出收敛成项目可执行的数据。*
+*图 22-1：智能体 Agent -> 提示词组装器 Scratch -> 模型统一调用层 LLMModel -> 模型提供方 provider 的调用链。模型适配层的价值在于把不同提供商的输出收敛成项目可执行的数据。*
+
+本章的证据脚手架会离线模拟结构化输出解析，不调用真实 API：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter22 model: think_provider=minimax, embedding_provider=minimax, falsey_response_boundary=8
+trace: docs/book/assets/chapter_22/ch22_model_adapter_trace.json
+figure: docs/book/assets/chapter_22/ch22_model_adapter_chain.png
+```
+
+![图 22-2：模型适配层的真实输入与输出](../../assets/chapter_22/ch22_model_adapter_chain.png)
+
+*图 22-2：模型适配层的真实输入与输出。左侧是模型提供方 provider 可能返回的原始文本，右侧是结构化解析函数 `parse_structured_output()` 交给业务代码的结果；这里的工程边界来自 `llm_model.py`。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `think_provider=minimax` | `data/config.json` 的 `agent.think.llm.provider` | 当前行为生成默认走 MiniMax 模型提供方 provider。 |
+| `embedding_provider=minimax` | `data/config.json` 的 `agent.associate.embedding.provider` | 当前记忆检索的向量嵌入 embedding 也走 MiniMax，但它和 LLM provider 是两套配置。 |
+| `falsey_response_boundary=8` | `LLMModel.completion()` 的 `return response or failsafe` | 如果模型解析结果是 `0` 这类假值，源码会返回兜底结果 failsafe；脚手架用 `0 or 8` 把这个边界显式打出来。 |
 
 ## 22.2 模型调用总链路
 
@@ -66,7 +92,7 @@ Agent.completion("wake_up")
   -> 返回业务结果
 ```
 
-这里有几个关键角色。`Agent` 决定要执行哪个认知任务。`Scratch` 构造 prompt，并定义输出结构。`LLMModel` 负责重试、统计、失败兜底。provider 子类负责具体 API 调用。这种分层很重要。它让业务逻辑不用关心模型 API 细节。
+这里有几个关键角色。智能体 `Agent` 决定要执行哪个认知任务。提示词组装器 `Scratch` 构造提示词 prompt，并定义输出结构。模型统一调用层 `LLMModel` 负责重试、统计、失败兜底。模型提供方 provider 子类负责具体 API 调用。这种分层很重要。它让业务逻辑不用关心模型 API 细节。
 
 ## 22.3 Result：prompt 调用契约
 
@@ -76,12 +102,12 @@ Agent.completion("wake_up")
 Result = namedtuple("Result", ["prompt", "callback", "failsafe", "return_type"])
 ```
 
-每个 `prompt_*` 方法都返回 Result。四个字段分别是：
+每个 `prompt_*` 方法都返回提示词契约 `Result`。四个字段分别是：
 
-- `prompt`：最终发给模型的文本。
+- `prompt`：最终发给模型的提示词文本。
 - `callback`：模型输出后的业务校验或转换。
-- `failsafe`：失败时的兜底结果。
-- `return_type`：Pydantic schema。
+- `failsafe`：失败时的兜底结果 failsafe。
+- `return_type`：Pydantic 结构化输出 schema。
 
 例如 `prompt_wake_up()` 返回：
 
@@ -131,7 +157,7 @@ agent 系统需要的不是漂亮文本，而是可执行数据。
 generative_agents/modules/model/llm_model.py
 ```
 
-初始化阶段会保存，可以这样处理：
+初始化阶段会保存下面这些运行状态：
 
 ```python
 self._api_key
@@ -158,7 +184,15 @@ S:<success>,F:<failure>/R:<request>
 def completion(self, prompt, retry=10, callback=None, failsafe=None, return_type=None, caller="llm_normal", **kwargs)
 ```
 
-它做几件事。第一，最多重试 10 次。第二，调用 `_completion()` 获取模型输出。第三，如果有 callback，就执行 callback。第四，如果结果为 None，继续重试。第五，最终失败时返回 failsafe。第六，记录成功失败统计。这让业务层可以比较放心地调用模型。但也有一个要注意的地方。failsafe 会让仿真继续运行，但也可能隐藏模型质量问题。所以实验时不能只看仿真是否跑完，还要看 LLM summary 中失败次数。
+它做几件事。第一，最多重试 10 次。第二，调用 `_completion()` 获取模型输出。第三，如果有 callback，就执行 callback。第四，如果结果为 `None`，继续重试。第五，最终失败时返回兜底结果 failsafe。第六，记录成功失败统计。这让业务层可以比较放心地调用模型。
+
+这里还有一个源码边界。函数最后返回的是：
+
+```python
+return response or failsafe
+```
+
+这意味着只要 `response` 是 Python 假值，就会走兜底结果。`None` 走 failsafe 是合理的，但 `0`、`False`、空字符串也会被当作假值。脚手架输出里的 `falsey_response_boundary=8` 就是在展示这个边界：如果起床时间解析成 `0`，而 `wake_up` 的 failsafe 是 `8`，最终返回会变成 `8`。因此实验时不能只看仿真是否跑完，还要看 LLM summary 中失败次数、结构化输出是否合理，以及是否出现大量兜底行为。
 
 ## 22.7 OpenAI provider
 
@@ -420,35 +454,35 @@ embo-01
 
 - LLM summary 中失败数。
 - 日志中 `LLMModel.completion()` 错误。
-- 结果中是否出现大量 failsafe 行为。
+- 结果中是否出现大量兜底结果 failsafe 行为。
 
 ## 22.19 模型适配的边界
 
-当前模型适配层有几个边界。第一，provider 数量有限。只内置 Ollama、MiniMax、OpenAI。第二，并发能力有限。当前 agent 按顺序调用模型，没有异步并发。第三，schema 支持依赖 provider。Ollama 和 MiniMax 的结构化输出处理不同，其他 provider 可能还要适配。第四，parse_structured_output 容错有限。复杂错误 JSON 仍然可能解析失败。第五，模型输出质量不做二次评审。例如反思是否被证据支持，当前没有自动 judge。这些边界是后续升级方向。
+当前模型适配层有几个边界。第一，模型提供方 provider 数量有限，只内置 Ollama、MiniMax、OpenAI。第二，并发能力有限，当前智能体 agent 按顺序调用模型，没有异步并发。第三，结构化输出 schema 支持依赖模型提供方 provider。Ollama 和 MiniMax 的结构化输出处理不同，其他 provider 可能还要适配。第四，结构化输出解析函数 `parse_structured_output()` 容错有限，复杂错误 JSON 仍然可能解析失败。第五，模型输出质量不做二次评审，例如反思是否被证据支持，当前没有自动评审 judge。这些边界是后续升级方向。
 
 ## 22.20 可改进方向
 
-模型层可以从六个方向升级。第一，增加 provider 抽象。统一 OpenAI compatible、Ollama native、Anthropic、DeepSeek、Qwen API 等。第二，引入异步并发。在不破坏仿真顺序的前提下并发非相互依赖调用。第三，引入模型路由。简单任务用小模型，反思和对话用强模型。第四，引入输出修复。结构化解析失败时，用专门 repair prompt 修 JSON。第五，引入质量评审。对反思、对话摘要、计划进行自动校验。第六，引入缓存。对重复 prompt 或低风险 prompt 做缓存，降低成本。这些升级会让 Generative Agents 更适合长期实验。
+模型层可以从六个方向升级。第一，增加模型提供方 provider 抽象，统一 OpenAI 兼容接口 OpenAI compatible、Ollama 原生接口 Ollama native、Anthropic、DeepSeek、Qwen API 等。第二，引入异步并发，在不破坏仿真顺序的前提下并发非相互依赖调用。第三，引入模型路由，简单任务用小模型，反思和对话用强模型。第四，引入输出修复，结构化解析失败时，用专门修复提示词 repair prompt 修 JSON。第五，引入质量评审，对反思、对话摘要、计划进行自动校验。第六，引入缓存，对重复提示词 prompt 或低风险 prompt 做缓存，降低成本。这些升级会让 Generative Agents 更适合长期实验。
 
 ## 22.21 本章小结
 
-模型适配层决定这个项目能不能稳定运行。agent 系统需要的不是漂亮文本，而是可以被代码继续执行的结构化结果。
+模型适配层决定这个项目能不能稳定运行。智能体 agent 系统需要的不是漂亮文本，而是可以被代码继续执行的结构化结果。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 调用链路 | `Agent.completion()` -> `Scratch.prompt_*()` -> `LLMModel.completion()` -> provider。 |
-| `Result` | 它封装 prompt、callback、failsafe 和 return_type。 |
-| 结构化输出 | Pydantic schema 是稳定运行的核心，不是附加装饰。 |
-| 统一入口 | `LLMModel.completion()` 负责 retry、callback、failsafe 和统计。 |
-| OpenAI | OpenAI provider 使用 magentic 的 OpenAI chat model。 |
-| Ollama | Ollama provider 调用 `/api/chat`，并通过 `format` 传 JSON schema。 |
-| MiniMax | MiniMax provider 把 JSON schema 写进 prompt，并启用 `json_object`。 |
-| 推理标签清理 | Ollama 和 MiniMax provider 会过滤 `<think>` 标签。 |
+| 调用链路 | 智能体补全函数 `Agent.completion()` -> 提示词函数 `Scratch.prompt_*()` -> 模型统一调用层 `LLMModel.completion()` -> 模型提供方 provider。 |
+| 提示词契约 `Result` | 它封装提示词 prompt、回调 callback、兜底结果 failsafe 和返回类型 return_type。 |
+| 结构化输出 | Pydantic 结构化输出 schema 是稳定运行的核心，不是附加装饰。 |
+| 统一入口 | `LLMModel.completion()` 负责重试 retry、回调 callback、兜底 failsafe 和统计。 |
+| OpenAI | OpenAI 模型提供方 provider 使用 magentic 的 OpenAI chat model。 |
+| Ollama | Ollama 模型提供方 provider 调用 `/api/chat`，并通过 `format` 传 JSON schema。 |
+| MiniMax | MiniMax 模型提供方 provider 把 JSON schema 写进提示词 prompt，并启用 `json_object`。 |
+| 推理标签清理 | Ollama 和 MiniMax 模型提供方 provider 会过滤 `<think>` 标签。 |
 | 解析校验 | `parse_structured_output()` 负责解析 JSON、提取片段并用 Pydantic 校验。 |
-| embedding 分离 | embedding provider 与 LLM provider 分离，支持 HuggingFace、Ollama、MiniMax、OpenAI。 |
+| 向量嵌入 embedding 分离 | 向量嵌入提供方 embedding provider 与大语言模型提供方 LLM provider 分离，支持 HuggingFace、Ollama、MiniMax、OpenAI。 |
 | 行为影响 | 模型质量会直接影响日程、对话、反思、检索和评价。 |
 
-下一章讲回放系统：看 checkpoint 如何压缩成 `movement.json` 和 `simulation.md`，以及 Phaser 前端如何展示小镇。
+下一章讲回放系统：看断点 checkpoint 如何压缩成 `movement.json` 和 `simulation.md`，以及前端渲染引擎 Phaser 如何展示小镇。
 
 ## 参考资料
 
@@ -458,3 +492,5 @@ embo-01
 - Local config: `generative_agents/data/config.json`
 - Local docs: `docs/ollama.md`
 - Local README: `README.md`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_22/ch22_model_adapter_trace.json`

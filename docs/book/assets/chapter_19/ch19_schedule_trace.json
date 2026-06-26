@@ -1,0 +1,45 @@
+{
+  "source": {
+    "schedule": "generative_agents/modules/memory/schedule.py",
+    "agent": "generative_agents/modules/agent.py",
+    "scratch": "generative_agents/modules/prompt/scratch.py",
+    "prompts": "generative_agents/data/prompts"
+  },
+  "prompt_template_bytes": {
+    "wake_up": 158,
+    "schedule_init": 560,
+    "schedule_daily": 920,
+    "schedule_decompose": 1104,
+    "schedule_revise": 975
+  },
+  "pipeline": [
+    "prompt_wake_up() -> wake_up hour",
+    "prompt_schedule_init() -> coarse activity list",
+    "prompt_schedule_daily() -> 24-hour dict",
+    "Schedule.add_plan() -> daily_schedule item",
+    "Schedule.decompose() + prompt_schedule_decompose() -> minute tasks",
+    "Agent._determine_action() -> address and Action",
+    "prompt_schedule_revise() -> interrupted plan repair"
+  ],
+  "sample_daily_schedule_item": {
+    "idx": 0,
+    "describe": "阅读并整理文献综述",
+    "start": 540,
+    "duration": 60,
+    "decompose": [
+      {
+        "idx": 0,
+        "describe": "阅读论文资料",
+        "start": 540,
+        "duration": 30
+      },
+      {
+        "idx": 1,
+        "describe": "起草论文开头段落",
+        "start": 570,
+        "duration": 30
+      }
+    ]
+  },
+  "source_boundary": "Schedule.decompose() contains mixed English/Chinese sleep checks; treat it as current code behavior, not a universal sleep design."
+}

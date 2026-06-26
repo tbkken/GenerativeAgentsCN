@@ -1,0 +1,42 @@
+{
+  "source": {
+    "llm_model": "generative_agents/modules/model/llm_model.py",
+    "scratch": "generative_agents/modules/prompt/scratch.py",
+    "index": "generative_agents/modules/storage/index.py",
+    "config": "generative_agents/data/config.json"
+  },
+  "think_provider": {
+    "provider": "minimax",
+    "model": "MiniMax-M3",
+    "base_url": "https://api.minimaxi.com/v1",
+    "api_key": "",
+    "max_tokens": 8192
+  },
+  "embedding_provider": {
+    "provider": "minimax",
+    "model": "embo-01",
+    "base_url": "https://api.minimax.chat/v1",
+    "api_key": "",
+    "group_id": ""
+  },
+  "structured_output_cases": {
+    "clean_json_int": 7,
+    "wrapped_json_bool": false,
+    "think_filtered_int": 7,
+    "falsey_response_boundary": 8
+  },
+  "providers": {
+    "llm": [
+      "ollama",
+      "minimax",
+      "openai"
+    ],
+    "embedding": [
+      "hugging_face",
+      "ollama",
+      "minimax",
+      "openai"
+    ]
+  },
+  "boundary": "LLMModel.completion() returns response or failsafe, so falsey values such as 0 can be replaced by failsafe."
+}

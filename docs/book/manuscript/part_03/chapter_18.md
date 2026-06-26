@@ -2,26 +2,26 @@
 
 ## 18.1 核心问题
 
-第 15 章讲感知。感知到的事件如果不存下来，只能影响当前 step。Generative Agents 的关键是让经历进入长期行为链路。在 Generative Agents 中，这个长期记忆系统主要由四个对象组成：
+第 17 章讲感知。感知到的事件如果不存下来，只能影响当前仿真步 step。Generative Agents 的关键是让经历进入长期行为链路。在 Generative Agents 中，这个长期记忆系统主要由四个对象组成：
 
 ```text
-Event
-  -> Concept
-  -> Associate
-  -> LlamaIndex
+事件 Event
+  -> 概念节点 Concept
+  -> 关联记忆 Associate
+  -> 向量索引 LlamaIndex
 ```
 
 还有一个负责检索重排的对象：
 
 ```text
-AssociateRetriever
+关联记忆检索器 AssociateRetriever
 ```
 
 本章重点聚焦以下九个问题：
 
-1. Event 与 Concept 有什么区别？
-2. 记忆为什么分成 event、chat、thought 三类？
-3. `Associate.add_node()` 如何写入记忆？
+1. 事件 Event 与概念节点 Concept 有什么区别？
+2. 记忆为什么分成事件 event、对话 chat、想法 thought 三类？
+3. 关联记忆写入函数 `Associate.add_node()` 如何写入记忆？
 4. 记忆 metadata 中保存了哪些信息？
 5. LlamaIndex 在项目中承担什么职责？
 6. `retrieve_events()`、`retrieve_chats()`、`retrieve_thoughts()` 怎么工作？
@@ -31,15 +31,42 @@ AssociateRetriever
 
 ```mermaid
 flowchart LR
-    E[Event<br/>subject/predicate/object/address] --> C[Concept<br/>node_type/poignancy/time]
-    C --> A[Associate.add_node]
-    A --> I[LlamaIndex VectorStore]
-    I --> R[AssociateRetriever]
-    R --> X[检索结果 Concept]
-    X --> P[Prompt 上下文]
+    E["事件 Event<br/>subject / predicate / object / address"] --> C["概念节点 Concept<br/>node_type / poignancy / time"]
+    C --> A["关联记忆写入函数 Associate.add_node()"]
+    A --> I["向量索引 LlamaIndex VectorStore"]
+    I --> R["关联记忆检索器 AssociateRetriever"]
+    R --> X["检索结果 Concept"]
+    X --> P["提示词 prompt 上下文"]
 ```
 
-*图 18-1：Event -> Concept -> Associate -> LlamaIndex 的记忆链路。世界事件先被包装成带元数据的记忆节点，再进入每个角色自己的可检索记忆库。*
+*图 18-1：事件 Event -> 概念节点 Concept -> 关联记忆 Associate -> 向量索引 LlamaIndex 的记忆链路。世界事件先被包装成带元数据的记忆节点，再进入每个角色自己的可检索记忆库。*
+
+继续运行第 17-23 章共用证据脚手架，可以得到本章的记忆 trace：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter18 memory: memory_types=event,thought,chat, metadata_keys=node_type,subject,predicate,object,address,poignancy,create,expire,access, retrieval=final_score = recency + relevance + importance
+trace: docs/book/assets/chapter_18/ch18_memory_trace.json
+figure: docs/book/assets/chapter_18/ch18_memory_retrieval_chain.png
+```
+
+![图 18-2：一条世界事实 Event 如何变成可检索记忆节点 Concept](../../assets/chapter_18/ch18_memory_retrieval_chain.png)
+
+*图 18-2：一条世界事实 Event 如何变成可检索记忆节点 `Concept`。图中把事件文本、元数据 metadata、向量嵌入 embedding 配置和检索权重放在同一张证据桌面上；这些材料都来自 `associate.py` 与 `data/config.json`。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `memory_types=event,thought,chat` | `Associate.__init__()` | 每个角色自己的记忆按事件、想法、对话三类维护 node id 列表。 |
+| `metadata_keys=...` | 关联记忆写入函数 `Associate.add_node()` | 真正写进向量索引 metadata 的字段是类型、主谓宾、地址、重要性和时间戳。 |
+| `retrieval=final_score = recency + relevance + importance` | 关联记忆检索器 `AssociateRetriever._retrieve()` | 检索结果不是只按向量相似度返回，而是同时考虑近因、相关性和重要性。 |
+| `ch18_memory_trace.json` | 证据 trace JSON | trace 里还记录了一个源码边界：反思 evidence 会传入 `_add_concept()`，但当前 `Associate.add_node()` 没把 `filling` 持久化到 metadata。 |
 
 ## 18.2 记忆模块的源码位置
 
@@ -51,7 +78,7 @@ generative_agents/modules/memory/associate.py
 generative_agents/modules/storage/index.py
 ```
 
-`event.py` 定义 Event。`associate.py` 定义 Concept、AssociateRetriever 和 Associate。`index.py` 封装 LlamaIndex 和 embedding provider。它们的职责不同：
+`event.py` 定义事件 Event。`associate.py` 定义概念节点 Concept、关联记忆检索器 AssociateRetriever 和关联记忆 Associate。`index.py` 封装向量索引 LlamaIndex 和向量嵌入提供方 embedding provider。它们的职责不同：
 
 ```text
 Event：描述发生了什么。
@@ -618,20 +645,20 @@ results/checkpoints/<sim>/storage/<agent>/associate/
 
 ## 18.28 本章小结
 
-记忆系统是 Generative Agents 最重要的基础设施之一。Event、Concept、Associate、LlamaIndex 和 AssociateRetriever 必须放到同一条链路里理解。
+记忆系统是 Generative Agents 最重要的基础设施之一。事件 Event、概念节点 Concept、关联记忆 Associate、向量索引 LlamaIndex 和关联记忆检索器 AssociateRetriever 必须放到同一条链路里理解。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| Event 与 Concept | Event 描述事实，Concept 是带元数据的记忆节点。 |
-| Associate | Associate 管理每个 agent 的 event、chat、thought 三类记忆。 |
-| LlamaIndex | LlamaIndex 负责底层向量索引、节点存储和持久化。 |
-| metadata | node_type、subject、predicate、object、address、poignancy、create、expire、access 共同定义记忆属性。 |
-| 写入流程 | `add_node()` 把文本和 metadata 写入索引，并把 node id 插入对应 memory 列表。 |
+| 事件 Event 与概念节点 Concept | 事件 Event 描述事实，概念节点 Concept 是带元数据 metadata 的记忆节点。 |
+| 关联记忆 Associate | 关联记忆 Associate 管理每个智能体 agent 的事件 event、对话 chat、想法 thought 三类记忆。 |
+| 向量索引 LlamaIndex | 向量索引 LlamaIndex 负责底层向量索引、节点存储和持久化。 |
+| 元数据 metadata | `node_type`、`subject`、`predicate`、`object`、`address`、`poignancy`、`create`、`expire`、`access` 共同定义记忆属性。 |
+| 写入流程 | `add_node()` 把文本和元数据 metadata 写入索引，并把节点编号 node id 插入对应记忆 memory 列表。 |
 | 类型检索 | `retrieve_events()`、`retrieve_chats()`、`retrieve_thoughts()` 支持按类型取记忆。 |
-| 焦点检索 | `retrieve_focus()` 支持多焦点检索，是 planning 和 reflection 的重要入口。 |
-| 三因素重排 | `AssociateRetriever` 实现 recency、relevance、importance 的组合。 |
-| access 更新 | 检索后会更新 access，进而影响未来 recency。 |
-| checkpoint | `to_dict()` 会保存 index 和 memory 列表，让记忆进入断点恢复。 |
+| 焦点检索 | `retrieve_focus()` 支持多焦点检索，是规划 planning 和反思 reflection 的重要入口。 |
+| 三因素重排 | 关联记忆检索器 `AssociateRetriever` 实现近因 recency、相关性 relevance、重要性 importance 的组合。 |
+| 访问时间 access 更新 | 检索后会更新访问时间 access，进而影响未来近因 recency。 |
+| 断点 checkpoint | `to_dict()` 会保存索引 index 和记忆 memory 列表，让记忆进入断点恢复。 |
 | 行为影响 | 记忆系统直接影响日程、对话、关系、反思和社会传播。 |
 
 下一章讲日程：深入 `Schedule`、`make_schedule()`、`schedule_init`、`schedule_daily`、`schedule_decompose` 和 `schedule_revise`，看一天计划如何生成、拆解和被对话打断。
@@ -643,3 +670,5 @@ results/checkpoints/<sim>/storage/<agent>/associate/
 - Local source: `generative_agents/modules/storage/index.py`
 - Local source: `generative_agents/modules/agent.py`
 - Local config: `generative_agents/data/config.json`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_18/ch18_memory_trace.json`

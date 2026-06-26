@@ -2,15 +2,15 @@
 
 ## 21.1 核心问题
 
-第 7 章已经讲过 Reflection 的论文思想。本章把 Reflection 落到源码实现。在 Generative Agents 中，反思入口是：
+第 7 章已经讲过反思 Reflection 的论文思想。本章把反思 Reflection 落到源码实现。在 Generative Agents 中，反思入口是：
 
 ```text
 Agent.reflect()
 ```
 
-相关 prompt 的中文含义如下：
+相关提示词 prompt 的中文含义如下：
 
-| prompt | 中文意思 | 它解决的问题 |
+| 提示词 prompt | 中文意思 | 它解决的问题 |
 | --- | --- | --- |
 | `reflect_focus` | 生成反思焦点。 | 先决定“最近这些经历值得围绕什么问题反思”。 |
 | `reflect_insights` | 生成高层洞察。 | 围绕焦点问题，从证据中归纳出可复用的 thought。 |
@@ -35,23 +35,49 @@ Agent.reflect()
 2. 它读取哪些记忆？
 3. 为什么要先生成 focus？
 4. evidence 如何保存？
-5. thought 如何写回 Associate？
+5. 想法 thought 如何写回关联记忆 Associate？
 6. 对话反思如何处理？
 7. 状态如何清零？
 8. 如何调试反思是否真正影响行为？
 
 ```mermaid
 flowchart TD
-    Trigger["重要性累计超过阈值"] --> Recent["取近期 event / thought"]
-    Recent --> Focus["生成 reflect focus"]
-    Focus --> Retrieve["围绕 focus 检索证据"]
-    Retrieve --> Insights["生成 insights"]
-    Insights --> Thought["写入 thought 记忆"]
-    Thought --> Reset["重置或降低反思触发状态"]
-    Thought --> Future["影响后续计划与对话"]
+    Trigger["重要性 poignancy 累计超过阈值"] --> Recent["取近期事件 event / 想法 thought"]
+    Recent --> Focus["生成反思焦点 reflect_focus"]
+    Focus --> Retrieve["围绕焦点 focus 检索证据 evidence"]
+    Retrieve --> Insights["生成洞察 insights"]
+    Insights --> Thought["写入想法记忆 thought"]
+    Thought --> Reset["重置反思触发状态"]
+    Thought --> Future["影响后续计划 planning 与对话 dialogue"]
 ```
 
-*图 21-1：Agent.reflect() 源码流程。反思的工程意义是把一批近期经历压缩成可复用的长期认知。*
+*图 21-1：智能体反思函数 `Agent.reflect()` 源码流程。反思的工程意义是把一批近期经历压缩成可复用的长期认知。*
+
+本章的证据脚手架会读取反思阈值、四个反思相关 prompt，以及 `Associate.add_node()` 的 metadata 字段：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter21 reflection: poignancy_max=150, reflect_prompt_count=4, evidence_persisted_in_metadata=False
+trace: docs/book/assets/chapter_21/ch21_reflection_trace.json
+figure: docs/book/assets/chapter_21/ch21_reflection_pipeline.png
+```
+
+![图 21-2：反思 Reflection 把近期经历钉到证据板上](../../assets/chapter_21/ch21_reflection_pipeline.png)
+
+*图 21-2：反思 Reflection 把近期经历钉到证据板上。左侧是真实对话片段形成的候选证据，中间是重要性阈值 poignancy_max 与源码边界，右侧是从反思焦点 focus 到想法 thought 写回的证据链。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `poignancy_max=150` | `data/config.json` 的 `agent.think.poignancy_max` | 重要性累计不到 150 时，智能体反思函数 `Agent.reflect()` 直接返回。 |
+| `reflect_prompt_count=4` | `reflect_focus`、`reflect_insights`、`reflect_chat_planing`、`reflect_chat_memory` | 反思包括经历反思和聊天反思两条线，不只是生成一句总结。 |
+| `evidence_persisted_in_metadata=False` | `Associate.add_node()` | 当前源码会把 evidence 传进 `_add_concept()`，但底层 metadata 没保存 `filling` 字段；读反思结果时要知道这个证据链边界。 |
 
 ## 21.2 reflect() 在 think() 中的位置
 
@@ -233,7 +259,7 @@ evidence 不是装饰。它解决两个问题。第一，可解释性。thought 
 玛丽亚完全信任克劳斯。
 ```
 
-如果 evidence 只是一次普通对话，这个 thought 就过度推断。有 evidence 后，后续可以审查 thought 是否合理。当前项目保存 evidence 到 `_add_thought()` 的 `filling` 参数，但需要注意，`Associate.add_node()` 当前 metadata 中没有显式保存 filling 字段。源码接口传了 evidence，但底层是否完整保留 evidence，需要进一步检查和改造。这是一个值得改进的点。
+如果 evidence 只是一次普通对话，这个 thought 就过度推断。有 evidence 后，后续可以审查 thought 是否合理。当前源码的边界也很明确：`reflect()` 会把 evidence 传给 `_add_thought()`，`_add_thought()` 再通过 `filling` 参数传给 `_add_concept()`；但 `Associate.add_node()` 写入 metadata 时只保存 `node_type`、主谓宾、地址、重要性和时间字段，没有保存 `filling`。所以 evidence 已经在接口层出现，却没有完整进入持久化记忆节点。这不是读者需要猜的行为，而是当前实现的一个可改造点。
 
 ## 21.12 _add_thought()
 
@@ -352,7 +378,7 @@ insight
 
 ## 21.20 反思与 Klaus/Maria 实验
 
-Klaus/Maria 是观察反思的好案例。可以运行两个版本：
+克劳斯/玛丽亚 Klaus/Maria 是观察反思的好案例。可以运行两个版本：
 
 ```text
 reflection on
@@ -368,18 +394,18 @@ reflection off
 - 下次相遇时关系摘要是否更具体。
 - 后续是否更容易主动聊天。
 
-如果有 reflection，理想结果是：
+如果开启反思 reflection，理想结果是：
 
 ```text
 克劳斯不只是记得和玛丽亚聊过。
 他还形成对玛丽亚兴趣、性格或关系可能性的高层理解。
 ```
 
-这就是 reflection 的行为价值。
+这就是反思 reflection 的行为价值。
 
 ## 21.21 可改进方向
 
-反思模块可以从几个方向增强。第一，保存完整 evidence graph。当前 evidence 参数传入 `_add_concept()`，但底层 metadata 未完整显式保留，需要增强。第二，区分 thought 类型。例如 self、relation、goal、world、norm。第三，增加反思质量评估。用模型或规则检查 insight 是否被证据支持。第四，引入反思遗忘。不正确或过时 thought 应该能被修正。第五，引入主动反思。不只被 poignancy 触发，也可以在日末、睡前或计划失败后触发。第六，与前沿 Reflexion 区分。当前 reflection 主要是经验归纳，Reflexion 更偏任务失败后的自我改进。第五部分会展开。
+反思模块可以从几个方向增强。第一，保存完整证据图 evidence graph。当前 evidence 参数传入 `_add_concept()`，但底层元数据 metadata 未完整显式保留，需要增强。第二，区分想法 thought 类型，例如自我 self、关系 relation、目标 goal、世界 world、规范 norm。第三，增加反思质量评估，用模型或规则检查洞察 insight 是否被证据支持。第四，引入反思遗忘，不正确或过时想法 thought 应该能被修正。第五，引入主动反思，不只被重要性 poignancy 触发，也可以在日末、睡前或计划失败后触发。第六，与前沿 Reflexion 区分。当前反思 reflection 主要是经验归纳，Reflexion 更偏任务失败后的自我改进。第五部分会展开。
 
 ## 21.22 本章小结
 
@@ -393,11 +419,11 @@ reflection off
 | 节点选择 | 节点按 access 选择，数量受 `max_importance` 限制。 |
 | 生成问题 | `reflect_focus` 先生成反思问题。 |
 | 检索证据 | `retrieve_focus(..., reduce_all=False)` 为每个问题保留证据集合。 |
-| 生成 thought | `reflect_insights` 生成 thought 和 evidence。 |
-| 写回记忆 | `_add_thought()` 把 thought 写回 Associate。 |
-| 对话反思 | 对话会生成计划影响和记忆影响两类 thought。 |
-| 状态清理 | 反思结束后清零 poignancy 和 chats。 |
-| 评价标准 | 反思的价值要看 thought 是否影响后续计划、对话和关系。 |
+| 生成想法 thought | 反思洞察提示词 `reflect_insights` 生成想法 thought 和证据 evidence。 |
+| 写回记忆 | `_add_thought()` 把想法 thought 写回关联记忆 Associate。 |
+| 对话反思 | 对话会生成计划影响和记忆影响两类想法 thought。 |
+| 状态清理 | 反思结束后清零重要性 poignancy 和聊天缓存 chats。 |
+| 评价标准 | 反思的价值要看想法 thought 是否影响后续计划、对话和关系。 |
 
 下一章讲模型适配：深入 `LLMModel`、Ollama、OpenAI、MiniMax、Pydantic schema，以及为什么结构化输出是这个项目能稳定运行的关键。
 
@@ -410,3 +436,5 @@ reflection off
 - Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
 - Local prompts: `generative_agents/data/prompts/reflect_chat_planing.txt`
 - Local prompts: `generative_agents/data/prompts/reflect_chat_memory.txt`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_21/ch21_reflection_trace.json`

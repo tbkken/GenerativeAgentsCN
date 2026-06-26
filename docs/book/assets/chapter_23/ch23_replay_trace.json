@@ -1,0 +1,23 @@
+{
+  "source": {
+    "compress": "generative_agents/compress.py",
+    "replay": "generative_agents/replay.py",
+    "checkpoints": "generative_agents/results/checkpoints/book-party-pair",
+    "compressed": "generative_agents/results/compressed/book-party-pair"
+  },
+  "simulation_name": "book-party-pair",
+  "checkpoint_count": 6,
+  "frames_per_step": 60,
+  "movement_frame_count": 361,
+  "non_empty_frame_count": 18,
+  "agent_names": [
+    "伊莎贝拉",
+    "阿伊莎"
+  ],
+  "conversation_key_count": 6,
+  "simulation_md_chars": 4698,
+  "generated_files": [
+    "generative_agents/results/compressed/book-party-pair/movement.json",
+    "generative_agents/results/compressed/book-party-pair/simulation.md"
+  ]
+}

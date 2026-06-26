@@ -1,462 +1,413 @@
-# 第 16 章 仿真循环：start.py、Game 与 Agent.think()
+# 第 16 章 仿真循环：入口脚本 start.py、游戏容器 Game 与智能体思考函数 Agent.think()
 
-## 16.1 核心问题
+## 16.1 仿真循环解决什么
 
-前两章讲了世界模型和智能体初始化。现在要把它们跑起来。Generative Agents 的仿真不是“调用一次 agent，得到一次回答”。它是一个时间推进系统。每一步，系统会：
+世界地图 Maze 让角色有地方可去，角色初始化让智能体 Agent 有身份和状态。仿真循环把这两件事放进时间里：同一个当前时间下，系统按顺序让每个智能体 Agent 思考、更新世界、保存状态，然后推进到下一个时间点。
 
-```text
-读取当前时间
-  -> 让每个 agent 思考
-  -> 更新 agent 状态
-  -> 写 checkpoint
-  -> 保存对话
-  -> 推进时间
-```
+| 没有仿真循环 | 有了仿真循环 |
+| --- | --- |
+| 智能体 Agent 只是一次提示词 prompt 调用 | 智能体 Agent 在连续时间中行动、移动、睡眠、感知和反思 |
+| 坐标只是 `agent.json` 里的初始值 | 坐标会随着移动路径 `path` 和行动结果持续更新 |
+| 行动只存在于内存对象里 | 每个仿真步 step 都写入断点 checkpoint，可恢复、可压缩、可回放 |
+| 多角色只是一个列表 | 多角色按顺序进入同一个世界状态中更新 |
+| 日程、感知、反应、路径分散在不同类里 | 智能体思考函数 `Agent.think()` 把它们串成一次仿真步 step 的行为结果 |
 
-这就是仿真循环。本章聚焦八个问题：
-
-1. `start.py` 如何解析命令行并创建仿真？
-2. 全局时间如何设置和推进？
-3. `SimulateServer.simulate()` 每一步做什么？
-4. `Game.agent_think()` 如何包装 agent 思考结果？
-5. `Agent.think()` 内部执行顺序是什么？
-6. agent 的移动、睡眠、感知、计划、反思如何串起来？
-7. checkpoint 和 conversation 如何保存？
-8. 这个仿真循环有哪些工程边界？
+源码链路可以从四层读：
 
 ```mermaid
-sequenceDiagram
-    participant CLI as start.py
-    participant Game
-    participant Agent
-    participant Maze
-    participant LLM
-    CLI->>Game: create_game(config)
-    loop each step
-        Game->>Agent: think(status, agents)
-        Agent->>Maze: percept nearby events
-        Agent->>LLM: schedule/react/chat/reflect prompts
-        Agent->>Maze: move/update tile events
-        Agent-->>Game: plan + state summary
-        Game-->>CLI: checkpoint data
+flowchart TD
+    subgraph Entry["入口层：入口脚本 start.py"]
+        Args["命令行参数：仿真名称 name / 起始时间 start / 步数 step / 步长 stride / 角色 agents"] --> Config["配置生成函数 get_config() / 断点恢复函数 get_config_from_log()"]
+        Config --> Server["仿真服务容器 SimulateServer(...)"]
+    end
+
+    subgraph Loop["循环层：仿真循环函数 SimulateServer.simulate()"]
+        Server --> Step["遍历仿真步 for each step"]
+        Step --> AgentOrder["按角色状态 agent_status 顺序遍历"]
+        AgentOrder --> Save["写断点文件 simulate-<time>.json 与对话文件 conversation.json"]
+        Save --> Forward["推进时间 timer.forward(stride)"]
+    end
+
+    subgraph World["世界层：游戏容器 Game"]
+        AgentOrder --> GameThink["角色思考包装函数 Game.agent_think(name,status)"]
+        GameThink --> Summary["整理当前关注 currently / 行动 action / 日程 schedule / 地址 address / 记录标记 record"]
+    end
+
+    subgraph AgentLayer["智能体层：智能体思考函数 Agent.think()"]
+        GameThink --> Move["移动同步函数 move() 同步坐标与地图事件"]
+        Move --> Schedule["日程函数 make_schedule() 生成或读取日程"]
+        Schedule --> Sleep{"当前计划是睡眠"}
+        Sleep -- 是 --> SleepAction["写入睡眠行动 Action"]
+        Sleep -- 否 --> Awake["感知 percept() -> 计划 make_plan() -> 反思 reflect()"]
+        SleepAction --> Path["寻路函数 find_path() 返回移动路径 path 与表情 emoji"]
+        Awake --> Path
     end
 ```
 
-*图 16-1：Generative Agents 仿真主循环。一次仿真由时间推进、逐个智能体思考、状态保存和结果回放共同组成。*
+*图 16-1：第 16 章的仿真循环代码链路。入口层决定运行哪批角色，循环层按仿真步 step 推进，世界层包装每个智能体 Agent 的结果，智能体层真正执行移动、日程、感知、计划、反思和寻路。*
 
-## 16.2 运行入口：start.py
+仿真循环层关注调用时机和结果流向；日程生成、感知、反应、对话和反思的提示词 prompt，会在对应机制进入时继续拆开。
 
-运行虚拟小镇的入口是：
+## 16.2 入口命令与配置骨架
+
+运行入口仍然是项目根目录下的：
 
 ```text
 generative_agents/start.py
 ```
 
-README 中的典型命令是：
+典型命令如下：
 
 ```bash
 cd generative_agents
-python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
+python start.py --name debug-loop --start "20240213-09:30" --step 3 --stride 10 --agents "克劳斯,玛丽亚" --verbose info --log debug-loop.log
 ```
 
-几个参数决定仿真如何启动和推进。`--name` 是仿真名称。它决定 checkpoint 和 compressed results 的目录名。`--start` 是仿真起始时间。例如：
+| 参数 | 进入代码后的含义 | 下游影响 |
+| --- | --- | --- |
+| `--name debug-loop` | 仿真名称 | 决定 `results/checkpoints/debug-loop/` 目录 |
+| `--start "20240213-09:30"` | 起始仿真时间 | 进入时间配置 `config["time"]["start"]`，再进入全局计时器 Timer |
+| `--step 3` | 推进 3 个仿真步 step | 仿真循环函数 `SimulateServer.simulate(step=3)` 的循环次数 |
+| `--stride 10` | 每个仿真步 step 推进 10 分钟 | 每步结束后执行时间推进函数 `timer.forward(10)` |
+| `--agents "克劳斯,玛丽亚"` | 只运行两个角色 | `config["agents"]` 只生成这两个角色的配置入口 |
+| `--log debug-loop.log` | 写文件日志 | 日志保存到断点 checkpoint 目录下 |
 
-```text
-20250213-09:30
-```
-
-`--step` 是要推进多少个仿真 step。`--stride` 是每个 step 对应多少分钟。例如 `stride=10`，时间会按：
-
-```text
-09:30 -> 09:40 -> 09:50 -> ...
-```
-
-推进。还有两个适合本地实验的参数：
-
-```text
---agent-count
---agents
-```
-
-前者限制 agent 数量。后者指定逗号分隔的角色名。这对本书实验很有用。25 个 agent 全量运行成本较高，前期调试可以只运行 2 到 6 个角色。
-
-## 16.3 start.py 的角色名单
-
-`start.py` 中有一个 `personas` 列表。它列出了默认可运行的 25 个角色：
-
-```text
-阿伊莎、克劳斯、玛丽亚、沃尔夫冈、梅、约翰、埃迪、
-简、汤姆、卡门、塔玛拉、亚瑟、伊莎贝拉、山姆、詹妮弗、
-弗朗西斯科、海莉、拉吉夫、拉托亚、阿比盖尔、卡洛斯、
-乔治、瑞恩、山本百合子、亚当
-```
-
-命令行指定 `--agents` 时，代码会检查角色名是否在这个列表中：
+新仿真的配置由配置生成函数 `get_config()` 创建：
 
 ```python
-unknown_agents = [a for a in selected_personas if a not in personas]
-if unknown_agents:
-    raise ValueError("Unknown agents: " + ", ".join(unknown_agents))
+def get_config(start_time="20240213-09:30", stride=15, agents=None):
+    with open("data/config.json", "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+        agent_config = json_data["agent"]
+
+    assets_root = os.path.join("assets", "village")
+    config = {
+        "stride": stride,
+        "time": {"start": start_time},
+        "maze": {"path": os.path.join(assets_root, "maze.json")},
+        "agent_base": agent_config,
+        "agents": {},
+    }
+    for a in agents:
+        config["agents"][a] = {
+            "config_path": os.path.join(
+                assets_root, "agents", a.replace(" ", "_"), "agent.json"
+            ),
+        }
+    return config
 ```
 
-这避免因为拼错角色名导致找不到 `agent.json`。读者做实验时要注意，角色名是中文。例如：
+这段代码把命令行参数变成运行时配置：
 
-```bash
-python start.py --name party-small --agents "伊莎贝拉,阿伊莎,克劳斯,玛丽亚"
+| 配置 config 字段 | 来自哪里 | 含义 | 进入哪里 |
+| --- | --- | --- | --- |
+| `stride` | `--stride` | 每步推进多少分钟 | `SimulateServer.simulate()` 末尾 |
+| `time.start` | `--start` | 仿真起始时间 | 游戏创建函数 `create_game()` 设置全局计时器 Timer |
+| `maze.path` | 固定为 `assets/village/maze.json` | 小镇世界地图 | 游戏容器构造函数 `Game.__init__()` 构造世界地图 Maze |
+| `agent_base` | `data/config.json` 的 `agent` | 所有角色共用运行参数 | 游戏容器构造函数 `Game.__init__()` 与角色配置合并 |
+| `agents.<name>.config_path` | `--agents` 或默认角色列表 | 角色种子文件路径 | 智能体构造函数 `Agent.__init__()` 的配置来源 |
+
+配置里还没有真正的智能体 Agent 对象。它只是告诉游戏容器 Game：地图在哪里，公共运行参数是什么，哪些角色要从哪些 `agent.json` 加载。
+
+## 16.3 角色集合决定循环顺序
+
+入口脚本 `start.py` 用角色列表 `personas` 定义默认角色集合。第 15 章已经完整展开 25 个角色，这里只看它在循环里的作用：
+
+```python
+if args.agents:
+    selected_personas = [a.strip() for a in args.agents.split(",") if a.strip()]
+    unknown_agents = [a for a in selected_personas if a not in personas]
+    if unknown_agents:
+        raise ValueError("Unknown agents: " + ", ".join(unknown_agents))
+elif args.agent_count > 0:
+    selected_personas = personas[:args.agent_count]
 ```
+
+角色参数 `--agents` 手动指定角色时，顺序来自命令行字符串。角色数量参数 `--agent-count` 截取角色时，顺序来自角色列表 `personas`。这个顺序会继续进入角色配置 `config["agents"]`，再进入仿真服务的角色状态 `SimulateServer.agent_status`，最后影响同一个仿真步 step 内哪个角色先思考。
+
+这不是小细节。当前项目是同一时间戳下的顺序更新仿真：克劳斯先行动，玛丽亚后行动；如果克劳斯的行动改变了地图事件，玛丽亚在同一个时间点内可能感知到更新后的世界。
 
 ## 16.4 新仿真与断点恢复
 
-`start.py` 支持两种模式。第一，新仿真。如果不加 `--resume`，系统会要求 `--name` 对应目录不存在。否则会要求换一个名字，避免覆盖旧结果。第二，断点恢复。如果加 `--resume`，系统会要求 checkpoint 目录存在。然后调用：
+入口层只有两条路：新仿真和断点恢复。
 
 ```python
-get_config_from_log(checkpoints_folder)
-```
+if resume:
+    sim_config = get_config_from_log(checkpoints_folder)
+    if sim_config is None:
+        print("No checkpoint file found to resume running.")
+        exit(0)
+    start_step = sim_config["step"]
+else:
+    sim_config = get_config(start_time, args.stride, selected_personas)
+    start_step = 0
 
-读取最后一个 checkpoint。新仿真使用：
-
-```python
-get_config(start_time, args.stride, selected_personas)
-```
-
-恢复仿真使用 checkpoint 中的 config，并从上次 step 继续。这两条路径最终都会进入：
-
-```python
-server = SimulateServer(...)
+server = SimulateServer(name, static_root, checkpoints_folder, sim_config, start_step, args.verbose, args.log)
 server.simulate(args.step, args.stride)
 ```
 
-这说明新运行和恢复运行共用同一个仿真循环。
-
-## 16.5 全局 Timer
-
-Generative Agents 使用全局 Timer 管理仿真时间。Timer 位于：
-
-```text
-generative_agents/modules/utils/timer.py
-```
-
-创建游戏时，`create_game()` 会设置 Timer：
+断点恢复读取最后一个断点 checkpoint：
 
 ```python
-utils.set_timer(**config.get("time", {}))
+json_files = list()
+for file_name in files:
+    if file_name.endswith(".json") and file_name != "conversation.json":
+        json_files.append(os.path.join(checkpoints_folder, file_name))
+
+with open(json_files[-1], "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+start_time = datetime.datetime.strptime(config["time"], "%Y%m%d-%H:%M")
+start_time += datetime.timedelta(minutes=config["stride"])
+config["time"] = {"start": start_time.strftime("%Y%m%d-%H:%M")}
 ```
 
-`Timer` 保存一个 `_offset`。如果传入 start，就从 start 开始。如果没有传入，就用当前真实时间。推进时间使用：
+恢复运行不是回到旧仿真步 step 重跑，而是读取上一个断点 checkpoint，然后把新起点设成“上一个断点 checkpoint 时间 + 步长 stride”。角色状态 `status`、日程 `schedule`、关联记忆 `associate`、当前关注 `currently` 和行动 `action` 已经写在断点 checkpoint 里，后续会覆盖初始 `agent.json`。
+
+| 模式 | 配置来源 | `start_step` | 时间来源 | 角色状态 |
+| --- | --- | --- | --- | --- |
+| 新仿真 | 配置生成函数 `get_config(start, stride, agents)` | `0` | 命令行 `--start` | 初始 `agent.json` |
+| 断点恢复 | 断点恢复函数 `get_config_from_log(checkpoints_folder)` | 断点 checkpoint 的 `step` | 最后断点 checkpoint 时间 + 步长 `stride` | 断点 checkpoint 中保存的状态 |
+
+这两条路径最终都会进入同一个仿真循环函数 `SimulateServer.simulate()`。循环层不关心角色是新建的，还是从断点恢复的。
+
+## 16.5 全局计时器 Timer：同一个仿真步 step 的共同时间
+
+全局时间由 `generative_agents/modules/utils/timer.py` 管理。游戏容器 Game 创建时设置全局计时器 Timer：
 
 ```python
-timer.forward(stride)
+def create_game(name, static_root, config, conversation, logger=None):
+    utils.set_timer(**config.get("time", {}))
+    GenerativeAgentsMap.set(
+        GenerativeAgentsKey.GAME,
+        Game(name, static_root, config, conversation, logger=logger),
+    )
+    return GenerativeAgentsMap.get(GenerativeAgentsKey.GAME)
 ```
 
-获取时间时使用下面方法：
+全局计时器 Timer 本身很小：
 
 ```python
-utils.get_timer().get_date()
+class Timer:
+    def __init__(self, start=None):
+        self._mode = "on_time"
+        if start:
+            d_format = "%Y%m%d-%H:%M" if "-" in start else "%H:%M"
+            self._offset = to_date(start, d_format)
+        else:
+            self._offset = datetime.datetime.now()
+
+    def forward(self, offset):
+        self._offset += datetime.timedelta(minutes=offset)
+
+    def daily_duration(self, mode="minute"):
+        return daily_duration(self.get_date(), mode)
+
+    def daily_time(self, duration):
+        base = self.get_date().replace(hour=0, minute=0, second=0, microsecond=0)
+        return base + datetime.timedelta(minutes=duration)
 ```
 
-所有模块共用这个 Timer。日程判断、action 开始结束、checkpoint 文件名、对话时间、反思日期都依赖它。这保证整个仿真中“现在几点”是一致的。
+项目里同时使用两类时间：
 
-## 16.6 时间格式与日程
+| 时间形式 | 示例 | 使用位置 |
+| --- | --- | --- |
+| 绝对时间 `datetime` | `2024-02-13 09:30:00` | 断点 checkpoint 文件名、行动 Action 开始结束、日志、对话时间 |
+| 当天分钟数 `minute-of-day` | `570` | 日程 Schedule 查找当前计划 plan、日程分解、记录间隔判断 |
 
-Timer 提供几个重要方法。`daily_duration()` 返回当天已经过去的分钟数。例如 09:30 是：
+09:30 对应的当天分钟数是：
 
 ```text
 9 * 60 + 30 = 570
 ```
 
-`daily_time(duration)` 把分钟数转回当天具体时间。日程系统大量使用这两个函数。例如 `Schedule.current_plan()` 会用当前 `daily_duration()` 找正在执行的 plan。`Action` 的 start 和 end 则是 datetime。这说明项目中有两类时间表示：
+日程当前计划函数 `Schedule.current_plan()` 用当天分钟数判断现在落在哪个计划段；行动结束判断函数 `Action.finished()` 用绝对时间判断行动是否结束。两种时间都来自同一个全局计时器 Timer，所以同一个仿真步 step 内所有角色看到的“当前时间”一致。
 
-```text
-datetime：绝对时间，用于日志、checkpoint、action start/end。
-minute-of-day：当天分钟数，用于 schedule plan。
-```
+## 16.6 仿真服务容器 SimulateServer 初始化了什么
 
-读源码时要分清这两种时间表示。
-
-## 16.7 SimulateServer 的初始化
-
-`SimulateServer.__init__()` 做几件重要事情。第一，保存仿真名称和路径：
+仿真服务构造函数 `SimulateServer.__init__()` 是循环层的容器。它不直接决定角色行为，但它持有仿真名称、断点 checkpoint 目录、对话记录 conversation、游戏容器 Game 和角色状态 `agent_status`：
 
 ```python
-self.name = name
-self.static_root = static_root
-self.checkpoints_folder = checkpoints_folder
+class SimulateServer:
+    def __init__(self, name, static_root, checkpoints_folder, config, start_step=0, verbose="info", log_file=""):
+        self.name = name
+        self.static_root = static_root
+        self.checkpoints_folder = checkpoints_folder
+        self.config = config
+
+        os.makedirs(checkpoints_folder, exist_ok=True)
+
+        self.conversation_log = f"{checkpoints_folder}/conversation.json"
+        if os.path.exists(self.conversation_log):
+            with open(self.conversation_log, "r", encoding="utf-8") as f:
+                conversation = json.load(f)
+        else:
+            conversation = {}
+
+        game = create_game(name, static_root, config, conversation, logger=self.logger)
+        game.reset_game()
+        self.game = get_game()
 ```
 
-第二，创建 checkpoint 目录：
+初始化后，它还会构造角色状态 `agent_status`：
 
 ```python
-os.makedirs(checkpoints_folder, exist_ok=True)
+for agent_name, agent in config["agents"].items():
+    agent_config = copy.deepcopy(agent_base)
+    agent_config.update(self.load_static(agent["config_path"]))
+    self.agent_status[agent_name] = {
+        "coord": agent_config["coord"],
+        "path": [],
+    }
 ```
 
-第三，读取历史 conversation。如果 `conversation.json` 已存在，就加载它。否则使用空 dict。第四，创建 logger。如果指定 `--log`，写文件日志。否则输出到终端。第五，创建 Game：
+角色状态 `agent_status` 是仿真服务 server 维护的外部状态，不等同于智能体坐标 `Agent.coord`。每个仿真步 step 开始时，仿真服务 server 把状态 `status` 传给智能体 Agent；每个智能体 Agent 返回移动路径 `path` 后，仿真服务 server 再更新自己的状态 `status`。这个设计让后端循环和前端回放共享同一套移动结果。
+
+## 16.7 仿真循环函数 SimulateServer.simulate() 的真实循环
+
+核心循环在仿真循环函数 `simulate()`：
 
 ```python
-game = create_game(name, static_root, config, conversation, logger=self.logger)
-game.reset_game()
-self.game = get_game()
+def simulate(self, step, stride=0):
+    timer = utils.get_timer()
+    for i in range(self.start_step, self.start_step + step):
+        title = "Simulate Step[{}/{}, time: {}]".format(
+            i+1, self.start_step + step, timer.get_date()
+        )
+        self.logger.info("\n" + utils.split_line(title, "="))
+        for name, status in self.agent_status.items():
+            plan = self.game.agent_think(name, status)["plan"]
+            agent = self.game.get_agent(name)
+            if name not in self.config["agents"]:
+                self.config["agents"][name] = {}
+            self.config["agents"][name].update(agent.to_dict())
+            if plan.get("path"):
+                status["coord"], status["path"] = plan["path"][-1], []
+            self.config["agents"][name].update({"coord": status["coord"]})
+
+        sim_time = timer.get_date("%Y%m%d-%H:%M")
+        self.config.update({"time": sim_time, "step": i + 1})
+        with open(f"{self.checkpoints_folder}/simulate-{sim_time.replace(':', '')}.json", "w", encoding="utf-8") as f:
+            f.write(json.dumps(self.config, indent=2, ensure_ascii=False))
+        with open(f"{self.checkpoints_folder}/conversation.json", "w", encoding="utf-8") as f:
+            f.write(json.dumps(self.game.conversation, indent=2, ensure_ascii=False))
+
+        if stride > 0:
+            timer.forward(stride)
 ```
 
-`reset_game()` 会为每个 agent 创建模型连接。第六，初始化 `agent_status`。它保存每个 agent 当前坐标和 path。这些状态会在每一步传给 agent。
+按执行顺序看，仿真循环函数 `simulate()` 做了六件事：
 
-## 16.8 agent_status 的作用
+| 顺序 | 代码 | 行为含义 |
+| --- | --- | --- |
+| 1 | `timer = utils.get_timer()` | 取全局计时器 Timer，本仿真步 step 内共用这一时间 |
+| 2 | `for name, status in self.agent_status.items()` | 按角色顺序逐个思考 |
+| 3 | `self.game.agent_think(name, status)` | 进入游戏容器 Game，再进入智能体思考函数 `Agent.think()` |
+| 4 | `agent.to_dict()` | 把智能体 Agent 内部状态写回配置 config |
+| 5 | `status["coord"] = plan["path"][-1]` | 如果返回移动路径 path，仿真服务 server 坐标直接更新到路径终点 |
+| 6 | 写 `simulate-<time>.json` 与 `conversation.json` | 保存断点和对话，供恢复、压缩、回放使用 |
 
-`agent_status` 是仿真循环和 agent 内部状态之间的桥。初始化时：
+这里的移动粒度要说清楚：后端每个仿真步 step 不是一格一格移动，而是让智能体寻路函数 `Agent.find_path()` 返回一条移动路径 path；仿真服务 server 把坐标更新到路径终点；前端回放再用这条移动路径 `path` 表现移动过程。
+
+## 16.8 角色思考包装函数 Game.agent_think() 包装了什么
+
+角色思考包装函数 `Game.agent_think()` 不替智能体 Agent 决策。它负责调用智能体 Agent，并把结果整理成日志、摘要和回放可读的信息：
 
 ```python
-self.agent_status[agent_name] = {
-    "coord": agent_config["coord"],
-    "path": [],
-}
+def agent_think(self, name, status):
+    agent = self.get_agent(name)
+    plan = agent.think(status, self.agents)
+    info = {
+        "currently": agent.scratch.currently,
+        "associate": agent.associate.abstract(),
+        "concepts": {c.node_id: c.abstract() for c in agent.concepts},
+        "chats": [
+            {"name": "self" if n == agent.name else n, "chat": c}
+            for n, c in agent.chats
+        ],
+        "action": agent.action.abstract(),
+        "schedule": agent.schedule.abstract(),
+        "address": agent.get_tile().get_address(as_list=False),
+    }
+    if (utils.get_timer().daily_duration() - agent.last_record) > self.record_iterval:
+        info["record"] = True
+        agent.last_record = utils.get_timer().daily_duration()
+    else:
+        info["record"] = False
+    return {"plan": plan, "info": info}
 ```
 
-每一步模拟时，传给：
+| 字段 | 来源 | 作用 |
+| --- | --- | --- |
+| 返回计划 `plan` | 智能体思考函数 `Agent.think()` 返回 | 给仿真服务 server 更新角色状态 `agent_status`，给前端回放移动路径 `path` 和表情 `emoji` |
+| 当前关注 `currently` | `agent.scratch.currently` | 当前关注点摘要 |
+| 关联记忆 `associate` | `agent.associate.abstract()` | 关联记忆摘要 |
+| 概念 `concepts` | `agent.concepts` | 本仿真步 step 感知到的新事件或聊天概念 |
+| 对话 `chats` | `agent.chats` | 本仿真步 step 或近期对话内容 |
+| 行动 `action` | `agent.action.abstract()` | 当前行动的事件、对象事件、开始结束时间 |
+| 日程 `schedule` | `agent.schedule.abstract()` | 当前日程 |
+| 地址 `address` | `agent.get_tile().get_address()` | 当前地图格子对应的语义地址 |
+| 记录标记 `record` | 记录间隔字段 `record_iterval` 判断 | 是否到了需要记录摘要的间隔 |
+
+这一层是观察窗口。调试仿真循环时，摘要 `info` 能告诉我们智能体 Agent 现在在哪里、正在做什么、是否记录、是否对话、是否产生新感知。
+
+## 16.9 智能体思考函数 Agent.think() 的真实执行顺序
+
+单个智能体 Agent 的行为主线在智能体思考函数 `Agent.think()`：
 
 ```python
-plan = self.game.agent_think(name, status)["plan"]
+def think(self, status, agents):
+    events = self.move(status["coord"], status.get("path"))
+    plan, _ = self.make_schedule()
+
+    if (plan["describe"] == "sleeping" or "睡" in plan["describe"]) and self.is_awake():
+        self.logger.info("{} is going to sleep...".format(self.name))
+        address = self.spatial.find_address("睡觉", as_list=True)
+        tiles = self.maze.get_address_tiles(address)
+        coord = random.choice(list(tiles))
+        events = self.move(coord)
+        self.action = memory.Action(
+            memory.Event(self.name, "正在", "睡觉", address=address, emoji="😴"),
+            memory.Event(address[-1], "被占用", self.name, address=address, emoji="🛌"),
+            duration=plan["duration"],
+            start=utils.get_timer().daily_time(plan["start"]),
+        )
+    if self.is_awake():
+        self.percept()
+        self.make_plan(agents)
+        self.reflect()
+    else:
+        if self.action.finished():
+            self.action = self._determine_action()
+
+    emojis = {}
+    if self.action:
+        emojis[self.name] = {"emoji": self.get_event().emoji, "coord": self.coord}
+    for eve, coord in events.items():
+        if eve.subject in agents:
+            continue
+        emojis[":".join(eve.address)] = {"emoji": eve.emoji, "coord": coord}
+    self.plan = {
+        "name": self.name,
+        "path": self.find_path(agents),
+        "emojis": emojis,
+    }
+    return self.plan
 ```
 
-agent 会根据 status 同步自己的移动状态：
-
-```python
-events = self.move(status["coord"], status.get("path"))
-```
-
-然后返回新的 path。`SimulateServer.simulate()` 再更新 status：
-
-```python
-if plan.get("path"):
-    status["coord"], status["path"] = plan["path"][-1], []
-```
-
-这里有一个简化：如果 agent 返回 path，server 直接把坐标更新到 path 的最后一个点。后端仿真 step 粒度不是每个 tile 移动一步，而是每个 step 计算一个目标路径，状态更新到路径终点。前端回放可以用 path 表现移动过程。
-
-## 16.9 SimulateServer.simulate()
-
-核心仿真循环可以这样概括：
-
-```python
-for i in range(self.start_step, self.start_step + step):
-    for name, status in self.agent_status.items():
-        plan = self.game.agent_think(name, status)["plan"]
-        agent = self.game.get_agent(name)
-        self.config["agents"][name].update(agent.to_dict())
-        ...
-    write checkpoint
-    write conversation
-    timer.forward(stride)
-```
-
-每个 step 对所有 agent 依次调用 `agent_think()`。调用顺序是 `agent_status` 字典顺序。在 Python 当前版本中，字典保持插入顺序，因此顺序通常与 `personas` 或指定 `--agents` 顺序一致。这意味着同一个 step 中，前面 agent 的行为可能先更新世界，后面 agent 感知时可能看到更新后的事件。这是一个顺序仿真，而不是所有 agent 完全同时决策。这个细节很重要。如果要做严格同步仿真，需要把感知、决策、更新拆成多个阶段。当前实现更简单，也更容易理解和回放。
-
-## 16.10 Game.agent_think()
-
-`Game.agent_think()` 是 game 层对 agent 思考的包装。它做三件事。第一，调用 agent：
-
-```python
-plan = agent.think(status, self.agents)
-```
-
-第二，整理 info：
-
-```python
-info = {
-    "currently": agent.scratch.currently,
-    "associate": agent.associate.abstract(),
-    "concepts": ...,
-    "chats": ...,
-    "action": agent.action.abstract(),
-    "schedule": agent.schedule.abstract(),
-    "address": agent.get_tile().get_address(as_list=False),
-}
-```
-
-第三，记录日志并返回：
-
-```python
-return {"plan": plan, "info": info}
-```
-
-从架构上看，`Game` 不替 agent 做决策。它只是提供世界、agent 集合、日志和摘要。真正的行为逻辑在 `Agent.think()`。
-
-## 16.11 Agent.think() 总览
-
-`Agent.think()` 是单个 agent 每一步的主函数。核心流程如下：
-
-```text
-move(status.coord, status.path)
-  -> make_schedule()
-  -> 如果当前计划是睡觉且还醒着：进入睡眠 action
-  -> 如果醒着：
-       percept()
-       make_plan()
-       reflect()
-     否则：
-       如果睡眠 action 结束，确定新 action
-  -> 整理 emoji
-  -> find_path()
-  -> 返回 plan
-```
-
-这条链路说明 agent 每一步不是只生成 action。它先同步移动状态，再确保日程存在，再处理睡眠，然后感知、计划、反思，最后返回前端需要的 path 和 emoji。
-
-```mermaid
-flowchart TD
-    Start["Agent.think()"] --> Sync["同步移动和当前状态"]
-    Sync --> Percept["percept()<br/>读取附近事件"]
-    Percept --> Memory["新事件写入记忆"]
-    Memory --> Reflect{"是否触发 reflect"}
-    Reflect -- 是 --> Reflection["生成 thought"]
-    Reflect -- 否 --> Plan
-    Reflection --> Plan["计划、反应或延续当前行动"]
-    Plan --> Action["生成/更新 Action"]
-    Action --> Tile["更新 tile 事件和对象占用"]
-```
-
-*图 16-2：Agent.think() 执行顺序。一次思考不是一次 LLM 调用，而是感知、记忆、反思、计划和世界状态更新的组合。*
-
-## 16.12 第一步：同步移动状态
-
-`Agent.think()` 开头：
-
-```python
-events = self.move(status["coord"], status.get("path"))
-```
-
-这一步把 server 维护的坐标同步给 agent。`move()` 会：
-
-- 如果离开旧 tile，移除旧 tile 上该 agent 的事件。
-- 恢复旧对象事件。
-- 如果不是沿 path 移动，则更新新 tile 上的 agent event。
-- 更新对象事件。
-- 设置 `self.coord` 和 `self.path`。
-
-返回的 `events` 是移动前后受到影响的 tile events。这些 events 后面会进入 emojis，用于前端显示对象或状态变化。这个设计说明，移动不是单纯改坐标。移动会改变世界事件。
-
-## 16.13 第二步：生成或读取日程
-
-接下来执行下面步骤：
-
-```python
-plan, _ = self.make_schedule()
-```
-
-`make_schedule()` 会确保当天有 schedule。如果还没有日程，就生成：
-
-- currently 更新。
-- wake up。
-- init schedule。
-- daily schedule。
-- schedule thought。
-
-如果已有日程，则直接取当前 plan。同时，如果当前 plan 还没有 decompose，会拆解。因此，`Agent.think()` 每一步都可以假设当前有可用计划。这让后续睡眠、行动和反应都有依据。
-
-## 16.14 第三步：处理睡眠
-
-`Agent.think()` 中有睡眠判断：
-
-```python
-if (plan["describe"] == "sleeping" or "睡" in plan["describe"]) and self.is_awake():
-```
-
-如果当前计划是睡眠，并且 agent 还醒着，就进入睡觉 action。它会：
-
-1. 根据空间记忆找到睡觉地址。
-2. 从对应 tiles 中选择一个可用坐标。
-3. 将角色移动到该睡眠坐标。
-4. 设置 sleep action 和对象占用事件。
-
-sleep action 包含角色事件：
-
-```text
-角色 正在 睡觉
-```
-
-以及对应的对象事件：
-
-```text
-床 被占用 角色
-```
-
-对应的 emoji 表示如下：
-
-```text
-😴
-🛌
-```
-
-这说明睡觉不是一个普通文本 plan，而是会被落到床和对象占用上。
-
-## 16.15 第四步：醒着时的三件事
-
-如果 agent 醒着：
-
-```python
-if self.is_awake():
-    self.percept()
-    self.make_plan(agents)
-    self.reflect()
-```
-
-执行顺序可以这样理解：
-
-1. 先感知当前环境中的事件。
-2. 再根据感知结果制定计划或作出反应。
-3. 最后检查是否需要触发反思。
-
-这个顺序很合理。先感知当前环境，才能对新事件作出反应。先做计划或反应，再做反思，意味着刚刚感知到的新事件可以累积 poignancy，并可能触发 reflection。注意，反思不是每步都真正执行。`reflect()` 内部会检查 poignancy 阈值。
-
-## 16.16 第五步：睡着时的处理
-
-如果 agent 不醒着：
-
-```python
-else:
-    if self.action.finished():
-        self.action = self._determine_action()
-```
-
-睡着时不会感知、不会聊天、不会反思。如果当前睡眠 action 结束，才确定新 action。这避免角色睡觉时继续感知和社交。但也说明当前睡眠逻辑比较简单。它依赖 schedule 和 action duration 判断，不模拟梦境、被叫醒或夜间事件。对当前项目来说，这已经足够支撑日常作息。
-
-## 16.17 第六步：整理 emojis
-
-`Agent.think()` 会整理 emojis：
-
-```python
-emojis = {}
-if self.action:
-    emojis[self.name] = {"emoji": self.get_event().emoji, "coord": self.coord}
-for eve, coord in events.items():
-    if eve.subject in agents:
-        continue
-    emojis[":".join(eve.address)] = {"emoji": eve.emoji, "coord": coord}
-```
-
-角色自己的 emoji 来自当前 action。对象 emoji 来自移动过程中受影响的 events。这些数据会进入前端回放。`Action` 和 `Event` 中的 emoji 字段服务于可视化。它不影响推理核心，但影响可视化。
-
-## 16.18 第七步：寻找路径并返回 plan
-
-最后执行下面步骤，可以按顺序阅读：
-
-```python
-self.plan = {
-    "name": self.name,
-    "path": self.find_path(agents),
-    "emojis": emojis,
-}
-return self.plan
-```
-
-`find_path()` 会根据当前 action 的地址决定下一步路径。如果已经在目标地址，返回空列表。如果 action address 是 `<waiting>` 或 `<persona>` 等特殊地址，会特殊处理。否则通过 `Maze.get_address_tiles()` 和 `Maze.find_path()` 找到目标路径。返回的 `plan` 是给 server 和前端用的。它不是 agent 的内部 schedule。这一点要分清：
-
-```text
-Schedule plan：角色一天要做什么。
-Agent.plan：当前 step 返回给仿真/回放的移动与 emoji 信息。
-```
-
-## 16.19 make_plan()：反应优先于新 action
-
-`make_plan()` 很短：
+这段代码可以拆成七步：
+
+| 步骤 | 源码动作 | 结果 |
+| --- | --- | --- |
+| 1 | 移动同步函数 `move(status["coord"], status.get("path"))` | 同步仿真服务 server 坐标，同时更新地图格子 Tile 上的事件 |
+| 2 | 日程函数 `make_schedule()` | 没有日程就生成日程，有日程就取当前计划 plan |
+| 3 | 判断睡眠计划 | 如果当前计划 plan 是睡觉，写入睡眠行动 Action 和床的对象事件 |
+| 4 | 感知函数 `percept()` | 醒着时读取视野范围内的事件，写入本仿真步 step 的概念 concepts |
+| 5 | 计划函数 `make_plan(agents)` | 先处理反应 reaction，再判断是否继续移动，再决定新行动 Action |
+| 6 | 反思函数 `reflect()` | 累计重要性达到阈值后生成想法 thought |
+| 7 | 寻路函数 `find_path(agents)` | 把当前行动 Action 的语义地址落成移动路径 |
+
+计划函数 `make_plan()` 的优先级很短，但很关键：
 
 ```python
 def make_plan(self, agents):
@@ -468,88 +419,102 @@ def make_plan(self, agents):
         self.action = self._determine_action()
 ```
 
-这三行体现了行为优先级。第一，先 reaction。如果遇到别人并决定聊天或等待，当前 step 行为被 reaction 接管。第二，如果还在 path 上，就继续移动。不频繁重新决定 action。第三，如果当前 action 结束，才根据 schedule 确定新 action。这让行为不会抖动。角色不是每个 step 都重新问模型“我现在干什么”，而是保持 action 直到结束或被合理打断。
+行为不会每个仿真步 step 都重新生成。先处理反应 reaction；如果还在路上，就继续走；只有当前行动 Action 结束时，才根据日程和空间记忆决定新行动 Action。这就是角色行为不抖动的原因。
 
-## 16.20 checkpoint 写入
+## 16.10 日程计划 Schedule plan、行动 Action 和返回计划 plan
 
-每个 step 结束后，`SimulateServer.simulate()` 会保存 config。文件名是：
+第 16 章里最容易混淆的是三个“计划”：
+
+| 名称 | 所在对象 | 示例 | 用途 |
+| --- | --- | --- | --- |
+| 日程计划 Schedule plan | `agent.schedule.daily_schedule` | `09:00~10:00 阅读并整理文献综述` | 描述一天中某段时间要做什么 |
+| 行动 Action | `agent.action` | `起草论文开头段落 @ the Ville:奥克山学院:图书馆:图书馆桌子` | 当前正在执行的行为，包含地点、对象事件、时间范围 |
+| 返回计划 plan | 智能体思考函数 `Agent.think()` 的返回值 | `{"name": ..., "path": ..., "emojis": ...}` | 给仿真服务容器 `SimulateServer` 和前端回放使用 |
+
+行动决定函数 `_determine_action()` 把日程计划 Schedule plan 落成行动 Action：
 
 ```python
-simulate-{sim_time.replace(':', '')}.json
+plan, de_plan = self.schedule.current_plan()
+describes = [plan["describe"], de_plan["describe"]]
+address = self.spatial.find_address(describes[0], as_list=True)
+if not address:
+    tile = self.get_tile()
+    kwargs = {
+        "describes": describes,
+        "spatial": self.spatial,
+        "address": tile.get_address("world", as_list=True),
+    }
+    kwargs["address"].append(self.completion("determine_sector", **kwargs, tile=tile))
+    arenas = self.spatial.get_leaves(kwargs["address"])
+    if len(arenas) == 1:
+        kwargs["address"].append(arenas[0])
+    else:
+        kwargs["address"].append(self.completion("determine_arena", **kwargs))
+    objs = self.spatial.get_leaves(kwargs["address"])
+    if len(objs) == 1:
+        kwargs["address"].append(objs[0])
+    elif len(objs) > 1:
+        kwargs["address"].append(self.completion("determine_object", **kwargs))
+    address = kwargs["address"]
 ```
 
-对应的调用路径如下：
+如果空间记忆地址 `spatial.address` 能直接匹配，例如“睡觉”，就直接得到床的地址。匹配不到时，模型依次选择大区域 sector、场所 arena 和对象 object。行动 Action 不是一句自由文本，而是被落到了世界模型的语义地址上。
 
-```text
-results/checkpoints/<name>/simulate-<time>.json
-```
+## 16.11 断点 checkpoint 与对话 conversation 写入
 
-保存前，server 会把每个 agent 状态写回 config：
+每个仿真步 step 结束，仿真服务 server 会把角色状态写回配置 `self.config`：
 
 ```python
 self.config["agents"][name].update(agent.to_dict())
+if plan.get("path"):
+    status["coord"], status["path"] = plan["path"][-1], []
 self.config["agents"][name].update({"coord": status["coord"]})
 ```
 
-`agent.to_dict()` 保存：
-
-- status。
-- schedule。
-- associate。
-- chats。
-- currently。
-- action。
-
-同时，associate index 会持久化到底层 storage。这就是断点恢复的基础。
-
-## 16.21 conversation 写入
-
-同一步还会保存下面内容：
+智能体序列化函数 `Agent.to_dict()` 保存的不是完整 Python 对象，而是可 JSON 化的恢复状态：
 
 ```python
-conversation.json
+def to_dict(self, with_action=True):
+    info = {
+        "status": self.status,
+        "schedule": self.schedule.to_dict(),
+        "associate": self.associate.to_dict(),
+        "chats": self.chats,
+        "currently": self.scratch.currently,
+    }
+    if with_action:
+        info.update({"action": self.action.to_dict()})
+    return info
 ```
 
-对应的调用路径如下：
-
-```text
-results/checkpoints/<name>/conversation.json
-```
-
-对话在 `_chat_with()` 中写入：
+随后写入两个结果文件：
 
 ```python
-self.conversation[key].append({ ... : chats})
+sim_time = timer.get_date("%Y%m%d-%H:%M")
+with open(f"{self.checkpoints_folder}/simulate-{sim_time.replace(':', '')}.json", "w", encoding="utf-8") as f:
+    f.write(json.dumps(self.config, indent=2, ensure_ascii=False))
+
+with open(f"{self.checkpoints_folder}/conversation.json", "w", encoding="utf-8") as f:
+    f.write(json.dumps(self.game.conversation, indent=2, ensure_ascii=False))
 ```
 
-然后 server 每 step 把全局 conversation 写盘。这使对话不会只存在于 agent memory 里。它也可以被 `compress.py` 用来生成 `simulation.md`。
+| 文件 | 内容 | 后续用途 |
+| --- | --- | --- |
+| `simulate-20240213-0930.json` | 当前时间、仿真步 step、所有角色状态、日程、行动、记忆索引引用、坐标 | 断点恢复、状态审计、压缩时间线 |
+| `conversation.json` | 仿真过程中发生的对话 conversation | 压缩脚本 `compress.py` 生成 `simulation.md` 和对话摘要 |
+| `storage/<角色名>/associate/` | 角色关联记忆 associate 的底层索引 | 恢复运行和后续检索 |
 
-## 16.22 时间推进位置
+断点 checkpoint 是仿真循环的黑匣子记录。只要断点 checkpoint 连续生成，且对话文件 `conversation.json` 能被正常写盘，循环层就已经完成了自己的保存职责。
 
-时间推进发生在每个 step 最后：
+## 16.12 记录间隔字段 record_iterval 与记录点
 
-```python
-if stride > 0:
-    timer.forward(stride)
-```
-
-这意味着同一个 step 内，所有 agent 使用同一个当前时间。等全部 agent 思考完，时间才进入下一 step。这是合理的。但要注意，由于 agent 是按顺序思考，同一步内前面 agent 更新的世界状态，后面 agent 可以看到。所以它不是完全同步决策。更准确地说，当前实现是：
-
-```text
-同一时间戳下的顺序更新仿真
-```
-
-这对大多数教学实验没问题，但如果研究严格同步多智能体行为，需要改造。
-
-## 16.23 record_iterval 与记录点
-
-`Game` 中有：
+`Game` 里有一个源码字段：
 
 ```python
 self.record_iterval = config.get("record_iterval", 30)
 ```
 
-`Game.agent_think()` 会判断是否超过记录间隔：
+拼写是 `record_iterval`，不是 `record_interval`。后面的判断也使用这个字段：
 
 ```python
 if (utils.get_timer().daily_duration() - agent.last_record) > self.record_iterval:
@@ -559,27 +524,168 @@ else:
     info["record"] = False
 ```
 
-这个字段主要影响输出记录和回放摘要。注意拼写是 `record_iterval`，不是 `record_interval`。这是源码中的实际字段。写书引用时要按源码写，不要擅自改正。
+这个字段不控制智能体 Agent 是否思考，也不控制断点 checkpoint 是否写入。它控制角色思考包装函数 `Game.agent_think()` 返回的摘要里是否带记录标记 `record=True`，用于较低频地标记需要记录的时刻。调试时看到记录标记 `record_flag: False`，不代表循环没有运行，只代表还没超过记录间隔。
 
-## 16.24 仿真循环的工程边界
+## 16.13 可运行脚手架
 
-当前仿真循环有几个边界。第一，agent 顺序执行。这简化实现，但不是严格同步。第二，step 粒度较粗。server 会把坐标更新到 path 最后一个点，而不是每个 tile 一步计算一次认知。第三，模型调用是阻塞的。每个 agent 的 LLM 调用会按顺序等待完成。25 个 agent 时运行较慢。第四，checkpoint 每步写完整 config。这有利于恢复和审计，但会产生较多文件。第五，conversation 是全局共享结构。这方便记录，但后续如果并行化 agent，需要考虑并发写入问题。第六，错误恢复以 failsafe 为主。某些模型输出失败后会使用 failsafe，让仿真继续，但也可能隐藏行为质量问题。这些边界不是问题本身，而是后续优化方向。
+第 16 章脚手架位于：
 
-## 16.25 如何调试仿真循环
+```text
+docs/book/scaffolds/part_03/ch16_simulation_loop_demo.py
+```
 
-调试仿真循环时，建议按下面顺序。第一，用少量 agent。例如：
+它加载真实地图配置 `maze.json`、真实克劳斯和玛丽亚的角色配置 `agent.json`，实际构造智能体 Agent 对象，并用真实角色思考包装函数 `Game.agent_think()` 调用智能体思考函数 `Agent.think()`。为了让输出稳定，脚手架把智能体补全函数 `Agent.completion()` 替换成确定性替身 deterministic stub，把关联记忆写入替换成轻量概念对象；它不调用外部大语言模型 LLM，也不写入仓库内断点 checkpoint。脚手架展示的是循环顺序，不是模型生成质量。
+
+核心替换代码如下：
+
+```python
+def stub_completion(self: Agent, func_hint: str, *args, **kwargs):
+    if not hasattr(self, "_ch16_completion_calls"):
+        self._ch16_completion_calls = []
+    self._ch16_completion_calls.append(func_hint)
+
+    daily = {
+        "8:00": "起床并完成早晨的例行工作",
+        "9:00": "阅读并整理文献综述" if self.name == "克劳斯" else "准备课程笔记",
+        "10:00": "继续推进上午的学习任务",
+        "11:00": "整理资料",
+        "12:00": "吃午饭",
+        "13:00": "休息",
+        "14:00": "继续学习",
+        "15:00": "参加小组讨论",
+        "16:00": "完成当天任务",
+        "17:00": "回到宿舍",
+        "18:00": "吃晚饭",
+        "19:00": "放松",
+        "20:00": "阅读",
+        "21:00": "整理明天计划",
+        "22:00": "准备睡觉",
+        "23:00": "睡觉",
+    }
+
+    if func_hint == "wake_up":
+        return 8
+    if func_hint == "schedule_init":
+        return [
+            "早上8点起床",
+            "上午在奥克山学院学习",
+            "中午吃午饭",
+            "下午继续完成学习任务",
+            "晚上回宿舍休息",
+        ]
+    if func_hint == "schedule_daily":
+        return daily
+    if func_hint == "schedule_decompose":
+        if self.name == "克劳斯":
+            return [("阅读论文资料", 30), ("起草论文开头段落", 30)]
+        return [("整理课堂资料", 30), ("准备课程讨论问题", 30)]
+    if func_hint == "determine_sector":
+        return "奥克山学院"
+    if func_hint == "determine_arena":
+        return "图书馆" if self.name == "克劳斯" else "教室"
+    if func_hint == "determine_object":
+        return "图书馆桌子" if self.name == "克劳斯" else "教室学生座位"
+```
+
+从仓库根目录运行：
 
 ```bash
+python docs/book/scaffolds/part_03/ch16_simulation_loop_demo.py
+```
+
+本机实际输出如下：
+
+```text
+第 16 章仿真循环脚手架 simulation-loop scaffold
+========================================================
+选中角色 selected_agents: 克劳斯, 玛丽亚
+起始时间 start_time: 20240213-09:30
+步长分钟 stride_minutes: 10
+配置角色顺序 config_agents_order: 克劳斯, 玛丽亚
+
+初始角色状态 agent_status
+- 克劳斯: 坐标 coord=[126, 46] 地址 address=the Ville:奥克山学院宿舍:克劳斯的房间:床 路径 path=[]
+- 玛丽亚: 坐标 coord=[123, 57] 地址 address=the Ville:奥克山学院宿舍:玛丽亚的房间:床 路径 path=[]
+
+仿真步 Simulate Step[1/1, time: 2024-02-13 09:30:00]
+[1] 克劳斯
+    输入状态 status_before: 坐标 coord=[126, 46]
+    当前地址 current_address: the Ville:奥克山学院宿舍:克劳斯的房间:床
+    提示词调用 completion_calls: wake_up, schedule_init, schedule_daily, schedule_decompose, determine_sector, determine_arena, determine_object, describe_object
+    行动结果 action_after: 起草论文开头段落 @ the Ville:奥克山学院:图书馆:图书馆桌子
+    返回路径长度 returned_path_len: 69
+    返回路径终点 returned_path_target: [119, 24]
+    服务端状态 server_status_after: 坐标 coord=[119, 24] 路径 path=[]
+    记录标记 record_flag: False
+[2] 玛丽亚
+    输入状态 status_before: 坐标 coord=[123, 57]
+    当前地址 current_address: the Ville:奥克山学院宿舍:玛丽亚的房间:床
+    提示词调用 completion_calls: wake_up, schedule_init, schedule_daily, schedule_decompose, determine_sector, determine_arena, determine_object, describe_object
+    行动结果 action_after: 准备课程讨论问题 @ the Ville:奥克山学院:教室:教室学生座位
+    返回路径长度 returned_path_len: 55
+    返回路径终点 returned_path_target: [112, 25]
+    服务端状态 server_status_after: 坐标 coord=[112, 25] 路径 path=[]
+    记录标记 record_flag: False
+
+本仿真步 step 会写入的结果文件
+- simulate-20240213-0930.json
+- conversation.json
+
+时间推进 timer.forward()
+- before_forward: 20240213-09:30
+- after_forward: 20240213-09:40
+```
+
+这段终端输出的信息量很大，适合再转成一张总览图。配图脚手架位于：
+
+```bash
+python docs/book/scaffolds/part_03/ch16_simulation_step_figure.py
+```
+
+它复用同一套仿真循环脚手架数据，再读取真实小镇地图、克劳斯和玛丽亚的角色头像与角色配置，生成图 16-2。
+
+![图 16-2：一个仿真步 step 如何推进两个智能体 Agent](../../assets/chapter_16/ch16_simulation_step_overview.png)
+
+*图 16-2：一个仿真步 step 如何推进两个智能体 Agent。左侧是真实小镇地图上的移动路径：克劳斯从宿舍床位走向图书馆桌子，玛丽亚从宿舍床位走向教室学生座位。右侧是同一仿真步 step 中每个角色的输入状态 status、提示词调用 completion calls、行动结果 action、返回路径 path 和服务端状态 server status。底部显示本步会写入的断点 checkpoint、对话 conversation，以及全局计时器 Timer 如何从 09:30 推进到 09:40。*
+
+图 16-2 的价值不在于多画一张流程图，而在于把终端输出放回小镇世界中。左侧说明移动路径 path 是世界地图 Maze 寻路的结果；右侧说明仿真循环函数 `SimulateServer.simulate()` 并不直接生成行为，而是按角色顺序调用角色思考包装函数 `Game.agent_think()`，再把智能体思考函数 `Agent.think()` 返回的路径、行动和摘要写回服务端状态。
+
+这段输出可以逐行映射回源码：
+
+| 输出行 | 对应源码 | 说明 |
+| --- | --- | --- |
+| `配置角色顺序 config_agents_order: 克劳斯, 玛丽亚` | 配置生成函数 `get_config()` 的 `for a in agents` | 角色顺序进入角色配置 `config["agents"]` |
+| `初始角色状态 agent_status` | 仿真服务构造函数 `SimulateServer.__init__()` | 仿真服务 server 先保存角色初始坐标和空移动路径 path |
+| `仿真步 Simulate Step[1/1, time: ...]` | 仿真循环函数 `simulate()` 取 `timer.get_date()` | 本仿真步 step 内两个角色共享 09:30 |
+| `[1] 克劳斯`、`[2] 玛丽亚` | `for name, status in self.agent_status.items()` | 当前实现是按顺序更新，不是并行同步决策 |
+| `提示词调用 completion_calls` | 智能体思考函数 `Agent.think()` -> 日程函数 `make_schedule()` -> 行动决定函数 `_determine_action()` | 第一次仿真步 step 先生成日程，再把当前子任务落到地点 |
+| `行动结果 action_after` | 行动类 `memory.Action`、事件类 `memory.Event` | 日程子任务已经变成带地址的行动 |
+| `返回路径长度 returned_path_len` | 智能体寻路函数 `Agent.find_path()` | 行动地址被世界地图 Maze 转成移动路径 |
+| `服务端状态 server_status_after` | `status["coord"] = plan["path"][-1]` | 仿真服务 server 把坐标更新到路径终点 |
+| `simulate-20240213-0930.json` | 断点 checkpoint 写入代码 | 文件名来自当前全局计时器 Timer |
+| `after_forward: 20240213-09:40` | 时间推进函数 `timer.forward(stride)` | 仿真步 step 完成后时间才推进 |
+
+脚手架里克劳斯从宿舍床位 `[126,46]` 出发，当前行动落到 `the Ville:奥克山学院:图书馆:图书馆桌子`，路径终点是 `[119,24]`。这个坐标不是手写解释出来的，它来自真实世界地图 Maze 的地址取格函数 `get_address_tiles()` 和寻路函数 `find_path()`。玛丽亚同理，从宿舍床位走向教室学生座位。看到这里，就能把“日程文字 -> 行动地址 -> 移动路径 path -> 仿真服务 server 坐标更新”这条链路连起来。
+
+## 16.14 完整仿真的调试顺序
+
+脚手架验证循环骨架；完整调试仍然要跑入口脚本 `start.py`。先用少量角色：
+
+```bash
+cd generative_agents
 python start.py --name debug-loop --start "20240213-09:30" --step 3 --stride 10 --agents "克劳斯,玛丽亚" --verbose info --log debug-loop.log
 ```
 
-第二，打开日志。这个命令会把日志写入：
+运行后先看日志，再看文件。
 
-```text
-results/checkpoints/debug-loop/debug-loop.log
-```
+| 检查对象 | 路径 | 要确认什么 |
+| --- | --- | --- |
+| 日志 log | `results/checkpoints/debug-loop/debug-loop.log` | 是否出现模型重置 `reset`、仿真步 `Simulate Step`、日程生成 `schedule_daily`、状态摘要 `summary` |
+| 断点 checkpoint | `results/checkpoints/debug-loop/simulate-*.json` | 每个仿真步 step 是否写入角色状态、坐标、日程和行动 |
+| 对话 conversation | `results/checkpoints/debug-loop/conversation.json` | 如果为空，先检查角色是否同场景、是否醒着、是否有反应 reaction 机会 |
+| 记忆索引 associate index | `results/checkpoints/debug-loop/storage/<角色名>/associate/` | 关联记忆 associate 是否持久化 |
 
-代表性输出如下：
+日志片段可以这样读：
 
 ```text
 克劳斯.reset
@@ -593,7 +699,6 @@ Simulate Step[1/3, time: 2024-02-13 09:30:00]
 克劳斯 is determining action...
 克劳斯.summary @ 20240213-09:30:00
   action: 阅读并整理文献综述 @ the Ville:奥克山学院:图书馆:图书馆桌子
-  total: S:9,F:0/R:9
 
 玛丽亚 -> wake_up
 玛丽亚 -> schedule_init
@@ -602,76 +707,57 @@ Simulate Step[1/3, time: 2024-02-13 09:30:00]
 玛丽亚 is going to sleep...
 玛丽亚.summary @ 20240213-09:30:00
   action: 玛丽亚 正在 睡觉 @ the Ville:奥克山学院宿舍:玛丽亚的房间:床
-  total: S:5,F:0/R:5
 ```
 
-这不是普通流水账。两名角色都经历了 `reset`，说明配置加载成功；克劳斯完成日程生成、感知、行动选择，最后落到图书馆桌子；玛丽亚也生成日程，但当前 09:30 仍在睡觉，所以日志出现 `is going to sleep...`。这正好说明仿真循环不是让所有角色每一步都“找事做”，而是尊重角色日程。
+这不是普通日志 log。模型重置 `reset` 表示模型连接已创建；日程生成 `schedule_daily` 表示当天日程已生成；感知摘要 `percept 0/4 concepts` 表示智能体 Agent 已经读取视野事件；行动决定日志 `is determining action...` 表示当前行动 Action 已结束，需要把日程落到行动地址；睡眠日志 `is going to sleep...` 表示当前日程段被睡眠逻辑接管。
 
-日志里可以观察：
-
-- 每个 step 时间。
-- 每个 agent 的 prompt 调用。
-- 感知数量。
-- action summary。
-- schedule summary。
-
-第三，检查 checkpoint。这个短实验会写入：
-
-```text
-simulate-20240213-0930.json
-simulate-20240213-0940.json
-simulate-20240213-0950.json
-conversation.json
-storage/克劳斯/associate/
-storage/玛丽亚/associate/
-```
-
-`conversation.json` 本次仍然是 `{}`。这不是循环失败，而是两个角色没有进入同一社交场景：克劳斯在图书馆推进论文，玛丽亚在宿舍睡觉。调试社交问题时，这个空文件反而很有用，它提醒我们先检查位置和日程，再去怀疑对话 prompt。
-
-第四，运行 compress。
+压缩结果用：
 
 ```bash
 python compress.py --name debug-loop
 ```
 
-第五，看 `simulation.md`。本次压缩后可以读到：
+压缩后读：
 
 ```text
-# 20240213-09:30
-### 克劳斯
-位置：the Ville，奥克山学院，图书馆，图书馆桌子
-活动：阅读并整理文献综述
-
-### 玛丽亚
-位置：the Ville，奥克山学院宿舍，玛丽亚的房间，床
-活动：睡觉
-
-# 20240213-09:50
-### 克劳斯
-位置：the Ville，奥克山学院，图书馆，图书馆桌子
-活动：起草论文开头段落
+results/compressed/debug-loop/simulation.md
+results/compressed/debug-loop/movement.json
 ```
 
-这条调试链路比直接盯前端更可靠：日志判断模块是否运行，checkpoint 判断状态是否保存，`conversation.json` 判断社交是否发生，`simulation.md` 判断时间线是否可读，`movement.json` 再交给前端回放。
+仿真时间线 `simulation.md` 负责给人读时间线，移动回放文件 `movement.json` 负责给前端回放。调试顺序是：日志 log 确认模块运行，断点 checkpoint 确认状态保存，对话 conversation 确认社交是否发生，仿真时间线 `simulation.md` 确认时间线可读，移动回放文件 `movement.json` 再交给前端。
 
-## 16.26 本章小结
+## 16.15 工程边界
 
-仿真循环把所有模块串起来。一次 step 可以串起命令行启动、Game 推进时间、Agent 思考和结果保存。
+当前仿真循环清晰，但不是研究级严格同步系统。
 
-| 本章内容 | 核心结论 |
+| 边界 | 当前实现 | 影响 |
+| --- | --- | --- |
+| 多智能体 Agent 顺序 | 同一时间戳下按字典顺序逐个更新 | 前面的智能体 Agent 会先改变世界状态 |
+| 移动粒度 | 每个仿真步 step 返回完整移动路径 path，仿真服务 server 坐标更新到终点 | 认知更新不是每个地图格子一步 |
+| 模型调用 | 每个智能体 Agent 内部顺序调用大语言模型 LLM | 25 个角色全量运行会慢 |
+| 断点 checkpoint | 每步写完整配置 config | 易恢复、易审计，但文件较多 |
+| 对话 conversation | 全局字典 dict 共享 | 串行运行简单，并行化时需要处理写入冲突 |
+| 兜底输出 failsafe | 提示词 prompt 输出异常时可能使用默认值 | 仿真不中断，但行为质量需要额外检查 |
+
+这些边界决定了后续优化方向：要做严格同步，需要把感知、决策、世界更新拆成多个阶段；要提速，需要并行化模型调用和存储写入；要做更细粒度移动，需要缩短仿真步 step 或把路径上的中间点纳入认知更新。
+
+## 16.16 本章小结
+
+仿真循环是第三部分的主干。入口脚本 `start.py` 负责把命令行参数变成配置，仿真服务容器 `SimulateServer` 负责逐仿真步 step 调用和保存状态，角色思考包装函数 `Game.agent_think()` 负责包装单个智能体 Agent 的结果，智能体思考函数 `Agent.think()` 负责把移动、日程、睡眠、感知、计划、反思和寻路串成一次行为。
+
+| 本章对象 | 核心结论 |
 | --- | --- |
-| 运行入口 | `start.py` 解析 name、start、step、stride、agents 等参数。 |
-| 配置模式 | 新仿真用 `get_config()`，断点恢复用 `get_config_from_log()`。 |
-| Game 创建 | `create_game()` 设置全局 Timer 并创建 Game。 |
-| SimulateServer | 它维护 checkpoint、conversation、agent_status 和 Game。 |
-| step 推进 | `simulate()` 每一步依次调用所有 agent 的 `Game.agent_think()`。 |
-| 思考入口 | `Game.agent_think()` 调用 `Agent.think()` 并整理 summary。 |
-| think 顺序 | 移动同步、日程、睡眠、感知、计划/反应、反思、寻路共同组成一次思考。 |
-| reaction 优先级 | `make_plan()` 中 reaction 优先于继续移动和新 action。 |
-| 状态保存 | 每步结束保存 checkpoint 和 conversation，时间再按 stride 推进。 |
-| 实现边界 | 当前是同一时间戳下的顺序更新仿真，不是严格同步并行仿真。 |
+| 配置生成函数 `get_config()` | 把起始时间、地图、公共配置和角色配置路径组织成运行配置 |
+| 角色列表 `personas` / 角色参数 `--agents` | 决定本次运行有哪些角色，也决定循环顺序 |
+| 全局计时器 Timer | 让所有模块共享同一个仿真时间 |
+| 角色状态 `SimulateServer.agent_status` | 保存仿真服务 server 视角下的坐标和路径 |
+| 仿真循环函数 `SimulateServer.simulate()` | 按仿真步 step 遍历角色、写断点 checkpoint、保存对话 conversation、推进时间 |
+| 角色思考包装函数 `Game.agent_think()` | 调用智能体思考函数 `Agent.think()`，并整理行动 action、日程 schedule、地址 address、记录标记 record 等摘要 |
+| 智能体思考函数 `Agent.think()` | 一次思考包含移动同步、日程、睡眠、感知、计划/反应、反思和寻路 |
+| 断点 checkpoint | 让仿真可以恢复、压缩和回放 |
+| 工程边界 | 当前是同一时间戳下的顺序更新仿真，不是严格同步并行仿真 |
 
-下一章讲感知：深入 `Agent.percept()`，看智能体如何从周围 tile 中看到事件、去重、写入记忆，并为 reaction 和 reflection 提供输入。
+下一章进入感知机制：智能体感知函数 `Agent.percept()` 如何从周围地图格子 Tile 中读取事件、去重、写入关联记忆，并为反应 reaction 和反思 reflection 提供输入。
 
 ## 参考资料
 
@@ -679,4 +765,7 @@ python compress.py --name debug-loop
 - Local source: `generative_agents/modules/game.py`
 - Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/utils/timer.py`
+- Local source: `generative_agents/modules/memory/schedule.py`
 - Local source: `generative_agents/modules/memory/action.py`
+- Local scaffold: `docs/book/scaffolds/part_03/ch16_simulation_loop_demo.py`
+- Local scaffold: `docs/book/scaffolds/part_03/ch16_simulation_step_figure.py`

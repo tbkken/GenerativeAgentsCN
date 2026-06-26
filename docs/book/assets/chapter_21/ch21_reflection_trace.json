@@ -1,0 +1,26 @@
+{
+  "source": {
+    "agent": "generative_agents/modules/agent.py",
+    "associate": "generative_agents/modules/memory/associate.py",
+    "config": "generative_agents/data/config.json",
+    "prompts": "generative_agents/data/prompts"
+  },
+  "poignancy_max": 150,
+  "prompt_template_bytes": {
+    "reflect_focus": 836,
+    "reflect_insights": 1071,
+    "reflect_chat_planing": 162,
+    "reflect_chat_memory": 119
+  },
+  "pipeline": [
+    "status['poignancy'] threshold check",
+    "retrieve_events() + retrieve_thoughts()",
+    "prompt_reflect_focus()",
+    "retrieve_focus(focus, reduce_all=False)",
+    "prompt_reflect_insights()",
+    "Agent._add_concept('thought', filling=evidence)",
+    "status['poignancy'] = 0 and chats = []"
+  ],
+  "evidence_persisted_in_metadata": false,
+  "metadata_boundary": "evidence reaches Agent._add_concept(..., filling=evidence), but current Associate.add_node() metadata does not include filling."
+}

@@ -1,0 +1,31 @@
+{
+  "source": {
+    "agent": "generative_agents/modules/agent.py",
+    "prompts": "generative_agents/data/prompts",
+    "conversation": "generative_agents/results/checkpoints/book-config-ai-seminar/conversation.json"
+  },
+  "prompt_template_bytes": {
+    "decide_chat": 229,
+    "summarize_relation": 230,
+    "generate_chat": 714,
+    "generate_chat_check_repeat": 211,
+    "decide_chat_terminate": 537,
+    "summarize_chats": 88,
+    "decide_wait": 182,
+    "reflect_chat_planing": 162,
+    "reflect_chat_memory": 119
+  },
+  "pipeline": [
+    "Agent._reaction() selects focus from self.concepts",
+    "Agent._chat_with() checks schedules, cooldown and decide_chat",
+    "generate_chat loop creates both sides of dialogue",
+    "summarize_chats compresses dialogue",
+    "schedule_chat() revises both agents' current action",
+    "reflect_chat_planing / reflect_chat_memory later convert chats into thoughts"
+  ],
+  "conversation_keys": [
+    "20240213-10:00"
+  ],
+  "conversation_entry_count": 1,
+  "wait_path": "Agent._wait_other() only runs when the agent already has a path and the target address is occupied by the other agent."
+}

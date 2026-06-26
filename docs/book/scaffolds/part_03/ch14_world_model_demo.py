@@ -135,7 +135,7 @@ def render_tilemap_crop(tilemap_config: dict, min_x: int, min_y: int, max_x: int
     crop = Image.new("RGBA", (width_tiles * tile_w, height_tiles * tile_h), (0, 0, 0, 0))
     tilesets = load_tilesets(tilemap_config)
 
-    # Rebuild the visual map crop from the real tilemap and tileset images.
+    # Rebuild the visual map crop from the real tile map and tileset images.
     layers = {layer["name"]: layer for layer in tilemap_config["layers"]}
     for layer_name in VISIBLE_TILEMAP_LAYERS:
         layer = layers.get(layer_name)

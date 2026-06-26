@@ -1,0 +1,44 @@
+{
+  "source": {
+    "associate": "generative_agents/modules/memory/associate.py",
+    "index": "generative_agents/modules/storage/index.py",
+    "config": "generative_agents/data/config.json"
+  },
+  "memory_types": [
+    "event",
+    "thought",
+    "chat"
+  ],
+  "associate_config": {
+    "embedding": {
+      "provider": "minimax",
+      "model": "embo-01",
+      "base_url": "https://api.minimax.chat/v1",
+      "api_key": "",
+      "group_id": ""
+    },
+    "retention": 8
+  },
+  "add_node_metadata_keys": [
+    "node_type",
+    "subject",
+    "predicate",
+    "object",
+    "address",
+    "poignancy",
+    "create",
+    "expire",
+    "access"
+  ],
+  "public_methods": [
+    "cleanup_index",
+    "add_node",
+    "retrieve_events",
+    "retrieve_thoughts",
+    "retrieve_chats",
+    "retrieve_focus",
+    "to_dict"
+  ],
+  "retrieval_formula": "final_score = recency + relevance + importance",
+  "evidence_boundary": "Agent.reflect() passes filling/evidence into Agent._add_concept(), but Associate.add_node() does not persist filling in metadata."
+}

@@ -39,21 +39,47 @@
 
 ```mermaid
 flowchart TD
-    O[感知附近角色] --> F[选择 focus]
-    F --> J{decide_chat?}
-    J -- 否 --> W{decide_wait?}
-    J -- 是 --> Rel[检索关系与记忆]
-    Rel --> Chat[多轮 generate_chat]
-    Chat --> End{结束/重复检查}
+    O["感知附近角色 nearby agents"] --> F["选择关注对象 focus"]
+    F --> J{"聊天判断提示词 decide_chat?"}
+    J -- 否 --> W{"等待判断提示词 decide_wait?"}
+    J -- 是 --> Rel["检索关系与记忆 relation memory"]
+    Rel --> Chat["多轮对话生成 generate_chat"]
+    Chat --> End{"结束/重复检查"}
     End -- 继续 --> Chat
-    End -- 结束 --> Sum[summarize_chats]
-    Sum --> S[schedule_chat]
-    S --> M[双方写入 chat 记忆]
-    W -- 是 --> Rev[revise_schedule 等待]
-    W -- 否 --> A[继续原行动]
+    End -- 结束 --> Sum["对话摘要 summarize_chats"]
+    Sum --> S["对话写回函数 schedule_chat()"]
+    S --> M["双方写入对话记忆 chat memory"]
+    W -- 是 --> Rev["修订日程 revise_schedule 等待"]
+    W -- 否 --> A["继续原行动 action"]
 ```
 
 *图 20-1：社交行为闭环。聊天不是孤立文本生成，而是从感知、关系检索、对话生成到记忆写回的完整链路。*
+
+社交机制也可以用同一个证据脚手架观察。这里的重点不是重新跑一段大模型对话，而是把源码里涉及的 prompt、已有真实对话文件和状态写回链路放在一起：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter20 social: prompt_count=9, conversation_keys=1, conversation_entries=1
+trace: docs/book/assets/chapter_20/ch20_social_trace.json
+figure: docs/book/assets/chapter_20/ch20_social_loop.png
+```
+
+![图 20-2：一次真实对话发生在小镇空间里](../../assets/chapter_20/ch20_social_loop.png)
+
+*图 20-2：一次真实对话发生在小镇空间里。左侧是对话发生的图书馆地图现场，右侧是对话文件 `conversation.json` 中的真实片段；读者可以同时看到“他们在哪里相遇”和“他们交换了什么信息”。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `prompt_count=9` | `decide_chat`、`generate_chat`、`summarize_chats` 等 prompt | 社交不是一个“聊天 prompt”，而是一组判断、生成、终止、摘要、反思相关 prompt 的协作。 |
+| `conversation_keys=1` | `results/checkpoints/book-config-ai-seminar/conversation.json` | 已有实验中至少有一个仿真时间点触发了真实对话记录。 |
+| `conversation_entries=1` | 对话写回链路 `_chat_with()` | 一条对话会先写入全局 `conversation.json`，再通过 `schedule_chat()` 改写双方日程，后续反思再把聊天影响压成想法 thought。 |
 
 ## 20.2 社交从 reaction 开始
 
@@ -565,20 +591,20 @@ Generative Agents 更接近：
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 社交入口 | 社交从 `percept()` 后的 `_reaction()` 开始。 |
-| focus 选择 | `_reaction()` 优先选择其他 agent 作为 focus。 |
-| 关系检索 | `get_relation()` 会检索与 focus 相关的 events 和 thoughts。 |
-| 两条反应路径 | reaction 主要有聊天和等待两种形式。 |
+| 社交入口 | 社交从感知函数 `percept()` 后的现场反应函数 `_reaction()` 开始。 |
+| 关注对象 focus 选择 | 现场反应函数 `_reaction()` 优先选择其他智能体 agent 作为关注对象 focus。 |
+| 关系检索 | `get_relation()` 会检索与关注对象 focus 相关的事件 events 和想法 thoughts。 |
+| 两条反应路径 | 现场反应 reaction 主要有聊天和等待两种形式。 |
 | 聊天前置条件 | `_chat_with()` 会检查日程、睡眠、移动、已有对话和冷却时间。 |
 | 聊天决策 | `decide_chat` 判断是否应该主动聊天。 |
 | 关系摘要 | `summarize_relation` 为双方分别生成关系背景。 |
 | 多轮生成 | `generate_chat` 使用记忆、地点、时间和已有对话逐轮生成。 |
 | 结束控制 | `generate_chat_check_repeat` 和 `decide_chat_terminate` 控制复读和终止。 |
-| 写回机制 | `summarize_chats` 和 `schedule_chat` 会把对话写回记忆、日程和反思材料。 |
+| 写回机制 | 对话摘要 `summarize_chats` 和对话写回函数 `schedule_chat` 会把对话写回记忆、日程和反思材料。 |
 | 等待机制 | `_wait_other()` 处理空间冲突下的等待。 |
 | 社会意义 | 社交闭环支撑信息扩散、关系形成和协同行动。 |
 
-下一章讲反思：深入 `Agent.reflect()`，看重要事件如何触发高层 thought，聊天如何变成计划影响和关系记忆，以及这些 thought 如何重新进入 memory stream。
+下一章讲反思：深入智能体反思函数 `Agent.reflect()`，看重要事件如何触发高层想法 thought，聊天如何变成计划影响和关系记忆，以及这些想法 thought 如何重新进入记忆流 memory stream。
 
 ## 参考资料
 
@@ -589,3 +615,5 @@ Generative Agents 更接近：
 - Local prompts: `generative_agents/data/prompts/summarize_relation.txt`
 - Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
 - Local prompts: `generative_agents/data/prompts/decide_wait.txt`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_20/ch20_social_trace.json`

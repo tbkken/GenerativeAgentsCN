@@ -1,17 +1,17 @@
-# 第 23 章 回放系统：checkpoint、movement.json、simulation.md 与 Phaser 前端
+# 第 23 章 回放系统：断点 checkpoint、movement.json、simulation.md 与 Phaser 前端
 
 ## 23.1 核心问题
 
-第三部分最后一章讲回放系统。Generative Agents 的仿真结果不是只存在日志里。运行后，项目会生成 checkpoint。然后 `compress.py` 把 checkpoint 转换成：
+第三部分最后一章讲回放系统。Generative Agents 的仿真结果不是只存在日志里。运行后，项目会生成断点 checkpoint。然后压缩脚本 `compress.py` 把断点 checkpoint 转换成：
 
 ```text
 movement.json
 simulation.md
 ```
 
-`replay.py` 再通过 Flask 和 Phaser 前端展示小镇动画。这个系统有三个价值。第一，可视化。读者可以看角色在小镇中移动、睡觉、聊天、行动。第二，可复盘。`simulation.md` 记录人物活动和对话，适合阅读和写书。第三，可评价。`movement.json`、`simulation.md` 和 `conversation.json` 可以作为实验数据，支撑派对传播、竞选扩散、关系形成等分析。本章聚焦八个问题：
+回放服务 `replay.py` 再通过 Flask 和前端渲染引擎 Phaser 展示小镇动画。这个系统有三个价值。第一，可视化。读者可以看角色在小镇中移动、睡觉、聊天、行动。第二，可复盘。`simulation.md` 记录人物活动和对话，适合阅读和写书。第三，可评价。`movement.json`、`simulation.md` 和 `conversation.json` 可以作为实验数据，支撑派对传播、竞选扩散、关系形成等分析。本章聚焦八个问题：
 
-1. checkpoint 保存了什么？
+1. 断点 checkpoint 保存了什么？
 2. `compress.py` 如何生成 `movement.json`？
 3. `simulation.md` 如何生成？
 4. `movement.json` 的结构是什么？
@@ -22,20 +22,49 @@ simulation.md
 
 ```mermaid
 flowchart LR
-    C[results/checkpoints/name<br/>逐步状态 JSON] --> CP[compress.py]
-    Conv[conversation.json] --> CP
-    Maze[maze.json] --> CP
-    CP --> MD[simulation.md<br/>可读时间线]
-    CP --> MV[movement.json<br/>回放帧数据]
-    MV --> RP[replay.py]
-    RP --> UI[Phaser 前端回放]
+    C["断点目录 results/checkpoints/name<br/>逐步状态 JSON"] --> CP["压缩脚本 compress.py"]
+    Conv["对话文件 conversation.json"] --> CP
+    Maze["世界地图 maze.json"] --> CP
+    CP --> MD["时间线报告 simulation.md<br/>人类可读复盘"]
+    CP --> MV["移动帧文件 movement.json<br/>前端回放数据"]
+    MV --> RP["回放服务 replay.py"]
+    RP --> UI["前端渲染引擎 Phaser"]
 ```
 
-*图 23-1：checkpoint -> compress -> replay 的数据流。原始 checkpoint 适合审计，压缩后的 movement.json 和 simulation.md 分别服务前端回放和人类复盘。*
+*图 23-1：断点 checkpoint -> 压缩脚本 compress.py -> 回放服务 replay.py 的数据流。原始 checkpoint 适合审计，压缩后的 `movement.json` 和 `simulation.md` 分别服务前端回放和人类复盘。*
+
+本章的证据脚手架读取 `book-party-pair` 的真实压缩结果，并统计 checkpoint、回放帧、角色和 `simulation.md` 字符数：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter23 replay: checkpoints=6, movement_frames=361, agents=伊莎贝拉,阿伊莎, simulation_md_chars=4698
+trace: docs/book/assets/chapter_23/ch23_replay_trace.json
+figure: docs/book/assets/chapter_23/ch23_replay_dataflow.png
+```
+
+![图 23-2：从断点 checkpoint 到前端回放的一段真实轨迹](../../assets/chapter_23/ch23_replay_dataflow.png)
+
+*图 23-2：从断点 checkpoint 到前端回放的一段真实轨迹。左侧是真实小镇地图上的两名角色路径，右侧同时展示移动回放文件 `movement.json`、时间线文件 `simulation.md` 和压缩统计。*
+
+这行输出可以这样读：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `checkpoints=6` | `results/checkpoints/book-party-pair/simulate-*.json` | 这个实验有 6 个原始状态快照，适合审计完整角色状态。 |
+| `movement_frames=361` | 压缩脚本 `compress.py` 与 `frames_per_step=60` | 回放不是一条 action 记录，而是被展开成前端逐帧播放的数据。 |
+| `agents=伊莎贝拉,阿伊莎` | `movement.json` 的 `persona_init_pos` | 本次回放包含两个角色，前端初始位置和后续帧都按角色名索引。 |
+| `simulation_md_chars=4698` | 时间线报告 `simulation.md` | 人类复盘读的是压缩后的时间线，不需要直接读庞大的 checkpoint JSON。 |
 
 ## 23.2 从仿真到回放的三阶段
 
-整个流程分三阶段。第一阶段，运行仿真：
+整个流程分三阶段。下面三条命令都在项目运行目录 `generative_agents` 下执行；输入来自 `results/checkpoints/<name>`、`conversation.json` 和地图文件 `frontend/static/assets/village/maze.json`，输出写到 `results/compressed/<name>`。
+
+第一阶段，运行仿真：
 
 ```bash
 python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
@@ -279,7 +308,7 @@ agent 不是每一帧都思考。agent 每 step 思考一次，前端只是把 s
 action = f"前往 {location}"
 ```
 
-如果角色没有移动，可以这样处理：
+角色没有移动时，回放帧直接使用当前行动描述：
 
 ```python
 action = agent_data["action"]["event"]["describe"]
@@ -291,7 +320,7 @@ action = agent_data["action"]["event"]["describe"]
 predicate + object
 ```
 
-睡觉动作会增加，可以这样处理：
+睡觉动作会增加睡眠图标：
 
 ```text
 😴
@@ -512,19 +541,19 @@ movement.json
 
 ## 23.23 本章小结
 
-回放系统把后台仿真变成可检查证据。checkpoint、movement.json、simulation.md 和前端回放各自服务不同目的，不能混成一种材料。
+回放系统把后台仿真变成可检查证据。断点 checkpoint、移动帧文件 `movement.json`、时间线报告 `simulation.md` 和前端回放各自服务不同目的，不能混成一种材料。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 原始输出 | `start.py` 每步生成 checkpoint 和 `conversation.json`。 |
-| checkpoint | checkpoint 适合断点恢复和严谨审计，但不适合直接阅读。 |
-| 压缩入口 | `compress.py` 生成 `movement.json` 和 `simulation.md`。 |
-| `movement.json` | 面向 Phaser 前端回放，服务可视化。 |
-| `simulation.md` | 面向人类阅读和实验复盘。 |
-| movement 生成 | `generate_movement()` 会把 checkpoint 展开成每 step 60 帧。 |
+| 原始输出 | `start.py` 每步生成断点 checkpoint 和对话文件 `conversation.json`。 |
+| 断点 checkpoint | 断点 checkpoint 适合断点恢复和严谨审计，但不适合直接阅读。 |
+| 压缩入口 | 压缩脚本 `compress.py` 生成移动帧文件 `movement.json` 和时间线报告 `simulation.md`。 |
+| 移动帧文件 `movement.json` | 面向前端渲染引擎 Phaser 回放，服务可视化。 |
+| 时间线报告 `simulation.md` | 面向人类阅读和实验复盘。 |
+| movement 生成 | `generate_movement()` 会把断点 checkpoint 展开成每个仿真步 step 60 帧。 |
 | report 生成 | `generate_report()` 会写基础人设、活动记录和对话记录。 |
-| 前端回放 | `replay.py` 和 `index.html` 加载 compressed 数据并展示画面。 |
-| 评价边界 | 回放数据是派生数据，严谨评价仍要回查 checkpoint、conversation 和 memory。 |
+| 前端回放 | 回放服务 `replay.py` 和 `index.html` 加载压缩数据 compressed data 并展示画面。 |
+| 评价边界 | 回放数据是派生数据，严谨评价仍要回查断点 checkpoint、对话 conversation 和记忆 memory。 |
 | 后续用途 | 第四部分复现实验会把这些输出作为证据基础。 |
 
 下一章进入复现实验：我们先复现论文中的情人节派对传播。
@@ -537,3 +566,5 @@ movement.json
 - Local source: `generative_agents/frontend/templates/main_script.html`
 - Local output: `generative_agents/results/checkpoints/`
 - Local output: `generative_agents/results/compressed/`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_23/ch23_replay_trace.json`

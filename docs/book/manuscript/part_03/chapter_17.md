@@ -10,43 +10,70 @@ self.make_plan(agents)
 self.reflect()
 ```
 
-本章专门讲第一步：`percept()`。感知是整个生成式智能体系统的入口。如果 agent 看不到世界，它就无法形成记忆。如果看到了错误事件，后续计划和对话也会错。如果它能看到全局世界，信息扩散和偶遇就失去意义。所以，感知机制的目标不是“看得越多越好”，而是“在合理限制下看到当前附近发生的事”。Generative Agents 的感知链路是：
+本章专门讲第一步：智能体感知函数 `Agent.percept()`。感知是整个生成式智能体系统的入口。如果智能体 agent 看不到世界，它就无法形成记忆。如果看到了错误事件，后续计划和对话也会错。如果它能看到全局世界，信息扩散和偶遇就失去意义。所以，感知机制的目标不是“看得越多越好”，而是“在合理限制下看到当前附近发生的事”。Generative Agents 的感知链路是：
 
 ```text
-当前坐标
-  -> Maze.get_scope()
-  -> 附近 tiles
-  -> 同 arena 过滤
-  -> 收集 tile events
-  -> 距离排序
-  -> attention bandwidth 截断
-  -> 去重
-  -> 写入 memory stream
-  -> 更新 poignancy
-  -> 得到 self.concepts
+当前坐标 coord
+  -> 视野范围函数 Maze.get_scope()
+  -> 附近地图格子 tiles
+  -> 同一场所 arena 过滤
+  -> 收集地图格子事件 tile events
+  -> 距离 distance 排序
+  -> 注意力带宽 attention bandwidth 截断
+  -> 近期记忆 recent memory 去重
+  -> 写入记忆流 memory stream
+  -> 更新重要性 poignancy
+  -> 得到本步概念缓存 self.concepts
 ```
 
 本章重点聚焦以下七个问题：
 
-1. `Agent.percept()` 在整体循环中处于什么位置？
+1. 智能体感知函数 `Agent.percept()` 在整体循环中处于什么位置？
 2. 视野范围如何计算？
-3. 为什么要限制同一 arena？
-4. tile events 如何变成 concepts？
+3. 为什么要限制同一场所 arena？
+4. 地图格子事件 tile events 如何变成概念节点 concepts？
 5. 哪些事件会写入长期记忆？
-6. 感知结果如何影响 reaction 和 reflection？
+6. 感知结果如何影响现场反应 reaction 和反思 reflection？
 7. 当前感知机制有哪些边界？
 
 ```mermaid
 flowchart LR
-    Position["当前坐标"] --> Scope["Maze.get_scope()<br/>附近 tile"]
-    Scope --> Events["收集 tile events"]
+    Position["当前坐标 coord"] --> Scope["视野范围函数 Maze.get_scope()<br/>附近地图格子 tiles"]
+    Scope --> Events["收集地图格子事件 tile events"]
     Events --> Filter["过滤自身事件和重复事件"]
-    Filter --> New["识别新观察"]
-    New --> Memory["写入 Associate"]
-    New --> Reaction["为 reaction 提供现场材料"]
+    Filter --> New["识别新观察 new observation"]
+    New --> Memory["写入关联记忆 Associate"]
+    New --> Reaction["为现场反应 reaction 提供材料"]
 ```
 
-*图 17-1：Agent.percept() 数据流。感知不是读取全局世界，而是在空间范围内把附近事件转成角色自己的观察。*
+*图 17-1：智能体感知函数 `Agent.percept()` 数据流。感知不是读取全局世界，而是在空间范围内把附近事件转成角色自己的观察。*
+
+为了把这条链路落回真实项目材料，第 17-23 章共用一个证据脚手架。它不调用大语言模型 LLM，也不发起向量嵌入 embedding 请求，只读取本地配置、源码、已有回放结果和压缩结果：
+
+```bash
+python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
+```
+
+本章相关输出如下：
+
+```text
+chapter17 percept: coord=(119, 24), scope_count=289, same_arena_tiles=67, events_in_same_arena=3
+trace: docs/book/assets/chapter_17/ch17_perception_trace.json
+figure: docs/book/assets/chapter_17/ch17_perception_funnel.png
+```
+
+![图 17-2：站在小镇地图里看智能体感知函数 Agent.percept()](../../assets/chapter_17/ch17_perception_funnel.png)
+
+*图 17-2：站在小镇地图里看智能体感知函数 `Agent.percept()`。图中的坐标来自第 13 章移动回放文件 `movement.json`，黄色区域是视野范围 vision，蓝色区域是同场所 arena，红点是可读地图格子事件 tile events。*
+
+这行输出可以直接映射回源码：
+
+| 输出片段 | 对应源码或文件 | 读法 |
+| --- | --- | --- |
+| `coord=(119, 24)` | 回放移动文件 `movement.json` | 这是阿伊莎和克劳斯在第 13 章实验中出现过的真实回放坐标，不是另造的示例坐标。 |
+| `scope_count=289` | 视野范围函数 `Maze.get_scope()` 与 `vision_r=8` | `17 x 17` 个地图格子 tiles 先进入候选范围。 |
+| `same_arena_tiles=67` | 智能体感知函数 `Agent.percept()` 的场所 arena 过滤 | 289 个候选格子里，只有同一图书馆场所的 67 个格子继续参与事件收集。 |
+| `events_in_same_arena=3` | 地图格子事件 `tile.get_events()` | 这一帧同场所内有书架、图书馆桌子、图书馆沙发三个对象事件进入后续排序与截断。 |
 
 ## 17.2 感知不是全局读取
 
@@ -59,7 +86,7 @@ flowchart LR
 
 因此，Generative Agents 让 agent 只感知附近区域。这一点对应论文中的观察机制：agent 只能根据自身所在环境观察到局部事件。局部感知是社会涌现的前提。信息之所以能扩散，是因为它一开始不在每个人那里。关系之所以能形成，是因为角色需要相遇、对话和记忆。
 
-## 17.3 percept() 的入口
+## 17.3 智能体感知函数 Agent.percept() 的入口
 
 `Agent.percept()` 位于：
 
@@ -88,17 +115,17 @@ def percept(self):
     self.concepts = [c for c in self.concepts if c.event.subject != self.name]
 ```
 
-可以分成下面五段，可以这样处理：
+这段源码可以分成五段读：
 
 1. 获取视野范围。
 2. 更新空间记忆。
 3. 收集附近事件。
-4. 转成 concepts。
+4. 转成概念缓存 concepts。
 5. 过滤自身事件。
 
 每一段都影响后续行为。
 
-## 17.4 视野范围：Maze.get_scope()
+## 17.4 视野范围函数 Maze.get_scope()
 
 感知流程的第一步如下：
 
@@ -122,15 +149,15 @@ scope = self.maze.get_scope(self.coord, self.percept_config)
 (2 * 8 + 1) x (2 * 8 + 1)
 ```
 
-也就是 17 x 17 个 tile。同时会裁剪地图边界，避免坐标越界。这只是候选范围。后面还会根据 arena 和 attention bandwidth 继续过滤。
+也就是 17 x 17 个地图格子 tile。同时会裁剪地图边界，避免坐标越界。这只是候选范围。后面还会根据场所 arena 和注意力带宽 attention bandwidth 继续过滤。
 
 ## 17.5 方形视野的工程取舍
 
 当前视野是 box，不是圆形。这是一种工程简化。方形视野实现简单，计算成本低，也足够支持小镇仿真。但它并不等于真实视觉。真实视觉会受方向、遮挡、墙、距离衰减、光线等影响。当前项目没有模拟这些。这意味着：
 
-- agent 可能看到方形边角处的事件。
-- agent 不区分正前方和身后。
-- agent 不做视线遮挡。
+- 智能体 agent 可能看到方形边角处的事件。
+- 智能体 agent 不区分正前方和身后。
+- 智能体 agent 不做视线遮挡。
 
 这些都是可接受的简化。因为项目重点不是物理感知，而是记忆、计划、反思和社会互动。
 
@@ -144,7 +171,7 @@ for tile in scope:
         self.spatial.add_leaf(tile.address)
 ```
 
-这一步很容易被忽略。它说明感知不仅产生事件记忆，也会扩展空间记忆。如果 agent 看到某个 game object，它就把该对象地址加入自己的 spatial tree。例如，角色进入霍布斯咖啡馆附近，看到：
+这一步很容易被忽略。它说明感知不仅产生事件记忆，也会扩展空间记忆。如果智能体 agent 看到某个游戏对象 game object，它就把该对象地址加入自己的空间树 spatial tree。例如，角色进入霍布斯咖啡馆附近，看到：
 
 ```text
 the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
@@ -153,12 +180,12 @@ the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 钢琴
 它后续就知道咖啡馆里有钢琴。这类空间学习不进入 `Associate`，而是进入 `Spatial`。这再次说明项目中的“记忆”有多层：
 
 ```text
-Spatial：哪里有什么。
-Associate：发生了什么、聊了什么、想到了什么。
-Schedule：今天要做什么。
+空间记忆 Spatial：哪里有什么。
+关联记忆 Associate：发生了什么、聊了什么、想到了什么。
+日程 Schedule：今天要做什么。
 ```
 
-## 17.7 arena 过滤
+## 17.7 场所 arena 过滤
 
 收集事件前，代码先取当前 arena：
 
@@ -176,7 +203,7 @@ for tile in scope:
 
 这意味着，即使某个 tile 在视野方框内，如果它不属于当前 arena，也不会被感知。它避免隔墙感知。例如，角色站在宿舍房间里，方形视野可能覆盖隔壁房间或走廊。如果只按距离，角色可能看到墙后的人。arena 过滤用语义区域限制感知。它不是完美视线模拟，但比单纯距离更合理。
 
-## 17.8 收集 tile events
+## 17.8 收集地图格子事件 tile events
 
 通过 arena 过滤后，系统读取 tile events：
 
@@ -232,13 +259,13 @@ recent_nodes = (
 recent_nodes = set(n.describe for n in recent_nodes)
 ```
 
-然后进行下面判断，可以这样处理：
+然后判断这条事件描述是否已经在近期记忆里：
 
 ```python
 if event.get_describe() not in recent_nodes:
 ```
 
-如果近期已经有同样描述，就不重复处理。这避免 agent 每一步都把同一个附近事件重复写入 memory stream。例如，克劳斯连续几步坐在书桌前读书。玛丽亚每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
+如果近期已经有同样描述，就不重复处理。这避免智能体 agent 每一步都把同一个附近事件重复写入记忆流 memory stream。例如，克劳斯连续几步坐在书桌前读书。玛丽亚每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
 
 ```text
 克劳斯正在读书。
@@ -482,32 +509,32 @@ att_bandwidth
 mode
 ```
 
-第四步是查看日志，可以这样处理：
+第四步看感知日志：
 
 ```text
 <agent> percept <valid>/<concepts> concepts
 ```
 
-第五，查看 agent memory。看 `associate.event` 和 `associate.chat` 是否新增。第六，确认 events 是否在同一 arena。如果两个角色很近但不在同一 arena，当前实现不会感知对方。第七，检查是否被去重。如果事件已经存在于 recent memory，就不会重复写入。
+第五，查看智能体记忆 agent memory。看 `associate.event` 和 `associate.chat` 是否新增。第六，确认事件 events 是否在同一场所 arena。如果两个角色很近但不在同一场所 arena，当前实现不会感知对方。第七，检查是否被去重。如果事件已经存在于近期记忆 recent memory，就不会重复写入。
 
 ## 17.23 本章小结
 
-感知是智能体和世界发生关系的入口。agent 不是全知地读取所有状态，而是在有限空间范围内看到附近事件，并把有意义的观察写入记忆。
+感知是智能体和世界发生关系的入口。智能体 agent 不是全知地读取所有状态，而是在有限空间范围内看到附近事件，并把有意义的观察写入记忆。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 调用位置 | 感知发生在 `Agent.think()` 中，先于计划和反思。 |
 | 视野范围 | `Maze.get_scope()` 根据坐标和 `percept_config` 取得方形视野。 |
 | 空间学习 | 感知会把 game object 地址加入 `Spatial`。 |
-| arena 限制 | 系统只收集同一 arena 内的 tile events。 |
+| 场所 arena 限制 | 系统只收集同一场所 arena 内的地图格子事件 tile events。 |
 | 注意力带宽 | 事件按距离排序，并受 `att_bandwidth` 限制。 |
-| 去重机制 | Event 通过 hash 去重，同一事件只保留最近距离。 |
-| 写入规则 | 空闲事件只生成临时 Concept，非空闲事件才写入 `Associate`。 |
-| 反思触发 | 新事件会累积 `status["poignancy"]`，推动 reflection。 |
-| reaction 材料 | `self.concepts` 保存当前 step 的感知结果，主要服务现场反应。 |
+| 去重机制 | 事件 Event 通过 hash 去重，同一事件只保留最近距离。 |
+| 写入规则 | 空闲事件只生成临时概念节点 Concept，非空闲事件才写入关联记忆 `Associate`。 |
+| 反思触发 | 新事件会累积 `status["poignancy"]`，推动反思 reflection。 |
+| 反应材料 | `self.concepts` 保存当前仿真步 step 的感知结果，主要服务现场反应 reaction。 |
 | 工程边界 | 当前感知是简化模型，不是完整物理视觉系统。 |
 
-下一章讲记忆：深入 `Associate`、`Concept`、`LlamaIndex`、`AssociateRetriever`，看事件、对话、想法如何存储、检索、过期和参与行为生成。
+下一章讲记忆：深入关联记忆 `Associate`、概念节点 `Concept`、向量索引 `LlamaIndex`、关联记忆检索器 `AssociateRetriever`，看事件、对话、想法如何存储、检索、过期和参与行为生成。
 
 ## 参考资料
 
@@ -516,3 +543,5 @@ mode
 - Local source: `generative_agents/modules/memory/event.py`
 - Local source: `generative_agents/modules/memory/associate.py`
 - Local config: `generative_agents/data/config.json`
+- Local scaffold: `docs/book/scaffolds/part_03/ch17_23_part03_evidence.py`
+- Local trace: `docs/book/assets/chapter_17/ch17_perception_trace.json`
