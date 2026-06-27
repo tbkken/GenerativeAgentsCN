@@ -1,39 +1,43 @@
-# 第 23 章 回放系统：断点 checkpoint、movement.json、simulation.md 与 Phaser 前端
+# 第 23 章 回放系统：断点 checkpoint、移动回放文件 movement.json、时间线报告 simulation.md 与前端渲染引擎 Phaser
 
 ## 23.1 核心问题
 
-第三部分最后一章讲回放系统。Generative Agents 的仿真结果不是只存在日志里。运行后，项目会生成断点 checkpoint。然后压缩脚本 `compress.py` 把断点 checkpoint 转换成：
+第三部分最后一章讲回放系统。生成式智能体 Generative Agents 的仿真结果不只存在日志里。运行后，项目会生成断点 checkpoint；压缩脚本 `compress.py` 再把断点 checkpoint 转换成两类材料：
 
 ```text
 movement.json
 simulation.md
 ```
 
-回放服务 `replay.py` 再通过 Flask 和前端渲染引擎 Phaser 展示小镇动画。这个系统有三个价值。第一，可视化。读者可以看角色在小镇中移动、睡觉、聊天、行动。第二，可复盘。`simulation.md` 记录人物活动和对话，适合阅读和写书。第三，可评价。`movement.json`、`simulation.md` 和 `conversation.json` 可以作为实验数据，支撑派对传播、竞选扩散、关系形成等分析。本章聚焦八个问题：
+移动回放文件 `movement.json` 给前端播放使用，时间线报告 `simulation.md` 给人阅读使用。回放服务 `replay.py` 通过 Web 服务框架 Flask 和前端渲染引擎 Phaser 展示小镇动画。
+
+这一章没有新的提示词 prompt，也不会重新调用大语言模型 LLM。它处理的是已经生成出来的数据：断点 checkpoint、对话文件 `conversation.json`、世界地图 maze、角色贴图和前端模板。因此，本章的重点不是“智能体如何思考”，而是“智能体思考后的结果如何变成可观看、可复盘、可审计的证据”。
+
+本章聚焦八个问题：
 
 1. 断点 checkpoint 保存了什么？
-2. `compress.py` 如何生成 `movement.json`？
-3. `simulation.md` 如何生成？
-4. `movement.json` 的结构是什么？
-5. `replay.py` 如何启动回放？
-6. 前端模板如何展示角色？
+2. `compress.py` 如何生成移动回放文件 `movement.json`？
+3. 时间线报告 `simulation.md` 如何生成？
+4. 移动回放文件 `movement.json` 的结构是什么？
+5. 回放服务 `replay.py` 如何启动前端？
+6. 前端模板如何展示角色精灵 sprite、行动 action 和对话 conversation？
 7. 回放系统与实验评价有什么关系？
 8. 当前回放系统有哪些边界和升级方向？
 
 ```mermaid
 flowchart LR
-    C["断点目录 results/checkpoints/name<br/>逐步状态 JSON"] --> CP["压缩脚本 compress.py"]
+    C["断点目录 checkpoint folder<br/>results/checkpoints/name<br/>逐步状态 JSON"] --> CP["压缩脚本 compress.py"]
     Conv["对话文件 conversation.json"] --> CP
     Maze["世界地图 maze.json"] --> CP
     CP --> MD["时间线报告 simulation.md<br/>人类可读复盘"]
-    CP --> MV["移动帧文件 movement.json<br/>前端回放数据"]
+    CP --> MV["移动回放文件 movement.json<br/>前端可播放帧"]
     MV --> RP["回放服务 replay.py"]
     RP --> UI["前端渲染引擎 Phaser"]
 ```
 
-*图 23-1：断点 checkpoint -> 压缩脚本 compress.py -> 回放服务 replay.py 的数据流。原始 checkpoint 适合审计，压缩后的 `movement.json` 和 `simulation.md` 分别服务前端回放和人类复盘。*
+*图 23-1：断点 checkpoint -> 压缩脚本 compress.py -> 回放服务 replay.py 的数据流。原始断点 checkpoint 适合审计，压缩后的移动回放文件 `movement.json` 和时间线报告 `simulation.md` 分别服务前端回放和人类复盘。*
 
-本章的证据脚手架读取 `book-party-pair` 的真实压缩结果，并统计 checkpoint、回放帧、角色和 `simulation.md` 字符数：
+本章的证据脚手架读取 `book-party-pair` 的真实压缩结果，并统计断点 checkpoint、回放帧、角色和时间线报告 `simulation.md` 字符数：
 
 ```bash
 python docs/book/scaffolds/part_03/ch17_23_part03_evidence.py
@@ -49,22 +53,122 @@ figure: docs/book/assets/chapter_23/ch23_replay_dataflow.png
 
 ![图 23-2：从断点 checkpoint 到前端回放的一段真实轨迹](../../assets/chapter_23/ch23_replay_dataflow.png)
 
-*图 23-2：从断点 checkpoint 到前端回放的一段真实轨迹。左侧是真实小镇地图上的两名角色路径，右侧同时展示移动回放文件 `movement.json`、时间线文件 `simulation.md` 和压缩统计。*
+*图 23-2：从断点 checkpoint 到前端回放的一段真实轨迹。左侧是真实小镇地图上的两名角色路径，右侧同时展示移动回放文件 `movement.json`、时间线报告 `simulation.md` 和压缩统计。*
 
 这行输出可以这样读：
 
 | 输出片段 | 对应源码或文件 | 读法 |
 | --- | --- | --- |
 | `checkpoints=6` | `results/checkpoints/book-party-pair/simulate-*.json` | 这个实验有 6 个原始状态快照，适合审计完整角色状态。 |
-| `movement_frames=361` | 压缩脚本 `compress.py` 与 `frames_per_step=60` | 回放不是一条 action 记录，而是被展开成前端逐帧播放的数据。 |
-| `agents=伊莎贝拉,阿伊莎` | `movement.json` 的 `persona_init_pos` | 本次回放包含两个角色，前端初始位置和后续帧都按角色名索引。 |
-| `simulation_md_chars=4698` | 时间线报告 `simulation.md` | 人类复盘读的是压缩后的时间线，不需要直接读庞大的 checkpoint JSON。 |
+| `movement_frames=361` | 压缩脚本 `compress.py` 与 `frames_per_step=60` | 回放不是一条行动 action 记录，而是被展开成前端逐帧播放的数据。 |
+| `agents=伊莎贝拉,阿伊莎` | 移动回放文件 `movement.json` 的 `persona_init_pos` | 本次回放包含两个角色，前端初始位置和后续帧都按角色名索引。 |
+| `simulation_md_chars=4698` | 时间线报告 `simulation.md` | 人类复盘读的是压缩后的时间线，不需要直接读庞大的断点 checkpoint JSON。 |
 
-## 23.2 从仿真到回放的三阶段
+把这四个数字连起来，就是本章的主线：
+
+```text
+6 个断点 checkpoint
+  -> 压缩成 361 个前端回放帧
+  -> 只包含伊莎贝拉和阿伊莎两个移动角色
+  -> 同时生成一份可阅读的 simulation.md
+```
+
+## 23.2 先读一条真实数据流
+
+先不看源码，把同一个时刻的三份材料摆在一起读。`book-party-pair` 的第一个断点来自：
+
+```text
+generative_agents/results/checkpoints/book-party-pair/simulate-20240214-0800.json
+```
+
+其中伊莎贝拉的状态可以压缩成下面这段：
+
+```json
+{
+  "time": "20240214-08:00",
+  "step": 1,
+  "stride": 10,
+  "agents": {
+    "伊莎贝拉": {
+      "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。",
+      "coord": [78, 19],
+      "action": {
+        "event": {
+          "subject": "伊莎贝拉",
+          "predicate": "此时",
+          "object": "打开咖啡馆大门并开灯",
+          "describe": "打开咖啡馆大门并开灯",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆柜台后面"]
+        },
+        "start": "20240214-08:00:00",
+        "duration": 5
+      }
+    }
+  }
+}
+```
+
+这段断点 checkpoint 是输入 input。它告诉我们：当前小镇时间是 2024 年 2 月 14 日 08:00，伊莎贝拉位于瓦片坐标 coordinate `[78, 19]`，当前行动 action 是“打开咖啡馆大门并开灯”，行动地点 address 是霍布斯咖啡馆柜台后面。
+
+压缩后，移动回放文件 `movement.json` 会出现下面这些帧：
+
+```json
+{
+  "start_datetime": "2024-02-14T08:00:00",
+  "stride": 10,
+  "sec_per_step": 10,
+  "persona_init_pos": {
+    "伊莎贝拉": [72, 14],
+    "阿伊莎": [118, 61]
+  },
+  "all_movement": {
+    "1": {
+      "伊莎贝拉": {
+        "location": "霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "movement": [72, 14],
+        "action": "前往 霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面"
+      }
+    },
+    "12": {
+      "伊莎贝拉": {
+        "location": "霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "movement": [78, 19],
+        "action": "打开咖啡馆大门并开灯"
+      }
+    }
+  }
+}
+```
+
+这段移动回放 movement 是输出 output。注意两个坐标不一样：断点 checkpoint 里的 `[78, 19]` 是这个仿真步 step 的目标状态；移动回放文件 `movement.json` 里的第 1 帧从 `[72, 14]` 起步，第 12 帧才到 `[78, 19]`。中间的路径是压缩脚本用世界地图 maze 重新算出来的。
+
+同一段结果写到时间线报告 `simulation.md` 时，会变成人类可读文本：
+
+```markdown
+# 20240214-08:00
+
+## 活动记录：
+
+### 伊莎贝拉
+位置：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+活动：打开咖啡馆大门并开灯
+```
+
+这就是本章最重要的读法：
+
+| 层次 | 文件 | 读什么 | 适合回答的问题 |
+| --- | --- | --- | --- |
+| 原始状态 | 断点 checkpoint `simulate-*.json` | 时间 time、仿真步 step、坐标 coord、日程 schedule、记忆 memory、行动 action | 这个角色当时完整状态是什么？ |
+| 前端回放 | 移动回放文件 `movement.json` | 初始位置、逐帧坐标、行动文本、对话文本 | 角色在屏幕上怎么移动、显示什么？ |
+| 人类复盘 | 时间线报告 `simulation.md` | 人设、活动变化、对话记录 | 故事线是否连贯，信息是否传播？ |
+
+后面每一节都围绕这条链路展开。
+
+## 23.3 从仿真到回放的三阶段
 
 整个流程分三阶段。下面三条命令都在项目运行目录 `generative_agents` 下执行；输入来自 `results/checkpoints/<name>`、`conversation.json` 和地图文件 `frontend/static/assets/village/maze.json`，输出写到 `results/compressed/<name>`。
 
-第一阶段，运行仿真：
+第一阶段，运行仿真 simulation：
 
 ```bash
 python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
@@ -76,7 +180,7 @@ python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
 results/checkpoints/sim-test/
 ```
 
-第二阶段，压缩结果：
+第二阶段，压缩结果 compression：
 
 ```bash
 python compress.py --name sim-test
@@ -89,7 +193,7 @@ results/compressed/sim-test/movement.json
 results/compressed/sim-test/simulation.md
 ```
 
-第三阶段，启动回放：
+第三阶段，启动回放 replay：
 
 ```bash
 python replay.py
@@ -101,53 +205,100 @@ python replay.py
 http://127.0.0.1:5000/?name=sim-test
 ```
 
-这三个阶段分别对应：
+这三个阶段对应一条明确的数据链：
 
-```text
-生成数据
-  -> 整理数据
-  -> 展示数据
+```mermaid
+flowchart TD
+    Run["运行仿真 simulation<br/>start.py"] --> Checkpoints["断点 checkpoint<br/>simulate-*.json"]
+    Checkpoints --> Compress["压缩结果 compression<br/>compress.py"]
+    Compress --> Movement["移动回放文件 movement.json"]
+    Compress --> Report["时间线报告 simulation.md"]
+    Movement --> Replay["启动回放 replay<br/>replay.py"]
+    Replay --> Browser["浏览器前端 browser<br/>前端渲染引擎 Phaser 动画"]
 ```
 
-理解这条链路后，读者就能知道实验结果存在哪里。
+理解这条链路后，读者就能知道实验结果存在哪里，也能判断问题出在仿真、压缩还是前端回放。
 
-## 23.3 checkpoint 是原始仿真状态
+## 23.4 断点 checkpoint 是原始仿真状态
 
-`start.py` 每个 step 写 checkpoint：
+`start.py` 每个仿真步 step 都会写一个断点 checkpoint：
 
 ```text
 results/checkpoints/<name>/simulate-<time>.json
 ```
 
-同时还会保存下面内容：
+同时还会保存全局对话文件：
 
 ```text
 results/checkpoints/<name>/conversation.json
 ```
 
-checkpoint JSON 保存的是仿真状态。包括：
+写盘逻辑在 `SimulateServer.simulate()` 中：
 
-- 当前 time。
-- step。
-- stride。
-- maze path。
-- agent_base。
-- 每个 agent 的配置和状态。
-- agent 当前 coord。
-- status。
-- schedule。
-- associate memory ids。
-- chats。
-- currently。
-- action。
+```python
+sim_time = timer.get_date("%Y%m%d-%H:%M")
+self.config.update(
+    {
+        "time": sim_time,
+        "step": i + 1,
+    }
+)
 
-阅读 checkpoint 时不要从第一行 JSON 机械往下看。更有效的顺序是先看顶层 `time`、`step` 和 `stride`，确认这是哪个仿真时刻；再进入目标 agent，查看 `coord`、`action`、`schedule` 和 `currently`；最后再看 `associate`、`chats` 等记忆相关状态。这样读，checkpoint 就是“某个时间点的小镇快照”，而不是一大团难读的 JSON。
+with open(f"{self.checkpoints_folder}/simulate-{sim_time.replace(':', '')}.json", "w", encoding="utf-8") as f:
+    f.write(json.dumps(self.config, indent=2, ensure_ascii=False))
 
-它适合断点恢复和严谨审计。但它不适合直接给人读故事线。因此需要 `compress.py` 转换。
+with open(f"{self.checkpoints_folder}/conversation.json", "w", encoding="utf-8") as f:
+    f.write(json.dumps(self.game.conversation, indent=2, ensure_ascii=False))
+```
 
-## 23.4 conversation.json
+断点 checkpoint JSON 保存的是仿真状态。它不是专门给人阅读的摘要，而是后续恢复、审计和压缩的原始材料。
 
-`conversation.json` 保存全局对话。真实结果中的一段对话可以整理成下面这种结构。下面片段来自 `example` 回放中 `20240213-06:00` 的山姆和詹妮弗对话，省略了部分字段外壳：
+| 字段 | 中文读法 | 作用 |
+| --- | --- | --- |
+| `time` | 小镇时间 time | 当前断点对应哪一个小镇时刻。 |
+| `step` | 仿真步 step | 当前是第几个认知更新步。 |
+| `stride` | 步长 stride | 每个仿真步推进多少分钟。 |
+| `agents` | 智能体集合 agents | 本次仿真的所有角色状态。 |
+| `coord` | 瓦片坐标 coordinate | 角色当前在地图上的瓦片位置。 |
+| `schedule` | 日程 schedule | 一天计划和当前子计划。 |
+| `associate` | 关联记忆 associate memory | 事件 event、想法 thought、对话 chat 的记忆节点引用。 |
+| `chats` | 当前对话 chats | 角色此刻持有的对话片段。 |
+| `currently` | 当前目标 currently | 角色的长期或阶段性状态描述。 |
+| `action` | 当前行动 action | 当前动作、对象状态、地点和持续时间。 |
+
+阅读断点 checkpoint 时不要从第一行 JSON 机械往下看。更有效的顺序是：
+
+```text
+time / step / stride
+  -> agents.<目标角色>
+  -> coord / action / schedule / currently
+  -> associate / chats / storage
+```
+
+这样读，断点 checkpoint 就是“某个时间点的小镇快照”，而不是一大团难读的 JSON。
+
+以 `simulate-20240214-0800.json` 为例，阿伊莎在 08:00 的状态可以读成一句话：
+
+```text
+阿伊莎位于 [118, 57]，在奥克山学院宿舍的书桌前阅读莎士比亚相关文献；
+她的当前目标 currently 仍然是毕业论文研究；
+她的关联记忆 associate memory 中已有一个 thought 节点 node_0。
+```
+
+断点 checkpoint 适合断点恢复和严谨审计。但它不适合直接给人读故事线，因此需要压缩脚本 `compress.py` 进行二次整理。
+
+## 23.5 对话文件 conversation.json：全局对话证据
+
+`conversation.json` 保存全局对话。对话发生时，`Agent._chat_with()` 会把聊天写入共享的对话字典：
+
+```python
+key = utils.get_timer().get_date("%Y%m%d-%H:%M")
+if key not in self.conversation.keys():
+    self.conversation[key] = []
+self.conversation[key].append({f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats})
+```
+
+真实结果中的一段对话可以整理成下面这种结构。下面片段来自 `example` 回放中 `20240213-06:00` 的山姆和詹妮弗对话，省略了部分字段外壳：
 
 ```json
 {
@@ -162,34 +313,122 @@ checkpoint JSON 保存的是仿真状态。包括：
 }
 ```
 
-这个文件由 `_chat_with()` 写入内存，由 `SimulateServer.simulate()` 每步写盘。它是信息扩散实验的重要证据。如果我们要证明阿伊莎知道派对，是因为伊莎贝拉告诉她，不能只看阿伊莎后来说“我知道”。还要能在 `conversation.json` 或 `simulation.md` 中找到这次对话。
+这个结构可以拆成三层阅读：
 
-这个结构可以拆成三层阅读。第一层 key 是小镇时间。第二层 key 同时包含“谁对谁说话”和对话地点。第三层列表才是具体轮次。实验记录传播路径时，最重要的是前两层：谁在什么时间、什么地点，把信息传给了谁。具体话术可以再从第三层摘录。
+| 层次 | 例子 | 含义 |
+| --- | --- | --- |
+| 时间键 time key | `20240213-06:00` | 对话发生的小镇时间。 |
+| 传播边 communication edge | `詹妮弗 -> 山姆 @ ...` | 谁把信息传给谁，地点在哪里。 |
+| 轮次列表 turns | `["山姆", "..."]` | 具体说话人和话术。 |
 
-## 23.5 compress.py 的两个输出
+`book-party-pair` 这次实验的 `conversation.json` 是空对象：
 
-`compress.py` 定义：
+```json
+{}
+```
+
+这不是压缩失败，而是本次 6 个仿真步内没有触发对话。压缩脚本仍然会在移动回放文件 `movement.json` 中保留对话字段：
+
+```json
+{
+  "conversation": {
+    "20240214-08:00": "",
+    "20240214-08:10": "",
+    "20240214-08:20": ""
+  }
+}
+```
+
+没有对话也是一种数据状态。做信息传播实验时，如果角色声称知道派对，却在 `conversation.json` 和时间线报告 `simulation.md` 中找不到传播链，就要继续检查记忆 memory、初始人设 persona 或提示词 prompt 是否提前泄漏了信息。
+
+## 23.6 压缩脚本 compress.py 的两个输出
+
+`compress.py` 定义了两个输出文件和一个关键帧数：
 
 ```python
 file_markdown = "simulation.md"
 file_movement = "movement.json"
-frames_per_step = 60
+
+frames_per_step = 60  # 每个step包含的帧数
 ```
 
-它有两个主要函数，需要结合源码查看：
+它有两个主要函数：
 
 ```python
 generate_report(...)
 generate_movement(...)
 ```
 
-`generate_report()` 生成 `simulation.md`。`generate_movement()` 生成 `movement.json`。这两个输出面向不同用途。`simulation.md` 面向人阅读。`movement.json` 面向前端回放。后续复现实验会同时使用二者。
+二者的职责不同：
 
-## 23.6 generate_movement() 总览
+| 函数 | 输入 | 处理逻辑 | 输出 |
+| --- | --- | --- | --- |
+| `generate_report()` | 断点 checkpoint、对话 conversation、角色配置 agent.json | 抽取人设、活动变化和对话记录 | 时间线报告 `simulation.md` |
+| `generate_movement()` | 断点 checkpoint、对话 conversation、世界地图 maze | 计算移动路径，把仿真步展开成回放帧 | 移动回放文件 `movement.json` |
 
-`generate_movement()` 做几件事。第一，读取 conversation。第二，收集 checkpoint JSON 文件。第三，读取 stride。第四，加载 maze，用于计算移动路径。第五，为 step 1 插入第 0 帧初始状态。第六，遍历每个 checkpoint 中的 agent。第七，根据 source_coord 和 target_coord 计算 path。第八，把每个 step 展开成 60 帧。第九，把结果保存为 `movement.json`。这一步把离散 checkpoint 变成前端可播放帧数据。
+```mermaid
+flowchart TD
+    Compress["压缩脚本 compress.py"] --> Report["生成报告 generate_report()"]
+    Compress --> Movement["生成移动 generate_movement()"]
+    Report --> Markdown["时间线报告 simulation.md<br/>给人阅读"]
+    Movement --> Json["移动回放文件 movement.json<br/>给前端播放"]
+```
 
-## 23.7 movement.json 的顶层结构
+`simulation.md` 面向人阅读，`movement.json` 面向前端回放。后续复现实验会同时使用二者：先用时间线报告判断故事，再用移动回放文件或断点 checkpoint 校验位置和行动。
+
+## 23.7 生成移动函数 generate_movement() 总览
+
+`generate_movement()` 是移动回放文件 `movement.json` 的生成入口。它的核心代码可以压缩成下面这段：
+
+```python
+conversation = {}
+if os.path.exists(os.path.join(checkpoints_folder, conversation_file)):
+    with open(os.path.join(checkpoints_folder, conversation_file), "r", encoding="utf-8") as f:
+        conversation = json.load(f)
+
+files = sorted(os.listdir(checkpoints_folder))
+json_files = list()
+for file_name in files:
+    if file_name.endswith(".json") and file_name != conversation_file:
+        json_files.append(os.path.join(checkpoints_folder, file_name))
+
+persona_init_pos = dict()
+all_movement = dict()
+all_movement["description"] = dict()
+all_movement["conversation"] = dict()
+
+stride = get_stride(json_files)
+sec_per_step = stride
+
+result = {
+    "start_datetime": "",
+    "stride": stride,
+    "sec_per_step": sec_per_step,
+    "persona_init_pos": persona_init_pos,
+    "all_movement": all_movement,
+}
+```
+
+这段代码的输入、处理、输出如下：
+
+```mermaid
+flowchart TD
+    Input["输入 input"] --> Conv["读取对话 conversation.json"]
+    Input --> Files["收集断点 checkpoint JSON"]
+    Input --> Maze["加载世界地图 maze.json"]
+    Files --> Stride["读取步长 stride"]
+    Files --> Loop["遍历每个断点 checkpoint"]
+    Loop --> Frame0["仿真步 step=1 插入第 0 帧"]
+    Loop --> Path["用 Maze.find_path() 计算路径 path"]
+    Path --> Frames["每个仿真步展开 60 帧"]
+    Conv --> ChatText["整理对话文本 conversation text"]
+    Frames --> Output["输出 output<br/>movement.json"]
+    ChatText --> Output
+```
+
+这一步把离散的断点 checkpoint 变成前端可播放帧数据。智能体 agent 并不是每一帧都重新思考；它在仿真步 step 上思考，回放系统只是把这个结果展开成动画。
+
+## 23.8 移动回放文件 movement.json 的顶层结构
 
 `generate_movement()` 最终输出：
 
@@ -203,71 +442,119 @@ result = {
 }
 ```
 
-字段含义可以这样理解：
+移动回放文件 `movement.json` 的顶层结构可以这样读：
 
-`start_datetime` 是回放起始时间。`stride` 是每个仿真 step 对应多少分钟。`sec_per_step` 是回放时每一帧对应秒数。`persona_init_pos` 保存每个角色初始位置。`all_movement` 保存每一帧的角色移动、位置和动作。其中 `all_movement` 还包含：
-
-```text
-description
-conversation
+```mermaid
+flowchart TD
+    Movement["移动回放文件 movement.json"] --> Time["起始时间 start_datetime"]
+    Movement --> Stride["仿真步长 stride"]
+    Movement --> Sec["每帧秒数 sec_per_step"]
+    Movement --> Init["角色初始位置 persona_init_pos"]
+    Movement --> All["逐帧移动 all_movement"]
+    All --> Description["角色描述 description"]
+    All --> Conversation["对话记录 conversation"]
+    All --> Frames["数字帧 0 / 1 / 2 / ..."]
 ```
 
-用于展示角色基础信息和对话内容。
+字段含义如下：
 
-如果直接打开 `movement.json`，建议先读顶层字段，再抽样看关键帧。以第 12 章生成的 `book-smoke/movement.json` 为例，节选如下：
+| 字段 | 中文读法 | 在前端中的作用 |
+| --- | --- | --- |
+| `start_datetime` | 起始时间 start datetime | 用来计算屏幕上的当前小镇时间。 |
+| `stride` | 仿真步长 stride | 表示一个仿真步 step 推进多少分钟。 |
+| `sec_per_step` | 每帧秒数 seconds per step | 前端用它计算时间流逝节奏。 |
+| `persona_init_pos` | 角色初始位置 persona initial position | 前端创建角色精灵 sprite 时的出生坐标。 |
+| `all_movement` | 全量移动帧 all movement | 每一帧角色在哪里、显示什么行动。 |
+| `all_movement.description` | 角色描述 description | 角色详情面板显示的当前状态 currently 和草稿状态 scratch。 |
+| `all_movement.conversation` | 对话记录 conversation | 前端按时间键显示聊天文本。 |
+
+以 `book-party-pair/movement.json` 为例，节选如下：
 
 ```json
 {
-  "start_datetime": "2024-02-13T09:30:00",
+  "start_datetime": "2024-02-14T08:00:00",
   "stride": 10,
+  "sec_per_step": 10,
   "persona_init_pos": {
-    "阿伊莎": [118, 61],
-    "克劳斯": [126, 46]
+    "伊莎贝拉": [72, 14],
+    "阿伊莎": [118, 61]
   },
   "all_movement": {
-    "1": {
+    "0": {
+      "伊莎贝拉": {
+        "location": "伊莎贝拉的公寓，主人房",
+        "movement": [72, 14],
+        "description": "正在睡觉"
+      },
       "阿伊莎": {
-        "location": "奥克山学院宿舍，阿伊莎的房间，书桌",
+        "location": "奥克山学院宿舍，阿伊莎的房间",
         "movement": [118, 61],
-        "action": "前往 奥克山学院宿舍，阿伊莎的房间，书桌"
+        "description": "正在睡觉"
+      }
+    },
+    "61": {
+      "伊莎贝拉": {
+        "location": "霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "movement": [78, 19],
+        "action": "检查并预热咖啡机"
       }
     }
   }
 }
 ```
 
-这段数据说明三件事。第一，回放起点是 09:30。第二，本次只有两个角色，所以 `persona_init_pos` 只有两个名字。第三，第 1 帧中阿伊莎的 `movement` 仍是坐标，但 `location` 已经是人类可读地点。不要把 `movement.json` 当作最原始事实。它是从 checkpoint 和 maze 重新整理出的回放数据，适合播放和统计位置；如果要判断记忆、计划或 action 的完整上下文，仍然要回查 checkpoint。
+这段数据说明三件事。第一，回放起点是 2024 年 2 月 14 日 08:00。第二，本次只有两个角色，所以 `persona_init_pos` 只有两个名字。第三，第 0 帧是初始化状态，第 61 帧已经进入第二个仿真步 step 的行动展示。
 
-## 23.8 第 0 帧：insert_frame0()
+不要把移动回放文件 `movement.json` 当作最原始事实。它是从断点 checkpoint 和世界地图 maze 派生出的回放数据，适合播放和统计位置；如果要判断记忆、计划或行动 action 的完整上下文，仍然要回查断点 checkpoint。
+
+## 23.9 第 0 帧：insert_frame0()
 
 `insert_frame0()` 插入角色初始状态。它读取每个角色的 `agent.json`：
 
 ```python
 json_path = f"frontend/static/assets/village/agents/{agent_name}/agent.json"
+with open(json_path, "r", encoding="utf-8") as f:
+    json_data = json.load(f)
+    address = json_data["spatial"]["address"]["living_area"]
+location = get_location(address)
+coord = json_data["coord"]
 ```
 
-然后取出下面这些内容：
-
-- living_area。
-- 初始 coord。
-- currently。
-- scratch。
-
-并写入下面这些内容：
+然后写入第 0 帧：
 
 ```python
-movement["0"][agent_name] = {
+movement[key][agent_name] = {
     "location": location,
     "movement": coord,
     "description": "正在睡觉",
 }
+movement["description"][agent_name] = {
+    "currently": json_data["currently"],
+    "scratch": json_data["scratch"],
+}
 ```
 
-第 0 帧主要给前端初始化角色位置和基础信息。注意这里 description 默认是“正在睡觉”，这是一种初始显示简化，不一定代表角色真实 action。
+第 0 帧的处理流程如下：
 
-## 23.9 从 checkpoint 到 path
+```mermaid
+flowchart TD
+    Agent["角色名 agent_name"] --> Json["读取角色配置 agent.json"]
+    Json --> Living["居住地址 living_area"]
+    Json --> Coord["初始坐标 coord"]
+    Json --> Current["当前状态 currently"]
+    Json --> Scratch["草稿状态 scratch"]
+    Living --> Location["转换为人类可读地点 location"]
+    Coord --> Frame0["写入第 0 帧 movement['0']"]
+    Location --> Frame0
+    Current --> Desc["写入 description 面板数据"]
+    Scratch --> Desc
+```
 
-对每个 checkpoint，`generate_movement()` 取：
+第 0 帧主要给前端初始化角色位置和基础信息。这里的 `description` 默认是“正在睡觉”，是一种初始显示简化，不一定代表角色真实行动 action。真实行动要从第 1 帧以及断点 checkpoint 中读取。
+
+## 23.10 从断点 checkpoint 到路径 path
+
+对每个断点 checkpoint，`generate_movement()` 取上一位置、目标坐标和当前行动地点：
 
 ```python
 source_coord = last_location.get(agent_name, all_movement["0"][agent_name])["movement"]
@@ -276,9 +563,32 @@ location = get_location(agent_data["action"]["event"]["address"])
 path = maze.find_path(source_coord, target_coord)
 ```
 
-回放路径不是 checkpoint 直接保存的 path，而是根据上一位置和当前 checkpoint 坐标重新计算。这样可以让前端播放移动过程。如果找不到 location，则使用上一位置。这说明 movement.json 是派生数据，不是原始仿真状态。原始状态仍然在 checkpoint。
+这段代码把断点 checkpoint 中的目标状态转换成移动路径 path：
 
-## 23.10 frames_per_step
+```mermaid
+flowchart TD
+    Last["上一帧位置 last_location"] --> Source["起点 source_coord"]
+    Checkpoint["当前断点 checkpoint<br/>agent_data.coord"] --> Target["终点 target_coord"]
+    Action["行动地点 action.event.address"] --> Location["人类可读地点 location"]
+    Source --> Search["路径搜索 Maze.find_path()"]
+    Target --> Search
+    Search --> Path["移动路径 path"]
+    Path --> Frames["展开为移动回放帧 movement frames"]
+```
+
+以伊莎贝拉 08:00 的移动为例：
+
+| 数据项 | 值 | 来源 |
+| --- | --- | --- |
+| 起点 source coord | `[72, 14]` | 第 0 帧，来自伊莎贝拉 `agent.json` 初始坐标。 |
+| 终点 target coord | `[78, 19]` | 断点 checkpoint `simulate-20240214-0800.json`。 |
+| 地点 location | `霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面` | `action.event.address` 去掉顶层世界名 `the Ville`。 |
+| 路径 path | `[72,14] -> ... -> [78,19]` | `Maze.find_path()` 根据世界地图 maze 计算。 |
+| 前端行动 action | `前往 霍布斯咖啡馆...`，到达后变成 `打开咖啡馆大门并开灯` | `generate_movement()` 根据是否仍在移动判断。 |
+
+回放路径不是断点 checkpoint 直接保存的路径 path，而是根据上一位置和当前坐标重新计算。这样可以让前端播放移动过程，也说明移动回放文件 `movement.json` 是派生数据，不是原始仿真状态。
+
+## 23.11 每步帧数 frames_per_step：一个仿真步展开成 60 帧
 
 `compress.py` 中：
 
@@ -286,39 +596,87 @@ path = maze.find_path(source_coord, target_coord)
 frames_per_step = 60
 ```
 
-每个仿真 step 被展开成 60 帧。对于每一帧：
+每个仿真步 step 被展开成 60 帧。对于每一帧，代码通过下面的公式计算回放帧编号：
 
 ```python
 step_key = "%d" % ((step-1) * frames_per_step + 1 + i)
 ```
 
-如果 path 有剩余坐标，就每帧取一个点。如果 path 结束，movement 为 None。这让前端可以平滑播放角色移动。不过它也意味着：
+帧编号可以这样换算：
 
-```text
-回放帧数不等于仿真认知步数。
+| 仿真步 step | 小镇时间 | 回放帧范围 |
+| --- | --- | --- |
+| `1` | `20240214-08:00` | `1` 到 `60` |
+| `2` | `20240214-08:10` | `61` 到 `120` |
+| `3` | `20240214-08:20` | `121` 到 `180` |
+| `4` | `20240214-08:30` | `181` 到 `240` |
+| `5` | `20240214-08:40` | `241` 到 `300` |
+| `6` | `20240214-08:50` | `301` 到 `360` |
+
+实际写帧时，`generate_movement()` 还会判断路径 path 是否已经走完：
+
+```mermaid
+flowchart TD
+    Step["离散仿真步 step"] --> Loop["循环 frames_per_step=60 次"]
+    Loop --> Key["计算回放帧编号 step_key"]
+    Key --> HasPath{"路径 path 是否还有坐标"}
+    HasPath -->|是| Coord["取下一个坐标作为 movement"]
+    HasPath -->|否| Stop["movement 为空<br/>不写这一角色的帧"]
+    Coord --> Moving{"角色是否仍在移动"}
+    Moving -->|是| Go["行动 action = 前往 location"]
+    Moving -->|否| Act["行动 action = 当前事件 describe"]
+    Go --> Frame["写入 all_movement[step_key]"]
+    Act --> Frame
 ```
 
-agent 不是每一帧都思考。agent 每 step 思考一次，前端只是把 step 展开成动画。
+`book-party-pair` 的统计结果是 `movement_frames=361`，其中非空帧 `non_empty_frame_count=18`。这并不矛盾：顶层帧键覆盖 `0` 到 `360`，但角色真正有坐标更新或行动更新的帧远少于总帧数。
 
-## 23.11 action 文本
+关键结论是：
 
-回放中每帧会保存 action。如果正在移动：
+```text
+回放帧数不等于智能体认知次数。
+```
+
+智能体 agent 不是每一帧都思考。智能体 agent 每个仿真步 step 思考一次，前端只是把仿真步 step 展开成动画。
+
+## 23.12 行动 action 文本如何生成
+
+回放中每帧会保存行动 action。如果角色正在移动：
 
 ```python
 action = f"前往 {location}"
 ```
 
-角色没有移动时，回放帧直接使用当前行动描述：
+角色没有移动时，回放帧使用当前事件描述：
 
 ```python
 action = agent_data["action"]["event"]["describe"]
+if len(action) < 1:
+    action = f'{agent_data["action"]["event"]["predicate"]}{agent_data["action"]["event"]["object"]}'
 ```
 
-如果 describe 为空，就用：
+这段逻辑可以画成一个分支图：
 
-```python
-predicate + object
+```mermaid
+flowchart TD
+    Frame["当前回放帧"] --> Moving{"角色是否正在移动"}
+    Moving -->|是| Go["行动 action = 前往 location"]
+    Moving -->|否| Describe{"事件描述 describe 是否存在"}
+    Describe -->|是| UseDescribe["使用 action.event.describe"]
+    Describe -->|否| Predicate["使用 predicate + object"]
+    Go --> Display["前端显示行动 action 文本"]
+    UseDescribe --> Display
+    Predicate --> Display
 ```
+
+伊莎贝拉 08:00 的帧变化很直观：
+
+| 回放帧 | 坐标 movement | 行动 action | 读法 |
+| --- | --- | --- | --- |
+| `1` | `[72, 14]` | `前往 霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面` | 仍在路上。 |
+| `7` | `[76, 16]` | `前往 霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面` | 继续移动。 |
+| `12` | `[78, 19]` | `打开咖啡馆大门并开灯` | 已到达，显示真实行动。 |
+| `61` | `[78, 19]` | `检查并预热咖啡机` | 第二个仿真步的行动开始展示。 |
 
 睡觉动作会增加睡眠图标：
 
@@ -326,77 +684,153 @@ predicate + object
 😴
 ```
 
-如果该 step 有对话，会加：
+如果该仿真步 step 有对话，会增加对话图标：
 
 ```text
 💬
 ```
 
-这些 action 主要用于前端显示。它不一定包含完整行为上下文。完整上下文需要看 checkpoint 和 simulation.md。
+这些行动 action 主要用于前端显示。它不一定包含完整行为上下文。完整上下文需要看断点 checkpoint 和时间线报告 `simulation.md`。
 
-## 23.12 对话如何进入 movement.json
+## 23.13 对话如何进入移动回放文件 movement.json
 
-`generate_movement()` 会读取 conversation。如果某个 step_time 有对话，会生成文本：
+`generate_movement()` 会读取对话记录 conversation。如果某个 `step_time` 有对话，会生成文本：
 
 ```python
-step_conversation += f"\n地点：{...}\n\n"
+step_conversation += f"\n地点：{persons.split(' @ ')[1]}\n\n"
 for c in chat:
+    agent = c[0]
+    text = c[1]
     step_conversation += f"{agent}：{text}\n"
 ```
 
-然后写入下面这些内容：
+然后写入：
 
 ```python
 all_movement["conversation"][step_time] = step_conversation
 ```
 
-前端可以根据时间显示对话。这让回放不仅是角色移动，也能看到聊天内容。
+对话进入前端的链路如下：
 
-## 23.13 generate_report()：生成 simulation.md
-
-`generate_report()` 生成 Markdown 报告。它首先写基础人设：
-
-```markdown
-# 基础人设
-
-## 克劳斯
-
-年龄：20岁
-先天：善良、好奇、热情
-后天：...
-生活习惯：...
-当前状态：...
+```mermaid
+flowchart TD
+    Source["对话文件 conversation.json"] --> HasTime{"当前 step_time 是否有对话"}
+    HasTime -->|否| Empty["写入空字符串"]
+    HasTime -->|是| Format["格式化地点和多轮对话"]
+    Empty --> Movement["写入 all_movement.conversation"]
+    Format --> Movement
+    Movement --> Frontend["前端按时间键读取 conversation_key"]
+    Frontend --> Panel["显示对话面板 conversation panel"]
 ```
 
-然后遍历 checkpoint，提取活动变化。如果角色位置和 action 与上次一样，就跳过。这避免 Markdown 被重复状态刷屏。当有变化时，写入：
+前端读取对话的代码在 `main_script.html` 中：
+
+```javascript
+conversation_key = `${curr_year}${curr_month}${curr_day}-${curr_hour}:${curr_minute}`;
+conversation_key_text = all_movement["conversation"][conversation_key];
+if (conversation_key_text && conversation_key_text != "") {
+    textConversation.setText(`\n${conversation_key} 对话记录：\n` + conversation_key_text);
+}
+```
+
+这说明对话显示依赖时间键 time key 精确匹配。`conversation.json` 里是 `20240214-08:00`，前端也必须算出同样格式的 `conversation_key`，对话才会显示。
+
+## 23.14 生成报告函数 generate_report()：生成时间线报告 simulation.md
+
+`generate_report()` 生成 Markdown 报告。它先写基础人设：
+
+```python
+def extract_description():
+    markdown_content = "# 基础人设\n\n"
+    for agent_name in personas:
+        json_path = f"frontend/static/assets/village/agents/{agent_name}/agent.json"
+        with open(json_path, "r", encoding="utf-8") as f:
+            json_data = json.load(f)
+            markdown_content += f"## {agent_name}\n\n"
+            markdown_content += f"年龄：{json_data['scratch']['age']}岁  \n"
+            markdown_content += f"先天：{json_data['scratch']['innate']}  \n"
+            markdown_content += f"后天：{json_data['scratch']['learned']}  \n"
+            markdown_content += f"生活习惯：{json_data['scratch']['lifestyle']}  \n"
+            markdown_content += f"当前状态：{json_data['currently']}\n\n"
+    return markdown_content
+```
+
+这里有一个容易忽略的细节：基础人设来自 `start.py` 中的全量角色列表 `personas`，不是只来自本次断点 checkpoint 中的两个角色。因此 `book-party-pair/simulation.md` 的开头会出现阿伊莎、克劳斯、玛丽亚、伊莎贝拉等全量角色人设；但后面的活动记录只来自本次断点中的 `agents`。
+
+接着，`generate_report()` 遍历断点 checkpoint，提取活动变化：
+
+```python
+location = "，".join(agent_data["action"]["event"]["address"])
+action = agent_data["action"]["event"]["describe"]
+
+if location == last_state[agent_name]["location"] and action == last_state[agent_name]["action"]:
+    continue
+
+last_state[agent_name]["location"] = location
+last_state[agent_name]["action"] = action
+```
+
+如果位置 location 和行动 action 与上一次相同，就跳过。这避免时间线报告 `simulation.md` 被重复状态刷屏。
+
+当有变化时，报告会写入：
 
 ```markdown
-# 20250213-10:20
+# 20240214-08:10
 
 ## 活动记录：
 
-### 克劳斯
-位置：...
-活动：...
+### 伊莎贝拉
+位置：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+活动：检查并预热咖啡机
+
+### 阿伊莎
+位置：the Ville，奥克山学院宿舍，阿伊莎的房间，书桌
+活动：在家阅读莎士比亚相关文献，研读《哈姆雷特》中的独白段落
 ```
 
-如果该时间有对话，再写对话记录。
+如果该时间有对话，再写对话记录：
 
-阅读 `simulation.md` 时，先看 `# 基础人设`，确认本次结果包含哪些角色；再看每个时间标题，确认仿真节奏；然后看 `活动记录`，判断角色行为是否连续；最后看对话记录，判断信息是否真的通过角色互动传播。这个阅读顺序和第 12 章的入门读法一致，只是这里进一步说明它由 `generate_report()` 从 checkpoint 和 conversation 派生出来。
+```python
+markdown_content += "## 对话记录：\n\n"
+for chats in conversation[json_data['time']]:
+    for agents, chat in chats.items():
+        markdown_content += f"### {agents}\n\n"
+        for item in chat:
+            markdown_content += f"`{item[0]}`\n> {item[1]}\n\n"
+```
 
-## 23.14 simulation.md 的价值
+阅读 `simulation.md` 时，可以按下面顺序读：
 
-`simulation.md` 是写书和实验的关键文件。它有三类价值。第一，人类可读。不用打开前端，也能按时间线阅读小镇发生了什么。第二，可引用。写实验报告时，可以引用某个时间点某个角色的活动和对话。第三，可审计。如果某个角色声称知道派对，可以回查时间线，看它什么时候听到。这使 Generative Agents 不只是演示项目，而是可分析项目。
+| 阅读顺序 | 看什么 | 目的 |
+| --- | --- | --- |
+| 1 | `# 基础人设` | 确认角色的长期设定、生活习惯 lifestyle 和当前状态 currently。 |
+| 2 | 时间标题 `# 20240214-08:00` | 确认仿真节奏。 |
+| 3 | 活动记录 | 判断角色位置和行为是否连续。 |
+| 4 | 对话记录 | 判断信息是否真的通过角色互动传播。 |
 
-## 23.15 replay.py：Flask 服务
+这个阅读顺序和第 12 章的入门读法一致。区别是：这里进一步说明了时间线报告 `simulation.md` 是如何由断点 checkpoint 和对话记录 conversation 派生出来的。
 
-回放服务入口可以定位到：
+## 23.15 时间线报告 simulation.md 的价值
+
+时间线报告 `simulation.md` 是写书和实验的关键文件。它的价值可以分成三类：
+
+| 价值 | 说明 | 例子 |
+| --- | --- | --- |
+| 人类可读 | 不用打开前端，也能按时间线阅读小镇发生了什么。 | `08:00 伊莎贝拉打开咖啡馆大门并开灯`。 |
+| 可引用 | 写实验报告时，可以引用某个时间点某个角色的活动和对话。 | 派对实验引用“伊莎贝拉何时开始准备咖啡馆”。 |
+| 可审计 | 如果某个角色声称知道派对，可以回查时间线，看它什么时候听到。 | 对照 `conversation.json` 查传播路径。 |
+
+生成式智能体 Generative Agents 的难点不只是“让角色动起来”，还包括“让研究者能解释角色为什么这样动”。时间线报告 `simulation.md` 就是连接故事体验和实验证据的材料。
+
+## 23.16 回放服务 replay.py：Web 服务框架 Flask
+
+回放服务入口在：
 
 ```text
 generative_agents/replay.py
 ```
 
-它创建 Flask app：
+它创建 Web 服务框架 Flask app：
 
 ```python
 app = Flask(
@@ -407,13 +841,24 @@ app = Flask(
 )
 ```
 
-首页路由读取 query 参数：
+这段代码把模板、静态资源和路由连接起来：
 
-```text
-name
-step
-speed
-zoom
+```mermaid
+flowchart TD
+    Replay["回放服务 replay.py"] --> App["创建 Flask app"]
+    App --> Templates["绑定模板目录 frontend/templates"]
+    App --> Static["绑定静态资源 frontend/static"]
+    Templates --> Index["渲染页面 index.html"]
+    Static --> Assets["加载地图、角色贴图和前端脚本"]
+```
+
+首页路由读取查询参数 query parameters：
+
+```python
+name = request.args.get("name", "")          # 记录名称
+step = int(request.args.get("step", 0))      # 回放起始步数
+speed = int(request.args.get("speed", 2))    # 回放速度（0~5）
+zoom = float(request.args.get("zoom", 0.8))  # 画面缩放比例
 ```
 
 可以看一个具体例子：
@@ -422,60 +867,162 @@ zoom
 http://127.0.0.1:5000/?name=sim-test&step=0&speed=2&zoom=0.8
 ```
 
-它会加载下面这些内容：
+参数含义如下：
+
+| 参数 | 中文读法 | 作用 |
+| --- | --- | --- |
+| `name` | 仿真记录名 simulation name | 指向 `results/compressed/<name>/movement.json`。 |
+| `step` | 起始仿真步 start step | 从第几个仿真步开始播放。 |
+| `speed` | 回放速度 playback speed | 取值限制在 0 到 5，再转成指数速度。 |
+| `zoom` | 缩放比例 zoom | 控制地图在浏览器中的显示比例。 |
+
+回放服务会加载：
 
 ```text
 results/compressed/<name>/movement.json
 ```
 
-然后渲染下面这些内容：
+然后渲染：
 
 ```text
 frontend/templates/index.html
 ```
 
-## 23.16 step、speed、zoom
+如果移动回放文件不存在，页面会直接提示：
 
-`replay.py` 对参数做处理。`step` 决定从第几个仿真 step 开始回放。如果 step > 1，会调整 `start_datetime` 和 agent 初始位置。`speed` 限制在 0 到 5，然后转换为：
+```text
+The data file doesn‘t exist: 'results/compressed/<name>/movement.json'
+Run compress.py to generate the data first.
+```
+
+这个报错说明回放链路卡在压缩阶段，需要先运行 `compress.py`。
+
+## 23.17 仿真步 step、回放速度 speed、缩放比例 zoom
+
+`replay.py` 对仿真步 step、回放速度 speed、缩放比例 zoom 做了二次处理。`step` 决定从第几个仿真步开始回放。如果 `step > 1`，它会调整起始时间和角色初始位置：
+
+```python
+if step > 1:
+    t = datetime.fromisoformat(params["start_datetime"])
+    dt = t + timedelta(minutes=params["stride"]*(step-1))
+    params["start_datetime"] = dt.isoformat()
+    step = (step-1) * frames_per_step + 1
+```
+
+也就是说，URL 参数里的 `step=3` 不是直接跳到第 3 帧，而是跳到第 3 个仿真步，对应回放帧：
+
+```text
+(3 - 1) * 60 + 1 = 121
+```
+
+`speed` 限制在 0 到 5，然后转换为：
 
 ```python
 speed = 2 ** speed
 ```
 
-也就是指数级速度。`zoom` 控制画面缩放。这些参数让读者可以快速跳到某段仿真。例如派对实验中，可以直接跳到下午 5 点前后。
+它不是线性速度，而是指数速度：
 
-## 23.17 index.html 与角色面板
+| URL 参数 `speed` | 实际 `play_speed` |
+| --- | --- |
+| `0` | `1` |
+| `1` | `2` |
+| `2` | `4` |
+| `3` | `8` |
+| `4` | `16` |
+| `5` | `32` |
 
-`frontend/templates/index.html` 继承 `base.html`。它包含：
+`zoom` 控制画面缩放比例。这些参数让读者可以快速跳到某段仿真。例如派对实验中，可以直接跳到下午 5 点前后；如果只是检查开场路径，可以用默认 `step=0` 从头看。
 
-- `game-container`：Phaser 游戏容器。
-- 角色头像列表。
-- 点击角色显示详情面板。
+## 23.18 前端模板 index.html 与角色面板
 
-每个角色详情主要包含：
+`frontend/templates/index.html` 继承 `base.html`。它包含三个关键区域：
 
-```text
-当前活动
-目标地址
-```
+| 区域 | 模板片段 | 作用 |
+| --- | --- | --- |
+| 游戏容器 game container | `<div id="game-container">` | 前端渲染引擎 Phaser 把地图和角色画在这里。 |
+| 角色头像列表 persona list | `{% for p in persona_names %}` | 根据 `movement.json` 中的角色名生成头像入口。 |
+| 角色详情面板 detail panel | `agent_desc__{{ p }}` / `current_action__{{ p }}` | 点击角色后显示当前状态、当前行动和目标地点。 |
 
-脚本中引入 Phaser：
+模板会引入前端渲染引擎 Phaser：
 
 ```html
 <script src='https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js'></script>
 ```
 
-并 include：
+并包含主要脚本：
 
 ```text
 main_script.html
 ```
 
-真正地图和角色动画逻辑在 `main_script.html` 中。本书不需要逐行讲 Phaser 细节，但要知道前端消费的是 `movement.json`。
+`main_script.html` 一开始把后端传入的移动回放数据转成前端脚本 JavaScript 变量：
 
-## 23.18 回放与 checkpoint 的区别
+```javascript
+let step = {{ step|tojson }};
+let step_size = {{ sec_per_step|tojson }} * 1000;
+let zoom = {{ zoom|tojson }};
+let movement_speed = {{ play_speed|tojson }};
+let all_movement = {{ all_movement|tojson }};
+let start_datetime = new Date(Date.parse({{ start_datetime|tojson }}));
+let persona_names = {{ persona_init_pos|tojson }};
+```
 
-回放数据不是原始真相。原始真相是 checkpoint 和 storage。`movement.json` 是为了前端展示而生成的派生数据。`simulation.md` 是为了人读而生成的摘要数据。如果要做严谨评价，应优先查：
+这就是前端消费移动回放文件 `movement.json` 的入口。随后，前端创建角色精灵 sprite：
+
+```javascript
+for (let i=0; i<Object.keys(spawn_tile_loc).length; i++) {
+    let persona_name = Object.keys(spawn_tile_loc)[i];
+    let start_pos = [
+        spawn_tile_loc[persona_name][0] * tile_width + tile_width / 2,
+        spawn_tile_loc[persona_name][1] * tile_width + tile_width
+    ];
+    let new_sprite = this.physics.add.sprite(start_pos[0], start_pos[1], persona_name, "down");
+    personas[persona_name] = new_sprite;
+}
+```
+
+每次调用更新函数 update() 时，前端读取当前帧：
+
+```javascript
+let curr_x = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][0];
+let curr_y = all_movement[step][curr_persona_name.replace("_", " ")]["movement"][1];
+movement_target[curr_persona_name] = [curr_x * tile_width, curr_y * tile_width];
+
+let action = all_movement[step][curr_persona_name.replace("_", " ")]["action"];
+let act = action;
+act = act.length > 25 ? act.substring(0, 20)+"..." : act;
+pronunciatios[curr_persona_name].setText(curr_persona_name + ": " + act);
+document.getElementById("current_action__"+curr_persona_name).innerHTML = action;
+document.getElementById("target_address__"+curr_persona_name).innerHTML =
+    all_movement[step][curr_persona_name.replace("_", " ")]["location"];
+```
+
+这段代码说明：
+
+| 移动回放字段 | 前端显示位置 |
+| --- | --- |
+| `movement` | 角色精灵 sprite 的目标像素坐标。 |
+| `action` | 角色头顶文本和详情面板的“当前活动”。 |
+| `location` | 详情面板的目标地址。 |
+| `description.currently` | 角色详情面板的人设状态。 |
+| `conversation` | 对话显示面板。 |
+
+到这里，后端数据和屏幕显示已经闭环：断点 checkpoint 提供状态，压缩脚本生成移动回放文件，前端按帧读取并更新地图上的角色。
+
+## 23.19 回放与断点 checkpoint 的区别
+
+回放数据不是原始真相。原始真相是断点 checkpoint 和存储 storage。移动回放文件 `movement.json` 是为了前端展示而生成的派生数据。时间线报告 `simulation.md` 是为了人读而生成的摘要数据。
+
+| 材料 | 类型 | 优点 | 边界 |
+| --- | --- | --- | --- |
+| 断点 checkpoint | 原始状态 raw state | 字段完整，适合恢复和审计。 | JSON 很大，不适合直接读故事线。 |
+| 记忆存储 storage | 持久化记忆 persistent memory | 能检查事件 event、想法 thought、对话 chat 的真实保存情况。 | 需要理解第 18 章的记忆结构。 |
+| 对话文件 `conversation.json` | 全局对话证据 conversation evidence | 能追踪谁在何时何地把信息传给谁。 | 没有对话时为空对象。 |
+| 移动回放文件 `movement.json` | 前端派生数据 derived replay data | 适合播放、定位、统计坐标。 | 路径 path 是压缩阶段重新计算的。 |
+| 时间线报告 `simulation.md` | 人类摘要 human-readable summary | 适合快速复盘和写实验报告。 | 只记录变化，不是每一步完整日志。 |
+
+严谨评价时，应优先查：
 
 ```text
 checkpoint
@@ -483,7 +1030,7 @@ conversation.json
 agent memory storage
 ```
 
-如果要快速理解故事线，可以看：
+快速理解故事线时，可以先看：
 
 ```text
 simulation.md
@@ -492,74 +1039,106 @@ movement.json
 
 这两类数据服务不同的复现实验环节。
 
-## 23.19 回放系统如何服务复现实验
+## 23.20 回放系统如何服务复现实验
 
-第四部分会大量用到回放系统。情人节派对实验需要看：
+第四部分会大量用到回放系统。不同实验关注的证据不同：
 
-- 伊莎贝拉什么时候邀请谁。
-- 被邀请者是否在正确时间到达咖啡馆。
-- 对话中是否包含时间和地点。
+| 实验 | 先看什么 | 再查什么 | 核心问题 |
+| --- | --- | --- | --- |
+| 情人节派对传播 | 时间线报告 `simulation.md`、对话文件 `conversation.json` | 断点 checkpoint 的行动 action、记忆 memory | 伊莎贝拉什么时候邀请谁，被邀请者是否在正确时间到达咖啡馆？ |
+| 镇长竞选信息扩散 | 对话文件 `conversation.json`、时间线报告 `simulation.md` | 记忆存储 storage、反思 reflection | 山姆是否谈到竞选，谁听到了，谁又告诉别人？ |
+| 关系形成实验 | 对话记录 conversation、角色位置 movement | 社交记忆 social memory、日程 schedule | 克劳斯和玛丽亚是否多次相遇，后续活动是否更接近？ |
+| 自定义小镇事件 | 移动回放文件 `movement.json`、断点 checkpoint | 地图地址 address、角色配置 agent.json | 新事件是否落在正确地点，角色行动是否符合设定？ |
 
-镇长竞选实验需要看：
+这些实验都可以从 `simulation.md` 和 `conversation.json` 开始分析。如果要统计位置和到场，则看移动回放文件 `movement.json` 或断点 checkpoint 中的坐标 coord 和行动 action。
 
-- 山姆是否谈到竞选。
-- 谁听到了。
-- 谁又告诉别人。
+## 23.21 回放系统调试清单
 
-关系形成实验需要看：
+回放系统的问题通常不在大语言模型 LLM，而在文件生成、路径计算或前端加载。可以按下面清单排查：
 
-- 克劳斯和玛丽亚是否相遇。
-- 是否多次对话。
-- 后续活动是否更接近。
+| 现象 | 优先检查 | 常见原因 | 处理方式 |
+| --- | --- | --- | --- |
+| 页面提示找不到 `movement.json` | `results/compressed/<name>/movement.json` | 只运行了 `start.py`，没有运行 `compress.py`。 | 进入 `generative_agents` 后执行 `python compress.py --name <name>`。 |
+| 页面能打开，但没有角色 | `persona_init_pos` | 压缩结果中没有角色初始位置。 | 检查断点 checkpoint 的 `agents` 是否为空。 |
+| 角色位置不对 | `agent.json` 初始 `coord`、断点 checkpoint `coord`、世界地图 maze | 初始坐标或行动地点不匹配。 | 对照第 14 章地图坐标读法，确认坐标落在正确瓦片。 |
+| 角色头顶行动不更新 | `all_movement[frame][agent].action` | 帧为空，或行动描述 describe 没有变化。 | 抽样查看关键帧，如 `1`、`61`、`121`。 |
+| 对话不显示 | `all_movement.conversation` 与时间键 | `conversation.json` 为空，或时间键不匹配。 | 检查 `YYYYMMDD-HH:MM` 格式是否一致。 |
+| `simulation.md` 比预期短 | `generate_report()` 的去重逻辑 | 位置和行动没变化时被跳过。 | 回查断点 checkpoint，确认状态是否真的变化。 |
+| 离线环境无法加载前端 | 前端渲染引擎 Phaser 的内容分发网络 CDN | 无法访问外部内容分发网络 CDN。 | 将 Phaser 依赖本地化到 `frontend/static`。 |
 
-这些都可以从 `simulation.md` 和 `conversation.json` 开始分析。如果要统计位置和到场，则看 `movement.json` 或 checkpoint 中 coord/action。
+调试时不要只盯浏览器。先看压缩文件是否生成，再看移动回放文件字段是否完整，最后看前端是否正确消费字段。
 
-## 23.20 回放系统边界
+## 23.22 回放系统边界
 
-当前回放系统有几个边界。第一，压缩是离线的。运行仿真后需要手动执行 `compress.py`。第二，movement 路径重新计算。它根据 checkpoint 坐标和 Maze 重新生成 path，不一定完全等同于运行时返回 path。第三，`simulation.md` 只记录变化。如果状态不变，会跳过，因此不是每一步完整日志。第四，对话显示依赖 conversation 时间匹配。如果时间 key 不一致，对话可能无法显示。第五，前端更偏回放，不是实时交互编辑器。第六，Phaser 从 CDN 加载。离线环境可能需要本地化依赖。这些边界不会影响基本使用，但做严谨实验时要知道。
+当前回放系统有几个边界：
 
-## 23.21 可改进方向
+| 边界 | 具体表现 | 对实验的影响 |
+| --- | --- | --- |
+| 离线压缩 offline compression | 运行仿真后需要手动执行 `compress.py`。 | 仿真结果不会自动出现在回放页面。 |
+| 路径重新计算 path recomputation | 移动路径根据断点坐标和世界地图 maze 重新生成。 | 回放路径不一定等于运行时内部路径。 |
+| 时间线去重 report deduplication | 时间线报告 `simulation.md` 只记录变化。 | 它不是逐步完整日志。 |
+| 对话依赖时间键 conversation time key | 前端按 `YYYYMMDD-HH:MM` 查对话。 | 时间键不一致会导致对话不显示。 |
+| 前端偏回放 replay-oriented UI | 页面主要用于观看，不是实时交互编辑器。 | 不适合直接在前端修改仿真状态。 |
+| 外部依赖 CDN dependency | Phaser 从内容分发网络 CDN 加载。 | 离线教学或内网环境可能需要本地化依赖。 |
 
-回放系统可以从五个方向升级。第一，自动压缩。仿真结束后自动生成 compressed 结果。第二，交互式时间线。在前端按角色、地点、事件筛选。第三，证据链接。从 `simulation.md` 的某条对话跳到对应 checkpoint 和 memory node。第四，实验指标导出。自动统计信息传播、到场率、对话次数、关系网络。第五，本地化前端依赖。避免 CDN 影响离线教学。这些升级会让项目更适合写实验报告和教学。
+这些边界不会影响基本使用，但做严谨实验时要知道它们的存在。
 
-## 23.22 第三部分总结
+## 23.23 可改进方向
+
+回放系统可以从五个方向升级：
+
+| 方向 | 做法 | 价值 |
+| --- | --- | --- |
+| 自动压缩 auto compression | 仿真结束后自动生成 `results/compressed/<name>`。 | 减少手动步骤，降低漏跑 `compress.py` 的概率。 |
+| 交互式时间线 interactive timeline | 在前端按角色、地点、事件筛选。 | 更适合复盘长时间实验。 |
+| 证据链接 evidence link | 从 `simulation.md` 的某条对话跳到断点 checkpoint 和记忆节点 memory node。 | 把故事线和底层证据连起来。 |
+| 实验指标导出 metric export | 自动统计信息传播、到场率、对话次数、关系网络。 | 支撑第四部分的复现实验和对比实验。 |
+| 本地化前端依赖 local frontend dependency | 将 Phaser 等依赖放入 `frontend/static`。 | 适合离线教学、课堂演示和长期归档。 |
+
+这些升级会让项目更适合写实验报告、做教学演示和构建自己的小镇应用。
+
+## 23.24 第三部分总结
 
 第三部分源码深读覆盖了从底层到上层的主要模块：
 
-- 世界模型。
-- 智能体初始化。
-- 仿真循环。
-- 感知。
-- 记忆。
-- 日程。
-- 社交。
-- 反思。
-- 模型适配。
-- 回放系统。
+| 章节 | 模块 | 读完后应掌握的问题 |
+| --- | --- | --- |
+| 第 14 章 | 世界模型 world model | 地图、瓦片、空间地址如何支撑角色行动。 |
+| 第 15 章 | 智能体初始化 agent initialization | 角色配置如何变成可运行的智能体。 |
+| 第 16 章 | 仿真循环 simulation loop | 一个仿真步 step 如何推动整座小镇。 |
+| 第 17 章 | 感知 perceive | 角色如何从周围环境中形成事件 event。 |
+| 第 18 章 | 记忆 memory | 事件 event、想法 thought、对话 chat 如何保存和检索。 |
+| 第 19 章 | 日程 schedule | 每日计划如何决定角色行动。 |
+| 第 20 章 | 社交 social interaction | 对话如何发生，信息如何传播。 |
+| 第 21 章 | 反思 reflection | 记忆如何被总结成更高层想法。 |
+| 第 22 章 | 模型适配 model adaptation | 大语言模型 LLM 和嵌入模型 embedding 如何接入项目。 |
+| 第 23 章 | 回放系统 replay system | 仿真结果如何变成可观看、可复盘、可审计的证据。 |
 
 论文概念和源码模块已经可以对应起来。下一部分不再只读源码，而是设计实验。第四部分会用当前项目复现论文中的情人节派对传播、镇长竞选信息扩散、角色关系形成，并设计自己的小镇事件。
 
-## 23.23 本章小结
+## 23.25 本章小结
 
-回放系统把后台仿真变成可检查证据。断点 checkpoint、移动帧文件 `movement.json`、时间线报告 `simulation.md` 和前端回放各自服务不同目的，不能混成一种材料。
+回放系统把后台仿真变成可检查证据。断点 checkpoint、移动回放文件 `movement.json`、时间线报告 `simulation.md` 和前端回放各自服务不同目的，不能混成一种材料。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 原始输出 | `start.py` 每步生成断点 checkpoint 和对话文件 `conversation.json`。 |
 | 断点 checkpoint | 断点 checkpoint 适合断点恢复和严谨审计，但不适合直接阅读。 |
-| 压缩入口 | 压缩脚本 `compress.py` 生成移动帧文件 `movement.json` 和时间线报告 `simulation.md`。 |
-| 移动帧文件 `movement.json` | 面向前端渲染引擎 Phaser 回放，服务可视化。 |
+| 对话文件 `conversation.json` | 对话文件记录谁在何时何地向谁传播了信息；为空对象时表示本次没有触发对话。 |
+| 压缩入口 | 压缩脚本 `compress.py` 生成移动回放文件 `movement.json` 和时间线报告 `simulation.md`。 |
+| 移动回放文件 `movement.json` | 面向前端渲染引擎 Phaser 回放，服务可视化。 |
 | 时间线报告 `simulation.md` | 面向人类阅读和实验复盘。 |
-| movement 生成 | `generate_movement()` 会把断点 checkpoint 展开成每个仿真步 step 60 帧。 |
-| report 生成 | `generate_report()` 会写基础人设、活动记录和对话记录。 |
+| 移动回放 movement 生成 | `generate_movement()` 会把断点 checkpoint 展开成每个仿真步 step 60 帧。 |
+| 报告 report 生成 | `generate_report()` 会写基础人设、活动记录和对话记录。 |
 | 前端回放 | 回放服务 `replay.py` 和 `index.html` 加载压缩数据 compressed data 并展示画面。 |
-| 评价边界 | 回放数据是派生数据，严谨评价仍要回查断点 checkpoint、对话 conversation 和记忆 memory。 |
+| 评价边界 | 回放数据是派生数据，严谨评价仍要回查断点 checkpoint、对话记录 conversation 和记忆 memory。 |
 | 后续用途 | 第四部分复现实验会把这些输出作为证据基础。 |
 
 下一章进入复现实验：我们先复现论文中的情人节派对传播。
 
 ## 参考资料
 
+- Local source: `generative_agents/start.py`
 - Local source: `generative_agents/compress.py`
 - Local source: `generative_agents/replay.py`
 - Local source: `generative_agents/frontend/templates/index.html`

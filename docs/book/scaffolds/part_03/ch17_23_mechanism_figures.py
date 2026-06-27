@@ -16,7 +16,7 @@ import math
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -217,6 +217,23 @@ def paste_portrait(image: Image.Image, name: str, box: tuple[int, int, int, int]
     draw.text((x1 + 10, y2 - 28), label or name, fill=COLORS["ink"], font=FONT["body_bold"])
 
 
+def draw_arrow(draw: ImageDraw.ImageDraw, start: tuple[int, int], end: tuple[int, int], color: str, width: int = 5) -> None:
+    draw.line([start, end], fill=color, width=width)
+    angle = math.atan2(end[1] - start[1], end[0] - start[0])
+    size = 15
+    left = (end[0] - size * math.cos(angle - math.pi / 6), end[1] - size * math.sin(angle - math.pi / 6))
+    right = (end[0] - size * math.cos(angle + math.pi / 6), end[1] - size * math.sin(angle + math.pi / 6))
+    draw.polygon([end, left, right], fill=color)
+
+
+def draw_tag(draw: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, fill: str, ink: str = "#ffffff") -> tuple[int, int]:
+    x, y = xy
+    w, h = text_size(draw, text, FONT["small"])
+    draw.rounded_rectangle([x, y, x + w + 22, y + h + 14], radius=12, fill=fill)
+    draw.text((x + 11, y + 7), text, fill=ink, font=FONT["small"])
+    return x + w + 30, y
+
+
 def build_maze() -> Maze:
     return Maze(copy.deepcopy(load_json(STATIC_ROOT / "maze.json")), None)
 
@@ -396,168 +413,319 @@ def chapter17() -> Path:
 
 
 def chapter18() -> Path:
-    image, draw = base_canvas(
-        "图 18-2：一条事件如何变成可检索记忆",
-        "把世界事实 Event、记忆节点 Concept、元数据 metadata、向量索引和检索权重放在同一张证据桌面上。",
-    )
-    trace = load_json(ASSET_ROOT / "chapter_18" / "ch18_memory_trace.json") if (ASSET_ROOT / "chapter_18" / "ch18_memory_trace.json").exists() else {}
-    associate_config = trace.get("associate_config") or load_json(GA / "data" / "config.json")["agent"]["associate"]
-    metadata_keys = trace.get("add_node_metadata_keys", [])
+    image = Image.new("RGBA", (2000, 1200), COLORS["paper"])
+    draw = ImageDraw.Draw(image)
+    draw.text((50, 34), "图 18-2：记忆节点在项目里到底长什么样", fill=COLORS["ink"], font=FONT["title"])
+    draw.text((54, 86), "从输入 Event 到 event/chat/thought，再到 docstore、embedding 和 retrieved concepts，把真实数据结构摊开看。", fill=COLORS["muted"], font=FONT["subtitle"])
 
-    paste_portrait(image, "阿伊莎", (58, 136, 196, 302), "阿伊莎")
-    draw_card(
+    def associate_base(sim: str, agent: str) -> Path:
+        return GA / "results" / "checkpoints" / sim / "storage" / agent / "associate"
+
+    def node_sample(base: Path, node_id: str) -> dict:
+        doc = load_json(base / "docstore.json")["docstore/data"][node_id]["__data__"]
+        vector_store = load_json(base / "default__vector_store.json")
+        embedding = vector_store["embedding_dict"][node_id]
+        return {
+            "id": node_id,
+            "text": doc["text"],
+            "metadata": doc["metadata"],
+            "embedding": embedding,
+        }
+
+    event_base = associate_base("book-smoke", "克劳斯")
+    chat_base = associate_base("book-config-ai-seminar", "阿伊莎")
+    event_node = node_sample(event_base, "node_2")
+    chat_node = node_sample(chat_base, "node_1")
+    thought_node = node_sample(chat_base, "node_0")
+    event_memory = load_json(GA / "results" / "checkpoints" / "book-smoke" / "simulate-20240213-1000.json")["agents"]["克劳斯"]["associate"]["memory"]
+    chat_memory = load_json(GA / "results" / "checkpoints" / "book-config-ai-seminar" / "simulate-20240213-1010.json")["agents"]["阿伊莎"]["associate"]["memory"]
+    event_index = load_json(event_base / "index_store.json")["index_store/data"]
+    event_nodes_dict = json.loads(next(iter(event_index.values()))["__data__"])["nodes_dict"]
+    event_index_config = load_json(event_base / "index_config.json")
+
+    def short(text: str, n: int = 42) -> str:
+        return text if len(text) <= n else text[: n - 1] + "…"
+
+    def embedding_preview(node: dict) -> str:
+        values = ", ".join(f"{v:.4f}" for v in node["embedding"][:5])
+        return f"embedding[0:5]=[{values}, ...], dim={len(node['embedding'])}"
+
+    def draw_section(box: tuple[int, int, int, int], title: str, subtitle: str, color: str) -> None:
+        x1, y1, x2, y2 = box
+        draw.rounded_rectangle([x1, y1, x2, y2], radius=12, fill="#fffdf8", outline="#d7c9b9", width=2)
+        draw.rounded_rectangle([x1, y1, x2, y1 + 48], radius=12, fill=color)
+        draw.rectangle([x1, y1 + 26, x2, y1 + 48], fill=color)
+        draw.text((x1 + 18, y1 + 13), title, fill="#ffffff", font=FONT["h"])
+        draw.text((x1 + 18, y1 + 60), subtitle, fill=COLORS["muted"], font=FONT["small"])
+
+    draw_section((46, 130, 510, 1060), "输入 Input：一条事件 Event", "这是写入记忆之前的对象，还不是索引节点。", COLORS["purple"])
+    paste_portrait(image, "克劳斯", (72, 218, 190, 372), "克劳斯")
+    draw_window(
         draw,
-        (226, 136, 560, 302),
-        "世界事实 Event",
+        (212, 218, 486, 506),
+        "Event.to_dict()",
         [
-            "主语 subject / 谓词 predicate / 宾语 object",
-            "address 与 describe 组成事件文本",
-            "例：图书馆桌子 此时 空闲",
+            "{",
+            '  "subject": "克劳斯",',
+            '  "predicate": "此时",',
+            '  "object": "阅读并批注选中的学术文章",',
+            '  "describe": "克劳斯 阅读并批注选中的学术文章",',
+            '  "address": ["the Ville", "奥克山学院", "图书馆", "图书馆桌子"]',
+            "}",
         ],
-        COLORS["purple"],
+        "#bfdbfe",
+        max_lines=10,
     )
     draw_card(
         draw,
-        (590, 136, 1018, 302),
-        "记忆节点 Concept",
+        (72, 540, 486, 720),
+        "输入不是记忆",
         [
-            "事件被包装成 node_id + node_type",
-            "重要性 poignancy、create、expire、access 进入元数据 metadata",
+            "Event 只说明发生了什么。",
+            "它没有 node_id、node_type、embedding。",
+            "只有进入 Associate.add_node() 后，才变成可检索记忆节点。",
         ],
         COLORS["blue"],
     )
     draw_window(
         draw,
-        (58, 334, 742, 730),
-        "associate.py / add_node 元数据 metadata",
+        (72, 752, 486, 1018),
+        "进入写入函数",
         [
-            "{",
-            *[f'  "{key}": ...,' for key in metadata_keys],
+            "Associate.add_node(",
+            '  node_type="event",',
+            "  event=Event(...),",
+            "  poignancy=2,",
+            "  create=20240213-09:40:00",
+            ")",
+        ],
+        "#fde68a",
+        max_lines=8,
+    )
+
+    draw_section((550, 130, 1220, 1060), "处理 Process：三种记忆节点", "处理后的结果不是一个 node_id，而是 TextNode + metadata + embedding。", COLORS["blue"])
+
+    def draw_memory_node(y: int, title: str, memory_key: str, node: dict, memory: dict, color: str) -> None:
+        meta = node["metadata"]
+        draw.rounded_rectangle([582, y, 1188, y + 246], radius=10, fill="#ffffff", outline=color, width=3)
+        draw_tag(draw, (602, y + 14), title, color)
+        memory_line = f'{memory_key} = {memory[meta["node_type"]]}'
+        draw_wrapped(draw, 760, y + 18, memory_line, FONT["mono"], COLORS["ink"], 400, line_gap=2, max_lines=1)
+        lines = [
+            f'TextNode.id_ = "{node["id"]}"',
+            f'text = "{short(node["text"], 52)}"',
+            "metadata = {",
+            f'  node_type: "{meta["node_type"]}", subject: "{meta["subject"]}",',
+            f'  predicate: "{meta["predicate"]}", object: "{short(str(meta["object"]), 28)}",',
+            f'  poignancy: {meta["poignancy"]}, create: "{meta["create"]}",',
             "}",
-            "",
-            "evidence boundary:",
-            "填充证据 filling/evidence 没有写入元数据 metadata",
+            f'embedding_dict["{node["id"]}"]: {embedding_preview(node)}',
+        ]
+        yy = y + 58
+        for line in lines:
+            yy = draw_wrapped(draw, 602, yy, line, FONT["mono"], "#111827", 560, line_gap=3, max_lines=1)
+
+    draw_memory_node(222, "事件 event", 'memory["event"]', event_node, event_memory, "#2563eb")
+    draw_memory_node(500, "聊天 chat", 'memory["chat"]', chat_node, chat_memory, "#0f766e")
+    draw_memory_node(778, "想法 thought", 'memory["thought"]', thought_node, chat_memory, "#b45309")
+
+    draw_section((1260, 130, 1954, 1060), "输出 Output：索引结构与检索结果", "输出不是“prompt 上下文”四个字，而是可打印的节点、向量和文本列表。", COLORS["teal"])
+    draw_window(
+        draw,
+        (1288, 218, 1928, 520),
+        "docstore.json：完整 TextNode 样例",
+        [
+            '"docstore/data": {',
+            f'  "{event_node["id"]}": {{',
+            '    "__data__": {',
+            '      "text": "克劳斯 阅读并批注选中的学术文章",',
+            '      "metadata": {',
+            '        node_type:event, subject:克劳斯, predicate:此时,',
+            '        object:阅读并批注选中的学术文章,',
+            '        address:the Ville:奥克山学院:图书馆:图书馆桌子,',
+            '        poignancy:2, create:20240213-09:40:00,',
+            '        expire:20240314-09:40:00, access:20240213-09:40:00',
+            '      }',
+            "    }",
+            "  }",
+            "}",
         ],
         "#bfdbfe",
-        max_lines=18,
-    )
-    draw_card(
-        draw,
-        (780, 334, 1168, 522),
-        "当前向量嵌入 embedding",
-        [
-            f"provider={associate_config['embedding']['provider']}",
-            f"model={associate_config['embedding']['model']}",
-            f"retention={associate_config['retention']}",
-        ],
-        COLORS["teal"],
-    )
-    draw_card(
-        draw,
-        (1198, 334, 1542, 522),
-        "检索权重",
-        [
-            "近因 recency",
-            "相关性 relevance",
-            "重要性 importance",
-            "final_score = 三者相加",
-        ],
-        COLORS["orange"],
+        max_lines=12,
     )
     draw_window(
         draw,
-        (780, 548, 1542, 730),
-        "证据 trace JSON：ch18_memory_trace.json",
+        (1288, 548, 1608, 704),
+        "vector_store.json",
         [
-            f"记忆类型 memory_types={','.join(trace.get('memory_types', ['event', 'thought', 'chat']))}",
-            "公开方法 public_methods=" + ", ".join(trace.get("public_methods", [])[:4]) + "...",
-            trace.get("retrieval_formula", "final_score = recency + relevance + importance"),
+            '"embedding_dict": {',
+            f'  "{event_node["id"]}": [',
+            "    -0.0124, -0.0081, 0.0131,",
+            "    0.0004, -0.0153, ...",
+            "  ]",
+            "}",
+            "这是 1536 维 float 向量，不是文本。",
+            '"metadata_dict": {...}',
         ],
-        "#fde68a",
+        "#c7f9cc",
         max_lines=10,
     )
+    draw_window(
+        draw,
+        (1630, 548, 1928, 704),
+        "index_store.json",
+        [
+            'nodes_dict={',
+            '  "node_0":"node_0", "node_1":"node_1", "node_2":"node_2", ...}',
+            f'max_nodes={event_index_config["max_nodes"]}',
+            "node_id 是门牌号。",
+            "完整内容在 docstore / vector_store。",
+        ],
+        "#fde68a",
+        max_lines=6,
+    )
+    draw_card(
+        draw,
+        (1288, 732, 1928, 1042),
+        "真实检索输出 retrieved concepts",
+        [
+            'retrieve_events() ->',
+            f'  event: "{short(event_node["text"], 54)}"',
+            'retrieve_chats("克劳斯") ->',
+            f'  chat: "{short(chat_node["text"], 54)}"',
+            'retrieve_focus(["今天计划", "奖学金评分"]) ->',
+            f'  thought: "{short(thought_node["text"], 54)}"',
+            "这些 Concept.describe 文本才会进入 prompt 上下文。",
+        ],
+        COLORS["orange"],
+    )
+
+    draw_arrow(draw, (510, 560), (550, 560), COLORS["blue"])
+    draw_arrow(draw, (1220, 560), (1260, 560), COLORS["blue"])
     draw_wrapped(
         draw,
-        58,
-        780,
-        "读法：这张图不是把记忆画成一个框，而是把“事件文本、元数据 metadata 字段、向量嵌入 embedding 配置、检索公式”摆在一起。记忆系统真正可检查的证据就在这些文件和字段里。",
-        FONT["h"],
+        60,
+        1096,
+        "读法：Event 输入经过 Associate.add_node() 后，分别落成 event/chat/thought 三类 TextNode。TextNode 的 text 进入语义向量，metadata 保留结构字段，node_id 写进 memory 列表；检索时返回的是 Concept.describe 文本列表，再被拼进 prompt。",
+        FONT["body_bold"],
         COLORS["ink"],
-        1450,
+        1880,
         max_lines=2,
     )
     return save(image, 18, "ch18_memory_retrieval_chain.png")
 
 
 def chapter19() -> Path:
-    image, draw = base_canvas(
-        "图 19-2：一天日程如何落到可执行行动",
-        "真实断点 checkpoint 里的日程 Schedule，不是一段说明文字，而是一张 24 小时时间表。",
+    image = Image.new("RGBA", (2000, 1200), COLORS["paper"])
+    draw = ImageDraw.Draw(image)
+    draw.text((50, 34), "图 19-2：日程不是表格，它把克劳斯送到图书馆桌子前", fill=COLORS["ink"], font=FONT["title"])
+    draw.text(
+        (54, 88),
+        "真实 book-smoke 断点：currently、daily_schedule、decompose、Action 和地图坐标共同解释 09:50 为什么正在写论文。",
+        fill=COLORS["muted"],
+        font=FONT["subtitle"],
     )
-    checkpoint = load_json(GA / "results" / "checkpoints" / "book-party-pair" / "simulate-20240214-0800.json")
-    agent = checkpoint["agents"]["伊莎贝拉"]
+    checkpoint = load_json(GA / "results" / "checkpoints" / "book-smoke" / "simulate-20240213-1000.json")
+    agent = checkpoint["agents"]["克劳斯"]
     schedule = agent["schedule"]["daily_schedule"]
-    decompose_plan = next((plan for plan in schedule if plan.get("decompose")), schedule[0])
+    rough_plan = schedule[9]
+    action = agent["action"]
+    coord = tuple(agent["coord"])
+    maze = build_maze()
 
-    paste_portrait(image, "伊莎贝拉", (62, 130, 210, 304), "伊莎贝拉")
+    render_map_panel(
+        image,
+        (50, 128, 900, 768),
+        maze,
+        {coord},
+        [
+            {"coords": {coord}, "fill": (190, 24, 93, 235), "outline": "#ffffff", "style": "ellipse", "inset": 2, "width": 4},
+        ],
+        "真实地图现场：奥克山学院 / 图书馆 / 图书馆桌子",
+        f"克劳斯 coord={coord}，Action.start={action['start']}，duration={action['duration']} 分钟",
+        [(coord, "克劳斯正在写论文", COLORS["red"])],
+    )
+    paste_portrait(image, "克劳斯", (940, 128, 1088, 302), "克劳斯")
     draw_card(
         draw,
-        (238, 130, 610, 304),
-        "角色目标 currently",
+        (1118, 128, 1940, 302),
+        "角色当前目标 currently",
         [
-            agent["currently"][:92] + "...",
-            "目标会进入日程提示词 prompt，影响一天计划。",
+            agent["currently"],
+            "日程 Schedule 不是随机动作表，而是把这个目标铺成一天时间结构。",
         ],
         COLORS["purple"],
     )
-    timeline_box = (62, 342, 1538, 574)
+
+    timeline_box = (940, 342, 1940, 575)
     draw.rounded_rectangle(timeline_box, radius=8, fill="#fffdf8", outline="#d7c9b9", width=2)
-    draw.text((84, 362), "真实日程 daily_schedule 时间轴", fill=COLORS["ink"], font=FONT["h"])
-    x0, y0, x1, y1 = 96, 430, 1508, 512
+    draw.text((968, 363), "真实日程 daily_schedule：09:00-10:00 被拆成 7 个分钟级动作", fill=COLORS["ink"], font=FONT["h"])
+    x0, y0, x1, y1 = 982, 438, 1905, 512
     draw.line([x0, y1 + 16, x1, y1 + 16], fill="#9a8f82", width=2)
-    for hour in range(0, 25, 2):
-        x = x0 + int((x1 - x0) * hour / 24)
+    for minute, label in [(540, "09:00"), (570, "09:30"), (590, "09:50"), (600, "10:00")]:
+        x = x0 + int((x1 - x0) * (minute - 540) / 60)
         draw.line([x, y1 + 8, x, y1 + 24], fill="#9a8f82", width=2)
-        draw.text((x - 12, y1 + 30), f"{hour:02d}", fill=COLORS["muted"], font=FONT["small"])
-    palette = ["#93c5fd", "#bfdbfe", "#fef3c7", "#fed7aa", "#bbf7d0", "#fecdd3"]
-    for idx, plan in enumerate(schedule):
-        start = plan["start"]
-        end = plan["start"] + plan["duration"]
-        bx0 = x0 + int((x1 - x0) * start / 1440)
-        bx1 = x0 + int((x1 - x0) * end / 1440)
-        color = palette[idx % len(palette)]
-        draw.rounded_rectangle([bx0, y0, max(bx1, bx0 + 8), y1], radius=5, fill=color, outline="#ffffff", width=1)
-        if bx1 - bx0 > 90:
-            draw_wrapped(draw, bx0 + 6, y0 + 8, plan["describe"], FONT["small"], "#1f2937", bx1 - bx0 - 12, max_lines=2)
+        draw.text((x - 22, y1 + 32), label, fill=COLORS["muted"], font=FONT["small"])
+    palette = ["#dbeafe", "#bfdbfe", "#fef3c7", "#fed7aa", "#bbf7d0", "#fecdd3", "#c7d2fe"]
+    for idx, item in enumerate(rough_plan["decompose"]):
+        start = item["start"]
+        end = item["start"] + item["duration"]
+        bx0 = x0 + int((x1 - x0) * (start - 540) / 60)
+        bx1 = x0 + int((x1 - x0) * (end - 540) / 60)
+        current = start == 590
+        color = "#fb7185" if current else palette[idx % len(palette)]
+        outline = "#881337" if current else "#ffffff"
+        draw.rounded_rectangle([bx0, y0, max(bx1, bx0 + 12), y1], radius=8, fill=color, outline=outline, width=3 if current else 1)
+        if bx1 - bx0 > 72:
+            draw_wrapped(draw, bx0 + 8, y0 + 9, f"{item['duration']}m {item['describe']}", FONT["small"], "#111827", bx1 - bx0 - 14, max_lines=2)
 
     draw_card(
         draw,
-        (62, 612, 618, 792),
-        "被拆解的粗计划",
+        (940, 620, 1390, 884),
+        "粗计划 plan",
         [
-            f"{decompose_plan['start']//60:02d}:{decompose_plan['start']%60:02d} 开始",
-            decompose_plan["describe"],
-            f"持续 {decompose_plan['duration']} 分钟",
+            "09:00-10:00",
+            rough_plan["describe"],
+            "字段：idx=9 / start=540 / duration=60",
         ],
         COLORS["teal"],
     )
-    decompose = decompose_plan.get("decompose", [])[:7]
-    draw.rounded_rectangle([650, 612, 1538, 792], radius=8, fill="#fffdf8", outline="#d7c9b9", width=2)
-    draw.text((672, 630), "子计划 decompose：行动已经能落到分钟级", fill=COLORS["ink"], font=FONT["h"])
-    for i, item in enumerate(decompose):
-        x = 676 + (i % 4) * 212
-        y = 676 + (i // 4) * 52
-        draw.rounded_rectangle([x, y, x + 190, y + 38], radius=6, fill="#eef2ff", outline="#c7d2fe")
-        draw_wrapped(draw, x + 8, y + 8, f"{item['duration']}m {item['describe']}", FONT["small"], "#1e1b4b", 174, max_lines=1)
+
+    draw_card(
+        draw,
+        (1425, 620, 1940, 884),
+        "当前行动 Action",
+        [
+            action["event"]["subject"] + " " + action["event"]["object"],
+            "地点 address：奥克山学院 / 图书馆 / 图书馆桌子",
+            f"对象事件 obj_event：{action['obj_event']['subject']} {action['obj_event']['object']}",
+        ],
+        COLORS["red"],
+    )
+
+    draw_window(
+        draw,
+        (50, 812, 900, 1070),
+        "断点 checkpoint 摘录",
+        [
+            '"currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。"',
+            '"schedule.create": "20240213-09:30:00"',
+            '"plan.describe": "开始在图书馆安静角落撰写关于中产阶级化的研究论文，查阅相关文献"',
+            '"de_plan.describe": "开始撰写论文中关于中产阶级化影响的段落"',
+            '"action.start": "20240213-09:50:00"',
+        ],
+        "#d9f99d",
+        max_lines=8,
+    )
     draw_wrapped(
         draw,
-        62,
-        824,
-        "读法：日程 Schedule 的真实形态是时间轴。提示词 prompt 生成的不是“生活感”这个抽象概念，而是能被当前计划函数 current_plan() 读取、能被行动落地函数 _determine_action() 落地的分钟级计划。",
+        940,
+        940,
+        "读法：日程 Schedule 先给出粗计划，再由子计划 decompose 定位到 09:50 的具体动作；行动落地函数 _determine_action() 把这个动作绑定到图书馆桌子，写成角色事件和对象事件。",
         FONT["h"],
         COLORS["ink"],
-        1460,
-        max_lines=2,
+        950,
+        max_lines=4,
     )
     return save(image, 19, "ch19_schedule_pipeline.png")
 
@@ -623,71 +791,211 @@ def chapter20() -> Path:
 
 
 def chapter21() -> Path:
-    image, draw = base_canvas(
-        "图 21-2：反思把经历钉到证据板上",
-        "反思不是一句总结，而是从近期记忆、焦点问题、证据编号到 thought 写回的证据链。",
-    )
+    image = Image.new("RGBA", (1600, 900), "#07111f")
+    draw = ImageDraw.Draw(image)
+
+    # A dark, high-contrast canvas makes reflection feel like memory being
+    # developed from raw evidence instead of another boxed pipeline.
+    gradient = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    gd = ImageDraw.Draw(gradient)
+    for y in range(900):
+        ratio = y / 900
+        gd.line(
+            [(0, y), (1600, y)],
+            fill=(
+                int(9 + 19 * ratio),
+                int(16 + 14 * ratio),
+                int(34 + 6 * ratio),
+                255,
+            ),
+        )
+    image = Image.alpha_composite(image, gradient)
+    draw = ImageDraw.Draw(image)
+
     trace = load_json(ASSET_ROOT / "chapter_21" / "ch21_reflection_trace.json") if (ASSET_ROOT / "chapter_21" / "ch21_reflection_trace.json").exists() else {}
     conversation = load_json(GA / "results" / "checkpoints" / "book-config-ai-seminar" / "conversation.json")
     turns = next(iter(conversation.values()))[0]
     _, chat_turns = next(iter(turns.items()))
 
-    draw.rounded_rectangle([58, 128, 498, 792], radius=8, fill="#fffdf8", outline="#d7c9b9", width=2)
-    draw.text((84, 152), "近期记忆素材", fill=COLORS["ink"], font=FONT["h"])
-    y = 198
-    for idx, (speaker, text) in enumerate(chat_turns[:4], 1):
-        draw.rounded_rectangle([84, y, 470, y + 112], radius=8, fill="#fefce8", outline="#eab308", width=2)
-        draw.text((104, y + 12), f"证据候选 {idx} / {speaker}", fill=COLORS["orange"], font=FONT["body_bold"])
-        draw_wrapped(draw, 104, y + 42, text, FONT["small"], COLORS["ink"], 340, max_lines=3)
-        y += 132
-
-    draw.rounded_rectangle([538, 128, 1038, 792], radius=8, fill="#f8fafc", outline="#cbd5e1", width=2)
-    draw.text((564, 152), "反思触发仪表盘", fill=COLORS["ink"], font=FONT["h"])
-    threshold = trace.get("poignancy_max", 150)
-    gauge_x, gauge_y = 598, 248
-    draw.arc([gauge_x, gauge_y, gauge_x + 340, gauge_y + 340], start=180, end=360, fill="#cbd5e1", width=28)
-    draw.arc([gauge_x, gauge_y, gauge_x + 340, gauge_y + 340], start=180, end=330, fill="#be123c", width=28)
-    draw.text((gauge_x + 102, gauge_y + 114), f"{threshold}", fill=COLORS["red"], font=FONT["title"])
-    draw.text((gauge_x + 42, gauge_y + 160), "重要性阈值 poignancy_max", fill=COLORS["muted"], font=FONT["h"])
-    draw_card(
-        draw,
-        (580, 520, 996, 704),
-        "源码边界",
-        [
-            f"证据写入 metadata：{trace.get('evidence_persisted_in_metadata', False)}",
-            "evidence 进入 _add_concept(filling=...)",
-            "但 Associate.add_node() 未持久化 filling",
-        ],
-        COLORS["red"],
-        fill="#fff7ed",
+    draw.text((46, 34), "图 21-2：反思把经历压成长期想法 thought", fill="#f8fafc", font=FONT["title"])
+    draw.text(
+        (50, 84),
+        "真实图书馆对话先变成候选证据；重要性阈值打开后，证据被压缩成可被后续计划和对话检索的 thought。",
+        fill="#b9c4d6",
+        font=FONT["subtitle"],
     )
 
-    draw.rounded_rectangle([1076, 128, 1548, 792], radius=8, fill="#fffdf8", outline="#d7c9b9", width=2)
-    draw.text((1102, 152), "从焦点到想法 thought", fill=COLORS["ink"], font=FONT["h"])
-    prompts = trace.get("prompt_template_bytes", {})
-    cards = [
-        ("reflect_focus", "先问：最近经历值得围绕什么问题反思？"),
-        ("retrieve_focus", "再围绕 focus 检索证据节点。"),
-        ("reflect_insights", "生成 thought + evidence 编号。"),
-        ("Associate", "把 thought 写回记忆流，影响后续对话和计划。"),
+    def glow_circle(center: tuple[int, int], radius: int, color: tuple[int, int, int], alpha: int) -> None:
+        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        od = ImageDraw.Draw(overlay)
+        cx, cy = center
+        for i in range(5, 0, -1):
+            r = radius + i * 24
+            od.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(*color, max(8, alpha // (i + 1))))
+        blurred = overlay.filter(ImageFilter.GaussianBlur(18))
+        image.alpha_composite(blurred)
+
+    def rounded_alpha_paste(src: Image.Image, xy: tuple[int, int], radius: int = 26) -> None:
+        mask = Image.new("L", src.size, 0)
+        md = ImageDraw.Draw(mask)
+        md.rounded_rectangle([0, 0, src.width - 1, src.height - 1], radius=radius, fill=255)
+        target = Image.new("RGBA", src.size, (0, 0, 0, 0))
+        target.paste(src, (0, 0), mask)
+        image.alpha_composite(target, xy)
+
+    def paste_round_portrait(name: str, center: tuple[int, int], size: int, ring: str) -> None:
+        x, y = center
+        portrait_layer = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        pd = ImageDraw.Draw(portrait_layer)
+        pd.ellipse([2, 2, size - 3, size - 3], fill="#0f172a", outline=ring, width=4)
+        path = STATIC_ROOT / "agents" / name / "portrait.png"
+        if path.exists():
+            portrait = Image.open(path).convert("RGBA")
+            portrait.thumbnail((size - 18, size - 18), RESAMPLE_NEAREST)
+            px = (size - portrait.width) // 2
+            py = (size - portrait.height) // 2 - 2
+            circle = Image.new("L", portrait.size, 0)
+            cd = ImageDraw.Draw(circle)
+            cd.ellipse([0, 0, portrait.width - 1, portrait.height - 1], fill=255)
+            portrait_layer.paste(portrait, (px, py), circle)
+        image.alpha_composite(portrait_layer, (x - size // 2, y - size // 2))
+        label_w, _ = text_size(draw, name, FONT["small"])
+        draw.rounded_rectangle([x - label_w // 2 - 10, y + size // 2 - 10, x + label_w // 2 + 10, y + size // 2 + 18], radius=12, fill="#f8fafc", outline=ring, width=2)
+        draw.text((x - label_w // 2, y + size // 2 - 6), name, fill="#0f172a", font=FONT["small"])
+
+    def beam(start: tuple[int, int], end: tuple[int, int], color: tuple[int, int, int], width: int = 7) -> None:
+        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        od = ImageDraw.Draw(overlay)
+        od.line([start, end], fill=(*color, 70), width=width + 10)
+        od.line([start, end], fill=(*color, 190), width=width)
+        image.alpha_composite(overlay.filter(ImageFilter.GaussianBlur(1)))
+
+    def speech_bubble(
+        idx: int,
+        speaker: str,
+        text: str,
+        xy: tuple[int, int],
+        angle: float,
+        accent: str,
+        fill: str,
+    ) -> tuple[int, int]:
+        bubble = Image.new("RGBA", (430, 134), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(bubble)
+        bd.rounded_rectangle([8, 8, 408, 116], radius=24, fill=fill, outline=accent, width=3)
+        bd.polygon([(52, 112), (88, 112), (64, 132)], fill=fill, outline=accent)
+        bd.text((30, 22), f"证据 {idx} / {speaker}", fill=accent, font=FONT["body_bold"])
+        draw_wrapped(bd, 30, 54, text, FONT["small"], "#142033", 350, max_lines=3)
+        rotated = bubble.rotate(angle, resample=RESAMPLE_BICUBIC, expand=True)
+        image.alpha_composite(rotated, xy)
+        return xy[0] + rotated.width // 2, xy[1] + rotated.height // 2
+
+    # Real town context: Klaus and Aisha are both at the library table [119, 24].
+    tilemap_config = load_json(TILEMAP_PATH)
+    tile_w = tilemap_config["tilewidth"]
+    min_x, max_x, min_y, max_y = 112, 126, 17, 31
+    crop = render_tilemap_crop(tilemap_config, min_x, min_y, max_x, max_y).convert("RGBA")
+    crop = crop.resize((600, 600), RESAMPLE_NEAREST)
+    crop = Image.alpha_composite(crop, Image.new("RGBA", crop.size, (3, 8, 18, 110)))
+    shadow = Image.new("RGBA", (640, 640), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    sd.rounded_rectangle([30, 30, 630, 630], radius=28, fill=(0, 0, 0, 160))
+    image.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(18)), (30, 150))
+    rounded_alpha_paste(crop, (58, 166), radius=30)
+
+    scale = 600 / ((max_x - min_x + 1) * tile_w)
+    focus = (119, 24)
+    fx = 58 + int(((focus[0] - min_x) * tile_w + tile_w // 2) * scale)
+    fy = 166 + int(((focus[1] - min_y) * tile_w + tile_w // 2) * scale)
+    glow_circle((fx, fy), 28, (250, 204, 21), 95)
+    draw.ellipse([fx - 26, fy - 26, fx + 26, fy + 26], outline="#fde047", width=5)
+    draw.text((76, 186), "真实场景：奥克山学院图书馆桌子 [119,24]", fill="#f8fafc", font=FONT["h"])
+    draw.text((78, 220), "克劳斯与阿伊莎讨论校园智能体公平性", fill="#cbd5e1", font=FONT["small"])
+    paste_round_portrait("克劳斯", (176, 720), 92, "#60a5fa")
+    paste_round_portrait("阿伊莎", (292, 720), 92, "#2dd4bf")
+
+    lens = (790, 462)
+    thought_center = (1276, 424)
+    bubble_centers = []
+    picks = [chat_turns[0], chat_turns[2], chat_turns[3], chat_turns[6]]
+    placements = [
+        ((146, 282), -7, "#f59e0b", (255, 251, 235, 235)),
+        ((286, 402), 5, "#60a5fa", (239, 246, 255, 235)),
+        ((100, 554), -4, "#2dd4bf", (240, 253, 250, 235)),
+        ((354, 626), 7, "#f97316", (255, 247, 237, 235)),
     ]
-    y = 204
-    for name, body in cards:
-        draw.rounded_rectangle([1102, y, 1522, y + 96], radius=8, fill="#eef2ff", outline="#818cf8", width=2)
-        size = prompts.get(name, "")
-        suffix = f" / {size} bytes" if size else ""
-        draw.text((1122, y + 12), name + suffix, fill="#3730a3", font=FONT["body_bold"])
-        draw_wrapped(draw, 1122, y + 42, body, FONT["small"], COLORS["ink"], 360, max_lines=2)
-        y += 124
+    for idx, ((speaker, text), (xy, angle, accent, fill)) in enumerate(zip(picks, placements), 1):
+        center = speech_bubble(idx, speaker, text, xy, angle, accent, fill)
+        bubble_centers.append(center)
+
+    for center in bubble_centers:
+        beam(center, lens, (251, 191, 36), width=4)
+    beam(lens, thought_center, (45, 212, 191), width=10)
+
+    # Trigger lens and threshold.
+    glow_circle(lens, 130, (244, 63, 94), 82)
+    draw.ellipse([lens[0] - 144, lens[1] - 144, lens[0] + 144, lens[1] + 144], fill=(15, 23, 42, 226), outline="#fb7185", width=5)
+    draw.arc([lens[0] - 110, lens[1] - 110, lens[0] + 110, lens[1] + 110], start=190, end=348, fill="#e11d48", width=22)
+    draw.arc([lens[0] - 110, lens[1] - 110, lens[0] + 110, lens[1] + 110], start=348, end=360, fill="#475569", width=22)
+    w, _ = text_size(draw, "150", FONT["title"])
+    draw.text((lens[0] - w // 2, lens[1] - 42), "150", fill="#fecdd3", font=FONT["title"])
+    draw.text((lens[0] - 110, lens[1] + 4), "重要性阈值 poignancy_max", fill="#e2e8f0", font=FONT["body_bold"])
+    draw.rounded_rectangle([lens[0] - 118, lens[1] + 48, lens[0] + 118, lens[1] + 82], radius=17, fill="#450a0a", outline="#f87171", width=2)
+    draw.text((lens[0] - 92, lens[1] + 55), "当前案例 5/6 < 150", fill="#fecaca", font=FONT["small"])
+
+    prompts = trace.get("prompt_template_bytes", {})
+    for angle, name, color in [
+        (-72, "reflect_focus", "#a78bfa"),
+        (-18, "retrieve_focus", "#38bdf8"),
+        (38, "reflect_insights", "#34d399"),
+    ]:
+        rad = math.radians(angle)
+        x = thought_center[0] + int(math.cos(rad) * 226)
+        y = thought_center[1] + int(math.sin(rad) * 154)
+        draw.line([thought_center, (x, y)], fill=color, width=3)
+        draw.ellipse([x - 42, y - 42, x + 42, y + 42], fill="#0f172a", outline=color, width=4)
+        label = name.split("_")[-1]
+        tw, _ = text_size(draw, label, FONT["small"])
+        draw.text((x - tw // 2, y - 8), label, fill="#f8fafc", font=FONT["small"])
+
+    glow_circle(thought_center, 150, (20, 184, 166), 88)
+    hex_points = []
+    for i in range(6):
+        rad = math.radians(60 * i - 30)
+        hex_points.append((thought_center[0] + int(math.cos(rad) * 164), thought_center[1] + int(math.sin(rad) * 138)))
+    draw.polygon(hex_points, fill=(6, 32, 44, 232), outline="#67e8f9")
+    draw.line(hex_points + [hex_points[0]], fill="#67e8f9", width=4)
+    draw.text((thought_center[0] - 112, thought_center[1] - 82), "写回长期想法 thought", fill="#ccfbf1", font=FONT["h"])
     draw_wrapped(
         draw,
-        58,
-        824,
-        "读法：反思图要让读者看见“证据被选中，又被压缩成想法 thought”。如果证据 evidence 不持久化，这个断点也必须出现在图上。",
-        FONT["h"],
-        COLORS["ink"],
-        1450,
-        max_lines=2,
+        thought_center[0] - 118,
+        thought_center[1] - 42,
+        "达到阈值后，近期事件 event 和想法 thought 会被聚焦、检索并压缩成新的 thought 节点。",
+        FONT["body"],
+        "#e0f2fe",
+        238,
+        max_lines=4,
+    )
+    draw.text((thought_center[0] - 118, thought_center[1] + 76), f"focus {prompts.get('reflect_focus', 0)} bytes", fill="#bae6fd", font=FONT["small"])
+    draw.text((thought_center[0] - 118, thought_center[1] + 100), f"insights {prompts.get('reflect_insights', 0)} bytes", fill="#bae6fd", font=FONT["small"])
+
+    torn = [(950, 666), (1508, 634), (1532, 772), (1380, 792), (972, 804)]
+    draw.polygon(torn, fill="#7f1d1d", outline="#fca5a5")
+    draw.text((990, 674), "源码边界：证据 evidence 没有持久化到 metadata", fill="#fee2e2", font=FONT["h"])
+    boundary_lines = [
+        f"evidence_persisted_in_metadata={trace.get('evidence_persisted_in_metadata', False)}",
+        "evidence 进入 _add_concept(filling=...)",
+        "但 Associate.add_node() 不写入 filling",
+    ]
+    yy = 716
+    for line in boundary_lines:
+        draw.text((990, yy), line, fill="#fecaca", font=FONT["body"])
+        yy += 28
+
+    draw.text(
+        (48, 840),
+        "读法：左侧是真实小镇对话和地图位置；中间是反思触发闸门；右侧是达到阈值后写回的 thought。红色断裂处提醒：当前源码没有把 evidence 完整持久化。",
+        fill="#f8fafc",
+        font=FONT["h"],
     )
     return save(image, 21, "ch21_reflection_pipeline.png")
 

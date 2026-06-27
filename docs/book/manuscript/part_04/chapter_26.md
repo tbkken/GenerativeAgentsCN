@@ -7,7 +7,7 @@
 - 情人节派对。
 - 镇长竞选。
 
-从这里开始设计自己的小镇事件。设计小镇事件不是随便写一句“今天有活动”。一个好的 Generative Agents 事件应该能进入完整行为链：
+从这里开始设计自己的小镇事件。设计小镇事件不是随便写一句“今天有活动”。一个好的生成式智能体 Generative Agents 事件应该能进入完整行为链：
 
 ```text
 角色初始意图
@@ -28,7 +28,7 @@
 
 这个事件适合当前项目，因为克劳斯的原始设定就是社会学学生，正在写相关论文。本章聚焦七个问题：
 
-1. 什么样的事件适合 Generative Agents？
+1. 什么样的事件适合生成式智能体 Generative Agents？
 2. 如何把事件写入角色设定？
 3. 如何选择地点、时间和参与者？
 4. 如何运行自定义事件实验？
@@ -49,6 +49,10 @@ flowchart LR
 ```
 
 *图 26-1：自定义事件从设定到评价的闭环。好事件不是写进设定就结束，而是要能传播、落地并被证据验证。*
+
+![图 26-2：自定义事件如何进入小镇运行证据](../../assets/chapter_26/ch26_custom_event_evidence_board.png)
+
+*图 26-2：自定义事件如何进入小镇运行证据。图片使用 `book-config-ai-seminar` 的真实地图位置、时间线 simulation、移动回放 movement 和断点 checkpoint 生成，展示事件从角色状态进入运行证据的路径。*
 
 ## 26.2 好事件的标准
 
@@ -123,6 +127,18 @@ generative_agents/frontend/static/assets/village/agents/克劳斯/agent.json
 "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。他计划在2月13日下午4点于奥克山学院图书馆组织一次小型讨论会，并正在邀请对社会议题感兴趣的同学和居民参加。"
 ```
 
+配置逻辑图：
+
+```mermaid
+flowchart TD
+    Idea["自定义事件设定"] --> Currently["写入发起者 currently"]
+    Currently --> Schedule["影响日程生成日程 schedule"]
+    Schedule --> Dialogue["通过对话邀请或转述"]
+    Dialogue --> Memory["写入他人记忆"]
+    Memory --> Action["改变计划或到场"]
+    Action --> Evidence["用时间线 simulation / 对话记录 conversation / 移动回放 movement 验证"]
+```
+
 这是最少侵入的做法。不需要改源码。只让角色当前目标发生变化。如果想让事件更稳定，也可以修改 `daily_plan`，加入：
 
 ```text
@@ -171,6 +187,18 @@ cd generative_agents
 python start.py --name book-custom-discussion --start "20240213-08:00" --step 72 --stride 10 --agents "克劳斯,玛丽亚,阿伊莎,沃尔夫冈,伊莎贝拉" --verbose info --log book-custom-discussion.log
 ```
 
+实验逻辑图：
+
+```mermaid
+flowchart TD
+    Command["运行自定义事件实验"] --> Seed["发起者 currently 带事件目标"]
+    Seed --> Plan["检查发起者日程是否出现事件"]
+    Plan --> Meet["检查是否遇到候选参与者"]
+    Meet --> Talk["检查对话是否提到时间地点"]
+    Talk --> Attend["检查参与者是否到场或行动变化"]
+    Attend --> Record["整理事件传播表"]
+```
+
 自定义事件的控制台输出要分两层读。第一层是系统是否跑通，日志中应该出现 `reset`、`Simulate Step`、`schedule_*`、`percept`、`summary` 和 `S/F/R`。第二层才是事件是否出现。也就是说，看到下面这种链路只能说明仿真正常推进：
 
 ```text
@@ -185,7 +213,7 @@ llm:
     total: S:...,F:.../R:...
 ```
 
-还不能说明“讨论会传播成功”。真正要看的是 `summary` 的 action 是否出现讨论会，`conversation.json` 是否出现别人听到讨论会，后续 `simulation.md` 是否出现到场或转述。自定义事件最容易犯的错误，是把“角色自己计划了事件”误读成“事件已经进入小镇社会网络”。
+还不能说明“讨论会传播成功”。真正要看的是 `summary` 的行动 action 是否出现讨论会，`conversation.json` 是否出现别人听到讨论会，后续 `simulation.md` 是否出现到场或转述。自定义事件最容易犯的错误，是把“角色自己计划了事件”误读成“事件已经进入小镇社会网络”。
 
 压缩命令可以直接照着执行：
 
@@ -207,8 +235,8 @@ results/compressed/book-custom-discussion/movement.json
 | --- | --- | --- | --- |
 | 1 | `simulation.md` | 搜索事件关键词，查看时间线和活动记录 | 事件是否进入角色行为 |
 | 2 | `conversation.json` | 查看谁向谁提到事件，是否包含时间地点 | 事件是否发生传播 |
-| 3 | `movement.json` | 检查事件时间附近的角色位置和 action | 角色是否真的到达事件地点 |
-| 4 | checkpoint JSON | 查看相关角色 memory、schedule、action | 如果结果异常，排查信息是否写入状态 |
+| 3 | `movement.json` | 检查事件时间附近的角色位置和行动 action | 角色是否真的到达事件地点 |
+| 4 | 断点 checkpoint JSON | 查看相关角色记忆 memory、日程 schedule、行动 action | 如果结果异常，排查信息是否写入状态 |
 
 这个顺序能避免两个常见误判。第一，只看 `simulation.md` 觉得事件出现了，但没有对话来源。第二，只看角色到达地点，就把路过误判成参加。自定义事件要同时满足“有人知道”“有人传播”“有人在正确时间地点行动”，才算真正进入小镇。
 
@@ -226,6 +254,19 @@ results/compressed/book-custom-discussion/movement.json
 如果真实结果里只有“克劳斯准备讨论会”，但没有接收者、时间、地点或后续到场证据，这个事件仍然只是角色个人计划，还不能算完成了一次小镇事件传播。实验章节要鼓励读者把原始片段整理成证据记录，而不是凭感觉判断成败。
 
 有了这张证据记录表之后，再回到运行配置，就能判断实验时间是否足够覆盖事件。如果讨论会时间是 16:00，`step=72` 从 08:00 到 20:00，足够覆盖事件。
+
+证据逻辑图：
+
+```mermaid
+flowchart TD
+    EvidenceTable["事件证据记录表"] --> Time{"仿真时间是否覆盖事件窗口"}
+    Time -->|否| Extend["增加仿真步 step 或提前 start"]
+    Time -->|是| Source{"是否有邀请来源"}
+    Source -->|否| DialogueFix["加强发起者目标或相遇设计"]
+    Source -->|是| Attend{"是否有到场或行动变化"}
+    Attend -->|否| PlanFix["检查记忆检索与日程修订"]
+    Attend -->|是| Success["事件成立"]
+```
 
 ## 26.7 观察关键词
 
@@ -290,7 +331,7 @@ results/compressed/book-custom-discussion/movement.json
 判断到场时重点查看：
 
 - 15:50 到 17:00 之间角色是否在图书馆。
-- action 是否与讨论、学习、参加活动、与克劳斯交流相关。
+- 行动 action 是否与讨论、学习、参加活动、与克劳斯交流相关。
 - 是否有相关对话。
 
 如果角色在图书馆但只是读书，不一定算参加。如果角色和克劳斯在图书馆讨论社会议题，可以算参加。
@@ -327,11 +368,24 @@ results/compressed/book-custom-discussion/movement.json
 
 ## 26.12 如何增强事件稳定性
 
-如果事件传播太弱，可以逐步增强。第一步，修改发起者 currently。第二步，修改发起者 daily_plan，加入准备或邀请。第三步，选择更容易相遇的角色。第四步，选择公共地点，例如咖啡馆或图书馆。第五步，延长仿真时间。第六步，微调对话 prompt，让角色更愿意提及当前计划。不要一开始就修改多个角色。否则无法判断是哪个改动起作用。
+如果事件传播太弱，可以逐步增强。第一步，修改发起者 currently。第二步，修改发起者 daily_plan，加入准备或邀请。第三步，选择更容易相遇的角色。第四步，选择公共地点，例如咖啡馆或图书馆。第五步，延长仿真时间。第六步，微调对话提示词 prompt，让角色更愿意提及当前计划。不要一开始就修改多个角色。否则无法判断是哪个改动起作用。
+
+调参逻辑图：
+
+```mermaid
+flowchart TD
+    Weak["事件传播太弱"] --> Current["先增强 currently"]
+    Current --> Daily["再增强 daily_plan"]
+    Daily --> Agents["再调整参与角色"]
+    Agents --> Place["再选择公共地点"]
+    Place --> Time["再延长仿真时间"]
+    Time --> Prompt["最后才调整对话提示词 prompt"]
+    Prompt --> Compare["每次只改一项，保留对照"]
+```
 
 ## 26.13 失败模式
 
-自定义事件常见失败有六类。第一，发起者日程没有事件。currently 没有影响 schedule。第二，发起者没有遇到别人。空间相遇不足。第三，对话没有提事件。generate_chat 没检索到当前目标。第四，摘要丢失关键细节。时间地点没有进入 chat memory。第五，知道但不到场。邀请没有转成计划。第六，到场但没有证据。可能是偶然在同一地点。每类失败对应不同模块。不要只说“模型不行”，要定位是 planning、dialogue、memory 还是 spatial。
+自定义事件常见失败有六类。第一，发起者日程没有事件。currently 没有影响日程 schedule。第二，发起者没有遇到别人。空间相遇不足。第三，对话没有提事件。generate_chat 没检索到当前目标。第四，摘要丢失关键细节。时间地点没有进入聊天记忆 chat memory。第五，知道但不到场。邀请没有转成计划。第六，到场但没有证据。可能是偶然在同一地点。每类失败对应不同模块。不要只说“模型不行”，要定位是规划 planning、对话 dialogue、记忆 memory 还是空间记忆 spatial。
 
 ## 26.14 实验记录模板
 
@@ -389,7 +443,7 @@ results/compressed/book-custom-discussion/movement.json
 | 结果材料 | 运行后重点看 `simulation.md`、`conversation.json` 和 `movement.json`。 |
 | 判断标准 | 事件发生要同时看发起者、传播、到场和行为证据。 |
 | 设计原则 | 不要硬编码所有参与者，要让信息通过对话传播。 |
-| 失败定位 | 失败时要分别检查 planning、spatial、dialogue、memory 和 reflection。 |
+| 失败定位 | 失败时要分别检查规划 planning、空间记忆 spatial、对话 dialogue、记忆 memory 和反思 reflection。 |
 | 扩展方向 | 诗歌会、安全会议、艺术展、学习小组都可以作为后续事件模板。 |
 
 下一章讲如何增加新角色、新地点和新关系。那是从“改事件”进一步走向“扩展小镇世界”。

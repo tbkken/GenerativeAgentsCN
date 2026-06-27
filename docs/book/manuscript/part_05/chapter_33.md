@@ -14,7 +14,7 @@
 智能体如何理解这些经历？
 ```
 
-在 Generative Agents 中，reflection 是让角色行为变得可信的关键。如果只有原始观察，角色会被大量细节淹没。有了反思，角色才能从事件中形成高层认知。例如：
+在生成式智能体 Generative Agents 中，反思 reflection 是让角色行为变得可信的关键。如果只有原始观察，角色会被大量细节淹没。有了反思，角色才能从事件中形成高层认知。例如：
 
 ```text
 玛丽亚对克劳斯的研究表现出兴趣。
@@ -34,9 +34,9 @@
 
 本章重点聚焦以下六个问题：
 
-1. Generative Agents 当前如何实现 reflection？
-2. 当前 reflection 的优势和局限是什么？
-3. Reflexion 给我们什么启发？
+1. 生成式智能体 Generative Agents 当前如何实现反思 reflection？
+2. 当前反思 reflection 的优势和局限是什么？
+3. 反思式学习 Reflexion 给我们什么启发？
 4. Voyager 的技能库思想如何迁移到小镇智能体？
 5. 如何把事件反思升级成行动后复盘和经验学习？
 6. 如何评价反思升级是否有效？
@@ -53,11 +53,15 @@ flowchart TD
     R --> S
 ```
 
-*图 33-1：从 reflection 到 reflexion-style learning 的闭环。反思升级的关键是让失败和成功经验进入后续行动，而不是只生成一段总结。*
+*图 33-1：从反思 reflection 到反思式学习 reflexion-style learning 的闭环。反思升级的关键是让失败和成功经验进入后续行动，而不是只生成一段总结。*
+
+![图 33-2：从失败结果到可复用技能记忆](../../assets/chapter_33/ch33_reflexion_skill_board.png)
+
+*图 33-2：从失败结果到可复用技能记忆。图片把行动 action、结果 outcome、自我评价 self-evaluation、经验 lesson 和技能记忆技能 skill 连成项目中的证据闭环，强调反思升级必须回到后续行动。*
 
 ## 33.2 当前项目的反思入口
 
-Generative Agents 的反思逻辑在：
+生成式智能体 Generative Agents 的反思逻辑在：
 
 ```text
 generative_agents/modules/agent.py
@@ -112,7 +116,7 @@ nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
 focus = self.completion("reflect_focus", nodes, 3)
 ```
 
-第四，围绕焦点检索相关记忆，生成 insight。
+第四，围绕焦点检索相关记忆，生成洞察 insight。
 
 ```python
 retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
@@ -120,7 +124,7 @@ for r_nodes in retrieved.values():
     thoughts = self.completion("reflect_insights", r_nodes, 5)
 ```
 
-生成的 insight 会被写回记忆：
+生成的洞察 insight 会被写回记忆：
 
 ```python
 _add_thought(thought, evidence)
@@ -136,14 +140,14 @@ _add_thought(thought, evidence)
   -> 写入 thought
 ```
 
-## 33.4 当前反思 prompt 做了什么
+## 33.4 当前反思提示词 prompt 做了什么
 
-反思相关 prompt 在 `generative_agents/data/prompts/` 下。主要包括：
+反思相关提示词 prompt 在 `generative_agents/data/prompts/` 下。主要包括：
 
-| prompt 文件 | 中文意思 | 它解决的问题 |
+| 提示词 prompt 文件 | 中文意思 | 它解决的问题 |
 | --- | --- | --- |
 | `reflect_focus.txt` | 生成反思焦点。 | 从近期记忆中提出值得深入思考的问题。 |
-| `reflect_insights.txt` | 生成反思洞察。 | 围绕焦点问题，把证据压缩成高层 thought。 |
+| `reflect_insights.txt` | 生成反思洞察。 | 围绕焦点问题，把证据压缩成高层想法 thought。 |
 | `reflect_chat_planing.txt` | 反思聊天对计划的影响。 | 判断一段聊天是否应该改变后续日程。 |
 | `reflect_chat_memory.txt` | 反思聊天对记忆的影响。 | 判断一段聊天中哪些关系、承诺或事实应该写入记忆。 |
 
@@ -167,7 +171,7 @@ _add_thought(thought, evidence)
 根据记忆节点生成反思洞察，并标注相关节点编号。
 ```
 
-当前项目不是只让模型随便写感想，而是要求 insight 绑定证据节点。`reflect_chat_planing.txt` 和 `reflect_chat_memory.txt` 则处理聊天后的计划影响和记忆内容。这说明 Generative Agents 已经比“单纯总结器”更进一步。它已经在问：
+当前项目不是只让模型随便写感想，而是要求洞察 insight 绑定证据节点。`reflect_chat_planing.txt` 和 `reflect_chat_memory.txt` 则处理聊天后的计划影响和记忆内容。这说明生成式智能体 Generative Agents 已经比“单纯总结器”更进一步。它已经在问：
 
 ```text
 这次对话是否影响我的计划？
@@ -176,11 +180,11 @@ _add_thought(thought, evidence)
 
 ## 33.5 当前反思的优势
 
-当前 reflection 有四个优点。第一，它有触发阈值。避免每一步都反思，降低成本。第二，它基于记忆证据。`reflect_insights` 输出 insight 时会绑定相关节点。第三，它把反思写回 memory stream。生成的 thought 会影响后续检索和行为。第四，它处理对话影响。聊天不仅生成对话记录，还会生成计划和记忆层面的总结。这四点说明当前项目已经保留了 Generative Agents 论文的精华。但它仍然不是完整的“经验学习”系统。
+当前反思 reflection 有四个优点。第一，它有触发阈值。避免每一步都反思，降低成本。第二，它基于记忆证据。`reflect_insights` 输出洞察 insight 时会绑定相关节点。第三，它把反思写回记忆流 memory stream。生成的想法 thought 会影响后续检索和行为。第四，它处理对话影响。聊天不仅生成对话记录，还会生成计划和记忆层面的总结。这四点说明当前项目已经保留了生成式智能体 Generative Agents 论文的精华。但它仍然不是完整的“经验学习”系统。
 
 ## 33.6 当前反思的局限
 
-当前 reflection 的主要局限有五个。第一，反思不一定针对失败。它根据重要性触发，但不关心某个行动是否成功。第二，反思不一定形成可执行策略。例如：
+当前反思 reflection 的主要局限有五个。第一，反思不一定针对失败。它根据重要性触发，但不关心某个行动是否成功。第二，反思不一定形成可执行策略。例如：
 
 ```text
 伊莎贝拉应该更关注顾客的需求。
@@ -194,29 +198,29 @@ _add_thought(thought, evidence)
 这次讨论会有人参加吗？
 ```
 
-第四，缺少技能库。成功经验不会被沉淀成可复用方法。第五，缺少反思质量评价。系统会保存 thought，但不会判断 thought 是否真的改善后续行为。这些局限正是 Reflexion 和 Voyager 思想可以补足的地方。
+第四，缺少技能库。成功经验不会被沉淀成可复用方法。第五，缺少反思质量评价。系统会保存想法 thought，但不会判断想法 thought 是否真的改善后续行为。这些局限正是反思式学习 Reflexion 和 Voyager 思想可以补足的地方。
 
-## 33.7 Reflexion 的启发
+## 33.7 反思式学习 Reflexion 的启发
 
-Reflexion 的关键思想是：
+反思式学习 Reflexion 的关键思想是：
 
 ```text
 让语言反馈成为 agent 自我改进的材料。
 ```
 
-它不是通过修改模型参数来学习。而是让 agent 在失败后生成 verbal reflection，并在下一次尝试中使用。这和 Generative Agents 的 reflection 有相似之处。两者都使用自然语言反思。但侧重点不同。Generative Agents 更关注：
+它不是通过修改模型参数来学习。而是让智能体 agent 在失败后生成语言 verbal 反思 reflection，并在下一次尝试中使用。这和生成式智能体 Generative Agents 的反思 reflection 有相似之处。两者都使用自然语言反思。但侧重点不同。生成式智能体 Generative Agents 更关注：
 
 ```text
 我从近期经历中理解到了什么？
 ```
 
-Reflexion 更关注：
+反思式学习 Reflexion 更关注：
 
 ```text
 我上次为什么失败，下次该怎么改？
 ```
 
-对 Generative Agents 来说，这个差异很重要。小镇角色不只要知道过去，还要能调整策略。例如：
+对生成式智能体 Generative Agents 来说，这个差异很重要。小镇角色不只要知道过去，还要能调整策略。例如：
 
 ```text
 伊莎贝拉邀请失败后，下次先询问对方是否有空，而不是直接发出邀请。
@@ -228,7 +232,7 @@ Reflexion 更关注：
 山姆发现汤姆不信任自己后，下次先回应汤姆关心的社区问题，而不是泛泛宣传竞选。
 ```
 
-这就是从 reflection 到经验学习的升级。
+这就是从反思 reflection 到经验学习的升级。
 
 ## 33.8 Voyager 的启发
 
@@ -262,7 +266,7 @@ host_discussion
 repair_relationship
 ```
 
-用于缓和紧张关系。这些技能不是写死的脚本。而是从经验中抽取的自然语言策略。它们可以作为 memory type 保存，供后续对话和计划使用。
+用于缓和紧张关系。这些技能不是写死的脚本。而是从经验中抽取的自然语言策略。它们可以作为记忆类型 memory type 保存，供后续对话和计划使用。
 
 ## 33.9 升级方向一：行动后复盘
 
@@ -276,6 +280,18 @@ plan -> action -> observation -> memory -> reflection
 
 ```text
 plan -> action -> outcome -> self_evaluate -> lesson -> future_strategy
+```
+
+升级逻辑图：
+
+```mermaid
+flowchart TD
+    Plan["计划 plan"] --> Action["行动 action"]
+    Action --> Outcome["结果 outcome"]
+    Outcome --> Eval["自我评估 self_evaluate"]
+    Eval --> Lesson["提取 lesson"]
+    Lesson --> Memory["写回想法 thought 或技能 skill"]
+    Memory --> Future["影响下一次策略 future_strategy"]
 ```
 
 例如伊莎贝拉邀请亚当参加派对。结果可能是：
@@ -328,9 +344,9 @@ unknown：无法判断结果。
 
 不要一开始追求复杂奖励函数。先用可解释标签。这样读者能理解结果，也能在 `simulation.md` 中核对。
 
-## 33.11 建议新增 prompt
+## 33.11 建议新增提示词 prompt
 
-可以新增三个 prompt。第一：
+可以新增三个提示词 prompt。第一：
 
 ```text
 self_evaluate_action.txt
@@ -396,7 +412,7 @@ apply_lesson_to_plan.txt
 }
 ```
 
-这三个 prompt 构成最小经验学习闭环。
+这三个提示词 prompt 构成最小经验学习闭环。
 
 ## 33.12 升级方向二：技能库
 
@@ -424,7 +440,7 @@ skill
 }
 ```
 
-技能不是函数。它是自然语言策略。它可以进入 prompt，帮助模型生成更好的对话或计划。例如对话前检索：
+技能不是函数。它是自然语言策略。它可以进入提示词 prompt，帮助模型生成更好的对话或计划。例如对话前检索：
 
 ```text
 当前目标是邀请克劳斯参加讨论会。
@@ -457,7 +473,7 @@ skill
 
 ## 33.14 升级方向三：失败驱动反思
 
-当前 reflection 主要由 poignancy 触发。可以增加失败触发。例如：
+当前反思 reflection 主要由 poignancy 触发。可以增加失败触发。例如：
 
 ```text
 如果 outcome == failed，并且目标重要性高，则触发 self_reflection。
@@ -470,7 +486,7 @@ skill
 - 克劳斯组织讨论会没人回应。
 - 角色口头答应活动但没有到场。
 
-这些都是值得反思的失败。失败反思 prompt 可以问：
+这些都是值得反思的失败。失败反思提示词 prompt 可以问：
 
 ```text
 这次行动原本目标是什么？
@@ -480,17 +496,17 @@ skill
 下次可以采取什么不同策略？
 ```
 
-这比普通 insight 更具体。
+这比普通洞察 insight 更具体。
 
 ## 33.15 升级方向四：把反思连接到计划
 
-反思如果不影响计划，就只是漂亮文本。因此需要把 lesson 和 skill 放入计划生成上下文。当前项目中，计划相关逻辑包括：
+反思如果不影响计划，就只是漂亮文本。因此需要把 lesson 和技能 skill 放入计划生成上下文。当前项目中，计划相关逻辑包括：
 
 - wake up。
-- daily schedule。
-- schedule decompose。
-- schedule revise。
-- determine action。
+- daily 日程 schedule。
+- 日程拆解 schedule decompose。
+- 日程修订 schedule revise。
+- determine 行动 action。
 
 升级时可以在两个位置使用反思结果。第一，生成日程时。例如：
 
@@ -581,6 +597,18 @@ impact
 4. 下一次邀请前检索 lesson。
 5. 比较升级前后邀请成功率和对话质量。
 
+最小实验逻辑图：
+
+```mermaid
+flowchart TD
+    Invite["发起邀请"] --> Result{"是否成功传达并获得回应"}
+    Result -->|成功| Record["记录成功经验"]
+    Result -->|失败| Lesson["生成失败 lesson"]
+    Lesson --> Store["写入想法 thought 或技能 skill"]
+    Store --> Next["下一次邀请前检索 lesson"]
+    Next --> Compare["比较升级前后邀请质量"]
+```
+
 实验对象可以这样选择：
 
 ```text
@@ -617,14 +645,14 @@ impact
 
 ## 33.19 本章小结
 
-反思升级要从“想明白发生了什么”走向“下次能做得更好”。Reflexion、Voyager 这类工作能给 Generative Agents 带来改进，但反思不能写成漂亮却无用的文本。
+反思升级要从“想明白发生了什么”走向“下次能做得更好”。反思式学习 Reflexion、Voyager 这类工作能给生成式智能体 Generative Agents 带来改进，但反思不能写成漂亮却无用的文本。
 
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 当前反思入口 | `Agent.reflect()` 在 poignancy 达到阈值后触发。 |
-| 当前流程 | 生成 focus、检索相关记忆、生成 insights，并把 thought 写回记忆。 |
+| 当前流程 | 生成焦点 focus、检索相关记忆、生成 insights，并把想法 thought 写回记忆。 |
 | 当前局限 | 已有证据节点和对话总结，但不一定针对失败，也不一定形成可执行策略。 |
-| Reflexion 启发 | 失败后的语言反馈可以成为下一次行动的改进材料。 |
+| 反思式学习 Reflexion 启发 | 失败后的语言反馈可以成为下一次行动的改进材料。 |
 | Voyager 启发 | 成功经验可以沉淀为可复用技能库。 |
 | 升级方向 | 行动后复盘、结果标签、lesson 提取、技能库、失败驱动反思和反思质量评分都可落地。 |
 | 行为连接 | 反思必须连接到计划和对话上下文，否则只是漂亮文本。 |
@@ -635,8 +663,8 @@ impact
 
 ## 参考资料
 
-- Generative Agents: https://arxiv.org/abs/2304.03442
-- Reflexion: https://arxiv.org/abs/2303.11366
+- 生成式智能体 Generative Agents: https://arxiv.org/abs/2304.03442
+- 反思式学习 Reflexion: https://arxiv.org/abs/2303.11366
 - Voyager: https://arxiv.org/abs/2305.16291
 - Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/prompt/scratch.py`

@@ -2,7 +2,7 @@
 
 ## 24.1 核心问题
 
-第四部分开始做实验。第一组实验复现论文中最经典的现象：Isabella 的情人节派对传播。论文中，Isabella Rodriguez 计划在 Hobbs Cafe 举办情人节派对。她邀请居民，居民通过对话得知活动，有些人调整计划并到场。Generative Agents 中，伊莎贝拉的中文设定保留了这条线索：
+第四部分开始做实验。第一组实验复现论文中最经典的现象：Isabella 的情人节派对传播。论文中，Isabella Rodriguez 计划在 Hobbs Cafe 举办情人节派对。她邀请居民，居民通过对话得知活动，有些人调整计划并到场。生成式智能体 Generative Agents 中，伊莎贝拉的中文设定保留了这条线索：
 
 ```text
 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。
@@ -48,9 +48,13 @@ flowchart LR
 
 *图 24-1：情人节派对传播证据链。复现实验要从发起、邀请、记忆、转述、到场和回放证据逐步检查，而不是只看派对有没有出现。*
 
+![图 24-2：情人节派对传播的真实证据桌面](../../assets/chapter_24/ch24_party_evidence_board.png)
+
+*图 24-2：情人节派对传播的真实证据桌面。图片使用本地 `book-party-pair` 输出生成，把真实移动回放 movement、时间线 simulation、断点 checkpoint 和对话记录 conversation 的证据边界放在同一张图里。*
+
 ## 24.2 这个实验验证什么
 
-情人节派对传播不是单一功能测试。它同时验证多个模块。第一，persona/currently。伊莎贝拉必须知道自己要办派对。第二，planning。她的日程中应该出现与派对准备或邀请有关的行为。第三，spatial grounding。相关行为应该落到霍布斯咖啡馆或合理地点。第四，reaction/dialogue。她遇到别人时，应该有机会发起对话。第五，memory。被邀请者需要把派对信息写入记忆。第六，information diffusion。被邀请者后续可能告诉别人。第七，schedule revision。有些居民应该可能把下午 5 点到 7 点的活动改成参加派对。第八，replay/evaluation。我们需要从 `conversation.json`、`simulation.md`、`movement.json` 中复查证据。因此，这是一个端到端实验。
+情人节派对传播不是单一功能测试。它同时验证多个模块。第一，角色设定 persona / 当前状态 currently。伊莎贝拉必须知道自己要办派对。第二，规划 planning。她的日程中应该出现与派对准备或邀请有关的行为。第三，空间落地 spatial grounding。相关行为应该落到霍布斯咖啡馆或合理地点。第四，反应 reaction / 对话 dialogue。她遇到别人时，应该有机会发起对话。第五，记忆 memory。被邀请者需要把派对信息写入记忆。第六，信息扩散 information diffusion。被邀请者后续可能告诉别人。第七，日程修订 schedule revision。有些居民应该可能把下午 5 点到 7 点的活动改成参加派对。第八，回放 replay / 评价 evaluation。我们需要从 `conversation.json`、`simulation.md`、`movement.json` 中复查证据。因此，这是一个端到端实验。
 
 ## 24.3 实验角色选择
 
@@ -85,7 +89,7 @@ flowchart LR
 - 让信息扩散。
 - 让被邀请者在下午到场。
 
-`stride` 建议先用 10 分钟。如果 step=72，则模拟 12 小时：
+`stride` 建议先用 10 分钟。如果仿真步 step=72，则模拟 12 小时：
 
 ```text
 72 * 10 分钟 = 720 分钟 = 12 小时
@@ -107,6 +111,19 @@ cd generative_agents
 python start.py --name book-party-small --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,阿伊莎,埃迪,亚当,玛丽亚,克劳斯" --verbose info --log book-party-small.log
 ```
 
+实验逻辑图：
+
+```mermaid
+flowchart TD
+    Command["运行命令 start.py"] --> Config["实验配置 name / start / 仿真步 step / 步长 stride / agents"]
+    Config --> Init["初始化角色与日程"]
+    Init --> Sim["按仿真步 step 推进仿真"]
+    Sim --> Log["先看控制台与日志"]
+    Log --> Checkpoint["再看断点 checkpoint 与对话记录 conversation"]
+    Checkpoint --> Compress["压缩生成 simulation.md / movement.json"]
+    Compress --> Judge["判断传播、到场和失败原因"]
+```
+
 长实验不应该等全部跑完才第一次检查。前几分钟的控制台输出就能判断方向是否正确。可以参考 `book-party-pair` 短实验的真实日志：
 
 ```text
@@ -124,7 +141,7 @@ llm:
     total: S:8,F:0/R:8
 ```
 
-这段日志说明伊莎贝拉已经被派对设定牵引到咖啡馆行动线上。`wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 是日程链路；`percept` 是感知；`summary` 是本 step 的状态快照。若这里的 action 完全没有咖啡馆、派对准备或顾客服务，就先回头检查伊莎贝拉的 `currently` 和运行日期，不要等 72 step 全部结束后才发现实验条件错了。
+这段日志说明伊莎贝拉已经被派对设定牵引到咖啡馆行动线上。`wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 是日程链路；`percept` 是感知；`summary` 是本仿真步 step 的状态快照。若这里的行动 action 完全没有咖啡馆、派对准备或顾客服务，就先回头检查伊莎贝拉的 `currently` 和运行日期，不要等 72 仿真步 step 全部结束后才发现实验条件错了。
 
 运行结束后执行压缩：
 
@@ -146,7 +163,18 @@ results/checkpoints/book-party-small/conversation.json
 | --- | --- | --- |
 | `simulation.md` | 时间线、活动记录、对话摘录 | 派对故事线是否出现，谁在什么时间提到派对 |
 | `conversation.json` | 对话时间、说话双方、地点、具体话术 | 派对信息是否真的从伊莎贝拉传给别人 |
-| `movement.json` | 17:00-19:00 附近角色位置和 action | 被邀请者是否在派对时段到达并停留在咖啡馆 |
+| `movement.json` | 17:00-19:00 附近角色位置和行动 action | 被邀请者是否在派对时段到达并停留在咖啡馆 |
+
+证据逻辑图：
+
+```mermaid
+flowchart TD
+    Simulation["时间线 simulation.md"] --> Locate["快速定位派对相关片段"]
+    Locate --> Conversation["回查 conversation.json 原始对话"]
+    Conversation --> Source["确认邀请来源与转述路径"]
+    Source --> Movement["用 movement.json 验证到场"]
+    Movement --> Conclusion["形成传播与到场结论"]
+```
 
 简单说，`simulation.md` 帮你快速发现线索，`conversation.json` 帮你证明传播路径，`movement.json` 帮你验证到场。三者合起来，才比“看起来有人参加了派对”更可靠。
 
@@ -161,7 +189,7 @@ results/checkpoints/book-party-small/conversation.json
 亚当：听起来很有趣，伊莎贝拉。不过我可能要婉拒了，因为我需要集中精力完成这本书的一些章节。
 ```
 
-这段原文说明了三件事。第一，派对信息有明确来源：伊莎贝拉。第二，接收者是亚当。第三，结果不是“成功参加”，而是“知道但婉拒”。所以做派对传播实验时，不能把“被邀请”直接等同于“会到场”。后面还要看 `movement.json` 中 17:00-19:00 的位置和 action。
+这段原文说明了三件事。第一，派对信息有明确来源：伊莎贝拉。第二，接收者是亚当。第三，结果不是“成功参加”，而是“知道但婉拒”。所以做派对传播实验时，不能把“被邀请”直接等同于“会到场”。后面还要看 `movement.json` 中 17:00-19:00 的位置和行动 action。
 
 理解了这种证据读法之后，再打开前端回放，目标就不是单纯看动画，而是核对时间、地点和到场行为。查看前端回放可以运行：
 
@@ -217,7 +245,7 @@ results/compressed/book-party-small/simulation.md
 4. 被邀请者后续活动是否改变。
 5. 下午 5 点附近是否有人到达霍布斯咖啡馆。
 
-`simulation.md` 是最快理解故事线的文件。但它不是最终证据。最终证据还要看 `conversation.json` 和 checkpoint。
+`simulation.md` 是最快理解故事线的文件。但它不是最终证据。最终证据还要看 `conversation.json` 和断点 checkpoint。
 
 ## 24.8 观察文件二：conversation.json
 
@@ -262,7 +290,7 @@ results/compressed/book-party-small/movement.json
 判断某个角色是否参加派对，可以检查：
 
 - 17:00 到 19:00 是否在霍布斯咖啡馆。
-- action 是否与派对、聊天、社交、咖啡馆活动相关。
+- 行动 action 是否与派对、聊天、社交、咖啡馆活动相关。
 - 是否只是路过。
 
 不要只看角色在咖啡馆出现一次。参加派对应该满足更强条件：
@@ -286,7 +314,7 @@ results/compressed/book-party-small/movement.json
 中等标准可以这样写：
 
 ```text
-角色 memory 或 conversation 中有明确信息来源。
+角色记忆 memory 或对话记录 conversation 中有明确信息来源。
 ```
 
 较强标准可以这样写：
@@ -308,6 +336,19 @@ results/compressed/book-party-small/movement.json
 ```
 
 就是中标准。如果阿伊莎下午调整计划去咖啡馆，就是强标准。
+
+判断逻辑图：
+
+```mermaid
+flowchart TD
+    Claim["角色疑似知道派对"] --> Source{"是否有信息来源"}
+    Source -->|无| Hallucination["标记为无证据知道或幻觉"]
+    Source -->|有| Detail{"是否说出时间、地点、活动"}
+    Detail -->|不完整| Weak["弱知道：记录缺失字段"]
+    Detail -->|完整| Memory{"后续是否再次提及或行动"}
+    Memory -->|否| Fragile["短暂知道或检索失败"]
+    Memory -->|是| Strong["强证据知道派对"]
+```
 
 ## 24.11 如何判断“传播成功”
 
@@ -342,7 +383,7 @@ results/compressed/book-party-small/movement.json
 
 ## 24.12 如何判断“参加派对”
 
-参加派对建议使用四个条件。第一，时间匹配。2 月 14 日 17:00 到 19:00。第二，地点匹配。霍布斯咖啡馆。第三，行为匹配。action 或对话与派对、社交、咖啡馆聚会相关。第四，来源匹配。该角色此前知道派对，或者被邀请。如果一个角色 17:30 在霍布斯咖啡馆吃饭，但从未知道派对，这可能不是参加派对。如果一个角色知道派对但因为工作冲突没来，应记录为“知道但未参加”。
+参加派对建议使用四个条件。第一，时间匹配。2 月 14 日 17:00 到 19:00。第二，地点匹配。霍布斯咖啡馆。第三，行为匹配。行动 action 或对话与派对、社交、咖啡馆聚会相关。第四，来源匹配。该角色此前知道派对，或者被邀请。如果一个角色 17:30 在霍布斯咖啡馆吃饭，但从未知道派对，这可能不是参加派对。如果一个角色知道派对但因为工作冲突没来，应记录为“知道但未参加”。
 
 ## 24.13 预期现象
 
@@ -354,7 +395,7 @@ results/compressed/book-party-small/movement.json
 4. 至少一位非伊莎贝拉角色知道派对。
 5. 至少一位角色在下午 5 点附近到达霍布斯咖啡馆。
 
-不要期待每次运行都完美复现论文数字。生成式系统有随机性。模型、prompt、角色数量、stride、起始时间都会影响结果。我们关注的是机制是否成立，而不是一次运行必须达到固定人数。
+不要期待每次运行都完美复现论文数字。生成式系统有随机性。模型、提示词 prompt、角色数量、步长 stride、起始时间都会影响结果。我们关注的是机制是否成立，而不是一次运行必须达到固定人数。
 
 ## 24.14 常见失败一：伊莎贝拉没有邀请别人
 
@@ -371,7 +412,7 @@ results/compressed/book-party-small/movement.json
 2. 看其他角色是否经过霍布斯咖啡馆。
 3. 看日志中 `decide_chat` 输出。
 4. 调整角色集合，加入更可能去咖啡馆的角色。
-5. 延长 step。
+5. 延长仿真步 step。
 
 ## 24.15 常见失败二：邀请中没有时间地点
 
@@ -384,9 +425,9 @@ results/compressed/book-party-small/movement.json
 可以按下面方法排查：
 
 1. 看伊莎贝拉 `currently`。
-2. 看 prompt 日志中 `generate_chat` 是否包含派对信息。
+2. 看提示词 prompt 日志中 `generate_chat` 是否包含派对信息。
 3. 看 `summarize_chats` 输出是否保留时间地点。
-4. 必要时加强 `generate_chat` 或 `summarize_chats` prompt。
+4. 必要时加强 `generate_chat` 或 `summarize_chats` 提示词 prompt。
 
 ## 24.16 常见失败三：知道但不到场
 
@@ -394,7 +435,7 @@ results/compressed/book-party-small/movement.json
 
 - 日程冲突。
 - 没有把邀请转成计划。
-- 派对信息没有被 planning 检索。
+- 派对信息没有被规划 planning 检索。
 - 角色兴趣不高。
 
 论文中也有被邀请但没到场的角色。实验报告应区分：
@@ -406,6 +447,19 @@ results/compressed/book-party-small/movement.json
 忘记或检索失败
 ```
 
+诊断逻辑图：
+
+```mermaid
+flowchart TD
+    NotAttend["知道派对但没有到场"] --> Schedule{"日程是否被派对改写"}
+    Schedule -->|否| Retrieval["检索或日程修订失败"]
+    Schedule -->|是| Path{"移动回放 movement 是否到达咖啡馆"}
+    Path -->|否| Spatial["空间路径或时间冲突"]
+    Path -->|是| Action{"行动 action 是否体现参加派对"}
+    Action -->|否| Label["行为标签或摘要不足"]
+    Action -->|是| Success["到场成立，记录证据"]
+```
+
 这比简单判定失败更有价值。
 
 ## 24.17 常见失败四：无证据知道
@@ -413,7 +467,7 @@ results/compressed/book-party-small/movement.json
 如果某角色说知道派对，但找不到对话或记忆来源，这就是幻觉。处理方法：
 
 1. 回查 `conversation.json`。
-2. 回查 checkpoint 中该角色 memory。
+2. 回查断点 checkpoint 中该角色记忆 memory。
 3. 如果没有来源，标记为 hallucinated awareness。
 
 论文评价也会区分真实传播和记忆幻觉。没有来源的“知道”，应标记为 hallucinated awareness，不能算信息扩散。
@@ -454,7 +508,7 @@ results/compressed/book-party-small/movement.json
 
 ## 24.19 扩展实验
 
-派对传播可以扩展成多组实验。第一，角色数量影响。比较 6 人、10 人、25 人传播范围。第二，stride 影响。比较 5 分钟、10 分钟、15 分钟步长。第三，模型影响。比较 Qwen、DeepSeek、MiniMax、OpenAI。第四，检索权重影响。提高 importance_weight，看派对信息是否更容易被记住。第五，反思影响。降低或关闭 reflection，看邀请是否更难转成长期计划。这些扩展会帮助读者理解系统参数如何影响社会现象。
+派对传播可以扩展成多组实验。第一，角色数量影响。比较 6 人、10 人、25 人传播范围。第二，步长 stride 影响。比较 5 分钟、10 分钟、15 分钟步长。第三，模型影响。比较 Qwen、DeepSeek、MiniMax、OpenAI。第四，检索权重影响。提高 importance_weight，看派对信息是否更容易被记住。第五，反思影响。降低或关闭反思 reflection，看邀请是否更难转成长期计划。这些扩展会帮助读者理解系统参数如何影响社会现象。
 
 ## 24.20 本章小结
 
@@ -462,7 +516,7 @@ results/compressed/book-party-small/movement.json
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 实验目标 | 派对传播同时验证 persona、planning、dialogue、memory、reflection 和 replay。 |
+| 实验目标 | 派对传播同时验证角色设定 persona、规划 planning、对话 dialogue、记忆 memory、反思 reflection 和回放 replay。 |
 | 角色选择 | 小规模实验建议先用伊莎贝拉、阿伊莎、埃迪、亚当、玛丽亚、克劳斯。 |
 | 起始时间 | 2 月 14 日 08:00 能覆盖派对前后的关键信息传播窗口。 |
 | 结果生成 | 运行后用 `compress.py` 生成 `simulation.md` 和 `movement.json`。 |
@@ -471,7 +525,7 @@ results/compressed/book-party-small/movement.json
 | 到场标准 | 判断参加派对要同时看时间、地点、行为和信息来源。 |
 | 报告内容 | 实验报告必须记录传播路径、知道者、到场者和幻觉情况。 |
 | 失败解释 | 知道但不到场不一定是失败，也可能是计划冲突或检索失败。 |
-| 扩展方向 | 后续可以扩展角色数量、模型、stride、检索权重和 reflection 设置。 |
+| 扩展方向 | 后续可以扩展角色数量、模型、步长 stride、检索权重和反思 reflection 设置。 |
 
 下一章复现镇长竞选信息扩散。它与派对实验类似，但更强调观点传播、关系态度和反对者反应。
 

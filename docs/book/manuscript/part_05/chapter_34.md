@@ -2,7 +2,7 @@
 
 ## 34.1 核心问题
 
-记忆让智能体知道过去。反思让智能体理解过去。规划决定智能体接下来做什么。Generative Agents 的 planning 很有启发性，因为它不是只生成下一句话，而是生成一天的生活节奏，并把粗计划拆成具体行动。Generative Agents 继承了这套机制。但到了 2026 年，只靠日程拆解已经不能覆盖更复杂的 agent 行为。例如：
+记忆让智能体知道过去。反思让智能体理解过去。规划决定智能体接下来做什么。生成式智能体 Generative Agents 的规划 planning 很有启发性，因为它不是只生成下一句话，而是生成一天的生活节奏，并把粗计划拆成具体行动。生成式智能体 Generative Agents 继承了这套机制。但到了 2026 年，只靠日程拆解已经不能覆盖更复杂的智能体 agent 行为。例如：
 
 ```text
 伊莎贝拉希望至少三位居民知道派对，并让两位居民实际到场。
@@ -10,10 +10,10 @@
 
 这不是普通日程问题。它是目标驱动问题。本章聚焦六个问题：
 
-1. 当前 Generative Agents 的 planning 如何工作？
+1. 当前生成式智能体 Generative Agents 的规划 planning 如何工作？
 2. 日程规划和目标规划有什么区别？
 3. ReAct、Tree of Thoughts 和 LATS 给我们什么启发？
-4. 如何给当前项目增加 Goal 对象？
+4. 如何给当前项目增加目标 Goal 对象？
 5. 如何实现多候选行动选择和轻量工具调用？
 6. 如何评价规划升级是否真的有效？
 
@@ -33,9 +33,13 @@ flowchart TD
 
 *图 34-1：从日程规划到目标驱动行动的升级结构。目标驱动规划不是替代日程，而是在日程之上增加目标、候选行动和反馈评估。*
 
+![图 34-2：目标驱动规划在小镇里怎样落地](../../assets/chapter_34/ch34_goal_planning_dashboard.png)
+
+*图 34-2：目标驱动规划在小镇里怎样落地。图片使用真实断点 checkpoint 中的日程 schedule 片段，把主动目标 active 目标 goal、候选行动 candidate actions、目标贡献目标贡献 goal contribution、自然性 naturalness 和进度 progress 组合成规划仪表盘。*
+
 ## 34.2 当前规划系统的三层
 
-Generative Agents 当前规划系统可以分成三层。第一层，日程生成。对应：
+生成式智能体 Generative Agents 当前规划系统可以分成三层。第一层，日程生成。对应：
 
 ```text
 Agent.make_schedule()
@@ -61,7 +65,7 @@ daily schedule -> decomposed plan -> concrete action
 
 这就是角色能在小镇里持续行动的基础。
 
-## 34.3 Schedule 的数据结构
+## 34.3 日程 Schedule 的数据结构
 
 `Schedule` 位于：
 
@@ -89,11 +93,11 @@ self.max_try = max_try
 }
 ```
 
-这里的 `start` 和 `duration` 都是分钟数。`current_plan()` 会根据当前虚拟时间找到正在执行的计划。如果有 decompose，就返回当前子计划。否则返回粗计划本身。这套结构简单、清晰、适合教学。它让读者可以在 checkpoint 中看到角色当天怎么安排。
+这里的 `start` 和 `duration` 都是分钟数。`current_plan()` 会根据当前虚拟时间找到正在执行的计划。如果有 decompose，就返回当前子计划。否则返回粗计划本身。这套结构简单、清晰、适合教学。它让读者可以在断点 checkpoint 中看到角色当天怎么安排。
 
 ## 34.4 当前日程生成流程
 
-`Agent.make_schedule()` 会做几件事。第一，如果当天还没有 schedule，就生成新日程。第二，如果已有记忆，会先检索近期重要内容，更新 `scratch.currently`。第三，生成起床时间。
+`Agent.make_schedule()` 会做几件事。第一，如果当天还没有日程 schedule，就生成新日程。第二，如果已有记忆，会先检索近期重要内容，更新 `scratch.currently`。第三，生成起床时间。
 
 ```python
 wake_up = self.completion("wake_up")
@@ -105,7 +109,7 @@ wake_up = self.completion("wake_up")
 init_schedule = self.completion("schedule_init", wake_up)
 ```
 
-第五，生成全天 schedule。
+第五，生成全天日程 schedule。
 
 ```python
 schedule_daily
@@ -118,7 +122,7 @@ if len(set(schedule.values())) >= self.schedule.diversity:
     break
 ```
 
-第七，把 schedule 写入 `daily_schedule`。第八，把当天计划作为 thought 写入记忆。这说明当前规划已经不是无状态生成。它会用近期记忆更新角色当前状态，再生成日程。
+第七，把日程 schedule 写入 `daily_schedule`。第八，把当天计划作为想法 thought 写入记忆。这说明当前规划已经不是无状态生成。它会用近期记忆更新角色当前状态，再生成日程。
 
 ## 34.5 当前行动落地流程
 
@@ -137,7 +141,7 @@ address = self.spatial.find_address(describes[0], as_list=True)
 如果找不到，就逐层判断：
 
 - sector。
-- arena。
+- 场所 arena。
 - object。
 
 最后生成下面结果，用于验证前文判断：
@@ -146,11 +150,11 @@ address = self.spatial.find_address(describes[0], as_list=True)
 memory.Action(...)
 ```
 
-这一步非常关键。因为规划如果不能落到空间，就只是文本。可信小镇要求角色真的走向某个地点，占用某个对象，并在 movement 中留下轨迹。
+这一步非常关键。因为规划如果不能落到空间，就只是文本。可信小镇要求角色真的走向某个地点，占用某个对象，并在移动回放 movement 中留下轨迹。
 
 ## 34.6 当前规划系统的优势
 
-当前规划系统有四个明显优势。第一，它符合日常生活结构。角色不是每一步随机决定，而是围绕一天计划行动。第二，它支持细粒度行动。粗计划可以被拆成子任务。第三，它能被打断和修订。`schedule_revise` 可以根据行动修改后续计划。第四，它与空间系统连接。行动不是纯文本，而会落到 Maze 地址树。这些能力足以支撑小镇生活仿真。但它们不等于复杂目标规划。
+当前规划系统有四个明显优势。第一，它符合日常生活结构。角色不是每一步随机决定，而是围绕一天计划行动。第二，它支持细粒度行动。粗计划可以被拆成子任务。第三，它能被打断和修订。`schedule_revise` 可以根据行动修改后续计划。第四，它与空间系统连接。行动不是纯文本，而会落到世界地图 Maze 地址树。这些能力足以支撑小镇生活仿真。但它们不等于复杂目标规划。
 
 ## 34.7 日程规划和目标规划的区别
 
@@ -205,7 +209,7 @@ ReAct 强调 reasoning 和 acting 的交替。也就是：
 再行动
 ```
 
-Generative Agents 当前已经有类似循环：
+生成式智能体 Generative Agents 当前已经有类似循环：
 
 ```text
 percept -> make_plan -> act -> percept
@@ -229,7 +233,7 @@ percept -> make_plan -> act -> percept
 trace
 ```
 
-或保存在 goal 进度中。
+或保存在目标 goal 进度中。
 
 ## 34.9 Tree of Thoughts 的启发
 
@@ -255,7 +259,7 @@ Tree of Thoughts 的核心启发是：
 哪个行动最符合角色性格？
 ```
 
-这不是让 agent 变成计算器。而是让复杂决策多一步比较。
+这不是让智能体 agent 变成计算器。而是让复杂决策多一步比较。
 
 ## 34.10 LATS 的启发
 
@@ -289,9 +293,9 @@ LATS 将语言推理、行动和规划放到树搜索框架中。对小镇项目
 复杂目标不应只靠当前一步生成，而应保留候选路径和反馈。
 ```
 
-## 34.11 升级方向一：Goal 对象
+## 34.11 升级方向一：目标 Goal 对象
 
-第一项可落地升级是引入 Goal 对象。示例：
+第一项可落地升级是引入目标 Goal 对象。示例：
 
 ```json
 {
@@ -312,11 +316,23 @@ LATS 将语言推理、行动和规划放到树搜索框架中。对小镇项目
 }
 ```
 
-Goal 对象解决三个问题。第一，把长期目标显式化。第二，把成功标准写清楚。第三，把进度从自然语言中抽出来。这不是替代 persona。persona 是角色是谁。goal 是角色当前要达成什么。
+目标对象目标 Goal 解决三个问题。第一，把长期目标显式化。第二，把成功标准写清楚。第三，把进度从自然语言中抽出来。这不是替代角色设定 persona。persona 是角色是谁。目标 goal 是角色当前要达成什么。
 
-## 34.12 Goal 应该放在哪里
+目标对象逻辑图：
 
-有三种实现方式。第一，作为新的 memory node_type：
+```mermaid
+flowchart TD
+    Goal["目标 Goal 对象"] --> Owner["目标拥有者 owner"]
+    Goal --> Criteria["成功标准 success_criteria"]
+    Goal --> Deadline["截止时间 deadline"]
+    Goal --> Progress["进度 progress"]
+    Progress --> Planning["影响日程与行动选择"]
+    Progress --> Evaluation["支持实验评价"]
+```
+
+## 34.12 目标 Goal 应该放在哪里
+
+有三种实现方式。第一，作为新的记忆类型记忆 memory node_type：
 
 ```text
 goal
@@ -328,7 +344,7 @@ goal
 generative_agents/modules/memory/goal.py
 ```
 
-定义 `Goal` 类。优点是结构清晰。缺点是需要修改 agent 序列化。第三，作为 `Scratch` 的扩展。把当前目标放入 scratch。优点是 prompt 使用方便。缺点是长期证据和进度管理较弱。本书建议：
+定义 `Goal` 类。优点是结构清晰。缺点是需要修改智能体 agent 序列化。第三，作为 `Scratch` 的扩展。把当前目标放入草稿状态 scratch。优点是提示词 prompt 使用方便。缺点是长期证据和进度管理较弱。本书建议：
 
 ```text
 先以 memory node_type 实验，再逐步独立成 Goal 类。
@@ -338,7 +354,7 @@ generative_agents/modules/memory/goal.py
 
 ## 34.13 升级方向二：目标驱动日程
 
-有了 Goal 后，生成日程时就不应只看 persona 和 currently。还应看当前目标。例如：
+有了目标 Goal 后，生成日程时就不应只看 persona 和 currently。还应看当前目标。例如：
 
 ```text
 伊莎贝拉有一个 active goal：让至少三位居民知道派对。
@@ -351,7 +367,7 @@ generative_agents/modules/memory/goal.py
 - 确认参加者。
 - 17:00 前回到咖啡馆。
 
-可以新增 prompt：
+可以新增提示词 prompt：
 
 ```text
 goal_influence_schedule.txt
@@ -361,7 +377,7 @@ goal_influence_schedule.txt
 
 - persona。
 - currently。
-- active goals。
+- 主动目标 active goals。
 - recent memories。
 
 对应的输出结果应该类似这样：
@@ -412,7 +428,7 @@ generate_candidate_actions
 ]
 ```
 
-选择时不只看 goal contribution。还要看：
+选择时不只看目标贡献目标贡献 goal contribution。还要看：
 
 - 是否符合当前时间。
 - 是否符合当前位置。
@@ -422,9 +438,20 @@ generate_candidate_actions
 
 这一步是 Tree of Thoughts 思想的轻量版本。
 
+候选行动逻辑图：
+
+```mermaid
+flowchart TD
+    Current["当前 de_plan 与 active 目标 goal"] --> Generate["生成候选行动"]
+    Generate --> Score["评分 goal_contribution / 时间 / 地点 / 性格"]
+    Score --> Choose["选择行动 choose_action"]
+    Choose --> Action["生成 Action 并写入世界地图 Maze"]
+    Action --> Feedback["后续更新目标进度 goal progress"]
+```
+
 ## 34.15 升级方向四：目标进度评估
 
-目标驱动规划必须知道进度。否则 agent 无法判断下一步。可以新增：
+目标驱动规划必须知道进度。否则智能体 agent 无法判断下一步。可以新增：
 
 ```text
 goal_evaluate_progress.txt
@@ -432,10 +459,10 @@ goal_evaluate_progress.txt
 
 对应的输入内容可以这样写：
 
-- goal。
+- 目标 goal。
 - 最近对话。
 - 最近行动。
-- movement 或地点记录。
+- 移动回放 movement 或地点记录。
 
 对应的输出结果应该类似这样：
 
@@ -457,7 +484,7 @@ goal_evaluate_progress.txt
 
 ## 34.16 升级方向五：轻量工具调用
 
-复杂 agent 框架常常引入工具调用。Generative Agents 不必一开始接复杂外部工具。可以先做小镇内部工具。例如：
+复杂智能体 agent 框架常常引入工具调用。生成式智能体 Generative Agents 不必一开始接复杂外部工具。可以先做小镇内部工具。例如：
 
 ```python
 get_current_time()
@@ -467,7 +494,7 @@ get_event_spread(keyword)
 get_current_plan(agent_name)
 ```
 
-这些工具不改变世界，只读取状态。它们能帮助 agent 做更合理规划。例如伊莎贝拉想邀请更多人，可以查询：
+这些工具不改变世界，只读取状态。它们能帮助智能体 agent 做更合理规划。例如伊莎贝拉想邀请更多人，可以查询：
 
 ```text
 谁现在可能在咖啡馆附近？
@@ -479,9 +506,9 @@ get_current_plan(agent_name)
 哪些居民已经听过竞选？
 ```
 
-工具调用要谨慎。如果 agent 直接获得全局上帝视角，社会仿真会失真。因此工具应该区分：
+工具调用要谨慎。如果智能体 agent 直接获得全局上帝视角，社会仿真会失真。因此工具应该区分：
 
-- agent 可知工具。
+- 智能体 agent 可知工具。
 - 实验分析工具。
 
 角色自己不应随便知道所有人的位置。除非这是环境设定允许的。
@@ -536,6 +563,17 @@ lesson
 每次邀请后更新 goal progress。
 ```
 
+实验逻辑图：
+
+```mermaid
+flowchart TD
+    Baseline["默认系统：currently + 日程 + 偶遇"] --> Compare["对照实验"]
+    Upgrade["升级系统：主动目标 active 目标 goal + 目标进度 progress"] --> Compare
+    Compare --> Metrics["统计邀请人数、接受人数、到场人数"]
+    Metrics --> Evidence["绑定对话记录 conversation 与移动回放 movement 证据"]
+    Evidence --> Verdict["判断目标规划是否真的改善行为"]
+```
+
 这一项可以这样评价：
 
 - 信息传播覆盖率是否提升。
@@ -584,7 +622,7 @@ candidate_selection_quality
 goal_progress_accuracy
 ```
 
-系统记录的目标进度是否与真实对话和 movement 一致。
+系统记录的目标进度是否与真实对话和移动回放 movement 一致。
 
 ```text
 naturalness_score
@@ -594,10 +632,10 @@ naturalness_score
 
 ## 34.20 风险与边界
 
-规划升级的主要风险有四类。第一，过度工具化。角色为了完成目标频繁打断日常生活。第二，上帝视角。如果工具让角色知道不该知道的信息，社会仿真会失真。第三，指标驱动。如果只优化目标完成率，角色可能做出不符合人设的行为。第四，成本上升。多候选行动和评分会显著增加 LLM 调用。因此建议：
+规划升级的主要风险有四类。第一，过度工具化。角色为了完成目标频繁打断日常生活。第二，上帝视角。如果工具让角色知道不该知道的信息，社会仿真会失真。第三，指标驱动。如果只优化目标完成率，角色可能做出不符合人设的行为。第四，成本上升。多候选行动和评分会显著增加大语言模型 LLM 调用。因此建议：
 
-- 只对重要 goal 使用多候选。
-- 日常行动仍使用普通 schedule。
+- 只对重要目标 goal 使用多候选。
+- 日常行动仍使用普通日程 schedule。
 - 工具调用限制在角色可知范围内。
 - 评价时同时看成功率和可信度。
 
@@ -612,12 +650,12 @@ naturalness_score
 | 当前三层规划 | 当前规划由日程生成、日程分解和行动落地三层构成。 |
 | `Schedule` | `Schedule` 保存 daily_schedule，并通过 `current_plan()` 找到当前计划。 |
 | `make_schedule()` | 它会根据记忆更新 currently，再生成当天日程。 |
-| `_determine_action()` | 它把当前计划映射到 Maze 地址和对象，是行动落地关键。 |
+| `_determine_action()` | 它把当前计划映射到世界地图 Maze 地址和对象，是行动落地关键。 |
 | 日程 vs 目标 | 日程规划回答“什么时候做什么”，目标规划回答“为了达成目标下一步怎么做”。 |
-| ReAct 启发 | 保存 reasoning / action / observation 闭环。 |
+| ReAct 启发 | 保存 reasoning / 行动 action / observation 闭环。 |
 | Tree of Thoughts 启发 | 生成多个候选行动并评估。 |
 | LATS 启发 | 保留候选路径和反馈，而不是只生成当前一步。 |
-| 可落地升级 | Goal 对象、目标驱动日程、多候选行动选择、目标进度评估、轻量工具调用和行动反馈闭环。 |
+| 可落地升级 | 目标 Goal 对象、目标驱动日程、多候选行动选择、目标进度评估、轻量工具调用和行动反馈闭环。 |
 | 评价要求 | 规划升级必须同时评价目标完成率、计划合理性、进度准确性和行为自然性。 |
 
 下一章讨论多智能体协作升级。目标规划解决单个角色如何围绕目标行动；多智能体协作要解决多个角色如何围绕共享目标分工、同步和协商。
@@ -627,7 +665,7 @@ naturalness_score
 - ReAct: https://arxiv.org/abs/2210.03629
 - Tree of Thoughts: https://arxiv.org/abs/2305.10601
 - LATS: https://arxiv.org/abs/2310.04406
-- Generative Agents: https://arxiv.org/abs/2304.03442
+- 生成式智能体 Generative Agents: https://arxiv.org/abs/2304.03442
 - Local source: `generative_agents/modules/memory/schedule.py`
 - Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/prompt/scratch.py`

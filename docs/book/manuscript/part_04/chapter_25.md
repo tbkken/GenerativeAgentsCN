@@ -2,7 +2,7 @@
 
 ## 25.1 核心问题
 
-上一章复现了情人节派对传播。镇长竞选信息扩散是另一条论文经典社会现象。在论文中，Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。Generative Agents 中，山姆保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
+上一章复现了情人节派对传播。镇长竞选信息扩散是另一条论文经典社会现象。在论文中，Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。生成式智能体 Generative Agents 中，山姆保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
 
 ```text
 时间 + 地点 + 是否参加
@@ -37,18 +37,22 @@ flowchart LR
     Retell --> Others["更多居民获知"]
     Memory --> Attitude["形成支持/观望/反对"]
     Others --> Attitude
-    Attitude --> Evidence["conversation / simulation 证据"]
+    Attitude --> Evidence["对话记录 conversation / 时间线 simulation 证据"]
 ```
 
 *图 25-1：山姆竞选信息扩散路径。竞选实验不只看消息有没有传播，还要看不同角色如何根据身份和关系形成不同态度。*
+
+![图 25-2：山姆竞选实验的角色与证据设计板](../../assets/chapter_25/ch25_election_evidence_board.png)
+
+*图 25-2：山姆竞选实验的角色与证据设计板。图片从山姆、汤姆、约翰和伊莎贝拉的真实角色配置 agent.json 与头像 portrait 生成，突出竞选信息源头、反对态度、公共话题节点和对话证据链。*
 
 ## 25.2 实验目标
 
 本实验目标有三层。第一层，信息是否扩散。仿真开始时，山姆知道自己要竞选镇长。运行后，其他角色是否知道？第二层，扩散路径是否可追踪。谁从山姆那里听到？谁又告诉别人？每条路径是否能在 `conversation.json` 中找到？第三层，态度是否有差异。居民是否表现出支持、怀疑、反对或追问？这三层对应不同能力：
 
-- memory 支撑知道。
-- dialogue 支撑传播。
-- reflection 和 relation 支撑态度。
+- 记忆 memory 支撑知道。
+- 对话 dialogue 支撑传播。
+- 反思 reflection 和关系 relation 支撑态度。
 
 ## 25.3 推荐角色
 
@@ -85,6 +89,19 @@ cd generative_agents
 python start.py --name book-election-small --start "20240213-08:00" --step 72 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉" --verbose info --log book-election-small.log
 ```
 
+实验逻辑图：
+
+```mermaid
+flowchart TD
+    Command["运行竞选实验命令"] --> Sam["检查山姆 currently 与首个摘要 summary"]
+    Sam --> Sim["推进仿真仿真步 step"]
+    Sim --> Log["观察 S/F/R 与 JSON 解析稳定性"]
+    Log --> Conversation["读取 conversation.json"]
+    Conversation --> Diffusion["整理传播路径"]
+    Diffusion --> Attitude["记录支持、怀疑、反对或观望"]
+    Attitude --> Report["写入实验记录"]
+```
+
 竞选实验启动后，第一眼先看山姆的 `reset` 和第一个 `summary`。山姆的 `currently` 应该明确包含“竞选地方市长”之类的设定；后续 `summary` 中应该出现打理公园、与邻居交谈、检查竞选材料、讨论政策等行动。如果日志里山姆只是在做普通家务，说明实验没有被竞选事件牵引起来。
 
 控制台还要看 `S/F/R`。竞选实验对结构化输出很敏感，因为一次错误的地点选择或对话判断，就可能让传播路径断掉。`F` 持续增加，或者反复出现 JSON 解析失败时，不要急着读 `simulation.md`，先处理模型输出稳定性。
@@ -109,7 +126,18 @@ results/compressed/book-election-small/movement.json
 | --- | --- | --- |
 | `simulation.md` | 山姆相关时间线、活动和对话摘要 | 竞选话题是否进入小镇故事线 |
 | `conversation.json` | 谁向谁提到竞选、在哪个地点、具体说了什么 | 信息扩散路径是否可追踪，态度是否来自真实对话 |
-| `movement.json` | 角色在关键时间段的位置和 action | 竞选话题是否发生在合理场景中，角色是否只是路过 |
+| `movement.json` | 角色在关键时间段的位置和行动 action | 竞选话题是否发生在合理场景中，角色是否只是路过 |
+
+证据逻辑图：
+
+```mermaid
+flowchart TD
+    Simulation["simulation.md"] --> Topic["定位竞选话题出现时间"]
+    Topic --> Conversation["conversation.json 追踪谁对谁说"]
+    Conversation --> Attitude["抽取态度词与追问内容"]
+    Attitude --> Movement["movement.json 检查地点合理性"]
+    Movement --> Verdict["判断传播路径和态度差异是否成立"]
+```
 
 竞选实验不要只问“多少人知道山姆竞选”。还要问：他们从哪里知道，是否正确转述，是否表达支持、怀疑、反对或观望。`conversation.json` 通常是最关键的证据文件；`simulation.md` 用来快速定位线索；`movement.json` 用来确认对话和行动是否落在合理地点。
 
@@ -176,7 +204,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 | 09:20 | 山姆 | 伊莎贝拉 | 霍布斯咖啡馆 | 山姆提到竞选镇长 | conversation.json |
 | 10:10 | 伊莎贝拉 | 约翰 | 霍布斯咖啡馆 | 伊莎贝拉转述山姆竞选 | conversation.json |
 
-每条传播都要有证据。如果某个角色后来说知道山姆竞选，但没有上游对话或 memory，就不能算真实传播。
+每条传播都要有证据。如果某个角色后来说知道山姆竞选，但没有上游对话或记忆 memory，就不能算真实传播。
 
 ## 25.7 态度记录表
 
@@ -220,6 +248,19 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 角色能在后续对话中正确转述山姆竞选，并表达态度或问题。
 ```
 
+判断逻辑图：
+
+```mermaid
+flowchart TD
+    Candidate["角色疑似知道竞选"] --> Evidence{"是否有对话或记忆来源"}
+    Evidence -->|否| Leak["标记为幻觉知道或设定泄漏"]
+    Evidence -->|是| Content{"是否包含山姆与竞选镇长"}
+    Content -->|否| Weak["只算弱相关线索"]
+    Content -->|是| Attitude{"是否表达态度"}
+    Attitude -->|否| Known["知道竞选"]
+    Attitude -->|是| KnownAttitude["知道竞选并形成态度"]
+```
+
 例如，约翰可能会这样说：
 
 ```text
@@ -253,7 +294,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 信息是否到达？角色如何解释？态度是否不同？
 ```
 
-派对实验更依赖 planning 和到场行为。竞选实验更依赖 dialogue、relation memory 和 reflection。派对成功可以用到场率衡量。竞选成功不能只用“知道人数”衡量，还要看：
+派对实验更依赖规划 planning 和到场行为。竞选实验更依赖对话 dialogue、关系记忆 relation memory 和反思 reflection。派对成功可以用到场率衡量。竞选成功不能只用“知道人数”衡量，还要看：
 
 - 是否出现政策讨论。
 - 是否出现支持和反对。
@@ -277,17 +318,17 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 可能原因包括下面几类：
 
 - 山姆日程没有竞选相关活动。
-- `currently` 没被 prompt 使用。
+- `currently` 没被提示词 prompt 使用。
 - 山姆没有遇到其他人。
 - decide_chat 返回 False。
 
 可以按下面步骤排查：
 
 1. 看山姆 `agent.json` 的 currently。
-2. 看山姆 schedule。
+2. 看山姆日程 schedule。
 3. 看山姆活动地点。
-4. 看 conversation 是否有山姆对话。
-5. 必要时延长 step 或加入更容易相遇的角色。
+4. 看对话记录 conversation 是否有山姆对话。
+5. 必要时延长仿真步 step 或加入更容易相遇的角色。
 
 ## 25.13 常见失败二：竞选信息传播但态度单一
 
@@ -301,7 +342,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 1. 看角色 learned 和关系设定是否包含差异。
 2. 看 `summarize_relation` 是否检索到负面关系。
-3. 看 `generate_chat` prompt 是否过度要求友好。
+3. 看 `generate_chat` 提示词 prompt 是否过度要求友好。
 4. 在实验报告中标记“态度过度同质化”。
 
 这不是小问题。可信人工社会需要不同观点。
@@ -310,9 +351,22 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 如果一个角色从未接触山姆，也没有听别人提到，却说知道竞选，就是幻觉。处理方式和派对实验一样：
 
-- 回查 conversation。
-- 回查 memory。
+- 回查对话记录 conversation。
+- 回查记忆 memory。
 - 标记 hallucinated awareness。
+
+诊断逻辑图：
+
+```mermaid
+flowchart TD
+    Claim["角色声称知道竞选"] --> Direct{"是否和山姆聊过"}
+    Direct -->|是| Valid["直接来源成立"]
+    Direct -->|否| Retell{"是否有人转述"}
+    Retell -->|是| Valid
+    Retell -->|否| Memory{"断点 checkpoint 记忆是否有竞选节点"}
+    Memory -->|是| Valid
+    Memory -->|否| Mark["标记 hallucinated awareness"]
+```
 
 竞选实验中幻觉更容易发生，因为“镇长竞选”是常见语义，模型可能凭常识补全。因此证据检查更重要。
 
@@ -378,7 +432,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 
 ## 25.17 扩展实验
 
-可以设计几组扩展。第一，对比有无汤姆。观察负面角色是否影响竞选话题质量。第二，加入更多公共场所角色。看咖啡馆和市场是否成为传播中心。第三，调整 `generate_chat` prompt。减少过度礼貌，看是否增加真实分歧。第四，调整 reflection。看居民是否形成关于山姆的长期政治态度。第五，跨天运行。看第二天是否还有人记得山姆竞选。竞选实验比派对更适合观察长期观点形成。
+可以设计几组扩展。第一，对比有无汤姆。观察负面角色是否影响竞选话题质量。第二，加入更多公共场所角色。看咖啡馆和市场是否成为传播中心。第三，调整 `generate_chat` 提示词 prompt。减少过度礼貌，看是否增加真实分歧。第四，调整反思 reflection。看居民是否形成关于山姆的长期政治态度。第五，跨天运行。看第二天是否还有人记得山姆竞选。竞选实验比派对更适合观察长期观点形成。
 
 ## 25.18 本章小结
 
@@ -394,7 +448,7 @@ python start.py --name book-election-extended --start "20240213-08:00" --step 96
 | 态度分类 | 支持、怀疑、反对、观望、未知，比单一“知道/不知道”更有信息量。 |
 | 失败暴露 | 竞选实验更容易暴露过度礼貌和角色差异不足。 |
 | 幻觉处理 | 幻觉知道必须单独标记，不能算有效传播。 |
-| 扩展方向 | 后续可以加入跨天记忆、reflection 和 prompt 改造。 |
+| 扩展方向 | 后续可以加入跨天记忆、反思 reflection 和提示词 prompt 改造。 |
 
 下一章设计自己的小镇事件：从论文复现转向项目扩展，学习如何设计新事件并让它进入角色设定、日程、对话和评价链路。
 

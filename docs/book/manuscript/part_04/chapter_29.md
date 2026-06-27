@@ -14,18 +14,18 @@
 我们如何判断一个智能体是否真的“可信”？
 ```
 
-这个问题不能靠感觉。“看起来有意思”不是可信。“对话很流畅”不是可信。“任务成功完成”也不一定是可信。Generative Agents 论文中的 believable behavior，指的是一种行为连续性：
+这个问题不能靠感觉。“看起来有意思”不是可信。“对话很流畅”不是可信。“任务成功完成”也不一定是可信。生成式智能体 Generative Agents 论文中的 believable behavior，指的是一种行为连续性：
 
 ```text
 角色的行动、记忆、计划、关系、反应和环境约束能够互相支撑。
 ```
 
-这个概念需要转化为 Generative Agents 的可操作评价框架。评价框架要回答七个问题：
+这个概念需要转化为生成式智能体 Generative Agents 的可操作评价框架。评价框架要回答七个问题：
 
 1. 为什么不能用“像不像人”评价智能体？
 2. 可信行为需要哪些证据？
 3. 如何区分语言可信、记忆可信和行动可信？
-4. 如何从 `simulation.md`、`conversation.json`、checkpoint 和 `movement.json` 收集证据？
+4. 如何从 `simulation.md`、`conversation.json`、断点 checkpoint 和 `movement.json` 收集证据？
 5. 如何给智能体行为打分？
 6. 如何做多个模型、多个版本或多个实验之间的比较？
 7. 如何把失败样例转化成系统改进方向？
@@ -41,6 +41,10 @@ flowchart TD
 ```
 
 *图 29-1：可信行为的六层证据链。评价可信性时要同时检查身份、记忆、计划、反应、传播和行动落地，不能只看对话是否顺。*
+
+![图 29-2：可信行为评价的六层证据桌](../../assets/chapter_29/ch29_credible_behavior_evidence_desk.png)
+
+*图 29-2：可信行为评价的六层证据桌。图片把角色身份 persona、记忆 memory、日程 schedule、反应 reacting、传播 diffusion 和移动回放 movement 组织成同一张评价桌，提醒读者不要只凭自然对话下结论。*
 
 ## 29.2 “可信”不是“真实”
 
@@ -89,10 +93,10 @@ flowchart TD
 这句话与角色身份一致吗？
 ```
 
-如果这些都无法追溯，那么它只是流畅文本，不是可信行为。Generative Agents 的优势是可以追证据。读者可以查：
+如果这些都无法追溯，那么它只是流畅文本，不是可信行为。生成式智能体 Generative Agents 的优势是可以追证据。读者可以查：
 
 - `agent.json` 中的角色设定。
-- checkpoint 中的记忆和日程。
+- 断点 checkpoint 中的记忆和日程。
 - `conversation.json` 中的对话。
 - `simulation.md` 中的活动时间线。
 - `movement.json` 中的位置移动。
@@ -110,16 +114,16 @@ flowchart TD
 5. 社会传播可信度是否足够。
 6. 行动落地能力是否可验证。
 
-这六个维度对应论文架构。身份一致性对应 persona 和 scratch。记忆连续性对应 memory stream 和 retrieval。计划合理性对应 planning 和 schedule。反应合理性对应 reacting。社会传播可信度对应 dialogue、memory 和 multi-agent interaction。行动落地能力对应 sandbox grounding、maze 和 movement。用这六个维度，可以把“这个智能体像不像人”拆成可检查问题。
+这六个维度对应论文架构。身份一致性对应 persona 和草稿状态 scratch。记忆连续性对应记忆流 memory stream 和检索 retrieval。计划合理性对应规划 planning 和日程 schedule。反应合理性对应反应 reacting。社会传播可信度对应对话 dialogue、记忆 memory 和多智能体互动 multi-agent interaction。行动落地能力对应沙盒落地 sandbox grounding、世界地图 maze 和移动回放 movement。用这六个维度，可以把“这个智能体像不像人”拆成可检查问题。
 
 | 评价维度 | 看什么 | 主要证据 | 常见失败 |
 | --- | --- | --- | --- |
 | 身份一致性 | 行为是否符合角色职业、性格和背景。 | `agent.json`、访谈回答、日程和对话。 | 角色忘记职业、语气漂移、行为和设定冲突。 |
-| 记忆连续性 | 是否记得关键事件、来源和关系。 | memory、conversation、simulation.md。 | 刚发生就遗忘，或编造不存在的经历。 |
-| 计划合理性 | 日程是否有节奏，是否能被事件合理打断。 | schedule、action、movement.json。 | 一直聊天、不去目标地点、重规划不合理。 |
+| 记忆连续性 | 是否记得关键事件、来源和关系。 | 记忆 memory、对话记录 conversation、simulation.md。 | 刚发生就遗忘，或编造不存在的经历。 |
+| 计划合理性 | 日程是否有节奏，是否能被事件合理打断。 | 日程 schedule、行动 action、movement.json。 | 一直聊天、不去目标地点、重规划不合理。 |
 | 反应合理性 | 遇到人和事件时是否反应得当。 | `_reaction()`、聊天记录、等待行为。 | 无视重要事件，或对小事过度反应。 |
-| 社会传播可信度 | 信息是否通过对话和记忆逐步扩散。 | 多人 conversation、传播路径、到场记录。 | 所有人突然知道，或信息完全不扩散。 |
-| 行动落地能力 | 语言承诺是否转化为地点、对象和时间上的行动。 | movement.json、checkpoint、前端回放。 | 口头答应但不到场，行动和地点不匹配。 |
+| 社会传播可信度 | 信息是否通过对话和记忆逐步扩散。 | 多人对话记录 conversation、传播路径、到场记录。 | 所有人突然知道，或信息完全不扩散。 |
+| 行动落地能力 | 语言承诺是否转化为地点、对象和时间上的行动。 | movement.json、断点 checkpoint、前端回放。 | 口头答应但不到场，行动和地点不匹配。 |
 
 *表 29-1：可信行为六维评价表。可信性评价必须同时看文本、记忆、计划、空间行动和社会传播，不能只看对话是否自然。*
 
@@ -195,7 +199,7 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
 她是否把时间、地点、发起者说对？
 ```
 
-记忆连续性可以分成四层。第一层，接触事实。角色是否真的经历过事件。第二层，写入记忆。事件是否进入 agent 的关联记忆或聊天记录。第三层，正确召回。后续是否能在相关场景想起它。第四层，影响行为。记忆是否改变了对话、计划或行动。如果只达到第一层，不算强记忆。如果达到第四层，说明 memory stream 真正进入行为闭环。
+记忆连续性可以分成四层。第一层，接触事实。角色是否真的经历过事件。第二层，写入记忆。事件是否进入智能体 agent 的关联记忆或聊天记录。第三层，正确召回。后续是否能在相关场景想起它。第四层，影响行为。记忆是否改变了对话、计划或行动。如果只达到第一层，不算强记忆。如果达到第四层，说明记忆流 memory stream 真正进入行为闭环。
 
 ## 29.7 记忆评价的证据链
 
@@ -217,6 +221,18 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
 克劳斯再把这件事纳入自己的计划或对话。
 ```
 
+记忆评价逻辑图：
+
+```mermaid
+flowchart TD
+    Experience["对话或观察发生"] --> Store["事件写入记忆"]
+    Store --> Retrieve["后续上下文正确召回"]
+    Retrieve --> Use["角色表达或行动使用该信息"]
+    Use --> Score["给出记忆连续性评分"]
+    Store --> Missing{"中间缺证据"}
+    Missing --> Diagnose["定位为未写入、未召回或事实变形"]
+```
+
 这条链越完整，记忆越可信。如果玛丽亚从未见过伊莎贝拉，却突然说自己知道派对，应该标记为幻觉或设定泄漏。如果玛丽亚听过派对，但后续完全忘记，说明传播失败或检索失败。如果玛丽亚记得派对，但说错时间地点，说明事实保持能力不足。这些都不是“失败了就完了”。它们是定位系统问题的线索。
 
 ## 29.8 维度三：计划合理性
@@ -227,7 +243,7 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
 角色的日程是否符合身份、时间和环境？
 ```
 
-Generative Agents 的计划不是临时动作列表。它从较粗日程生成，再逐步拆成具体行动。评价计划时要看四点。第一，时间合理。例如：
+生成式智能体 Generative Agents 的计划不是临时动作列表。它从较粗日程生成，再逐步拆成具体行动。评价计划时要看四点。第一，时间合理。例如：
 
 - 睡觉时间不要频繁被不合理打断。
 - 早餐、午餐、晚餐大致符合生活节奏。
@@ -334,7 +350,7 @@ sleep_consistency_score
 信息是否通过人际互动自然扩散，并在传播中保持核心事实？
 ```
 
-这是 Generative Agents 最重要的魅力之一。但也是最容易被误判的地方。一个事件被多人提到，不一定说明传播成功。可能是每个人初始设定里都知道。可能是模型幻觉。可能是 prompt 泄漏。可能是压缩文本让读者误以为发生了传播。可信传播至少要满足三点。第一，有源头。例如派对源头是伊莎贝拉，竞选源头是山姆。第二，有路径。例如：
+这是生成式智能体 Generative Agents 最重要的魅力之一。但也是最容易被误判的地方。一个事件被多人提到，不一定说明传播成功。可能是每个人初始设定里都知道。可能是模型幻觉。可能是提示词 prompt 泄漏。可能是压缩文本让读者误以为发生了传播。可信传播至少要满足三点。第一，有源头。例如派对源头是伊莎贝拉，竞选源头是山姆。第二，有路径。例如：
 
 ```text
 伊莎贝拉 -> 玛丽亚 -> 克劳斯
@@ -404,13 +420,13 @@ attitude_diversity_score
 角色说过或计划过的事，是否真的变成环境中的行动？
 ```
 
-这是很多 agent demo 最薄弱的地方。角色可以说：
+这是很多智能体 demo 最薄弱的地方。角色可以说：
 
 ```text
 我下午五点会去咖啡馆。
 ```
 
-但如果 movement 中它没有去咖啡馆，这只是口头承诺。Generative Agents 的回放数据可以帮助检查行动落地。主要看：
+但如果移动回放 movement 中它没有去咖啡馆，这只是口头承诺。生成式智能体 Generative Agents 的回放数据可以帮助检查行动落地。主要看：
 
 ```text
 generative_agents/results/compressed/<实验名>/movement.json
@@ -469,6 +485,17 @@ generative_agents/results/compressed/<实验名>/simulation.md
 - 对应文件。
 - 判断理由。
 
+评分逻辑图：
+
+```mermaid
+flowchart TD
+    Dimension["评价维度"] --> Evidence["收集证据行"]
+    Evidence --> Rubric["套用 1-5 分规则"]
+    Rubric --> Score["给出分数"]
+    Score --> Reason["写明扣分理由"]
+    Reason --> Compare["用于模型或版本比较"]
+```
+
 ## 29.15 可信行为评分表模板
 
 可以使用下面这个模板：
@@ -520,15 +547,27 @@ remote-strong-party-2h
 
 这张表比一句“远程模型更好”有价值。因为它指出：
 
+比较逻辑图：
+
+```mermaid
+flowchart TD
+    RunA["实验 A"] --> SixA["六维评分"]
+    RunB["实验 B"] --> SixB["六维评分"]
+    SixA --> Diff["逐维比较差异"]
+    SixB --> Diff
+    Diff --> Bottleneck["定位最大瓶颈"]
+    Bottleneck --> Improve["转成下一轮改进方向"]
+```
+
 ```text
 最大的瓶颈不是对话，而是行动落地。
 ```
 
-后续优化就应该关注 schedule 修订、目标地点选择和 movement 证据，而不是盲目换模型。
+后续优化就应该关注日程 schedule 修订、目标地点选择和移动回放 movement 证据，而不是盲目换模型。
 
 ## 29.17 受控评价：采访智能体
 
-除了看回放，还可以做中文 controlled evaluation。方法是：
+除了看回放，还可以做中文 controlled 评价 evaluation。方法是：
 
 ```text
 在某个实验运行后，向智能体提问，检查回答是否与经历一致。
@@ -585,7 +624,7 @@ remote-strong-party-2h
 - 有派对设定。
 - 有邀请或传播记录。
 - 有接受或计划变化。
-- 有 movement 到场记录。
+- 有移动回放 movement 到场记录。
 - 有活动期间对话或行动描述。
 
 缺少任何一环，都要降低结论强度。
@@ -636,6 +675,17 @@ remote-strong-party-2h
 失败：汤姆明明不喜欢山姆，却表达强烈支持。
 可能原因：对话 prompt 过度鼓励合作，或检索没有召回汤姆对山姆的态度。
 改进方向：检查角色 learned/currently；增加关系记忆在对话上下文中的权重。
+```
+
+失败转化逻辑图：
+
+```mermaid
+flowchart TD
+    Failure["失败样例"] --> Evidence["绑定具体证据"]
+    Evidence --> Hypothesis["提出原因假设"]
+    Hypothesis --> Module["定位模块规划 planning / 记忆 memory / 对话 dialogue / 空间记忆 spatial"]
+    Module --> Change["设计最小改动"]
+    Change --> Rerun["重跑对照实验"]
 ```
 
 这种写法比“效果不好”有价值。因为它把现象、原因和工程动作连接起来。
@@ -703,7 +753,7 @@ remote-strong-party-2h
 - 反思与经验学习。
 - 搜索式规划。
 - 多智能体协作框架。
-- 更严格的 agent benchmark。
+- 更严格的智能体基准 agent benchmark。
 
 这些研究不能只作为“新名词”介绍。它们必须回答一个问题：
 
@@ -714,7 +764,7 @@ remote-strong-party-2h
 可以看一个具体例子：
 
 - MemGPT / Mem0 主要改进记忆连续性。
-- Reflexion 主要改进失败后的经验学习。
+- 反思式学习 Reflexion 主要改进失败后的经验学习。
 - Tree of Thoughts / LATS 主要改进规划和决策搜索。
 - AutoGen / MetaGPT / AgentScope 主要改进多智能体协作组织。
 - AgentBench / WebArena / GAIA 等推动评价标准更严谨。
@@ -732,7 +782,7 @@ remote-strong-party-2h
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 可信定义 | “可信”不是“真实意识”，而是行为、记忆、计划和环境约束的一致性。 |
-| 证据链 | 不能只看对话流畅度，要追踪 `simulation.md`、`conversation.json`、checkpoint 和 `movement.json`。 |
+| 证据链 | 不能只看对话流畅度，要追踪 `simulation.md`、`conversation.json`、断点 checkpoint 和 `movement.json`。 |
 | 六个维度 | 身份一致性、记忆连续性、计划合理性、反应合理性、社会传播可信度和行动落地能力共同构成评价框架。 |
 | 评分规则 | 1-5 分适合教学，但每个分数都必须附具体证据。 |
 | 受控评价 | 适合检查单个智能体能力。 |
@@ -745,7 +795,7 @@ remote-strong-party-2h
 
 ## 参考资料
 
-- Paper: Generative Agents: Interactive Simulacra of Human Behavior
+- Paper: 生成式智能体 Generative Agents: Interactive Simulacra of Human Behavior
 - Local manuscript: `docs/book/manuscript/part_01/chapter_11.md`
 - Local experiment design: `docs/book/04_experiment_design.md`
 - Local compressed result: `generative_agents/results/compressed/<实验名>/simulation.md`
