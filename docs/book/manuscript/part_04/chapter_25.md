@@ -2,7 +2,9 @@
 
 ## 25.1 核心问题
 
-上一章复现了情人节派对传播。镇长竞选信息扩散是另一条论文经典社会现象。在论文中，Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。生成式智能体 Generative Agents 中，山姆保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
+上一章复现了情人节派对传播，本章节我们来学习另外一个传播扩散案例，镇长竞选信息扩散，这是论文中另一条经典社会现象。
+
+在论文中，Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。生成式智能体 Generative Agents 中，山姆保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
 
 ```text
 时间 + 地点 + 是否参加
@@ -23,7 +25,7 @@
 
 1. 镇长竞选实验验证哪些模块？
 2. 角色应该如何选择？
-3. 如何运行小规模与扩展实验？
+3. 如何运行 10 人竞选扩散实验？
 4. 如何判断“知道山姆竞选”？
 5. 如何记录居民态度？
 6. 如何避免把幻觉当传播？
@@ -42,13 +44,19 @@ flowchart LR
 
 *图 25-1：山姆竞选信息扩散路径。竞选实验不只看消息有没有传播，还要看不同角色如何根据身份和关系形成不同态度。*
 
-![图 25-2：山姆竞选实验的角色与证据设计板](../../assets/chapter_25/ch25_election_evidence_board.png)
+![图 25-2：镇长竞选信息扩散证据板](../../assets/chapter_25/ch25_election_evidence_board.png)
 
-*图 25-2：山姆竞选实验的角色与证据设计板。图片从山姆、汤姆、约翰和伊莎贝拉的真实角色配置 agent.json 与头像 portrait 生成，突出竞选信息源头、反对态度、公共话题节点和对话证据链。*
+*图 25-2：镇长竞选信息扩散证据板。图片以山姆、汤姆和约翰的真实头像 portrait 与角色配置 agent.json 为锚点，把 conversation.json、simulation.md、movement.json 和 checkpoint memory 组织成证据链，突出信息源头、传播路径、态度分化和“幻觉知道”判定红线。*
 
 ## 25.2 实验目标
 
-本实验目标有三层。第一层，信息是否扩散。仿真开始时，山姆知道自己要竞选镇长。运行后，其他角色是否知道？第二层，扩散路径是否可追踪。谁从山姆那里听到？谁又告诉别人？每条路径是否能在 `conversation.json` 中找到？第三层，态度是否有差异。居民是否表现出支持、怀疑、反对或追问？这三层对应不同能力：
+本实验目标有三层。
+
+- 第一层，信息是否扩散。仿真开始时，山姆知道自己要竞选镇长。运行后，其他角色是否知道？
+- 第二层，扩散路径是否可追踪。谁从山姆那里听到？谁又告诉别人？每条路径是否能在 `conversation.json` 中找到？
+- 第三层，态度是否有差异。居民是否表现出支持、怀疑、反对或追问？
+
+这三层对应不同能力：
 
 - 记忆 memory 支撑知道。
 - 对话 dialogue 支撑传播。
@@ -56,7 +64,7 @@ flowchart LR
 
 ## 25.3 推荐角色
 
-小规模实验建议使用：
+本章采用 10 人版本作为主实验。这个规模既保留山姆、汤姆、约翰、拉托亚、乔治和伊莎贝拉这组竞选核心角色，也加入阿伊莎、亚当、玛丽亚和克劳斯，用来观察竞选信息是否进入学院和咖啡馆社交圈。建议使用：
 
 ```text
 山姆
@@ -65,20 +73,89 @@ flowchart LR
 拉托亚
 乔治
 伊莎贝拉
-```
-
-这样选择的理由如下：
-
-山姆是信息源。汤姆是关键反对或怀疑节点。项目设定中，汤姆对山姆并不友好，适合观察负面态度。约翰、拉托亚、乔治适合观察信息传播。伊莎贝拉在咖啡馆，容易成为社交枢纽。如果成本允许，可以加入：
-
-```text
 阿伊莎
 亚当
 玛丽亚
 克劳斯
 ```
 
-这样可以观察竞选信息是否进入学院和咖啡馆社交圈。
+这样选择的理由如下：
+
+山姆是信息源。汤姆是关键反对或怀疑节点。项目设定中，汤姆对山姆并不友好，适合观察负面态度。约翰、拉托亚、乔治适合观察信息传播。伊莎贝拉在咖啡馆，容易成为社交枢纽。阿伊莎、亚当、玛丽亚和克劳斯把实验扩展到学院、写作者和咖啡馆常客圈。
+
+```mermaid
+flowchart TD
+    Goal["10 人实验任务 task<br/>验证镇长竞选信息扩散"]
+    Sam["山姆 Sam<br/>信息源 source<br/>currently 写明正在竞选"]
+    Tom["汤姆 Tom<br/>反对压力 opposition<br/>不喜欢山姆"]
+    John["约翰 John<br/>询问节点 inquiry<br/>关心谁参加选举"]
+    Latoya["拉托亚 LaToya<br/>传播观察 observation<br/>选举是交谈核心话题"]
+    George["乔治 George<br/>议题深化 policy discussion<br/>经常谈论选举"]
+    Isabella["伊莎贝拉 Isabella<br/>咖啡馆枢纽 cafe hub<br/>公共对话场景"]
+    Extended["扩展圈 extended circle<br/>阿伊莎 / 亚当 / 玛丽亚 / 克劳斯"]
+    Evidence["证据闭环 evidence<br/>conversation.json / simulation.md / movement.json"]
+    Verdict["实验结论 verdict<br/>知道人数 + 传播路径 + 态度差异 + 幻觉知道"]
+
+    Goal --> Sam
+    Sam -->|宣布竞选| John
+    Sam -->|触发怀疑| Tom
+    Sam -->|进入公共场景| Isabella
+    John -->|询问 / 转述| Evidence
+    Latoya -->|扩散观察| Evidence
+    George -->|政策与策略讨论| Evidence
+    Tom -->|怀疑 / 反对| Evidence
+    Isabella -->|咖啡馆传播| Evidence
+    Extended -->|学院 / 写作者 / 常客圈| Evidence
+    Evidence --> Verdict
+```
+
+*图 25-3：镇长竞选实验任务关系图。山姆负责提供竞选信息源头，汤姆负责制造态度压力，约翰、拉托亚和乔治负责观察竞选话题是否被询问、转述和深化，伊莎贝拉负责提供咖啡馆公共场景，阿伊莎、亚当、玛丽亚和克劳斯负责观察竞选信息是否进入学院、写作者和咖啡馆常客圈。*
+
+再看人物关系。下面这张图不表示竞选信息已经传播，而是说明这些角色为什么适合放在同一组实验中：他们分别处在公园、市场、咖啡馆和学院等自然接触圈里，竞选话题可以通过这些场景进入对话。
+
+```mermaid
+flowchart LR
+    subgraph Source["竞选源头 source"]
+        Sam["山姆 Sam<br/>退役军官 / 公园 / 咖啡馆<br/>正在告诉邻居竞选"]
+    end
+
+    subgraph Market["柳树市场和药店 Market"]
+        Tom["汤姆 Tom<br/>店主<br/>不喜欢山姆"]
+        John["约翰 John<br/>药店店主<br/>主动询问谁参选"]
+    end
+
+    subgraph Cafe["霍布斯咖啡馆 Cafe"]
+        Isabella["伊莎贝拉 Isabella<br/>咖啡馆老板<br/>公共社交枢纽"]
+        Adam["亚当 Adam<br/>写作者<br/>关心地方选举"]
+    end
+
+    subgraph College["奥克山学院 College"]
+        Aisha["阿伊莎 Aisha<br/>文学学生"]
+        Maria["玛丽亚 Maria<br/>物理学生 / 咖啡馆常客"]
+        Klaus["克劳斯 Klaus<br/>社会学学生 / 咖啡馆吃饭"]
+    end
+
+    subgraph Observers["跨圈观察者 observers"]
+        Latoya["拉托亚 LaToya<br/>摄影师<br/>选举是核心话题"]
+        George["乔治 George<br/>数学家<br/>经常谈论选举"]
+    end
+
+    Sam -->|竞选信息源头| John
+    Sam -.->|负面关系：态度测试| Tom
+    Sam -->|公园 / 咖啡馆相遇机会| Isabella
+    John ---|市场同场景| Tom
+    Isabella ---|咖啡馆常客| Maria
+    Isabella ---|咖啡馆饭点| Klaus
+    Isabella ---|公共场所入口| Adam
+    Aisha ---|学院同圈| Maria
+    Maria ---|学院同圈| Klaus
+    Latoya ---|选举话题观察| Aisha
+    Latoya ---|公共场所观察| Isabella
+    George ---|政策 / 数据讨论| Sam
+    George ---|市场或咖啡馆相遇| John
+```
+
+*图 25-4：镇长竞选实验人物关系图。实线表示自然接触机会或话题触发机会，虚线表示汤姆对山姆的负面态度关系。读实验结果时，先用这张图判断哪些相遇是自然的，再回到 `conversation.json` 验证信息是否真的传播。*
 
 ## 25.4 运行命令
 
@@ -86,7 +163,7 @@ flowchart LR
 
 ```bash
 cd generative_agents
-python start.py --name book-election-small --start "20240213-08:00" --step 72 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉" --verbose info --log book-election-small.log
+python start.py --name book-election-extended --start "20240213-08:00" --step 96 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉,阿伊莎,亚当,玛丽亚,克劳斯" --verbose info --log book-election-extended.log
 ```
 
 实验逻辑图：
@@ -109,15 +186,15 @@ flowchart TD
 压缩命令可以直接照着执行：
 
 ```bash
-python compress.py --name book-election-small
+python compress.py --name book-election-extended
 ```
 
 查看命令可以直接照着执行：
 
 ```text
-results/compressed/book-election-small/simulation.md
-results/checkpoints/book-election-small/conversation.json
-results/compressed/book-election-small/movement.json
+results/compressed/book-election-extended/simulation.md
+results/checkpoints/book-election-extended/conversation.json
+results/compressed/book-election-extended/movement.json
 ```
 
 这三个结果文件可以分工阅读：
@@ -163,11 +240,7 @@ flowchart TD
 
 这类早期对话适合标记为“信息源头”；中午与乔治的策略讨论适合标记为“议题深化”。竞选实验的证据表不应该只记录“谁知道”，还要记录信息处在什么阶段：宣布、询问、转述、支持、怀疑、策略讨论，还是政策细化。
 
-掌握这种读法后，再扩大角色数量才有意义。否则日志变长以后，只会更难判断信息到底怎么传播。扩展实验可以这样设计：
-
-```bash
-python start.py --name book-election-extended --start "20240213-08:00" --step 96 --stride 10 --agents "山姆,汤姆,约翰,拉托亚,乔治,伊莎贝拉,阿伊莎,亚当,玛丽亚,克劳斯"
-```
+掌握这种读法后，再读 10 人日志才有意义。否则日志变长以后，只会更难判断信息到底怎么传播。10 人实验中的阿伊莎、亚当、玛丽亚和克劳斯不是为了堆人数，而是为了观察竞选信息是否跨出山姆、汤姆、约翰、拉托亚、乔治和伊莎贝拉组成的核心圈，进入学院、写作者和咖啡馆常客圈。
 
 ## 25.5 观察关键词
 
@@ -442,7 +515,7 @@ flowchart TD
 | --- | --- |
 | 信息源 | 山姆是竞选信息源，汤姆是关键态度测试角色。 |
 | 评价重点 | 实验要同时记录知道、支持、怀疑、反对和观望。 |
-| 推荐角色 | 小规模实验可使用山姆、汤姆、约翰、拉托亚、乔治、伊莎贝拉。 |
+| 推荐角色 | 本章主实验使用山姆、汤姆、约翰、拉托亚、乔治、伊莎贝拉、阿伊莎、亚当、玛丽亚、克劳斯。 |
 | 关键证据 | 运行后重点检查 `conversation.json` 和 `simulation.md`。 |
 | 知道标准 | 判断知道竞选必须有信息来源证据。 |
 | 态度分类 | 支持、怀疑、反对、观望、未知，比单一“知道/不知道”更有信息量。 |

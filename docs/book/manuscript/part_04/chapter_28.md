@@ -42,7 +42,7 @@ flowchart TD
 
 ![图 28-2：模型配置与运行稳定性观察台](../../assets/chapter_28/ch28_model_config_observatory.png)
 
-*图 28-2：模型配置与运行稳定性观察台。图片从真实配置文件 `generative_agents/data/config.json` 和本地运行日志生成，把模型提供方 provider、模型 model、向量嵌入 embedding、结构化输出 JSON 和 S/F/R 稳定性放在一张观察台里。*
+*图 28-2：模型配置与运行稳定性观察台。图片把 `generative_agents/data/config.json`、本地模型接口、JSON Schema 闸门、S/F/R 稳定性和日程、行动、对话、记忆、反思、传播行为链放在同一张观察台里，强调本地模型实验不能只看“能不能聊”。*
 
 ## 28.2 本地模型实验不是部署教程
 
