@@ -4,9 +4,9 @@
 
 前面已经完成三类实验准备：
 
-- 复现论文里的情人节派对传播。
-- 复现镇长竞选信息扩散。
-- 设计自己的小镇事件，并用中文本地模型重跑。
+- 情人节派对传播
+- 镇长竞选信息扩散
+- 设计自己的小镇事件
 
 下一步要回答可信性评价问题：
 
@@ -14,7 +14,12 @@
 我们如何判断一个智能体是否真的“可信”？
 ```
 
-这个问题不能靠感觉。“看起来有意思”不是可信。“对话很流畅”不是可信。“任务成功完成”也不一定是可信。生成式智能体 Generative Agents 论文中的 believable behavior，指的是一种行为连续性：
+这个问题不能靠感觉：
+- “看起来有意思”不是可信
+- “对话很流畅”不是可信
+- “任务成功完成”也不一定是可信
+
+生成式智能体 Generative Agents 论文中的 believable behavior，指的是一种行为连续性：
 
 ```text
 角色的行动、记忆、计划、关系、反应和环境约束能够互相支撑。
@@ -22,7 +27,7 @@
 
 这个概念需要转化为生成式智能体 Generative Agents 的可操作评价框架。评价框架要回答七个问题：
 
-1. 为什么不能用“像不像人”评价智能体？
+1. “像不像人”评价智能体？
 2. 可信行为需要哪些证据？
 3. 如何区分语言可信、记忆可信和行动可信？
 4. 如何从 `simulation.md`、`conversation.json`、断点 checkpoint 和 `movement.json` 收集证据？
@@ -42,13 +47,13 @@ flowchart TD
 
 *图 29-1：可信行为的六层证据链。评价可信性时要同时检查身份、记忆、计划、反应、传播和行动落地，不能只看对话是否顺。*
 
-![图 29-2：可信行为评价的六层证据桌](../../assets/chapter_29/ch29_credible_behavior_evidence_desk.png)
+![图 29-2：可信行为评价的证据审判台](../../assets/chapter_29/ch29_credible_behavior_verdict_board.png)
 
-*图 29-2：可信行为评价的六层证据桌。图片把角色身份 persona、记忆 memory、日程 schedule、反应 reacting、传播 diffusion 和移动回放 movement 组织成同一张评价桌，提醒读者不要只凭自然对话下结论。*
+*图 29-2：可信行为评价的证据审判台。图片把视频回放 replay 放在中央，但让角色身份 persona、记忆 memory、日程 schedule、反应 reacting、传播 diffusion 和移动回放 movement 六层证据同时压上来，提醒读者不要用“视频看起来热闹”替代证据验证。*
 
 ## 29.2 “可信”不是“真实”
 
-先澄清一个重要边界。本书说的“可信”，不是说智能体真的有意识。也不是说它真的拥有主观体验、真实动机或真实社会关系。这里的可信更接近：
+先澄清一个重要边界：本书说的“可信”，不是说智能体真的有意识。也不是说它真的拥有主观体验、真实动机或真实社会关系。这里的可信更接近：
 
 ```text
 在给定设定、环境和历史记录下，智能体的行为是否像一个连续存在的角色。
@@ -199,7 +204,14 @@ generative_agents/results/checkpoints/<实验名>/conversation.json
 她是否把时间、地点、发起者说对？
 ```
 
-记忆连续性可以分成四层。第一层，接触事实。角色是否真的经历过事件。第二层，写入记忆。事件是否进入智能体 agent 的关联记忆或聊天记录。第三层，正确召回。后续是否能在相关场景想起它。第四层，影响行为。记忆是否改变了对话、计划或行动。如果只达到第一层，不算强记忆。如果达到第四层，说明记忆流 memory stream 真正进入行为闭环。
+记忆连续性可以分成四层。
+
+- 第一层，接触事实，角色是否真的经历过事件。
+- 第二层，写入记忆，事件是否进入智能体 agent 的关联记忆或聊天记录。
+- 第三层，正确召回，后续是否能在相关场景想起它。
+- 第四层，影响行为，记忆是否改变了对话、计划或行动。
+
+如果只达到第一层，不算强记忆。如果达到第四层，说明记忆流 memory stream 真正进入行为闭环。
 
 ## 29.7 记忆评价的证据链
 
@@ -233,7 +245,13 @@ flowchart TD
     Missing --> Diagnose["定位为未写入、未召回或事实变形"]
 ```
 
-这条链越完整，记忆越可信。如果玛丽亚从未见过伊莎贝拉，却突然说自己知道派对，应该标记为幻觉或设定泄漏。如果玛丽亚听过派对，但后续完全忘记，说明传播失败或检索失败。如果玛丽亚记得派对，但说错时间地点，说明事实保持能力不足。这些都不是“失败了就完了”。它们是定位系统问题的线索。
+这条链越完整，记忆越可信。
+
+- 如果玛丽亚从未见过伊莎贝拉，却突然说自己知道派对，应该标记为幻觉或设定泄漏。
+- 如果玛丽亚听过派对，但后续完全忘记，说明传播失败或检索失败。
+- 如果玛丽亚记得派对，但说错时间地点，说明事实保持能力不足。
+
+这些都不是“失败了就完了”。它们是定位系统问题的线索。
 
 ## 29.8 维度三：计划合理性
 
@@ -243,7 +261,9 @@ flowchart TD
 角色的日程是否符合身份、时间和环境？
 ```
 
-生成式智能体 Generative Agents 的计划不是临时动作列表。它从较粗日程生成，再逐步拆成具体行动。评价计划时要看四点。第一，时间合理。例如：
+生成式智能体 Generative Agents 的计划不是临时动作列表。它从较粗日程生成，再逐步拆成具体行动。评价计划时要看四点。
+
+第一，时间合理。例如：
 
 - 睡觉时间不要频繁被不合理打断。
 - 早餐、午餐、晚餐大致符合生活节奏。
@@ -261,7 +281,7 @@ flowchart TD
 - 克劳斯写论文期间应有研究、阅读或讨论。
 - 伊莎贝拉筹备派对期间应有准备、邀请或布置。
 
-第四，粒度合理。计划不能太粗。如果一个角色连续数小时只是：
+第四，粒度合理。例如：计划不能太粗。如果一个角色连续数小时只是：
 
 ```text
 做自己的事情。
@@ -271,37 +291,159 @@ flowchart TD
 
 ## 29.9 计划评价的常见指标
 
-计划合理性可以用人工评分，也可以记录一些简单指标。例如：
+计划指标不能只列名字。每个指标都要规定输入数据、统计窗口、分母和判定规则。否则“计划还可以”只是感受，不是评价。
+
+先定义计算口径：
+
+| 符号 | 中文 English | 来源 | 含义 |
+| --- | --- | --- | --- |
+| `P` | 日计划 daily schedule | 断点 checkpoint 中 `agents.<name>.schedule.daily_schedule` | 当天所有粗计划 plan。 |
+| `p_i` | 第 `i` 个粗计划 plan | `P[i]` | 形如 `{start, duration, describe, decompose}`。 |
+| `s_i` | 开始分钟 start minute | `p_i["start"]` | 从当天 00:00 开始计数，09:00 是 540。 |
+| `e_i` | 结束分钟 end minute | `p_i["start"] + p_i["duration"]` | 当前计划结束时间。 |
+| `A` | 观测行动 observation actions | `simulation.md` 或 `movement.json` | 评价窗口内每个时间点的角色位置与行动。 |
+| `a_t` | 第 `t` 条观测行动 action | `A[t]` | 形如 `{time, location, action}`。 |
+| `G` | 目标关键词 goal set | `currently`、`daily_plan`、实验目标 | 用来判断行动是否服务当前目标。 |
+| `I(x)` | 指示函数 indicator | 人工或脚本判断 | 条件成立取 1，否则取 0。 |
+| `N` | 观测行动数 action count | `len(A)` | 评价窗口内的行动记录总数。 |
+
+这些定义允许人工标注，也允许脚本自动统计。人工标注时，每一行证据仍然要写清楚 `time`、`location`、`action` 和判定值。
+
+| 指标 | 计算公式 | 字段来源 | 解释 |
+| --- | --- | --- | --- |
+| 时间冲突数 `schedule_conflict_count` | `invalid_duration_count + overlap_count + boundary_error_count` | 断点 checkpoint `schedule.daily_schedule` | 统计计划时间是否自洽。 |
+| 日程覆盖率 `schedule_coverage_rate` | `covered_minutes / window_minutes` | 断点 checkpoint `schedule.daily_schedule` | 统计评价窗口是否被计划覆盖。 |
+| 计划行动匹配率 `plan_action_match_rate` | `Σ I(action(a_t) 与 current_plan(t) 语义匹配) / N` | `simulation.md`、断点 checkpoint `schedule` | 行动是否真的在执行当前计划。 |
+| 地点匹配率 `location_match_rate` | `Σ I(location(a_t) ∈ L(current_plan(t))) / N` | `movement.json`、`simulation.md`、空间记忆 spatial | 当前地点是否符合计划语义。 |
+| 目标相关行动率 `goal_related_action_rate` | `Σ rel(action(a_t), G) / N` | `currently`、`daily_plan`、`simulation.md` | 行动是否服务当前目标。 |
+| 泛化行动率 `generic_action_rate` | `Σ I(action(a_t) ∈ H) / N` | `simulation.md` | “工作”“休息”“做自己的事情”这类泛化动作占比。 |
+| 连续泛化重复数 `repeated_generic_action_count` | `Σ I(action(a_t) ∈ H 且 norm(action(a_t)) = norm(action(a_{t-1})))` | `simulation.md` | 泛化动作连续重复的次数。 |
+| 粒度通过率 `granularity_pass_rate` | `Σ I(5 <= duration(de_plan) <= 60 且 describe 具体) / M` | 断点 checkpoint `schedule.daily_schedule[*].decompose` | 子计划是否细到可执行，又没有碎到抖动。 |
+| 重规划成功率 `replan_success_rate` | `successful_replans / triggered_replans` | `conversation.json`、断点 checkpoint `schedule`、`movement.json` | 对话、邀请或等待打断后，后续计划是否合理改变。 |
+| 睡眠一致性分数 `sleep_consistency_score` | `clamp(1 - (wake_error + bed_error + night_active_minutes) / expected_sleep_minutes, 0, 1)` | 生活方式 lifestyle、`simulation.md`、`movement.json` | 睡觉、起床和夜间活动是否符合生活习惯。 |
+
+其中几个指标需要继续展开。
+
+时间冲突数 `schedule_conflict_count` 按下面方式拆：
 
 ```text
-schedule_conflict_count
+invalid_duration_count = Σ I(duration_i <= 0 or s_i < 0 or e_i > 1440)
+overlap_count = Σ I(s_{i+1} < e_i)
+boundary_error_count = I(s_0 != 0) + I(e_last != 1440)
+schedule_conflict_count = invalid_duration_count + overlap_count + boundary_error_count
 ```
 
-该指标统计明显时间冲突。
+本项目的 `Schedule.add_plan()` 通常会按顺序追加计划，所以普通运行中这个值常常是 0。一旦模型输出被解析错、日程修订 schedule revise 把时间段改乱，或者断点 checkpoint 中出现异常，这个指标会立刻暴露问题。
+
+地点匹配率 `location_match_rate` 要先定义计划可接受地点 `L(plan)`。例如：
+
+| 当前计划 plan | 可接受地点集合 `L(plan)` |
+| --- | --- |
+| 写中产阶级化论文 | 奥克山学院图书馆、奥克山学院宿舍书桌、咖啡馆顾客座位 |
+| 筹备情人节派对 | 霍布斯咖啡馆、供应店、社区公告板 |
+| 竞选沟通 | 咖啡馆、公园、居民常去的公共空间 |
+| 睡觉 | living_area 中的卧室或床 |
+
+然后计算：
 
 ```text
-location_mismatch_count
+location_match_rate = 命中可接受地点的行动数 / 评价窗口内行动数
+location_mismatch_count = 评价窗口内行动数 - 命中可接受地点的行动数
 ```
 
-统计行动描述和地点不匹配次数。
+目标相关行动率 `goal_related_action_rate` 的关键是先写清楚 `G`。同一段行为，换一个目标集合，结论会不同。`rel(action, G)` 可以用三档人工标注：
+
+| `rel(action, G)` | 含义 | 例子 |
+| ---: | --- | --- |
+| `1` | 直接服务目标 | 克劳斯“撰写社区文化变迁章节”服务中产阶级化论文目标。 |
+| `0.5` | 间接服务目标 | 克劳斯“吃晚饭休息”间接支持后续写作。 |
+| `0` | 无关 | 克劳斯计划组织讨论会，但行动是处理完全无关事务。 |
+
+公式是：
 
 ```text
-goal_related_action_count
+goal_related_action_rate = Σ rel(action(a_t), G) / N
 ```
 
-统计与当前目标相关的行动次数。
+泛化动作集合 `H` 也要提前写清楚，不能事后随便挑。可以先用下面集合：
 
 ```text
-repeated_generic_action_count
+H = {
+  "工作",
+  "学习",
+  "休息",
+  "社交",
+  "做自己的事情",
+  "思考下一步计划",
+  "处理事务"
+}
 ```
 
-统计“工作”“休息”“社交”等泛化动作重复次数。
+如果 `simulation.md` 连续多段都是“学习”或“工作”，没有对象、地点、材料和动作，`generic_action_rate` 和 `repeated_generic_action_count` 都会上升。它们不是惩罚勤奋，而是惩罚不可观察。
+
+睡眠一致性分数 `sleep_consistency_score` 只适合覆盖完整白天和夜间的实验。若实验只跑 4 小时，就标记为 `N/A`。完整实验中：
 
 ```text
-sleep_consistency_score
+wake_error = |实际起床时间 - 生活方式 lifestyle 中的起床时间|
+bed_error = |实际入睡时间 - 生活方式 lifestyle 中的入睡时间|
+night_active_minutes = 预期睡眠窗口内非睡眠活动分钟数
+sleep_consistency_score = clamp(
+  1 - (wake_error + bed_error + night_active_minutes) / expected_sleep_minutes,
+  0,
+  1
+)
 ```
 
-评价睡眠、起床和夜间活动是否合理。这些指标不必一开始就完全自动化。手工在 `simulation.md` 中标注也可以。关键是保留证据。不要只写：
+这里的 `clamp(x, 0, 1)` 表示把结果限制在 0 到 1 之间。分数越接近 1，睡眠节奏越符合人设。
+
+用第 26 章 `book-custom-discussion` 的真实结果做一个小样例。克劳斯在最新断点 checkpoint 中的日程没有时间冲突：
+
+```text
+invalid_duration_count = 0
+overlap_count = 0
+boundary_error_count = 0
+schedule_conflict_count = 0
+```
+
+再看 15:50-16:50 这四条观测行动：
+
+| 时间 | 地点 | 行动 |
+| --- | --- | --- |
+| 15:50 | 图书馆桌子 | 撰写分析笔记 |
+| 16:00 | 图书馆桌子 | 回顾社区文化变迁访谈笔记 |
+| 16:30 | 图书馆桌子 | 撰写社区抵抗与韧性 |
+| 16:50 | 图书馆桌子 | 融入访谈引用和田野观察案例 |
+
+如果评价目标是“写中产阶级化论文”，目标集合是：
+
+```text
+G_paper = {中产阶级化, 置换效应, 社区文化变迁, 访谈笔记, 田野观察, 撰写论文}
+```
+
+那么：
+
+```text
+location_match_rate = 4 / 4 = 1.00
+goal_related_action_rate = 4 / 4 = 1.00
+```
+
+克劳斯在这段时间的计划是可信的。地点对，行动也服务论文目标。
+
+如果评价目标换成“下午 4 点组织小型讨论会”，目标集合是：
+
+```text
+G_discussion = {组织讨论会, 邀请, 参加讨论会, 小型讨论会}
+```
+
+同样四条行动变成：
+
+```text
+goal_related_action_rate = 0 / 4 = 0.00
+```
+
+这就是指标的价值。同一段仿真，不能笼统写“计划合理”。它对于“论文写作”合理，对于“多人讨论会”不达标。
+
+这些指标不必一开始就完全自动化。手工在 `simulation.md` 中标注也可以。关键是保留证据。不要只写：
 
 ```text
 计划还可以。
@@ -322,7 +464,9 @@ sleep_consistency_score
 角色遇到人、事件或意外时，是否做出符合情境的反应？
 ```
 
-论文中 Reacting 的意义在于打破静态计划。如果角色只按日程机械执行，不理会周围事件，就不可信。但如果角色看到任何人都强行聊天，也不可信。评价反应合理性，要看三类情况。第一，应该反应时是否反应。例如：
+论文中 Reacting 的意义在于打破静态计划。如果角色只按日程机械执行，不理会周围事件，就不可信。但如果角色看到任何人都强行聊天，也不可信。评价反应合理性，要看三类情况。
+
+第一，应该反应时是否反应。例如：
 
 - 伊莎贝拉遇到熟人时，可能自然提到派对。
 - 山姆遇到邻居时，可能谈竞选。

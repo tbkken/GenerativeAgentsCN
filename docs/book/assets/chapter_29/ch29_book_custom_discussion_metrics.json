@@ -1,0 +1,521 @@
+{
+  "simulation": "book-custom-discussion",
+  "agent": "克劳斯",
+  "latest_checkpoint": "generative_agents\\results\\checkpoints\\book-custom-discussion\\simulate-20240213-1950.json",
+  "checkpoint_time": "20240213-19:50",
+  "checkpoint_step": 72,
+  "window": {
+    "start": "15:50",
+    "end": "16:50",
+    "sample_minutes": 10
+  },
+  "goal_keywords": [
+    "中产阶级化",
+    "置换效应",
+    "社区文化变迁",
+    "访谈笔记",
+    "田野观察",
+    "撰写"
+  ],
+  "fact_keywords": [
+    "置换效应",
+    "图书馆"
+  ],
+  "location_keywords": [
+    "图书馆"
+  ],
+  "schedule_metrics": {
+    "invalid_duration_count": 0,
+    "overlap_count": 0,
+    "boundary_error_count": 0,
+    "schedule_conflict_count": 0,
+    "schedule_coverage_rate": 1.0
+  },
+  "action_metrics": {
+    "sample_count": 7,
+    "location_match_count": 7,
+    "location_match_rate": 1.0,
+    "goal_related_action_count": 6,
+    "goal_related_action_rate": 0.8571428571428571,
+    "generic_action_count": 0,
+    "generic_action_rate": 0.0,
+    "repeated_generic_action_count": 0,
+    "plan_action_match_count": 5,
+    "plan_action_match_rate": 0.7142857142857143,
+    "evidence_rows": [
+      {
+        "time": "15:50",
+        "frame": 2820,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "撰写将数据与论文论点结合的分析笔记",
+        "current_plan": "继续撰写研究论文，整理访谈数据和实地观察记录",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": true
+      },
+      {
+        "time": "16:00",
+        "frame": 2880,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "回顾笔记并补充缺失信息",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": false,
+        "generic_match": false,
+        "plan_action_match": false
+      },
+      {
+        "time": "16:10",
+        "frame": 2940,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "回顾关于社区文化变迁的访谈笔记",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": true
+      },
+      {
+        "time": "16:20",
+        "frame": 3000,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "回顾关于社区文化变迁的访谈笔记",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": true
+      },
+      {
+        "time": "16:30",
+        "frame": 3060,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "撰写文化置换现象的分析段落",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": true
+      },
+      {
+        "time": "16:40",
+        "frame": 3120,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "💬 撰写社区抵抗与韧性的论述",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": true
+      },
+      {
+        "time": "16:50",
+        "frame": 3180,
+        "location": "奥克山学院，图书馆，图书馆桌子",
+        "movement": [
+          119,
+          24
+        ],
+        "action": "融入访谈引用和田野观察案例",
+        "current_plan": "继续撰写研究论文，撰写论文中关于社区文化变迁的章节",
+        "location_match": true,
+        "goal_match": true,
+        "generic_match": false,
+        "plan_action_match": false
+      }
+    ]
+  },
+  "conversation_metrics": {
+    "conversation_count": 25,
+    "agent_conversation_count": 19,
+    "unique_agent_partners": [
+      "伊莎贝拉",
+      "沃尔夫冈",
+      "阿伊莎"
+    ],
+    "json_residue_count": 4,
+    "goal_keyword_mentions": {
+      "中产阶级化": 2,
+      "置换效应": 13,
+      "社区文化变迁": 0,
+      "访谈笔记": 0,
+      "田野观察": 1,
+      "撰写": 0
+    },
+    "evidence_rows": [
+      {
+        "time": "20240213-10:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 2,
+        "first_line": "阿伊莎老师，您刚才讲的写作技巧正好是我现在需要的——我正在搭建中产阶级化论文的框架，您觉得开头应该怎么切入比较吸引人？"
+      },
+      {
+        "time": "20240213-11:30",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 4,
+        "first_line": "阿伊莎，你标注的这些隐喻和意象分析方法很精妙，我正想请教你——你觉得我论文开篇用街巷改造前后的对比切入，是否也需要加入一些类似的修辞来增强感染力？"
+      },
+      {
+        "time": "20240213-12:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 3,
+        "first_line": "嘿，克劳斯，复习得怎么样了？要不要一起去吃点东西，我正好也该吃午饭了。"
+      },
+      {
+        "time": "20240213-12:10",
+        "title": "伊莎贝拉 -> 克劳斯 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "line_count": 3,
+        "first_line": "克劳斯，你吃得这么晚啊？需要我帮你再添点什么吗？对了，别忘了明天下午5点我们的情人节派对，记得来哦！"
+      },
+      {
+        "time": "20240213-12:40",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位",
+        "line_count": 4,
+        "first_line": "阿伊莎！多亏了你之前的建议，我用田野笔记的思路重写了开头，感觉顺畅多了。你午饭吃得怎么样？"
+      },
+      {
+        "time": "20240213-13:00",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 5,
+        "first_line": "嗨，克劳斯！你回来了，准备开始写论文主体了吧？之前聊到的按核心论点分节、用数据案例支撑的结构，你理出大概思路了吗？"
+      },
+      {
+        "time": "20240213-13:40",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 5,
+        "first_line": "克劳斯，你把这些案例和数据嵌进论证里，整个段落的说服力一下子就上来了——比我预想的还要紧凑。要不要趁热把刚才讨论的几个数据点标注一下来源，方便后面回溯？"
+      },
+      {
+        "time": "20240213-14:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 6,
+        "first_line": "看起来你的流离失所那部分进展挺顺利的，我刚把几个有机化学的例题理顺了，要不休息几分钟聊两句？"
+      },
+      {
+        "time": "20240213-14:10",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 2,
+        "first_line": "克劳斯，旧金山的中产阶级化案例很有代表性呢——你在研究时有没有注意到当地媒体在报道时用了哪些特定的叙事框架？我觉得这种话语分析的角度对你论文的'置换效应'部分会很有帮助。"
+      },
+      {
+        "time": "20240213-14:30",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 2,
+        "first_line": "伦敦的案例看起来很有趣，你找到什么有意思的材料了吗？我刚好在整理课堂笔记，想听听你的发现。"
+      },
+      {
+        "time": "20240213-14:50",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，书架",
+        "line_count": 2,
+        "first_line": "克劳斯，比较分析那部分写得怎么样了？刚才聊到的伦敦和旧金山媒体叙事的对立框架，我觉得正好可以作为你比较段落的论证主线，要不要试试把'城市更新'和'社会清洗'这两种话语冲突作为对比核心来展开？"
+      },
+      {
+        "time": "20240213-15:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 8,
+        "first_line": "克劳斯，你刚才标记的那段是关于什么的？我看你一直在翻访谈记录，是在找能支持置换效应论证的案例吗？"
+      },
+      {
+        "time": "20240213-15:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 8,
+        "first_line": "阿伊莎，你在精读第一篇参考文献啊？我刚把访谈内容做了初步编码和主题归类，发现有几个挺有意思的发现，你想听听吗？"
+      },
+      {
+        "time": "20240213-16:30",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 3,
+        "first_line": "克劳斯，我刚到。你写的社区抵抗部分让我想到《亨利四世》中福斯塔夫在流亡边缘的独白，那种'在故土却无家可归'的矛盾感，是不是正好可以呼应你这里要论证的韧性叙事？"
+      },
+      {
+        "time": "20240213-16:50",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 3,
+        "first_line": "你的过渡段落改得怎么样了？福斯塔夫那个意象嵌进去之后，读起来会不会太突兀？我刚才翻莎翁的《亨利四世》注释，突然想到他写福斯塔夫被放逐那场戏用的也是'笑着被推出去'的语气，跟你说的替代性归属感其实可以呼应。"
+      },
+      {
+        "time": "20240213-17:30",
+        "title": "伊莎贝拉 -> 克劳斯 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位",
+        "line_count": 3,
+        "first_line": "克劳斯，餐马上好。今天论文写得怎么样了？明天下午5点的情人节派对可别忘了哦，记得来霍布斯咖啡馆！"
+      },
+      {
+        "time": "20240213-17:50",
+        "title": "伊莎贝拉 -> 克劳斯 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "line_count": 2,
+        "first_line": "克劳斯，三明治味道怎么样？对了，明天情人节派对下午5点开始，记得准时来啊，我已经把派对信息卡放在柜台上了，你再看看细节。"
+      },
+      {
+        "time": "20240213-19:20",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，书架",
+        "line_count": 3,
+        "first_line": "克劳斯，你的政策建议部分想得怎么样了？要不要我帮你看看措辞，文学系的角度说不定能帮上忙。"
+      },
+      {
+        "time": "20240213-19:50",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "line_count": 7,
+        "first_line": "你找到什么好东西了？我这边写到第二条政策建议，想看看能不能从文学评论里借点理论支撑。"
+      }
+    ]
+  },
+  "social_metrics": {
+    "exists": true,
+    "source_agent": "克劳斯",
+    "unique_informed_agents": 3,
+    "informed_agents": [
+      "克劳斯",
+      "沃尔夫冈",
+      "阿伊莎"
+    ],
+    "source_mention_count": 2,
+    "source_mention_targets": [
+      "沃尔夫冈",
+      "阿伊莎"
+    ],
+    "direct_invitation_count": 0,
+    "direct_invitation_targets": [],
+    "indirect_mention_count": 7,
+    "diffusion_depth": 1,
+    "fact_related_mentions": 17,
+    "preserved_fact_mentions": 13,
+    "fact_preservation_score": 0.7647058823529411,
+    "attitude_labels": [
+      "positive",
+      "uncertain"
+    ],
+    "attitude_diversity_score": 0.6666666666666666,
+    "diffusion_edges": [
+      [
+        "克劳斯",
+        "沃尔夫冈"
+      ],
+      [
+        "克劳斯",
+        "阿伊莎"
+      ],
+      [
+        "沃尔夫冈",
+        "克劳斯"
+      ],
+      [
+        "阿伊莎",
+        "克劳斯"
+      ]
+    ],
+    "evidence_rows": [
+      {
+        "time": "20240213-10:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "阿伊莎老师，您刚才讲的写作技巧正好是我现在需要的——我正在搭建中产阶级化论文的框架，您觉得开头应该怎么切入比较吸引人？"
+      },
+      {
+        "time": "20240213-13:00",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "uncertain",
+        "text": "嗯，有了大致的框架。我打算先从置换效应切入，再用你提到的真实调研场景和数据案例来支撑各小节的主题句。不过具体怎么把田野笔记和文献分析自然衔接起来，我还有点拿不准。"
+      },
+      {
+        "time": "20240213-13:40",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "好主意，我这就翻笔记把来源标上。对了，那个置换效应的数据我记不太清出处了，你有没有印象我是在哪本书里看到的？"
+      },
+      {
+        "time": "20240213-13:40",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "阿伊莎",
+        "attitude": "positive",
+        "text": "让我想想……你之前翻的那本讨论城市更新的文献里好像出现过这个数据，就是你上周标注了经济影响那一段的地方。要不你先回图书馆翻翻那本笔记，如果找不到我陪你再梳理一遍文献清单。"
+      },
+      {
+        "time": "20240213-13:40",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "uncertain",
+        "text": "好，我先回图书馆翻翻那本城市更新的笔记。要是找到了来源，我再跟你确认一下数据细节。对了，晚点有空的话，帮我看看置换效应那段的论证逻辑够不够严谨？我怕光堆数据反而显得生硬。"
+      },
+      {
+        "time": "20240213-14:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "谢啦，区域选择性那部分我当时看你标的时候也觉得挺有意思的，回头有空你给我讲讲。阿伊莎说的田野笔记方式我其实刚才试了一下，用'参与式观察'的写法确实比纯文献综述更有带入感，不过具体怎么跟置换效应的数据衔接好我还在琢磨，你有什么建议吗？"
+      },
+      {
+        "time": "20240213-14:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "沃尔夫冈",
+        "attitude": "positive",
+        "text": "我之前看你搭的置换效应框架里有几个核心数据点，比如租金涨幅和原住民迁出率，你可以试着用田野场景做'引子'，比如先描述一户街角杂货店关门的过程，再用那些数据做'注脚'式补充，这样既有画面感又不失学术分量。"
+      },
+      {
+        "time": "20240213-14:10",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "阿伊莎",
+        "attitude": "neutral",
+        "text": "克劳斯，旧金山的中产阶级化案例很有代表性呢——你在研究时有没有注意到当地媒体在报道时用了哪些特定的叙事框架？我觉得这种话语分析的角度对你论文的'置换效应'部分会很有帮助。"
+      },
+      {
+        "time": "20240213-14:10",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "确实有！旧金山当地的媒体在报道米慎区改造时特别爱用'文化复兴'这个词，把驱逐包装成社区升级的副产品，但社区组织的自办报纸反而会强调'系统性置换'——这两种叙事框架的对立我觉得特别能佐证你的观点，可以和置换效应的统计数据形成互文。"
+      },
+      {
+        "time": "20240213-14:30",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "{\"res\": \"嗯，伦敦的案例挺有意思的，媒体叙事差异特别明显——《卫报》这类主流媒体常用'城市更新'的框架，而当地社区刊物则突出'社会清洗'和居民被迫迁移的经历。两套话语的撕裂感比旧金山还要强烈，正好可以和我之前梳理的田野观察呼应。\""
+      },
+      {
+        "time": "20240213-15:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "沃尔夫冈",
+        "attitude": "positive",
+        "text": "克劳斯，你刚才标记的那段是关于什么的？我看你一直在翻访谈记录，是在找能支持置换效应论证的案例吗？"
+      },
+      {
+        "time": "20240213-15:00",
+        "title": "沃尔夫冈 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "neutral",
+        "text": "是的，我在找能体现居民视角的访谈段落，想找一个原住民因房租上涨被迫搬迁的直接引述，用来做置换效应论证的田野证据支撑。你那边错题整理得怎么样了？"
+      },
+      {
+        "time": "20240213-15:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "有个特别突出的主题——几乎所有受访者都用'被背叛'这个词来描述他们和街角小店之间的关系，不管是已经搬走的还是留下的。有人甚至说'看着那扇门关掉，比收到驱逐通知还难受'，我觉得这个情感维度可以成为我们置换效应段落的一个切入点。"
+      },
+      {
+        "time": "20240213-15:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "阿伊莎",
+        "attitude": "positive",
+        "text": "这个'被背叛'的情感太有力量了，克劳斯！你想想，这几乎和莎士比亚笔下那种被家园放逐的悲剧人物如出一辙——我们可以把这种个人化的情感创伤作为引子，再展开到系统性置换效应的数据论证，情感锚点和学术严谨性就这么自然地衔接上了。"
+      },
+      {
+        "time": "20240213-15:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "克劳斯",
+        "attitude": "positive",
+        "text": "{\"res\": \"没错，这个思路我觉得很有戏！我刚还注意到另一个细节——好几个受访者都提到他们会特意绕路去看那些关门的店铺，这种'仪式性的告别'其实也是一种隐性抵抗。要不我们在那段先用一个受访者的原话作为情感锚点，然后再用置换效应的统计数据和伦敦跟旧金山的对比来撑起学术论证？\""
+      },
+      {
+        "time": "20240213-15:20",
+        "title": "克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "阿伊莎",
+        "attitude": "positive",
+        "text": "四点图书馆老位置见！我手头正好在读莎翁关于流亡与故土的段落，有一句意象和你那个面包店的气味记忆简直跨时空呼应——等下碰头时我把原文带过来，咱们一起把这段过渡文字敲定。"
+      },
+      {
+        "time": "20240213-16:50",
+        "title": "阿伊莎 -> 克劳斯 @ the Ville，奥克山学院，图书馆，图书馆桌子",
+        "speaker": "阿伊莎",
+        "attitude": "positive",
+        "text": "这个切入点很妙，福斯塔夫本来就是用插科打诨消解权威和失落的——你要是在论文里点出这一点，可以拿他被放逐那场戏和居民们的反应做个简短对照，不过别展开太多，毕竟你的核心论点还是置换效应，文学呼应点到为止就行。"
+      }
+    ]
+  },
+  "memory_metrics": {
+    "exists": true,
+    "total_nodes": 194,
+    "node_type_counts": {
+      "thought": 18,
+      "event": 158,
+      "chat": 18
+    },
+    "goal_related_nodes": 38,
+    "examples": [
+      {
+        "node_id": "node_0",
+        "node_type": "thought",
+        "create": "20240213-08:00:00",
+        "address": "the Ville:奥克山学院宿舍:克劳斯的房间:床",
+        "text": "这是 克劳斯 在 2024年02月13日（星期二）08:00 的计划：早上7点起床并完成早餐的例行工作；早上8点前往奥克山学院图书馆；上午8点30分开始撰写关于中产阶级化的研究论文；中午12点在图书馆附近吃午饭；下午1点继续写作研究论文；下午5点在霍布斯咖啡馆吃晚饭；下午6点返回图书馆继续研究论文的写作；晚上9点整理当天研究笔记并规划明天的写作计划；晚上11"
+      },
+      {
+        "node_id": "node_10",
+        "node_type": "event",
+        "create": "20240213-09:20:00",
+        "address": "the Ville:奥克山学院:图书馆:书架",
+        "text": "克劳斯 在图书馆书目系统中搜索关于中产阶级化的相关书籍"
+      },
+      {
+        "node_id": "node_14",
+        "node_type": "event",
+        "create": "20240213-09:30:00",
+        "address": "the Ville:奥克山学院:图书馆:书架",
+        "text": "克劳斯 筛选并收集与低收入社区中产阶级化相关的书籍"
+      },
+      {
+        "node_id": "node_25",
+        "node_type": "chat",
+        "create": "20240213-10:30:00",
+        "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+        "text": "克劳斯向阿伊莎请教中产阶级化论文的写作开头，阿伊莎建议用调研中的真实场景或街巷改造前后对比来切入。"
+      },
+      {
+        "node_id": "node_27",
+        "node_type": "event",
+        "create": "20240213-10:40:00",
+        "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+        "text": "克劳斯 发展中产阶级化的主要论点（如置换效应、社区影响等）"
+      },
+      {
+        "node_id": "node_32",
+        "node_type": "event",
+        "create": "20240213-10:50:00",
+        "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+        "text": "克劳斯 撰写论文引言段落"
+      },
+      {
+        "node_id": "node_39",
+        "node_type": "event",
+        "create": "20240213-11:10:00",
+        "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+        "text": "克劳斯 查阅关于中产阶级化的社会经济影响的相关文献和笔记"
+      },
+      {
+        "node_id": "node_44",
+        "node_type": "event",
+        "create": "20240213-11:30:00",
+        "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+        "text": "克劳斯 分析中产阶级化对低收入社区居民的经济影响"
+      }
+    ]
+  }
+}
