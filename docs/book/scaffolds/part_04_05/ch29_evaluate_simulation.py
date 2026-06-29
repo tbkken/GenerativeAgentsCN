@@ -61,6 +61,20 @@ def parse_args() -> argparse.Namespace:
         help="Comma-separated keywords that define acceptable locations.",
     )
     parser.add_argument(
+        "--commitments",
+        default="",
+        help=(
+            "Optional semicolon-separated commitments in the format "
+            "'agent|HH:MM|location_keyword1+location_keyword2|description'."
+        ),
+    )
+    parser.add_argument(
+        "--arrival-tolerance-minutes",
+        type=int,
+        default=20,
+        help="Allowed minutes before/after a promised time for commitment arrival checks.",
+    )
+    parser.add_argument(
         "--output",
         default="",
         help="Optional JSON output path. Parent folders are created automatically.",
@@ -261,6 +275,90 @@ def sample_actions(
             }
         )
     return rows
+
+
+def parse_commitments(value: str) -> list[dict[str, Any]]:
+    commitments = []
+    for raw_item in [item.strip() for item in value.split(";") if item.strip()]:
+        parts = [part.strip() for part in raw_item.split("|", 3)]
+        if len(parts) != 4:
+            raise ValueError(
+                "Each commitment must use 'agent|HH:MM|location_keyword1+location_keyword2|description'."
+            )
+        agent, promised_time, location_text, description = parts
+        commitments.append(
+            {
+                "agent": agent,
+                "promised_time": promised_time,
+                "location_keywords": [part.strip() for part in location_text.split("+") if part.strip()],
+                "description": description,
+            }
+        )
+    return commitments
+
+
+def commitment_metrics(
+    movement: dict[str, Any],
+    commitments: list[dict[str, Any]],
+    tolerance_minutes: int,
+) -> dict[str, Any]:
+    if not commitments:
+        return {
+            "commitment_count": 0,
+            "arrived_commitment_count": 0,
+            "arrival_rate": None,
+            "mean_abs_arrival_delay_minutes": None,
+            "evidence_rows": [],
+        }
+
+    arrived_count = 0
+    delays: list[int] = []
+    evidence_rows = []
+    for commitment in commitments:
+        promised_minute = minutes_since_midnight(commitment["promised_time"])
+        start = promised_minute - tolerance_minutes
+        end = promised_minute + tolerance_minutes
+        best_hit = None
+        sampled_rows = []
+        for minute in range(start, end + 1, 5):
+            label = hhmm_from_minutes(minute % (24 * 60))
+            frame = frame_for_time(movement, label)
+            state = reconstruct_state(movement, commitment["agent"], frame)
+            location = state.get("location") or ""
+            hit = any(keyword in location for keyword in commitment["location_keywords"])
+            sampled_rows.append({"time": label, "location": location, "hit": hit})
+            delay = abs(minute - promised_minute)
+            if hit and (best_hit is None or delay < best_hit["delay_minutes"]):
+                best_hit = {
+                    "time": label,
+                    "location": location,
+                    "delay_minutes": delay,
+                }
+
+        arrived = best_hit is not None
+        arrived_count += int(arrived)
+        if best_hit:
+            delays.append(best_hit["delay_minutes"])
+        evidence_rows.append(
+            {
+                **commitment,
+                "arrived": arrived,
+                "matched_time": best_hit["time"] if best_hit else None,
+                "matched_location": best_hit["location"] if best_hit else None,
+                "delay_minutes": best_hit["delay_minutes"] if best_hit else None,
+                "sampled_rows": sampled_rows,
+            }
+        )
+
+    denominator = max(len(commitments), 1)
+    return {
+        "commitment_count": len(commitments),
+        "arrived_commitment_count": arrived_count,
+        "arrival_rate": arrived_count / denominator,
+        "mean_abs_arrival_delay_minutes": sum(delays) / len(delays) if delays else None,
+        "arrival_tolerance_minutes": tolerance_minutes,
+        "evidence_rows": evidence_rows,
+    }
 
 
 def action_metrics(
@@ -553,6 +651,7 @@ def main() -> None:
     fact_keywords = split_keywords(args.fact_keywords) or goal_keywords
     invitation_keywords = split_keywords(args.invitation_keywords)
     location_keywords = split_keywords(args.location_keywords)
+    commitments = parse_commitments(args.commitments)
     agent_data = checkpoint["agents"][args.agent]
     schedule = agent_data["schedule"]["daily_schedule"]
     start_minute = minutes_since_midnight(args.window_start)
@@ -586,6 +685,7 @@ def main() -> None:
             "schedule_coverage_rate": schedule_coverage_rate(schedule, start_minute, end_minute),
         },
         "action_metrics": action_metrics(actions, schedule, goal_keywords, location_keywords),
+        "commitment_metrics": commitment_metrics(movement, commitments, args.arrival_tolerance_minutes),
         "conversation_metrics": conversation_metrics(checkpoint_dir / "conversation.json", args.agent, goal_keywords),
         "social_metrics": social_metrics(
             checkpoint_dir / "conversation.json",
@@ -609,6 +709,7 @@ def main() -> None:
         "location_match_rate": result["action_metrics"]["location_match_rate"],
         "goal_related_action_rate": result["action_metrics"]["goal_related_action_rate"],
         "plan_action_match_rate": result["action_metrics"]["plan_action_match_rate"],
+        "arrival_rate": result["commitment_metrics"].get("arrival_rate"),
         "unique_informed_agents": result["social_metrics"].get("unique_informed_agents"),
         "diffusion_depth": result["social_metrics"].get("diffusion_depth"),
         "fact_preservation_score": result["social_metrics"].get("fact_preservation_score"),

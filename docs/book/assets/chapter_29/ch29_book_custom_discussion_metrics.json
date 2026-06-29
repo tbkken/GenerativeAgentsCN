@@ -150,6 +150,74 @@
       }
     ]
   },
+  "commitment_metrics": {
+    "commitment_count": 1,
+    "arrived_commitment_count": 1,
+    "arrival_rate": 1.0,
+    "mean_abs_arrival_delay_minutes": 0.0,
+    "arrival_tolerance_minutes": 20,
+    "evidence_rows": [
+      {
+        "agent": "阿伊莎",
+        "promised_time": "16:00",
+        "location_keywords": [
+          "图书馆"
+        ],
+        "description": "四点图书馆老位置见",
+        "arrived": true,
+        "matched_time": "16:00",
+        "matched_location": "奥克山学院，图书馆，图书馆桌子",
+        "delay_minutes": 0,
+        "sampled_rows": [
+          {
+            "time": "15:40",
+            "location": "奥克山学院，图书馆，图书馆桌子",
+            "hit": true
+          },
+          {
+            "time": "15:45",
+            "location": "奥克山学院，图书馆，图书馆桌子",
+            "hit": true
+          },
+          {
+            "time": "15:50",
+            "location": "奥克山学院，图书馆，图书馆桌子",
+            "hit": true
+          },
+          {
+            "time": "15:55",
+            "location": "奥克山学院，图书馆，图书馆桌子",
+            "hit": true
+          },
+          {
+            "time": "16:00",
+            "location": "奥克山学院，图书馆，图书馆桌子",
+            "hit": true
+          },
+          {
+            "time": "16:05",
+            "location": "奥克山学院，图书馆，书架",
+            "hit": true
+          },
+          {
+            "time": "16:10",
+            "location": "奥克山学院，图书馆，书架",
+            "hit": true
+          },
+          {
+            "time": "16:15",
+            "location": "奥克山学院，图书馆，书架",
+            "hit": true
+          },
+          {
+            "time": "16:20",
+            "location": "奥克山学院，图书馆，书架",
+            "hit": true
+          }
+        ]
+      }
+    ]
+  },
   "conversation_metrics": {
     "conversation_count": 25,
     "agent_conversation_count": 19,

@@ -132,6 +132,72 @@ flowchart TD
 
 *表 29-1：可信行为六维评价表。可信性评价必须同时看文本、记忆、计划、空间行动和社会传播，不能只看对话是否自然。*
 
+### 本章评价工具入口
+
+当前项目没有内置一套论文级自动评价器，但它已经把评价需要的证据写到了本地文件里。本章新增一个轻量脚手架：
+
+```text
+docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py
+```
+
+这个脚本不调用大语言模型 LLM，也不重新跑仿真。它只读取一次已经完成的实验，把证据文件转成可复查指标：
+
+| 证据文件 | 项目产物 | 可计算内容 |
+| --- | --- | --- |
+| 断点 checkpoint | `generative_agents/results/checkpoints/<实验名>/simulate-*.json` | 日程 schedule、当前计划 current plan、角色记忆数量、日程冲突。 |
+| 对话记录 conversation | `generative_agents/results/checkpoints/<实验名>/conversation.json` | 对话次数、参与者、事件关键词、传播路径、JSON 残留。 |
+| 移动回放 movement | `generative_agents/results/compressed/<实验名>/movement.json` | 角色位置、行动描述、采样窗口内的行动落地情况。 |
+| 关联记忆 docstore | `generative_agents/results/checkpoints/<实验名>/storage/<角色>/associate/docstore.json` | 事件 event、对话 chat、想法 thought 的数量与关键词命中。 |
+
+从仓库根目录运行：
+
+```powershell
+python .\docs\book\scaffolds\part_04_05\ch29_evaluate_simulation.py `
+  --name book-custom-discussion `
+  --agent 克劳斯 `
+  --source-agent 克劳斯 `
+  --window-start 15:50 `
+  --window-end 16:50 `
+  --sample-minutes 10 `
+  --goal-keywords "中产阶级化,置换效应,社区文化变迁,访谈笔记,田野观察,撰写" `
+  --fact-keywords "置换效应,图书馆" `
+  --location-keywords "图书馆" `
+  --output docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json
+```
+
+命令里的关键参数含义如下：
+
+| 参数 | 中文含义 | 作用 |
+| --- | --- | --- |
+| `--name` | 实验名 simulation name | 定位 `results/checkpoints/` 和 `results/compressed/` 下的同名目录。 |
+| `--agent` | 被评价角色 evaluated agent | 本次主要计算克劳斯的日程、行动和记忆。 |
+| `--source-agent` | 传播源头 source agent | 计算传播路径 diffusion path 时，从谁开始追踪信息扩散。 |
+| `--window-start` / `--window-end` | 观察窗口 observation window | 只评价 15:50-16:50 这一小时的行动。 |
+| `--goal-keywords` | 目标关键词 goal keywords | 判断行动和对话是否服务论文写作目标。 |
+| `--fact-keywords` | 核心事实 core facts | 判断传播过程中“置换效应”“图书馆”这类事实是否保留。 |
+| `--location-keywords` | 合理地点 location keywords | 判断角色是否落在目标空间。 |
+
+真实输出如下：
+
+```json
+{
+  "simulation": "book-custom-discussion",
+  "agent": "克劳斯",
+  "schedule_conflict_count": 0,
+  "location_match_rate": 1.0,
+  "goal_related_action_rate": 0.8571428571428571,
+  "plan_action_match_rate": 0.7142857142857143,
+  "unique_informed_agents": 3,
+  "diffusion_depth": 1,
+  "fact_preservation_score": 0.7647058823529411,
+  "json_residue_count": 4,
+  "memory_goal_related_nodes": 38,
+  "output": "docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json"
+}
+```
+
+这些数值是机器初筛，不是最终判决。它适合快速发现“日程有没有冲突”“位置是否落地”“传播链是否存在”“记忆里有没有相关节点”。涉及语义相似、角色动机、态度变化和最终 1-5 分评分时，仍然要回到证据行人工复核。
+
 ## 29.5 维度一：身份一致性
 
 身份一致性回答的问题是：
@@ -396,7 +462,13 @@ sleep_consistency_score = clamp(
 
 这里的 `clamp(x, 0, 1)` 表示把结果限制在 0 到 1 之间。分数越接近 1，睡眠节奏越符合人设。
 
-用第 26 章 `book-custom-discussion` 的真实结果做一个小样例。克劳斯在最新断点 checkpoint 中的日程没有时间冲突：
+用第 26 章 `book-custom-discussion` 的真实结果做一个小样例。脚手架读取最新断点 checkpoint：
+
+```text
+generative_agents/results/checkpoints/book-custom-discussion/simulate-20240213-1950.json
+```
+
+克劳斯在这个断点中的日程没有时间冲突：
 
 ```text
 invalid_duration_count = 0
@@ -405,29 +477,33 @@ boundary_error_count = 0
 schedule_conflict_count = 0
 ```
 
-再看 15:50-16:50 这四条观测行动：
+再看移动回放 movement 在 15:50-16:50 的 7 条采样行动：
 
-| 时间 | 地点 | 行动 |
-| --- | --- | --- |
-| 15:50 | 图书馆桌子 | 撰写分析笔记 |
-| 16:00 | 图书馆桌子 | 回顾社区文化变迁访谈笔记 |
-| 16:30 | 图书馆桌子 | 撰写社区抵抗与韧性 |
-| 16:50 | 图书馆桌子 | 融入访谈引用和田野观察案例 |
+| 时间 | 地点 | 当前行动 | 当前计划 current plan | 地点命中 | 目标命中 | 计划行动匹配 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 15:50 | 图书馆桌子 | 撰写将数据与论文论点结合的分析笔记 | 继续撰写研究论文，整理访谈数据和实地观察记录 | 是 | 是 | 是 |
+| 16:00 | 图书馆桌子 | 回顾笔记并补充缺失信息 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 否 | 否 |
+| 16:10 | 图书馆桌子 | 回顾关于社区文化变迁的访谈笔记 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 是 | 是 |
+| 16:20 | 图书馆桌子 | 回顾关于社区文化变迁的访谈笔记 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 是 | 是 |
+| 16:30 | 图书馆桌子 | 撰写文化置换现象的分析段落 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 是 | 是 |
+| 16:40 | 图书馆桌子 | 撰写社区抵抗与韧性的论述 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 是 | 是 |
+| 16:50 | 图书馆桌子 | 融入访谈引用和田野观察案例 | 继续撰写研究论文，撰写论文中关于社区文化变迁的章节 | 是 | 是 | 否 |
 
 如果评价目标是“写中产阶级化论文”，目标集合是：
 
 ```text
-G_paper = {中产阶级化, 置换效应, 社区文化变迁, 访谈笔记, 田野观察, 撰写论文}
+G_paper = {中产阶级化, 置换效应, 社区文化变迁, 访谈笔记, 田野观察, 撰写}
 ```
 
 那么：
 
 ```text
-location_match_rate = 4 / 4 = 1.00
-goal_related_action_rate = 4 / 4 = 1.00
+location_match_rate = 7 / 7 = 1.00
+goal_related_action_rate = 6 / 7 = 0.86
+plan_action_match_rate = 5 / 7 = 0.71
 ```
 
-克劳斯在这段时间的计划是可信的。地点对，行动也服务论文目标。
+克劳斯在这段时间的地点落地很稳定，7 次采样都在奥克山学院图书馆。目标相关行动率 `goal_related_action_rate` 不是满分，原因是 16:00 的“回顾笔记并补充缺失信息”没有命中目标关键词。计划行动匹配率 `plan_action_match_rate` 也不是满分，原因是 16:50 的“融入访谈引用和田野观察案例”服务论文写作，但与当前计划中的“社区文化变迁章节”缺少足够直接的短语重叠。这个结果适合作为机器初筛；人工复核时可以把 16:50 标为“间接匹配”。
 
 如果评价目标换成“下午 4 点组织小型讨论会”，目标集合是：
 
@@ -435,10 +511,10 @@ goal_related_action_rate = 4 / 4 = 1.00
 G_discussion = {组织讨论会, 邀请, 参加讨论会, 小型讨论会}
 ```
 
-同样四条行动变成：
+同样 7 条行动变成：
 
 ```text
-goal_related_action_rate = 0 / 4 = 0.00
+goal_related_action_rate = 0 / 7 = 0.00
 ```
 
 这就是指标的价值。同一段仿真，不能笼统写“计划合理”。它对于“论文写作”合理，对于“多人讨论会”不达标。
