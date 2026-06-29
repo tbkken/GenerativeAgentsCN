@@ -37,9 +37,9 @@ flowchart TD
 
 *图 30-1：生成式智能体 Generative Agents 的风险来源与证据位置。风险章节不能停在原则层面，而要指向读者能检查的日志、回放和实验报告。*
 
-![图 30-2：风险审计不是原则清单，而是证据回查现场](../../assets/chapter_30/ch30_risk_audit_workbench.png)
+![图 30-2：风险审计不是原则清单，而是证据回查现场](../../assets/chapter_30/ch30_risk_audit_workbench_v2.png)
 
-*图 30-2：风险审计不是原则清单，而是证据回查现场。图片把幻觉、过度合作、模型漂移和选择性展示等风险映射到时间线 simulation、对话记录 conversation、断点 checkpoint 与移动回放 movement。*
+*图 30-2：风险审计不是原则清单，而是证据回查现场。小镇地图、角色移动轨迹、时间线 simulation、对话记录 conversation、断点 checkpoint 与移动回放 movement 被放在同一张审计工作台上，红色连线标出记忆幻觉、过度合作、模型漂移和选择性展示等风险。*
 
 ## 30.2 风险不是附录
 
