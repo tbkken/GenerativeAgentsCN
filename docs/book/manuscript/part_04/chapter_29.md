@@ -162,6 +162,7 @@ python .\docs\book\scaffolds\part_04_05\ch29_evaluate_simulation.py `
   --goal-keywords "中产阶级化,置换效应,社区文化变迁,访谈笔记,田野观察,撰写" `
   --fact-keywords "置换效应,图书馆" `
   --location-keywords "图书馆" `
+  --commitments "阿伊莎|16:00|图书馆|四点图书馆老位置见" `
   --output docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json
 ```
 
@@ -176,6 +177,7 @@ python .\docs\book\scaffolds\part_04_05\ch29_evaluate_simulation.py `
 | `--goal-keywords` | 目标关键词 goal keywords | 判断行动和对话是否服务论文写作目标。 |
 | `--fact-keywords` | 核心事实 core facts | 判断传播过程中“置换效应”“图书馆”这类事实是否保留。 |
 | `--location-keywords` | 合理地点 location keywords | 判断角色是否落在目标空间。 |
+| `--commitments` | 承诺落地 commitments | 人工标注“谁在什么时间去哪里做什么”，用于计算到场率。 |
 
 真实输出如下：
 
@@ -187,6 +189,7 @@ python .\docs\book\scaffolds\part_04_05\ch29_evaluate_simulation.py `
   "location_match_rate": 1.0,
   "goal_related_action_rate": 0.8571428571428571,
   "plan_action_match_rate": 0.7142857142857143,
+  "arrival_rate": 1.0,
   "unique_informed_agents": 3,
   "diffusion_depth": 1,
   "fact_preservation_score": 0.7647058823529411,
@@ -580,57 +583,105 @@ goal_related_action_rate = 0 / 7 = 0.00
 
 ## 29.12 社会传播的指标
 
-可以用下面指标评价传播：
+社会传播指标要先明确三件事：传播源头是谁，核心事实是什么，传播证据来自哪一条对话。不要把“多人都说过某个词”直接当成传播成功。计算口径如下：
+
+| 符号 | 中文 English | 来源 | 含义 |
+| --- | --- | --- | --- |
+| `S` | 传播源头 source agent | 实验设定或 `--source-agent` | 事件最早由谁发起或稳定持有。 |
+| `F` | 核心事实 core facts | `--fact-keywords` | 传播中必须保留的事实词，例如 `{派对, 下午5点, 霍布斯咖啡馆}`。 |
+| `C` | 对话集合 conversations | `conversation.json` | 所有对话标题、参与者和逐句内容。 |
+| `u_j` | 第 `j` 条话语 utterance | `conversation.json` 中的发言行 | 某个角色在某次对话中说出的一句话。 |
+| `speaker(u_j)` | 发言者 speaker | `conversation.json` | 这句话是谁说的。 |
+| `participants(c)` | 对话参与者 participants | 对话标题 `A -> B @ location` | 这次对话涉及的角色。 |
+| `E` | 传播边 diffusion edge | 脚手架从 `u_j` 推导 | 如果发言者说出核心事实，则记一条 `speaker -> listener`。 |
+
+有了这些定义，社会传播指标可以写成可计算公式：
+
+| 指标 | 公式 | 证据来源 | 解释 |
+| --- | --- | --- | --- |
+| 知情角色数 `unique_informed_agents` | `|{agent | agent 说出或听到 F}|` | `conversation.json` | 有多少去重角色接触到核心事实。 |
+| 源头提及数 `source_mention_count` | `|{target | S 对 target 提到 F 或 G}|` | `conversation.json` | 源头主动把话题说给了多少人。 |
+| 直接邀请数 `direct_invitation_count` | `|{target | S 对 target 说出邀请词且提到 F 或 G}|` | `conversation.json` | 源头明确邀请或约定的人数。 |
+| 间接提及次数 `indirect_mention_count` | `Σ I(speaker(u_j) != S 且 u_j 提到 F 或 G)` | `conversation.json` | 非源头角色主动延续话题的次数。 |
+| 传播深度 `diffusion_depth` | `max shortest_path_length(S, v)` | 传播边 `E` | 从源头出发，最远传到第几跳。 |
+| 事实保持分数 `fact_preservation_score` | `preserved_fact_mentions / fact_related_mentions` | `conversation.json` | 提到事件的话语中，有多少仍保留全部核心事实。 |
+| 态度多样性分数 `attitude_diversity_score` | `|distinct(attitude_labels)| / 3` | 对话文本关键词 | 角色是否出现接受、犹豫、反对等不同态度。 |
+
+这里的 `G` 是目标关键词 goal keywords，`F` 是核心事实 core facts。两者不完全一样。以派对实验为例，`G` 可以包括“筹备”“邀请”“参加”，`F` 必须包括“伊莎贝拉”“下午5点”“霍布斯咖啡馆”。目标词用来判断话题相关，核心事实用来判断传播有没有变形。
+
+传播深度 `diffusion_depth` 的计算来自有向图 directed graph：
 
 ```text
-unique_informed_agents
+V = 说出或听到核心事实的角色集合
+E = {(speaker, listener) | speaker 在对话中说出核心事实，listener 是同场对话对象}
+diffusion_depth = 从 S 出发到所有可达节点的最短路径最大值
 ```
 
-明确知道事件的去重角色数。
+如果路径是：
 
 ```text
-direct_invitation_count
+伊莎贝拉 -> 玛丽亚 -> 克劳斯
 ```
 
-发起者直接告诉的人数。
+那么传播深度是 `2`。如果伊莎贝拉只分别告诉玛丽亚和克劳斯，路径是：
 
 ```text
-indirect_mention_count
+伊莎贝拉 -> 玛丽亚
+伊莎贝拉 -> 克劳斯
 ```
 
-非发起者主动提及事件次数。
+那么传播深度是 `1`。两种结果都可能可信，但社会结构不同。第一种是链式传播，第二种是源头广播。
+
+第 26 章 `book-custom-discussion` 的真实输出可以作为一个小型传播样例。本次设置：
 
 ```text
-diffusion_depth
+S = 克劳斯
+F = {置换效应, 图书馆}
+G = {中产阶级化, 置换效应, 社区文化变迁, 访谈笔记, 田野观察, 撰写}
 ```
 
-该指标记录最长传播链路深度。
+脚手架得到的社会传播 social diffusion 指标如下：
+
+| 指标 | 结果 | 解读 |
+| --- | ---: | --- |
+| `unique_informed_agents` | `3` | 克劳斯、阿伊莎、沃尔夫冈都进入相关对话。 |
+| `source_mention_count` | `2` | 克劳斯把论文话题提给阿伊莎和沃尔夫冈。 |
+| `direct_invitation_count` | `0` | 克劳斯没有明确邀请别人参加活动，这次更像研究讨论，不是活动动员。 |
+| `indirect_mention_count` | `7` | 阿伊莎和沃尔夫冈多次主动延续“置换效应”等话题。 |
+| `diffusion_depth` | `1` | 话题主要停留在克劳斯与两位对话对象之间，没有出现第二跳外扩。 |
+| `fact_preservation_score` | `13 / 17 = 0.76` | 17 条相关话语中，13 条保留了“置换效应”“图书馆”这组核心事实。 |
+| `attitude_diversity_score` | `2 / 3 = 0.67` | 关键词初筛出现积极 positive 与犹豫 uncertain 两类态度。 |
+
+对应传播边 diffusion edges 是：
 
 ```text
-fact_preservation_score
+克劳斯 -> 阿伊莎
+克劳斯 -> 沃尔夫冈
+阿伊莎 -> 克劳斯
+沃尔夫冈 -> 克劳斯
 ```
 
-该指标记录核心事实保持评分。
+这个结果不能写成“话题已经在小镇广泛传播”。它更准确地说明：克劳斯的论文主题在图书馆小圈子里形成了可追踪讨论，阿伊莎和沃尔夫冈会围绕“置换效应”给出反馈，但还没有扩散到更多角色。
+
+`source_mention_count` 和 `direct_invitation_count` 必须分开。克劳斯问阿伊莎“置换效应那段怎么写”是源头提及，不是邀请。阿伊莎说“四点图书馆老位置见”是一个后续约定，但发言者不是克劳斯，所以在 `S = 克劳斯` 的口径下不计入直接邀请。换成派对实验时，伊莎贝拉说“明天下午 5 点来霍布斯咖啡馆参加情人节派对”，才应该计入直接邀请。
+
+不同事件的传播指标可以有不同侧重点：
+
+| 实验类型 | 关键事实 `F` | 重点指标 | 典型失败 |
+| --- | --- | --- | --- |
+| 情人节派对 | 发起者、时间、地点、活动主题 | `direct_invitation_count`、`arrival_rate`、`fact_preservation_score` | 知道派对但说错时间，或答应后不到场。 |
+| 镇长竞选 | 候选人、政策立场、支持/反对态度 | `unique_informed_agents`、`attitude_diversity_score`、`diffusion_depth` | 所有人突然支持同一候选人，或传播没有来源。 |
+| 论文讨论会 | 讨论主题、地点、约定时间、参与者 | `source_mention_count`、`indirect_mention_count`、`arrival_rate` | 有讨论话题但没有形成约定，或约定后没有落地。 |
+
+脚手架里的态度标签 attitude labels 是关键词初筛。它适合快速定位候选对话，不适合直接替代人工判断。比如“我有点拿不准”会被标成犹豫 uncertain，但这不一定是负面态度；它可能是可信的学术讨论状态。
+
+社会传播评价最后要回到一句判断：
 
 ```text
-attitude_diversity_score
+这次传播有没有源头、有没有路径、核心事实有没有保持、后续有没有影响记忆或行动。
 ```
 
-态度是否有接受、拒绝、犹豫、反对等差异。派对实验更关注：
-
-- 邀请。
-- 接受或拒绝。
-- 到场。
-- 准备行为。
-
-竞选实验更关注这些结果：
-
-- 谁知道候选人。
-- 谁支持。
-- 谁反对。
-- 话题是否扩展到政策和社区生活。
-
-不同事件的传播指标可以不同。但都要保留“源头、路径、事实保持”三个核心。
+缺任意一项，结论都要降级。
 
 ## 29.13 维度六：行动落地能力
 
@@ -668,7 +719,68 @@ generative_agents/results/compressed/<实验名>/simulation.md
 是否出现行动发生但没有前置动机？
 ```
 
-可信行为不要求每个承诺都兑现。真实社会中也会有人迟到、忘记或改变主意。但如果没有解释，频繁违背承诺会降低可信度。
+行动落地指标要把口头承诺 commitment、移动回放 movement 和行动描述 action 连在一起：
+
+| 符号 | 中文 English | 来源 | 含义 |
+| --- | --- | --- | --- |
+| `K` | 承诺集合 commitments | `conversation.json` 人工标注或 `--commitments` | 角色说过要在某时某地做某事。 |
+| `k_i` | 第 `i` 条承诺 commitment | `K[i]` | 形如 `{agent, promised_time, location_keywords, description}`。 |
+| `τ` | 到场容差 tolerance | `--arrival-tolerance-minutes` | 承诺时间前后允许多少分钟。 |
+| `M_t` | 时间 `t` 的移动状态 movement state | `movement.json` | 角色在这一帧的位置和行动。 |
+| `arrive(k_i)` | 到场判定 arrival indicator | 脚手架或人工复核 | 容差窗口内是否到达目标地点。 |
+
+常用指标如下：
+
+| 指标 | 公式 | 证据来源 | 解释 |
+| --- | --- | --- | --- |
+| 承诺数 `commitment_count` | `|K|` | `conversation.json`、人工标注 | 需要检查落地的口头承诺数量。 |
+| 到场率 `arrival_rate` | `Σ arrive(k_i) / |K|` | `movement.json` | 承诺有没有变成位置上的到达。 |
+| 平均到场延迟 `mean_abs_arrival_delay_minutes` | `Σ |matched_time_i - promised_time_i| / arrived_count` | `movement.json` | 到场时间离承诺时间有多远。 |
+| 未到场数 `no_show_count` | `commitment_count - arrived_commitment_count` | `movement.json` | 答应但没有落地的承诺数量。 |
+| 行动目标匹配率 `action_goal_match_rate` | `Σ rel(action(a_t), G) / N` | `simulation.md`、`movement.json` | 到场后是否真的在做相关事情。 |
+| 无前置动机行动数 `unsupported_action_count` | `Σ I(action 命中事件关键词但前文无记忆/日程/对话证据)` | `conversation.json`、记忆 memory、日程 schedule | 角色是否突然执行没有来源的行动。 |
+
+脚手架的 `--commitments` 参数用于标注承诺：
+
+```text
+agent|HH:MM|location_keyword1+location_keyword2|description
+```
+
+第 26 章的真实对话里，阿伊莎在 15:20 对克劳斯说：
+
+```text
+四点图书馆老位置见！我手头正好在读莎翁关于流亡与故土的段落……
+```
+
+这句话可以标成一条承诺：
+
+```text
+阿伊莎|16:00|图书馆|四点图书馆老位置见
+```
+
+脚手架在 `movement.json` 中检查 16:00 前后 20 分钟，得到：
+
+```json
+{
+  "commitment_count": 1,
+  "arrived_commitment_count": 1,
+  "arrival_rate": 1.0,
+  "mean_abs_arrival_delay_minutes": 0.0,
+  "matched_time": "16:00",
+  "matched_location": "奥克山学院，图书馆，图书馆桌子"
+}
+```
+
+这条证据说明阿伊莎的约定落地了：她在承诺时间出现在图书馆桌子附近。再结合 16:50 的对话记录，阿伊莎继续围绕置换效应和文本论证给克劳斯反馈，行动不是单纯到场，而是进入了约定主题。
+
+可信行为不要求每个承诺都兑现。真实社会中也会有人迟到、忘记或改变主意。但如果没有解释，频繁违背承诺会降低可信度。落地失败要写清楚是哪一环断了：
+
+| 失败表现 | 可能断点 | 检查文件 |
+| --- | --- | --- |
+| 说了邀请，但 `movement.json` 中不到场 | 日程 schedule 没修订，或行动 action 没落到目标地点 | `conversation.json`、断点 checkpoint、`movement.json` |
+| 到了地点，但行动与事件无关 | 到场成功，目标 goal 或行动描述 action 失败 | `simulation.md`、`movement.json` |
+| 角色突然到场，但没有任何前置对话或记忆 | 可能是路径规划偶然经过，不能算承诺兑现 | `conversation.json`、记忆 memory、日程 schedule |
+| 多人同时知道地点但没有传播路径 | 可能是提示词 prompt 泄漏或初始设定泄漏 | `agent.json`、`conversation.json` |
 
 ## 29.14 一套 1-5 分评分规则
 
@@ -681,6 +793,24 @@ generative_agents/results/compressed/<实验名>/simulation.md
 4 分：大部分可信，少量问题不影响整体判断。
 5 分：非常可信，行为、记忆、计划和环境证据高度一致。
 ```
+
+自动指标可以辅助评分，但不能把 `0.86` 直接写成 `4.3 分`。更稳妥的做法是先把每个维度绑定到一组指标，再给出人工裁决：
+
+| 维度 | 可参考机器指标 | 5 分倾向 | 3 分倾向 | 1 分倾向 |
+| --- | --- | --- | --- | --- |
+| 计划合理性 | `schedule_conflict_count`、`location_match_rate`、`goal_related_action_rate`、`plan_action_match_rate` | 无时间冲突，地点与目标大多命中，行动能解释当前计划。 | 时间基本正常，但有明显泛化行动或部分目标脱节。 | 时间冲突频繁，行动与计划和地点大面积脱节。 |
+| 社会传播可信度 | `unique_informed_agents`、`source_mention_count`、`diffusion_depth`、`fact_preservation_score` | 有清晰源头、路径和事实保持，传播后影响对话或行动。 | 有相关对话，但路径较短或事实保持不稳定。 | 多人突然知道事件，找不到源头或事实严重变形。 |
+| 行动落地能力 | `arrival_rate`、`mean_abs_arrival_delay_minutes`、`location_match_rate`、`action_goal_match_rate` | 承诺在容差内落地，后续行动与事件目标一致。 | 到场或目标命中只满足一部分，需要人工解释。 | 多次口头承诺没有任何位置或行动证据。 |
+| 记忆连续性 | `memory_goal_related_nodes`、`conversation_metrics.goal_keyword_mentions`、人工追踪召回 | 事件进入记忆，并在后续对话或行动中被正确使用。 | 有记忆节点，但召回不稳定或事实略有漂移。 | 关键经历没有写入，或后续凭空编造。 |
+
+如果实验需要固定公式，可以先定义权重，再换算成评分：
+
+```text
+dimension_metric_score = Σ weight_i * normalized_metric_i
+dimension_score = round(1 + 4 * dimension_metric_score)
+```
+
+这个公式只适合对照实验。正式报告仍然要附证据行，因为同一个 `arrival_rate = 0` 可能代表“角色失约”，也可能代表“角色合理拒绝后没有承诺”。
 
 每个分数必须附证据。不要只写：
 
@@ -927,10 +1057,22 @@ flowchart TD
 - step：
 - stride：
 - 事件：
+- metrics_json：
 
 ## 总体结论
 
 一句话概括本次实验是否支撑目标假设。
+
+## 自动指标摘要
+
+| 指标 | 数值 | 证据文件 | 解释 |
+| --- | ---: | --- | --- |
+| schedule_conflict_count |  |  |  |
+| goal_related_action_rate |  |  |  |
+| plan_action_match_rate |  |  |  |
+| unique_informed_agents |  |  |  |
+| fact_preservation_score |  |  |  |
+| arrival_rate |  |  |  |
 
 ## 六维评分
 
@@ -963,7 +1105,13 @@ flowchart TD
 3. （填写下一步修改）
 ```
 
-这个模板可以放进实验目录。也可以作为本书读者完成练习时的提交格式。
+`metrics_json` 填脚手架输出路径，例如：
+
+```text
+docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json
+```
+
+报告中的自动指标摘要来自这个文件，六维评分和失败样例来自人工复核。这样报告既能复现，又不会把机器初筛误当成最终判断。
 
 ## 29.22 本章框架如何连接第五部分
 
@@ -1003,7 +1151,9 @@ flowchart TD
 | --- | --- |
 | 可信定义 | “可信”不是“真实意识”，而是行为、记忆、计划和环境约束的一致性。 |
 | 证据链 | 不能只看对话流畅度，要追踪 `simulation.md`、`conversation.json`、断点 checkpoint 和 `movement.json`。 |
+| 评价工具 | `ch29_evaluate_simulation.py` 把断点、移动回放、对话和记忆文件转成可复查指标。 |
 | 六个维度 | 身份一致性、记忆连续性、计划合理性、反应合理性、社会传播可信度和行动落地能力共同构成评价框架。 |
+| 指标定义 | 计划、传播和行动落地指标都要有输入、公式、分母、证据来源和人工复核边界。 |
 | 评分规则 | 1-5 分适合教学，但每个分数都必须附具体证据。 |
 | 受控评价 | 适合检查单个智能体能力。 |
 | 端到端评价 | 适合观察小镇中的社会现象。 |
@@ -1018,6 +1168,8 @@ flowchart TD
 - Paper: 生成式智能体 Generative Agents: Interactive Simulacra of Human Behavior
 - Local manuscript: `docs/book/manuscript/part_01/chapter_11.md`
 - Local experiment design: `docs/book/04_experiment_design.md`
+- Local evaluation scaffold: `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py`
+- Local evaluation output: `docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json`
 - Local compressed result: `generative_agents/results/compressed/<实验名>/simulation.md`
 - Local replay data: `generative_agents/results/compressed/<实验名>/movement.json`
 - Local checkpoint data: `generative_agents/results/checkpoints/<实验名>/`
