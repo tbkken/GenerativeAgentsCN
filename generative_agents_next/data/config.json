@@ -1,0 +1,35 @@
+{
+    "agent": {
+        "percept": {
+            "mode": "box",
+            "vision_r": 8,
+            "att_bandwidth": 8
+        },
+        "schedule": {
+            "max_try": 5,
+            "diversity": 5
+        },
+        "think": {
+            "llm": {
+                "provider": "minimax",
+                "model": "MiniMax-M3",
+                "base_url": "https://api.minimaxi.com/v1",
+                "api_key": "",
+                "max_tokens": 8192
+            },
+            "interval": 1000,
+            "poignancy_max": 150
+        },
+        "chat_iter": 4,
+        "associate": {
+            "embedding": {
+                "provider": "minimax",
+                "model": "embo-01",
+                "base_url": "https://api.minimax.chat/v1",
+                "api_key": "",
+                "group_id": ""
+            },
+            "retention": 8
+        }
+    }
+}

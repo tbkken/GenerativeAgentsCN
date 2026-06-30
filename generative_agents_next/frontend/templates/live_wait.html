@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 24px;">
+  <h3>等待实时数据：{{ name }}</h3>
+  <p>还没有发现 checkpoint。请先启动仿真，页面会自动重试。</p>
+  <p><code>{{ checkpoints_folder }}</code></p>
+</div>
+{% endblock content %}
+
+{% block js_content %}
+<script>
+setTimeout(function() {
+  window.location.reload();
+}, {{ poll_ms|tojson }});
+</script>
+{% endblock js_content %}
