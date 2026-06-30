@@ -1,587 +1,379 @@
 # 第 37 章 评价体系升级：从故事可信到可复现实验指标
 
-## 37.1 核心问题
+## 37.1 派对看起来成功，证据链还没有自动闭合
 
-第 27 章已经建立了“可信行为”的评价框架。第 34 章又把单次小镇故事推进到批量社会仿真。评价体系升级继续向前推进一个问题：
-
-```text
-如何让 Generative Agents 的实验评价更接近 2023-2026 年 Agent 领域的严谨标准？
-```
-
-智能体 Agent 领域过去几年有一个很大的问题：
+`book-party-extended` 的对话记录里，伊莎贝拉在 2024-02-14 11:30 对玛丽亚说“下午五点的情人节派对你一定要来”，玛丽亚回答“五点刚好有休息时间，肯定会去参加”。这段故事很好读，但评价不能停在“她答应了”。工程上的问题是：
 
 ```text
-demo 很精彩，但评价不够稳。
+玛丽亚是否真的知道派对，是否记住了时间地点，是否在 17:00-19:00 到过霍布斯咖啡馆，失败时又断在哪一环？
 ```
 
-很多系统展示了漂亮轨迹、自然对话或任务成功案例。但读者很难知道：
-
-- 是否只挑了最好的一次。
-- 是否有强基线对照。
-- 失败率是多少。
-- 成本是多少。
-- 多次运行是否稳定。
-- 换模型后是否仍有效。
-- 指标是否真的衡量了目标能力。
-
-本章重点聚焦以下六个问题：
-
-1. 为什么智能体 agent 评价不能只看演示？
-2. AgentBench、WebArena、GAIA、SWE-bench 和 AI Agents That Matter 给我们什么启发？
-3. 生成式智能体 Generative Agents 当前已有哪些评价材料？
-4. 如何设计指标脚本和统一报告？
-5. 如何设置基线、成本和多次运行统计？
-6. 如何避免为了指标牺牲可信行为？
+当前项目已经留下了足够多的线索：`conversation.json` 记录谁对谁说了什么，`movement.json` 记录角色位置和回放帧，`simulation.md` 方便人工快速定位故事片段，`results/checkpoints/<name>/simulate-*.json` 保存每个时间点的日程 schedule、行动 action、记忆 associate 和大语言模型 LLM 摘要。评价体系升级要做的不是把小镇变成冷冰冰的排行榜，而是把这些线索组织成可复查、可比较、可复现的证据链。
 
 ```mermaid
 flowchart LR
-    Run[仿真运行] --> Data[断点 checkpoint / 对话 conversation / 移动 movement]
-    Data --> Metrics[指标脚本]
-    Metrics --> JSON[metrics.json]
-    Data --> Evidence[证据抽样]
-    Evidence --> Report[report.md]
-    JSON --> Compare[多次运行比较]
-    Compare --> Baseline[基线/成本/失败率]
-    Baseline --> Decision[是否接受升级]
-    Report --> Decision
+    Run["仿真运行 simulation run"] --> Checkpoint["断点 checkpoint<br/>simulate-*.json"]
+    Run --> Conversation["对话记录 conversation.json"]
+    Run --> Compress["压缩脚本 compress.py"]
+    Compress --> Movement["移动回放 movement.json"]
+    Compress --> Timeline["时间线 simulation.md"]
+    Checkpoint --> Metrics["指标脚本 metrics scripts"]
+    Conversation --> Metrics
+    Movement --> Metrics
+    Timeline --> Report["人工报告 report.md"]
+    Metrics --> Json["指标文件 metrics.json"]
+    Json --> Compare["多次运行比较 multi-run comparison"]
+    Report --> Decision["是否接受升级 upgrade decision"]
+    Compare --> Decision
 ```
 
-*图 37-1：生成式智能体 Generative Agents 的评价升级流水线。评价升级要把原始日志、指标脚本、报告和人工证据连起来，避免只凭演示效果下结论。*
+*图 37-1：生成式智能体 Generative Agents 的评价升级流水线。图中的每个节点都对应当前项目已经存在或拟新增的文件：`conversation.json`、`movement.json`、`simulation.md` 和断点 checkpoint 是强证据来源；`metrics.json` 与 `report.md` 是评价升级后的输出。*
 
-![图 37-2：评价报告工作台](../../assets/chapter_37/ch37_evaluation_workbench.png)
+![图 37-2：评价报告工作台](../../assets/chapter_37/ch37_evaluation_workbench_v2.png)
 
-*图 37-2：评价报告工作台。图片把指标文件 metrics.json、人工报告 report.md、对话记录 conversation、移动回放 movement、时间线 simulation 和断点 checkpoint 放在同一张工作台上，说明指标必须能回到原始证据。*
+*图 37-2：评价报告工作台。中央证据桌和天平表示评价 evaluation 必须同时接受确定性指标 deterministic metrics、大模型裁判 LLM as Judge 和人工复核 human review 的约束；周围的对话 conversation、移动 movement、时间线 simulation、断点 checkpoint、指标 metrics 与报告 report 共同构成证据链。*
 
-## 37.2 从“故事可信”到“实验可信”
+## 37.2 高频术语锚点
 
-生成式智能体 Generative Agents 的魅力来自故事。Smallville 中，派对传播、竞选讨论和关系形成都很有叙事感。生成式智能体 Generative Agents 的回放也很容易让读者进入故事。但研究和工程不能只停在故事。故事可信回答的是：
+| 中文 English | 当前项目位置 | 在评价中的职责 | 常见误读 |
+| --- | --- | --- | --- |
+| 对话记录 conversation | `generative_agents/results/checkpoints/<name>/conversation.json` | 记录对话时间、地点、说话双方和原文 | 只要出现关键词就算传播成功 |
+| 移动回放 movement | `generative_agents/results/compressed/<name>/movement.json` | 验证角色是否真的到达目标地点 | 把口头承诺当成到场 |
+| 时间线 simulation | `generative_agents/results/compressed/<name>/simulation.md` | 人工快速定位行为、位置和对话摘录 | 把压缩摘要当成唯一事实源 |
+| 断点 checkpoint | `generative_agents/results/checkpoints/<name>/simulate-*.json` | 保存角色状态、日程 schedule、行动 action、记忆 associate、模型配置 | 只看最后一个断点，忽略过程变化 |
+| 指标 metrics | 拟新增 `generative_agents/results/evaluations/<name>/metrics.json` | 机器可读统计结果 | 指标越高就越可信 |
+| 报告 report | 拟新增 `generative_agents/results/evaluations/<name>/report.md` | 人工可读结论、证据摘录和失败样例 | 报告只写成功案例 |
+| 模型摘要 LLM summary | `Game.agent_think()` 写入每步 `info["llm"]` | 记录模型名、成功数、失败数和请求数 | 只看最终行为，不看隐藏调用成本 |
+| 提示词 prompt | `generative_agents/data/prompts/*.txt`，由 `Scratch.build_prompt()` 填充 | 解释 LLM 行为如何被驱动 | 评价只看输出，不回查 prompt 输入 |
+| 调用类型 caller | `LLMModel.completion(..., caller="llm_normal")` | 可扩展为按提示词 prompt 类型统计成本 | 所有 LLM 调用混在一个总数里 |
+| 失败模式 failure mode | 拟新增评价字段 | 定位失败发生在接触、对话、记忆、计划、移动或格式解析 | 只写“失败”两个字 |
 
-```text
-这个案例看起来是否合理？
+## 37.3 前沿评价思想要落回小镇证据
+
+AgentBench、WebArena、GAIA、SWE-bench 和 AI Agents That Matter 的价值不在于给本项目贴论文标签，而在于提醒我们把“好看的回放”拆成可验证条件。
+
+| 前沿框架 frontier benchmark | 对小镇项目的约束 | 输入 input | 处理 process | 输出 output | 验证方式 |
+| --- | --- | --- | --- | --- | --- |
+| AgentBench | 不只跑一个派对故事，要覆盖派对、竞选、关系形成、模型切换和反思消融 | 多个实验配置 experiment configs | 同一指标脚本跑多个事件 | 每个实验的 `metrics.json` 与跨运行汇总 | 对比默认系统、消融系统和模型变体 |
+| WebArena | 语言承诺必须被环境 grounding 验证 | `conversation.json` 中的承诺，`movement.json` 中的位置 | 把承诺中的地点和时间窗映射到移动帧 | 到场数 attendance、承诺落地率 promise_action_match_rate | 回放页和 `movement.json` 双重核验 |
+| GAIA | 多步骤任务链不能只看最终结果 | 源头目标、对话传播、记忆、日程、移动 | 为每一环打标签，找断点 | 传播深度 diffusion_depth、链路断点 chain_break | 抽查原文和断点状态 |
+| SWE-bench | 成功条件要像测试一样可复查 | 实验目标、事实集合、目标地点、时间窗 | 用脚本判定“是否满足条件” | 通过/失败 verdict 和失败类型 failure_type | 失败样例必须能回到文件路径 |
+| AI Agents That Matter | 记录基线、成本、重复性和公平比较 | 默认系统、升级系统、多次运行、LLM summary | 汇总均值、最小值、最大值、失败率和调用成本 | 多次运行报告 multi-run report | 每次只改变一个主要变量 |
+
+这些框架共同指向一个工程结论：评价不是追加几行统计，而是把仿真输出变成可审计数据包。
+
+## 37.4 当前项目已经留下哪些证据
+
+当前代码已经具备评价升级的底座。关键链路如下。
+
+| 证据材料 | 生成位置 | 关键数据结构 | 能回答的问题 | 证据强度 |
+| --- | --- | --- | --- | --- |
+| `conversation.json` | `start.py` 每个仿真步写入 | `{time: [{"A -> B @ address": [[speaker, text], ...]}]}` | 谁在何时何地说过目标事实 | 强证据，适合传播路径 |
+| `simulate-*.json` | `SimulateServer.simulate()` | `agents.<name>.schedule`、`action`、`status`、`associate` | 角色当时计划什么、在哪里、记住什么 | 强证据，适合断点复查 |
+| `movement.json` | `compress.py generate_movement()` | `start_datetime`、`stride`、`all_movement`、`conversation` | 角色是否真的移动到目标地点 | 强证据，适合环境落地 |
+| `simulation.md` | `compress.py generate_report()` | 人设、活动记录、对话记录 | 人工快速阅读故事线 | 中证据，需要回到底层 JSON |
+| `LLMModel.get_summary()` | `Game.agent_think()` | `{"model": "...", "summary": {"total": "S:x,F:y/R:z"}}` | 调用了多少次模型，失败多少次 | 强证据，适合成本统计 |
+| `data/config.json` | 运行启动前读取 | `provider`、`model`、`embedding`、`poignancy_max`、`retention` | 本次实验的模型、检索和反思条件 | 强证据，适合基线说明 |
+
+`Game.agent_think()` 是评价材料进入断点的关键位置。它把 `currently`、`associate`、`concepts`、`chats`、`action`、`schedule`、`address` 和可用时的 `llm` 摘要放进 `info`。虽然当前 `start.py` 保存的是角色配置状态而不是完整 `info` 对象，但这些字段已经说明项目内部有统一观察点，后续可以把评价脚本接到这个观察点上。
+
+## 37.5 对话传播指标：从 conversation 到 diffusion
+
+派对、竞选和讨论会这类实验，第一层指标来自对话传播。对话不是自然语言文本堆叠，而是有明确结构的数据。
+
+```json
+{
+  "20240214-11:30": [
+    {
+      "伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面": [
+        ["伊莎贝拉", "下午五点的情人节派对你一定要来哦"],
+        ["玛丽亚", "五点刚好有休息时间，肯定会去参加"]
+      ]
+    }
+  ]
+}
 ```
 
-实验可信性需要回答的是：
+| 环节 | 输入 input | 处理 process | 输出 output | 失败模式 failure mode | 验证方式 |
+| --- | --- | --- | --- | --- | --- |
+| 关键词提取 keyword extraction | `conversation.json`、实验配置中的关键词 | 匹配“情人节、派对、霍布斯咖啡馆、五点”等同义表达 | `mentions[]`，含时间、地点、说话人、原文 | 漏掉同义词，或把旁支话题误计入传播 | 抽查原文上下文 |
+| 源头识别 source tracing | 初始 `currently` 和第一条相关对话 | 判断信息是否来自伊莎贝拉或明确上游 | `source_agent`、`upstream_agent` | 没有上游来源却算成知道 | 标注“疑似幻觉知晓 hallucinated awareness” |
+| 接受判断 acceptance | 含承诺的对话原文 | 区分接受、拒绝、犹豫、旁观提及 | `accepted_count`、`rejected_count` | 把礼貌回应当成接受 | 人工报告列出原话 |
+| 事实保真 fact preservation | 核心事实：时间、地点、事件、发起人 | 比较后续转述是否保持核心事实 | `fact_preservation_score` | “五点”变“晚上”、咖啡馆变酒吧 | 逐条列出漂移字段 |
 
-```text
-在明确条件下，这个系统是否稳定地产生某类可验证行为？
-```
+**公式 37-1：事实保真率 fact preservation score**
 
-两者都重要。没有故事，读者难以理解系统。没有实验，读者无法判断系统能力。本章目标就是把故事转成实验。
+$$
+\text{事实保真率}=\frac{\text{保留正确核心事实的转述数}}{\text{包含目标事件的转述总数}}
+$$
 
-## 37.3 AgentBench 的启发
+读法：核心事实集合可以包含“发起人=伊莎贝拉”“地点=霍布斯咖啡馆”“时间=17:00-19:00”“事件=情人节派对”。如果 4 条转述中有 3 条完整保留这些字段，事实保真率为 \(3/4=0.75\)。这不是语义美感评分，而是事实字段是否漂移的工程指标。
 
-AgentBench 试图在多种环境中评估大语言模型作为智能体大语言模型作为智能体 LLM as agents。它的启发是：
+### 对话 prompt 如何进入评价链
 
-```text
-agent 能力不应该只在一个任务、一种环境、一个案例中评价。
-```
+对话传播由一组真实提示词 prompt 驱动，不能只在报告末尾笼统写“模型生成了对话”。
 
-对生成式智能体 Generative Agents 来说，这意味着：
+| 机制 | 提示词 prompt 路径 | 主要变量 | 输出结构 schema / 字段 | 输出流向 |
+| --- | --- | --- | --- | --- |
+| 是否发起对话 decide chat | `generative_agents/data/prompts/decide_chat.txt` | `context`、`date`、`agent_status`、`another_status`、`agent`、`another` | `res: bool` | `Agent._chat_with()` 决定是否进入对话 |
+| 关系摘要 relation summary | `generative_agents/data/prompts/summarize_relation.txt` | `context`、`agent`、`another` | `res: str` | 作为 `generate_chat` 的关系输入 |
+| 生成对话 generate chat | `generative_agents/data/prompts/generate_chat.txt` | `base_desc`、`memory`、`address`、`current_time`、`previous_context`、`current_context`、`conversation` | `res: str` | 写入 `chats`，随后进入 `conversation.json` |
+| 检查复读 repeat check | `generative_agents/data/prompts/generate_chat_check_repeat.txt` | `conversation`、`content`、`agent` | `res: bool` | 决定对话是否提前结束 |
+| 判断结束 terminate | `generative_agents/data/prompts/decide_chat_terminate.txt` | `conversation`、`agent`、`another` | `res: bool` | 控制对话轮次 |
+| 对话摘要 summarize chats | `generative_agents/data/prompts/summarize_chats.txt` | `conversation` | `res: str` | `schedule_chat()` 写入行动和聊天记忆 |
 
-不要只跑派对实验。还要跑：
+这些提示词 prompt 的评价价值在于定位失败：如果角色相遇但没有提到派对，先看 `decide_chat` 是否没有触发；如果提到派对但事实漂移，查 `generate_chat` 输入的 `memory` 和 `previous_context`；如果 `conversation.json` 里残留 `{"res": ...` 这类字符串，就归入结构化输出残留或解析边界问题，而不是把它当成正常对话美化掉。
 
-- 竞选传播。
-- 关系形成。
-- 自定义讨论会。
-- 本地模型实验。
-- 反思消融。
-- 目标规划升级。
+## 37.6 到场与环境落地：从 movement 到 attendance
 
-不同实验考察不同能力。派对更适合评价传播和协同行动。竞选更适合评价态度分化和信息保持。关系形成更适合评价长期记忆和反思。本地模型实验更适合评价模型适配和结构化输出。多任务评价比单一 replay 更可靠。
+WebArena 给本项目最直接的启发是环境落地 grounding。小镇里，环境落地不靠角色自述，而靠 `movement.json` 和回放页面。
 
-## 37.4 WebArena 的启发
+| 环节 | 输入 input | 处理 process | 输出 output | 失败模式 failure mode | 验证方式 |
+| --- | --- | --- | --- | --- | --- |
+| 目标地点定义 target location | 评价配置中的 `target_location` | 映射到地址片段，如“霍布斯咖啡馆，咖啡馆” | 标准地点表达 | 地点别名没覆盖 | 对照 `maze.json` 与 `movement.json` 的 `location` |
+| 时间窗定义 time window | `attendance_window: ["17:00", "19:00"]` | 根据 `start_datetime`、`stride` 和帧号换算时间 | 帧范围 frame range | 时区或步长换算错误 | 复核 `movement.json.start_datetime` 和 `stride` |
+| 到场判断 attendance | `all_movement` 中每帧角色位置 | 统计角色在时间窗内是否进入目标地点 | `arrived_agents[]`、`attendance_count` | 路过门口被算作到场 | 抽查回放帧和位置字段 |
+| 承诺落地 promise to action | `conversation.json` 的接受话语 + `movement.json` 位置 | 匹配承诺者是否在时间窗内出现 | `promise_action_match_rate` | 承诺没有进入日程 | 回查 checkpoint 的 `schedule` 和 `action` |
 
-WebArena 强调在真实感更强的网页环境中评价自主智能体 autonomous agents。它的启发是：
+**公式 37-2：承诺落地率 promise action match rate**
 
-```text
-Agent 评价必须看环境 grounding。
-```
+$$
+\text{承诺落地率}=\frac{\text{承诺参加且到场的角色数}}{\text{承诺参加的角色数}}
+$$
 
-一个智能体 agent 说“我完成了任务”不够。它必须在环境中真的完成。对生成式智能体 Generative Agents 来说，环境 grounding 对应：
+读法：如果玛丽亚和克劳斯都明确承诺参加，最终只有克劳斯在 17:00-19:00 出现在霍布斯咖啡馆，承诺落地率为 \(1/2=0.50\)。这个指标把“说过”和“做过”分开，避免把自然对话误当成行动完成。
 
-- 世界地图 Maze。
-- 地图格子 Tile。
-- 地址树。
-- 移动回放 movement。
-- 对象占用。
-- 回放位置。
+现有回放链路已经可用：在 `generative_agents` 目录下，`python compress.py --name <实验名>` 会从 `results/checkpoints/<实验名>/` 生成 `results/compressed/<实验名>/simulation.md` 和 `movement.json`；`python replay.py` 再读取压缩结果提供前端回放。评价脚本不需要替代回放，而是把回放中的证据变成可比较字段。
 
-例如，角色可能会这样说：
+## 37.7 断点、记忆与日程：从 checkpoint 定位断链
 
-```text
-我会在 17:00 去霍布斯咖啡馆。
-```
+如果对话里有人答应参加，移动回放里却没有到场，下一步不能直接归咎于“模型不行”。断点 checkpoint 可以把失败定位到日程 schedule、记忆 associate、行动 action 或路径 movement。
 
-评价时必须检查下面证据：
+| 检查对象 | 文件位置 | 字段 | 可回答的问题 |
+| --- | --- | --- | --- |
+| 当前行动 action | `simulate-*.json` 的 `agents.<name>.action.event` | `describe`、`address`、`emoji` | 角色当时要做什么，要去哪里 |
+| 日程 schedule | `agents.<name>.schedule.daily_schedule` | `start`、`duration`、`describe`、`decompose` | 承诺是否进入计划，计划是否被修订 |
+| 记忆 associate | `agents.<name>.associate.memory` 与 `storage/<name>/associate/docstore.json` | `event`、`chat`、`thought` 节点 | 角色是否保存了派对事实 |
+| 反思状态 status | `agents.<name>.status.poignancy` | `poignancy` | 是否达到反思阈值 |
+| 模型配置 llm | `agent_base.think.llm` | `provider`、`model`、`max_tokens` | 本次运行使用什么模型 |
 
-```text
-movement.json 中它是否真的到达霍布斯咖啡馆？
-```
+### 日程 prompt 与计划修订证据
 
-这就是 WebArena 给小镇项目的启发：
+日程相关 prompt 直接影响到场指标，因此评价时必须知道它们的输入和输出。
 
-```text
-语言承诺必须用环境状态验证。
-```
+| 机制 | 提示词 prompt 路径 | 主要变量 | 输出结构 schema / 字段 | 失败时看哪里 |
+| --- | --- | --- | --- | --- |
+| 起床时间 wake up | `data/prompts/wake_up.txt` | `base_desc`、`lifestyle`、`agent` | `res: int`，0 到 11 | 角色全天节奏异常 |
+| 初始日程 schedule init | `data/prompts/schedule_init.txt` | `base_desc`、`lifestyle`、`wake_up` | `res: list[str]` | 日程过少或不合人设 |
+| 小时日程 schedule daily | `data/prompts/schedule_daily.txt` | `daily_schedule`、`hourly_schedule` | `res: dict[str, str]` | 派对时间被日常任务覆盖 |
+| 计划分解 schedule decompose | `data/prompts/schedule_decompose.txt` | `plan`、`increment`、`start`、`end` | `res: List[Tuple[str, int]]` | 子任务无法落到具体行动 |
+| 日程修订 schedule revise | `data/prompts/schedule_revise.txt` | `original_plan`、`event`、`new_plan`、`duration` | `res: List[Tuple[str, str, str]]` | 对话承诺没有改写当前计划 |
 
-## 37.5 GAIA 的启发
+`Agent.revise_schedule()` 是对话影响行动的关键位置。它先把当前行动写成 `memory.Action`，再在当前计划已有 `decompose` 时调用 `schedule_revise`，把新事件插入后续子计划。评价脚本可以在承诺之后检查后续断点：如果承诺者的 `daily_schedule` 和 `action.address` 从未靠近目标地点，应归入 `plan_not_updated` 或 `movement_miss`，而不是笼统写成传播失败。
 
-GAIA 关注通用 AI assistant 处理真实复杂任务的能力。它的启发是：
+## 37.8 统一 metrics.json 的数据结构
 
-```text
-评价要关注多步骤任务链。
-```
-
-很多智能体 agent 失败不是因为单步回答差，而是因为长链路中某一步断了。小镇实验也是这样。一个派对传播链包括：
-
-```text
-伊莎贝拉有派对目标
-  -> 她遇到别人
-  -> 她自然提到派对
-  -> 对方听懂时间地点
-  -> 对方记住
-  -> 对方可能转述
-  -> 有人调整计划
-  -> 有人到场
-```
-
-如果最后没人到场，不能只说“失败”。要定位是哪一环断了。GAIA 式复杂任务评价提醒我们：
-
-```text
-指标要覆盖任务链路，而不是只看最终结果。
-```
-
-## 37.6 SWE-bench 的启发
-
-SWE-bench 用真实 GitHub issue 检验模型是否能解决软件工程问题。它的启发是：
-
-```text
-任务完成要有可验证结果。
-```
-
-在软件工程里，可验证结果可能是测试通过。在小镇仿真里，可验证结果可以是：
-
-- 关键词传播路径。
-- 到场记录。
-- 日程变化。
-- 关系记忆变化。
-- 反思节点生成。
-- 多次运行统计。
-
-不要只让模型自评。不要只让角色说“我做到了”。要用外部证据判断。例如：
-
-```text
-accepted_count
-attendance_count
-promise_action_match_rate
-fact_preservation_score
-```
-
-这些指标就是小镇任务的“测试”。
-
-## 37.7 AI Agents That Matter 的启发
-
-AI Agents That Matter 对智能体 agent 评价提出了非常直接的批评。它提醒我们关注：
-
-- 可重复性。
-- 基线。
-- 成本。
-- 统计显著性。
-- 公平比较。
-- 工具和模型带来的混淆。
-
-如果只展示一个好看的回放，就是在重复智能体 demo 的老问题。一本严肃的项目书应该记录：
-
-- 运行了几次。
-- 成功几次。
-- 失败几次。
-- 使用什么模型。
-- 花费多少调用。
-- 和什么基线比。
-- 改动是否只影响一个变量。
-
-这不是为了把小镇变成冷冰冰的 benchmark。而是为了让读者知道：
-
-```text
-这个系统到底在哪些条件下有效。
-```
-
-## 37.8 当前项目已有评价基础
-
-生成式智能体 Generative Agents 已经提供很多评价材料。第一，`simulation.md`。用于人工阅读行为和对话。第二，`conversation.json`。用于追踪对话和传播路径。第三，断点 checkpoint。用于查看智能体 agent 状态、记忆、日程、行动和大语言模型 LLM 摘要。第四，`movement.json`。用于检查位置和回放。第五，大语言模型 LLM summary。`LLMModel.get_summary()` 会记录调用成功、失败和请求数。在 `Game.agent_think()` 中，如果智能体 agent 的大语言模型 LLM 可用，会把摘要 summary 写入 info：
-
-```text
-info["llm"] = agent._llm.get_summary()
-```
-
-这意味着项目已经有成本和失败率记录的入口。还缺的是统一收集和报告。
-
-## 37.9 当前评价缺口
-
-当前项目的评价缺口主要有六个。第一，没有统一指标 metrics 输出。每次实验需要人工看文件。第二，没有批量运行汇总。多次实验结果不容易比较。第三，没有标准基线。读者不知道升级版相对默认系统提升在哪里。第四，没有成本报告。大语言模型 LLM 调用统计存在，但没有汇总成实验级指标。第五，没有失败类型分类。失败样例需要人工整理。第六，没有实验配置文件。运行条件容易散落在命令行和口头说明中。这些缺口不影响项目作为教学 demo。但会影响它作为研究实验平台。
-
-## 37.10 升级方向一：指标脚本
-
-建议增加下面这些工具：
-
-```text
-tools/analyze_conversation_keywords.py
-tools/analyze_attendance.py
-tools/analyze_memory_references.py
-tools/compare_experiment_runs.py
-tools/export_experiment_report.py
-```
-
-它们分别负责下面任务：
-
-- 对话关键词和传播路径。
-- 指定地点和时间窗到场统计。
-- 记忆引用准确率抽样。
-- 多次运行指标比较。
-- 导出 Markdown 和 JSON 报告。
-
-第一版不需要复杂。可以先支持派对和竞选两个事件。工具脚本的价值不是自动取代判断，而是建立标准流程。
-
-指标脚本逻辑图：
-
-```mermaid
-flowchart TD
-    Inputs["原始材料：对话记录 conversation、移动回放 movement、时间线 simulation、断点 checkpoint"] --> Scripts["指标脚本指标 metrics scripts"]
-    Scripts --> Diffusion["传播指标"]
-    Scripts --> Attendance["到场指标"]
-    Scripts --> Memory["记忆引用抽样"]
-    Diffusion --> Metrics["统一指标文件 metrics.json"]
-    Attendance --> Metrics
-    Memory --> Metrics
-```
-
-## 37.11 升级方向二：统一 metrics.json
-
-每次实验可以生成下面材料：
-
-```text
-generative_agents/results/evaluations/<实验名>/metrics.json
-```
-
-可以参考下面这个示例：
+第一版 `metrics.json` 不需要试图评价所有社会行为。它只要把实验条件、传播、到场、成本和失败样例结构化，就已经能让项目从 demo 走向实验。
 
 ```json
 {
   "experiment": {
-    "name": "book-party-small-run-01",
-    "model": "qwen3.5:4b-q4_K_M",
-    "embedding": "qwen3-embedding:0.6b-q8_0",
-    "start": "20240214-08:00",
-    "step": 72,
+    "name": "book-party-extended",
+    "metric_version": "party_diffusion_v1",
+    "start_datetime": "2024-02-14T08:00:00",
     "stride": 10,
-    "agents": 6
+    "agents": ["伊莎贝拉", "玛丽亚", "克劳斯", "山姆"],
+    "model": {
+      "provider": "minimax",
+      "name": "MiniMax-M3",
+      "embedding": "embo-01"
+    }
   },
   "diffusion": {
+    "source_agent": "伊莎贝拉",
     "unique_informed_agents": 4,
-    "direct_mentions": 2,
-    "indirect_mentions": 1,
+    "accepted_count": 2,
+    "rejected_count": 1,
     "diffusion_depth": 2,
     "fact_preservation_score": 0.75
   },
   "attendance": {
     "target_location": "霍布斯咖啡馆",
     "window": "17:00-19:00",
-    "arrived_agents": ["伊莎贝拉", "玛丽亚"],
-    "attendance_count": 2
+    "arrived_agents": ["克劳斯"],
+    "attendance_count": 1,
+    "promise_action_match_rate": 0.5
   },
   "runtime": {
-    "llm_requests": 320,
+    "llm_total_requests": 320,
     "llm_success": 305,
     "llm_failures": 15,
-    "elapsed_minutes": 95
-  }
+    "failure_rate": 0.046875
+  },
+  "failures": [
+    {
+      "type": "plan_not_updated",
+      "agent": "玛丽亚",
+      "evidence": [
+        "results/checkpoints/book-party-extended/conversation.json#20240214-11:30",
+        "results/compressed/book-party-extended/movement.json"
+      ]
+    }
+  ]
 }
 ```
 
-这个文件让实验可以被脚本读取、比较和汇总。
+| 字段 | 来源 | 解释 | 必须保留的证据路径 |
+| --- | --- | --- | --- |
+| `experiment` | 启动命令、`data/config.json`、首尾断点 | 说明这次实验如何运行 | checkpoint 目录、模型配置 |
+| `diffusion` | `conversation.json` | 说明目标事实如何传播 | 每条提及的时间、地点、原话 |
+| `attendance` | `movement.json` | 说明承诺是否落到地点 | 帧号、时间窗、角色位置 |
+| `runtime` | `LLMModel.get_summary()` | 说明成本、失败和重试 | `S:x,F:y/R:z` 原始摘要 |
+| `failures` | 指标脚本 + 人工复核 | 说明失败类型和边界 | 对话、断点、移动回放路径 |
 
-指标文件逻辑图：
+**公式 37-3：模型失败率 LLM failure rate**
 
-```mermaid
-flowchart TD
-    Experiment["实验配置"] --> Metrics["指标文件 metrics.json"]
-    Diffusion["传播统计"] --> Metrics
-    Attendance["到场统计"] --> Metrics
-    Runtime["运行成本与失败率"] --> Metrics
-    Metrics --> Compare["跨运行比较"]
-    Metrics --> Report["生成评价报告 report.md"]
-```
+$$
+\text{模型失败率}=\frac{\text{最终失败次数 }F}{\text{请求尝试次数 }R}
+$$
 
-## 37.12 升级方向三：统一 report.md
+读法：`LLMModel.get_summary()` 的 `S:25,F:0/R:31` 表示最终成功 25 次、最终失败 0 次、总请求尝试 31 次。失败率是 \(0/31=0\)，但额外重试成本是 \(31-25=6\)。所以报告要同时记录失败率和重试成本。
 
-除了机器可读的 `metrics.json`，还应生成人工可读报告：
+## 37.9 统一 report.md 的人工裁决结构
 
-```text
-generative_agents/results/evaluations/<实验名>/report.md
-```
+`metrics.json` 适合脚本比较，`report.md` 适合人判断行为是否可信。报告不应只是把 JSON 换成 Markdown，而要把证据强弱、失败边界和人工裁决写清楚。
 
-报告结构可以这样设计：
+| 报告模块 | 内容 | 项目证据 |
+| --- | --- | --- |
+| 实验配置 experiment config | 实验名、时间、步长 stride、角色、模型、评价版本 | 启动命令、`data/config.json`、首个 checkpoint |
+| 指标摘要 metrics summary | 传播、到场、成本、失败率 | `metrics.json` |
+| 传播路径 diffusion path | 谁从谁那里知道，是否有上游来源 | `conversation.json` 原文 |
+| 到场统计 attendance | 谁承诺，谁到场，谁缺席 | `movement.json` 帧和回放 |
+| 记忆与计划 memory and schedule | 承诺是否进入记忆和日程 | `simulate-*.json`、`docstore.json` |
+| 失败样例 failure cases | 每类失败至少一条原始证据 | 对话、断点、移动路径 |
+| 成本与稳定性 cost and stability | 模型调用、重试、多次运行差异 | `LLM summary`、多次 `metrics.json` |
+| 结论 verdict | 可接受、需复查或不接受升级 | 指标和人工证据共同决定 |
 
-```markdown
-# 实验评价报告
+图 37-2 的工作台正对应这份报告结构：上半部分是评价产物，下半部分是回查入口。人工裁决必须从上往下读，再从下往上复查；如果一个数字不能回到底层文件，它就不应该进入结论。
 
-## 实验配置
+## 37.10 基线、成本和多次运行
 
-## 指标摘要
+没有基线 baseline，就无法判断升级是否有效。没有成本 cost，就无法判断升级是否值得。没有多次运行 multi-run，就无法判断升级是否稳定。
 
-## 传播路径
+| 对照变量 | 基线设置 | 升级设置 | 观察指标 | 归因边界 |
+| --- | --- | --- | --- | --- |
+| 默认系统 default | 不改源码，使用当前 `data/config.json` | 新评价脚本只读输出 | 指标能否生成 | 不评价行为提升 |
+| 反思阈值 reflection threshold | `poignancy_max=150` | 调高或调低阈值 | 反思次数、事实保持、行为自然性 | 只改一个阈值 |
+| 检索保留 retrieval retention | `associate.retention=8` | 调整保留数量 | 记忆引用率、事实漂移 | 不同时换模型 |
+| 模型 provider | 当前 `minimax / MiniMax-M3` | `ollama` 本地模型或其他远程模型 | 格式失败率、成本、对话质量 | 保持 prompt 和角色不变 |
+| 对话开关 dialogue | 默认对话逻辑 | 限制 `chat_iter` 或禁用对话 | 传播深度、到场率 | 只用于消融实验 |
 
-## 到场统计
-
-## 记忆与计划证据
-
-## 失败样例
-
-## 成本与稳定性
-
-## 结论
-```
-
-这能把第 27 章的评分表、第 34 章的统计指标和本章的成本记录连接起来。
-
-报告生成逻辑图：
-
-```mermaid
-flowchart TD
-    Metrics["指标文件 metrics.json"] --> Summary["指标摘要"]
-    Evidence["证据材料：时间线 simulation、对话记录 conversation、移动回放 movement"] --> Cases["证据摘录与失败样例"]
-    Cost["模型调用成本大语言模型 LLM summary"] --> Runtime["成本与稳定性"]
-    Summary --> Report["人工可读报告 report.md"]
-    Cases --> Report
-    Runtime --> Report
-    Report --> Conclusion["透明结论"]
-```
-
-## 37.13 升级方向四：基线对照
-
-没有基线，就无法判断升级是否有效。建议至少设置五类基线。第一，默认完整系统。这是当前生成式智能体 Generative Agents。第二，高反思阈值。把 `poignancy_max` 调高，减少反思，观察关系和传播是否变弱。第三，低检索保留。降低 `associate.retention`，观察记忆连续性是否下降。第四，禁用或减少对话。观察信息传播是否消失。第五，小模型 vs 大模型。观察模型能力对结构化输出、对话和反思的影响。每次只改一个主要变量。否则不能归因。
-
-## 37.14 升级方向五：成本记录
-
-智能体 Agent 系统评价必须记录成本。成本包括：
-
-- 大语言模型 LLM 请求次数。
-- 成功次数。
-- 失败次数。
-- 重试次数。
-- 运行耗时。
-- 本地模型硬件条件。
-- 远程接口令牌 API token 成本。
-
-当前 `LLMModel` 已经有摘要 summary：
-
-```text
-S:成功数,F:失败数/R:请求数
-```
-
-真实日志里会写得更具体。例如短实验中可能看到：
-
-```text
-llm:
-  model: MiniMax-M3
-  summary:
-    total: S:25,F:0/R:25
-    llm_normal: S:25,F:0/R:25
-```
-
-这组数字可以直接转成成本记录。`S:25` 表示成功 completion 25 次，`F:0` 表示没有最终失败，`R:25` 表示请求尝试也是 25 次，因此没有重试成本。如果出现 `S:25,F:0/R:31`，说明最终都成功了，但中间多消耗了 6 次请求。社会仿真评价不能只记录“实验成功”，还要记录这些隐藏成本。
-
-可以把它汇总成下面表格：
-
-```json
-{
-  "llm_total_requests": 320,
-  "llm_success": 305,
-  "llm_failures": 15,
-  "failure_rate": 0.046875
-}
-```
-
-成本记录会改变我们对系统的判断。一个升级如果让传播率提升 5%，但大语言模型 LLM 调用增加 5 倍，不一定值得。
-
-## 37.15 升级方向六：失败分类
-
-失败不是一个类别。建议把失败分为：
-
-```text
-no_contact
-```
-
-该失败表示角色没有相遇。
-
-```text
-no_mention
-```
-
-相遇但没有提到目标事件。
-
-```text
-memory_miss
-```
-
-该失败表示角色听过但后续想不起。
-
-```text
-fact_drift
-```
-
-时间、地点或人物说错。
-
-```text
-plan_not_updated
-```
-
-口头承诺没有进入计划。
-
-```text
-movement_miss
-```
-
-计划或承诺没有落地到位置。
-
-```text
-llm_format_failure
-```
-
-该失败表示结构化输出失败。
-
-```text
-over_cooperation
-```
-
-所有角色无条件接受。分类之后，改进方向才清楚。例如 `no_contact` 可能是路径和时间问题。`memory_miss` 是检索问题。`plan_not_updated` 是日程修订问题。`llm_format_failure` 是模型适配问题。
-
-失败定位逻辑图：
-
-```mermaid
-flowchart TD
-    Failure["实验失败样例"] --> Contact{"角色是否相遇"}
-    Contact -->|否| NoContact["no_contact：路径或日程问题"]
-    Contact -->|是| Mention{"是否提到目标事件"}
-    Mention -->|否| NoMention["no_mention：对话触发问题"]
-    Mention -->|是| Memory{"后续是否记得"}
-    Memory -->|否| MemoryMiss["memory_miss：检索或保留问题"]
-    Memory -->|是| Action{"是否更新计划并行动"}
-    Action -->|否| PlanMiss["plan_not_updated 或 movement_miss"]
-    Action -->|是| Success["传播转化成立"]
-```
-
-## 37.16 升级方向七：多次运行统计
-
-每个实验至少建议运行 3-5 次。报告中写：
-
-```text
-mean
-min
-max
-standard deviation
-```
-
-可以看一个具体例子：
+多次运行建议至少记录 3-5 次。成本太高时可以先写“样例运行 sample run”，但不能把样例写成稳定统计结论。
 
 ```json
 {
   "attendance_count": {
-    "mean": 2.2,
+    "mean": 1.7,
     "min": 1,
-    "max": 3
+    "max": 3,
+    "std": 0.94
   },
-  "diffusion_depth": {
-    "mean": 1.8,
-    "min": 1,
-    "max": 3
+  "fact_preservation_score": {
+    "mean": 0.78,
+    "min": 0.62,
+    "max": 0.91,
+    "std": 0.12
   }
 }
 ```
 
-如果运行成本太高，可以先少量运行。但要明确说明：
+多次运行的读法要诚实：均值高但方差大，说明系统偶尔很精彩但不稳定；到场率提高但调用成本暴涨，说明升级可能不适合长期运行；自然性下降，说明指标优化正在牺牲小镇可信行为。
 
-```text
-这是样例结果，不是稳定统计结论。
-```
+## 37.11 失败分类比成功率更有用
 
-评价报告应优先透明，而不是夸大效果。
+社会仿真里的失败经常比成功更有诊断价值。推荐第一版失败分类如下。
 
-## 37.17 升级方向八：评价配置版本化
-
-指标脚本本身也会变化。因此评价配置也要版本化。例如：
-
-```text
-evaluations/configs/party_diffusion_v1.json
-```
-
-可以直接参考下面内容：
-
-```json
-{
-  "metric_version": "party_diffusion_v1",
-  "keywords": ["情人节", "派对", "霍布斯咖啡馆"],
-  "core_facts": {
-    "source": "伊莎贝拉",
-    "location": "霍布斯咖啡馆",
-    "time": ["17:00", "下午5点"]
-  },
-  "attendance_window": ["17:00", "19:00"]
-}
-```
-
-这样以后指标变化时，旧实验仍能解释。没有评价版本，实验结果会变得不可追溯。
-
-## 37.18 不要为了指标牺牲可信行为
-
-指标设计有一个危险：
-
-```text
-系统可能为了指标优化，而不是为了可信行为优化。
-```
-
-例如只看传播覆盖率，系统可能让角色到处重复广播派对。只看到场率，系统可能让所有人准时到场，失去拒绝和冲突。只看任务完成率，角色可能做出不符合人设的行为。因此评价要同时保留：
-
-- 定量指标。
-- 人工证据。
-- 负样本。
-- 行为自然性评分。
-- 风险说明。
-
-智能体 Agent 评价不是越高越好。而是要让指标与目标一致。社会仿真尤其需要保留不完美。合理拒绝、误解、迟到和冲突都可能提升可信度。
-
-## 37.19 最小可行评价升级
-
-建议读者按四步实现。第一步，输出 `metrics.json`。先记录实验配置、模型、智能体 agent 数、仿真步 step、步长 stride。第二步，做派对关键词统计。从 `conversation.json` 抽取提及。第三步，做派对到场统计。从 `movement.json` 统计 17:00-19:00 霍布斯咖啡馆到场。第四步，生成 `report.md`。把指标、证据和失败样例写成一页报告。这四步不改核心智能体 agent 行为。风险低，但收益高。它会让整个项目从“能看回放”进入“能做实验”。
-
-最小评价升级逻辑图：
+| 失败类型 failure type | 表现 | 可能原因 | 检查位置 | 修正方向 |
+| --- | --- | --- | --- | --- |
+| `no_contact` | 角色没有相遇 | 路径、日程或空间距离不合适 | `movement.json`、`schedule` | 调整初始位置、日程或事件地点 |
+| `no_mention` | 相遇但没提目标事件 | `decide_chat` 未触发或 `generate_chat` 没带目标 | `conversation.json`、`generate_chat` 输入 | 改 prompt 上下文或事件目标 |
+| `memory_miss` | 听过但后续想不起 | `associate` 检索不到相关 chat/event | `docstore.json`、`Associate.retrieve_*()` | 调整检索、记忆类型或保留策略 |
+| `fact_drift` | 时间、地点或人物漂移 | 对话生成时事实约束弱 | 后续转述原文 | 增加事实核对字段 |
+| `plan_not_updated` | 口头承诺没有进入计划 | `schedule_revise` 未触发或输出不合格 | `schedule.daily_schedule` | 强化承诺到日程的桥接 |
+| `movement_miss` | 计划有了但没到场 | 路径、地址映射或行动持续时间问题 | `action.address`、`movement.json` | 检查 `Maze` 地址和路径 |
+| `llm_format_failure` | 输出残留 JSON 或解析失败 | 结构化输出不稳 | 对话原文、日志、`parse_structured_output()` | 调整 schema、failsafe 或模型 |
+| `over_cooperation` | 所有人无条件接受 | 指标诱导过强 | 报告负样本和拒绝样例 | 保留合理拒绝和冲突 |
 
 ```mermaid
 flowchart TD
-    Step1["第一步：输出 metrics.json"] --> Step2["第二步：统计派对关键词"]
-    Step2 --> Step3["第三步：统计咖啡馆到场"]
-    Step3 --> Step4["第四步：生成 report.md"]
-    Step4 --> Evidence["报告绑定证据和失败样例"]
-    Evidence --> Result["项目进入可复查实验状态"]
+    Failure["失败样例 failure case"] --> Contact{"是否相遇 contact?"}
+    Contact -->|否 no| NoContact["no_contact<br/>查 movement / schedule"]
+    Contact -->|是 yes| Mention{"是否提到目标事件 mention?"}
+    Mention -->|否 no| NoMention["no_mention<br/>查 decide_chat / generate_chat"]
+    Mention -->|是 yes| Remember{"后续是否记得 remember?"}
+    Remember -->|否 no| MemoryMiss["memory_miss<br/>查 associate / docstore"]
+    Remember -->|是 yes| Plan{"是否更新计划 plan?"}
+    Plan -->|否 no| PlanMiss["plan_not_updated<br/>查 schedule_revise"]
+    Plan -->|是 yes| Move{"是否到场 movement?"}
+    Move -->|否 no| MovementMiss["movement_miss<br/>查 action.address / movement.json"]
+    Move -->|是 yes| Success["传播转化成立 conversion"]
 ```
 
-## 37.20 本章小结
+失败分类图用于定位断点，不用于给失败贴静态标签。每个标签都必须能指向一个检查位置。
 
-评价体系升级的目标，是把“这个故事看起来可信”推进到“在明确条件下可以复查、比较和复现”。指标脚本有用，但不能替代对可信行为的判断。
+## 37.12 最小可行评价升级
 
-| 本章内容 | 核心结论 |
+最小可行升级只读现有输出，不改智能体 agent 行为。推荐四个产物：
+
+| 新增产物 | 输入 input | 处理 process | 输出 output | 验证方式 |
+| --- | --- | --- | --- | --- |
+| `evaluations/configs/party_diffusion_v1.json` | 事件目标、关键词、核心事实、时间窗 | 固化评价版本 | 可复用评价配置 | 改指标时旧实验仍可解释 |
+| `tools/analyze_conversation_keywords.py` | `conversation.json` | 提取提及、来源、接受和拒绝 | `diffusion` 指标 | 抽查原文行 |
+| `tools/analyze_attendance.py` | `movement.json` | 统计时间窗内目标地点出现 | `attendance` 指标 | 回放帧复核 |
+| `tools/export_experiment_report.py` | `metrics.json`、底层证据路径 | 生成报告和失败样例 | `report.md` | 人工检查每个链接 |
+
+可执行路径应写成这样：
+
+```text
+工作目录：generative_agents
+输入文件：results/checkpoints/<实验名>/conversation.json
+输入文件：results/compressed/<实验名>/movement.json
+输出文件：results/evaluations/<实验名>/metrics.json
+输出文件：results/evaluations/<实验名>/report.md
+```
+
+评价脚本的边界也要写清楚：第一版可以先不调用 LLM，不做自动主观评分，只统计可验证事实和证据路径。行为自然性 naturalness、可信裁决 verdict 和负样本解释仍由人工报告承担。
+
+## 37.13 不要为了指标牺牲可信行为
+
+指标会改变系统设计方向，所以必须保留负样本。派对传播覆盖率高，不等于小镇更真实；所有人都准时到场，反而可能说明角色失去了日程冲突、关系差异和个人动机。社会仿真尤其需要“不完美”：合理拒绝、误解、迟到、遗忘和冲突，常常比整齐划一的成功更可信。
+
+| 指标诱惑 | 可能副作用 | 防护方式 |
+| --- | --- | --- |
+| 提高传播覆盖率 | 角色像广播员一样重复事件 | 报告对话自然性和重复率 |
+| 提高到场率 | 所有人无条件接受邀请 | 保留拒绝、犹豫和缺席样例 |
+| 提高目标完成率 | 角色强行打断日常生活 | 记录日程冲突和人设一致性 |
+| 降低失败率 | 脚本忽略边界案例 | 强制输出失败样例 |
+| 降低成本 | 小模型导致格式漂移 | 同时记录格式失败和人工复核 |
+
+评价体系不追求数字漂亮；它要说明：在什么配置、什么模型、什么角色、什么事件和什么成本下，生成式智能体 Generative Agents 能稳定地产生哪类可信行为。
+
+## 37.14 本章小结
+
+评价体系升级把“故事看起来可信”推进到“证据可以复查、指标可以比较、失败可以定位”。当前项目已经有 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint、prompt 链路和 LLM summary；缺的是把它们组织成 `metrics.json`、`report.md`、基线 baseline、多次运行 multi-run 和失败分类 failure taxonomy。
+
+| 主题 | 核心结论 |
 | --- | --- |
-| 故事可信 vs 实验可信 | 前者看案例是否合理，后者看系统在明确条件下是否稳定产生可验证行为。 |
-| AgentBench 启发 | 评价要覆盖多任务、多环境。 |
-| WebArena 启发 | 环境 grounding 很关键，语言承诺必须落地到位置和行动。 |
-| GAIA 启发 | 评价要看多步骤任务链，而不是只看最终结果。 |
-| SWE-bench 启发 | 成功条件要可验证。 |
-| AI Agents That Matter 启发 | 可重复性、基线、成本、统计和公平比较都不能省。 |
-| 当前材料 | 生成式智能体 Generative Agents 已有 `simulation.md`、`conversation.json`、断点 checkpoint、`movement.json` 和大语言模型摘要 LLM summary。 |
-| 可落地升级 | 指标脚本、统一 `metrics.json`、统一 `report.md`、基线对照、成本记录、失败分类、多次运行统计和评价配置版本化。 |
-| 指标边界 | 指标不能替代可信行为判断，必须结合人工证据、负样本和风险边界。 |
+| 评价现场 | 派对传播不能只看承诺，必须同时看对话、记忆、日程、移动和成本 |
+| 前沿框架 | AgentBench、WebArena、GAIA、SWE-bench 和 AI Agents That Matter 都要落回项目证据 |
+| 对话传播 | `conversation.json` 是传播强证据，但要区分提及、接受、拒绝和事实漂移 |
+| 环境落地 | `movement.json` 验证语言承诺是否真的变成位置行动 |
+| prompt 证据 | `decide_chat`、`generate_chat`、`schedule_revise` 等 prompt 要随机制解释 |
+| 指标产物 | `metrics.json` 给脚本读，`report.md` 给人读，两者都要链接底层证据 |
+| 失败分类 | 失败应定位到接触、提及、记忆、计划、移动、格式或过度合作 |
+| 边界 | 指标不能替代可信行为判断，负样本和人工证据必须保留 |
 
-下一章是第五部分的收束：基于前面所有前沿洞察，给出一条面向生成式智能体 Generative Agents 的分阶段升级路线图。
+下一章收束第五部分：这些评价能力先落地，然后再分阶段推进记忆、反思、目标规划、组织协作和模型路由。没有评价底座，任何前沿升级都很难证明自己真的让小镇变得更可靠。
 
 ## 参考资料
 
@@ -590,8 +382,14 @@ flowchart TD
 - GAIA: https://arxiv.org/abs/2311.12983
 - SWE-bench: https://arxiv.org/abs/2310.06770
 - AI Agents That Matter: https://arxiv.org/abs/2407.01502
-- Local source: `generative_agents/modules/model/llm_model.py`
+- Local source: `generative_agents/start.py`
+- Local source: `generative_agents/compress.py`
 - Local source: `generative_agents/modules/game.py`
-- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`
+- Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/model/llm_model.py`
+- Local prompt: `generative_agents/data/prompts/generate_chat.txt`
+- Local prompt: `generative_agents/data/prompts/schedule_revise.txt`
 - Local output: `generative_agents/results/checkpoints/<实验名>/conversation.json`
+- Local output: `generative_agents/results/checkpoints/<实验名>/simulate-*.json`
 - Local output: `generative_agents/results/compressed/<实验名>/movement.json`
+- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`

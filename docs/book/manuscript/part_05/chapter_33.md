@@ -1,674 +1,508 @@
 # 第 33 章 反思系统升级：从事件反思到经验学习
 
-## 33.1 核心问题
+## 33.1 从一次没有落地的邀请开始
 
-上一章讨论记忆系统升级。记忆回答的是：
-
-```text
-智能体经历过什么？
-```
-
-反思回答的是下面问题：
+`book-party-extended` 实验里，伊莎贝拉在 11:30 向玛丽亚发出邀请：
 
 ```text
-智能体如何理解这些经历？
+玛丽亚，今天的三明治看起来很美味呢！下午五点的情人节派对你一定要来哦，我已经准备好了一些特别的安排。
 ```
 
-在生成式智能体 Generative Agents 中，反思 reflection 是让角色行为变得可信的关键。如果只有原始观察，角色会被大量细节淹没。有了反思，角色才能从事件中形成高层认知。例如：
+玛丽亚的回答也很明确：
 
 ```text
-玛丽亚对克劳斯的研究表现出兴趣。
+哇，情人节派对？听起来太棒了！我五点刚好有休息时间，肯定会去参加的！
 ```
 
-比下面这句更有行为意义：
+这两句来自 `generative_agents/results/checkpoints/book-party-extended/conversation.json` 的 `20240214-11:30` 对话记录 conversation。只看对话，邀请似乎成功；但 17:00 附近的移动回放 movement 给出了另一层证据：`generative_agents/results/compressed/book-party-extended/movement.json` 在 frame `3241` 的快照里，伊莎贝拉已经在 `霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位` 迎接客人，玛丽亚仍在 `奥克山学院宿舍，玛丽亚的房间，书桌`。这不是简单的“模型没写好故事”，而是反思系统 reflection system 没有把“承诺 accepted”和“到场 arrived”拆成可复核的结果 outcome。
 
-```text
-玛丽亚和克劳斯在图书馆聊了几句话。
-```
-
-但 2023-2026 年的前沿研究进一步推动了一个问题：
-
-```text
-反思能不能不只是总结过去，而是帮助智能体下次做得更好？
-```
-
-本章重点聚焦以下六个问题：
-
-1. 生成式智能体 Generative Agents 当前如何实现反思 reflection？
-2. 当前反思 reflection 的优势和局限是什么？
-3. 反思式学习 Reflexion 给我们什么启发？
-4. Voyager 的技能库思想如何迁移到小镇智能体？
-5. 如何把事件反思升级成行动后复盘和经验学习？
-6. 如何评价反思升级是否有效？
+当前项目中的反思 reflection 需要从“生成高层想法 thought”推进到“行动后复盘 post-action review -> 经验 lesson -> 可复用技能 skill -> 下一次行动”。反思式学习 Reflexion 和 Voyager 指向同一个工程约束：失败证据必须回到 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint 和指标 metrics / 报告 report，而不是只在角色内心独白里变得更深刻。
 
 ```mermaid
 flowchart TD
-    A[Action<br/>行动/对话] --> O[Outcome<br/>结果标签]
-    O --> E[Self Evaluation<br/>自我评估]
-    E --> L[Lesson<br/>失败经验/成功经验]
-    L --> S[Skill Memory<br/>可复用策略]
-    S --> P[下一次 Planning/Dialogue]
-    P --> A
-    O --> R[Reflection<br/>高层认知]
-    R --> S
+    A["行动 action：发出邀请"] --> B["对话证据 conversation：对方是否回应"]
+    B --> C["移动证据 movement：对方是否到场"]
+    C --> D["结果 outcome：success / partial / failed / unknown"]
+    D --> E["自我评估 self-evaluation：为什么成功或失败"]
+    E --> F["经验 lesson：下次如何改变"]
+    F --> G["技能记忆 skill memory：可复用策略"]
+    G --> H["计划 planning / 对话 dialogue：下一次使用"]
+    H --> A
 ```
 
-*图 33-1：从反思 reflection 到反思式学习 reflexion-style learning 的闭环。反思升级的关键是让失败和成功经验进入后续行动，而不是只生成一段总结。*
+*图 33-1：反思式学习 reflexion-style learning 在当前项目中的闭环。行动 action 不能只落到想法 thought，还要绑定对话记录 conversation、移动回放 movement 和结果 outcome，再把经验 lesson 写回后续计划 planning 或对话 dialogue。*
 
-![图 33-2：从失败结果到可复用技能记忆](../../assets/chapter_33/ch33_reflexion_skill_board.png)
+![图 33-2：从失败结果到可复用技能记忆](../../assets/chapter_33/ch33_reflexion_skill_board_v2.png)
 
-*图 33-2：从失败结果到可复用技能记忆。图片把行动 action、结果 outcome、自我评价 self-evaluation、经验 lesson 和技能记忆技能 skill 连成项目中的证据闭环，强调反思升级必须回到后续行动。*
+*图 33-2：从失败结果到可复用技能记忆。左侧红色失败回放表示行动 action 没有达成预期 outcome；中间的证据桌把 `conversation.json`、`movement.json`、`simulation.md` 和日程 schedule 放在一起复核；右侧的蓝绿色记忆胶囊表示自我评价 self-evaluation、经验 lesson 和技能记忆 skill memory 被写回，等待下一次行动调用。*
 
-## 33.2 当前项目的反思入口
+## 33.2 高频术语锚点表
 
-生成式智能体 Generative Agents 的反思逻辑在：
+| 中文 English | 项目含义 | 当前项目锚点 |
+| --- | --- | --- |
+| 反思 reflection | 从近期事件 event 和想法 thought 中生成高层理解。 | `Agent.reflect()` |
+| 重要性 poignancy | 事件进入反思前累积的触发分数。 | `status["poignancy"]`、`poignancy_max` |
+| 洞察 insight | `reflect_insights` 输出的高层想法。 | 写回 `node_type="thought"` |
+| 证据 evidence | 支撑洞察 insight 的记忆节点编号或运行材料。 | 当前传入 `filling`，但未持久化到 metadata |
+| 结果 outcome | 一次行动是否达成目标的标签。 | 当前缺失，需新增 |
+| 经验 lesson | 从 outcome 和证据中抽取的可执行改进。 | 可写入 thought 或 skill |
+| 技能记忆 skill memory | 从多次 lesson 中沉淀出的自然语言策略。 | 当前 `Associate.memory` 仅有 event/chat/thought，需扩展 |
+| 指标 metrics | 判断升级是否改善行为的结构化结果。 | `docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json` |
+| 报告 report | 给人复核的证据摘要和裁判意见。 | 第 37 章继续展开 |
+
+## 33.3 当前项目的反思入口
+
+当前反思 reflection 的主入口在 `generative_agents/modules/agent.py`：
+
+```python
+def reflect(self):
+    def _add_thought(thought, evidence=None):
+        event = self.make_event(self.name, thought, self.get_tile().get_address())
+        return self._add_concept("thought", event, filling=evidence)
+
+    if self.status["poignancy"] < self.think_config["poignancy_max"]:
+        return
+    nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
+    if not nodes:
+        return
+    nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
+        : self.associate.max_importance
+    ]
+    focus = self.completion("reflect_focus", nodes, 3)
+    retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
+    for r_nodes in retrieved.values():
+        thoughts = self.completion("reflect_insights", r_nodes, 5)
+        for thought, evidence in thoughts:
+            _add_thought(thought, evidence)
+```
+
+这段代码的输入 input、处理 process、输出 output 闭环如下。
+
+| 环节 | 输入 input | 处理 process | 输出 output | 证据路径 |
+| --- | --- | --- | --- | --- |
+| 触发判断 | `status["poignancy"]` 和 `think_config["poignancy_max"]` | 分数低于阈值直接返回。 | 反思 reflection 是否启动。 | `generative_agents/data/config.json` 中 `poignancy_max=150` |
+| 取近期材料 | 事件 event、想法 thought | `retrieve_events()` 与 `retrieve_thoughts()` 合并，并按 `access` 倒序截断。 | 近期记忆节点 nodes。 | `generative_agents/modules/memory/associate.py` |
+| 生成焦点 | nodes 列表 | `self.completion("reflect_focus", nodes, 3)` 调用提示词 prompt。 | 焦点问题 focus。 | `generative_agents/data/prompts/reflect_focus.txt` |
+| 检索证据 | focus | `retrieve_focus(focus, reduce_all=False)` 按焦点召回相关节点。 | 每个焦点对应的 r_nodes。 | `Associate.retrieve_focus()` |
+| 生成洞察 | r_nodes | `reflect_insights` 输出洞察 insight 和节点编号。 | `[thought, evidence]`。 | `generative_agents/data/prompts/reflect_insights.txt` |
+| 写回记忆 | thought、evidence | `_add_concept("thought", filling=evidence)`。 | 新 thought 节点。 | `Associate.add_node()` |
+
+这里有一个很重要的证据断点：`Agent.reflect()` 已经把 `evidence` 传给 `_add_concept(..., filling=evidence)`，但 `Associate.add_node()` 的 metadata 只保存 `node_type/subject/predicate/object/address/poignancy/create/expire/access`，没有保存 `filling`。所以当前反思 insight 在生成时“知道自己来自哪些节点”，持久化后却丢失了这条来源链。第 21 章生成的 `docs/book/assets/chapter_21/ch21_reflection_trace.json` 也记录了这个边界：`evidence_persisted_in_metadata` 为 `false`。
+
+## 33.4 `reflect_focus` 如何把记忆变成问题
+
+`reflect_focus` 是当前反思 reflection 的第一道大语言模型 LLM 入口。
+
+| 项目 | 内容 |
+| --- | --- |
+| 提示词 prompt 路径 | `generative_agents/data/prompts/reflect_focus.txt` |
+| 绑定方法 | `Scratch.prompt_reflect_focus(nodes, topk)` |
+| 调用位置 | `Agent.reflect()` |
+| 变量 | `reference` 为按编号排列的记忆节点；`number` 为问题数量。 |
+| 输出结构 schema | `res: List[str]`，每项为一个焦点问题 focus question。 |
+| 失败兜底 failsafe | `"{name} 是谁？"`、`"{name} 住在哪里？"`、`"{name} 今天要做什么？"` |
+| 输出流向 | 进入 `Associate.retrieve_focus(focus, reduce_all=False)`，用于召回支撑每个问题的记忆节点。 |
+
+提示词 prompt 的关键模板是：
 
 ```text
-generative_agents/modules/agent.py
-```
+根据给定的记忆节点，生成反思的焦点问题。
 
-核心函数可以定位到：
+参考示例，为以下记忆节点生成反思焦点问题：
+"""
+记忆节点：
+${reference}
 
-```python
-Agent.reflect()
-```
+生成${number}个反思焦点问题：
+"""
 
-它的触发条件可以概括为：
-
-```python
-if self.status["poignancy"] < self.think_config["poignancy_max"]:
-    return
-```
-
-只有当重要性累积到阈值时，角色才会反思。当前配置中阈值来自：
-
-```text
-generative_agents/data/config.json
-```
-
-对应字段可以这样定义：
-
-```json
-"poignancy_max": 150
-```
-
-这符合论文思想。人不会对每件小事都深度反思。只有足够重要的经历积累后，才值得生成高层认知。
-
-## 33.3 当前反思的四个步骤
-
-`Agent.reflect()` 大致分为四步。第一，取出近期事件和想法。
-
-```python
-nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
-```
-
-第二，按访问时间排序，保留一定数量。
-
-```python
-nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
-    : self.associate.max_importance
+确保返回的数据格式遵守schema：
+[
+  "焦点问题1",
+  "焦点问题2",
+  "焦点问题3",
+  ...
 ]
 ```
 
-第三，生成反思焦点问题。
+它的工程作用不是“让角色变深刻”，而是把近期记忆压缩成检索 query。对于派对实验，焦点问题可能是“伊莎贝拉的派对邀请是否形成实际承诺？”或者“哪些居民可能参加派对？”。当前模板并不知道 outcome，也不会区分“答应过”和“到场了”，所以它只能生成理解型问题，不能独立完成经验学习。
 
-```python
-focus = self.completion("reflect_focus", nodes, 3)
-```
+## 33.5 `reflect_insights` 如何生成并绑定洞察
 
-第四，围绕焦点检索相关记忆，生成洞察 insight。
+`reflect_insights` 是第二道大语言模型 LLM 入口。
 
-```python
-retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
-for r_nodes in retrieved.values():
-    thoughts = self.completion("reflect_insights", r_nodes, 5)
-```
-
-生成的洞察 insight 会被写回记忆：
-
-```python
-_add_thought(thought, evidence)
-```
-
-这条链路可以这样理解：
-
-```text
-重要事件积累
-  -> 生成反思问题
-  -> 检索相关记忆
-  -> 生成洞察
-  -> 写入 thought
-```
-
-## 33.4 当前反思提示词 prompt 做了什么
-
-反思相关提示词 prompt 在 `generative_agents/data/prompts/` 下。主要包括：
-
-| 提示词 prompt 文件 | 中文意思 | 它解决的问题 |
-| --- | --- | --- |
-| `reflect_focus.txt` | 生成反思焦点。 | 从近期记忆中提出值得深入思考的问题。 |
-| `reflect_insights.txt` | 生成反思洞察。 | 围绕焦点问题，把证据压缩成高层想法 thought。 |
-| `reflect_chat_planing.txt` | 反思聊天对计划的影响。 | 判断一段聊天是否应该改变后续日程。 |
-| `reflect_chat_memory.txt` | 反思聊天对记忆的影响。 | 判断一段聊天中哪些关系、承诺或事实应该写入记忆。 |
-
-`reflect_focus.txt` 的作用是：
-
-```text
-根据给定记忆节点，生成需要深入思考的问题。
-```
-
-可以看一个具体例子：
-
-```text
-凯莉今天的生活重点是什么？
-凯莉最近的社交活动如何？
-凯莉的日常习惯有什么变化？
-```
-
-`reflect_insights.txt` 的作用是：
-
-```text
-根据记忆节点生成反思洞察，并标注相关节点编号。
-```
-
-当前项目不是只让模型随便写感想，而是要求洞察 insight 绑定证据节点。`reflect_chat_planing.txt` 和 `reflect_chat_memory.txt` 则处理聊天后的计划影响和记忆内容。这说明生成式智能体 Generative Agents 已经比“单纯总结器”更进一步。它已经在问：
-
-```text
-这次对话是否影响我的计划？
-这次对话有什么值得记住？
-```
-
-## 33.5 当前反思的优势
-
-当前反思 reflection 有四个优点。第一，它有触发阈值。避免每一步都反思，降低成本。第二，它基于记忆证据。`reflect_insights` 输出洞察 insight 时会绑定相关节点。第三，它把反思写回记忆流 memory stream。生成的想法 thought 会影响后续检索和行为。第四，它处理对话影响。聊天不仅生成对话记录，还会生成计划和记忆层面的总结。这四点说明当前项目已经保留了生成式智能体 Generative Agents 论文的精华。但它仍然不是完整的“经验学习”系统。
-
-## 33.6 当前反思的局限
-
-当前反思 reflection 的主要局限有五个。第一，反思不一定针对失败。它根据重要性触发，但不关心某个行动是否成功。第二，反思不一定形成可执行策略。例如：
-
-```text
-伊莎贝拉应该更关注顾客的需求。
-```
-
-这句话是想法，但不一定能转成下次行动。第三，缺少结果标签。系统没有明确记录：
-
-```text
-这次邀请成功了吗？
-这次竞选宣传有效吗？
-这次讨论会有人参加吗？
-```
-
-第四，缺少技能库。成功经验不会被沉淀成可复用方法。第五，缺少反思质量评价。系统会保存想法 thought，但不会判断想法 thought 是否真的改善后续行为。这些局限正是反思式学习 Reflexion 和 Voyager 思想可以补足的地方。
-
-## 33.7 反思式学习 Reflexion 的启发
-
-反思式学习 Reflexion 的关键思想是：
-
-```text
-让语言反馈成为 agent 自我改进的材料。
-```
-
-它不是通过修改模型参数来学习。而是让智能体 agent 在失败后生成语言 verbal 反思 reflection，并在下一次尝试中使用。这和生成式智能体 Generative Agents 的反思 reflection 有相似之处。两者都使用自然语言反思。但侧重点不同。生成式智能体 Generative Agents 更关注：
-
-```text
-我从近期经历中理解到了什么？
-```
-
-反思式学习 Reflexion 更关注：
-
-```text
-我上次为什么失败，下次该怎么改？
-```
-
-对生成式智能体 Generative Agents 来说，这个差异很重要。小镇角色不只要知道过去，还要能调整策略。例如：
-
-```text
-伊莎贝拉邀请失败后，下次先询问对方是否有空，而不是直接发出邀请。
-```
-
-也可以写成下面这样：
-
-```text
-山姆发现汤姆不信任自己后，下次先回应汤姆关心的社区问题，而不是泛泛宣传竞选。
-```
-
-这就是从反思 reflection 到经验学习的升级。
-
-## 33.8 Voyager 的启发
-
-Voyager 的启发来自另一个方向：
-
-```text
-把成功经验沉淀为可复用技能。
-```
-
-在 Minecraft 环境中，Voyager 通过探索、反馈和技能库不断扩展能力。小镇智能体不需要挖矿或建造工具。但它同样可以拥有“社交技能”和“组织技能”。例如：
-
-```text
-invite_to_event
-```
-
-用于邀请别人参加活动。
-
-```text
-campaign_conversation
-```
-
-该技能用于和居民讨论竞选。
-
-```text
-host_discussion
-```
-
-该技能用于组织小型讨论会。
-
-```text
-repair_relationship
-```
-
-用于缓和紧张关系。这些技能不是写死的脚本。而是从经验中抽取的自然语言策略。它们可以作为记忆类型 memory type 保存，供后续对话和计划使用。
-
-## 33.9 升级方向一：行动后复盘
-
-第一项可实现升级是行动后复盘。当前行为链大致是：
-
-```text
-plan -> action -> observation -> memory -> reflection
-```
-
-升级后可以增加，可以这样处理：
-
-```text
-plan -> action -> outcome -> self_evaluate -> lesson -> future_strategy
-```
-
-升级逻辑图：
-
-```mermaid
-flowchart TD
-    Plan["计划 plan"] --> Action["行动 action"]
-    Action --> Outcome["结果 outcome"]
-    Outcome --> Eval["自我评估 self_evaluate"]
-    Eval --> Lesson["提取 lesson"]
-    Lesson --> Memory["写回想法 thought 或技能 skill"]
-    Memory --> Future["影响下一次策略 future_strategy"]
-```
-
-例如伊莎贝拉邀请亚当参加派对。结果可能是：
-
-```text
-亚当接受。
-```
-
-也可能出现下面情况：
-
-```text
-亚当拒绝，因为他要写作。
-```
-
-系统应记录 outcome。然后生成复盘：
-
-```text
-亚当正在专注写作，直接邀请他参加长时间派对效果不好。以后可以邀请他短暂停留，或选择他休息时再提。
-```
-
-这条 lesson 比普通反思更可执行。
-
-## 33.10 结果标签设计
-
-行动后复盘需要先知道结果。建议引入简单结果标签：
-
-```text
-success
-partial
-failed
-unknown
-```
-
-可以参考下面这个示例：
-
-```text
-success：对方明确接受邀请。
-partial：对方表示有兴趣但不确定。
-failed：对方拒绝或话题没有传达。
-unknown：无法判断结果。
-```
-
-这些标签可以用于下面场景：
-
-- 邀请。
-- 竞选宣传。
-- 讨论会组织。
-- 关系修复。
-- 协作任务。
-
-不要一开始追求复杂奖励函数。先用可解释标签。这样读者能理解结果，也能在 `simulation.md` 中核对。
-
-## 33.11 建议新增提示词 prompt
-
-可以新增三个提示词 prompt。第一：
-
-```text
-self_evaluate_action.txt
-```
-
-对应的输入内容可以这样写：
-
-- 行动目标。
-- 行动过程。
-- 对方反应。
-- 当前角色设定。
-
-对应的输出结果应该类似这样：
-
-```json
-{
-  "outcome": "partial",
-  "reason": "对方表示感兴趣，但没有明确承诺参加。",
-  "evidence": ["node_31"]
-}
-```
-
-第二个环节可以这样处理：
-
-```text
-extract_lesson.txt
-```
-
-对应的输入内容可以这样写：
-
-- 行动目标。
-- outcome。
-- 对话或事件证据。
-
-对应的输出结果应该类似这样：
-
-```json
-{
-  "lesson": "邀请忙碌的人时，应先询问时间安排，再给出灵活参与方式。",
-  "applies_to": "invite_to_event",
-  "confidence": 0.7
-}
-```
-
-第三个环节可以这样处理：
-
-```text
-apply_lesson_to_plan.txt
-```
-
-对应的输入内容可以这样写：
-
-- 当前目标。
-- 可用 lesson。
-- 当前对象。
-
-对应的输出结果应该类似这样：
-
-```json
-{
-  "strategy": "先询问对方是否有空，再简短介绍派对，并说明可以只来十分钟。",
-  "reason": "目标人物最近忙于写作，不适合直接要求长时间参加。"
-}
-```
-
-这三个提示词 prompt 构成最小经验学习闭环。
-
-## 33.12 升级方向二：技能库
-
-经验学习如果只保存单条 lesson，长期会变散。更好的方式是技能库。技能可以作为记忆类型：
-
-```text
-skill
-```
-
-结构示例可以这样写：
-
-```json
-{
-  "name": "invite_to_event",
-  "condition": "需要邀请别人参加活动",
-  "steps": [
-    "先根据关系和场景判断对方是否适合邀请",
-    "简短说明活动时间、地点和主题",
-    "给对方留下拒绝或稍后决定的空间",
-    "如果对方感兴趣，记录承诺和时间"
-  ],
-  "evidence": ["node_31", "node_42"],
-  "success_count": 2,
-  "failure_count": 1
-}
-```
-
-技能不是函数。它是自然语言策略。它可以进入提示词 prompt，帮助模型生成更好的对话或计划。例如对话前检索：
-
-```text
-当前目标是邀请克劳斯参加讨论会。
-检索 skill: invite_to_event。
-```
-
-模型就能使用过去经验。
-
-## 33.13 技能库和硬编码的区别
-
-技能库容易被误解成硬编码脚本。两者不同。硬编码脚本是：
-
-```text
-如果遇到 A，就说固定句子 B。
-```
-
-技能库可以定义为下面这种形式：
-
-```text
-给模型提供经过经验沉淀的策略，让它结合当前场景生成具体行动。
-```
-
-例如，技能可以这样描述：
-
-```text
-邀请忙碌的人时，要给出短时间参与选项。
-```
-
-但不规定必须说哪一句话。这样保留了生成式系统的灵活性。技能库应该影响行为，不应替代模型判断。
-
-## 33.14 升级方向三：失败驱动反思
-
-当前反思 reflection 主要由 poignancy 触发。可以增加失败触发。例如：
-
-```text
-如果 outcome == failed，并且目标重要性高，则触发 self_reflection。
-```
-
-这样一些低频但关键的失败不会被忽略。例如：
-
-- 伊莎贝拉连续三次没有传播派对消息。
-- 山姆连续遇到反对意见。
-- 克劳斯组织讨论会没人回应。
-- 角色口头答应活动但没有到场。
-
-这些都是值得反思的失败。失败反思提示词 prompt 可以问：
-
-```text
-这次行动原本目标是什么？
-结果为什么没有达成？
-哪些因素来自对方状态？
-哪些因素来自我的表达方式？
-下次可以采取什么不同策略？
-```
-
-这比普通洞察 insight 更具体。
-
-## 33.15 升级方向四：把反思连接到计划
-
-反思如果不影响计划，就只是漂亮文本。因此需要把 lesson 和技能 skill 放入计划生成上下文。当前项目中，计划相关逻辑包括：
-
-- wake up。
-- daily 日程 schedule。
-- 日程拆解 schedule decompose。
-- 日程修订 schedule revise。
-- determine 行动 action。
-
-升级时可以在两个位置使用反思结果。第一，生成日程时。例如：
-
-```text
-山姆昨天发现居民更关心公园安全，因此今天上午安排去公园附近与居民交流。
-```
-
-第二，生成当前行动时。例如：
-
-```text
-伊莎贝拉根据上次邀请失败经验，决定先找熟悉顾客，而不是随机邀请陌生人。
-```
-
-这要求检索能够返回：
-
-```text
-goal + relevant lesson + relationship + recent thought
-```
-
-反思只有进入计划上下文，才真正改变行为。
-
-## 33.16 升级方向五：反思质量评分
-
-不是所有反思都有价值。可以给反思打分。维度包括：
-
-```text
-groundedness
-```
-
-该项检查反思是否基于真实证据。
-
-```text
-specificity
-```
-
-是否具体，而不是空话。
-
-```text
-actionability
-```
-
-该项检查反思是否能指导后续行动。
-
-```text
-consistency
-```
-
-是否与角色设定和已有记忆一致。
-
-```text
-impact
-```
-
-后续是否真的影响行为。示例低质量反思：
-
-```text
-伊莎贝拉应该更加努力与大家交流。
-```
-
-需要回答的问题如下：
-
-- 太泛。
-- 没有对象。
-- 没有策略。
-- 不容易评价。
-
-示例高质量反思如下：
-
-```text
-伊莎贝拉发现亚当在写作时不愿长时间参加活动；下次邀请亚当时，应强调他可以短暂停留，并选择他休息时再提。
-```
-
-这条反思更好，因为它有对象、原因和行动策略。
-
-## 33.17 最小可行升级方案
-
-建议读者从一个最小升级开始：
-
-```text
-邀请任务失败复盘
-```
-
-执行步骤可以这样设计：
-
-1. 在对话后判断是否传达了邀请。
-2. 如果对方拒绝或未表态，生成 `lesson`。
-3. 将 lesson 写入 `thought` 或新增 `skill`。
-4. 下一次邀请前检索 lesson。
-5. 比较升级前后邀请成功率和对话质量。
-
-最小实验逻辑图：
-
-```mermaid
-flowchart TD
-    Invite["发起邀请"] --> Result{"是否成功传达并获得回应"}
-    Result -->|成功| Record["记录成功经验"]
-    Result -->|失败| Lesson["生成失败 lesson"]
-    Lesson --> Store["写入想法 thought 或技能 skill"]
-    Store --> Next["下一次邀请前检索 lesson"]
-    Next --> Compare["比较升级前后邀请质量"]
-```
-
-实验对象可以这样选择：
-
-```text
-伊莎贝拉的情人节派对。
-```
-
-这一项可以这样评价：
-
-- 邀请是否更自然。
-- 是否减少重复邀请。
-- 是否更好处理拒绝。
-- 是否能针对不同关系调整话术。
-- 是否出现过度策略化、不像生活的行为。
-
-这个实验足够小，但能体现 Reflexion-style learning 的价值。
-
-## 33.18 风险与边界
-
-反思增强会带来风险。第一，反思可能变成伪内心。越深刻的反思越容易让人误以为角色有真实意识。第二，失败标签可能过度简化社会行为。一次拒绝不一定是失败，可能是合理选择。第三，技能库可能让角色行为过度工具化。如果每次社交都像执行任务，会失去生活感。第四，错误 lesson 会长期影响行为。例如模型错误总结：
-
-```text
-汤姆拒绝山姆是因为汤姆讨厌所有社区活动。
-```
-
-这种错误会污染后续关系。因此反思升级必须保留：
-
-- 证据节点。
-- 置信度。
-- 可删除机制。
-- 人工抽样检查。
-- 行为影响评价。
-
-反思不是越多越好。好的反思应该少而准，并能被证据支撑。
-
-## 33.19 本章小结
-
-反思升级要从“想明白发生了什么”走向“下次能做得更好”。反思式学习 Reflexion、Voyager 这类工作能给生成式智能体 Generative Agents 带来改进，但反思不能写成漂亮却无用的文本。
-
-| 本章内容 | 核心结论 |
+| 项目 | 内容 |
 | --- | --- |
-| 当前反思入口 | `Agent.reflect()` 在 poignancy 达到阈值后触发。 |
-| 当前流程 | 生成焦点 focus、检索相关记忆、生成 insights，并把想法 thought 写回记忆。 |
-| 当前局限 | 已有证据节点和对话总结，但不一定针对失败，也不一定形成可执行策略。 |
-| 反思式学习 Reflexion 启发 | 失败后的语言反馈可以成为下一次行动的改进材料。 |
-| Voyager 启发 | 成功经验可以沉淀为可复用技能库。 |
-| 升级方向 | 行动后复盘、结果标签、lesson 提取、技能库、失败驱动反思和反思质量评分都可落地。 |
-| 行为连接 | 反思必须连接到计划和对话上下文，否则只是漂亮文本。 |
-| 最小实验 | 可以从伊莎贝拉派对邀请失败复盘开始。 |
-| 风险边界 | 反思增强会提高拟人化、错误经验固化和行为工具化风险，必须配套证据、置信度和评价。 |
+| 提示词 prompt 路径 | `generative_agents/data/prompts/reflect_insights.txt` |
+| 绑定方法 | `Scratch.prompt_reflect_insights(nodes, topk)` |
+| 输入 input | 被某个 focus 召回的记忆节点。 |
+| 输出结构 schema | `res: List[Tuple[str, str]]`，每项为 `[洞察内容 insight, "相关节点编号"]`。 |
+| 回调 callback | 把 `"1,2,3"` 转成真实 `node_id` 列表。 |
+| 输出流向 | `_add_thought(thought, evidence)` 写入 `node_type="thought"`。 |
 
-下一章讨论规划系统升级。记忆和反思让角色知道过去、理解过去；规划系统要解决的是：面对目标和不确定环境，角色下一步应该怎么做。
+模板要求模型输出洞察 insight 和相关节点编号：
+
+```text
+参考示例，为以下记忆节点生成反思洞察：
+"""
+记忆节点：
+${reference}
+
+生成${number}个反思洞察：
+"""
+
+确保返回的数据格式遵守schema：
+[
+  ("洞察内容", "相关节点编号"),
+  ("洞察内容", "相关节点编号"),
+  ...
+]
+```
+
+这比普通摘要 summary 强，因为它试图保留证据 evidence。但是写回 `Associate.add_node()` 后，当前 metadata 没有保存 `filling`。因此升级经验学习前，先要修复来源链 persistence：否则后续技能 skill 可能看起来可靠，却无法回查它到底来自哪段对话 conversation 或哪次移动 movement。
+
+## 33.6 对话后的反思入口
+
+`Agent.reflect()` 在处理普通事件反思后，还会处理聊天记录 chats：
+
+```python
+if self.chats:
+    recorded, evidence = set(), []
+    for name, _ in self.chats:
+        if name == self.name or name in recorded:
+            continue
+        res = self.associate.retrieve_chats(name)
+        if res and len(res) > 0:
+            node = res[-1]
+            evidence.append(node.node_id)
+    thought = self.completion("reflect_chat_planing", self.chats)
+    _add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
+    thought = self.completion("reflect_chat_memory", self.chats)
+    _add_thought(f"{self.name} {thought}", evidence)
+```
+
+| 提示词 prompt | 路径 | 输入 input | 输出结构 schema | 输出流向 |
+| --- | --- | --- | --- | --- |
+| 反思聊天计划 `reflect_chat_planing` | `generative_agents/data/prompts/reflect_chat_planing.txt` | `conversation`、`agent` | `res: str`，一句话描述对计划的影响。 | 加前缀 `对于 {agent} 的计划：` 写入 thought。 |
+| 反思聊天记忆 `reflect_chat_memory` | `generative_agents/data/prompts/reflect_chat_memory.txt` | `conversation`、`agent` | `res: str`，一句话描述值得记住的内容。 | 加前缀 `{agent}` 写入 thought。 |
+
+这两个 prompt 很短，分别问：
+
+```text
+根据以上对话记录，以 ${agent} 的视角，用一句话描述 ${agent} 是否需要记住自己的计划。
+```
+
+```text
+以 ${agent} 的视角，用一句话描述对话中最有趣的地方。
+```
+
+它们能把对话 dialogue 变成计划相关 thought 或关系相关 thought，却不会生成结构化结果 outcome。仍以派对实验为例，`山姆 -> 伊莎贝拉` 的对话里，山姆表达了荣幸，但同时说明 17:00 已与詹妮弗有晚餐。这应该被判成 `partial` 或 `failed`，而不是只写成“山姆对派对小惊喜感兴趣”。
+
+## 33.7 当前反思的能力和缺口
+
+| 维度 | 当前能力 | 当前缺口 | 项目证据 |
+| --- | --- | --- | --- |
+| 触发 trigger | 用 `poignancy_max=150` 控制成本。 | 不会因关键失败 failed outcome 直接触发。 | `generative_agents/data/config.json` |
+| 来源 grounding | `reflect_insights` 生成节点编号。 | `filling` 没有进入 metadata，断点恢复后证据链变弱。 | `Associate.add_node()` |
+| 写回 memory | insight 写成 `thought`。 | 没有 `lesson`、`skill`、`outcome` 等类型。 | `Associate.memory={"event":[],"thought":[],"chat":[]}` |
+| 对话影响 dialogue impact | `reflect_chat_planing` 和 `reflect_chat_memory` 生成聊天后想法。 | 不能区分承诺 accepted、拒绝 rejected、到场 arrived。 | `book-party-extended/conversation.json` 与 `movement.json` |
+| 后续行动 action | thought 可被后续检索召回。 | 没有保证 lesson 进入 `make_schedule()` 或 `_determine_action()`。 | `Agent.make_schedule()`、`Agent._determine_action()` |
+| 评价 evaluation | 第 29 章已有指标脚本可抽取行动和承诺。 | 反思本身没有质量评分。 | `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py` |
+
+当前系统已经保留生成式智能体 Generative Agents 论文中的核心反思机制：重要事件积累、焦点生成、相关记忆召回、洞察写回。它缺的是面向下一次行动的经验学习 experience learning。
+
+## 33.8 前沿思想如何落回 GenerativeAgentsCN
+
+| 前沿思想 frontier idea | 论文中的关键点 | 当前项目可接入的位置 | 不能偷换成什么 |
+| --- | --- | --- | --- |
+| 反思式学习 Reflexion | 失败后生成语言反馈 verbal feedback，并在下一次尝试中使用。 | 在 `Agent.reflect()` 旁新增行动后复盘 post-action review；把 outcome、lesson 写入 `Associate`。 | 不能只把 reflection 写得更长。 |
+| 探索智能体 Voyager | 将成功策略沉淀成可复用技能 skill library。 | 扩展 `Associate.memory` 或新增 `Skill` 存储，让 skill 被计划 planning 和对话 dialogue 检索。 | 不能写成固定脚本 if-then。 |
+| 目标驱动智能体 goal-driven agent | 行动按目标和反馈调整。 | 与第 34 章目标 goal、进度 progress、候选行动 candidate actions 对接。 | 不能让角色拥有上帝视角。 |
+| 可复现实验 evaluation | 用指标和报告验证升级。 | 复用 `movement.json`、`conversation.json`、`simulation.md`、指标 metrics / 报告 report。 | 不能只凭一次好看的故事判断成功。 |
+
+反思式学习 Reflexion 的工程翻译是：不要更新模型参数，更新可检索的语言经验。Voyager 的工程翻译是：不要把经验藏在一段一次性总结里，沉淀为可以被后续任务检索的技能记忆 skill memory。
+
+## 33.9 升级点一：结果标签 outcome
+
+结果标签 outcome 是经验学习的入口。没有 outcome，系统无法知道哪次行动值得复盘。
+
+| 标签 | 判定口径 | 强证据 | 弱证据 | 派对实验样例 |
+| --- | --- | --- | --- | --- |
+| 成功 success | 目标被明确达成。 | 对方明确接受，并在 movement 中到场。 | `simulation.md` 事后摘要。 | 需要同时看到承诺和到场。 |
+| 部分 partial | 对方知道信息，但承诺或执行不完整。 | 对话中表示兴趣，movement 未到场。 | 日程里提到活动但无位置证据。 | 玛丽亚 11:30 接受，17:00 附近未到咖啡馆，可标 partial。 |
+| 失败 failed | 对方拒绝，或目标没有传达。 | 对话里明确拒绝；后续无行动证据。 | 关键词未命中。 | 山姆因与詹妮弗晚餐，无法 17:00 参加。 |
+| 未知 unknown | 证据不足，不能判断。 | 缺少 conversation 或 movement。 | 只有角色设定。 | 压缩结果缺少某段原始对话时使用。 |
+
+结果标签 outcome 的输入 input、处理 process、输出 output 可以这样落地。
+
+| 输入 input | 处理 process | 输出 output | 文件位置 | 失败模式 | 验证方式 |
+| --- | --- | --- | --- | --- | --- |
+| 当前行动 action、目标 goal、对话记录 conversation、移动回放 movement、当前日程 schedule | 按目标类型抽取承诺、拒绝、到场和地点匹配。 | `ActionOutcome` 结构，含 `outcome/reason/evidence/confidence`。 | 建议新增 `generative_agents/modules/memory/outcome.py`，或先写入 `thought` metadata。 | 把“知道活动”误判成“参加活动”。 | 回查 `conversation.json` 原话和 `movement.json` 位置。 |
+
+最小结构可以先写成 JSON：
+
+```json
+{
+  "action_id": "20240214-1130-isabella-invite-maria",
+  "agent": "伊莎贝拉",
+  "target": "玛丽亚",
+  "goal": "邀请玛丽亚参加 17:00 情人节派对",
+  "outcome": "partial",
+  "reason": "玛丽亚明确答应参加，但 17:00 附近 movement 仍显示她在宿舍书桌。",
+  "evidence": [
+    "conversation:book-party-extended:20240214-11:30",
+    "movement:book-party-extended:frame-3241"
+  ],
+  "confidence": 0.82
+}
+```
+
+## 33.10 升级点二：自我评估 prompt
+
+自我评估 self-evaluation 由大语言模型 LLM 驱动时，必须给出提示词 prompt 路径、变量、输出结构 schema 和流向。建议新增：
+
+```text
+generative_agents/data/prompts/self_evaluate_action.txt
+```
+
+| 项目 | 设计 |
+| --- | --- |
+| 绑定方法 | `Scratch.prompt_self_evaluate_action(action, goal, evidence)` |
+| 输入变量 | `agent`、`goal`、`intended_action`、`conversation_evidence`、`movement_evidence`、`schedule_context`、`persona_context` |
+| 输出结构 schema | `outcome: str`、`reason: str`、`evidence: list[str]`、`confidence: float`、`failure_type: str` |
+| 输出流向 | 写入 `ActionOutcome`；低 confidence 进入人工复核或标记 `unknown`。 |
+
+模板草案：
+
+```text
+你正在评估 ${agent} 的一次行动是否达成目标。
+
+目标 goal：
+${goal}
+
+计划行动 intended_action：
+${intended_action}
+
+对话证据 conversation_evidence：
+${conversation_evidence}
+
+移动证据 movement_evidence：
+${movement_evidence}
+
+日程上下文 schedule_context：
+${schedule_context}
+
+角色设定 persona_context：
+${persona_context}
+
+请只返回 JSON，字段为：
+{
+  "outcome": "success | partial | failed | unknown",
+  "reason": "一句话说明判定原因",
+  "failure_type": "no_contact | rejected | no_arrival | schedule_conflict | evidence_missing | none",
+  "evidence": ["证据路径或节点编号"],
+  "confidence": 0.0
+}
+```
+
+这条提示词 prompt 的关键边界是：模型只能根据传入证据判断，不能凭故事合理性补全事实。例如 `simulation.md` 后面写“派对效果不错”，不能自动推出玛丽亚在 17:00 到场；必须查 `movement.json` 或断点 checkpoint。
+
+## 33.11 升级点三：从结果抽取经验 lesson
+
+有了 outcome，下一步才是经验 lesson。建议新增：
+
+```text
+generative_agents/data/prompts/derive_lesson_from_outcome.txt
+```
+
+| 输入 input | 处理 process | 输出 output | 写入位置 | 验证方式 |
+| --- | --- | --- | --- | --- |
+| `ActionOutcome`、原始 action、相关 conversation、movement、persona、已有 similar lessons | LLM 生成可执行 lesson，并要求说明适用范围。 | `Lesson`：`lesson/apply_to/avoid_when/evidence/confidence`。 | 先写 `node_type="thought"`；稳定后扩展 `node_type="lesson"` 或 `skill`。 | 下一次相似目标前是否被检索到；后续 outcome 是否改善。 |
+
+输出结构 schema 示例：
+
+```json
+{
+  "lesson": "邀请已经有固定晚餐安排的人时，不要把到场作为唯一目标；可以改成提前送祝福、邀请短暂停留，或请对方转告他人。",
+  "applies_to": ["invite_to_event", "relationship_maintenance"],
+  "avoid_when": "对方已经明确不想讨论该活动。",
+  "evidence": [
+    "conversation:book-party-extended:20240214-10:00",
+    "movement:book-party-extended:frame-3241"
+  ],
+  "confidence": 0.78
+}
+```
+
+这个 lesson 比“伊莎贝拉应该更努力邀请大家”更有价值，因为它有对象、失败原因、替代策略、适用范围和证据路径。
+
+## 33.12 升级点四：技能记忆 skill memory
+
+单条 lesson 会越来越散。多次同类 lesson 应沉淀成技能记忆 skill memory。它不是代码函数，而是可检索的自然语言策略。
+
+```json
+{
+  "node_type": "skill",
+  "name": "invite_to_event",
+  "trigger": "需要邀请居民参加活动",
+  "strategy": [
+    "先判断对方是否有时间冲突",
+    "给出活动时间、地点和可短暂停留的选项",
+    "对熟人使用具体理由，对陌生人保留拒绝空间",
+    "邀请后记录承诺，并在活动前检查到场证据"
+  ],
+  "evidence": [
+    "conversation:book-party-extended:20240214-11:30",
+    "movement:book-party-extended:frame-3241"
+  ],
+  "success_count": 0,
+  "partial_count": 1,
+  "failure_count": 1,
+  "last_updated": "2024-02-14T17:10:00"
+}
+```
+
+要让 skill 真正进入系统，需要补三处工程接口。
+
+| 接口 | 当前状态 | 升级做法 | 失败模式 | 验证方式 |
+| --- | --- | --- | --- | --- |
+| 存储 storage | `Associate.memory` 只有 `event/chat/thought`。 | 增加 `skill` 类型，或先把 skill 写成带 `node_type` metadata 的 thought。 | skill 丢失或混进普通 thought。 | 断点 checkpoint 中能看到 skill 节点。 |
+| 检索 retrieval | `retrieve_focus()` 只从 event/thought 中召回。 | 新增 `retrieve_skills(goal_or_action)`，按目标和场景查 skill。 | 无关 skill 干扰普通生活。 | 对邀请任务抽样检查 top-k skill。 |
+| 使用 application | `make_schedule()` 和 `_determine_action()` 不读 skill。 | 在目标行动前注入 relevant skill，不替代原本 schedule。 | 角色变得过度策略化。 | 对比升级前后对话自然性 naturalness。 |
+
+## 33.13 升级点五：把 lesson 接入计划和对话
+
+经验学习只有写回没有使用，就只是漂亮文本。当前项目可以在两个位置接入 lesson。
+
+| 接入位置 | 当前代码 | 输入 input | 处理 process | 输出 output |
+| --- | --- | --- | --- | --- |
+| 日程生成 schedule generation | `Agent.make_schedule()` | `currently`、近期记忆、active goal、relevant lesson | 在 `schedule_daily` 前补目标和经验上下文。 | 当天日程中出现更合理的邀请、确认、复查时间。 |
+| 行动落地 action determination | `Agent._determine_action()` | 当前 `de_plan`、空间地址 spatial、lesson/skill | 生成行动前检索 `invite_to_event` 等技能。 | `memory.Action` 的 event、object event、address 更贴近目标。 |
+| 对话生成 dialogue generation | `_chat_with()` 与 `generate_chat` | 对方身份、关系、lesson/skill | 对话前补“上次邀请失败的原因”。 | 更少重复邀请，更能处理拒绝。 |
+
+建议新增应用 prompt：
+
+```text
+generative_agents/data/prompts/apply_lesson_to_plan.txt
+```
+
+输出结构 schema：
+
+```json
+{
+  "strategy": "先确认对方 17:00 是否有空，再提供短暂停留选项。",
+  "use_lesson_ids": ["lesson_20240214_invite_sam"],
+  "risk": "如果反复提到派对，可能显得过度推销。",
+  "next_action_hint": "在午后遇到对方时只做一次温和确认。"
+}
+```
+
+这条输出不直接替代 `Action`，而是作为上下文进入计划 planning 或对话 dialogue。模型仍要结合当前地点、关系和人设生成具体行动。
+
+## 33.14 失败驱动反思 trigger
+
+当前反思 reflection 主要由 `poignancy` 阈值触发。经验学习还需要失败触发 failed-outcome trigger。
+
+| 触发条件 | 为什么需要 | 处理方式 | 输出 |
+| --- | --- | --- | --- |
+| `outcome == "failed"` 且目标重要 | 关键失败可能不够“情绪强烈”，但对任务很重要。 | 立即调用 `self_evaluate_action` 和 `derive_lesson_from_outcome`。 | failed lesson。 |
+| 连续 `partial` | 多次部分成功说明策略有缺口。 | 合并相似 evidence，升级为 skill 修订。 | skill update。 |
+| 承诺 accepted 但未到场 no_arrival | 对话成功不等于行动落地。 | 强制回查 movement 与 schedule。 | arrival lesson。 |
+| evidence 缺失 | 无证据不能硬判成功。 | 标记 `unknown`，进入报告 report。 | evidence_missing item。 |
+
+这类触发必须克制。反思不是越多越好；它应该在结果不清、失败可定位、策略可改进时启动。
+
+## 33.15 反思质量评分
+
+质量评分不是为了给角色打分，而是防止坏 lesson 长期污染行为。
+
+| 评分项 | 中文 English | 检查问题 | 证据来源 |
+| --- | --- | --- | --- |
+| 证据扎实度 groundedness | 反思是否能回到真实证据。 | 是否含 conversation、movement、checkpoint 或 node_id。 | `conversation.json`、`movement.json`、`docstore.json` |
+| 具体性 specificity | 是否有对象、场景和原因。 | 是否只写“应该更努力”。 | lesson 字段 |
+| 可行动性 actionability | 是否能改变下一次行动。 | 是否给出可执行策略。 | 后续 schedule/action |
+| 一致性 consistency | 是否符合人设 persona 和已有记忆 memory。 | 是否突然变成任务机器。 | `agent.json`、`scratch` |
+| 影响 impact | 后续行为是否真的改变。 | 是否被检索并影响 `Action`。 | 指标 metrics / 报告 report |
+
+**公式卡片 33-A：证据绑定率 evidence binding rate**
+
+$$
+\text{证据绑定率 evidence binding rate}
+=
+\frac{\text{带有可回查证据的 lesson 数量}}
+{\text{全部 lesson 数量}}
+$$
+
+读法：如果系统生成了 20 条 lesson，其中 16 条至少能回到 `conversation.json`、`movement.json`、断点 checkpoint 或记忆节点 node_id，则证据绑定率为：
+
+$$
+\frac{16}{20}=0.80
+$$
+
+**公式卡片 33-B：经验复用命中率 lesson reuse hit rate**
+
+$$
+\text{经验复用命中率 lesson reuse hit rate}
+=
+\frac{\text{相似任务前被检索并使用的 lesson 数量}}
+{\text{相似任务总次数}}
+$$
+
+读法：这项指标不问 lesson 写得是否漂亮，只问它有没有进入下一次相似行动。可以从日志、prompt 组装记录或报告 report 中抽样确认。
+
+## 33.16 最小可行实验
+
+最小实验仍从派对邀请开始，因为它已有可复核证据。
+
+| 阶段 | 输入 input | 处理 process | 输出 output | 验证路径 |
+| --- | --- | --- | --- | --- |
+| 基线 baseline | `book-party-extended` 的当前运行。 | 读取伊莎贝拉邀请、承诺和 17:00 movement。 | 标注 success/partial/failed。 | `conversation.json`、`movement.json`、`simulation.md` |
+| 升级 upgrade | 新增 outcome、self-evaluation、lesson。 | 对失败或 partial 邀请生成 lesson。 | `lesson` 或 `skill` 节点。 | 断点 checkpoint 中可查。 |
+| 再运行 rerun | 相同角色和派对目标。 | 邀请前检索 relevant skill。 | 新对话、新行动。 | 统计邀请覆盖、接受、到场。 |
+| 对比 compare | 基线 baseline 与升级 upgrade。 | 用指标脚本或人工报告对齐证据。 | 结论报告 report。 | 可复用第 29 章指标 metrics / 报告 report 思路。 |
+
+第 29 章的 `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py` 已经演示了如何把 checkpoint、movement、conversation 和 memory 转成指标 metrics。反思升级可以复用它的证据口径：`goal_related_action_rate` 看行动是否围绕目标，`commitment_metrics` 看承诺是否到场，`conversation_metrics` 看对话是否真的承载目标信息。
+
+## 33.17 风险与边界
+
+| 风险 | 表现 | 原因 | 检查位置 | 修正方向 |
+| --- | --- | --- | --- | --- |
+| 伪内心 pseudo interiority | 角色反思越来越像真人心理报告。 | reflection 写得过度深刻。 | thought、lesson 文本。 | 保持证据、置信度和可删除机制。 |
+| 错误经验固化 bad lesson | 一次误判影响后续多次行动。 | outcome 或 evidence 误判。 | skill memory、后续 prompt。 | 加 confidence、人工抽样、过期时间。 |
+| 行为工具化 over-optimization | 角色每次社交都像完成 KPI。 | skill 直接控制话术。 | 对话 dialogue 和自然性 naturalness。 | skill 只提供策略，不写固定句子。 |
+| 上帝视角 omniscience | 角色知道不该知道的位置或承诺。 | 检索了实验分析工具数据。 | prompt 输入。 | 区分角色可知证据和评估证据。 |
+| 成功粉饰 success washing | 只看承诺，不看到场。 | conversation 强、movement 弱。 | report 结论表。 | 证据分层：知道、承诺、到场、事后摘要分开写。 |
+
+## 33.18 本章小结
+
+反思升级的核心不是“让角色更会总结”，而是让行动结果 outcome 进入可复用经验 lesson。当前项目已经有 `Agent.reflect()`、`reflect_focus`、`reflect_insights`、聊天后反思提示词 prompt 和 `thought` 写回机制；真正的缺口在于 outcome、证据持久化、lesson/skill 类型、后续使用和评价闭环。
+
+| 主题 | 核心结论 |
+| --- | --- |
+| 当前反思入口 | `Agent.reflect()` 在 `poignancy_max=150` 后触发，生成 focus 和 insight。 |
+| 提示词 prompt 流向 | `reflect_focus` 生成问题，`reflect_insights` 生成洞察和节点编号，聊天反思写入计划 thought 与记忆 thought。 |
+| 证据断点 | `filling=evidence` 已传入 `_add_concept()`，但 `Associate.add_node()` 未持久化 evidence。 |
+| 前沿锚定 | 反思式学习 Reflexion 对应失败后语言经验，Voyager 对应可复用技能记忆 skill memory。 |
+| 可落地升级 | outcome、自我评估 self-evaluation、lesson、skill、失败触发 trigger 和质量评分组成最小闭环。 |
+| 验证要求 | 结论必须回到 conversation、movement、simulation、checkpoint 和指标 metrics / 报告 report。 |
+| 最小实验 | 派对邀请复盘最适合作为第一步，因为已有承诺与到场脱钩的真实证据。 |
+
+下一章进入规划系统升级。反思 learning 让角色从过去的失败中拿到经验；规划 planning 要解决的是：这些经验、目标 goal 和当前环境如何共同决定下一步行动。
 
 ## 参考资料
 
 - 生成式智能体 Generative Agents: https://arxiv.org/abs/2304.03442
 - 反思式学习 Reflexion: https://arxiv.org/abs/2303.11366
-- Voyager: https://arxiv.org/abs/2305.16291
-- Local source: `generative_agents/modules/agent.py`
-- Local source: `generative_agents/modules/prompt/scratch.py`
-- Local prompts: `generative_agents/data/prompts/reflect_focus.txt`
-- Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
-- Local prompts: `generative_agents/data/prompts/reflect_chat_planing.txt`
-- Local prompts: `generative_agents/data/prompts/reflect_chat_memory.txt`
+- 探索智能体 Voyager: https://arxiv.org/abs/2305.16291
+- 本地源码 Local source: `generative_agents/modules/agent.py`
+- 本地源码 Local source: `generative_agents/modules/memory/associate.py`
+- 本地配置 Local config: `generative_agents/data/config.json`
+- 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_focus.txt`
+- 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
+- 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_chat_planing.txt`
+- 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_chat_memory.txt`
+- 本地证据 Local evidence: `docs/book/assets/chapter_21/ch21_reflection_trace.json`
+- 本地证据 Local evidence: `generative_agents/results/checkpoints/book-party-extended/conversation.json`
+- 本地证据 Local evidence: `generative_agents/results/compressed/book-party-extended/movement.json`
+- 本地证据 Local evidence: `generative_agents/results/compressed/book-party-extended/simulation.md`
+- 本地指标脚手架 Local metrics scaffold: `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py`

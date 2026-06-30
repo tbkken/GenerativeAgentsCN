@@ -1,281 +1,196 @@
 # 第 35 章 多智能体协作升级：从自然偶遇到组织化协作
 
-## 35.1 核心问题
+## 35.1 派对准备卡在“谁负责”
 
-生成式智能体 Generative Agents 已经是多智能体系统。小镇里有多个角色。他们能感知彼此、聊天、等待、形成记忆，并通过对话传播信息。但这类多智能体互动主要是：
+`book-party-extended` 的回放里，伊莎贝拉在霍布斯咖啡馆反复向玛丽亚提到下午五点的情人节派对。对话里能看到邀请、承诺、布置彩带和爱心气球，`simulation.md` 里也会出现“伊莎贝拉请玛丽亚帮忙挂爱心气球布置派对，玛丽亚欣然应允”这样的活动摘要。问题在于，当前项目只能把这件事保存成自然对话 conversation、日程 schedule 和移动回放 movement，不能把它保存成一个团队任务 team task。
 
-```text
-自然偶遇型互动
-```
+这就是多智能体协作升级 multi-agent collaboration 的现场：自然偶遇已经能让消息传播起来，但系统还不知道“谁接了任务、任务做到哪一步、失败卡在哪里、证据从哪段对话来”。
 
-也就是下面这个过程：
-
-```text
-角色在地图中相遇
-  -> 判断是否聊天
-  -> 生成对话
-  -> 写入记忆
-  -> 影响后续计划
-```
-
-这种机制很适合复现论文中的社会涌现。例如派对传播、竞选信息扩散、关系形成。但它不擅长组织化协作。例如：
-
-```text
-多人分工筹备派对。
-多人协作竞选宣传。
-多人共同组织社区讨论会。
-```
-
-这些任务需要共享目标、角色分工、任务状态和协作协议。本章聚焦六个问题：
-
-1. 当前项目的多智能体互动如何工作？
-2. 自然偶遇型多智能体有什么优势和局限？
-3. CAMEL、AutoGen、MetaGPT、AgentScope 给我们什么启发？
-4. 如何在生成式智能体 Generative Agents 中引入公共事件板和临时工作组？
-5. 如何设计共享记忆和协作对话协议？
-6. 如何评价组织化协作是否有效？
+| 场景 | 当前自然偶遇 natural encounter | 组织化协作 organized collaboration |
+| --- | --- | --- |
+| 派对邀请 | 伊莎贝拉和玛丽亚聊天，摘要写入日程 schedule。 | 事件板 event board 记录玛丽亚接受“布置气球”任务。 |
+| 音乐安排 | 埃迪可能在咖啡馆弹钢琴，但没有任务归属。 | 工作组 workgroup 把“确认音乐”分给埃迪，并记录接受或拒绝。 |
+| 到场判断 | 通过 `movement.json` 看角色是否到霍布斯咖啡馆。 | 到场 attendance 与任务完成 task completion 一起进入报告 report。 |
+| 失败解释 | 只能人工翻 `conversation.json`、`simulation.md` 和断点 checkpoint。 | 失败模式 failure mode 直接绑定证据路径 evidence path。 |
 
 ```mermaid
 flowchart LR
-    subgraph Natural[自然偶遇型]
-      A1[空间相遇] --> A2[decide_chat]
-      A2 --> A3[自由对话]
-      A3 --> A4[个人记忆]
-      A4 --> A5[社会涌现]
-    end
-    subgraph Organized[组织协作型]
-      B1[公共事件板] --> B2[角色分工]
-      B2 --> B3[任务状态]
-      B3 --> B4[协作对话协议]
-      B4 --> B5[共享记忆/进度报告]
-    end
-    A5 -.升级.-> B1
+    A["感知 perception：角色在世界地图 Maze 相遇"] --> B["聊天判断 prompt decide_chat"]
+    B --> C["自然对话 conversation"]
+    C --> D["个人记忆 personal memory 与日程 schedule"]
+    D --> E["社会涌现 social emergence"]
+    E -.升级.-> F["公共事件板 event board"]
+    F --> G["临时工作组 temporary workgroup"]
+    G --> H["任务状态 task status"]
+    H --> I["协作报告 collaboration report"]
 ```
 
-*图 35-1：自然社交型多智能体与组织协作型多智能体对比。自然偶遇适合社会涌现，组织协作则需要共享目标、状态和协议。*
+*图 35-1：从自然偶遇 natural encounter 到组织化协作 organized collaboration。当前项目已有感知、对话、记忆和日程写回；协作升级要在这条链后面增加公共状态、角色分工和可审计报告。*
 
-![图 35-2：情人节派对从个人事件升级成协作事件](../../assets/chapter_35/ch35_collaboration_event_board.png)
+![图 35-2：情人节派对从个人事件升级成协作事件](../../assets/chapter_35/ch35_collaboration_event_board_v2.png)
 
-*图 35-2：情人节派对从个人事件升级成协作事件。图片用真实角色头像 portrait 与公共事件板公共事件板 event board 结构展示组织者 organizer、助手 helper、传播者 messenger、参与者 participant 和任务状态任务状态 task status 如何进入协作证据。*
+*图 35-2：情人节派对从个人事件升级成协作事件。图中的咖啡馆事件桌把公共事件板 event board、角色分工 role、任务状态 task status、对话轨迹 conversation 和移动路径 movement 放在一起；有角色接受任务，也有角色犹豫或冲突。协作不是全员配合，而是可以被证据追踪的社会过程。*
 
-## 35.2 当前项目的社交链路
+## 35.2 项目锚点和术语
 
-当前项目的社交逻辑集中在：
+框架 CAMEL、框架 AutoGen、框架 MetaGPT 和平台 AgentScope 在 GenerativeAgentsCN 中的作用，是把协作能力压回 GenerativeAgentsCN 的可改位置。
 
-```text
-generative_agents/modules/agent.py
-```
-
-核心函数主要包括，需要逐项查看：
-
-| 函数 | 中文意思 | 当前能力 |
+| 中文 English | 项目锚点 | 升级读法 |
 | --- | --- | --- |
-| `_reaction()` | 现场反应入口。 | 角色看到附近事件或他人后，决定是否要产生反应。 |
-| `_chat_with()` | 发起或参与聊天。 | 判断是否聊天，生成多轮对话，并写回对话结果。 |
-| `_wait_other()` | 等待他人。 | 当目标地点或对象被占用时，让角色选择等待而不是穿插执行。 |
-| `schedule_chat()` | 把聊天写入日程。 | 让聊天占用时间，并改变当前行动记录。 |
+| 智能体 Agent | `generative_agents/modules/agent.py` | 角色行为的执行单元，协作逻辑不能绕开它。 |
+| 游戏循环 Game loop | `generative_agents/modules/game.py` | `Game.agent_think()` 每步调用智能体思考，并把状态交回 `start.py` 保存。 |
+| 提示词 prompt | `generative_agents/data/prompts/*.txt`、`generative_agents/modules/prompt/scratch.py` | 对话、判断、总结都由提示词 prompt 包装函数提供变量和输出结构 schema。 |
+| 对话记录 conversation | `generative_agents/results/checkpoints/<name>/conversation.json` | 当前最强的协作证据来源，记录说话双方、地点和原话。 |
+| 断点 checkpoint | `generative_agents/results/checkpoints/<name>/simulate-*.json` | 保存每一步角色状态、行动、日程、记忆摘要和坐标。 |
+| 移动回放 movement | `generative_agents/results/compressed/<name>/movement.json` | 检查承诺是否转化为到场、聚集和任务行动。 |
+| 时间线 simulation | `generative_agents/results/compressed/<name>/simulation.md` | 给人读的证据索引，适合定位片段，再回查原始 JSON。 |
+| 公共事件板 event board | 建议新增到 `results/checkpoints/<name>/storage/shared/<event_id>/event_board.json` | 把协作任务从个人记忆提升为实验可观察对象。 |
 
-对话提示词 prompt 和辅助判断在：
+## 35.3 当前社交链路如何运行
 
-```text
-generative_agents/modules/prompt/scratch.py
-generative_agents/data/prompts/
+当前社交互动 social interaction 不是一个抽象概念，而是一段清楚的源码链路。入口在 `generative_agents/modules/agent.py` 的 `Agent._reaction()`。
+
+| 阶段 | 输入 input | 处理 process | 输出 output |
+| --- | --- | --- | --- |
+| 选择关注对象 focus | `self.concepts`、附近角色 `agents`、忽略词 `ignore_words` | 优先选择关注角色相关的概念 concept；否则随机选择非空闲事件。 | `focus` 与 `other`，供聊天或等待判断使用。 |
+| 发起聊天 chat | `other`、关系焦点 `focus`、历史聊天 `associate.retrieve_chats()` | 调用 `_chat_with()`，经过 prompt 判断、生成、终止、总结。 | `conversation.json` 记录原话，双方 `schedule` 写入对话事件。 |
+| 等待他人 wait | 当前路径 `self.path`、对方所在地图格子 Tile、`decide_wait` prompt | 判断目标对象是否被占用，以及是否等待。 | `revise_schedule()` 写入等待事件。 |
+
+```mermaid
+flowchart TD
+    C["感知概念 self.concepts"] --> F["选择焦点 focus"]
+    F --> O["定位对方智能体 other Agent"]
+    O --> Chat["聊天闭环 _chat_with()"]
+    O --> Wait["等待闭环 _wait_other()"]
+    Chat --> Conv["写入对话记录 conversation.json"]
+    Chat --> Sched["写入双方日程 schedule"]
+    Wait --> Sched
 ```
 
-这里主要涉及下面这些提示词 prompt：
+*图 35-3：当前社交链路 social interaction 的项目路径。自然偶遇不是随机寒暄，它已经有输入、prompt 判断、状态写回和持久化输出，只是输出还停留在个人层面。*
 
-| 提示词 prompt | 中文意思 | 当前能力 |
+## 35.4 `_chat_with()` 的输入、处理、输出闭环
+
+`Agent._chat_with()` 是组织化协作最重要的基线。组织化协作不能替换它，而要在它生成自然对话之后追加结构化抽取 structural extraction。
+
+| 源码位置 | 输入 input | 处理 process | 输出 output |
+| --- | --- | --- | --- |
+| `Agent._chat_with(other, focus)` | 两个智能体 Agent、焦点记忆 `focus`、历史聊天 `chats`、双方当前行动 event | 过滤不适合聊天的状态；判断是否聊天；生成关系摘要；多轮生成对话；检查重复和结束；总结对话。 | `self.conversation[key]`、双方 `schedule_chat()`、对话摘要 `chat_summary`。 |
+| `Agent.schedule_chat()` | 对话轮次 `chats`、摘要 `chats_summary`、开始时间 `start`、持续时间 `duration`、对方 `other` | 生成谓词为“对话”的 `memory.Event`，调用 `revise_schedule()`。 | 当前日程被聊天占用，角色行动在断点 checkpoint 中可见。 |
+
+### 聊天前置过滤
+
+`_chat_with()` 会先排除五类情况：日程未初始化、任一角色正在睡觉、对方正在移动、任一角色已在对话、两人 60 分钟内刚聊过。这些过滤是组织化协作必须保留的生活感约束。如果绕过它强行安排会议，角色就会像流程机器人 workflow bot，而不是小镇居民。
+
+| 过滤条件 | 检查位置 | 协作升级的含义 |
 | --- | --- | --- |
-| `decide_chat` | 判断是否聊天。 | 让角色根据关系、地点和当前计划决定是否开口。 |
-| `generate_chat` | 生成对话内容。 | 让双方围绕当前情境和记忆进行多轮交流。 |
-| `generate_chat_check_repeat` | 检查对话重复。 | 避免角色不断重复同一句话或同一个意思。 |
-| `decide_chat_terminate` | 判断是否结束。 | 让对话在自然时机收束。 |
-| `summarize_chats` | 总结对话。 | 把多轮聊天压缩成可写入记忆的摘要。 |
-| `summarize_relation` | 总结关系。 | 聊天前提取两人的关系背景，避免对话像陌生人随机寒暄。 |
+| 日程为空 | `len(self.schedule.daily_schedule) < 1` | 工作组 workgroup 不能在角色尚未初始化时创建任务。 |
+| 睡觉或待开始 | `_skip_react()` | 公共事件板 event board 不能让睡觉角色自动接任务。 |
+| 对方在移动 | `if other.path` | 分配任务前要确认角色有可对话窗口。 |
+| 正在对话 | `event.fit(predicate="对话")` | 协作协议 dialogue protocol 不能插入并发对话。 |
+| 60 分钟内刚聊过 | `associate.retrieve_chats()` 与 `get_delta()` | 防止为了推进任务反复骚扰同一个角色。 |
 
-整体流程可以这样概括：
+### 聊天判断 prompt：`decide_chat`
 
-```text
-感知附近事件
-  -> 选择关注对象
-  -> 判断是否聊天
-  -> 检索关系和记忆
-  -> 多轮生成对话
-  -> 判断重复和结束
-  -> 总结对话
-  -> 写入双方日程和记忆
-```
+`decide_chat` 是自然偶遇是否转化为对话的入口，不是协作任务本身。
 
-这条链已经足以支撑自然社交。
+| 项目 | 内容 |
+| --- | --- |
+| 提示词 prompt 文件 | `generative_agents/data/prompts/decide_chat.txt` |
+| 包装函数 | `PromptScratch.prompt_decide_chat()` |
+| 变量 variables | `context`、`date`、`chat_history`、`agent_status`、`another_status`、`agent`、`another` |
+| 输出结构 schema | `decide_chatResponse.res: bool`，含义是是否主动发起对话。 |
+| 失败保护 failsafe | `False`，模型失败时不发起聊天。 |
+| 流向 flow | `False` 直接退出 `_chat_with()`；`True` 进入关系摘要和对话生成。 |
 
-## 35.3 `_chat_with()` 做了什么
-
-`Agent._chat_with()` 首先排除不适合聊天的情况。例如：
-
-- 日程未初始化。
-- 任一角色正在睡觉。
-- 对方正在移动。
-- 任一角色已经在对话。
-- 两人刚聊过，间隔小于 60 分钟。
-
-然后调用下面函数，需要结合源码查看：
+真实模板骨架如下，变量由 `scratch.py` 填入：
 
 ```text
-decide_chat
+背景：
+"""
+${context}
+
+现在是 ${date}。${chat_history}
+
+${agent_status}
+${another_status}
+"""
+
+根据上述背景判断，${agent} 是否有可能主动与 ${another} 对话？只用“是”或“否”回答：
 ```
 
-判断是否要聊天。如果决定聊天，会先生成双方关系摘要：
+### 关系摘要和对话生成 prompt
 
-```python
-summarize_relation
-```
+判断要聊天之后，源码会先为双方各生成一次关系摘要，再交替调用对话生成 prompt。
 
-然后交替生成下面对话：
+| 提示词 prompt | 文件路径 | 输入 input | 输出结构 schema | 输出流向 |
+| --- | --- | --- | --- | --- |
+| 关系摘要 summarize_relation | `generative_agents/data/prompts/summarize_relation.txt` | `associate.retrieve_focus([other_name], 50)` 取出的相关记忆、`agent`、`another` | `summarize_relationResponse.res: str` | 作为 `generate_chat` 的关系背景 `relation`。 |
+| 对话生成 generate_chat | `generative_agents/data/prompts/generate_chat.txt` | 基础描述 `base_desc`、记忆 `memory`、地址 `address`、时间 `current_time`、历史对话 `conversation` | `generate_chat.res: str`，1 到 3 句话 | 追加到 `chats`，后续进入重复检查和终止判断。 |
 
-```python
-generate_chat
-```
+`generate_chat.txt` 的核心约束是：不要重复对话记录，符合角色性格和当前情境，直接输出当前角色要说的话。协作升级要复用这个自然语言层，而不是把角色台词改成 JSON。
 
-中途需要检查下面条件：
+### 重复、终止和总结 prompt
 
-```text
-generate_chat_check_repeat
-decide_chat_terminate
-```
+对话过程中还有三类 prompt 保证输出可收束。
 
-最后需要总结对话，可以这样处理：
+| 提示词 prompt | 文件路径 | 变量 variables | 输出结构 schema | 下游影响 |
+| --- | --- | --- | --- | --- |
+| 重复检查 generate_chat_check_repeat | `generative_agents/data/prompts/generate_chat_check_repeat.txt` | `conversation`、`content`、`agent` | `generate_chat_check_repeatResponse.res: bool` | 为 `True` 时停止继续生成，避免复读。 |
+| 终止判断 decide_chat_terminate | `generative_agents/data/prompts/decide_chat_terminate.txt` | `conversation`、`agent`、`another` | `decide_chat_terminateResponse.res: bool` | 为 `True` 时结束多轮对话。 |
+| 对话总结 summarize_chats | `generative_agents/data/prompts/summarize_chats.txt` | `conversation` | `summarize_chatsResponse.res: str` | 进入 `schedule_chat()` 的 `describe` 字段。 |
 
-```text
-summarize_chats
-```
-
-并调用下面函数，需要结合源码查看：
-
-```text
-schedule_chat()
-```
-
-把对话作为行动写入双方日程。这套机制很完整。但它仍然是两两对话。没有团队目标。没有共享任务板。没有组织流程。
-
-## 35.4 自然偶遇型多智能体的优势
-
-自然偶遇型多智能体有三个优势。第一，涌现感强。角色不是被中央调度强行安排对话，而是在地图中自然相遇。第二，贴近论文思想。生成式智能体 Generative Agents 关注的就是局部互动如何导致社会级联。第三，适合可信生活仿真。普通居民的一天确实不是一直围绕任务协作。很多信息就是通过偶遇、闲聊、关系和记忆传播。因此当前机制不应该被替换掉。它是小镇的生命力。组织化协作应该是在此基础上的扩展，而不是重写。
-
-## 35.5 当前机制的局限
-
-自然偶遇型机制也有明显局限。第一，协作效率低。如果伊莎贝拉需要找埃迪帮忙布置派对，她可能一直遇不到他。第二，缺少共享状态。每个人只知道自己的记忆。活动任务没有公共状态。第三，分工不稳定。即使有人说“我来帮忙”，系统也没有明确把任务分配给他。第四，冲突难以协商。如果两个人对任务理解不同，缺少团队层面的解决机制。第五，协作结果难以评价。因为任务没有结构化状态，很难判断：
-
-```text
-谁负责了什么？
-做到了哪一步？
-为什么失败？
-```
-
-这些局限正是多智能体框架研究可以补足的地方。
-
-## 35.6 CAMEL 的启发
-
-CAMEL 关注角色扮演式沟通智能体角色扮演式沟通智能体 role-playing communicative agents。它的启发是：
-
-```text
-多智能体对话不只是闲聊，也可以通过角色设定推动任务协作。
-```
-
-在生成式智能体 Generative Agents 中，角色本来就有 persona。但这些 persona 主要服务生活和社交。如果要做协作任务，可以进一步引入临时协作角色。例如派对筹备：
-
-```text
-organizer：伊莎贝拉
-music_helper：埃迪
-guest_messenger：玛丽亚
-venue_helper：亚当
-```
-
-这些不是永久身份。它们是某个事件下的临时角色。这样既保留原 persona，又能组织任务。
-
-## 35.7 AutoGen 的启发
-
-AutoGen 强调多智能体对话框架多智能体对话框架 multi-agent conversation framework。它的重点不是让角色自然生活，而是让多个可配置智能体 agent 通过对话完成任务。对本项目的启发是：
-
-```text
-协作任务需要对话协议。
-```
-
-可以看一个具体例子：
-
-- 谁提出任务？
-- 谁接受任务？
-- 谁报告进度？
-- 谁确认完成？
-- 谁处理冲突？
-
-当前 `_chat_with()` 是自由对话。协作升级可以增加一些结构化对话类型：
-
-```text
-assign_task
-accept_task
-decline_task
-report_progress
-request_help
-resolve_conflict
-confirm_completion
-```
-
-这些类型不需要替代自然语言。它们可以作为对话后的结构化摘要。例如：
+`conversation.json` 的结构已经足够做协作证据抽取。例如 `book-party-extended` 中有这样的证据形态：
 
 ```json
 {
-  "speech": "如果你愿意的话，可以帮我确认一下音乐安排吗？",
-  "dialogue_act": "assign_task",
-  "task": "确认派对音乐安排",
-  "assignee": "埃迪"
+  "20240214-10:00": [
+    {
+      "伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面": [
+        ["伊莎贝拉", "玛丽亚，今天的三明治看起来很美味呢！下午五点的情人节派对你一定要来哦，我已经准备好了一些特别的安排。"],
+        ["玛丽亚", "哇，情人节派对？听起来太棒了！我五点刚好有休息时间，肯定会去参加的！"]
+      ]
+    }
+  ]
 }
 ```
 
-这样对话既自然，又能进入任务系统。
+这段输出已经有时间、地点、说话者、听话者和原话。缺少的是把“肯定会去参加”抽取成结构化承诺 commitment，并把它绑定到事件板 event board。
 
-## 35.8 MetaGPT 的启发
+## 35.5 当前机制的能力边界
 
-MetaGPT 的核心启发是：
+自然偶遇 natural encounter 的优势是可信生活流，局限是协作状态不可见。
+
+| 当前能力 | 项目证据 | 适合做什么 | 不足在哪里 |
+| --- | --- | --- | --- |
+| 自然传播 information diffusion | `conversation.json`、`simulation.md` | 派对消息、竞选观点、关系信息的扩散。 | 不知道传播是否对应任务承诺。 |
+| 个人日程 schedule | 断点 checkpoint 中的 `schedule` 和 `action` | 检查角色当前在做什么。 | 缺少“团队任务”的统一进度视图。 |
+| 移动回放 movement | `movement.json` 的 `all_movement` | 验证角色是否到达地点。 | 到场不等于完成任务，需要任务语义。 |
+| 关系与记忆 memory | `storage/<agent>/associate/` | 让后续对话带历史背景。 | 共享事件状态不能只存在于某个角色记忆里。 |
+| 人工报告 simulation | `simulation.md` | 快速阅读一天发生了什么。 | 报告是结果汇编，不是协作状态机。 |
+
+协作升级要补的不是“更会聊天”，而是让对话后的结构化事实进入可验证数据结构。
+
+## 35.6 前沿框架给项目的接口
+
+| 前沿思想 | 不直接照搬的原因 | 落回 GenerativeAgentsCN 的接口 |
+| --- | --- | --- |
+| 框架 CAMEL 角色扮演式沟通智能体 role-playing communicative agents | 框架 CAMEL 更像任务型双智能体协作，本项目还要保留小镇生活。 | 在事件 event 内增加临时协作角色 role，例如 `organizer`、`helper`、`messenger`。 |
+| 框架 AutoGen 多智能体对话框架 multi-agent conversation framework | 框架 AutoGen 强调可配置代理对话，本项目已有生活化对话链。 | 在自然对话后抽取 `dialogue_act`，不直接让台词变成命令。 |
+| 框架 MetaGPT 标准作业流程 SOP | 框架 MetaGPT 面向软件开发流程，小镇任务不能被 SOP 写死。 | 为派对、竞选、讨论会定义轻量 SOP，允许拒绝、遗忘、冲突和偏离。 |
+| 平台 AgentScope 多智能体平台 multi-agent platform | 平台 AgentScope 面向更通用的平台扩展，本项目优先保持小规模可复查。 | 增加配置、状态观测、日志、指标 metrics 和报告 report，而不是先扩到大量角色。 |
+
+## 35.7 升级一：公共事件板 event board
+
+公共事件板 event board 把“伊莎贝拉想办派对”从个人状态提升为实验对象。它不代表所有角色都知道派对，只代表实验环境有一个可追踪的协作对象。
+
+建议保存位置：
 
 ```text
-复杂协作需要 SOP 和角色分工。
+generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/event_board.json
 ```
 
-它主要面向软件开发任务。但小镇任务也可以有轻量 SOP。例如情人节派对 SOP：
-
-1. 明确时间地点。
-2. 准备食物和饮品。
-3. 邀请顾客和朋友。
-4. 确认音乐或活动内容。
-5. 派对前回到咖啡馆。
-6. 活动后总结反馈。
-
-镇长竞选 SOP 可以这样设计：
-
-1. 明确竞选主题。
-2. 找支持者讨论。
-3. 向中立居民介绍。
-4. 回应反对意见。
-5. 记录居民关心的问题。
-6. 调整宣传重点。
-
-SOP 不应把故事写死。它只是提供协作骨架。角色仍然可以失败、拒绝、变更计划。
-
-## 35.9 AgentScope 的启发
-
-AgentScope 强调多智能体平台的灵活性、鲁棒性和可扩展性。对生成式智能体 Generative Agents 来说，它的启发主要是工程层面。如果要支持组织化协作，需要：
-
-- 可配置实验。
-- 可观察协作状态。
-- 可复盘任务流。
-- 可扩展智能体 agent 数量。
-- 清晰日志和指标。
-
-协作不是只改提示词 prompt。还要改数据结构和观测工具。否则读者只能看到对话，看不到协作是否真的发生。
-
-## 35.10 升级方向一：公共事件板
-
-第一项可落地升级是公共事件板。示例：
+建议结构：
 
 ```json
 {
@@ -283,345 +198,267 @@ AgentScope 强调多智能体平台的灵活性、鲁棒性和可扩展性。对
   "owner": "伊莎贝拉",
   "title": "情人节派对",
   "time": "2024-02-14 17:00",
-  "location": "霍布斯咖啡馆",
+  "location": "the Ville，霍布斯咖啡馆，咖啡馆",
   "status": "active",
-  "participants": [],
+  "known_by": ["伊莎贝拉"],
   "tasks": [
     {
-      "name": "准备饮品",
-      "assignee": "伊莎贝拉",
-      "status": "active"
-    },
-    {
-      "name": "确认音乐安排",
-      "assignee": "埃迪",
-      "status": "todo"
+      "task_id": "decorate_cafe",
+      "name": "布置咖啡馆",
+      "assignee": "玛丽亚",
+      "status": "accepted",
+      "evidence": ["conversation:20240214-10:00:伊莎贝拉->玛丽亚"]
     }
   ]
 }
 ```
 
-公共事件板解决两个问题。第一，活动不再只存在于某个人的记忆中。第二，协作状态可以被记录和评价。注意，公共事件板不是让所有角色自动知道所有信息。角色是否知道某个事件，仍然要通过记忆和传播判断。公共事件板更多是实验环境和协作任务的结构化表示。
+| 闭环 | 内容 |
+| --- | --- |
+| 输入 input | 事件设定、角色当前状态、自然对话 conversation、断点 checkpoint 中的行动和日程。 |
+| 处理 process | 读取对话，抽取承诺 commitment、任务 task、负责人 assignee、状态 status；只更新符合输出结构 schema 的字段。 |
+| 输出 output | `event_board.json`、`team_tasks.json`、`simulation.md` 中的事件板摘要。 |
+| 证据路径 evidence path | `conversation.json` 证明谁说了什么；`movement.json` 证明是否到场；断点 checkpoint 证明日程和动作。 |
+| 失败模式 failure mode | 模型把闲聊误判成承诺；任务被写入但没有证据；所有角色无条件接受。 |
+| 验证方式 verification | 随机抽取任务，回查原话、日程、移动轨迹和报告摘要是否一致。 |
 
-协作状态逻辑图：
+## 35.8 升级二：临时工作组 temporary workgroup
 
-```mermaid
-flowchart TD
-    Event["公共事件板公共事件板 event board"] --> Facts["记录时间、地点、发起人"]
-    Event --> Tasks["记录任务、负责人、状态"]
-    Facts --> Access["通过记忆和对话判断角色是否知道"]
-    Tasks --> Evidence["写入团队任务 team_tasks 与报告"]
-    Access --> Evaluate["评价信息传播是否成立"]
-    Evidence --> Evaluate
-```
+临时工作组 temporary workgroup 不改变角色永久人设 persona。伊莎贝拉仍是咖啡馆老板，玛丽亚仍是学生，埃迪仍是音乐学生；只是在 `valentine_party` 这个事件里临时承担协作角色。
 
-## 35.11 升级方向二：临时工作组
-
-有了公共事件后，可以为事件创建临时工作组。角色类型示例：
-
-```text
-organizer
-helper
-messenger
-critic
-participant
-observer
-```
-
-以派对传播实验为例：
-
-```text
-伊莎贝拉：organizer
-埃迪：helper
-玛丽亚：messenger
-亚当：participant
-汤姆：observer 或 critic
-```
-
-角色分工应来自对话或设定。不要一开始直接给所有人分工。例如伊莎贝拉和埃迪对话后，埃迪才成为 helper。这样协作仍然从社会互动中生长出来。
-
-工作组生成逻辑图：
+| 临时角色 role | 触发来源 | 能做的事 | 不能自动获得的能力 |
+| --- | --- | --- | --- |
+| 组织者 organizer | 事件 owner 或初始配置 | 创建任务、邀请他人、总结进度。 | 不能强迫别人接受任务。 |
+| 助手 helper | 对话中接受具体任务 | 更新自己的任务进度。 | 不能读取全部私密记忆。 |
+| 传播者 messenger | 接受邀请别人或扩散消息 | 在自然对话中提到事件事实。 | 不能把未听说过的人标记为知情。 |
+| 参与者 participant | 承诺到场或实际到场 | 被计入到场 attendance。 | 到场不等于完成组织任务。 |
+| 观察者 observer | 被动听到或在场 | 可作为弱证据。 | 不能被算作任务负责人。 |
 
 ```mermaid
 flowchart TD
-    Setting["初始设定：伊莎贝拉是组织者 organizer"] --> Dialogue["自然对话"]
-    Dialogue --> Accept{"对方是否接受任务"}
-    Accept -->|是| Role["写入临时角色 helper / messenger"]
-    Accept -->|否| Conflict["记录拒绝或冲突"]
-    Role --> Board["更新公共事件板公共事件板 event board"]
-    Conflict --> Board
+    E["公共事件板 event board"] --> D["自然对话 conversation"]
+    D --> X["结构化抽取 extraction"]
+    X --> A{"是否有接受任务 accepted task"}
+    A -->|是 yes| R["写入临时角色 role 与任务 assignee"]
+    A -->|否 no| K["只记录知情 known_by 或拒绝 declined"]
+    R --> B["更新 team_tasks.json"]
+    K --> B
 ```
 
-## 35.12 升级方向三：共享记忆
+*图 35-4：临时工作组 temporary workgroup 的生成逻辑。角色分工来自事件设定和对话证据，而不是在仿真开始时把所有人硬塞进团队。*
 
-当前记忆主要是个人记忆。组织化协作需要共享记忆。可以为事件增加共享存储：
+## 35.9 升级三：协作对话协议 dialogue act
+
+协作对话协议 dialogue act 应该发生在自然对话之后。角色仍然说自然语言，系统再抽取结构化动作。
+
+建议新增提示词 prompt 文件：
+
+```text
+generative_agents/data/prompts/team_assign_role.txt
+generative_agents/data/prompts/team_update_task.txt
+generative_agents/data/prompts/team_report_progress.txt
+generative_agents/data/prompts/team_resolve_conflict.txt
+generative_agents/data/prompts/team_summarize_progress.txt
+```
+
+建议在 `generative_agents/modules/prompt/scratch.py` 中增加对应包装函数，例如 `prompt_team_update_task()`。
+
+| 提示词 prompt | 输入变量 variables | 输出结构 schema | 输出流向 |
+| --- | --- | --- | --- |
+| `team_assign_role` | `event_board`、`conversation`、`agent`、`another`、`current_roles` | `event_id`、`role`、`assignee`、`confidence`、`evidence` | 更新 `workgroup.roles`。 |
+| `team_update_task` | `tasks`、`conversation`、`movement_window`、`time` | `task_id`、`status`、`assignee`、`evidence`、`reason` | 更新 `team_tasks.json`。 |
+| `team_report_progress` | `event_board`、`team_tasks`、`recent_actions` | `summary`、`done`、`blocked`、`next_actions` | 写入 `simulation.md` 和报告 report。 |
+| `team_resolve_conflict` | `conflict_type`、`claims`、`evidence_paths` | `resolution`、`changed_tasks`、`unresolved_reason` | 保留冲突或改派任务。 |
+
+`team_update_task.txt` 的模板可以保持短而严格：
+
+```text
+事件板 event board：
+${event_board}
+
+任务列表 team tasks：
+${tasks}
+
+自然对话 conversation：
+${conversation}
+
+请判断这段对话是否改变了任务状态。只输出 JSON：
+{
+  "event_id": "...",
+  "dialogue_act": "accept_task | decline_task | report_progress | request_help | confirm_completion | no_change",
+  "task_id": "...",
+  "assignee": "...",
+  "status": "todo | accepted | active | blocked | done | declined",
+  "evidence": ["..."],
+  "reason": "..."
+}
+```
+
+关键约束是：提示词 prompt 输出不能直接覆盖公共状态。它必须先通过字段校验，再由确定性代码写入事件板 event board。
+
+## 35.10 升级四：共享记忆 shared memory
+
+共享记忆 shared memory 不是让所有角色共享大脑。它是事件级存储，用来保存公共事实、任务状态和证据路径。
+
+建议目录：
 
 ```text
 generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
+  event_board.json
+  team_tasks.json
+  progress_log.jsonl
+  conflicts.jsonl
 ```
 
-共享记忆可以这样保存：
+| 文件 | 数据结构 | 读取者 | 写入者 | 验证方式 |
+| --- | --- | --- | --- | --- |
+| `event_board.json` | 事件基本事实、状态、知情角色、参与者。 | 组织者 organizer、报告脚本。 | 事件初始化和校验后的更新器。 | 与 `simulation.md` 的事件描述一致。 |
+| `team_tasks.json` | 任务、负责人、状态、证据、更新时间。 | 任务相关角色、指标脚本。 | `team_update_task` 的校验后结果。 | 每条任务都有 `conversation` 或 `movement` 证据。 |
+| `progress_log.jsonl` | 每次状态变化的追加日志。 | 审计工具、报告脚本。 | 状态更新器。 | 时间顺序和断点 checkpoint 对齐。 |
+| `conflicts.jsonl` | 拒绝、冲突、记忆不一致。 | 人工复查、冲突提示词 prompt。 | 冲突检测器。 | 冲突不能被静默改写成成功。 |
 
-- 活动目标。
-- 任务列表。
-- 参与者确认。
-- 进度更新。
-- 冲突记录。
-- 结果总结。
+访问规则 access control 要比共享目录更重要：
 
-但共享记忆也有边界。不是每个角色都能读全部共享记忆。可以设置访问规则：
+| 访问身份 | 可读内容 | 可写内容 |
+| --- | --- | --- |
+| `owner` | 事件事实、全部任务、进度日志、冲突记录。 | 新建任务、确认完成、关闭事件。 |
+| `assignee` | 自己任务、公共事件事实、相关证据。 | 自己任务的进度、阻塞原因。 |
+| `participant` | 时间、地点、活动说明、自己的承诺。 | 到场确认或反馈。 |
+| `observer` | 只能通过对话和回放间接获得事实。 | 无直接写权限。 |
 
-```text
-owner 可读写全部。
-assignee 可读写自己的任务。
-participant 可读事件基本信息。
-observer 只能通过对话获知。
-```
+## 35.11 升级五：协作冲突处理 conflict resolution
 
-这能避免角色获得不该知道的信息。
+组织化协作 organized collaboration 必须允许失败。派对实验里，山姆可能知道派对但因为与詹妮弗有晚餐约定而不能参加；玛丽亚可能答应布置但被学习任务拖住；埃迪可能在钢琴旁准备音乐但没有明确接收任务。这些都不是系统错误，而是协作事实。
 
-## 35.13 升级方向四：协作对话协议
+| 冲突类型 conflict type | 表现 | 检查位置 | 修正方向 |
+| --- | --- | --- | --- |
+| 时间冲突 time conflict | 角色接受任务但同一时段已有强日程。 | 断点 checkpoint 的 `schedule`、`action`。 | 改派任务或降低完成预期。 |
+| 兴趣冲突 interest conflict | 角色愿意参加但不愿负责。 | `conversation.json` 原话。 | 写入 `declined`，不要算作接受。 |
+| 信念冲突 belief conflict | 角色对事件目的有不同看法。 | 对话、记忆和反思记录。 | 保留争议，并进入报告 report。 |
+| 资源冲突 resource conflict | 地点、对象或工具被占用。 | `movement.json`、地图地址 address、对象状态。 | 调整地点或等待 wait。 |
+| 关系冲突 relationship conflict | 关系弱或敌对导致拒绝合作。 | `associate` 关系记忆、历史聊天。 | 让传播路径绕开该角色。 |
 
-协作对话协议可以通过提示词 prompt 实现。建议新增：
-
-```text
-team_assign_role.txt
-team_update_task.txt
-team_report_progress.txt
-team_resolve_conflict.txt
-team_summarize_progress.txt
-```
-
-对话后可以抽取结构化结果：
+`team_resolve_conflict` 提示词 prompt 的输出结构 schema 应保持可审计：
 
 ```json
 {
   "event_id": "valentine_party",
-  "dialogue_act": "accept_task",
-  "task": "确认音乐安排",
-  "assignee": "埃迪",
-  "status": "accepted",
-  "evidence": ["conversation_20240214_1030"]
+  "conflict_type": "time_conflict",
+  "agents": ["山姆", "伊莎贝拉"],
+  "resolution": "keep_declined",
+  "changed_tasks": [],
+  "unresolved_reason": "山姆明确表示五点要和詹妮弗共度晚餐",
+  "evidence": ["conversation:20240214-10:00:山姆->伊莎贝拉"]
 }
 ```
 
-这条结构化结果可以更新公共事件板。不要让模型直接随意改公共状态。最好通过：
+## 35.12 升级六：协作可视化 collaboration visualization
 
-```text
-自然对话 -> 结构化抽取 -> 状态更新
-```
+有了公共事件板 event board 和共享任务 team tasks，`simulation.md` 需要多一段协作摘要，`movement.json` 需要继续承担到场证据，报告 report 需要把二者合并。
 
-这种链路比直接改提示词 prompt 更可控。
-
-协作协议逻辑图：
-
-```mermaid
-flowchart LR
-    Chat["自然对话"] --> Extract["结构化抽取对话行为对话行为 dialogue act"]
-    Extract --> Check{"字段是否完整"}
-    Check -->|是| Update["更新公共事件板状态"]
-    Check -->|否| Review["保留原对话证据，人工复查"]
-    Update --> Audit["在报告中展示任务变化"]
-    Review --> Audit
-```
-
-## 35.14 升级方向五：协作冲突处理
-
-协作系统必须允许冲突。例如：
-
-- 埃迪没有时间帮忙。
-- 玛丽亚愿意邀请人，但不想负责布置。
-- 山姆希望宣传竞选，汤姆公开反对。
-- 两个角色对活动时间记忆不同。
-
-可以设计下面冲突类型：
-
-```text
-time_conflict
-interest_conflict
-belief_conflict
-resource_conflict
-relationship_conflict
-```
-
-冲突处理提示词 prompt 可以问：
-
-```text
-冲突是什么？
-涉及哪些角色？
-各自立场是什么？
-是否需要修改任务、换人或放弃？
-```
-
-组织化协作不等于所有人合作。它意味着系统能记录和处理协作中的分歧。
-
-## 35.15 升级方向六：协作可视化
-
-如果有公共事件板和共享任务，就应该在回放或报告中展示。可以在 `simulation.md` 中增加一节：
+建议在 `simulation.md` 中增加可渲染区块：
 
 ```markdown
-## 事件板：情人节派对
+## 协作事件 event board：valentine_party
 
-- owner：伊莎贝拉
-- time：2024-02-14 17:00
-- location：霍布斯咖啡馆
-- participants：玛丽亚、克劳斯
-
-### Tasks
-
-- 准备饮品：伊莎贝拉，done
-- 确认音乐安排：埃迪，accepted
-- 邀请学生：玛丽亚，partial
+| 任务 task | 负责人 assignee | 状态 status | 证据 evidence |
+| --- | --- | --- | --- |
+| 布置咖啡馆 | 玛丽亚 | accepted | conversation:20240214-10:00 |
+| 确认音乐 | 埃迪 | todo | movement:钢琴区域 |
+| 邀请顾客 | 伊莎贝拉 | active | conversation:多段邀请 |
 ```
 
-也可以生成下面内容：
+| 输出位置 | 可判断内容 | 回查路径 |
+| --- | --- | --- |
+| `simulation.md` 的协作事件区块 | 谁负责、进度如何、哪里失败。 | 表格中的 `evidence` 字段。 |
+| `team_tasks.json` | 机器可统计的任务状态。 | `status`、`assignee`、`updated_at`、`evidence`。 |
+| `movement.json` | 负责人是否到达任务地点。 | 时间窗口、地点关键字、角色坐标。 |
+| `report.md` 或指标 metrics | 多次运行中协作是否稳定。 | 指标值、失败样例、原始文件路径。 |
 
-```text
-team_tasks.json
-```
+图 35-2 是协作升级的视觉审计：左侧角色头像对应真实小镇居民，中央事件板固定事件事实，右侧任务卡拆开任务状态，底部链路把自然对话先转成结构化抽取结果，再进入报告。
 
-供后续分析。没有可视化，协作很容易只停留在对话里。可视化让读者看清：
+## 35.13 最小可行升级实验
 
-```text
-谁承担了什么，完成了什么，失败在哪里。
-```
+第一轮实验不需要改成完整团队平台。保留当前小镇循环，只增加事件板、任务抽取和报告输出。
 
-## 35.16 最小可行升级实验
-
-建议第一个协作升级实验仍然使用派对。目标：
-
-```text
-让情人节派对从伊莎贝拉个人事件，升级成多人协作事件。
-```
-
-新增公共事件板可以这样做：
-
-```text
-valentine_party
-```
-
-初始任务可以这样设置：
-
-- 准备饮品。
-- 邀请顾客。
-- 确认音乐。
-- 17:00 前布置咖啡馆。
-
-实验角色可以这样选择：
-
-- 伊莎贝拉。
-- 埃迪。
-- 玛丽亚。
-- 克劳斯。
-- 亚当。
-
-实验观察重点可以这样安排：
-
-- 是否有人接受协作任务。
-- 是否出现任务状态更新。
-- 是否有人拒绝或忘记任务。
-- 是否多人在派对前集中到咖啡馆。
-- 协作是否比原始传播实验更稳定。
-
-这个实验足够直观。也能展示组织化协作和自然社交的区别。
-
-最小实验逻辑图：
-
-```mermaid
-flowchart TD
-    Config["配置情人节派对事件板"] --> Agents["选择伊莎贝拉、埃迪、玛丽亚、克劳斯、亚当"]
-    Agents --> Run["运行小镇仿真"]
-    Run --> Conversations["读取对话记录 conversation"]
-    Run --> Movement["读取移动回放 movement"]
-    Conversations --> Tasks["判断任务接受、拒绝、遗忘"]
-    Movement --> Gather["判断派对前后是否聚集"]
-    Tasks --> Report["生成协作评价报告"]
-    Gather --> Report
-```
-
-## 35.17 评价指标
-
-协作升级可以用以下指标评价：
-
-```text
-team_task_completion_rate
-```
-
-该指标记录团队任务完成率。
-
-```text
-role_assignment_clarity
-```
-
-该项检查角色分工是否清楚。
-
-```text
-shared_state_consistency
-```
-
-公共事件板状态是否与对话和行动一致。
-
-```text
-coordination_dialogue_efficiency
-```
-
-协作对话是否有效，而不是空泛寒暄。
-
-```text
-conflict_resolution_count
-```
-
-冲突是否被发现和处理。
-
-```text
-collaboration_naturalness_score
-```
-
-协作是否仍符合角色生活，而不是变成流程机器人。
-
-```text
-multi_agent_credit_traceability
-```
-
-能否追踪每个角色对结果的贡献。最后一个指标很重要。多智能体系统经常出现：
-
-```text
-结果看似成功，但不知道是谁推动的。
-```
-
-可追踪贡献能让评价更严谨。
-
-## 35.18 风险与边界
-
-组织化协作也有风险。第一，破坏生活感。如果每个居民都像公司员工一样执行任务，小镇会失去社会仿真味道。第二，中心化过强。公共事件板可能让所有行为围绕任务转，削弱偶遇和涌现。第三，上帝视角。共享状态如果不限制访问，会让角色知道不该知道的信息。第四，过度合作。团队系统可能进一步放大“所有人都接受任务”的问题。第五，评价偏任务成功。团队任务完成率高，不一定代表可信。因此，组织化协作要遵守两条原则。第一，只在明确事件或目标上启用。日常生活仍由原始机制驱动。第二，允许拒绝和冲突。组织化协作不是让所有角色听话，而是让协作过程可记录、可解释、可评价。
-
-## 35.19 本章小结
-
-多智能体协作升级要从“自然偶遇”走向“有目标的协作”，但不能把小镇居民变成机械任务机器人。合理做法是在自然社交之上加轻量组织结构。
-
-| 本章内容 | 核心结论 |
+| 实验项 | 配置 |
 | --- | --- |
-| 当前社交基础 | 生成式智能体 Generative Agents 已支持感知、聊天决策、对话生成、总结和记忆写回。 |
-| `_chat_with()` | 它支持关系摘要、多轮对话、重复检查、结束判断和对话总结。 |
-| 当前局限 | 自然社交适合涌现，但缺少共享目标、角色分工、公共任务状态和协作协议。 |
-| CAMEL 启发 | 可以使用临时协作角色。 |
-| AutoGen 启发 | 协作任务需要设计对话协议。 |
-| MetaGPT 启发 | 复杂任务可以使用轻量 SOP。 |
-| AgentScope 启发 | 多智能体平台要重视可配置、可观察和可扩展。 |
-| 可落地升级 | 公共事件板、临时工作组、共享记忆、协作对话协议、冲突处理和协作可视化。 |
-| 最小实验 | 可以从多人协作筹备情人节派对开始。 |
-| 评价要求 | 协作评价要同时看任务完成、分工清晰、状态一致、贡献可追踪和行为自然性。 |
+| 实验名 | `book-team-party-01` |
+| 事件 event | `valentine_party`，时间 `2024-02-14 17:00`，地点“霍布斯咖啡馆”。 |
+| 角色 agents | 伊莎贝拉、玛丽亚、埃迪、克劳斯、亚当。 |
+| 新增文件 | `event_board.json`、`team_tasks.json`、`progress_log.jsonl`。 |
+| 观察对象 | 对话承诺、任务接受、任务完成、到场、冲突和遗忘。 |
 
-下一章讨论社会仿真升级。协作让多个角色围绕事件组织起来；社会仿真则要进一步从单次故事走向可重复、可统计、可比较的群体现象研究。
+可复用当前运行入口：
+
+```bash
+cd generative_agents
+python start.py --name book-team-party-01 --start 20240214-08:00 --step 72 --stride 10 --agents "伊莎贝拉,玛丽亚,埃迪,克劳斯,亚当" --verbose info --log book-team-party-01.log
+python compress.py --name book-team-party-01
+```
+
+这条命令的输入 input 是固定角色、开始时间和步长；处理 process 是 `start.py` 每步调用 `Game.agent_think()`，再由 `compress.py` 生成报告和回放；输出 output 是 `results/checkpoints/book-team-party-01/` 与 `results/compressed/book-team-party-01/`。协作升级脚本应只在这些输出旁边追加事件板和任务报告，不覆盖原始证据。
+
+## 35.14 协作指标 metrics
+
+指标要绑定文件，不能只给抽象名字。
+
+| 指标 metric | 字段 | 证据来源 | 解决的问题 |
+| --- | --- | --- | --- |
+| 团队任务完成率 team_task_completion_rate | `tasks.status` | `team_tasks.json`、`simulation.md` | 团队是否真正推进任务。 |
+| 角色分工清晰度 role_assignment_clarity | `assignee`、`role` | `event_board.json`、`conversation.json` | 是否知道谁负责什么。 |
+| 共享状态一致率 shared_state_consistency | `status` 与证据是否匹配 | `team_tasks.json`、`conversation.json`、`movement.json` | 公共状态是否被模型胡乱改写。 |
+| 协作对话效率 coordination_dialogue_efficiency | 有效 `dialogue_act` 数量 | `conversation.json`、抽取结果 | 对话是否推进任务，而不是空泛寒暄。 |
+| 冲突记录数 conflict_resolution_count | `conflicts.jsonl` | 冲突提示词 prompt 输出、原始证据 | 系统是否允许拒绝和分歧。 |
+| 多智能体归因可追踪性 multi_agent_credit_traceability | `evidence` 完整率 | 所有报告和 JSON | 成功结果能否追到角色贡献。 |
+
+**公式 35-1：团队任务完成率 team_task_completion_rate**
+
+$$
+\text{团队任务完成率} =
+\frac{\text{状态为 done 的任务数}}{\text{事件板 event board 中的任务总数}}
+$$
+
+读法：如果情人节派对事件板有 4 个任务，其中 2 个任务状态为 `done`，则团队任务完成率为 \(2/4 = 0.50\)。这个数只能说明任务状态，不说明对话自然性。
+
+**公式 35-2：共享状态一致率 shared_state_consistency**
+
+$$
+\text{共享状态一致率} =
+\frac{\text{有原始证据支持的状态更新数}}{\text{全部状态更新数}}
+$$
+
+读法：如果 `team_tasks.json` 里有 10 次状态更新，8 次能回查到 `conversation.json` 或 `movement.json`，共享状态一致率为 \(8/10 = 0.80\)。低一致率说明事件板可能被提示词 prompt 幻觉污染。
+
+## 35.15 风险与边界
+
+| 风险 | 表现 | 检查位置 | 控制方式 |
+| --- | --- | --- | --- |
+| 生活感被破坏 | 所有角色都像项目经理一样接任务。 | `simulation.md` 的活动记录、对话风格。 | 协作只在明确事件 event 中启用，日常生活仍走自然机制。 |
+| 上帝视角泄漏 | 角色知道自己没听说过的任务。 | `known_by`、对话传播链、记忆检索。 | 事件板是实验状态，不等于角色知识。 |
+| 过度合作 over-cooperation | 拒绝和冲突消失。 | `conflicts.jsonl`、原始对话。 | 把拒绝、遗忘、误解作为有效输出。 |
+| 状态幻觉 state hallucination | `team_tasks.json` 标记完成，但没有行动证据。 | `movement.json`、断点 checkpoint。 | 每次状态更新必须带 `evidence`。 |
+| 指标偏任务化 | 任务完成率高，但角色行为不可信。 | 对话自然性、日程冲突、人物设定 persona。 | 指标报告同时列自然性和失败样例。 |
+
+## 35.16 本章小结
+
+多智能体协作升级 multi-agent collaboration 的核心不是把小镇居民改造成任务机器人，而是在自然社交链路之后增加可审计的协作层。当前项目已经有 `_reaction()`、`_chat_with()`、prompt 链、`conversation.json`、断点 checkpoint、`simulation.md` 和 `movement.json`；缺少的是公共事件板 event board、临时工作组 temporary workgroup、协作对话协议 dialogue act、共享记忆 shared memory 和协作指标 metrics。
+
+协作升级遵守一个原则：自然对话先发生，结构化状态后抽取。这样既保留 Generative Agents 的生活流，又能让“谁负责、谁拒绝、谁遗忘、谁真的到场”进入可复查的工程证据链。
+
+下一章继续讨论社会仿真 social simulation。协作升级回答的是一个事件内部如何组织；社会仿真升级要回答同类事件在多次运行中是否稳定、能否统计、如何比较，以及哪些结论不能外推到现实社会。
 
 ## 参考资料
 
-- CAMEL: https://arxiv.org/abs/2303.17760
-- AutoGen: https://arxiv.org/abs/2308.08155
-- MetaGPT: https://arxiv.org/abs/2308.00352
-- AgentScope: https://arxiv.org/abs/2402.14034
+- 框架 CAMEL: https://arxiv.org/abs/2303.17760
+- 框架 AutoGen: https://arxiv.org/abs/2308.08155
+- 框架 MetaGPT: https://arxiv.org/abs/2308.00352
+- 平台 AgentScope: https://arxiv.org/abs/2402.14034
 - 生成式智能体 Generative Agents: https://arxiv.org/abs/2304.03442
 - Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/game.py`
 - Local source: `generative_agents/modules/prompt/scratch.py`
+- Local prompts: `generative_agents/data/prompts/decide_chat.txt`
 - Local prompts: `generative_agents/data/prompts/generate_chat.txt`
 - Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
+- Local evidence figure scaffold: `docs/book/scaffolds/part_04_05/ch24_38_evidence_figures.py`
