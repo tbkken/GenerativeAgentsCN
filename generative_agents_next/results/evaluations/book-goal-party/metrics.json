@@ -1,0 +1,110 @@
+{
+  "experiment": "book-goal-party",
+  "event": "valentine_party",
+  "keywords": [
+    "情人节",
+    "派对",
+    "五点",
+    "5点",
+    "17:00",
+    "霍布斯咖啡馆"
+  ],
+  "target_place": "霍布斯咖啡馆",
+  "window_start": "20240214-17:00",
+  "window_end": "20240214-19:00",
+  "checkpoint_count": 74,
+  "final_time": "20240214-20:10",
+  "diffusion": {
+    "mention_count": 16,
+    "known_agents": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "known_agent_count": 2
+  },
+  "commitments": {
+    "accepted": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "accepted_count": 2,
+    "rejected": [],
+    "rejected_count": 0
+  },
+  "attendance": {
+    "arrived": [
+      "伊莎贝拉"
+    ],
+    "arrived_count": 1
+  },
+  "goal_progress": {
+    "informed": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "accepted": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "arrived": [
+      "伊莎贝拉"
+    ],
+    "rejected_or_unavailable": [],
+    "accepted_not_arrived": [
+      "玛丽亚"
+    ],
+    "missing": [
+      "这些角色有承诺但未在目标时间窗到场：玛丽亚"
+    ],
+    "criteria": {
+      "has_event_diffusion": true,
+      "has_commitment": true,
+      "has_attendance": true,
+      "has_no_unfulfilled_commitment": false
+    },
+    "goal_completion_rate": 0.75
+  },
+  "memory_summary": {
+    "伊莎贝拉": {
+      "chat": 6,
+      "conflict": 2,
+      "event": 140,
+      "goal": 1,
+      "relationship": 6,
+      "skill": 2,
+      "summary": 103,
+      "thought": 18
+    },
+    "玛丽亚": {
+      "chat": 5,
+      "conflict": 0,
+      "event": 86,
+      "goal": 1,
+      "relationship": 5,
+      "skill": 0,
+      "summary": 70,
+      "thought": 1
+    },
+    "山姆": {
+      "chat": 0,
+      "conflict": 0,
+      "event": 124,
+      "goal": 1,
+      "relationship": 0,
+      "skill": 0,
+      "summary": 89,
+      "thought": 16
+    },
+    "汤姆": {
+      "chat": 1,
+      "conflict": 0,
+      "event": 119,
+      "goal": 1,
+      "relationship": 1,
+      "skill": 0,
+      "summary": 88,
+      "thought": 16
+    }
+  },
+  "reflection_candidates": 1
+}

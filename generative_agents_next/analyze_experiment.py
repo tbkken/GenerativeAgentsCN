@@ -55,19 +55,24 @@ def flatten_conversation(conversation):
 def detect_commitment(text):
     invitation_patterns = [
         r"一起过来",
+        r"过来一起",
+        r"不如过来",
         r"记得来",
         r"来玩",
+        r"要不要来",
+        r"你要是.{0,16}(有空|方便).{0,24}过来",
         r"欢迎.{0,8}来",
     ]
     accept_patterns = [
         r"我.{0,30}直播完.{0,20}(过来|到|来|捧场)",
         r"直播完.{0,20}(过来|到|来|捧场)",
-        r"我.{0,30}(一定|肯定|会|可以|能).{0,20}(过来|到场|参加|捧场)",
-        r"我.{0,30}(五点|六点|17:00|18:00|下午|晚上).{0,20}(过来|到场|到|参加|捧场)",
-        r"(肯定|一定).{0,8}(过来|到场|参加|捧场)",
+        r"(我|我们|我和.{0,8}).{0,25}(一定|肯定|会|可以|能|没问题|正好|准时).{0,35}(过来|到场|参加|捧场|帮忙|布置|挂.{0,4}装饰)",
+        r"(我|我们|我和.{0,8}).{0,25}(五点|六点|17:00|18:00|下午|晚上).{0,35}(过来|到场|参加|捧场|帮忙|布置)",
+        r"(肯定|一定|准时).{0,12}(过来|到场|参加|捧场|帮忙|布置)",
     ]
     reject_patterns = [
-        r"(不能|没法|有约|来不了|赶不上|冲突|抱歉)",
+        r"(来不了|赶不上|时间冲突|有约)",
+        r"(不能|没法|不方便).{0,16}(过来|到场|到|参加|捧场|帮忙|布置)",
         r"(我不行|我今天不行|今天不行|下午不行|晚上不行|可能不行)",
     ]
     if any(re.search(pattern, text) for pattern in reject_patterns):
@@ -81,17 +86,21 @@ def detect_commitment(text):
 
 def collect_mentions(rows, keywords):
     mentions = []
+    event_context = set()
     for row in rows:
         hits = [keyword for keyword in keywords if keyword and keyword in row["text"]]
-        if not hits:
-            continue
         commitment = detect_commitment(row["text"])
+        context_key = (row["time"], row["route"])
+        if hits:
+            event_context.add(context_key)
+        if not hits and not (commitment and context_key in event_context):
+            continue
         mentions.append(
             {
                 "time": row["time"],
                 "route": row["route"],
                 "speaker": row["speaker"],
-                "keywords": hits,
+                "keywords": hits or ["context"],
                 "commitment": commitment,
                 "text": row["text"],
             }
@@ -239,6 +248,7 @@ def build_goal_progress(event_board):
         "has_event_diffusion": bool(informed),
         "has_commitment": bool(accepted),
         "has_attendance": bool(arrived),
+        "has_no_unfulfilled_commitment": not bool(accepted_not_arrived),
     }
     return {
         "informed": sorted(informed),

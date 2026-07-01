@@ -2,7 +2,7 @@
 
 ## 前沿论文时间轴
 
-在斯坦福小镇的论文出现后，长期记忆 memory、反思学习 reflexion、目标规划 goal planning、多智能体协作 multi-agent collaboration、社会仿真 social simulation、评价体系 evaluation system 和模型路由 model routing，分别来自不同阶段的前沿论文。下表按时间给出论文或系统、论文原标题 Original title、核心概念和在 GenerativeAgentsCN 中的项目落点。
+在斯坦福小镇的论文出现后，在生成式智能体这个领域，出现了很多的前沿研究，例如 长期记忆 memory、反思学习 reflexion、目标规划 goal planning、多智能体协作 multi-agent collaboration、社会仿真 social simulation、评价体系 evaluation system 和模型路由 model routing，它们分别来自不同阶段的前沿论文。下表按时间给出论文或系统、论文原标题 Original title、核心概念和在 Generative Agents 中的项目落点。
 
 ```mermaid
 flowchart LR
@@ -44,7 +44,7 @@ flowchart LR
 
 ## 31.1 从前沿概念的项目落点开始
 
-到这里，本项目已经能复刻经典论文中的关键观点，我们将会继续迭代已有代码，将前沿的概念落进新的模块 `generative_agents_next`，优化 源码 source、配置 config、提示词 prompt、断点 checkpoint、对话 conversation、移动回放 movement、指标 metrics 或报告 report，根据前沿理念，继续优化 Generative Agents 这个项目。
+到这里，本项目已经能复刻经典论文《Generative Agents: Interactive Simulacra of Human Behavior》中的关键观点，我们将会继续迭代已有代码，将前沿的概念落进新的模块 `generative_agents_next`，根据前沿理念，继续优化 Generative Agents 这个项目。
 
 ```mermaid
 flowchart TD
@@ -93,7 +93,7 @@ flowchart TD
 
 ## 31.3 前沿判断原则
 
-第五部分不把每篇论文都写成“必须实现”，我们筛选的优化方向，决策判断原则，如下所示。
+按照 让记忆更可治理，让反思能学习，让计划能追目标，让多智能体能组织协作，让仿真可统计，让评价可复现 这个思路，我们确定了优化方向的判断原则，如下所示。
 
 ```mermaid
 flowchart TD
@@ -110,8 +110,6 @@ flowchart TD
 
 *图 31-4：第五部分的前沿判断逻辑。它把“论文很新”转换成“是否值得改当前项目”的工程判断。*
 
-按照 让记忆更可治理，让反思能学习，让计划能追目标，让多智能体能组织协作，让仿真可统计，让评价可复现 这个思路，我们确定了以下的优化方向。
-
 ## 31.4 长期记忆治理 memory governance
 
 长期记忆治理落成七个升级方向，如下表所示。
@@ -126,7 +124,7 @@ flowchart TD
 | 来源与置信度 source / confidence | 反思、关系、摘要和冲突如果没有来源字段，读者无法判断记忆是否可信。 | 高级记忆统一写入 `source_nodes/source_type/confidence/generated_by/downstream_use/conflict_with`。 | `generative_agents_next/modules/memory/associate.py`、`generative_agents_next/modules/agent.py` |
 | 场景化检索 contextual retrieval | 单一 `retrieve_focus()` 很难同时服务对话、规划、反思、反应和失败复盘。 | 增加面向任务的检索入口：对话取关系，规划取目标和摘要，反思取高重要性事件与冲突，恢复取技能。 | `generative_agents_next/modules/memory/associate.py` |
 
-这七个方向共同把 `Associate` 从“把经历存起来”的记忆容器，推到“让记忆可追溯、可合并、可裁决、可迁移、可评价”的治理层。第 32 章后半部分再用指标和实验命令验证这些改动是否真的生效。
+这七个方向共同把 `Associate` 从“把经历存起来”的记忆容器，推到“让记忆可追溯、可合并、可裁决、可迁移、可评价”的治理层。
 
 ## 31.5 反思式学习 reflexion-style learning
 
@@ -214,35 +212,9 @@ Smallville 式小镇故事很适合展示社会涌现，但单次故事不是严
 
 工程上真正的升级不是“加更多模块”，而是让每个模块都能被复查、比较和回滚。
 
-## 31.12 第五部分的章节分工
+## 31.12 本章小结
 
-| 后续章节 | 解决的问题 | 项目锚点 |
-| --- | --- | --- |
-| 第 32 章 记忆系统升级 memory upgrade | 让记忆从 `event/thought/chat` 走向可治理长期记忆 | `generative_agents_next/modules/memory/associate.py`、`memory_metrics.json`、`relationship_update.txt` |
-| 第 33 章 反思系统升级 reflection upgrade | 让反思从总结经历走向失败学习和技能库 | `generative_agents_next/analyze_experiment.py`、`reflection_candidates.json` |
-| 第 34 章 规划系统升级 planning upgrade | 让日程拆解增加目标 Goal、候选行动和反馈评估 | `generative_agents_next/modules/agent.py`、`goal_progress.json` |
-| 第 35 章 多智能体协作 collaboration upgrade | 让偶遇对话升级为共享任务和组织协作 | `event_board.json`、`conversation.json`、`movement.json` |
-| 第 36 章 社会仿真 social simulation upgrade | 让单次故事升级为批量统计实验 | `start.py`、`compress.py`、`analyze_experiment.py --batch-names` |
-| 第 37 章 评价体系 evaluation upgrade | 让可信故事升级为可复现实验指标 | `metrics.json`、`report.md`、`goal_progress.json`、`reflection_candidates.json` |
-| 第 38 章 前沿升级路线图 roadmap | 给出已落地能力、待跑实验和后续接入顺序 | `generative_agents_next` 源码、配置、prompt、checkpoint、压缩结果 compressed result |
-
-## 31.13 本章小结
-
-2023-2026 年的智能体 agent 前沿，放在本书里不是论文名词表，而是一组项目升级约束。能落地的方向必须回答：输入 input 从哪里来，处理 process 改哪段源码或 prompt，输出 output 落到哪个文件，失败模式 failure mode 怎么排查，验证 validation 如何回到证据。
-
-| 演进方向 | 核心结论 |
-| --- | --- |
-| 经典地基 classic foundation | 生成式智能体 Generative Agents 建立了观察、记忆、检索、反思、计划、行动和社会互动组成的可信行为链。 |
-| 记忆 memory | 记忆流 memory stream 已在 `generative_agents_next` 中升级出类型、来源、摘要、冲突、关系和指标。 |
-| 反思 reflection | 反思 reflection 先从 `reflection_candidates.json` 开始，后续再把失败复盘接入 lesson 和 skill。 |
-| 规划 planning | 日程 schedule 已能生成 `goal` 记忆，进度评估先由 `goal_progress.json` 离线完成。 |
-| 协作 collaboration | 多智能体 multi-agent 先生成离线 `event_board.json`，再谨慎进入角色共享状态。 |
-| 仿真 simulation | 小镇故事要通过 `--batch-names` 汇总成可重复、可统计、可比较的小规模社会仿真。 |
-| 评价 evaluation | 演示可信已经落到 `metrics.json`、`report.md`、失败样例 failure case 和基线 baseline。 |
-| 模型 model | 中文、本地和推理模型改变了 provider 选择，后续需要模型路由 model routing。 |
-| 工程 observability | 日志、配置、prompt 版本、断点 checkpoint、回放 replay 和指标报告，是前沿升级能否被复查的基础。 |
-
-下一章进入第一条具体升级线：记忆系统升级。它从原始 `generative_agents/modules/memory/associate.py` 读懂基线，再转到 `generative_agents_next/modules/memory/associate.py`、真实 checkpoint 和 `memory_metrics.json`，判断如何把记忆流 memory stream 改造成可管理长期记忆。
+本章节，本着按照 让记忆更可治理，让反思能学习，让计划能追目标，让多智能体能组织协作，让仿真可统计，让评价可复现 这个思路，我们确定了优化方向，下一章进入第一条具体升级线：记忆系统升级。
 
 ## 参考资料
 

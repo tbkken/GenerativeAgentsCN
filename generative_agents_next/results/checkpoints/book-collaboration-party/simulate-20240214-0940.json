@@ -1,0 +1,1667 @@
+{
+  "stride": 10,
+  "time": "20240214-09:40",
+  "maze": {
+    "path": "assets\\village\\maze.json"
+  },
+  "agent_base": {
+    "percept": {
+      "mode": "box",
+      "vision_r": 8,
+      "att_bandwidth": 8
+    },
+    "schedule": {
+      "max_try": 5,
+      "diversity": 5
+    },
+    "think": {
+      "llm": {
+        "provider": "minimax",
+        "model": "MiniMax-M3",
+        "base_url": "https://api.minimaxi.com/v1",
+        "api_key": "",
+        "max_tokens": 8192
+      },
+      "interval": 1000,
+      "poignancy_max": 150
+    },
+    "chat_iter": 4,
+    "associate": {
+      "embedding": {
+        "provider": "minimax",
+        "model": "embo-01",
+        "base_url": "https://api.minimax.chat/v1",
+        "api_key": "",
+        "group_id": ""
+      },
+      "retention": 8
+    }
+  },
+  "agents": {
+    "伊莎贝拉": {
+      "config_path": "assets\\village\\agents\\伊莎贝拉\\agent.json",
+      "status": {
+        "poignancy": 15
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "起床并完成早晨的例行工作（洗漱、穿衣、整理自己）",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "在家享用早餐",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "前往霍布斯咖啡馆开店，站在柜台前迎接第一批顾客",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "步行前往霍布斯咖啡馆",
+                "start": 480,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "打开咖啡馆大门、开启灯光和暖气",
+                "start": 490,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "启动咖啡机并准备柜台器具",
+                "start": 500,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "检查并摆放柜台上的糕点展示",
+                "start": 510,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "系上围裙、整理仪容准备迎接顾客",
+                "start": 520,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "站在柜台前热情迎接第一批顾客",
+                "start": 530,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "在柜台工作，为顾客调制咖啡并友好地与他们交谈",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "检查并启动咖啡机设备",
+                "start": 540,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "准备咖啡豆、牛奶和糖等材料",
+                "start": 545,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "为顾客调制咖啡饮品",
+                "start": 555,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "与顾客友好地交谈并了解需求",
+                "start": 570,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "处理顾客点单并收款",
+                "start": 580,
+                "duration": 15
+              },
+              {
+                "idx": 5,
+                "describe": "擦拭柜台并整理工作台面",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "在柜台工作，招待顾客并营造咖啡馆的温馨氛围",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "在柜台工作，开始准备午餐时间的简餐供应",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "在咖啡馆里吃午饭并短暂休息",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "继续在柜台工作，同时开始收集情人节派对的装饰和材料",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "装饰霍布斯咖啡馆，布置情人节派对的场地（气球、彩带、桌花等）",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续布置派对场地，准备情人节特色饮品（如玫瑰拿摩）和爱心甜点",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "最终检查派对准备工作，确认音乐、灯光、食物和饮料都已就绪",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "在霍布斯咖啡馆举办情人节派对，热情迎接参加派对的顾客",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "招待顾客并参与情人节派对活动，与顾客互动、聊天、拍照留念",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "派对结束后整理咖啡馆，清理场地、收拾餐具、打扫卫生",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "关闭霍布斯咖啡馆，完成打烊工作并锁好店门",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "回家放松并吃晚饭，回顾一天的工作与派对情况",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "在家放松，整理派对照片和顾客留言，准备休息",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "上床睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_10",
+            "node_8",
+            "node_6",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_23",
+            "node_21",
+            "node_19",
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_9",
+            "node_7",
+            "node_5"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。她也邀请本地记者林晓在社区公告板旁收集居民留言，希望林晓能帮忙把派对和社区活动告诉更多居民。",
+      "action": {
+        "event": {
+          "subject": "伊莎贝拉",
+          "predicate": "此时",
+          "object": "处理顾客点单并收款",
+          "describe": "处理顾客点单并收款",
+          "address": [
+            "the Ville",
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
+          ],
+          "emoji": "处理顾客点单并收款"
+        },
+        "obj_event": {
+          "subject": "咖啡馆柜台后面",
+          "predicate": "此时",
+          "object": "正在处理订单和收款",
+          "describe": "正在处理订单和收款",
+          "address": [
+            "the Ville",
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-09:40:00",
+        "duration": 15
+      },
+      "coord": [
+        78,
+        19
+      ]
+    },
+    "玛丽亚": {
+      "config_path": "assets\\village\\agents\\玛丽亚\\agent.json",
+      "status": {
+        "poignancy": 0
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "睡觉",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "睡觉",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "躺在床上闭眼放松",
+                "start": 480,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "慢慢进入睡眠状态",
+                "start": 485,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "翻身调整睡姿",
+                "start": 495,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "进入深度睡眠",
+                "start": 500,
+                "duration": 25
+              },
+              {
+                "idx": 4,
+                "describe": "做梦",
+                "start": 525,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "继续沉睡",
+                "start": 535,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "睡觉",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "继续睡眠",
+                "start": 540,
+                "duration": 25
+              },
+              {
+                "idx": 1,
+                "describe": "翻身调整睡姿",
+                "start": 565,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "进入深度睡眠",
+                "start": 570,
+                "duration": 20
+              },
+              {
+                "idx": 3,
+                "describe": "做短暂的梦",
+                "start": 590,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "起床并进行晨间例行工作（刷牙、洗脸、换衣服）",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "在霍布斯咖啡馆吃早餐，浏览Twitch直播数据",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "在霍布斯咖啡馆学习物理（量子力学课程内容）",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "在霍布斯咖啡馆吃午餐（沙拉和三明治）",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "在宿舍开启Twitch直播，玩游戏《艾尔登法环》",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续在Twitch直播游戏，与观众互动聊天",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "结束直播，在霍布斯咖啡馆学习物理课程（电磁学）",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "继续在霍布斯咖啡馆完成物理作业（习题集）",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "步行回家，短暂休息并查看手机消息",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "在霍布斯咖啡馆吃晚餐（意面和咖啡），与朋友聊天",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "回到宿舍，开启Twitch晚间直播，玩游戏《堡垒之夜》",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续在Twitch直播游戏，与观众讨论物理和游戏话题",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "在Twitch直播中玩休闲游戏，与观众互动建立联系",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "结束直播，刷社交媒体，准备睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "玛丽亚正在攻读物理学位，并在Twitch上直播游戏以赚取额外收入。她几乎每天都会去霍布斯咖啡馆学习和吃饭。",
+      "action": {
+        "event": {
+          "subject": "玛丽亚",
+          "predicate": "正在",
+          "object": "睡觉",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "奥克山学院宿舍",
+            "玛丽亚的房间",
+            "床"
+          ],
+          "emoji": "😴"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "被占用",
+          "object": "玛丽亚",
+          "describe": "",
+          "address": [
+            "the Ville",
+            "奥克山学院宿舍",
+            "玛丽亚的房间",
+            "床"
+          ],
+          "emoji": "🛌"
+        },
+        "start": "20240214-09:00:00",
+        "duration": 60
+      },
+      "coord": [
+        123,
+        57
+      ]
+    },
+    "埃迪": {
+      "config_path": "assets\\village\\agents\\埃迪\\agent.json",
+      "status": {
+        "poignancy": 17
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床并完成早晨例行工作，洗漱整理",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "在宿舍吃早餐，浏览今天的课程安排",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "整理床铺和宿舍",
+                "start": 480,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "准备早餐食材",
+                "start": 485,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "吃早餐",
+                "start": 495,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "喝咖啡",
+                "start": 510,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "查看今天的课程表",
+                "start": 515,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "浏览课程相关通知",
+                "start": 525,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "整理学习用品和书包",
+                "start": 530,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "预习音乐理论课程，复习和声学笔记",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "复习和声学基本概念",
+                "start": 540,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "回顾之前的和声学笔记",
+                "start": 550,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "复习音程与和弦构成",
+                "start": 565,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "预习今天课程主题",
+                "start": 575,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "练习和声分析",
+                "start": 585,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "整理课程疑问与要点",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "在奥克山学院上音乐理论课，学习音乐结构分析",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "继续在奥克山学院上课，学习对位法和曲式分析",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "前往霍布斯咖啡馆吃午饭",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "在霍布斯咖啡馆午餐并稍作休息，翻阅音乐杂志",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "在霍布斯咖啡馆开始音乐合成项目，设计合成器音色",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续在咖啡馆做音乐合成项目，编写MIDI序列",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "在霍布斯咖啡馆深入研究音乐合成技术，尝试不同的混音效果",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "在宿舍附近吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "在宿舍继续完善音乐合成项目，调试音频参数",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "回到霍布斯咖啡馆，边喝咖啡边学习音乐合成项目",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "继续在咖啡馆探索不同的音乐风格，寻找创作灵感",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "回宿舍休息，整理今天的学习笔记和项目进度",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "听一些音乐放松，准备睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_20",
+            "node_19",
+            "node_17",
+            "node_16",
+            "node_14",
+            "node_13",
+            "node_11",
+            "node_10",
+            "node_8",
+            "node_7",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_21",
+            "node_18",
+            "node_15",
+            "node_12",
+            "node_9",
+            "node_6"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。",
+      "action": {
+        "event": {
+          "subject": "埃迪",
+          "predicate": "此时",
+          "object": "预习今天课程主题",
+          "describe": "预习今天课程主题",
+          "address": [
+            "the Ville",
+            "奥克山学院宿舍",
+            "公共休息室",
+            "公共休息室桌子"
+          ],
+          "emoji": "预习今天课程主题"
+        },
+        "obj_event": {
+          "subject": "公共休息室桌子",
+          "predicate": "此时",
+          "object": "摊开着预习资料",
+          "describe": "摊开着预习资料",
+          "address": [
+            "the Ville",
+            "奥克山学院宿舍",
+            "公共休息室",
+            "公共休息室桌子"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-09:35:00",
+        "duration": 10
+      },
+      "coord": [
+        122,
+        47
+      ]
+    },
+    "克劳斯": {
+      "config_path": "assets\\village\\agents\\克劳斯\\agent.json",
+      "status": {
+        "poignancy": 16
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉，在宿舍床上休息",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床并完成晨间例行工作，包括洗漱、换衣服和整理宿舍",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "前往奥克山学院图书馆，带上午餐准备和笔记本",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "打包午餐便当",
+                "start": 480,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "装好笔记本和学习用品",
+                "start": 490,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "穿上外套和鞋子",
+                "start": 500,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "检查宿舍并锁门",
+                "start": 505,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "步行到公交站",
+                "start": 510,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "乘坐公交前往奥克山学院",
+                "start": 520,
+                "duration": 15
+              },
+              {
+                "idx": 6,
+                "describe": "从校门步行到图书馆",
+                "start": 535,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "开始撰写关于低收入社区中产阶级化影响的研究论文，查阅相关文献",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "整理桌面，打开电脑和文献管理软件",
+                "start": 540,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "回顾论文大纲和研究问题",
+                "start": 545,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "在学术数据库中搜索关于中产阶级化的相关文献",
+                "start": 555,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "阅读并分析第一组核心文献",
+                "start": 570,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "记录关键论点、数据和引用来源",
+                "start": 585,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "整理参考文献并做批注",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "继续在图书馆写作论文，分析中产阶级化的社会经济影响",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "在图书馆整理研究资料，记录参考书目和引文",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "去霍布斯咖啡馆吃午饭，点一份三明治和咖啡",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "返回奥克山学院图书馆继续写作论文",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "在图书馆进行深度写作，撰写论文第二部分",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "短暂休息，起身在图书馆走廊散步，活动一下身体",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "回到图书馆，查阅社会学相关书籍以丰富论文论据",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "在霍布斯咖啡馆吃晚饭，与同学简单交流",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "返回图书馆进行论文研究和修改完善",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "在图书馆继续修改论文，润色文字和检查逻辑",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "在图书馆整理今日写作成果，备份论文文档",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "返回宿舍放松一下，听音乐缓解写作压力",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "在宿舍为明天的写作做计划，整理思路",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "准备睡觉，结束充实的一天",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_17",
+            "node_15",
+            "node_14",
+            "node_12",
+            "node_11",
+            "node_9",
+            "node_7",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_23",
+            "node_21",
+            "node_19",
+            "node_16",
+            "node_13",
+            "node_10",
+            "node_8",
+            "node_6"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。",
+      "action": {
+        "event": {
+          "subject": "克劳斯",
+          "predicate": "此时",
+          "object": "阅读并分析第一组核心文献",
+          "describe": "阅读并分析第一组核心文献",
+          "address": [
+            "the Ville",
+            "奥克山学院",
+            "图书馆",
+            "图书馆桌子"
+          ],
+          "emoji": "阅读并分析第一组核心文献"
+        },
+        "obj_event": {
+          "subject": "图书馆桌子",
+          "predicate": "此时",
+          "object": "上面摊开着核心文献",
+          "describe": "上面摊开着核心文献",
+          "address": [
+            "the Ville",
+            "奥克山学院",
+            "图书馆",
+            "图书馆桌子"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-09:30:00",
+        "duration": 15
+      },
+      "coord": [
+        119,
+        24
+      ]
+    },
+    "亚当": {
+      "config_path": "assets\\village\\agents\\亚当\\agent.json",
+      "status": {
+        "poignancy": 30
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "起床，在书桌前进行晨间反思，思考昨日写作中浮现的灵感与疑问",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "冥想并规划一天的工作，在笔记本上列出当天关于创造力的写作目标",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "吃早餐，一边用餐一边翻阅当天的新闻，留意哲学与时事相关的报道",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "开始撰写关于创造力的书，思考创造力对人类文明进化的根本意义",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "阅读与创造力相关的书籍，研读柏拉图与尼采关于创造性思维的论述",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "挑选要阅读的哲学书籍并准备笔记本",
+                "start": 480,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "阅读柏拉图关于创造性思维的论述",
+                "start": 485,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "记录柏拉图观点的读书笔记",
+                "start": 500,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "阅读尼采关于创造性思维的论述",
+                "start": 510,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "记录尼采观点的读书笔记",
+                "start": 525,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "比较两位哲学家观点的异同",
+                "start": 535,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "继续阅读，从哲学史中汲取关于创造力本质的观点",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "翻阅哲学史相关书籍章节",
+                "start": 540,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "阅读古希腊哲学家关于创造力的论述",
+                "start": 550,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "阅读近代哲学家关于创造力的论述",
+                "start": 560,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "比较分析不同哲学家的创造力观点",
+                "start": 575,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "记录关于创造力本质的核心观点",
+                "start": 585,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "整理笔记并思考对自身研究的启发",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "研究创造力如何塑造世界的案例，分析文艺复兴时期的创新突破",
+            "start": 600,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 11,
+            "describe": "继续研究案例，比较不同文化中创造力对社会发展的推动作用",
+            "start": 660,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 12,
+            "describe": "吃午饭，思考书中关于创造力与社会变革的论点",
+            "start": 720,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 13,
+            "describe": "小睡一会儿，让大脑在潜意识中继续整理上午的思考",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "研究下月地方市长选举的候选人，查阅各候选人的公开资料与演讲记录",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "分析不同候选人的观点和理念，从哲学角度评估其施政理念的内在逻辑",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "整理笔记，挑战对各候选人的固有印象，记录批判性的反思",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "回顾一天的写作进展，审视书中章节的结构与论证是否严密",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "放松并思考哲学问题，在壁炉旁反思创造力与人类自由意志的关系",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "上床睡觉，阅读片刻后入睡",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "睡觉",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_10",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_9"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "亚当正在写一本关于创造力的重要性以及它如何塑造世界的书。他也很好奇谁将参加下个月的地方市长选举。",
+      "action": {
+        "event": {
+          "subject": "亚当",
+          "predicate": "此时",
+          "object": "比较分析不同哲学家的创造力观点",
+          "describe": "比较分析不同哲学家的创造力观点",
+          "address": [
+            "the Ville",
+            "亚当的家",
+            "主人房",
+            "书桌"
+          ],
+          "emoji": "比较分析不同哲学家的创造力观点"
+        },
+        "obj_event": {
+          "subject": "书桌",
+          "predicate": "此时",
+          "object": "上面摊开着哲学典籍",
+          "describe": "上面摊开着哲学典籍",
+          "address": [
+            "the Ville",
+            "亚当的家",
+            "主人房",
+            "书桌"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-09:35:00",
+        "duration": 10
+      },
+      "coord": [
+        21,
+        62
+      ]
+    }
+  },
+  "memory_governance": {
+    "relationship_update": true,
+    "summary_merge": true,
+    "summary_poignancy_max": 3,
+    "summary_threshold": 3,
+    "summary_window": 12,
+    "conflict_detection": true,
+    "conflict_window": 30,
+    "skill_from_conflict": true
+  },
+  "step": 11
+}

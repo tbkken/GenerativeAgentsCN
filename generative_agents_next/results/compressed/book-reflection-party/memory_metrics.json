@@ -1,0 +1,109 @@
+{
+  "checkpoint": "results/checkpoints/book-reflection-party",
+  "generated_at": "2026-07-01T20:14:24",
+  "agents": {
+    "伊莎贝拉": {
+      "total_nodes": 227,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 115,
+        "summary": 81,
+        "chat": 5,
+        "relationship": 5,
+        "conflict": 1,
+        "skill": 1
+      },
+      "advanced_nodes": 89,
+      "source_traced_advanced_nodes": 89,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "山姆": 4,
+        "汤姆": 1
+      },
+      "conflict_nodes": 1,
+      "summary_nodes": 81,
+      "skill_nodes": 1,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "山姆": {
+      "total_nodes": 190,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 96,
+        "summary": 67,
+        "chat": 4,
+        "relationship": 4
+      },
+      "advanced_nodes": 72,
+      "source_traced_advanced_nodes": 72,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 4
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 67,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "汤姆": {
+      "total_nodes": 197,
+      "type_counts": {
+        "thought": 1,
+        "goal": 1,
+        "event": 113,
+        "summary": 80,
+        "chat": 1,
+        "relationship": 1
+      },
+      "advanced_nodes": 82,
+      "source_traced_advanced_nodes": 82,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 1
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 80,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "玛丽亚": {
+      "total_nodes": 180,
+      "type_counts": {
+        "thought": 1,
+        "goal": 1,
+        "event": 99,
+        "summary": 79
+      },
+      "advanced_nodes": 80,
+      "source_traced_advanced_nodes": 80,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {},
+      "conflict_nodes": 0,
+      "summary_nodes": 79,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    }
+  },
+  "totals": {
+    "total_nodes": 794,
+    "advanced_nodes": 323,
+    "source_traced_advanced_nodes": 323,
+    "relationship_nodes": 10,
+    "goal_nodes": 4,
+    "summary_nodes": 307,
+    "skill_nodes": 1,
+    "conflict_nodes": 1,
+    "imported_nodes": 0,
+    "source_trace_rate": 1.0
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "agent": "山姆",
+    "outcome": "failed",
+    "failure_type": "commitment_not_verified_by_movement",
+    "lesson": "承诺类对话需要在目标时间窗用 movement.json 复核到场，而不是只相信聊天摘要。",
+    "evidence": [
+      {
+        "time": "20240214-09:30",
+        "route": "伊莎贝拉 -> 山姆 @ the Ville，约翰逊公园，公园，公园花园",
+        "text": "下午没问题！我正好要去你那儿取詹妮弗的甜点，正好顺路帮忙布置。我这老海军挂装饰还是有一手的，保证给你们弄得漂漂亮亮的！"
+      }
+    ]
+  }
+]

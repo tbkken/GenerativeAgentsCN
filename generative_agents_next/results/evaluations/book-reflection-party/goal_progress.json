@@ -1,0 +1,27 @@
+{
+  "informed": [
+    "伊莎贝拉",
+    "山姆"
+  ],
+  "accepted": [
+    "山姆"
+  ],
+  "arrived": [
+    "伊莎贝拉",
+    "汤姆"
+  ],
+  "rejected_or_unavailable": [],
+  "accepted_not_arrived": [
+    "山姆"
+  ],
+  "missing": [
+    "这些角色有承诺但未在目标时间窗到场：山姆"
+  ],
+  "criteria": {
+    "has_event_diffusion": true,
+    "has_commitment": true,
+    "has_attendance": true,
+    "has_no_unfulfilled_commitment": false
+  },
+  "goal_completion_rate": 0.75
+}

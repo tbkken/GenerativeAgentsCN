@@ -1,7 +1,10 @@
 """generative_agents.storage.index"""
 
+import json
 import os
 import time
+from pathlib import Path
+
 import requests
 from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.bridge.pydantic import Field
@@ -250,8 +253,33 @@ class LlamaIndex:
 
     def save(self, path=None):
         path = path or self._path
-        self._index.storage_context.persist(path)
+        path = os.path.abspath(os.fspath(path))
+        os.makedirs(path, exist_ok=True)
+        try:
+            self._index.storage_context.persist(path)
+        except OSError as exc:
+            if exc.errno != 22:
+                raise
+            self._persist_storage_context_locally(path)
         utils.save_dict(self._config, os.path.join(path, "index_config.json"))
+
+    def _persist_storage_context_locally(self, path):
+        # Work around Windows/fsspec path failures on local non-ASCII storage dirs.
+        persist_dir = Path(path)
+        persist_dir.mkdir(parents=True, exist_ok=True)
+        storage_context = self._index.storage_context
+
+        def _write_json(file_name, data):
+            with open(persist_dir / file_name, "w", encoding="utf-8") as f:
+                json.dump(data, f)
+
+        _write_json("docstore.json", storage_context.docstore.to_dict())
+        _write_json("index_store.json", storage_context.index_store.to_dict())
+        _write_json("graph_store.json", storage_context.graph_store.to_dict())
+        if storage_context.property_graph_store:
+            _write_json("property_graph_store.json", storage_context.property_graph_store.to_dict())
+        for vector_store_name, vector_store in storage_context.vector_stores.items():
+            _write_json(f"{vector_store_name}__vector_store.json", vector_store.to_dict())
 
     @property
     def nodes_num(self):

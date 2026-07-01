@@ -1,0 +1,109 @@
+{
+  "checkpoint": "results/checkpoints/book-goal-party",
+  "generated_at": "2026-07-01T21:29:54",
+  "agents": {
+    "伊莎贝拉": {
+      "total_nodes": 281,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 142,
+        "summary": 104,
+        "chat": 6,
+        "conflict": 2,
+        "skill": 2,
+        "relationship": 6
+      },
+      "advanced_nodes": 115,
+      "source_traced_advanced_nodes": 115,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "玛丽亚": 5,
+        "汤姆": 1
+      },
+      "conflict_nodes": 2,
+      "summary_nodes": 104,
+      "skill_nodes": 2,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "山姆": {
+      "total_nodes": 230,
+      "type_counts": {
+        "thought": 16,
+        "goal": 1,
+        "event": 124,
+        "summary": 89
+      },
+      "advanced_nodes": 90,
+      "source_traced_advanced_nodes": 90,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {},
+      "conflict_nodes": 0,
+      "summary_nodes": 89,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "汤姆": {
+      "total_nodes": 226,
+      "type_counts": {
+        "thought": 16,
+        "goal": 1,
+        "event": 119,
+        "summary": 88,
+        "chat": 1,
+        "relationship": 1
+      },
+      "advanced_nodes": 90,
+      "source_traced_advanced_nodes": 90,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 1
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 88,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "玛丽亚": {
+      "total_nodes": 175,
+      "type_counts": {
+        "thought": 1,
+        "goal": 1,
+        "event": 90,
+        "summary": 73,
+        "chat": 5,
+        "relationship": 5
+      },
+      "advanced_nodes": 79,
+      "source_traced_advanced_nodes": 79,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 5
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 73,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    }
+  },
+  "totals": {
+    "total_nodes": 912,
+    "advanced_nodes": 374,
+    "source_traced_advanced_nodes": 374,
+    "relationship_nodes": 12,
+    "goal_nodes": 4,
+    "summary_nodes": 354,
+    "skill_nodes": 2,
+    "conflict_nodes": 2,
+    "imported_nodes": 0,
+    "source_trace_rate": 1.0
+  }
+}

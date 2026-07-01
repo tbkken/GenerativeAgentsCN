@@ -1,0 +1,57 @@
+{
+  "event": "valentine_party",
+  "known_by": [
+    "伊莎贝拉",
+    "山姆"
+  ],
+  "accepted": [
+    "山姆"
+  ],
+  "rejected": [],
+  "arrived": [
+    "伊莎贝拉",
+    "汤姆"
+  ],
+  "tasks": [
+    {
+      "task_id": "spread_fact",
+      "status": "done",
+      "owners": [
+        "伊莎贝拉",
+        "山姆"
+      ],
+      "evidence": [
+        "20240214-08:30",
+        "20240214-08:30",
+        "20240214-08:30",
+        "20240214-09:30",
+        "20240214-09:30",
+        "20240214-09:30",
+        "20240214-09:30",
+        "20240214-12:10",
+        "20240214-12:10",
+        "20240214-19:20",
+        "20240214-19:20"
+      ]
+    },
+    {
+      "task_id": "collect_commitments",
+      "status": "done",
+      "owners": [
+        "山姆"
+      ],
+      "accepted": [
+        "山姆"
+      ],
+      "rejected": []
+    },
+    {
+      "task_id": "verify_attendance",
+      "status": "done",
+      "owners": [
+        "伊莎贝拉",
+        "汤姆"
+      ]
+    }
+  ]
+}
