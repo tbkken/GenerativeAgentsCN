@@ -1,0 +1,24 @@
+{
+  "informed": [
+    "伊莎贝拉",
+    "玛丽亚"
+  ],
+  "accepted": [
+    "玛丽亚"
+  ],
+  "arrived": [],
+  "rejected_or_unavailable": [],
+  "accepted_not_arrived": [
+    "玛丽亚"
+  ],
+  "missing": [
+    "这些角色有承诺但未在目标时间窗到场：玛丽亚",
+    "目标时间窗内没有角色到达目标地点。"
+  ],
+  "criteria": {
+    "has_event_diffusion": true,
+    "has_commitment": true,
+    "has_attendance": false
+  },
+  "goal_completion_rate": 0.6667
+}

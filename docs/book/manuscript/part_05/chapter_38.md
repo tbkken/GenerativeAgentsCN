@@ -42,15 +42,25 @@ flowchart LR
 
 当前项目的运行链路已经清晰：`start.py` 创建配置并运行 `SimulateServer.simulate()`；每步调用 `Game.agent_think()`；角色内部先 `make_schedule()`，再 `percept()`、`make_plan()`、`reflect()`；对话由 `_chat_with()` 写入 `conversation.json`；`compress.py` 再把 checkpoint 压缩成 `simulation.md` 和 `movement.json`。前沿升级的每一阶段都要接在这条链上。
 
+本书当前采用复制目录的方式推进升级：`generative_agents` 保留为原始基线，`generative_agents_next` 承担第五部分的代码实验。路线图里凡是写“已落地”的内容，都必须能在 `generative_agents_next` 中找到相对路径。
+
+| 当前状态 | 已落地位置 | 还没有完成的部分 |
+| --- | --- | --- |
+| 记忆治理 memory governance | `generative_agents_next/modules/memory/associate.py`、`generative_agents_next/modules/agent.py`、`generative_agents_next/compress.py` | 跨实验长期记忆还需要显式运行 `--load-long-term-memory` 验证。 |
+| 关系更新 relationship update | `generative_agents_next/data/prompts/relationship_update.txt`、`generative_agents_next/modules/prompt/scratch.py` | 关系更新质量需要更多对话实验抽查。 |
+| 目标记忆 goal memory | `generative_agents_next/modules/agent.py` | 目标还没有接管 `_determine_action()`，目前只进入记忆和评价。 |
+| 评价脚本 evaluation script | `generative_agents_next/analyze_experiment.py` | 评价规则仍是关键词与时间窗，主观自然性需要人工报告。 |
+| 事件板 event board | `generative_agents_next/analyze_experiment.py` | 目前是离线评价产物，还不是角色共享状态。 |
+
 ## 38.3 阶段总表：输入、处理、输出和验证
 
 | 阶段 | 升级点 | 输入 input | 处理 process | 输出 output | 首选验证 |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 观测与评价 evaluation | checkpoint、conversation、movement、simulation、LLM summary | 统计传播、到场、成本、失败类型 | `metrics.json`、`report.md` | 情人节派对报告 |
-| 2 | 关系记忆 relationship memory | 对话摘要、事件节点、角色关系 | 新增关系节点、来源追踪、冲突检查 | `associate` 新记忆类型或 metadata | 关系稳定与事实保真 |
-| 3 | 反思学习 reflexion learning | 行动结果、失败样例、证据路径 | 自评、抽取 lesson、写入 skill | lesson/skill 记忆 | 连续邀请任务 |
-| 4 | 目标规划 goal planning | 主动目标、当前日程、可选行动 | 目标分解、候选行动、进度评估 | active goals、计划修订、目标报告 | 目标驱动派对 |
-| 5 | 组织协作 team collaboration | 公共事件、团队角色、共享任务 | 分工、状态更新、团队总结 | event board、shared memory | 协作筹备派对 |
+| 1 | 观测与评价 evaluation | checkpoint、conversation、movement、simulation、LLM summary | `analyze_experiment.py` 统计传播、承诺、到场、目标进度、失败候选 | `metrics.json`、`report.md`、`event_board.json`、`goal_progress.json` | 情人节派对报告 |
+| 2 | 关系记忆 relationship memory | 对话摘要、事件节点、角色关系 | 新增关系节点、来源追踪、摘要、冲突检查 | `associate` 高级记忆类型和 `memory_metrics.json` | 关系稳定与事实保真 |
+| 3 | 反思学习 reflexion learning | 行动结果、失败样例、证据路径 | 先离线抽取 reflection candidates，后续再接入 lesson/skill | `reflection_candidates.json`、后续 skill 记忆 | 连续邀请任务 |
+| 4 | 目标规划 goal planning | 日程目标、当前行动、事件证据 | 先写入 `goal` 记忆并离线评估 progress，后续再接候选行动 | `goal` 节点、`goal_progress.json` | 目标驱动派对 |
+| 5 | 组织协作 team collaboration | 公共事件、对话承诺、到场证据 | 先生成离线 event board，后续再做角色共享状态 | `event_board.json`、协作报告 | 协作筹备派对 |
 | 6 | 模型路由 model routing | prompt 调用类型、成本、失败率 | 按 caller 路由到不同模型 | per-caller LLM summary、成本报告 | 多模型对比 |
 
 这五列构成后续阶段的准入条件。任何新增代码如果填不出这五列，就不应进入路线图。
@@ -64,7 +74,7 @@ flowchart LR
 | 现有输入 input | `results/checkpoints/<name>/conversation.json`、`simulate-*.json`、`results/compressed/<name>/movement.json`、`simulation.md` |
 | 新增处理 process | 关键词传播统计、到场统计、LLM summary 解析、失败分类 |
 | 新增输出 output | `results/evaluations/<name>/metrics.json`、`results/evaluations/<name>/report.md` |
-| 文件位置 | 拟新增 `tools/analyze_conversation_keywords.py`、`tools/analyze_attendance.py`、`tools/export_experiment_report.py` |
+| 文件位置 | 已新增 `generative_agents_next/analyze_experiment.py` |
 | 失败模式 | 指标误判、证据链接断裂、把弱线索写成强结论 |
 | 验证方式 | 对 `book-party-extended` 生成报告，人工抽查 5 条证据 |
 
@@ -86,26 +96,27 @@ flowchart TD
 
 ## 38.5 阶段二：关系记忆与来源追踪
 
-当前 `Associate` 的记忆类型 memory type 是 `event`、`thought`、`chat`。这足以支撑基本小镇行为，但关系变化和事实来源还不够显式。阶段二优先做轻量增强，不直接引入完整 MemGPT 或 Mem0。
+原始 `Associate` 的记忆类型 memory type 主要是 `event`、`thought`、`chat`。这足以支撑基本小镇行为，但关系变化和事实来源还不够显式。`generative_agents_next` 已经扩展出 `relationship/goal/summary/skill/conflict`，阶段二的重点变成验证这些节点是否真实、可追溯、不会污染对话。
 
 | 项目项 | 内容 |
 | --- | --- |
 | 现有输入 input | `conversation.json`、`Associate.retrieve_chats()`、`Associate.retrieve_focus()`、`summarize_chats` 输出 |
 | 新增处理 process | 从对话中抽取关系变化，写入 `relationship` 记忆，记录 `source_type`、`source_id`、`confidence` |
 | 新增输出 output | 关系节点 relationship node、冲突记录 conflict record、证据字段 evidence |
-| 涉及源码 | `generative_agents/modules/memory/associate.py`、`generative_agents/modules/agent.py` |
+| 涉及源码 | `generative_agents_next/modules/memory/associate.py`、`generative_agents_next/modules/agent.py` |
 | 涉及存储 | `results/checkpoints/<name>/storage/<角色>/associate/docstore.json` |
 | 失败模式 | 关系过度更新、把单次礼貌对话当成亲密关系、来源丢失 |
 | 验证方式 | 比较升级前后关系一致性、事实保真和证据可追踪率 |
 
 ### 关系记忆 prompt
 
-阶段二拟新增两个 prompt，不放在章节开头，而放在关系记忆首次执行的位置。
+阶段二已经新增三个 prompt，不放在章节开头，而放在关系记忆或记忆治理首次执行的位置。
 
 | 机制 | 提示词 prompt 路径 | 变量 | 输出结构 schema / 字段 | 流向 |
 | --- | --- | --- | --- | --- |
-| 关系更新 relationship update | 拟新增 `generative_agents/data/prompts/relationship_update.txt` | `agent`、`another`、`conversation`、`previous_relation`、`evidence_path` | `res: {"relation": str, "confidence": float, "evidence": list[str], "ttl_days": int}` | 写入 `Associate.add_node("relationship", ...)` 或 metadata |
-| 记忆冲突检查 memory conflict check | 拟新增 `generative_agents/data/prompts/memory_conflict_check.txt` | `new_memory`、`existing_memories`、`source_time` | `res: {"conflict": bool, "reason": str, "conflict_with": list[str]}` | 决定新增、降权或标记冲突 |
+| 关系更新 relationship update | `generative_agents_next/data/prompts/relationship_update.txt` | `agent`、`another`、`current_relationship`、`recent_conversation`、`related_memories`、`source_nodes` | `affinity_delta/trust_delta/familiarity_delta/summary_update/evidence/confidence` | 写入 `relationship` 节点 |
+| 记忆合并 memory merge | `generative_agents_next/data/prompts/memory_merge.txt` | `new_memory`、`similar_memories`、`merge_policy` | `should_merge/summary/source_nodes/drop_after/reason/confidence` | 后续替换确定性摘要规则 |
+| 记忆冲突检查 memory conflict check | `generative_agents_next/data/prompts/memory_conflict_check.txt` | `new_memory`、`similar_memories` | `has_conflict/conflict_type/summary/evidence/need_clarification/confidence` | 后续替换确定性冲突规则 |
 
 关系记忆的关键不是“记更多”，而是让后续对话能说明自己从哪里知道某段关系。比如玛丽亚和克劳斯多次学术讨论后，关系变化必须带有对话时间和节点 ID；否则后续一句“我们很熟”只能算模型自述。
 
@@ -128,8 +139,8 @@ flowchart TD
 | 现有输入 input | `self.status["poignancy"]`、事件记忆、聊天记忆、失败样例、指标报告 |
 | 现有处理 process | `Agent.reflect()` 生成思考 thought |
 | 新增处理 process | 绑定行动结果 outcome，自评失败原因，抽取 lesson，生成 skill |
-| 新增输出 output | `lesson` 记忆、`skill` 记忆、下次计划前的技能检索 |
-| 涉及源码 | `agent.py`、`associate.py`、`prompt/scratch.py` |
+| 新增输出 output | 当前先输出 `reflection_candidates.json`；后续接入 `lesson` 记忆、`skill` 记忆、下次计划前的技能检索 |
+| 涉及源码 | `generative_agents_next/analyze_experiment.py`、后续 `agent.py`、`associate.py`、`prompt/scratch.py` |
 | 失败模式 | 错误经验被反复使用，角色变得过度策略化 |
 | 验证方式 | 连续邀请任务中，第二轮是否减少重复失败，同时保持自然性 |
 
@@ -166,10 +177,10 @@ flowchart TD
 | 项目项 | 内容 |
 | --- | --- |
 | 现有输入 input | `Schedule.daily_schedule`、当前行动 action、空间记忆 spatial、对话事件 |
-| 新增输入 input | `active_goals`：目标描述、截止时间、成功条件、优先级 |
-| 处理 process | 目标分解、候选行动生成、目标贡献评估、日程修订 |
-| 输出 output | `goal_state`、候选行动列表、进度记录、写回记忆 |
-| 涉及源码 | 拟新增 `modules/memory/goal.py`，修改 `agent.py` 和 `schedule.py` |
+| 新增输入 input | 当前先从日程生成 `goal` 记忆；后续再加入 `active_goals`：目标描述、截止时间、成功条件、优先级 |
+| 处理 process | 已落地 goal memory 与离线 progress；后续再做目标分解、候选行动生成、目标贡献评估、日程修订 |
+| 输出 output | 当前有 `goal` 节点和 `goal_progress.json`；后续扩展 `goal_state`、候选行动列表、进度记录 |
+| 涉及源码 | `generative_agents_next/modules/agent.py`、`generative_agents_next/analyze_experiment.py`；后续再考虑独立 `goal.py` |
 | 失败模式 | 目标吞掉日常生活，角色不停推销任务 |
 | 验证方式 | 目标完成率和自然性同时达标 |
 
@@ -200,9 +211,9 @@ flowchart TD
 | 项目项 | 内容 |
 | --- | --- |
 | 输入 input | 公共事件 event、参与角色、任务列表、角色关系、可用时间 |
-| 处理 process | 分配团队角色、更新任务状态、共享证据、生成进度总结 |
-| 输出 output | `event_board`、`team_tasks`、`shared_memory`、协作报告 |
-| 涉及源码 | 拟新增 `modules/memory/shared.py`、`modules/memory/team.py`，修改 `game.py`、`agent.py` |
+| 处理 process | 当前离线生成 `event_board`；后续再分配团队角色、更新任务状态、共享证据、生成进度总结 |
+| 输出 output | 当前有 `event_board.json`；后续扩展 `team_tasks`、`shared_memory`、协作报告 |
+| 涉及源码 | `generative_agents_next/analyze_experiment.py`；后续再新增 `modules/memory/shared.py`、`modules/memory/team.py` |
 | 失败模式 | 全员过度合作、任务板接管日常、归因不清 |
 | 验证方式 | 协作过程可追踪，拒绝和遗忘也被记录 |
 
@@ -329,10 +340,10 @@ flowchart TD
 
 | 时间预算 | 推荐阶段 | 交付物 | 成功标准 |
 | --- | --- | --- | --- |
-| 两周 | 阶段一：观测评价 | `metrics.json`、`report.md`、失败分类 | 能解释一次派对实验的证据强弱 |
-| 一个月 | 阶段一 + 阶段二 | 关系记忆、来源字段、冲突检查 | 后续对话能引用有证据的关系 |
-| 两到三个月 | 阶段一 + 二 + 三 | lesson/skill 记忆、失败复盘 | 第二轮相似任务减少重复失败 |
-| 研究项目 | 阶段四 + 五 | active goal、event board、shared memory | 目标和协作提升可复查且自然 |
+| 两周 | 阶段一：观测评价 | `metrics.json`、`report.md`、失败分类 | 已有脚本，先跑完第 33-37 章实验并回填结果 |
+| 一个月 | 阶段一 + 阶段二 | 关系记忆、来源字段、冲突检查 | 已有代码，继续验证关系质量与跨实验导入 |
+| 两到三个月 | 阶段一 + 二 + 三 | lesson/skill 记忆、失败复盘 | 从 `reflection_candidates.json` 选择样例，再接入角色内循环 |
+| 研究项目 | 阶段四 + 五 | active goal、event board、shared memory | 从 `goal_progress.json` 和 `event_board.json` 扩展到角色可见状态 |
 | 长期维护 | 阶段六持续加入 | caller 级成本、模型路由报告 | 成本可控，格式失败率下降 |
 
 ```mermaid
@@ -368,11 +379,11 @@ flowchart TD
 
 | 升级阶段 | 核心结论 |
 | --- | --- |
-| 阶段一 evaluation | 先建立 `metrics.json` 和 `report.md`，不改智能体 agent 行为 |
-| 阶段二 memory | 增加关系记忆、来源追踪和冲突检测，避免凭空关系变化 |
-| 阶段三 reflexion | 把失败证据转成 lesson/skill，但保留置信度和删除机制 |
-| 阶段四 goal | 显式目标只服务明确事件，不吞掉日常生活 |
-| 阶段五 team | 组织协作要记录接受、拒绝、遗忘和贡献归因 |
+| 阶段一 evaluation | `generative_agents_next/analyze_experiment.py` 已建立 `metrics.json` 和 `report.md`，不改智能体 agent 行为 |
+| 阶段二 memory | `generative_agents_next` 已增加关系记忆、来源追踪和冲突检测，避免凭空关系变化 |
+| 阶段三 reflexion | 当前先有 `reflection_candidates.json`，后续再把失败证据转成 lesson/skill |
+| 阶段四 goal | 当前先有 `goal` 记忆和 `goal_progress.json`，后续再让显式目标影响行动 |
+| 阶段五 team | 当前先有离线 `event_board.json`，后续组织协作要记录接受、拒绝、遗忘和贡献归因 |
 | 阶段六 routing | 利用 caller 级统计做模型路由和成本控制 |
 | 总原则 | 不另起炉灶，沿 Generative Agents 的原始模块继续生长 |
 
@@ -410,5 +421,13 @@ flowchart TD
 - Local source: `generative_agents/modules/memory/schedule.py`
 - Local source: `generative_agents/modules/model/llm_model.py`
 - Local prompt directory: `generative_agents/data/prompts/`
-- Local output: `generative_agents/results/checkpoints/<实验名>/`
-- Local output: `generative_agents/results/compressed/<实验名>/`
+- Local output: `generative_agents_next/results/checkpoints/<实验名>/`
+- Local output: `generative_agents_next/results/compressed/<实验名>/`
+- Local upgrade source: `generative_agents_next/modules/memory/associate.py`
+- Local upgrade source: `generative_agents_next/modules/agent.py`
+- Local upgrade source: `generative_agents_next/modules/prompt/scratch.py`
+- Local upgrade source: `generative_agents_next/compress.py`
+- Local upgrade source: `generative_agents_next/analyze_experiment.py`
+- Local upgrade prompts: `generative_agents_next/data/prompts/relationship_update.txt`
+- Local upgrade prompts: `generative_agents_next/data/prompts/memory_merge.txt`
+- Local upgrade prompts: `generative_agents_next/data/prompts/memory_conflict_check.txt`

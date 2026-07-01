@@ -40,11 +40,11 @@ flowchart LR
 | 智能体 Agent | `generative_agents/modules/agent.py` | 角色行为的执行单元，协作逻辑不能绕开它。 |
 | 游戏循环 Game loop | `generative_agents/modules/game.py` | `Game.agent_think()` 每步调用智能体思考，并把状态交回 `start.py` 保存。 |
 | 提示词 prompt | `generative_agents/data/prompts/*.txt`、`generative_agents/modules/prompt/scratch.py` | 对话、判断、总结都由提示词 prompt 包装函数提供变量和输出结构 schema。 |
-| 对话记录 conversation | `generative_agents/results/checkpoints/<name>/conversation.json` | 当前最强的协作证据来源，记录说话双方、地点和原话。 |
-| 断点 checkpoint | `generative_agents/results/checkpoints/<name>/simulate-*.json` | 保存每一步角色状态、行动、日程、记忆摘要和坐标。 |
-| 移动回放 movement | `generative_agents/results/compressed/<name>/movement.json` | 检查承诺是否转化为到场、聚集和任务行动。 |
-| 时间线 simulation | `generative_agents/results/compressed/<name>/simulation.md` | 给人读的证据索引，适合定位片段，再回查原始 JSON。 |
-| 公共事件板 event board | 建议新增到 `results/checkpoints/<name>/storage/shared/<event_id>/event_board.json` | 把协作任务从个人记忆提升为实验可观察对象。 |
+| 对话记录 conversation | `generative_agents_next/results/checkpoints/<name>/conversation.json` | 当前最强的协作证据来源，记录说话双方、地点和原话。 |
+| 断点 checkpoint | `generative_agents_next/results/checkpoints/<name>/simulate-*.json` | 保存每一步角色状态、行动、日程、记忆摘要和坐标。 |
+| 移动回放 movement | `generative_agents_next/results/compressed/<name>/movement.json` | 检查承诺是否转化为到场、聚集和任务行动。 |
+| 时间线 simulation | `generative_agents_next/results/compressed/<name>/simulation.md` | 给人读的证据索引，适合定位片段，再回查原始 JSON。 |
+| 公共事件板 event board | `generative_agents_next/results/evaluations/<name>/event_board.json` | 把协作任务从个人记忆提升为实验可观察对象。 |
 
 ## 35.3 当前社交链路如何运行
 
@@ -184,10 +184,10 @@ ${another_status}
 
 公共事件板 event board 把“伊莎贝拉想办派对”从个人状态提升为实验对象。它不代表所有角色都知道派对，只代表实验环境有一个可追踪的协作对象。
 
-建议保存位置：
+当前离线评价保存位置：
 
 ```text
-generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/event_board.json
+generative_agents_next/results/evaluations/<实验名>/event_board.json
 ```
 
 建议结构：
@@ -300,10 +300,10 @@ ${conversation}
 
 共享记忆 shared memory 不是让所有角色共享大脑。它是事件级存储，用来保存公共事实、任务状态和证据路径。
 
-建议目录：
+后续如果把事件板升级为角色可见共享状态，建议目录放在 `generative_agents_next` 的实验存储中：
 
 ```text
-generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
+generative_agents_next/results/checkpoints/<实验名>/storage/shared/<event_id>/
   event_board.json
   team_tasks.json
   progress_log.jsonl
@@ -356,17 +356,15 @@ generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
 
 有了公共事件板 event board 和共享任务 team tasks，`simulation.md` 需要多一段协作摘要，`movement.json` 需要继续承担到场证据，报告 report 需要把二者合并。
 
-建议在 `simulation.md` 中增加可渲染区块：
+建议在 `simulation.md` 或 `report.md` 中增加可渲染区块，读者直接看到任务状态，而不是阅读一段嵌在代码块里的 Markdown 模板。
 
-```markdown
-## 协作事件 event board：valentine_party
+### 协作事件 event board：valentine_party
 
 | 任务 task | 负责人 assignee | 状态 status | 证据 evidence |
 | --- | --- | --- | --- |
 | 布置咖啡馆 | 玛丽亚 | accepted | conversation:20240214-10:00 |
 | 确认音乐 | 埃迪 | todo | movement:钢琴区域 |
 | 邀请顾客 | 伊莎贝拉 | active | conversation:多段邀请 |
-```
 
 | 输出位置 | 可判断内容 | 回查路径 |
 | --- | --- | --- |
@@ -377,29 +375,59 @@ generative_agents/results/checkpoints/<实验名>/storage/shared/<event_id>/
 
 图 35-2 是协作升级的视觉审计：左侧角色头像对应真实小镇居民，中央事件板固定事件事实，右侧任务卡拆开任务状态，底部链路把自然对话先转成结构化抽取结果，再进入报告。
 
-## 35.13 最小可行升级实验
+## 35.13 实验设计与执行命令
 
-第一轮实验不需要改成完整团队平台。保留当前小镇循环，只增加事件板、任务抽取和报告输出。
+第 35 章先把协作事件板 event board 做成离线评价产物。它读取自然对话和移动结果，不直接塞回角色提示词 prompt，所以不会让小镇居民突然拥有上帝视角。后续如果要做真正共享状态 shared state，必须再单独修改角色可见上下文。
+
+相对路径：`generative_agents_next/analyze_experiment.py`
+
+```diff
++def build_event_board(event_name, mentions, attendance):
++    return {
++        "event": event_name,
++        "known_by": known_by,
++        "accepted": accepted,
++        "rejected": rejected,
++        "arrived": arrived,
++        "tasks": [...]
++    }
+```
 
 | 实验项 | 配置 |
 | --- | --- |
-| 实验名 | `book-team-party-01` |
+| 实验名 | `book-collaboration-party` |
+| 工作目录 | `generative_agents_next` |
 | 事件 event | `valentine_party`，时间 `2024-02-14 17:00`，地点“霍布斯咖啡馆”。 |
 | 角色 agents | 伊莎贝拉、玛丽亚、埃迪、克劳斯、亚当。 |
-| 新增文件 | `event_board.json`、`team_tasks.json`、`progress_log.jsonl`。 |
+| 新增文件 | `event_board.json`、`goal_progress.json`、`report.md`。 |
 | 观察对象 | 对话承诺、任务接受、任务完成、到场、冲突和遗忘。 |
 
-可复用当前运行入口：
+执行命令：
 
 ```bash
-cd generative_agents
-python start.py --name book-team-party-01 --start 20240214-08:00 --step 72 --stride 10 --agents "伊莎贝拉,玛丽亚,埃迪,克劳斯,亚当" --verbose info --log book-team-party-01.log
-python compress.py --name book-team-party-01
+cd generative_agents_next
+python start.py --name book-collaboration-party --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,玛丽亚,埃迪,克劳斯,亚当" --verbose info --log book-collaboration-party.log
+python compress.py --name book-collaboration-party
+python analyze_experiment.py --name book-collaboration-party --event valentine_party --keywords "情人节,派对,五点,5点,17:00,霍布斯咖啡馆,帮忙,布置,音乐,邀请" --target-place "霍布斯咖啡馆" --window-start "20240214-17:00" --window-end "20240214-19:00"
 ```
 
-这条命令的输入 input 是固定角色、开始时间和步长；处理 process 是 `start.py` 每步调用 `Game.agent_think()`，再由 `compress.py` 生成报告和回放；输出 output 是 `results/checkpoints/book-team-party-01/` 与 `results/compressed/book-team-party-01/`。协作升级脚本应只在这些输出旁边追加事件板和任务报告，不覆盖原始证据。
+这条命令的输入 input 是固定角色、开始时间和步长；处理 process 是 `start.py` 每步调用 `Game.agent_think()`，再由 `compress.py` 生成报告和回放，最后由 `analyze_experiment.py` 生成事件板；输出 output 是 `results/checkpoints/book-collaboration-party/`、`results/compressed/book-collaboration-party/` 与 `results/evaluations/book-collaboration-party/`。协作升级脚本只在输出旁边追加事件板和任务报告，不覆盖原始证据。
 
-## 35.14 协作指标 metrics
+## 35.14 实验结果分析（待填写）
+
+实验完成后，把 `event_board.json` 当作本章主证据，不要只摘 `simulation.md` 里好看的叙事。
+
+| 分析项 | 读取文件 | 填写口径 |
+| --- | --- | --- |
+| 事件是否被传播 | `event_board.json`、`conversation.json` | `known_by` 里有哪些角色，是否有上游对话证据。 |
+| 任务是否形成 | `event_board.json` 的 `tasks` | `spread_fact`、`collect_commitments`、`verify_attendance` 的状态是否有证据支撑。 |
+| 承诺与拒绝 | `event_board.json` | accepted/rejected 是否来自原话，不把旁观提及算成接受任务。 |
+| 到场是否落地 | `movement.json`、`metrics.json` | 17:00-19:00 是否有人到达霍布斯咖啡馆。 |
+| 协作边界 | `report.md`、人工抽查 | 事件板是否只是评价产物，是否没有泄漏进角色可知上下文。 |
+
+当前预期是：第一版事件板能回答“谁知道、谁答应、谁拒绝、谁到场”，但还不能回答“谁真正负责布置、谁完成了音乐任务”。后者需要后续把 `team_tasks` 和协作对话协议 dialogue act 接入真实角色状态。
+
+## 35.15 协作指标 metrics
 
 指标要绑定文件，不能只给抽象名字。
 
@@ -430,7 +458,7 @@ $$
 
 读法：如果 `team_tasks.json` 里有 10 次状态更新，8 次能回查到 `conversation.json` 或 `movement.json`，共享状态一致率为 \(8/10 = 0.80\)。低一致率说明事件板可能被提示词 prompt 幻觉污染。
 
-## 35.15 风险与边界
+## 35.16 风险与边界
 
 | 风险 | 表现 | 检查位置 | 控制方式 |
 | --- | --- | --- | --- |
@@ -440,9 +468,9 @@ $$
 | 状态幻觉 state hallucination | `team_tasks.json` 标记完成，但没有行动证据。 | `movement.json`、断点 checkpoint。 | 每次状态更新必须带 `evidence`。 |
 | 指标偏任务化 | 任务完成率高，但角色行为不可信。 | 对话自然性、日程冲突、人物设定 persona。 | 指标报告同时列自然性和失败样例。 |
 
-## 35.16 本章小结
+## 35.17 本章小结
 
-多智能体协作升级 multi-agent collaboration 的核心不是把小镇居民改造成任务机器人，而是在自然社交链路之后增加可审计的协作层。当前项目已经有 `_reaction()`、`_chat_with()`、prompt 链、`conversation.json`、断点 checkpoint、`simulation.md` 和 `movement.json`；缺少的是公共事件板 event board、临时工作组 temporary workgroup、协作对话协议 dialogue act、共享记忆 shared memory 和协作指标 metrics。
+多智能体协作升级 multi-agent collaboration 的核心不是把小镇居民改造成任务机器人，而是在自然社交链路之后增加可审计的协作层。当前项目已经有 `_reaction()`、`_chat_with()`、prompt 链、`conversation.json`、断点 checkpoint、`simulation.md` 和 `movement.json`；`generative_agents_next/analyze_experiment.py` 已经能输出第一版 `event_board.json`。仍缺少的是进入角色可见上下文的临时工作组 temporary workgroup、协作对话协议 dialogue act、共享记忆 shared memory 和可写回任务状态 team tasks。
 
 协作升级遵守一个原则：自然对话先发生，结构化状态后抽取。这样既保留 Generative Agents 的生活流，又能让“谁负责、谁拒绝、谁遗忘、谁真的到场”进入可复查的工程证据链。
 
@@ -461,4 +489,6 @@ $$
 - Local prompts: `generative_agents/data/prompts/decide_chat.txt`
 - Local prompts: `generative_agents/data/prompts/generate_chat.txt`
 - Local prompts: `generative_agents/data/prompts/summarize_chats.txt`
+- Local upgrade source: `generative_agents_next/analyze_experiment.py`
+- Local pending experiment: `generative_agents_next/results/evaluations/book-collaboration-party/`
 - Local evidence figure scaffold: `docs/book/scaffolds/part_04_05/ch24_38_evidence_figures.py`

@@ -4,7 +4,7 @@ import re
 from string import Template
 from pydantic import BaseModel, Field
 from collections import namedtuple
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 from modules import utils
 from modules.memory import Event
 
@@ -578,7 +578,11 @@ class Scratch:
         return Result(prompt, _callback, failsafe, decide_waitResponse)
 
     def prompt_summarize_relation(self, agent, other_name):
-        nodes = agent.associate.retrieve_focus([other_name], 50)
+        nodes = agent.associate.retrieve_focus(
+            [other_name],
+            50,
+            node_types=("relationship", "chat", "event", "thought"),
+        )
 
         prompt = self.build_prompt(
             "summarize_relation",
@@ -597,12 +601,196 @@ class Scratch:
 
         return Result(prompt, _callback, failsafe, summarize_relationResponse)
 
+    def prompt_relationship_update(
+        self,
+        agent,
+        other,
+        current_relationship,
+        recent_conversation,
+        related_memories,
+        source_nodes=None,
+    ):
+        conversation = "\n".join("{}: {}".format(n, u) for n, u in recent_conversation)
+        memories = "\n".join(
+            [
+                "{}. [{}] {}".format(idx, node.node_type, node.describe)
+                for idx, node in enumerate(related_memories)
+            ]
+        ) or "暂无相关记忆。"
+        source_nodes = source_nodes or []
+
+        prompt = self.build_prompt(
+            "relationship_update",
+            {
+                "base_desc": self._base_desc(),
+                "agent": agent.name,
+                "another": other.name,
+                "current_relationship": utils.dump_dict(current_relationship),
+                "recent_conversation": conversation,
+                "related_memories": memories,
+                "source_nodes": ", ".join(source_nodes) or "无",
+            }
+        )
+
+        class relationship_updateResponse(BaseModel):
+            res: Dict[str, Any] = Field(
+                description=(
+                    "关系更新结果，包含 affinity_delta、trust_delta、"
+                    "familiarity_delta、summary_update、evidence、confidence"
+                )
+            )
+
+        def _clamp_int(value, low, high, default=0):
+            try:
+                value = int(value)
+            except (TypeError, ValueError):
+                value = default
+            return max(low, min(high, value))
+
+        def _clamp_float(value, low, high, default=0.0):
+            try:
+                value = float(value)
+            except (TypeError, ValueError):
+                value = default
+            return max(low, min(high, value))
+
+        def _callback(response):
+            response = response if isinstance(response, dict) else {}
+            evidence = response.get("evidence") or source_nodes
+            if isinstance(evidence, str):
+                evidence = [e.strip() for e in evidence.split(",") if e.strip()]
+            return {
+                "affinity_delta": _clamp_int(response.get("affinity_delta"), -2, 2),
+                "trust_delta": _clamp_int(response.get("trust_delta"), -2, 2),
+                "familiarity_delta": _clamp_int(response.get("familiarity_delta"), 0, 3, 1),
+                "summary_update": str(response.get("summary_update") or "").strip(),
+                "evidence": evidence,
+                "confidence": _clamp_float(response.get("confidence"), 0, 1, 0.35),
+            }
+
+        failsafe = {
+            "affinity_delta": 0,
+            "trust_delta": 0,
+            "familiarity_delta": 1,
+            "summary_update": "",
+            "evidence": source_nodes,
+            "confidence": 0.35,
+        }
+        return Result(prompt, _callback, failsafe, relationship_updateResponse)
+
+    def prompt_memory_merge(self, new_memory, similar_memories, merge_policy):
+        prompt = self.build_prompt(
+            "memory_merge",
+            {
+                "new_memory": new_memory,
+                "similar_memories": "\n".join(similar_memories) or "暂无相似记忆。",
+                "merge_policy": merge_policy,
+            }
+        )
+
+        class memory_mergeResponse(BaseModel):
+            res: Dict[str, Any] = Field(
+                description=(
+                    "记忆合并判断，包含 should_merge、summary、"
+                    "source_nodes、drop_after、reason、confidence"
+                )
+            )
+
+        def _callback(response):
+            response = response if isinstance(response, dict) else {}
+            source_nodes = response.get("source_nodes") or []
+            if isinstance(source_nodes, str):
+                source_nodes = [s.strip() for s in source_nodes.split(",") if s.strip()]
+            should_merge = response.get("should_merge")
+            if not isinstance(should_merge, bool):
+                should_merge = str(should_merge).strip().lower() in ("true", "yes", "是", "1")
+            try:
+                confidence = float(response.get("confidence") or 0.0)
+            except (TypeError, ValueError):
+                confidence = 0.0
+            return {
+                "should_merge": should_merge,
+                "summary": str(response.get("summary") or "").strip(),
+                "source_nodes": source_nodes,
+                "drop_after": response.get("drop_after"),
+                "reason": str(response.get("reason") or "").strip(),
+                "confidence": confidence,
+            }
+
+        failsafe = {
+            "should_merge": False,
+            "summary": "",
+            "source_nodes": [],
+            "drop_after": None,
+            "reason": "failsafe",
+            "confidence": 0.0,
+        }
+        return Result(prompt, _callback, failsafe, memory_mergeResponse)
+
+    def prompt_memory_conflict_check(self, new_memory, similar_memories):
+        prompt = self.build_prompt(
+            "memory_conflict_check",
+            {
+                "new_memory": new_memory,
+                "similar_memories": "\n".join(similar_memories) or "暂无相似记忆。",
+            }
+        )
+
+        class memory_conflict_checkResponse(BaseModel):
+            res: Dict[str, Any] = Field(
+                description=(
+                    "冲突检查结果，包含 has_conflict、conflict_type、"
+                    "summary、evidence、need_clarification、confidence"
+                )
+            )
+
+        def _callback(response):
+            response = response if isinstance(response, dict) else {}
+            evidence = response.get("evidence") or []
+            if isinstance(evidence, str):
+                evidence = [e.strip() for e in evidence.split(",") if e.strip()]
+            has_conflict = response.get("has_conflict")
+            if not isinstance(has_conflict, bool):
+                has_conflict = str(has_conflict).strip().lower() in ("true", "yes", "是", "1")
+            need_clarification = response.get("need_clarification")
+            if not isinstance(need_clarification, bool):
+                need_clarification = (
+                    str(need_clarification).strip().lower() in ("true", "yes", "是", "1")
+                )
+            try:
+                confidence = float(response.get("confidence") or 0.0)
+            except (TypeError, ValueError):
+                confidence = 0.0
+            return {
+                "has_conflict": has_conflict,
+                "conflict_type": str(response.get("conflict_type") or "").strip(),
+                "summary": str(response.get("summary") or "").strip(),
+                "evidence": evidence,
+                "need_clarification": need_clarification,
+                "confidence": confidence,
+            }
+
+        failsafe = {
+            "has_conflict": False,
+            "conflict_type": "",
+            "summary": "",
+            "evidence": [],
+            "need_clarification": False,
+            "confidence": 0.0,
+        }
+        return Result(prompt, _callback, failsafe, memory_conflict_checkResponse)
+
     def prompt_generate_chat(self, agent, other, relation, chats):
         focus = [relation, other.get_event().get_describe()]
         if len(chats) > 4:
             focus.append("; ".join("{}: {}".format(n, t) for n, t in chats[-4:]))
-        nodes = agent.associate.retrieve_focus(focus, 15)
-        memory = "\n- " + "\n- ".join([n.describe for n in nodes])
+        nodes = agent.associate.retrieve_for_dialogue(other.name, "; ".join(focus))
+        memory = "\n- " + "\n- ".join(
+            [
+                "[{}] {}".format(n.node_type, n.describe)
+                for n in nodes[:15]
+            ]
+        )
         chat_nodes = agent.associate.retrieve_chats(other.name)
         pass_context = ""
         for n in chat_nodes:

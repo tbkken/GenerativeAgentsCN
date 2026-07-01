@@ -418,20 +418,88 @@ generative_agents/data/prompts/goal_evaluate_progress.txt
 
 这条 feedback 会回到第 33 章的反思式学习 reflexion-style learning：目标规划发现 progress 缺口，反思模块生成 lesson，下一次规划使用 lesson 调整候选行动。
 
-## 34.16 最小可行升级实验
+## 34.16 实验设计与执行命令
 
-| 实验阶段 | 输入 input | 处理 process | 输出 output | 检查点 |
-| --- | --- | --- | --- | --- |
-| 基线 baseline | 当前 `book-party-extended`。 | 统计已邀请、已接受、已到场。 | 基线进度 baseline progress。 | 11:30 conversation、17:00 movement、17:00 checkpoint。 |
-| 新增目标 Goal | 为伊莎贝拉加入 `goal_party_20240214`。 | 写入 goal memory 或 scratch active goal。 | 可检索 active goal。 | checkpoint 能看到 goal。 |
-| 目标影响日程 | 在 `schedule_daily` 前加入 goal constraints。 | 生成带确认动作的日程。 | 新 daily_schedule。 | schedule 中出现“确认承诺/到场”但不过度打断生活。 |
-| 候选行动 | 关键时间生成 candidate actions。 | 按 goal contribution/naturalness/feasibility 评分。 | chosen action hint。 | prompt 日志或 report 可回查。 |
-| 进度评估 | 每次邀请或关键时刻读取 evidence。 | 更新 progress。 | informed/accepted/arrived/missing。 | movement 与 conversation 一致。 |
-| 对照报告 | 基线 baseline vs 升级 upgrade。 | 计算目标完成和自然性。 | 指标 metrics / 报告 report。 | 第 37 章评价体系接手。 |
+第 34 章的实验先验证两件事：第一，目标 goal 已经能作为记忆类型进入 checkpoint；第二，目标进度 progress 能从对话和移动证据中独立计算。完整的候选行动搜索 candidate action search 还没有接入角色决策，不应在结果里写成“目标规划已经闭环”。
 
-这个实验的价值不是追求“所有人都到场”。更重要的是系统能发现：山姆有晚餐冲突不能强推；玛丽亚承诺后仍可能没到；伊莎贝拉应该在不破坏生活感的前提下补一次确认。
+相对路径：`generative_agents_next/modules/agent.py`
 
-## 34.17 评价指标和公式卡片
+```diff
+ def make_schedule(self):
+     ...
+     thought_node = self._add_concept("thought", event, expire=...)
++    goal_event = memory.Event(
++        self.name,
++        "目标",
++        schedule_time,
++        describe=f"{self.name} 在 {schedule_time} 的阶段目标：..."
++    )
++    self._add_concept(
++        "goal",
++        goal_event,
++        filling={
++            "source_nodes": [thought_node.node_id],
++            "source_type": "schedule",
++            "confidence": 0.75,
++            "downstream_use": "planning,reflection"
++        }
++    )
+```
+
+相对路径：`generative_agents_next/analyze_experiment.py`
+
+```diff
++def build_goal_progress(event_board):
++    return {
++        "informed": sorted(informed),
++        "accepted": sorted(accepted),
++        "arrived": sorted(arrived),
++        "missing": missing,
++        "goal_completion_rate": ...
++    }
+```
+
+| 实验项 | 配置 |
+| --- | --- |
+| 实验名 | `book-goal-party` |
+| 工作目录 | `generative_agents_next` |
+| 角色 agents | 伊莎贝拉、玛丽亚、山姆、汤姆 |
+| 检查对象 | `goal` 记忆节点、`goal_progress.json`、目标完成率 |
+| 成功边界 | 能区分 informed、accepted、arrived、rejected，不把承诺当到场 |
+
+执行命令：
+
+```bash
+cd generative_agents_next
+python start.py --name book-goal-party --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,玛丽亚,山姆,汤姆" --verbose info --log book-goal-party.log
+python compress.py --name book-goal-party
+python analyze_experiment.py --name book-goal-party --event valentine_party --keywords "情人节,派对,五点,5点,17:00,霍布斯咖啡馆" --target-place "霍布斯咖啡馆" --window-start "20240214-17:00" --window-end "20240214-19:00"
+```
+
+实验输出：
+
+| 输出文件 | 用途 |
+| --- | --- |
+| `results/checkpoints/book-goal-party/simulate-*.json` | 检查角色 `associate.memory.goal` 是否存在。 |
+| `results/compressed/book-goal-party/memory_metrics.json` | 统计 `goal_nodes` 与来源追踪。 |
+| `results/evaluations/book-goal-party/goal_progress.json` | 检查 informed、accepted、arrived、missing。 |
+| `results/evaluations/book-goal-party/report.md` | 人工复核目标进度与原始证据是否一致。 |
+
+## 34.17 实验结果分析（待填写）
+
+实验跑完后，按下面的顺序回填，不要直接写总分。
+
+| 分析项 | 读取文件 | 判断问题 |
+| --- | --- | --- |
+| goal 节点是否落盘 | `memory_metrics.json`、最新 `simulate-*.json` | 每个角色是否出现 `goal` 类型，来源是否指向日程 thought。 |
+| 目标进度是否准确 | `goal_progress.json`、`conversation.json`、`movement.json` | `informed/accepted/arrived/rejected_or_unavailable` 是否能回到原始证据。 |
+| 目标完成率 | `metrics.json` | 哪些成功标准成立，哪些只是弱线索。 |
+| 目标没有接管生活 | `simulation.md`、对话原文 | 角色是否仍在做原本人设中的日常行动。 |
+| 后续改造入口 | 人工判断 | 是否需要把 `goal_progress.missing` 转成下一轮日程提醒或候选行动。 |
+
+预期结论只应写到“目标证据层已经可见”。如果实验里出现了 `goal` 节点和 `goal_progress.json`，只能说明系统具备目标状态记录和离线评估能力；除非后续代码把 `goal_progress.missing` 接入 `schedule_revise` 或 `_determine_action()`，否则不能说角色已经会主动补救目标。
+
+## 34.18 评价指标和公式卡片
 
 **公式卡片 34-A：目标完成率 goal completion rate**
 
@@ -481,7 +549,7 @@ $$
 
 第 29 章的 `ch29_book_custom_discussion_metrics.json` 已经提供了参考结构：`location_match_rate`、`goal_related_action_rate`、`plan_action_match_rate` 和 `commitment_metrics` 都能迁移到目标规划实验。
 
-## 34.18 失败模式和排查路径
+## 34.19 失败模式和排查路径
 
 | 表现 | 原因 | 检查位置 | 修正方向 |
 | --- | --- | --- | --- |
@@ -492,7 +560,7 @@ $$
 | 提示词 prompt 调用成本过高 | 每步都生成候选和评分。 | 大语言模型 LLM 用量摘要 usage summary。 | 只对 active goal 且进度缺口明显时启用。 |
 | 目标 Goal 断点恢复失败 | 目标状态没纳入序列化。 | 断点 checkpoint JSON。 | 先用记忆类型 memory node_type，稳定后独立 Goal 类。 |
 
-## 34.19 本章小结
+## 34.20 本章小结
 
 当前 GenerativeAgentsCN 的规划系统已经能完成日程 schedule、拆解 decompose、地址 grounding 和行动 action；目标规划升级要补的是 active goal、candidate actions、progress、feedback 和 evaluation。派对案例显示，日程写着“17:00 举办派对”还不够，系统必须知道谁被邀请、谁承诺、谁到场、谁因为冲突无法到场，并把这些证据回流到下一次行动。
 
@@ -501,9 +569,9 @@ $$
 | 当前规划链路 | `make_schedule()` 生成日程，`Schedule.current_plan()` 找当前计划，`_determine_action()` 落到 Maze 地址。 |
 | 提示词 prompt 流向 | `wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose`、`schedule_revise` 分别负责起床、粗日程、全天日程、子计划和修订。 |
 | 行动落地 | `determine_sector/arena/object` 和 `describe_object` 把计划转成 `memory.Action`。 |
-| 当前缺口 | 目标 goal、进度 progress、候选行动 candidate actions 和行动反馈 feedback 没有结构化。 |
+| 当前缺口 | `generative_agents_next` 已有 `goal` 记忆和离线 `goal_progress`，候选行动 candidate actions 与行动反馈 feedback 尚未接入角色决策。 |
 | 前沿锚定 | ReAct 提醒保存推理 reasoning、行动 action 和观察 observation，Tree of Thoughts 提醒多候选评分，LATS 提醒路径和反馈。 |
-| 可落地升级 | 先用目标记忆 goal memory 或草稿状态 Scratch active goal，再逐步加入目标影响日程、多候选行动、进度评估和轻量工具。 |
+| 可落地升级 | 先用目标记忆 goal memory 与 `goal_progress.json` 建立证据层，再逐步加入目标影响日程、多候选行动、进度评估和轻量工具。 |
 | 验证要求 | 目标规划必须同时看 conversation、movement、simulation、checkpoint、指标 metrics / 报告 report 和自然性 naturalness。 |
 
 下一章讨论多智能体协作升级。目标规划解决单个角色如何围绕目标持续行动；多智能体协作要解决多个角色如何共享目标、分工、同步进度和协商冲突。
@@ -517,6 +585,9 @@ $$
 - 本地源码 Local source: `generative_agents/modules/memory/schedule.py`
 - 本地源码 Local source: `generative_agents/modules/agent.py`
 - 本地源码 Local source: `generative_agents/modules/prompt/scratch.py`
+- 本地升级源码 Local upgrade source: `generative_agents_next/modules/agent.py`
+- 本地升级源码 Local upgrade source: `generative_agents_next/analyze_experiment.py`
+- 本地升级指标 Local upgrade metrics: `generative_agents_next/compress.py`
 - 本地提示词 Local prompts: `generative_agents/data/prompts/wake_up.txt`
 - 本地提示词 Local prompts: `generative_agents/data/prompts/schedule_init.txt`
 - 本地提示词 Local prompts: `generative_agents/data/prompts/schedule_daily.txt`
@@ -528,6 +599,7 @@ $$
 - 本地提示词 Local prompts: `generative_agents/data/prompts/describe_object.txt`
 - 本地证据 Local evidence: `docs/book/assets/chapter_19/ch19_schedule_trace.json`
 - 本地证据 Local evidence: `generative_agents/results/checkpoints/book-party-extended/simulate-20240214-1700.json`
+- 本地待跑实验 Local pending experiment: `generative_agents_next/results/evaluations/book-goal-party/`
 - 本地证据 Local evidence: `generative_agents/results/checkpoints/book-party-extended/conversation.json`
 - 本地证据 Local evidence: `generative_agents/results/compressed/book-party-extended/movement.json`
 - 本地指标 Local metrics: `docs/book/assets/chapter_29/ch29_book_custom_discussion_metrics.json`

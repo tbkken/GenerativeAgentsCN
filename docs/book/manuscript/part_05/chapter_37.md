@@ -37,16 +37,16 @@ flowchart LR
 
 | 中文 English | 当前项目位置 | 在评价中的职责 | 常见误读 |
 | --- | --- | --- | --- |
-| 对话记录 conversation | `generative_agents/results/checkpoints/<name>/conversation.json` | 记录对话时间、地点、说话双方和原文 | 只要出现关键词就算传播成功 |
-| 移动回放 movement | `generative_agents/results/compressed/<name>/movement.json` | 验证角色是否真的到达目标地点 | 把口头承诺当成到场 |
-| 时间线 simulation | `generative_agents/results/compressed/<name>/simulation.md` | 人工快速定位行为、位置和对话摘录 | 把压缩摘要当成唯一事实源 |
-| 断点 checkpoint | `generative_agents/results/checkpoints/<name>/simulate-*.json` | 保存角色状态、日程 schedule、行动 action、记忆 associate、模型配置 | 只看最后一个断点，忽略过程变化 |
-| 指标 metrics | 拟新增 `generative_agents/results/evaluations/<name>/metrics.json` | 机器可读统计结果 | 指标越高就越可信 |
-| 报告 report | 拟新增 `generative_agents/results/evaluations/<name>/report.md` | 人工可读结论、证据摘录和失败样例 | 报告只写成功案例 |
+| 对话记录 conversation | `generative_agents_next/results/checkpoints/<name>/conversation.json` | 记录对话时间、地点、说话双方和原文 | 只要出现关键词就算传播成功 |
+| 移动回放 movement | `generative_agents_next/results/compressed/<name>/movement.json` | 验证角色是否真的到达目标地点 | 把口头承诺当成到场 |
+| 时间线 simulation | `generative_agents_next/results/compressed/<name>/simulation.md` | 人工快速定位行为、位置和对话摘录 | 把压缩摘要当成唯一事实源 |
+| 断点 checkpoint | `generative_agents_next/results/checkpoints/<name>/simulate-*.json` | 保存角色状态、日程 schedule、行动 action、记忆 associate、模型配置 | 只看最后一个断点，忽略过程变化 |
+| 指标 metrics | `generative_agents_next/results/evaluations/<name>/metrics.json` | 机器可读统计结果 | 指标越高就越可信 |
+| 报告 report | `generative_agents_next/results/evaluations/<name>/report.md` | 人工可读结论、证据摘录和失败样例 | 报告只写成功案例 |
 | 模型摘要 LLM summary | `Game.agent_think()` 写入每步 `info["llm"]` | 记录模型名、成功数、失败数和请求数 | 只看最终行为，不看隐藏调用成本 |
 | 提示词 prompt | `generative_agents/data/prompts/*.txt`，由 `Scratch.build_prompt()` 填充 | 解释 LLM 行为如何被驱动 | 评价只看输出，不回查 prompt 输入 |
 | 调用类型 caller | `LLMModel.completion(..., caller="llm_normal")` | 可扩展为按提示词 prompt 类型统计成本 | 所有 LLM 调用混在一个总数里 |
-| 失败模式 failure mode | 拟新增评价字段 | 定位失败发生在接触、对话、记忆、计划、移动或格式解析 | 只写“失败”两个字 |
+| 失败模式 failure mode | `reflection_candidates.json`、`report.md` | 定位失败发生在接触、对话、记忆、计划、移动或格式解析 | 只写“失败”两个字 |
 
 ## 37.3 前沿评价思想要落回小镇证据
 
@@ -321,30 +321,74 @@ flowchart TD
 
 失败分类图用于定位断点，不用于给失败贴静态标签。每个标签都必须能指向一个检查位置。
 
-## 37.12 最小可行评价升级
+## 37.12 评价脚本落地
 
-最小可行升级只读现有输出，不改智能体 agent 行为。推荐四个产物：
+第 37 章的评价升级已经落到 `generative_agents_next/analyze_experiment.py`。它只读本地输出，不调用 LLM，不改变角色行为。这样做的好处是：指标错误可以直接追到 JSON 解析和关键词规则，不会混入模型裁判的不确定性。
 
-| 新增产物 | 输入 input | 处理 process | 输出 output | 验证方式 |
-| --- | --- | --- | --- | --- |
-| `evaluations/configs/party_diffusion_v1.json` | 事件目标、关键词、核心事实、时间窗 | 固化评价版本 | 可复用评价配置 | 改指标时旧实验仍可解释 |
-| `tools/analyze_conversation_keywords.py` | `conversation.json` | 提取提及、来源、接受和拒绝 | `diffusion` 指标 | 抽查原文行 |
-| `tools/analyze_attendance.py` | `movement.json` | 统计时间窗内目标地点出现 | `attendance` 指标 | 回放帧复核 |
-| `tools/export_experiment_report.py` | `metrics.json`、底层证据路径 | 生成报告和失败样例 | `report.md` | 人工检查每个链接 |
+相对路径：`generative_agents_next/analyze_experiment.py`
 
-可执行路径应写成这样：
-
-```text
-工作目录：generative_agents
-输入文件：results/checkpoints/<实验名>/conversation.json
-输入文件：results/compressed/<实验名>/movement.json
-输出文件：results/evaluations/<实验名>/metrics.json
-输出文件：results/evaluations/<实验名>/report.md
+```diff
++conversation = load_json("results/checkpoints/<name>/conversation.json", {})
++movement = load_json("results/compressed/<name>/movement.json", {})
++mentions = collect_mentions(rows, keywords)
++attendance = collect_attendance(movement, target_place, window_start, window_end)
++event_board = build_event_board(event, mentions, attendance)
++goal_progress = build_goal_progress(event_board)
++reflection_candidates = build_reflection_candidates(event_board, mentions)
++
++write("metrics.json")
++write("report.md")
++write("event_board.json")
++write("goal_progress.json")
++write("reflection_candidates.json")
 ```
 
-评价脚本的边界也要写清楚：第一版可以先不调用 LLM，不做自动主观评分，只统计可验证事实和证据路径。行为自然性 naturalness、可信裁决 verdict 和负样本解释仍由人工报告承担。
+| 输出产物 | 输入 input | 处理 process | 输出 output | 验证方式 |
+| --- | --- | --- | --- | --- |
+| `metrics.json` | `conversation.json`、`movement.json`、latest checkpoint | 汇总传播、承诺、到场、目标进度、记忆摘要 | 机器可读指标 | 抽查各字段的原始文件。 |
+| `report.md` | `metrics.json` 和证据列表 | 生成可读报告 | 人工复核文本 | 检查每条结论是否有证据。 |
+| `event_board.json` | 关键词命中、承诺判断、到场窗口 | 构造事件状态 | known/accepted/rejected/arrived/tasks | 对照原始对话和移动。 |
+| `goal_progress.json` | `event_board.json` | 把事件状态转成目标进度 | informed/accepted/arrived/missing | 不能把承诺当到场。 |
+| `reflection_candidates.json` | `event_board.json`、mentions | 找出承诺但未到场的失败样例 | outcome/failure_type/evidence | 人工判断是否能生成 lesson。 |
 
-## 37.13 不要为了指标牺牲可信行为
+通用执行命令：
+
+```bash
+cd generative_agents_next
+python analyze_experiment.py --name <实验名> --event valentine_party --keywords "情人节,派对,五点,5点,17:00,霍布斯咖啡馆" --target-place "霍布斯咖啡馆" --window-start "20240214-17:00" --window-end "20240214-19:00"
+```
+
+工作目录、输入和输出如下：
+
+```text
+工作目录：generative_agents_next
+输入文件：results/checkpoints/<实验名>/conversation.json
+输入文件：results/compressed/<实验名>/movement.json
+输入文件：results/checkpoints/<实验名>/simulate-*.json
+输出文件：results/evaluations/<实验名>/metrics.json
+输出文件：results/evaluations/<实验名>/report.md
+输出文件：results/evaluations/<实验名>/event_board.json
+输出文件：results/evaluations/<实验名>/goal_progress.json
+输出文件：results/evaluations/<实验名>/reflection_candidates.json
+```
+
+评价脚本的边界也要写清楚：第一版不做自动主观评分，只统计可验证事实和证据路径。行为自然性 naturalness、可信裁决 verdict 和负样本解释仍由人工报告承担。
+
+## 37.13 实验结果分析（待填写）
+
+评价脚本跑完后，本节填写实际结果。写法要像审计报告，不像故事摘要。
+
+| 分析项 | 读取文件 | 填写口径 |
+| --- | --- | --- |
+| 指标完整性 | `metrics.json` | 是否包含 `diffusion/commitments/attendance/goal_progress/memory_summary`。 |
+| 传播证据 | `report.md`、`conversation.json` | 列出关键命中原话，标注说话人和时间。 |
+| 到场证据 | `movement.json`、`report.md` | 确认时间窗、地点关键字和角色位置。 |
+| 失败样例 | `reflection_candidates.json` | 哪些失败能转成反思样例，哪些只是证据不足。 |
+| 指标边界 | 人工复核 | 说明关键词误命中、礼貌回应误判、移动时间窗不足等问题。 |
+
+如果某次实验的 `final_time` 早于 17:00，评价报告只能说明“实验没有覆盖到派对时间窗”，不能据此判断派对到场失败。时间范围本身也是指标结论的一部分。
+
+## 37.14 不要为了指标牺牲可信行为
 
 指标会改变系统设计方向，所以必须保留负样本。派对传播覆盖率高，不等于小镇更真实；所有人都准时到场，反而可能说明角色失去了日程冲突、关系差异和个人动机。社会仿真尤其需要“不完美”：合理拒绝、误解、迟到、遗忘和冲突，常常比整齐划一的成功更可信。
 
@@ -358,7 +402,7 @@ flowchart TD
 
 评价体系不追求数字漂亮；它要说明：在什么配置、什么模型、什么角色、什么事件和什么成本下，生成式智能体 Generative Agents 能稳定地产生哪类可信行为。
 
-## 37.14 本章小结
+## 37.15 本章小结
 
 评价体系升级把“故事看起来可信”推进到“证据可以复查、指标可以比较、失败可以定位”。当前项目已经有 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint、prompt 链路和 LLM summary；缺的是把它们组织成 `metrics.json`、`report.md`、基线 baseline、多次运行 multi-run 和失败分类 failure taxonomy。
 
@@ -369,7 +413,7 @@ flowchart TD
 | 对话传播 | `conversation.json` 是传播强证据，但要区分提及、接受、拒绝和事实漂移 |
 | 环境落地 | `movement.json` 验证语言承诺是否真的变成位置行动 |
 | prompt 证据 | `decide_chat`、`generate_chat`、`schedule_revise` 等 prompt 要随机制解释 |
-| 指标产物 | `metrics.json` 给脚本读，`report.md` 给人读，两者都要链接底层证据 |
+| 指标产物 | `metrics.json` 给脚本读，`report.md` 给人读，`event_board.json`、`goal_progress.json`、`reflection_candidates.json` 分别支撑协作、目标和反思分析 |
 | 失败分类 | 失败应定位到接触、提及、记忆、计划、移动、格式或过度合作 |
 | 边界 | 指标不能替代可信行为判断，负样本和人工证据必须保留 |
 
@@ -387,9 +431,12 @@ flowchart TD
 - Local source: `generative_agents/modules/game.py`
 - Local source: `generative_agents/modules/agent.py`
 - Local source: `generative_agents/modules/model/llm_model.py`
+- Local upgrade source: `generative_agents_next/analyze_experiment.py`
 - Local prompt: `generative_agents/data/prompts/generate_chat.txt`
 - Local prompt: `generative_agents/data/prompts/schedule_revise.txt`
-- Local output: `generative_agents/results/checkpoints/<实验名>/conversation.json`
-- Local output: `generative_agents/results/checkpoints/<实验名>/simulate-*.json`
-- Local output: `generative_agents/results/compressed/<实验名>/movement.json`
-- Local output: `generative_agents/results/compressed/<实验名>/simulation.md`
+- Local output: `generative_agents_next/results/checkpoints/<实验名>/conversation.json`
+- Local output: `generative_agents_next/results/checkpoints/<实验名>/simulate-*.json`
+- Local output: `generative_agents_next/results/compressed/<实验名>/movement.json`
+- Local output: `generative_agents_next/results/compressed/<实验名>/simulation.md`
+- Local pending output: `generative_agents_next/results/evaluations/<实验名>/metrics.json`
+- Local pending output: `generative_agents_next/results/evaluations/<实验名>/report.md`

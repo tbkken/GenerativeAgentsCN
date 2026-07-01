@@ -157,6 +157,49 @@ def get_config(start_time="20240213-09:30", stride=15, agents=None):
     return config
 
 
+def infer_source_experiment(source_root):
+    norm_path = os.path.normpath(source_root)
+    base = os.path.basename(norm_path)
+    if base == "storage":
+        return os.path.basename(os.path.dirname(norm_path))
+    return base
+
+
+def apply_memory_upgrade_config(config, args):
+    governance = {
+        "relationship_update": True,
+        "summary_merge": True,
+        "summary_poignancy_max": 3,
+        "summary_threshold": 3,
+        "summary_window": 12,
+        "conflict_detection": True,
+        "conflict_window": 30,
+        "skill_from_conflict": True,
+    }
+    governance.update(config.get("memory_governance", {}))
+    if args.disable_memory_governance:
+        governance = {key: False for key in governance}
+    config["memory_governance"] = governance
+
+    if args.load_long_term_memory:
+        memory_types = [
+            t.strip()
+            for t in args.long_term_memory_types.split(",")
+            if t.strip()
+        ]
+        config["long_term_memory"] = {
+            "enabled": True,
+            "source_root": args.load_long_term_memory,
+            "label": args.long_term_memory_label or infer_source_experiment(args.load_long_term_memory),
+            "source_experiment": infer_source_experiment(args.load_long_term_memory),
+            "max_nodes": args.long_term_memory_max_nodes,
+            "min_confidence": args.long_term_memory_min_confidence,
+            "types": memory_types,
+            "extend_days": args.long_term_memory_extend_days,
+        }
+    return config
+
+
 load_dotenv(find_dotenv())
 
 parser = argparse.ArgumentParser(description="console for village")
@@ -167,6 +210,13 @@ parser.add_argument("--step", type=int, default=10, help="The simulate step")
 parser.add_argument("--stride", type=int, default=10, help="The step stride in minute")
 parser.add_argument("--agent-count", type=int, default=0, help="Limit the number of agents for a lightweight local run")
 parser.add_argument("--agents", type=str, default="", help="Comma-separated agent names to run")
+parser.add_argument("--load-long-term-memory", type=str, default="", help="Load prior associate memory from a storage root")
+parser.add_argument("--long-term-memory-label", type=str, default="", help="Human-readable label for imported memory")
+parser.add_argument("--long-term-memory-max-nodes", type=int, default=80, help="Maximum prior nodes to import for each agent")
+parser.add_argument("--long-term-memory-min-confidence", type=float, default=0.0, help="Minimum confidence for imported advanced memory")
+parser.add_argument("--long-term-memory-types", type=str, default="event,chat,thought,relationship,goal,summary,skill,conflict", help="Comma-separated memory types to import")
+parser.add_argument("--long-term-memory-extend-days", type=int, default=180, help="Extend expired imported nodes by this many days")
+parser.add_argument("--disable-memory-governance", action="store_true", help="Disable relationship, merge, conflict and skill governance")
 parser.add_argument("--verbose", type=str, default="debug", help="The verbose level")
 parser.add_argument("--log", type=str, default="", help="Name of the log file")
 args = parser.parse_args()
@@ -208,6 +258,8 @@ if __name__ == "__main__":
 
         sim_config = get_config(start_time, args.stride, selected_personas)
         start_step = 0
+
+    sim_config = apply_memory_upgrade_config(sim_config, args)
 
     static_root = "frontend/static"
 

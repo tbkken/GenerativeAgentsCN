@@ -1,13 +1,16 @@
 import os
 import json
 import argparse
+from collections import Counter
 from datetime import datetime
 
 from modules.maze import Maze
-from start import personas
 
 file_markdown = "simulation.md"
 file_movement = "movement.json"
+file_memory_metrics = "memory_metrics.json"
+
+advanced_memory_types = {"relationship", "goal", "summary", "skill", "conflict"}
 
 frames_per_step = 60  # 每个step包含的帧数
 
@@ -33,6 +36,25 @@ def get_location(address):
     location = "，".join(address[1:])
 
     return location
+
+
+def get_checkpoint_json_files(checkpoints_folder):
+    conversation_file = "conversation.json"
+    files = sorted(os.listdir(checkpoints_folder))
+    return [
+        os.path.join(checkpoints_folder, file_name)
+        for file_name in files
+        if file_name.endswith(".json") and file_name != conversation_file
+    ]
+
+
+def get_checkpoint_agents(checkpoints_folder):
+    json_files = get_checkpoint_json_files(checkpoints_folder)
+    if not json_files:
+        return []
+    with open(json_files[-1], "r", encoding="utf-8") as f:
+        config = json.load(f)
+    return list(config.get("agents", {}).keys())
 
 
 # 插入第0帧数据（Agent的初始状态）
@@ -69,11 +91,7 @@ def generate_movement(checkpoints_folder, compressed_folder, compressed_file):
         with open(os.path.join(checkpoints_folder, conversation_file), "r", encoding="utf-8") as f:
             conversation = json.load(f)
 
-    files = sorted(os.listdir(checkpoints_folder))
-    json_files = list()
-    for file_name in files:
-        if file_name.endswith(".json") and file_name != conversation_file:
-            json_files.append(os.path.join(checkpoints_folder, file_name))
+    json_files = get_checkpoint_json_files(checkpoints_folder)
 
     persona_init_pos = dict()
     all_movement = dict()
@@ -190,9 +208,122 @@ def generate_movement(checkpoints_folder, compressed_folder, compressed_file):
     return result
 
 
+def load_docstore_nodes(agent_storage_dir):
+    docstore_file = os.path.join(agent_storage_dir, "associate", "docstore.json")
+    if not os.path.exists(docstore_file):
+        return []
+    with open(docstore_file, "r", encoding="utf-8") as f:
+        docstore = json.load(f)
+    nodes = []
+    for node_id, payload in docstore.get("docstore/data", {}).items():
+        data = payload.get("__data__", {})
+        metadata = data.get("metadata", {}) or {}
+        nodes.append(
+            {
+                "node_id": node_id,
+                "text": data.get("text", ""),
+                "metadata": metadata,
+                "node_type": metadata.get("node_type", "unknown"),
+            }
+        )
+    return nodes
+
+
+def collect_memory_metrics(checkpoints_folder):
+    storage_folder = os.path.join(checkpoints_folder, "storage")
+    result = {
+        "checkpoint": checkpoints_folder,
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "agents": {},
+        "totals": {},
+    }
+    totals = Counter()
+    if not os.path.isdir(storage_folder):
+        result["totals"] = dict(totals)
+        return result
+
+    for agent_name in sorted(os.listdir(storage_folder)):
+        agent_storage_dir = os.path.join(storage_folder, agent_name)
+        if not os.path.isdir(agent_storage_dir):
+            continue
+        nodes = load_docstore_nodes(agent_storage_dir)
+        type_counts = Counter(node["node_type"] for node in nodes)
+        advanced_nodes = [
+            node for node in nodes if node["node_type"] in advanced_memory_types
+        ]
+        source_traced = [
+            node
+            for node in advanced_nodes
+            if node["metadata"].get("source_nodes")
+            or node["metadata"].get("source_node_id")
+        ]
+        relationships = [
+            node for node in nodes if node["node_type"] == "relationship"
+        ]
+        relationship_targets = Counter(
+            node["metadata"].get("target", "unknown") for node in relationships
+        )
+        imported = [
+            node for node in nodes if node["metadata"].get("loaded_from")
+        ]
+        agent_metrics = {
+            "total_nodes": len(nodes),
+            "type_counts": dict(type_counts),
+            "advanced_nodes": len(advanced_nodes),
+            "source_traced_advanced_nodes": len(source_traced),
+            "source_trace_rate": (
+                round(len(source_traced) / len(advanced_nodes), 4)
+                if advanced_nodes
+                else 0
+            ),
+            "relationship_targets": dict(relationship_targets),
+            "conflict_nodes": type_counts.get("conflict", 0),
+            "summary_nodes": type_counts.get("summary", 0),
+            "skill_nodes": type_counts.get("skill", 0),
+            "goal_nodes": type_counts.get("goal", 0),
+            "imported_nodes": len(imported),
+            "loaded_from": sorted(
+                {
+                    node["metadata"].get("loaded_from")
+                    for node in imported
+                    if node["metadata"].get("loaded_from")
+                }
+            ),
+        }
+        result["agents"][agent_name] = agent_metrics
+        totals["total_nodes"] += agent_metrics["total_nodes"]
+        totals["advanced_nodes"] += agent_metrics["advanced_nodes"]
+        totals["source_traced_advanced_nodes"] += agent_metrics["source_traced_advanced_nodes"]
+        totals["relationship_nodes"] += type_counts.get("relationship", 0)
+        totals["goal_nodes"] += type_counts.get("goal", 0)
+        totals["summary_nodes"] += type_counts.get("summary", 0)
+        totals["skill_nodes"] += type_counts.get("skill", 0)
+        totals["conflict_nodes"] += type_counts.get("conflict", 0)
+        totals["imported_nodes"] += agent_metrics["imported_nodes"]
+
+    totals = dict(totals)
+    if totals.get("advanced_nodes"):
+        totals["source_trace_rate"] = round(
+            totals["source_traced_advanced_nodes"] / totals["advanced_nodes"],
+            4,
+        )
+    else:
+        totals["source_trace_rate"] = 0
+    result["totals"] = totals
+    return result
+
+
+def generate_memory_metrics(checkpoints_folder, compressed_folder, compressed_file):
+    metrics = collect_memory_metrics(checkpoints_folder)
+    with open(os.path.join(compressed_folder, compressed_file), "w", encoding="utf-8") as f:
+        f.write(json.dumps(metrics, indent=2, ensure_ascii=False))
+    return metrics
+
+
 # 生成Markdown文档
 def generate_report(checkpoints_folder, compressed_folder, compressed_file):
     last_state = dict()
+    personas = get_checkpoint_agents(checkpoints_folder)
 
     conversation_file = "conversation.json"
     conversation = {}
@@ -288,5 +419,6 @@ if __name__ == "__main__":
 
     generate_report(checkpoints_folder, compressed_folder, file_markdown)
     generate_movement(checkpoints_folder, compressed_folder, file_movement)
+    generate_memory_metrics(checkpoints_folder, compressed_folder, file_memory_metrics)
 
     print("Compression completed.")

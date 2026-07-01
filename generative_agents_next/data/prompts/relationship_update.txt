@@ -1,0 +1,30 @@
+$base_desc
+
+现在需要更新 $agent 对 $another 的长期关系记忆。
+
+当前关系状态：
+$current_relationship
+
+最近一次对话：
+$recent_conversation
+
+相关历史记忆：
+$related_memories
+
+可引用的来源节点：
+$source_nodes
+
+请只根据最近对话和相关历史记忆判断关系变化，不要凭空补充事件。
+普通寒暄只能带来很小变化；明确承诺、帮助、拒绝、冲突、道歉或信任表达才可以改变好感与信任。
+
+请输出 JSON，字段放在 res 中：
+{
+  "res": {
+    "affinity_delta": -2 到 2 的整数,
+    "trust_delta": -2 到 2 的整数,
+    "familiarity_delta": 0 到 3 的整数,
+    "summary_update": "一句话说明 $agent 对 $another 的关系变化",
+    "evidence": ["来源节点 ID"],
+    "confidence": 0 到 1 的小数
+  }
+}

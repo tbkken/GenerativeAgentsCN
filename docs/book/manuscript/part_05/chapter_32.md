@@ -2,28 +2,7 @@
 
 ## 32.1 当前记忆能保存事实，但还不能治理事实
 
-`book-party-extended` 运行到 `20240214-17:00` 时，伊莎贝拉正在霍布斯咖啡馆迎接客人。这个断点适合作为记忆系统的体检现场：它证明当前项目已经能把行动、位置、对话和反思保存下来，也暴露出这些记忆还缺少治理字段和裁决机制。断点文件 `generative_agents/results/checkpoints/book-party-extended/simulate-20240214-1700.json` 里，她的记忆不是一个抽象概念，而是可数的本地状态：
-
-| 抽样字段 | 真实值 | 证据意义 |
-| --- | --- | --- |
-| 时间 time | `20240214-17:00` | 记忆必须能回到具体仿真时间 simulation time。 |
-| 当前行动 action | 在门口热情迎接到来的顾客，引导他们入座 | 记忆会影响角色下一步行动，而不是只用于问答。 |
-| 位置 address | `the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位` | 记忆和地图 Maze、移动 movement、对话 conversation 必须能对齐。 |
-| 记忆类型 memory types | `event, thought, chat` | 当前项目只有三类关联记忆 Associate 节点。 |
-| 事件 event 数量 | `125` | 事件很多，长期运行会带来重复和检索噪声。 |
-| 想法 thought 数量 | `18` | 反思已经写回记忆，但证据字段仍不完整。 |
-| 聊天 chat 数量 | `9` | 对话能形成记忆，但关系 relationship 还不是稳定对象。 |
-| 重要性累计 status.poignancy | `103` | 反思触发依赖重要性阈值，不是每条记忆都会立刻进入高层总结。 |
-
-同一实验的强证据在 `conversation.json`。例如 `20240214-11:30`，伊莎贝拉明确邀请玛丽亚参加 17:00 的情人节派对：
-
-| 角色 | 对话原文片段 |
-| --- | --- |
-| 伊莎贝拉 | 玛丽亚，今天的三明治看起来很美味呢！下午五点的情人节派对你一定要来哦，我已经准备好了一些特别的安排。 |
-| 玛丽亚 | 哇，情人节派对？听起来太棒了！我五点刚好有休息时间，肯定会去参加的！ |
-| 伊莎贝拉 | 我准备了情人节主题的特调饮品，还有新鲜出炉的爱心点心……到时候大家一定会喜欢的！ |
-
-这个现场先给出一个判断：当前项目不是“没有记忆”。它已经能保存事件、对话和反思，也能在 checkpoint 与 `conversation.json` 里留下证据。真正的缺口是记忆治理 memory governance：系统保存了“下午五点邀请玛丽亚”，但没有把“承诺”“关系变化”“冲突裁决”“下游用途”变成可稳定检索和验证的对象。
+当前项目不是“没有记忆”。它已经能保存事件、对话和反思，也能在 checkpoint 与 `conversation.json` 里留下证据。真正的缺口是记忆治理 memory governance：系统保存了“下午五点邀请玛丽亚”，但没有把“承诺”“关系变化”“冲突裁决”“下游用途”变成可稳定检索和验证的对象。
 
 | 追问问题 | 当前已有证据 | 当前缺口 | 对应升级方向 |
 | --- | --- | --- | --- |
@@ -33,6 +12,22 @@
 | 这条记忆以后服务计划、对话还是评价？ | 当前只有 `event/thought/chat` 三类节点。 | 记忆缺少下游用途 downstream use，检索时难以按任务选择。 | 场景化检索 contextual retrieval |
 
 因此，本章的升级目标不是“多存一些记忆”，而是把重要记忆变成可追溯、可分类、可裁决、可复用的长期记忆 long-term memory。每条关键记忆至少要能说明来源 source、类型 type、可信度 confidence 和下游用途 downstream use。
+
+### 论文依据与工程落点
+
+下面的论文依据只引用能落到本项目代码和实验的结论。`source_nodes`、`confidence`、`resolution_status` 这类字段不是论文原封不动给出的标准字段，而是把论文中的长期记忆、关系结构、动态检索和可验证评价要求落到 `generative_agents_next` 时新增的工程字段。
+
+| 升级方向 | 论文名称 | 论文原文要点 | 本项目结论 |
+| --- | --- | --- | --- |
+| 记忆流基线 memory stream | Generative Agents: Interactive Simulacra of Human Behavior | 论文把智能体架构概括为保存经历、生成 `higher-level reflections`，并动态检索来计划行为。 | 当前 `event/chat/thought` 是基线，不应直接推翻；升级应在 `Associate` 上增加治理类型，而不是重写整套仿真循环。 |
+| 扩展记忆类型 memory types | MemGPT: Towards LLMs as Operating Systems | 论文提出 `virtual context management`，并让系统管理 `different memory tiers`。 | `Associate` 不应只有三类自然语言节点；工作记忆、长期记忆、摘要、技能和冲突需要分层或分类型保存。 |
+| 记忆合并与摘要 merge / summary | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 论文强调从对话中动态 `extracting, consolidating, and retrieving` 关键信息。 | 日常重复事件不应全部平铺进检索结果；低价值重复事件要合并为 `summary`，同时保留 `source_nodes`。 |
+| 记忆保留与遗忘 retention / forgetting | MemoryBank: Enhancing Large Language Models with Long-Term Memory | 论文强调 `summon relevant memories`、`continuous memory updates`，并允许系统 `forget and reinforce memory`。 | 本章的摘要合并还只是第一步；后续应继续增加过期、降权、强化和删除策略，避免旧记忆长期污染。 |
+| 结构化关系记忆 relationship memory | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 论文进一步提出图结构记忆，用来捕捉对话元素之间的复杂关系。 | 伊莎贝拉和玛丽亚的关系不能只靠一次 `summarize_relation` 临时生成；需要写入 `relationship` 节点，记录对象、强度、证据和置信度。 |
+| 来源与结构化属性 source / metadata | A-MEM: Agentic Memory for LLM Agents | 论文为新记忆生成包含 `contextual descriptions, keywords, and tags` 的结构化笔记，并建立动态链接。 | 高级记忆必须带 metadata：核心字段是 `source_nodes/source_type/generated_by/downstream_use`，发生冲突时再写入 `conflict_with`。 |
+| 冲突检测 conflict detection | Evaluating Very Long-Term Conversational Memory of LLM Agents | LoCoMo 构造最多 35 个会话的长期对话，并指出模型理解 `long-range temporal and causal dynamics` 仍然困难。 | 派对时间、承诺、位置和关系变化必须有 `conflict` 节点。冲突字段是本项目的工程扩展，用来把时间/因果错误显式暴露出来。 |
+| 跨实验长期记忆 long-term memory | MemGPT: Towards LLMs as Operating Systems；Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 两篇论文都把多轮、多会话场景作为长期记忆的核心压力测试。 | `--resume` 不是长期记忆迁移；跨实验加载必须显式传参，并记录 `loaded_from/source_experiment/source_node_id`。 |
+| 场景化检索 contextual retrieval | Generative Agents: Interactive Simulacra of Human Behavior；Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 前者用动态检索支撑计划和行为，后者比较不同问题类型下的长期记忆效果。 | 对话、规划、反思、反应和失败复盘不应共用一个无差别检索入口；需要 `retrieve_for_dialogue/planning/reflection/reaction/recovery`。 |
 
 ```mermaid
 flowchart LR
@@ -50,29 +45,11 @@ flowchart LR
     RET --> ACT["计划 planning / 对话 dialogue / 反思 reflection"]
 ```
 
-*图 32-1：从记忆流 Memory Stream 到记忆治理层 memory governance 的演进。当前项目已经有 `event/chat/thought`，图中的 `relationship/goal/summary/skill` 是建议新增的治理类型，不是现有源码已经完成的字段。*
+*图 32-1：从记忆流 Memory Stream 到记忆治理层 memory governance 的演进。原始 `generative_agents` 已经有 `event/chat/thought`；升级目录 `generative_agents_next` 在此基础上增加 `relationship/goal/summary/skill/conflict`，并把来源 source、置信度 confidence 和下游用途 downstream use 写入 metadata。*
 
 ![图 32-2：长期记忆治理的真实存储剖面](../../assets/chapter_32/ch32_memory_governance_board_v2.png)
 
 *图 32-2：长期记忆治理的真实存储剖面。画面把原始证据流、关联记忆 associate、向量嵌入 embedding、检索 retrieval、保留策略 retention 和审计标记放进同一个记忆库现场。当前项目已经有 `storage/<角色>/associate`、`docstore.json` 与向量索引；relationship、goal、summary、skill 等治理对象则是后续升级要新增的记忆层。*
-
-## 32.2 高频术语锚点表
-
-| 术语 | 项目读法 | 当前项目位置 | 行为影响 |
-| --- | --- | --- | --- |
-| 关联记忆 Associate | 每个角色的主观记忆容器和检索入口 | `generative_agents/modules/memory/associate.py` | 保存 `event/thought/chat` 节点，给计划、对话和反思提供上下文。 |
-| 概念节点 Concept | 记忆节点的运行时包装对象 | `Concept.from_node()`、`Concept.from_event()` | 把 LlamaIndex 节点还原为带时间、类型、事件和重要性的对象。 |
-| 事件 Event | 行动、观察或对象状态的结构化描述 | `generative_agents/modules/memory/event.py` | 提供 `subject/predicate/object/address/describe`，用于写入记忆和更新地图。 |
-| LlamaIndex 索引框架 | 本项目使用的向量索引和文档存储封装 | `generative_agents/modules/storage/index.py` | 把自然语言记忆写成 `TextNode`，并保存正文、metadata 与向量检索结果。 |
-| 向量索引 vector index | 让自然语言记忆可检索的索引 | `generative_agents/modules/storage/index.py` | 写入 `TextNode`，通过相似度召回相关记忆。 |
-| 文档存储 docstore | LlamaIndex 保存节点正文和 metadata 的文件 | `storage/<角色>/associate/docstore.json` | 排查“记忆到底写了什么”的第一证据。 |
-| 访问时间 access | 最近被检索或访问的时间 | `Concept.access`、node metadata | 参与新近度 recency 排序。 |
-| 情感强度 poignancy | 事件或对话的重要性评分 | `poignancy_event.txt`、`poignancy_chat.txt` | 参与重要性 importance 排序，并推动反思阈值。 |
-| 保留数量 retention | 普通检索返回的记忆数量上限 | `data/config.json` 的 `associate.retention` | 控制 `retrieve_events()`、`retrieve_thoughts()`、`retrieve_chats()` 的可见范围。 |
-| 断点 checkpoint | 每一步仿真状态快照 | `results/checkpoints/<name>/simulate-*.json` | resume、排错和实验复盘的底层证据。 |
-| 压缩结果 compressed result | 供阅读和回放的结果包 | `results/compressed/<name>/simulation.md`、`movement.json` | 适合书稿引用，但不替代 checkpoint。 |
-
-这些术语共同指向一个边界：当前系统已经能把事件、对话和反思写入可检索的记忆流 memory stream，但长期运行需要的不只是“写进去”。关系要稳定，来源要可追，冲突要能裁决，摘要要能回到原始证据，跨实验迁移要能说明加载了什么旧记忆。当前实现的瓶颈如下。
 
 ## 32.3 当前实现的长期瓶颈
 
@@ -101,11 +78,11 @@ flowchart LR
 | `skill` | 可复用经验 | 成功或失败复盘 | 策略片段 | 失败恢复和计划改进 |
 | `conflict` | 冲突事实记录 | 新旧记忆不一致 | 待确认或已裁决冲突 | 防止错误记忆固化 |
 
-建议先改 `generative_agents/modules/memory/associate.py`。这一步只扩展类型集合，不改变旧的 `event/chat/thought` 语义。
+实际改动落在 `generative_agents_next/modules/memory/associate.py`。这一步只扩展类型集合，不改变旧的 `event/chat/thought` 语义。
 
 ```diff
---- a/generative_agents/modules/memory/associate.py
-+++ b/generative_agents/modules/memory/associate.py
+--- a/generative_agents_next/modules/memory/associate.py
++++ b/generative_agents_next/modules/memory/associate.py
 @@
 -class Associate:
 +DEFAULT_MEMORY_TYPES = [
@@ -166,11 +143,11 @@ flowchart LR
 | `summary` | 一句话关系摘要 | 关系更新 prompt | 是否与证据一致。 |
 | `evidence` | 支撑节点 | `chat/event/thought` 节点 ID | `docstore.json` 是否能找到对应节点。 |
 
-建议新增提示词 prompt 放在机制执行处，而不是附录：
+本轮新增的关系更新提示词 prompt 放在机制执行处，而不是附录：
 
 | 项目 | 建议值 |
 | --- | --- |
-| 提示词 prompt 路径 | `generative_agents/data/prompts/relationship_update.txt` |
+| 提示词 prompt 路径 | `generative_agents_next/data/prompts/relationship_update.txt` |
 | 调用时机 | 一次关键对话结束后，`summarize_chats` 之后、`schedule_chat()` 写入关系前。 |
 | 变量 variables | `current_relationship`、`recent_conversation`、`related_memories`、`agent`、`another`。 |
 | 输出结构 schema | `affinity_delta: int`、`trust_delta: int`、`familiarity_delta: int`、`summary_update: str`、`evidence: list[str]`、`confidence: float`。 |
@@ -201,7 +178,7 @@ flowchart LR
 | 失败模式 failure mode | 把承诺、拒绝、地点、时间压缩掉，导致后续行动丢失关键约束。 |
 | 验证 validation | 抽样 summary，检查是否能追回所有 source nodes；检查承诺类事件是否未被错误合并。 |
 
-建议新增 `memory_merge.txt`，变量包括 `new_memory`、`similar_memories`、`merge_policy`，输出结构 schema 包括 `should_merge: bool`、`summary: str`、`source_nodes: list[str]`、`drop_after: str 或 null`、`reason: str`。
+本轮已经新增 `generative_agents_next/data/prompts/memory_merge.txt`，变量包括 `new_memory`、`similar_memories`、`merge_policy`，输出结构 schema 包括 `should_merge: bool`、`summary: str`、`source_nodes: list[str]`、`drop_after: str 或 null`、`reason: str`。同时要分清当前实验边界：`book-memory-governance-full` 中的 `summary` 节点由 `Associate.maybe_create_summary()` 的确定性规则生成，`memory_merge.txt` 和 `Scratch.prompt_memory_merge()` 是后续把合并判断交给 LLM 时的扩展入口。
 
 ## 32.7 升级方向四：冲突检测 conflict detection
 
@@ -224,7 +201,7 @@ flowchart LR
 | 失败模式 failure mode | 过度检测会把自然变化误判成矛盾；检测不足会让错误记忆长期污染。 |
 | 验证 validation | 人工抽样冲突节点，回到 `conversation.json` 和 `movement.json` 判定是否真实冲突。 |
 
-建议新增 `memory_conflict_check.txt`，输出结构 schema 至少包含 `has_conflict: bool`、`conflict_type: str`、`summary: str`、`evidence: list[str]`、`need_clarification: bool`。
+本轮已经新增 `generative_agents_next/data/prompts/memory_conflict_check.txt`，输出结构 schema 至少包含 `has_conflict: bool`、`conflict_type: str`、`summary: str`、`evidence: list[str]`、`need_clarification: bool`。当前实验中的 `conflict` 节点由 `Associate.maybe_detect_conflict()` 的时间抽取规则生成；这个 prompt 模板暂时是后续替换规则检测的接口，而不是本轮指标里的直接调用来源。
 
 ## 32.8 升级方向五：跨实验长期记忆 long-term memory
 
@@ -233,9 +210,9 @@ flowchart LR
 | 设计项 | 建议 |
 | --- | --- |
 | 默认状态 | 关闭，不自动加载历史实验记忆。 |
-| 建议路径 | `generative_agents/results/long_term_memory/<角色名>/` 或 `generative_agents/data/long_term_memory/<角色名>/`。 |
-| 启用方式 | 增加显式命令行参数，例如 `--load-long-term-memory baseline-1`。 |
-| 当前边界 | 现有 `start.py` 只解析 `--name`、`--start`、`--resume`、`--step`、`--stride`、`--agent-count`、`--agents`、`--verbose`、`--log`，尚不支持该参数。 |
+| 建议路径 | 直接使用旧实验存储根目录，例如 `generative_agents_next/results/checkpoints/<实验名>/storage`；也可以后续整理到 `generative_agents_next/data/long_term_memory/<角色名>/`。 |
+| 启用方式 | `generative_agents_next/start.py` 已增加显式命令行参数，例如 `--load-long-term-memory results/checkpoints/book-memory-governance-full/storage`。 |
+| 当前边界 | 参数已经实现，但本轮 `book-memory-governance-full` 没有启用导入，所以实验结果中的 `imported_nodes=0`。 |
 | 必须记录 | 来源实验名、角色名、加载节点数、加载时间、配置版本。 |
 | 报告要求 | `simulation.md` 和指标报告必须说明本轮加载了哪一轮长期记忆。 |
 
@@ -251,7 +228,7 @@ flowchart LR
 
 ## 32.9 升级方向六：来源 source 与置信度 confidence
 
-高级记忆必须知道自己从哪里来。当前第 18 章证据文件已经指出一个边界：`Agent.reflect()` 会把 evidence 传入 `_add_concept()`，但 `Associate.add_node()` 没有把 `filling/evidence` 持久化到 metadata。升级时应补上来源字段。
+高级记忆必须知道自己从哪里来。当前第 18 章证据文件已经指出一个边界：原始 `Agent.reflect()` 会把 evidence 传入 `_add_concept()`，但原始 `Associate.add_node()` 没有把 `filling/evidence` 持久化到 metadata。`generative_agents_next/modules/memory/associate.py` 已通过 `_normalize_filling()` 补上来源字段。
 
 ```json
 {
@@ -278,7 +255,7 @@ flowchart LR
 
 ## 32.10 升级方向七：场景化检索 contextual retrieval
 
-不同任务需要不同记忆。当前 `retrieve_focus()` 主要面向事件 event 和想法 thought，不能覆盖所有场景。
+不同任务需要不同记忆。原始 `retrieve_focus()` 主要面向事件 event 和想法 thought，不能覆盖所有场景。`generative_agents_next/modules/memory/associate.py` 已把 `retrieve_focus()` 扩展为可传入 `node_types`，并增加下列场景化检索入口。
 
 | 场景 | 应检索的记忆 | 建议接口 | 下游 prompt |
 | --- | --- | --- | --- |
@@ -313,29 +290,86 @@ flowchart LR
 
 这些指标后续应进入第 37 章的统一 `metrics.json` 和 `report.md`。
 
-## 32.12 最小可行升级方案
+## 32.12 实验设计与执行命令
 
-记忆系统最小可行升级不应一次性实现 MemGPT 或 Mem0 的全部思想。先做关系记忆 relationship memory 更稳，因为它直接影响小镇对话和社会行为。
+第 32 章的升级实验使用复制出来的 `generative_agents_next`，不再修改原始 `generative_agents`。实验目标不是证明故事情节成功，而是检查七个记忆治理方向是否进入 checkpoint、docstore 和压缩指标。
 
-| 步骤 | 输入 input | 处理 process | 输出 output | 失败模式 | 验证方式 |
-| --- | --- | --- | --- | --- | --- |
-| 1. 增加 `relationship` 类型 | 旧 `Associate.memory`、新类型常量 | 用 `DEFAULT_MEMORY_TYPES` 初始化并兼容旧 checkpoint | checkpoint 中出现空 `relationship` 列表 | 旧实验 resume 报错 | 用 `book-party-extended` resume 一步。 |
-| 2. 新增关系更新 prompt | 当前关系、最近对话、相关记忆 | `relationship_update.txt` 输出 delta、summary、evidence、confidence | `relationship` 节点 | 普通寒暄导致关系大幅跳变 | 抽样汤姆-山姆、玛丽亚-克劳斯、伊莎贝拉-玛丽亚关系。 |
-| 3. 对话前显式检索关系 | 对话对象 target、当前情境 context | `retrieve_for_dialogue()` 先取 relationship，再取 chat/event | `generate_chat.txt` 的 memory 更有结构 | 关系记忆压过当前情境 | 对比升级前后对话自然性和一致性。 |
-| 4. 报告中展示证据 | `relationship` 节点和 `source_nodes` | 压缩报告或指标脚本列出关系变化 | `metrics.json` / `report.md` 增加关系证据卡 | 只有分数没有原文证据 | 抽样检查每条关系变化能回到 `conversation.json`。 |
+| 验证项 | 观察对象 | 成功标准 | 结果文件 |
+| --- | --- | --- | --- |
+| 扩展记忆类型 | 最终 `simulate-*.json` 中的 `associate.memory` | 每个角色都有 `event/chat/thought/relationship/goal/summary/skill/conflict` 键，未触发的类型为空列表。 | `generative_agents_next/results/checkpoints/book-memory-governance-full/simulate-20240214-1350.json` |
+| 结构化关系记忆 | `relationship` 节点和 `conversation.json` | 发生对话的双方写入关系节点，并带 `target/affinity/trust/familiarity/source_nodes/confidence`。 | `storage/<角色>/associate/docstore.json` |
+| 摘要合并 | `summary` 节点 | 低重要性重复事件生成 `summary`，并保留 `source_nodes`。 | `memory_metrics.json`、`docstore.json` |
+| 冲突检测 | `conflict` 节点 | 互斥事实进入 `conflict`，并记录 `resolution_status`。 | `docstore.json` |
+| 来源与置信度 | 高级记忆 metadata | 高级记忆有 `source_nodes` 或等价来源字段，能计算 `source_trace_rate`。 | `memory_metrics.json` |
+| 场景化检索 | 对话后关系更新和后续检索入口 | `relationship` 能成为对话、规划、反思的下游记忆。 | `relationship` metadata 的 `downstream_use` |
+| 跨实验长期记忆 | `imported_nodes` 和 `loaded_from` | 本轮未启用导入时应为 0；启用时必须记录来源。 | `memory_metrics.json` |
 
-```mermaid
-flowchart TD
-    Step1["增加关系记忆 relationship 类型"] --> Step2["关键对话后更新关系摘要 relationship_update"]
-    Step2 --> Step3["对话前显式检索关系 retrieve_for_dialogue"]
-    Step3 --> Step4["写入来源 source 与置信度 confidence"]
-    Step4 --> Eval["评价关系一致性 relationship_consistency_score"]
-    Eval --> Decide["再决定是否扩展目标 goal / 摘要 summary / 技能 skill"]
+本次运行命令如下。`--step 36 --stride 10` 表示从 2024-02-14 08:00 开始，每 10 分钟保存一次，共保存 36 个 checkpoint，最后停在 13:50。
+
+```powershell
+cd generative_agents_next
+python start.py --name book-memory-governance-full --start "20240214-08:00" --step 36 --stride 10 --agents "伊莎贝拉,玛丽亚,山姆,汤姆" --verbose info --log book-memory-governance-full.log
+python compress.py --name book-memory-governance-full
 ```
 
-*图 32-3：最小可行记忆升级路径。先做关系记忆，是因为它能用现有 `conversation.json` 和对话 prompt 直接验证。*
+离线压缩不会调用 LLM，只把 checkpoint 整理成三个可读文件。
 
-## 32.13 风险与边界
+| 输出 | 作用 |
+| --- | --- |
+| `results/checkpoints/book-memory-governance-full/conversation.json` | 原始对话证据，适合验证关系变化。 |
+| `results/checkpoints/book-memory-governance-full/storage/<角色>/associate/docstore.json` | 每个角色的真实记忆节点和 metadata。 |
+| `results/compressed/book-memory-governance-full/simulation.md` | 供阅读的事件与对话报告。 |
+| `results/compressed/book-memory-governance-full/movement.json` | 回放所需的位置、行动和对话帧。 |
+| `results/compressed/book-memory-governance-full/memory_metrics.json` | 本章实验的记忆治理指标。 |
+
+## 32.13 实验结果分析
+
+本次实验实际生成 36 个 checkpoint，时间范围是 `20240214-08:00` 到 `20240214-13:50`。四个角色是伊莎贝拉、玛丽亚、山姆和汤姆；`conversation.json` 中出现 4 段对话，共 15 轮发言，全部发生在伊莎贝拉和玛丽亚之间。
+
+| 指标 | 实际结果 | 读法 |
+| --- | --- | --- |
+| checkpoint 数量 | 36 | 实验按 10 分钟步长稳定写入，没有中途断档。 |
+| 总记忆节点 total_nodes | 390 | 四个角色的 docstore 节点总数。 |
+| 高级记忆 advanced_nodes | 173 | 包含 `relationship/goal/summary/skill/conflict`。 |
+| 来源追踪率 source_trace_rate | 173 / 173 = 1.0 | 高级记忆全部带来源字段；这是本章升级最明确的成功点。 |
+| 关系记忆 relationship_nodes | 8 | 伊莎贝拉和玛丽亚各 4 条，和 4 段对话一一对应。 |
+| 目标记忆 goal_nodes | 4 | 每个角色都把日程生成结果沉淀为阶段目标。 |
+| 摘要记忆 summary_nodes | 159 | 重复日常事件被识别并写成摘要。 |
+| 冲突记忆 conflict_nodes | 1 | 系统发现 1 条时间冲突，但需要人工判定是否误报。 |
+| 技能记忆 skill_nodes | 1 | 冲突节点进一步生成了“计划或对话前核对冲突事实”的经验。 |
+| 跨实验导入 imported_nodes | 0 | 本轮没有使用 `--load-long-term-memory`，所以不能证明跨实验迁移。 |
+
+各角色最终记忆分布如下，数据来自 `memory_metrics.json`。
+
+| 角色 | 总节点 | event | chat | thought | relationship | goal | summary | conflict | skill |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 伊莎贝拉 | 131 | 65 | 4 | 1 | 4 | 1 | 54 | 1 | 1 |
+| 玛丽亚 | 89 | 44 | 4 | 1 | 4 | 1 | 35 | 0 | 0 |
+| 山姆 | 89 | 50 | 0 | 1 | 0 | 1 | 37 | 0 | 0 |
+| 汤姆 | 81 | 46 | 0 | 1 | 0 | 1 | 33 | 0 | 0 |
+
+这张表说明两件事。第一，扩展记忆类型已经进入持久化结构，哪怕山姆和汤姆没有对话，也保留了空的高级记忆槽位。第二，关系记忆只在真实对话发生后生成，没有给未互动角色编造关系。
+
+关系记忆最清楚的证据来自伊莎贝拉和玛丽亚。
+
+| 时间 | 对话证据 | 写入结果 |
+| --- | --- | --- |
+| `20240214-11:10` | 伊莎贝拉邀请玛丽亚参加下午 5 点到 7 点的情人节派对，玛丽亚说直播后会来。 | 伊莎贝拉写入 `node_59`：`affinity=1`、`trust=1`、`familiarity=1`，来源是聊天节点 `node_58`。 |
+| `20240214-12:20` | 玛丽亚点鸡肉牛油果三明治和玫瑰拿铁，继续询问情人节装饰。 | 伊莎贝拉写入 `node_89`：`affinity=2`、`trust=1`、`familiarity=2`。 |
+| `20240214-12:40` | 玛丽亚简单寒暄，伊莎贝拉说明自己在确认派对宣传。 | 伊莎贝拉写入 `node_96`：好感和信任不变，熟悉度升到 3。 |
+| `20240214-13:00` | 伊莎贝拉再次提醒派对五点开始，玛丽亚说直播完六点左右到。 | 伊莎贝拉写入 `node_110`：`affinity=3`、`trust=1`、`familiarity=4`。 |
+
+玛丽亚视角也有对应关系链：`node_17 -> node_45 -> node_55 -> node_59`。她对伊莎贝拉的 `affinity` 从 1 升到 2，`familiarity` 从 1 升到 4，`trust` 保持 0。这个结果比一次性 `summarize_relation` 更可解释，因为每次变化都能回到具体聊天节点。
+
+摘要合并也已经工作，但还不是完整的“压缩删除”。`summary_nodes=159` 说明系统能识别低价值重复事件，例如开店、整理柜台、打理花园、检查库存等，并写入带 `source_nodes` 的摘要节点。不过原始 `event` 仍然保留在 docstore 中，所以当前效果是“生成摘要索引”，还不是“减少存储体积”。后续如果要真正降低冗余，需要增加过期、降权或删除策略。
+
+冲突检测暴露了一个有价值的问题。伊莎贝拉的 `node_108` 被标记为 `conflict`，来源是 `node_0` 的日程计划和 `node_107` 的对话摘要：计划说派对 17:00-19:00，玛丽亚说直播后 18:00 左右到。严格说这不是互斥冲突，而是时间窗口内的迟到或到场偏移。这个误报说明当前冲突检测规则太敏感，下一步要区分“互斥 contradiction”和“包含/偏移 overlap”。这类失败比完全没有冲突节点更有价值，因为它把需要改的规则暴露在 `docstore.json` 里。
+
+本轮没有验证跨实验长期记忆。`memory_metrics.json` 中 `imported_nodes=0`、`loaded_from=[]`，说明 `--load-long-term-memory` 没有启用。因此本章只能说跨实验导入的命令行参数和 metadata 字段已经具备，不能说长期迁移成功。要验证这一点，需要追加一轮新实验，显式加载本轮 `storage` 作为长期记忆来源，再观察角色是否正确引用旧记忆，并在报告中写出来源实验名。
+
+结论是：第 32 章的实验已经证明“记忆治理字段能落盘、关系记忆能随对话递进、来源追踪能量化、摘要和冲突能进入指标”。尚未证明的是“摘要能真正减少存储”“冲突能准确裁决”“跨实验长期记忆能影响后续行为”。这些边界必须保留，否则结构跑通会被误解成完整长期记忆能力已经完成。
+
+## 32.14 风险与边界
 
 | 风险 | 表现 | 检查位置 | 修正方向 |
 | --- | --- | --- | --- |
@@ -348,19 +382,19 @@ flowchart TD
 
 可治理记忆 memory governance 的底线是：保存得越久，越要能解释为什么保存、从哪里来、什么时候该忘、出错后如何回滚。
 
-## 32.14 本章小结
+## 32.15 本章小结
 
-记忆升级从抽象概念落回当前项目：`Associate` 保存三类记忆，`LlamaIndex` 负责向量索引，提示词 prompt 负责评分、关系摘要、对话和反思，断点 checkpoint 负责持久化。长期记忆治理 memory governance 的核心不是把记忆存得更多，而是让记忆有类型、来源、置信度、冲突处理和场景化检索。
+记忆升级从抽象概念落回当前项目：`generative_agents_next` 扩展了 `Associate` 的记忆类型，`LlamaIndex` 继续负责向量索引，`relationship_update.txt` 负责关系更新，摘要合并和冲突检测在本轮实验中由 `Associate.maybe_create_summary()` 与 `Associate.maybe_detect_conflict()` 生成，断点 checkpoint 与 `memory_metrics.json` 负责证明结果。长期记忆治理 memory governance 的核心不是把记忆存得更多，而是让记忆有类型、来源、置信度、冲突处理和场景化检索。
 
 | 主题 | 核心结论 |
 | --- | --- |
-| 真实现场 | `book-party-extended` 证明当前项目已经有大量 `event/thought/chat`，但缺少关系、目标、摘要、技能等高级记忆对象。 |
-| 当前实现 | `Associate`、`Concept`、`Event` 和 `LlamaIndex` 组成记忆流 memory stream。 |
+| 真实现场 | `book-memory-governance-full` 生成 36 个 checkpoint、390 个记忆节点和 173 个高级记忆节点，证明升级后的记忆类型已经进入持久化结果。 |
+| 当前实现 | `Associate`、`Concept`、`Event` 和 `LlamaIndex` 组成记忆流 memory stream，`generative_agents_next` 在其上增加治理 metadata。 |
 | 提示词 prompt 链路 | `poignancy_*`、`summarize_relation`、`generate_chat`、`reflect_*` 共同影响记忆写入和使用。 |
 | 检索机制 | 当前检索叠加新近度 recency、相关性 relevance 和重要性 importance，但 `retrieve_focus()` 默认只查 `event + thought`。 |
-| 关键瓶颈 | 类型不足、证据未持久化、关系不稳定、重复记忆、冲突无裁决、跨实验边界不清。 |
-| 可落地升级 | 先扩展 memory types，再做关系记忆、来源字段、冲突检测、摘要合并和场景化检索。 |
-| 最小方案 | 从 `relationship` 记忆开始，因为它能直接用现有对话证据验证。 |
+| 关键结果 | 高级记忆来源追踪率达到 1.0；伊莎贝拉和玛丽亚形成 8 条关系记忆；摘要节点达到 159 条；冲突检测产生 1 条需要修正规则的误报。 |
+| 可落地升级 | memory types、关系记忆、来源字段、摘要合并、冲突检测和场景化检索已经进入实验目录。 |
+| 未验证能力 | 本轮 `imported_nodes=0`，跨实验长期记忆还需要单独运行 `--load-long-term-memory` 实验。 |
 | 风险边界 | 记忆越强，越要重视幻觉、偏见、隐私、可复现性和回滚能力。 |
 
 下一章讨论反思系统升级。记忆让角色保存经历，反思让角色理解经历；而 2023-2026 年的新方向进一步要求智能体 agent 能从失败中学习，并把经验 lesson 变成可复用技能 skill。
@@ -370,19 +404,36 @@ flowchart TD
 - 生成式智能体 Generative Agents: https://arxiv.org/abs/2304.03442
 - MemGPT: https://arxiv.org/abs/2310.08560
 - Mem0: https://arxiv.org/abs/2504.19413
+- MemoryBank: Enhancing Large Language Models with Long-Term Memory: https://arxiv.org/abs/2305.10250
+- A-MEM: Agentic Memory for LLM Agents: https://arxiv.org/abs/2502.12110
+- Evaluating Very Long-Term Conversational Memory of LLM Agents: https://arxiv.org/abs/2402.17753
 - Local source: `generative_agents/modules/memory/associate.py`
 - Local source: `generative_agents/modules/storage/index.py`
 - Local source: `generative_agents/modules/memory/event.py`
 - Local source: `generative_agents/modules/agent.py`
+- Local upgrade source: `generative_agents_next/modules/memory/associate.py`
+- Local upgrade source: `generative_agents_next/modules/agent.py`
+- Local upgrade source: `generative_agents_next/modules/prompt/scratch.py`
+- Local upgrade source: `generative_agents_next/modules/game.py`
+- Local upgrade source: `generative_agents_next/start.py`
+- Local upgrade source: `generative_agents_next/compress.py`
 - Local prompt: `generative_agents/data/prompts/poignancy_event.txt`
 - Local prompt: `generative_agents/data/prompts/poignancy_chat.txt`
 - Local prompt: `generative_agents/data/prompts/summarize_relation.txt`
 - Local prompt: `generative_agents/data/prompts/generate_chat.txt`
 - Local prompt: `generative_agents/data/prompts/reflect_focus.txt`
 - Local prompt: `generative_agents/data/prompts/reflect_insights.txt`
+- Local upgrade prompt: `generative_agents_next/data/prompts/relationship_update.txt`
+- Local upgrade prompt: `generative_agents_next/data/prompts/memory_merge.txt`
+- Local upgrade prompt: `generative_agents_next/data/prompts/memory_conflict_check.txt`
 - Local config: `generative_agents/data/config.json`
 - Local evidence: `generative_agents/results/checkpoints/book-party-extended/simulate-20240214-1700.json`
 - Local evidence: `generative_agents/results/checkpoints/book-party-extended/conversation.json`
 - Local evidence: `generative_agents/results/checkpoints/book-party-extended/storage/伊莎贝拉/associate/docstore.json`
+- Local experiment: `generative_agents_next/results/checkpoints/book-memory-governance-full/simulate-20240214-1350.json`
+- Local experiment: `generative_agents_next/results/checkpoints/book-memory-governance-full/conversation.json`
+- Local experiment: `generative_agents_next/results/checkpoints/book-memory-governance-full/storage/伊莎贝拉/associate/docstore.json`
+- Local metrics: `generative_agents_next/results/compressed/book-memory-governance-full/memory_metrics.json`
+- Local report: `generative_agents_next/results/compressed/book-memory-governance-full/simulation.md`
 - Local evidence: `docs/book/assets/chapter_18/ch18_memory_trace.json`
 - Local evidence: `docs/book/assets/chapter_32/ch32_memory_governance_board.png`

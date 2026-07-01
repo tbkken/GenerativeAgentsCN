@@ -450,20 +450,64 @@ $$
 
 读法：这项指标不问 lesson 写得是否漂亮，只问它有没有进入下一次相似行动。可以从日志、prompt 组装记录或报告 report 中抽样确认。
 
-## 33.16 最小可行实验
+## 33.16 实验设计与执行命令
 
-最小实验仍从派对邀请开始，因为它已有可复核证据。
+第 33 章不直接宣称“角色已经学会反思”。本轮落地的是证据侧闭环：从对话承诺 commitment 和移动到场 attendance 中抽取反思候选 reflection candidates，把“答应了但没到场”这类失败样例写成可复查 JSON。角色内部的 `lesson -> skill -> 下一次行动` 链路，需要等这组候选样例跑出来后再接入。
 
-| 阶段 | 输入 input | 处理 process | 输出 output | 验证路径 |
-| --- | --- | --- | --- | --- |
-| 基线 baseline | `book-party-extended` 的当前运行。 | 读取伊莎贝拉邀请、承诺和 17:00 movement。 | 标注 success/partial/failed。 | `conversation.json`、`movement.json`、`simulation.md` |
-| 升级 upgrade | 新增 outcome、self-evaluation、lesson。 | 对失败或 partial 邀请生成 lesson。 | `lesson` 或 `skill` 节点。 | 断点 checkpoint 中可查。 |
-| 再运行 rerun | 相同角色和派对目标。 | 邀请前检索 relevant skill。 | 新对话、新行动。 | 统计邀请覆盖、接受、到场。 |
-| 对比 compare | 基线 baseline 与升级 upgrade。 | 用指标脚本或人工报告对齐证据。 | 结论报告 report。 | 可复用第 29 章指标 metrics / 报告 report 思路。 |
+相对路径：`generative_agents_next/analyze_experiment.py`
 
-第 29 章的 `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py` 已经演示了如何把 checkpoint、movement、conversation 和 memory 转成指标 metrics。反思升级可以复用它的证据口径：`goal_related_action_rate` 看行动是否围绕目标，`commitment_metrics` 看承诺是否到场，`conversation_metrics` 看对话是否真的承载目标信息。
+```diff
++def build_reflection_candidates(event_board, mentions):
++    for speaker in event_board["accepted"]:
++        if speaker not in event_board["arrived"]:
++            candidates.append({
++                "agent": speaker,
++                "outcome": "failed",
++                "failure_type": "commitment_not_verified_by_movement",
++                "evidence": [...]
++            })
++
++outputs = {
++    "reflection_candidates": "results/evaluations/<实验名>/reflection_candidates.json"
++}
+```
 
-## 33.17 风险与边界
+| 实验项 | 配置 |
+| --- | --- |
+| 实验名 | `book-reflection-party` |
+| 工作目录 | `generative_agents_next` |
+| 角色 agents | 伊莎贝拉、玛丽亚、山姆、汤姆 |
+| 事件 event | `valentine_party` |
+| 目标事实 | 情人节派对、五点、17:00、霍布斯咖啡馆 |
+| 到场窗口 | `20240214-17:00` 到 `20240214-19:00` |
+| 新增分析产物 | `reflection_candidates.json`、`metrics.json`、`report.md` |
+
+执行命令：
+
+```bash
+cd generative_agents_next
+python start.py --name book-reflection-party --start "20240214-08:00" --step 72 --stride 10 --agents "伊莎贝拉,玛丽亚,山姆,汤姆" --verbose info --log book-reflection-party.log
+python compress.py --name book-reflection-party
+python analyze_experiment.py --name book-reflection-party --event valentine_party --keywords "情人节,派对,五点,5点,17:00,霍布斯咖啡馆" --target-place "霍布斯咖啡馆" --window-start "20240214-17:00" --window-end "20240214-19:00"
+```
+
+这三条命令的链路很明确：`start.py` 生成 checkpoint 和 `conversation.json`；`compress.py` 生成 `movement.json` 和 `simulation.md`；`analyze_experiment.py` 把承诺、拒绝、到场和反思候选写入 `results/evaluations/book-reflection-party/`。其中 `reflection_candidates.json` 是第 33 章的关键产物，不进入角色 prompt，只作为下一步反思学习改造的训练样例和人工核验入口。
+
+## 33.17 实验结果分析（待填写）
+
+实验完成后，把结果按下面的口径写回本节。不要只写“派对成功/失败”，要拆成证据层级。
+
+| 分析项 | 读取文件 | 填写口径 |
+| --- | --- | --- |
+| 传播事实 | `results/evaluations/book-reflection-party/metrics.json` | `mention_count`、`known_agents`，说明谁在对话中知道派对。 |
+| 承诺与拒绝 | `event_board.json` | 分别列出 `accepted` 和 `rejected`，不要把礼貌性回应算成承诺。 |
+| 到场证据 | `movement.json`、`metrics.json` | 只认 17:00-19:00 时间窗内的霍布斯咖啡馆到场。 |
+| 反思候选 | `reflection_candidates.json` | 写清 agent、failure_type、证据原话和是否适合生成 lesson。 |
+| 后续接入 | 人工判断 | 哪些 lesson 可以写入 `skill`，哪些只是一次性失败，不应固化。 |
+
+当前预期是：如果某个角色明确承诺参加，却没有在目标时间窗出现在霍布斯咖啡馆，报告应生成 `commitment_not_verified_by_movement`。如果没有承诺，只是知道派对，不能生成反思候选。
+
+## 33.18 风险与边界
 
 | 风险 | 表现 | 原因 | 检查位置 | 修正方向 |
 | --- | --- | --- | --- | --- |
@@ -473,7 +517,7 @@ $$
 | 上帝视角 omniscience | 角色知道不该知道的位置或承诺。 | 检索了实验分析工具数据。 | prompt 输入。 | 区分角色可知证据和评估证据。 |
 | 成功粉饰 success washing | 只看承诺，不看到场。 | conversation 强、movement 弱。 | report 结论表。 | 证据分层：知道、承诺、到场、事后摘要分开写。 |
 
-## 33.18 本章小结
+## 33.19 本章小结
 
 反思升级的核心不是“让角色更会总结”，而是让行动结果 outcome 进入可复用经验 lesson。当前项目已经有 `Agent.reflect()`、`reflect_focus`、`reflect_insights`、聊天后反思提示词 prompt 和 `thought` 写回机制；真正的缺口在于 outcome、证据持久化、lesson/skill 类型、后续使用和评价闭环。
 
@@ -485,7 +529,7 @@ $$
 | 前沿锚定 | 反思式学习 Reflexion 对应失败后语言经验，Voyager 对应可复用技能记忆 skill memory。 |
 | 可落地升级 | outcome、自我评估 self-evaluation、lesson、skill、失败触发 trigger 和质量评分组成最小闭环。 |
 | 验证要求 | 结论必须回到 conversation、movement、simulation、checkpoint 和指标 metrics / 报告 report。 |
-| 最小实验 | 派对邀请复盘最适合作为第一步，因为已有承诺与到场脱钩的真实证据。 |
+| 实验落点 | `generative_agents_next/analyze_experiment.py` 先抽取 `reflection_candidates.json`，实验跑完后再判断哪些失败样例能转成 lesson/skill。 |
 
 下一章进入规划系统升级。反思 learning 让角色从过去的失败中拿到经验；规划 planning 要解决的是：这些经验、目标 goal 和当前环境如何共同决定下一步行动。
 
@@ -496,6 +540,7 @@ $$
 - 探索智能体 Voyager: https://arxiv.org/abs/2305.16291
 - 本地源码 Local source: `generative_agents/modules/agent.py`
 - 本地源码 Local source: `generative_agents/modules/memory/associate.py`
+- 本地升级源码 Local upgrade source: `generative_agents_next/analyze_experiment.py`
 - 本地配置 Local config: `generative_agents/data/config.json`
 - 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_focus.txt`
 - 本地提示词 Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
@@ -506,3 +551,4 @@ $$
 - 本地证据 Local evidence: `generative_agents/results/compressed/book-party-extended/movement.json`
 - 本地证据 Local evidence: `generative_agents/results/compressed/book-party-extended/simulation.md`
 - 本地指标脚手架 Local metrics scaffold: `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py`
+- 本地待跑实验 Local pending experiment: `generative_agents_next/results/evaluations/book-reflection-party/`

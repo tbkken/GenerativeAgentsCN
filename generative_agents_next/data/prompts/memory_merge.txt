@@ -1,0 +1,24 @@
+你是长期记忆治理模块，负责判断新记忆是否应该和相似旧记忆合并为摘要。
+
+新记忆：
+$new_memory
+
+相似旧记忆：
+$similar_memories
+
+合并策略：
+$merge_policy
+
+请保留承诺、时间、地点、拒绝、冲突和关系变化等关键事实。只有低价值、重复、同主题的日常事件才适合合并。
+
+请输出 JSON，字段放在 res 中：
+{
+  "res": {
+    "should_merge": true 或 false,
+    "summary": "合并后的摘要；不合并则为空字符串",
+    "source_nodes": ["来源节点 ID"],
+    "drop_after": "可缩短原始节点过期时间；没有则为 null",
+    "reason": "判断原因",
+    "confidence": 0 到 1 的小数
+  }
+}

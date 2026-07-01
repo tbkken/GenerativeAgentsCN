@@ -1,0 +1,51 @@
+{
+  "event": "valentine_party",
+  "known_by": [
+    "伊莎贝拉",
+    "玛丽亚"
+  ],
+  "accepted": [
+    "玛丽亚"
+  ],
+  "rejected": [],
+  "arrived": [],
+  "tasks": [
+    {
+      "task_id": "spread_fact",
+      "status": "done",
+      "owners": [
+        "伊莎贝拉",
+        "玛丽亚"
+      ],
+      "evidence": [
+        "20240214-11:10",
+        "20240214-11:10",
+        "20240214-11:10",
+        "20240214-11:10",
+        "20240214-12:20",
+        "20240214-12:20",
+        "20240214-12:20",
+        "20240214-12:40",
+        "20240214-13:00",
+        "20240214-13:00",
+        "20240214-13:00"
+      ]
+    },
+    {
+      "task_id": "collect_commitments",
+      "status": "done",
+      "owners": [
+        "玛丽亚"
+      ],
+      "accepted": [
+        "玛丽亚"
+      ],
+      "rejected": []
+    },
+    {
+      "task_id": "verify_attendance",
+      "status": "pending",
+      "owners": []
+    }
+  ]
+}

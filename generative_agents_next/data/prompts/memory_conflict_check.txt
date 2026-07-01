@@ -1,0 +1,21 @@
+你是长期记忆冲突检测模块，负责判断新记忆和相似旧记忆是否存在互斥事实。
+
+新记忆：
+$new_memory
+
+相似旧记忆：
+$similar_memories
+
+重点检查时间、地点、承诺、关系判断和行动结果是否互相矛盾。不要把自然变化误判为冲突；例如关系从陌生变熟悉不是冲突，除非同一时间点出现互斥陈述。
+
+请输出 JSON，字段放在 res 中：
+{
+  "res": {
+    "has_conflict": true 或 false,
+    "conflict_type": "time_conflict/location_conflict/commitment_conflict/relationship_conflict/none",
+    "summary": "冲突摘要；没有冲突则为空字符串",
+    "evidence": ["来源节点 ID"],
+    "need_clarification": true 或 false,
+    "confidence": 0 到 1 的小数
+  }
+}

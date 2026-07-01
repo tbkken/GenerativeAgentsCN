@@ -32,6 +32,19 @@ class Game:
                 copy.deepcopy(agent_base), self.load_static(agent["config_path"])
             )
             agent_config = utils.update_dict(agent_config, agent)
+            memory_governance = copy.deepcopy(config.get("memory_governance", {}))
+            if memory_governance:
+                agent_config["memory_governance"] = utils.update_dict(
+                    agent_config.get("memory_governance", {}),
+                    memory_governance,
+                )
+                agent_config.setdefault("associate", {})["memory_governance"] = (
+                    agent_config["memory_governance"]
+                )
+            long_term_memory = copy.deepcopy(config.get("long_term_memory", {}))
+            if long_term_memory:
+                long_term_memory["agent_name"] = name
+                agent_config.setdefault("associate", {})["long_term_memory"] = long_term_memory
 
             agent_config["storage_root"] = os.path.join(storage_root, name)
             self.agents[name] = Agent(agent_config, self.maze, self.conversation, self.logger)

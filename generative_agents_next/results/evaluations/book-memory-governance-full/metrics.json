@@ -1,0 +1,104 @@
+{
+  "experiment": "book-memory-governance-full",
+  "event": "valentine_party",
+  "keywords": [
+    "情人节",
+    "派对",
+    "五点",
+    "5点",
+    "17:00",
+    "霍布斯咖啡馆"
+  ],
+  "target_place": "霍布斯咖啡馆",
+  "window_start": "20240214-17:00",
+  "window_end": "20240214-19:00",
+  "checkpoint_count": 36,
+  "final_time": "20240214-13:50",
+  "diffusion": {
+    "mention_count": 11,
+    "known_agents": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "known_agent_count": 2
+  },
+  "commitments": {
+    "accepted": [
+      "玛丽亚"
+    ],
+    "accepted_count": 1,
+    "rejected": [],
+    "rejected_count": 0
+  },
+  "attendance": {
+    "arrived": [],
+    "arrived_count": 0
+  },
+  "goal_progress": {
+    "informed": [
+      "伊莎贝拉",
+      "玛丽亚"
+    ],
+    "accepted": [
+      "玛丽亚"
+    ],
+    "arrived": [],
+    "rejected_or_unavailable": [],
+    "accepted_not_arrived": [
+      "玛丽亚"
+    ],
+    "missing": [
+      "这些角色有承诺但未在目标时间窗到场：玛丽亚",
+      "目标时间窗内没有角色到达目标地点。"
+    ],
+    "criteria": {
+      "has_event_diffusion": true,
+      "has_commitment": true,
+      "has_attendance": false
+    },
+    "goal_completion_rate": 0.6667
+  },
+  "memory_summary": {
+    "伊莎贝拉": {
+      "chat": 4,
+      "conflict": 1,
+      "event": 65,
+      "goal": 1,
+      "relationship": 4,
+      "skill": 1,
+      "summary": 54,
+      "thought": 1
+    },
+    "玛丽亚": {
+      "chat": 4,
+      "conflict": 0,
+      "event": 44,
+      "goal": 1,
+      "relationship": 4,
+      "skill": 0,
+      "summary": 35,
+      "thought": 1
+    },
+    "山姆": {
+      "chat": 0,
+      "conflict": 0,
+      "event": 50,
+      "goal": 1,
+      "relationship": 0,
+      "skill": 0,
+      "summary": 37,
+      "thought": 1
+    },
+    "汤姆": {
+      "chat": 0,
+      "conflict": 0,
+      "event": 46,
+      "goal": 1,
+      "relationship": 0,
+      "skill": 0,
+      "summary": 33,
+      "thought": 1
+    }
+  },
+  "reflection_candidates": 1
+}

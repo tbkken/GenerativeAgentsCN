@@ -7,7 +7,7 @@ import datetime
 
 from modules import memory, prompt, utils
 from modules.model.llm_model import create_llm_model
-from modules.memory.associate import Concept
+from modules.memory.associate import ADVANCED_MEMORY_TYPES, Concept
 
 
 class Agent:
@@ -22,6 +22,14 @@ class Agent:
         self.percept_config = config["percept"]
         self.think_config = config["think"]
         self.chat_iter = config["chat_iter"]
+        self.memory_governance_config = {
+            "relationship_update": True,
+            "summary_merge": True,
+            "conflict_detection": True,
+            "skill_from_conflict": True,
+            **config.get("memory_governance", {}),
+        }
+        config["associate"].setdefault("memory_governance", self.memory_governance_config)
 
         # memory
         self.spatial = memory.Spatial(**config["spatial"])
@@ -235,10 +243,33 @@ class Agent:
                 describe=thought,
                 address=self.get_tile().get_address(),
             )
-            self._add_concept(
+            thought_node = self._add_concept(
                 "thought",
                 event,
                 expire=self.schedule.create + datetime.timedelta(days=30),
+            )
+            goal_event = memory.Event(
+                self.name,
+                "目标",
+                schedule_time,
+                describe="{} 在 {} 的阶段目标：{}".format(
+                    self.name,
+                    schedule_time,
+                    "；".join(init_schedule),
+                ),
+                address=self.get_tile().get_address(),
+            )
+            self._add_concept(
+                "goal",
+                goal_event,
+                expire=self.schedule.create + datetime.timedelta(days=30),
+                filling={
+                    "source_nodes": [thought_node.node_id],
+                    "source_type": "schedule",
+                    "confidence": 0.75,
+                    "generated_by": "schedule_daily",
+                    "downstream_use": "planning,reflection",
+                },
             )
         # decompose current plan
         plan, _ = self.schedule.current_plan()
@@ -587,10 +618,12 @@ class Agent:
         )
         chat_summary = self.completion("summarize_chats", chats)
         duration = int(sum([len(c[1]) for c in chats]) / 240)
-        self.schedule_chat(
+        self_chat_node = self.schedule_chat(
             chats, chat_summary, start, duration, other
         )
-        other.schedule_chat(chats, chat_summary, start, duration, self)
+        other_chat_node = other.schedule_chat(chats, chat_summary, start, duration, self)
+        self._update_relationship_memory(other, chats, chat_summary, self_chat_node)
+        other._update_relationship_memory(self, chats, chat_summary, other_chat_node)
         return True
 
     def _wait_other(self, other, focus):
@@ -628,6 +661,100 @@ class Agent:
             emoji=f"💬",
         )
         self.revise_schedule(event, start, duration)
+        return self._add_concept(
+            "chat",
+            event,
+            create=start,
+            expire=start + datetime.timedelta(days=30),
+            filling={
+                "source_type": "conversation",
+                "confidence": 0.8,
+                "generated_by": "summarize_chats",
+                "downstream_use": "dialogue,relationship,reflection",
+            },
+        )
+
+    def _update_relationship_memory(self, other, chats, chat_summary, chat_node=None):
+        if not self.memory_governance_config.get("relationship_update", True):
+            return None
+        current = self.associate.relationship_state(other.name)
+        related_memories = self.associate.retrieve_for_dialogue(other.name, chat_summary)
+        source_nodes = [chat_node.node_id] if chat_node else []
+        update = self.completion(
+            "relationship_update",
+            self,
+            other,
+            current,
+            chats,
+            related_memories,
+            source_nodes,
+        ) or {}
+
+        def _clamp(value, low, high):
+            return max(low, min(high, value))
+
+        affinity = _clamp(
+            int(current.get("affinity", 0)) + int(update.get("affinity_delta", 0)),
+            -5,
+            5,
+        )
+        trust = _clamp(
+            int(current.get("trust", 0)) + int(update.get("trust_delta", 0)),
+            -5,
+            5,
+        )
+        familiarity = _clamp(
+            int(current.get("familiarity", 0)) + int(update.get("familiarity_delta", 0)),
+            0,
+            10,
+        )
+        confidence = _clamp(float(update.get("confidence", 0.35) or 0.35), 0.0, 1.0)
+        evidence = update.get("evidence") or source_nodes
+        if isinstance(evidence, str):
+            evidence = [e.strip() for e in evidence.split(",") if e.strip()]
+        for node_id in source_nodes:
+            if node_id not in evidence:
+                evidence.append(node_id)
+        summary = (
+            update.get("summary_update")
+            or current.get("summary")
+            or "{} 和 {} 刚进行了一次对话。".format(self.name, other.name)
+        )
+        describe = "{} 对 {} 的关系：{} 好感 {}，信任 {}，熟悉度 {}。".format(
+            self.name,
+            other.name,
+            summary,
+            affinity,
+            trust,
+            familiarity,
+        )
+        event = memory.Event(
+            self.name,
+            "关系",
+            other.name,
+            describe=describe,
+            address=self.get_tile().get_address(),
+        )
+        return self.associate.add_node(
+            "relationship",
+            event,
+            max(3, int(confidence * 10)),
+            create=utils.get_timer().get_date(),
+            expire=utils.get_timer().get_date() + datetime.timedelta(days=180),
+            filling={
+                "target": other.name,
+                "affinity": affinity,
+                "trust": trust,
+                "familiarity": familiarity,
+                "last_interaction": utils.get_timer().get_date("%Y%m%d-%H:%M:%S"),
+                "summary": summary,
+                "source_nodes": evidence,
+                "source_type": "conversation",
+                "confidence": confidence,
+                "generated_by": "relationship_update",
+                "downstream_use": "dialogue,planning,reflection",
+            },
+        )
 
     def _add_concept(
         self,
@@ -646,7 +773,7 @@ class Agent:
         else:
             poignancy = self.completion("poignancy_event", event)
         self.logger.debug("{} add associate {}".format(self.name, event))
-        return self.associate.add_node(
+        node = self.associate.add_node(
             e_type,
             event,
             poignancy,
@@ -654,6 +781,34 @@ class Agent:
             expire=expire,
             filling=filling,
         )
+        if e_type not in ADVANCED_MEMORY_TYPES:
+            if self.memory_governance_config.get("summary_merge", True):
+                self.associate.maybe_create_summary(node)
+            if self.memory_governance_config.get("conflict_detection", True):
+                conflict = self.associate.maybe_detect_conflict(node)
+                if conflict and self.memory_governance_config.get("skill_from_conflict", True):
+                    skill_event = memory.Event(
+                        self.name,
+                        "经验",
+                        "处理记忆冲突",
+                        describe=(
+                            "{} 需要在计划或对话前核对冲突事实：{}"
+                        ).format(self.name, conflict.describe),
+                        address=event.address,
+                    )
+                    self.associate.add_node(
+                        "skill",
+                        skill_event,
+                        6,
+                        filling={
+                            "source_nodes": [conflict.node_id],
+                            "source_type": "conflict",
+                            "confidence": 0.7,
+                            "generated_by": "skill_from_conflict",
+                            "downstream_use": "recovery,planning,dialogue",
+                        },
+                    )
+        return node
 
     def get_tile(self):
         return self.maze.tile_at(self.coord)
