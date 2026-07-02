@@ -53,4 +53,4 @@
 35. [多智能体协作升级：从自然偶遇到组织化协作](part_05/chapter_35.md)
 36. [社会仿真升级：从 Smallville 到更大规模实验](part_05/chapter_36.md)
 37. [评价体系升级：从故事可信到可复现实验指标](part_05/chapter_37.md)
-38. [基于 Generative Agents 的前沿升级路线图](part_05/chapter_38.md)
+38. [第五部分小结：从升级方向到可验证工程](part_05/chapter_38.md)
