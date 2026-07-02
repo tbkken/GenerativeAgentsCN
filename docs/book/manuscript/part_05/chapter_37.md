@@ -374,19 +374,87 @@ python analyze_experiment.py --name <实验名> --event valentine_party --keywor
 
 评价脚本的边界也要写清楚：第一版不做自动主观评分，只统计可验证事实和证据路径。行为自然性 naturalness、可信裁决 verdict 和负样本解释仍由人工报告承担。
 
-## 37.13 实验结果分析（待填写）
+## 37.13 实验结果分析
 
-评价脚本跑完后，本节填写实际结果。写法要像审计报告，不像故事摘要。
+评价脚本已经在 Part 05 的多组实验上跑通。它不调用大语言模型 LLM，也不重新生成行为，只读取本地的 `conversation.json`、`movement.json` 和最终 checkpoint，输出 `metrics.json`、`event_board.json`、`goal_progress.json`、`reflection_candidates.json` 与 `report.md`。这一轮验证的是评价体系 evaluation 是否能把故事证据转成可复查指标，而不是判断小镇行为已经完美可信。
 
-| 分析项 | 读取文件 | 填写口径 |
+### 评价产物完整性
+
+| 实验 | `metrics.json` | `report.md` | `event_board.json` | `goal_progress.json` | `reflection_candidates.json` |
+| --- | --- | --- | --- | --- | --- |
+| `book-collaboration-party` | 已生成 | 已生成 | 已生成 | 已生成 | 已生成 |
+| `book-social-party-r1` | 已生成 | 已生成 | 已生成 | 已生成 | 已生成 |
+| `book-social-party-r2` | 已生成 | 已生成 | 已生成 | 已生成 | 已生成 |
+| `book-social-party-r3` | 已生成 | 已生成 | 已生成 | 已生成 | 已生成 |
+| `book-social-party-batch` | `batch_summary.json` 已生成 | 不适用 | 不适用 | 不适用 | 不适用 |
+
+四个单次实验的 `metrics.json` 都包含同一组顶层字段：`diffusion`、`commitments`、`attendance`、`goal_progress`、`memory_summary` 和 `reflection_candidates`。这说明评价产物已经具备可比较的结构，后续才能做跨 run 比较。
+
+### 一次完整审计样例
+
+`book-collaboration-party` 是最适合讲清评价闭环的样例。
+
+| 指标 | 数值 | 证据读法 |
+| --- | ---: | --- |
+| `checkpoint_count` | `71` | 仿真覆盖 `08:00-19:40`，包含派对窗口。 |
+| `mention_count` | `28` | 派对、五点、布置、帮忙、音乐等事实被多次提及。 |
+| `known_agent_count` | `4` | 伊莎贝拉、克劳斯、埃迪、玛丽亚进入事件板。 |
+| `accepted_count` | `2` | 埃迪和玛丽亚被抽取为承诺候选。 |
+| `arrived_count` | `4` | 四名角色在目标窗口进入霍布斯咖啡馆。 |
+| `goal_completion_rate` | `1.0` | 四个检查项都通过，但拒绝信号需要人工复核。 |
+
+关键证据链如下：
+
+| 证据类型 | 原始证据 | 判断 |
 | --- | --- | --- |
-| 指标完整性 | `metrics.json` | 是否包含 `diffusion/commitments/attendance/goal_progress/memory_summary`。 |
-| 传播证据 | `report.md`、`conversation.json` | 列出关键命中原话，标注说话人和时间。 |
-| 到场证据 | `movement.json`、`report.md` | 确认时间窗、地点关键字和角色位置。 |
-| 失败样例 | `reflection_candidates.json` | 哪些失败能转成反思样例，哪些只是证据不足。 |
-| 指标边界 | 人工复核 | 说明关键词误命中、礼貌回应误判、移动时间窗不足等问题。 |
+| 传播 diffusion | `12:30` 伊莎贝拉告诉克劳斯“下午5点到7点我们这儿有情人节派对”。 | 事件事实从组织者传给顾客。 |
+| 承诺 commitment | `14:30` 埃迪回答“没问题，交给我吧”。 | 可作为帮忙承诺候选。 |
+| 二次传播 retransmission | `16:10` 玛丽亚提醒克劳斯“派对5点就开始了”。 | 信息不只停留在伊莎贝拉一侧。 |
+| 到场 attendance | `17:00` 伊莎贝拉、玛丽亚、克劳斯在咖啡馆，`17:40` 埃迪到场。 | 承诺与行动可以回到 `movement.json` 验证。 |
 
-如果某次实验的 `final_time` 早于 17:00，评价报告只能说明“实验没有覆盖到派对时间窗”，不能据此判断派对到场失败。时间范围本身也是指标结论的一部分。
+### 失败样例进入报告
+
+评价体系的价值不只在成功样例。`book-social-party-r3` 生成了 2 条 `reflection_candidates`：
+
+| 角色 | failure_type | 证据 | 评价含义 |
+| --- | --- | --- | --- |
+| 山姆 | `commitment_not_verified_by_movement` | `16:30` 山姆说“等派对开始我和林晓一定过来坐坐”。 | 有承诺候选，但没有目标窗口到场证据。 |
+| 玛丽亚 | `commitment_not_verified_by_movement` | `13:10` 玛丽亚说“我肯定要来”；`14:10` 又提出帮忙吹气球。 | 对话承诺充分，但 `arrived` 中没有玛丽亚。 |
+
+这两条候选适合进入第 33 章的经验学习链路：先由评价脚本定位失败，再由 self-evaluation 或人工复核决定是否生成 lesson。它们不能直接写成“山姆和玛丽亚不可靠”，因为失败可能来自日程、地点映射、对话抽取、时间窗口或行动计划没有更新。
+
+### 自动指标的边界
+
+这一轮也暴露了第一版规则的局限，必须写进报告。
+
+| 问题 | 真实样例 | 处理方式 |
+| --- | --- | --- |
+| 否定词误判 | `book-collaboration-party` 中，伊莎贝拉说“能不能帮忙拍照记录一下”，被规则抽成 `rejected`。 | `rejected` 是候选字段，正式结论要人工复核原话。 |
+| 同一角色同时接受和拒绝 | `book-social-party-r3` 中，埃迪先说还要赶项目，随后又说六点左右赶来。 | 报告要保留时序，不把冲突压成一个最终标签。 |
+| JSON 残留 | `book-social-party-r3` 的对话中出现 `{"res": ...}` 残留。 | 标记为结构化输出清洗问题，不能当作自然对话质量证据。 |
+| 时间窗不足 | `book-social-party-r3` 最终 checkpoint 是 `18:50`。 | 可以评价 `17:00-18:50` 的到场，不能声称覆盖 19:00 之后的行动。 |
+| 到场不等于任务完成 | 埃迪到达咖啡馆，不自动等于音乐或布置任务完成。 | 需要未来的 `team_tasks.json` 或任务级证据。 |
+
+### 评价体系结论
+
+| 结论 | 证据 | 边界 |
+| --- | --- | --- |
+| 指标文件可稳定生成 | 四个单次实验都生成同构 `metrics.json`。 | 指标稳定不等于行为稳定。 |
+| 传播、承诺、到场可以拆开看 | `event_board.json` 同时保存 `known_by/accepted/rejected/arrived`。 | 自动抽取只是候选，仍需人工复核。 |
+| 失败样例可进入后续升级 | `reflection_candidates.json` 能输出承诺未到场候选。 | 候选不是最终裁决，不能直接写回角色长期记忆。 |
+| 批量比较入口成立 | `book-social-party-batch/batch_summary.json` 汇总三次运行均值。 | 当前只有三次运行，仍属于小样本机制验证。 |
+
+### 复查入口
+
+| 文件 | 用途 |
+| --- | --- |
+| `generative_agents_next/analyze_experiment.py` | 复查指标生成逻辑。 |
+| `generative_agents_next/results/evaluations/book-collaboration-party/metrics.json` | 查看完整单次评价指标。 |
+| `generative_agents_next/results/evaluations/book-collaboration-party/report.md` | 查看传播、承诺和到场证据摘录。 |
+| `generative_agents_next/results/evaluations/book-social-party-r3/reflection_candidates.json` | 查看失败候选。 |
+| `generative_agents_next/results/evaluations/book-social-party-batch/batch_summary.json` | 查看三次运行的批量汇总。 |
+| `generative_agents_next/results/checkpoints/<实验名>/conversation.json` | 回查原始对话。 |
+| `generative_agents_next/results/compressed/<实验名>/movement.json` | 回查真实到场位置。 |
 
 ## 37.14 不要为了指标牺牲可信行为
 
@@ -404,7 +472,7 @@ python analyze_experiment.py --name <实验名> --event valentine_party --keywor
 
 ## 37.15 本章小结
 
-评价体系升级把“故事看起来可信”推进到“证据可以复查、指标可以比较、失败可以定位”。当前项目已经有 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint、prompt 链路和 LLM summary；缺的是把它们组织成 `metrics.json`、`report.md`、基线 baseline、多次运行 multi-run 和失败分类 failure taxonomy。
+评价体系升级把“故事看起来可信”推进到“证据可以复查、指标可以比较、失败可以定位”。当前项目已经有 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint、prompt 链路和 LLM summary；本章把这些证据进一步组织成 `metrics.json`、`report.md`、`event_board.json`、`goal_progress.json` 和 `reflection_candidates.json`。后续还需要补强的是基线 baseline、更多对照实验 controlled experiment 和更严格的失败分类 failure taxonomy。
 
 | 主题 | 核心结论 |
 | --- | --- |
@@ -438,5 +506,5 @@ python analyze_experiment.py --name <实验名> --event valentine_party --keywor
 - Local output: `generative_agents_next/results/checkpoints/<实验名>/simulate-*.json`
 - Local output: `generative_agents_next/results/compressed/<实验名>/movement.json`
 - Local output: `generative_agents_next/results/compressed/<实验名>/simulation.md`
-- Local pending output: `generative_agents_next/results/evaluations/<实验名>/metrics.json`
-- Local pending output: `generative_agents_next/results/evaluations/<实验名>/report.md`
+- Local output: `generative_agents_next/results/evaluations/<实验名>/metrics.json`
+- Local output: `generative_agents_next/results/evaluations/<实验名>/report.md`

@@ -1,0 +1,47 @@
+{
+  "runs": [
+    {
+      "experiment": "book-social-party-r1",
+      "status": "ok",
+      "mentions": 45,
+      "known_agents": 5,
+      "accepted": 2,
+      "rejected": 0,
+      "arrived": 3,
+      "goal_completion_rate": 1.0,
+      "final_time": "20240214-19:50"
+    },
+    {
+      "experiment": "book-social-party-r2",
+      "status": "ok",
+      "mentions": 30,
+      "known_agents": 3,
+      "accepted": 3,
+      "rejected": 0,
+      "arrived": 3,
+      "goal_completion_rate": 1.0,
+      "final_time": "20240214-19:50"
+    },
+    {
+      "experiment": "book-social-party-r3",
+      "status": "ok",
+      "mentions": 45,
+      "known_agents": 4,
+      "accepted": 4,
+      "rejected": 1,
+      "arrived": 2,
+      "goal_completion_rate": 0.75,
+      "final_time": "20240214-18:50"
+    }
+  ],
+  "run_count": 3,
+  "successful_metric_files": 3,
+  "averages": {
+    "mentions": 40.0,
+    "known_agents": 4.0,
+    "accepted": 3.0,
+    "rejected": 0.3333,
+    "arrived": 2.6667,
+    "goal_completion_rate": 0.9167
+  }
+}

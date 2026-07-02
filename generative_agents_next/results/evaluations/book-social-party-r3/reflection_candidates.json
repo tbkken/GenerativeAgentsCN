@@ -1,0 +1,33 @@
+[
+  {
+    "agent": "山姆",
+    "outcome": "failed",
+    "failure_type": "commitment_not_verified_by_movement",
+    "lesson": "承诺类对话需要在目标时间窗用 movement.json 复核到场，而不是只相信聊天摘要。",
+    "evidence": [
+      {
+        "time": "20240214-16:30",
+        "route": "伊莎贝拉 -> 山姆 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位",
+        "text": "居民们最关心的还是社区安全和公园维护，正好和我竞选计划的重点对上了。桌椅布置得很有情人节氛围，辛苦你了，等派对开始我和林晓一定过来坐坐！"
+      }
+    ]
+  },
+  {
+    "agent": "玛丽亚",
+    "outcome": "failed",
+    "failure_type": "commitment_not_verified_by_movement",
+    "lesson": "承诺类对话需要在目标时间窗用 movement.json 复核到场，而不是只相信聊天摘要。",
+    "evidence": [
+      {
+        "time": "20240214-13:10",
+        "route": "伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "text": "哇，情人节派对？听起来超有趣的！我肯定要来，正好学习完可以放松一下。伊莎贝拉，需要我帮忙准备什么吗？"
+      },
+      {
+        "time": "20240214-14:10",
+        "route": "伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面",
+        "text": "很好吃！沙拉很新鲜，三明治也不错。我差不多吃完了，现在就可以开始帮忙吹气球，我来负责打气，你来系绳子怎么样？"
+      }
+    ]
+  }
+]

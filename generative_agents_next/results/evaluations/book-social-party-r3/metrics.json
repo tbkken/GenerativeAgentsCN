@@ -1,0 +1,136 @@
+{
+  "experiment": "book-social-party-r3",
+  "event": "valentine_party",
+  "keywords": [
+    "情人节",
+    "派对",
+    "五点",
+    "5点",
+    "17:00",
+    "霍布斯咖啡馆"
+  ],
+  "target_place": "霍布斯咖啡馆",
+  "window_start": "20240214-17:00",
+  "window_end": "20240214-19:00",
+  "checkpoint_count": 66,
+  "final_time": "20240214-18:50",
+  "diffusion": {
+    "mention_count": 45,
+    "known_agents": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "玛丽亚"
+    ],
+    "known_agent_count": 4
+  },
+  "commitments": {
+    "accepted": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "玛丽亚"
+    ],
+    "accepted_count": 4,
+    "rejected": [
+      "埃迪"
+    ],
+    "rejected_count": 1
+  },
+  "attendance": {
+    "arrived": [
+      "伊莎贝拉",
+      "埃迪"
+    ],
+    "arrived_count": 2
+  },
+  "goal_progress": {
+    "informed": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "玛丽亚"
+    ],
+    "accepted": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "玛丽亚"
+    ],
+    "arrived": [
+      "伊莎贝拉",
+      "埃迪"
+    ],
+    "rejected_or_unavailable": [
+      "埃迪"
+    ],
+    "accepted_not_arrived": [
+      "山姆",
+      "玛丽亚"
+    ],
+    "missing": [
+      "这些角色有承诺但未在目标时间窗到场：山姆、玛丽亚",
+      "这些角色明确拒绝或表示时间冲突：埃迪"
+    ],
+    "criteria": {
+      "has_event_diffusion": true,
+      "has_commitment": true,
+      "has_attendance": true,
+      "has_no_unfulfilled_commitment": false
+    },
+    "goal_completion_rate": 0.75
+  },
+  "memory_summary": {
+    "伊莎贝拉": {
+      "chat": 18,
+      "conflict": 2,
+      "event": 127,
+      "goal": 1,
+      "relationship": 18,
+      "skill": 2,
+      "summary": 94,
+      "thought": 18
+    },
+    "玛丽亚": {
+      "chat": 2,
+      "conflict": 0,
+      "event": 77,
+      "goal": 1,
+      "relationship": 2,
+      "skill": 0,
+      "summary": 56,
+      "thought": 1
+    },
+    "山姆": {
+      "chat": 12,
+      "conflict": 1,
+      "event": 119,
+      "goal": 1,
+      "relationship": 12,
+      "skill": 1,
+      "summary": 83,
+      "thought": 18
+    },
+    "汤姆": {
+      "chat": 1,
+      "conflict": 0,
+      "event": 96,
+      "goal": 1,
+      "relationship": 1,
+      "skill": 0,
+      "summary": 72,
+      "thought": 1
+    },
+    "埃迪": {
+      "chat": 5,
+      "conflict": 0,
+      "event": 108,
+      "goal": 1,
+      "relationship": 5,
+      "skill": 0,
+      "summary": 74,
+      "thought": 20
+    }
+  },
+  "reflection_candidates": 2
+}

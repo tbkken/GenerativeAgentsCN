@@ -1,0 +1,2860 @@
+{
+  "stride": 10,
+  "time": "20240214-12:10",
+  "maze": {
+    "path": "assets\\village\\maze.json"
+  },
+  "agent_base": {
+    "percept": {
+      "mode": "box",
+      "vision_r": 8,
+      "att_bandwidth": 8
+    },
+    "schedule": {
+      "max_try": 5,
+      "diversity": 5
+    },
+    "think": {
+      "llm": {
+        "provider": "minimax",
+        "model": "MiniMax-M3",
+        "base_url": "https://api.minimaxi.com/v1",
+        "api_key": "",
+        "max_tokens": 8192
+      },
+      "interval": 1000,
+      "poignancy_max": 150
+    },
+    "chat_iter": 4,
+    "associate": {
+      "embedding": {
+        "provider": "minimax",
+        "model": "embo-01",
+        "base_url": "https://api.minimax.chat/v1",
+        "api_key": "",
+        "group_id": ""
+      },
+      "retention": 8
+    }
+  },
+  "agents": {
+    "伊莎贝拉": {
+      "config_path": "assets\\village\\agents\\伊莎贝拉\\agent.json",
+      "status": {
+        "poignancy": 100
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "起床并完成早间例行工作（洗漱、穿衣）",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "在厨房吃早餐，准备好今天的工作心情",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "开放霍布斯咖啡馆，开始一天的工作",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "解锁咖啡馆大门，打开灯光，解除安保系统",
+                "start": 480,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "启动咖啡机和磨豆机，检查设备运行状态",
+                "start": 490,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "摆放柜台上的糕点和点心，准备好展示柜",
+                "start": 500,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "开启收银机，整理柜台上的杯具和小票纸",
+                "start": 510,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "煮好第一壶咖啡，准备好外带杯和配料区",
+                "start": 520,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "穿上围裙，浏览今日排班和情人节派对的准备事项",
+                "start": 530,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "站在柜台前招待顾客，为他们准备咖啡和点心",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "迎接顾客并微笑问候",
+                "start": 540,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "接受顾客点单",
+                "start": 545,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "研磨咖啡豆",
+                "start": 555,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "制作咖啡饮品",
+                "start": 560,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "准备点心和小食",
+                "start": 575,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "山姆向伊莎贝拉表示，他正关注社区的热闹景象，并解释自己参选市长是为了让社区变得更好。",
+                "start": 580,
+                "duration": 0
+              },
+              {
+                "idx": 6,
+                "describe": "将咖啡和点心送到顾客手中",
+                "start": 580,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "操作收银机收款",
+                "start": 590,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "在柜台前招待顾客，同时整理情人节派对的装饰材料",
+            "start": 600,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "迎接进店顾客并微笑打招呼",
+                "start": 600,
+                "duration": 0
+              },
+              {
+                "idx": 1,
+                "describe": "山姆和伊莎贝拉在情人节于咖啡馆相遇，山姆表示参选市长并关心社区，伊莎贝拉邀请他参加情人节派对但山姆因与妻子詹妮弗的40年传统婉拒，二人约定下午再聊社区事宜。",
+                "start": 600,
+                "duration": 1
+              },
+              {
+                "idx": 2,
+                "describe": "为顾客制作拿铁咖啡",
+                "start": 601,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "整理情人节约会气球装饰材料",
+                "start": 611,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "招待新顾客并推荐当日特调",
+                "start": 621,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "整理派对彩带和横幅装饰",
+                "start": 631,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "为顾客准备巧克力点心",
+                "start": 641,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "处理顾客付款并邀请参加派对",
+                "start": 651,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 11,
+            "describe": "继续在柜台前招待顾客，安排派对场地的布置",
+            "start": 660,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "在柜台前热情迎接并招待顾客",
+                "start": 660,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "伊莎贝拉好奇山姆的海军服役经历，山姆分享了在太平洋执行任务时遭遇暴风雨，一米九的舰长被甩到桌下的趣事。",
+                "start": 670,
+                "duration": 0
+              },
+              {
+                "idx": 2,
+                "describe": "为顾客点单并准备咖啡饮品",
+                "start": 670,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "在咖啡馆悬挂情人节心形装饰",
+                "start": 680,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "重新摆放桌椅布置派对场地",
+                "start": 690,
+                "duration": 0
+              },
+              {
+                "idx": 5,
+                "describe": "两人回忆暴风雨中舰长被甩到桌下的惊险经历，并调侃海军中嘴硬的人。",
+                "start": 690,
+                "duration": 0
+              },
+              {
+                "idx": 6,
+                "describe": "重新摆放桌椅布置派对场地",
+                "start": 690,
+                "duration": 15
+              },
+              {
+                "idx": 7,
+                "describe": "摆放情人节主题桌花装饰",
+                "start": 705,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "山姆边喝咖啡边给正在布置桌椅的伊莎贝拉讲部队里战友的搞笑故事，同时商量下午林晓来访时一起聊聊竞选和帮忙宣传派对的事。",
+                "start": 710,
+                "duration": 2
+              },
+              {
+                "idx": 9,
+                "describe": "摆放情人节主题桌花装饰",
+                "start": 712,
+                "duration": 3
+              },
+              {
+                "idx": 10,
+                "describe": "向林晓确认社区公告板留言收集情况",
+                "start": 715,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 12,
+            "describe": "短暂休息，吃午餐",
+            "start": 720,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "从休息室取出午餐",
+                "start": 720,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "加热午餐",
+                "start": 725,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "享用午餐",
+                "start": 735,
+                "duration": 20
+              },
+              {
+                "idx": 3,
+                "describe": "喝杯咖啡放松一下",
+                "start": 755,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "查看手机上的派对准备消息",
+                "start": 765,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "稍作休息，整理餐桌准备回到柜台",
+                "start": 770,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 13,
+            "describe": "在柜台前继续工作，准备派对用的饮品和小食",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续在柜台前招待顾客，并摆放派对的桌椅和装饰",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "与记者林晓协调，请她在社区公告板旁收集居民留言，帮助宣传情人节派对",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "在柜台前做派对的最后准备工作，确保一切就绪",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "在霍布斯咖啡馆主持情人节派对，热情欢迎参加派对的顾客",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "继续主持情人节派对，为顾客们递送特调饮品，拍照留念",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "派对结束后收拾场地，同时继续在柜台前招待晚间顾客",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "关闭霍布斯咖啡馆，清点今日营业情况",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "放松休息，回顾今天的情人节派对活动，整理思绪",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "准备上床睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_110",
+            "node_109",
+            "node_107",
+            "node_104",
+            "node_102",
+            "node_100",
+            "node_98",
+            "node_96",
+            "node_94",
+            "node_91",
+            "node_89",
+            "node_88",
+            "node_84",
+            "node_83",
+            "node_81",
+            "node_79",
+            "node_78",
+            "node_77",
+            "node_75",
+            "node_73",
+            "node_71",
+            "node_69",
+            "node_67",
+            "node_65",
+            "node_64",
+            "node_62",
+            "node_60",
+            "node_58",
+            "node_56",
+            "node_52",
+            "node_51",
+            "node_49",
+            "node_47",
+            "node_43",
+            "node_41",
+            "node_39",
+            "node_37",
+            "node_35",
+            "node_34",
+            "node_32",
+            "node_30",
+            "node_28",
+            "node_26",
+            "node_24",
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_10",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [
+            "node_105",
+            "node_92",
+            "node_86",
+            "node_54",
+            "node_45",
+            "node_4"
+          ],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [
+            "node_106",
+            "node_93",
+            "node_87",
+            "node_55",
+            "node_46",
+            "node_5"
+          ],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_111",
+            "node_108",
+            "node_103",
+            "node_101",
+            "node_99",
+            "node_97",
+            "node_95",
+            "node_90",
+            "node_85",
+            "node_82",
+            "node_80",
+            "node_76",
+            "node_74",
+            "node_72",
+            "node_70",
+            "node_68",
+            "node_66",
+            "node_63",
+            "node_61",
+            "node_59",
+            "node_57",
+            "node_53",
+            "node_50",
+            "node_48",
+            "node_44",
+            "node_42",
+            "node_40",
+            "node_38",
+            "node_36",
+            "node_33",
+            "node_31",
+            "node_29",
+            "node_27",
+            "node_25",
+            "node_23",
+            "node_21",
+            "node_19",
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_9"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [
+        [
+          "山姆",
+          "早上好，伊莎贝拉！来得挺早啊，看来咱俩都是早起的人。我就说嘛，霍布斯咖啡馆每天第一个客人非我莫属——给我来杯黑咖啡怎么样？"
+        ],
+        [
+          "伊莎贝拉",
+          "早上好，山姆！你总是这么捧场，第一杯黑咖啡马上就好。今天可是情人节，晚上5点来参加我们的派对吧，有惊喜等着大家哦！"
+        ],
+        [
+          "山姆",
+          "情人节派对？哈哈，听起来不错！不过你可得给我和詹妮弗留个好位子，结婚40年的老夫老妻也需要浪漫一下嘛。对了，今天的黑咖啡我请客，就当是提前庆祝了！"
+        ],
+        [
+          "伊莎贝拉",
+          "外面这么热闹啊，山姆。看什么呢这么入迷？"
+        ],
+        [
+          "山姆",
+          "哈哈，伊莎贝拉，我就是在看咱们社区的热闹劲儿。街坊邻居们来来往往的，每个人都有自己的故事——这正是我想参选市长的原因，想让这个社区变得更好。"
+        ],
+        [
+          "山姆",
+          "早上好啊，伊莎贝拉，今天咖啡馆看起来挺热闹的——不过话说回来，情人节嘛，大家都出来找乐子了。"
+        ],
+        [
+          "伊莎贝拉",
+          "早上好，山姆！是啊，情人节大家都爱出门凑热闹。对了，你之前提到的那些社区想法，我一直记着呢，等有空咱们好好聊聊。"
+        ],
+        [
+          "山姆",
+          "哈哈，你还记得呢，伊莎贝拉。其实我参选市长的核心理念很简单——就是想让咱们这个社区每个人都觉得被重视、被照顾。你要是有什么想法，随时来霍布斯咖啡馆找我聊，我下午常在这看书。"
+        ],
+        [
+          "伊莎贝拉",
+          "那就说定了，下午你过来坐的时候咱们好好聊聊！对了，今晚5点我们有个情人节派对，你也带上詹妮弗一起来热闹热闹，说不定还能认识更多有想法的邻居呢。"
+        ],
+        [
+          "山姆",
+          "哈哈，伊莎贝拉，谢谢你的好意！不过今晚我和詹妮弗早就约好了一起过情人节，这可是我们结婚40年的老传统了。下午我肯定还在这儿看书，到时候咱们好好聊聊社区的事！"
+        ],
+        [
+          "伊莎贝拉",
+          "哇，40年的情人节约会！山姆，这可比我们派对浪漫多了，你和詹妮弗好好享受吧。下午你过来看书的时候，咱们再慢慢聊社区的事——对了，我正好留了点新出炉的肉桂卷给你尝尝。"
+        ],
+        [
+          "伊莎贝拉",
+          "哦，你在海军服过役呀？那一定有很多精彩的故事！我最爱听这些冒险经历了，跟我说说当时最有意思的事儿吧。"
+        ],
+        [
+          "山姆",
+          "哈哈，那可太多了！有一次我们在太平洋上执行任务，遭遇了一场突如其来的暴风雨，整艘船晃得像坐过山车，结果我们舰长——一个一米九的大块头——被甩到了桌子底下，全舰的人都在憋笑，那场面你想想就觉得好笑。"
+        ],
+        [
+          "伊莎贝拉",
+          "哇，那位舰长一定吓坏了！能在暴风雨中被甩到桌下，这经历也太惊险了——还好你平安回来了。"
+        ],
+        [
+          "山姆",
+          "哈，那家伙脸都绿了，不过他事后总是第一个站出来说'这点风浪算什么'——海军里最不缺的就是嘴硬的人。"
+        ],
+        [
+          "伊莎贝拉",
+          "山姆，那些战友之间的情谊一定很珍贵吧。你继续说，我这边把桌椅摆好就过来听你讲。对了，下午林晓会过来帮忙宣传派对，你也帮忙出出主意，让更多邻居来参加呀！"
+        ],
+        [
+          "山姆",
+          "哈哈，战友情谊确实比酒还烈。对了，林晓那边我正好想找机会跟她聊聊竞选的事，帮派对出主意没问题，咱们可以把社区的事儿一起串起来聊聊。"
+        ],
+        [
+          "伊莎贝拉",
+          "太好了，山姆，有你帮忙出主意派对肯定更热闹！林晓下午来的时候你正好可以跟她聊聊竞选的事儿，说不定她还能帮你写篇报道呢。你先跟我讲讲那些战友的故事，我搬完这张桌子就过来～"
+        ],
+        [
+          "山姆",
+          "好，那我先讲个最经典的——我那艘驱逐舰上有个信号兵，每次出海前都偷偷给他老婆写信，结果有一次信封被海风吹到甲板上，全舰弟兄都知道了，他气得追着我骂了三条街，哈哈哈！你先忙，摆好了我接着说。"
+        ],
+        [
+          "伊莎贝拉",
+          "哈哈哈，那信号兵也太倒霉了！信封被吹走还追着你骂三条腿——不对，三条街！哈哈哈，好啦好啦，这故事太逗了，你先喝着咖啡等我，我把这排桌子摆好就过来跟你好好聊～"
+        ],
+        [
+          "山姆",
+          "哈哈，你快去忙吧，我这咖啡正好还烫着呢。对了，等你摆好了我还有个更绝的故事——有个厨师兵把舰长的假胡子偷走挂在桅杆上当信号旗，全舰紧急集合了半天去找，哈哈！等你过来我接着讲。"
+        ],
+        [
+          "伊莎贝拉",
+          "哈哈哈，假胡子当信号旗，这也太有创意了！好了好了，这排桌子摆完了，我过来坐你旁边听你讲，顺便给你续杯咖啡～"
+        ],
+        [
+          "山姆",
+          "哈哈，好，那你先坐好，咖啡等下再续，我得先让你笑完这个故事再说——假胡子那事儿还没讲完呢，后来舰长找到那胡子，厨师兵被罚擦了一整周的甲板，结果他边擦边偷笑，气得舰长又给他加了一个月的夜班！来来来，趁热喝一口，笑完了我再给你讲下一个。"
+        ]
+      ],
+      "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。她也邀请本地记者林晓在社区公告板旁收集居民留言，希望林晓能帮忙把派对和社区活动告诉更多居民。",
+      "action": {
+        "event": {
+          "subject": "伊莎贝拉",
+          "predicate": "此时",
+          "object": "加热午餐",
+          "describe": "加热午餐",
+          "address": [
+            "the Ville",
+            "伊莎贝拉的公寓",
+            "主人房",
+            "冰箱"
+          ],
+          "emoji": "加热午餐"
+        },
+        "obj_event": {
+          "subject": "冰箱",
+          "predicate": "此时",
+          "object": "正在冷藏保存食材",
+          "describe": "正在冷藏保存食材",
+          "address": [
+            "the Ville",
+            "伊莎贝拉的公寓",
+            "主人房",
+            "冰箱"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-12:05:00",
+        "duration": 10
+      },
+      "coord": [
+        75,
+        14
+      ]
+    },
+    "玛丽亚": {
+      "config_path": "assets\\village\\agents\\玛丽亚\\agent.json",
+      "status": {
+        "poignancy": 37
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "睡觉",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "睡觉",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "进入深度睡眠阶段",
+                "start": 480,
+                "duration": 20
+              },
+              {
+                "idx": 1,
+                "describe": "翻身调整睡姿",
+                "start": 500,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "进入REM睡眠阶段，做梦",
+                "start": 505,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "进入轻度睡眠",
+                "start": 520,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "短暂半醒后再次入睡",
+                "start": 535,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "睡觉",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "继续睡眠",
+                "start": 540,
+                "duration": 15
+              },
+              {
+                "idx": 1,
+                "describe": "翻身调整睡姿",
+                "start": 555,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "进入深度睡眠",
+                "start": 560,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "做梦",
+                "start": 575,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "浅睡眠阶段",
+                "start": 590,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "逐渐苏醒",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "起床，完成早晨例行工作：洗漱、护肤、换衣服",
+            "start": 600,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "醒来，在床上伸懒腰",
+                "start": 600,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "去洗手间",
+                "start": 605,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "刷牙",
+                "start": 610,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "洗脸和基础清洁",
+                "start": 615,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "洗澡",
+                "start": 620,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "涂抹护肤品（爽肤水、面霜、防晒）",
+                "start": 630,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "挑选并穿上衣服",
+                "start": 635,
+                "duration": 5
+              },
+              {
+                "idx": 7,
+                "describe": "整理头发",
+                "start": 640,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "整理床铺",
+                "start": 645,
+                "duration": 5
+              },
+              {
+                "idx": 9,
+                "describe": "收拾书包和随身物品",
+                "start": 650,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 11,
+            "describe": "前往霍布斯咖啡馆，点早餐并开始学习物理课程",
+            "start": 660,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "收拾学习用品并出门",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "步行前往霍布斯咖啡馆",
+                "start": 665,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "进入咖啡馆并找到座位",
+                "start": 680,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "查看菜单并点早餐",
+                "start": 685,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "享用早餐",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "拿出物理教材和笔记",
+                "start": 700,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "开始学习物理课程内容",
+                "start": 705,
+                "duration": 15
+              }
+            ]
+          },
+          {
+            "idx": 12,
+            "describe": "在霍布斯咖啡馆继续学习物理，复习量子力学笔记",
+            "start": 720,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "整理学习材料和笔记本",
+                "start": 720,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "回顾上次的量子力学笔记",
+                "start": 725,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "复习波函数和薛定谔方程部分",
+                "start": 735,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "复习算符和测量理论部分",
+                "start": 750,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "做量子力学相关练习题",
+                "start": 765,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "标记不理解的概念并查阅资料",
+                "start": 775,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 13,
+            "describe": "在霍布斯咖啡馆吃午餐（沙拉和三明治）",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "开始Twitch直播，玩《塞尔达传说：王国之泪》并与观众聊天",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "继续Twitch直播玩游戏，与观众讨论游戏策略",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "继续Twitch直播，尝试新游戏关卡并回应弹幕",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "短暂休息，站起来活动身体、拉伸、喝点水",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "继续Twitch直播玩游戏",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "吃晚饭（霍布斯咖啡馆的三明治或外卖）",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "恢复Twitch直播，与观众互动，回答粉丝问题",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续Twitch直播，玩游戏并与观众分享日常生活",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "继续Twitch直播，进行直播最后的游戏环节",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "结束直播，整理当天直播内容、回复关注者消息",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_26",
+            "node_24",
+            "node_23",
+            "node_22",
+            "node_20",
+            "node_19",
+            "node_18",
+            "node_16",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_10",
+            "node_8",
+            "node_7",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_27",
+            "node_25",
+            "node_21",
+            "node_17",
+            "node_14",
+            "node_12",
+            "node_9",
+            "node_6"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "玛丽亚正在攻读物理学位，并在Twitch上直播游戏以赚取额外收入。她几乎每天都会去霍布斯咖啡馆学习和吃饭。",
+      "action": {
+        "event": {
+          "subject": "玛丽亚",
+          "predicate": "此时",
+          "object": "回顾上次的量子力学笔记",
+          "describe": "回顾上次的量子力学笔记",
+          "address": [
+            "the Ville",
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
+          ],
+          "emoji": "回顾上次的量子力学笔记"
+        },
+        "obj_event": {
+          "subject": "咖啡馆顾客座位",
+          "predicate": "此时",
+          "object": "正被坐着使用",
+          "describe": "正被坐着使用",
+          "address": [
+            "the Ville",
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-12:05:00",
+        "duration": 10
+      },
+      "coord": [
+        76,
+        25
+      ]
+    },
+    "山姆": {
+      "config_path": "assets\\village\\agents\\山姆\\agent.json",
+      "status": {
+        "poignancy": 99
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "起床，洗漱后喝一杯温水，开始晨间准备",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "在约翰逊公园散步，呼吸清晨新鲜空气，思考竞选策略",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "回家和妻子詹妮弗一起吃早餐，聊聊当天的安排",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "前往霍布斯咖啡馆，点一杯黑咖啡，找个靠窗的位置看书",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "步行前往霍布斯咖啡馆",
+                "start": 480,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "情人节早上，山姆到霍布斯咖啡馆点黑咖啡，伊莎贝拉邀请他晚上5点参加情人节派对，山姆表示要和结婚40年的妻子詹妮弗共度浪漫。",
+                "start": 490,
+                "duration": 0
+              },
+              {
+                "idx": 2,
+                "describe": "在柜台点一杯黑咖啡",
+                "start": 490,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "等待咖啡制作完成",
+                "start": 495,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "取咖啡",
+                "start": 500,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "在靠窗的位置找座位坐下",
+                "start": 505,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "打开书开始阅读",
+                "start": 515,
+                "duration": 20
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "继续在霍布斯咖啡馆阅读，偶尔抬头观察社区生活",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "继续阅读当前章节",
+                "start": 540,
+                "duration": 15
+              },
+              {
+                "idx": 1,
+                "describe": "放下书,拿起咖啡杯喝一口",
+                "start": 555,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "抬头观察窗外路过的邻居和社区生活",
+                "start": 560,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "继续阅读下一章节",
+                "start": 570,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "注意到熟识的邻居,心里记下打算聊聊的话题",
+                "start": 585,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "安静地专注于书页阅读",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "在咖啡馆和邻居们聊天，向他们介绍自己的竞选计划",
+            "start": 600,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "向咖啡馆里的邻居们打招呼",
+                "start": 600,
+                "duration": 0
+              },
+              {
+                "idx": 1,
+                "describe": "山姆和伊莎贝拉在情人节于咖啡馆相遇，山姆表示参选市长并关心社区，伊莎贝拉邀请他参加情人节派对但山姆因与妻子詹妮弗的40年传统婉拒，二人约定下午再聊社区事宜。",
+                "start": 600,
+                "duration": 1
+              },
+              {
+                "idx": 2,
+                "describe": "自我介绍，说明想聊聊社区的事",
+                "start": 601,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "介绍自己竞选市长的想法和初衷",
+                "start": 606,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "分享海军服役时的有趣故事拉近距离",
+                "start": 616,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "阐述自己的主要竞选计划和施政纲领",
+                "start": 626,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "倾听邻居们对社区发展的看法和担忧",
+                "start": 636,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "针对邻居的疑问给出解答",
+                "start": 646,
+                "duration": 5
+              },
+              {
+                "idx": 8,
+                "describe": "留下联系方式，约定下次详谈",
+                "start": 651,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 11,
+            "describe": "继续与邻居交流，分享在海军服役时的有趣故事，争取支持",
+            "start": 660,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "结束上一个话题，引入海军经历话题",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "分享海军入伍和基础训练的趣事",
+                "start": 665,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "伊莎贝拉好奇山姆的海军服役经历，山姆分享了在太平洋执行任务时遭遇暴风雨，一米九的舰长被甩到桌下的趣事。",
+                "start": 670,
+                "duration": 0
+              },
+              {
+                "idx": 3,
+                "describe": "讲述一次海上执行任务时的惊险故事",
+                "start": 670,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "分享军队中学到的领导力和团队管理经验",
+                "start": 680,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "讲述军旅生涯中难忘的战友情谊",
+                "start": 690,
+                "duration": 0
+              },
+              {
+                "idx": 6,
+                "describe": "两人回忆暴风雨中舰长被甩到桌下的惊险经历，并调侃海军中嘴硬的人。",
+                "start": 690,
+                "duration": 0
+              },
+              {
+                "idx": 7,
+                "describe": "讲述军旅生涯中难忘的战友情谊",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 8,
+                "describe": "回答邻居们关于从军经历的提问",
+                "start": 700,
+                "duration": 10
+              },
+              {
+                "idx": 9,
+                "describe": "表达竞选市长的决心并争取邻居的支持",
+                "start": 710,
+                "duration": 0
+              },
+              {
+                "idx": 10,
+                "describe": "山姆边喝咖啡边给正在布置桌椅的伊莎贝拉讲部队里战友的搞笑故事，同时商量下午林晓来访时一起聊聊竞选和帮忙宣传派对的事。",
+                "start": 710,
+                "duration": 2
+              },
+              {
+                "idx": 11,
+                "describe": "表达竞选市长的决心并争取邻居的支持",
+                "start": 712,
+                "duration": 8
+              }
+            ]
+          },
+          {
+            "idx": 12,
+            "describe": "回家和詹妮弗一起吃午饭，享用一个温暖的午餐时光",
+            "start": 720,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "走回家",
+                "start": 720,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "和詹妮弗打招呼并聊聊近况",
+                "start": 730,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "一起准备午餐食材",
+                "start": 735,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "一起烹饪午餐",
+                "start": 745,
+                "duration": 15
+              },
+              {
+                "idx": 4,
+                "describe": "摆放餐具",
+                "start": 760,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "与詹妮弗共进温暖午餐",
+                "start": 765,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "收拾碗筷",
+                "start": 775,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 13,
+            "describe": "前往约翰逊公园，开始打理公园事务，修剪花草",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "继续在公园打理事务，清扫步道，照料园中植物",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "在霍布斯咖啡馆接受记者林晓的采访，详细介绍竞选理念和计划",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "采访结束后与林晓继续交流，感谢她的谨慎态度，整理采访要点",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "回家和詹妮弗共进晚餐，度过一天中最温馨的时光",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "与詹妮弗在客厅聊天，分享今天的经历和竞选进展",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "在家中书房看书放松，阅读一本关于领导力的书籍",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "继续阅读，摘录书中精彩段落，为竞选演讲积累素材",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "做完睡前祷告，整理思绪，回顾一天的工作，与詹妮弗道晚安",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "上床睡觉",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_105",
+            "node_104",
+            "node_102",
+            "node_100",
+            "node_97",
+            "node_96",
+            "node_94",
+            "node_92",
+            "node_91",
+            "node_88",
+            "node_87",
+            "node_85",
+            "node_83",
+            "node_80",
+            "node_78",
+            "node_76",
+            "node_74",
+            "node_72",
+            "node_70",
+            "node_69",
+            "node_68",
+            "node_66",
+            "node_64",
+            "node_62",
+            "node_61",
+            "node_60",
+            "node_56",
+            "node_54",
+            "node_52",
+            "node_50",
+            "node_48",
+            "node_47",
+            "node_43",
+            "node_41",
+            "node_39",
+            "node_37",
+            "node_35",
+            "node_33",
+            "node_31",
+            "node_29",
+            "node_27",
+            "node_26",
+            "node_24",
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_10",
+            "node_8",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [
+            "node_98",
+            "node_89",
+            "node_81",
+            "node_58",
+            "node_45",
+            "node_6"
+          ],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [
+            "node_99",
+            "node_90",
+            "node_82",
+            "node_59",
+            "node_46",
+            "node_7"
+          ],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_103",
+            "node_101",
+            "node_95",
+            "node_93",
+            "node_86",
+            "node_84",
+            "node_79",
+            "node_77",
+            "node_75",
+            "node_73",
+            "node_71",
+            "node_67",
+            "node_65",
+            "node_63",
+            "node_57",
+            "node_55",
+            "node_53",
+            "node_51",
+            "node_49",
+            "node_44",
+            "node_42",
+            "node_40",
+            "node_38",
+            "node_36",
+            "node_34",
+            "node_32",
+            "node_30",
+            "node_28",
+            "node_25",
+            "node_23",
+            "node_21",
+            "node_19",
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_9"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [
+        [
+          "山姆",
+          "早上好，伊莎贝拉！来得挺早啊，看来咱俩都是早起的人。我就说嘛，霍布斯咖啡馆每天第一个客人非我莫属——给我来杯黑咖啡怎么样？"
+        ],
+        [
+          "伊莎贝拉",
+          "早上好，山姆！你总是这么捧场，第一杯黑咖啡马上就好。今天可是情人节，晚上5点来参加我们的派对吧，有惊喜等着大家哦！"
+        ],
+        [
+          "山姆",
+          "情人节派对？哈哈，听起来不错！不过你可得给我和詹妮弗留个好位子，结婚40年的老夫老妻也需要浪漫一下嘛。对了，今天的黑咖啡我请客，就当是提前庆祝了！"
+        ],
+        [
+          "伊莎贝拉",
+          "外面这么热闹啊，山姆。看什么呢这么入迷？"
+        ],
+        [
+          "山姆",
+          "哈哈，伊莎贝拉，我就是在看咱们社区的热闹劲儿。街坊邻居们来来往往的，每个人都有自己的故事——这正是我想参选市长的原因，想让这个社区变得更好。"
+        ],
+        [
+          "山姆",
+          "早上好啊，伊莎贝拉，今天咖啡馆看起来挺热闹的——不过话说回来，情人节嘛，大家都出来找乐子了。"
+        ],
+        [
+          "伊莎贝拉",
+          "早上好，山姆！是啊，情人节大家都爱出门凑热闹。对了，你之前提到的那些社区想法，我一直记着呢，等有空咱们好好聊聊。"
+        ],
+        [
+          "山姆",
+          "哈哈，你还记得呢，伊莎贝拉。其实我参选市长的核心理念很简单——就是想让咱们这个社区每个人都觉得被重视、被照顾。你要是有什么想法，随时来霍布斯咖啡馆找我聊，我下午常在这看书。"
+        ],
+        [
+          "伊莎贝拉",
+          "那就说定了，下午你过来坐的时候咱们好好聊聊！对了，今晚5点我们有个情人节派对，你也带上詹妮弗一起来热闹热闹，说不定还能认识更多有想法的邻居呢。"
+        ],
+        [
+          "山姆",
+          "哈哈，伊莎贝拉，谢谢你的好意！不过今晚我和詹妮弗早就约好了一起过情人节，这可是我们结婚40年的老传统了。下午我肯定还在这儿看书，到时候咱们好好聊聊社区的事！"
+        ],
+        [
+          "伊莎贝拉",
+          "哇，40年的情人节约会！山姆，这可比我们派对浪漫多了，你和詹妮弗好好享受吧。下午你过来看书的时候，咱们再慢慢聊社区的事——对了，我正好留了点新出炉的肉桂卷给你尝尝。"
+        ],
+        [
+          "伊莎贝拉",
+          "哦，你在海军服过役呀？那一定有很多精彩的故事！我最爱听这些冒险经历了，跟我说说当时最有意思的事儿吧。"
+        ],
+        [
+          "山姆",
+          "哈哈，那可太多了！有一次我们在太平洋上执行任务，遭遇了一场突如其来的暴风雨，整艘船晃得像坐过山车，结果我们舰长——一个一米九的大块头——被甩到了桌子底下，全舰的人都在憋笑，那场面你想想就觉得好笑。"
+        ],
+        [
+          "伊莎贝拉",
+          "哇，那位舰长一定吓坏了！能在暴风雨中被甩到桌下，这经历也太惊险了——还好你平安回来了。"
+        ],
+        [
+          "山姆",
+          "哈，那家伙脸都绿了，不过他事后总是第一个站出来说'这点风浪算什么'——海军里最不缺的就是嘴硬的人。"
+        ],
+        [
+          "伊莎贝拉",
+          "山姆，那些战友之间的情谊一定很珍贵吧。你继续说，我这边把桌椅摆好就过来听你讲。对了，下午林晓会过来帮忙宣传派对，你也帮忙出出主意，让更多邻居来参加呀！"
+        ],
+        [
+          "山姆",
+          "哈哈，战友情谊确实比酒还烈。对了，林晓那边我正好想找机会跟她聊聊竞选的事，帮派对出主意没问题，咱们可以把社区的事儿一起串起来聊聊。"
+        ],
+        [
+          "伊莎贝拉",
+          "太好了，山姆，有你帮忙出主意派对肯定更热闹！林晓下午来的时候你正好可以跟她聊聊竞选的事儿，说不定她还能帮你写篇报道呢。你先跟我讲讲那些战友的故事，我搬完这张桌子就过来～"
+        ],
+        [
+          "山姆",
+          "好，那我先讲个最经典的——我那艘驱逐舰上有个信号兵，每次出海前都偷偷给他老婆写信，结果有一次信封被海风吹到甲板上，全舰弟兄都知道了，他气得追着我骂了三条街，哈哈哈！你先忙，摆好了我接着说。"
+        ],
+        [
+          "伊莎贝拉",
+          "哈哈哈，那信号兵也太倒霉了！信封被吹走还追着你骂三条腿——不对，三条街！哈哈哈，好啦好啦，这故事太逗了，你先喝着咖啡等我，我把这排桌子摆好就过来跟你好好聊～"
+        ],
+        [
+          "山姆",
+          "哈哈，你快去忙吧，我这咖啡正好还烫着呢。对了，等你摆好了我还有个更绝的故事——有个厨师兵把舰长的假胡子偷走挂在桅杆上当信号旗，全舰紧急集合了半天去找，哈哈！等你过来我接着讲。"
+        ],
+        [
+          "伊莎贝拉",
+          "哈哈哈，假胡子当信号旗，这也太有创意了！好了好了，这排桌子摆完了，我过来坐你旁边听你讲，顺便给你续杯咖啡～"
+        ],
+        [
+          "山姆",
+          "哈哈，好，那你先坐好，咖啡等下再续，我得先让你笑完这个故事再说——假胡子那事儿还没讲完呢，后来舰长找到那胡子，厨师兵被罚擦了一整周的甲板，结果他边擦边偷笑，气得舰长又给他加了一个月的夜班！来来来，趁热喝一口，笑完了我再给你讲下一个。"
+        ]
+      ],
+      "currently": "山姆和他结婚40年的妻子詹妮弗住在一起，他空闲时间都在打理公园，他还是个狂热的读者。山姆打算在即将到来的选举中竞选地方市长，他正在告诉邻居们这件事。他知道本地记者林晓正在霍布斯咖啡馆采访居民，愿意向她解释自己的竞选想法。",
+      "action": {
+        "event": {
+          "subject": "山姆",
+          "predicate": "此时",
+          "object": "走回家",
+          "describe": "走回家",
+          "address": [
+            "the Ville",
+            "摩尔家族的房子",
+            "主人房",
+            "床"
+          ],
+          "emoji": "走回家"
+        },
+        "obj_event": {
+          "subject": "床",
+          "predicate": "此时",
+          "object": "已铺好等待入睡",
+          "describe": "已铺好等待入睡",
+          "address": [
+            "the Ville",
+            "摩尔家族的房子",
+            "主人房",
+            "床"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-12:00:00",
+        "duration": 10
+      },
+      "coord": [
+        37,
+        65
+      ]
+    },
+    "汤姆": {
+      "config_path": "assets\\village\\agents\\汤姆\\agent.json",
+      "status": {
+        "poignancy": 50
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床并完成早晨的例行工作，洗漱更衣",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "在柳树市场和药店开门营业，站在杂货店柜台后面迎接早起的顾客",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "打开店门并开启店内灯光和暖气设备",
+                "start": 480,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "检查收银机，准备零钱和当日收据",
+                "start": 485,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "整理杂货店柜台，摆放热销商品",
+                "start": 495,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "确认今日促销商品的展示和价签",
+                "start": 505,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "站在杂货店柜台后迎接早起的顾客",
+                "start": 515,
+                "duration": 15
+              },
+              {
+                "idx": 5,
+                "describe": "与早到顾客热情互动，介绍今日特惠商品",
+                "start": 530,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "帮助顾客完成订单，热情地与顾客互动，介绍今日促销商品",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "迎接早起的顾客，询问需要什么帮助",
+                "start": 540,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "帮助顾客挑选货架上的杂货商品",
+                "start": 545,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "向顾客介绍今日促销商品并推荐购买",
+                "start": 560,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "为顾客在柜台处理订单并收款",
+                "start": 575,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "与常客热情聊天，聊聊近况",
+                "start": 585,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "整理被翻乱的促销商品货架",
+                "start": 595,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "继续在柜台服务顾客，处理杂货订单，偶尔和常客聊天",
+            "start": 600,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "迎接进店的顾客，询问他们的需求",
+                "start": 600,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "推荐今日促销商品并介绍产品特点",
+                "start": 605,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "处理顾客的杂货订单，包括挑选和称重商品",
+                "start": 615,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "为顾客包装商品并完成收款",
+                "start": 630,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "整理柜台上的商品摆放，补充缺货的物品",
+                "start": 640,
+                "duration": 5
+              },
+              {
+                "idx": 5,
+                "describe": "和常客聊天寒暄，了解他们的近况",
+                "start": 645,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "记录订单明细，更新库存信息",
+                "start": 655,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 11,
+            "describe": "整理刚到的货品，同时招呼进店的顾客，确保大家都得到照顾",
+            "start": 660,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "检查新到货品的清单",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "拆包并分类整理新到货品",
+                "start": 665,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "将新货品摆放到货架上",
+                "start": 680,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "招呼进店的顾客",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "处理顾客的杂货订单",
+                "start": 700,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "与常客闲聊几句",
+                "start": 710,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "确认每位顾客都得到照顾",
+                "start": 715,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 12,
+            "describe": "在店后间吃午餐，简送来的三明治和咖啡",
+            "start": 720,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "从简那里接过三明治和咖啡",
+                "start": 720,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "走到店后间的餐桌",
+                "start": 725,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "在桌边坐下准备用餐",
+                "start": 730,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "打开三明治的包装",
+                "start": 735,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "享用三明治",
+                "start": 740,
+                "duration": 15
+              },
+              {
+                "idx": 5,
+                "describe": "搭配喝咖啡",
+                "start": 755,
+                "duration": 15
+              },
+              {
+                "idx": 6,
+                "describe": "用餐后短暂休息放松",
+                "start": 770,
+                "duration": 10
+              },
+              {
+                "idx": 7,
+                "describe": "收拾餐桌和午餐残渣",
+                "start": 780,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 13,
+            "describe": "回到药店柜台工作，仔细整理药品货架，检查库存",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "与进店的顾客交流，了解大家的需求，推荐合适的药品或商品",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "处理顾客的药店订单，核对处方，精力充沛地忙碌着",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "为即将下班的顾客结账，顺便聊聊下个月市长选举的话题",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "关店门后回家，与妻子简一起吃晚饭",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "晚饭后与简讨论下个月的市长选举，粗鲁地表达对山姆竞选承诺的怀疑",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "考虑去霍布斯咖啡馆看看，听说记者林晓在采访居民",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "在霍布斯咖啡馆与记者林晓交谈，谈论本地事务，公开质疑山姆的竞选承诺",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "继续在咖啡馆与林晓及其他顾客交流本地新闻，好斗地评价当前的政治形势",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "回家准备休息，和简道晚安",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "上床睡觉",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_72",
+            "node_70",
+            "node_68",
+            "node_66",
+            "node_64",
+            "node_62",
+            "node_60",
+            "node_58",
+            "node_56",
+            "node_54",
+            "node_52",
+            "node_50",
+            "node_48",
+            "node_46",
+            "node_44",
+            "node_43",
+            "node_41",
+            "node_40",
+            "node_38",
+            "node_37",
+            "node_35",
+            "node_33",
+            "node_31",
+            "node_29",
+            "node_27",
+            "node_25",
+            "node_23",
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_11",
+            "node_9",
+            "node_8",
+            "node_6",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_73",
+            "node_71",
+            "node_69",
+            "node_67",
+            "node_65",
+            "node_63",
+            "node_61",
+            "node_59",
+            "node_57",
+            "node_55",
+            "node_53",
+            "node_51",
+            "node_49",
+            "node_47",
+            "node_45",
+            "node_42",
+            "node_39",
+            "node_36",
+            "node_34",
+            "node_32",
+            "node_30",
+            "node_28",
+            "node_26",
+            "node_24",
+            "node_21",
+            "node_19",
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_10",
+            "node_7",
+            "node_5"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "汤姆和他的妻子简住在一起，负责管理商店的日常运营，并帮助顾客完成订单。汤姆对下个月即将举行的地方市长选举也很感兴趣。他不喜欢山姆，并且听说本地记者林晓正在霍布斯咖啡馆采访居民，可能会向她表达自己对山姆竞选承诺的怀疑。",
+      "action": {
+        "event": {
+          "subject": "汤姆",
+          "predicate": "此时",
+          "object": "在桌边坐下准备用餐",
+          "describe": "在桌边坐下准备用餐",
+          "address": [
+            "the Ville",
+            "柳树市场和药店",
+            "商店",
+            "杂货店柜台"
+          ],
+          "emoji": "在桌边坐下准备用餐"
+        },
+        "obj_event": {
+          "subject": "杂货店柜台",
+          "predicate": "此时",
+          "object": "暂作餐桌使用",
+          "describe": "暂作餐桌使用",
+          "address": [
+            "the Ville",
+            "柳树市场和药店",
+            "商店",
+            "杂货店柜台"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-12:10:00",
+        "duration": 5
+      },
+      "coord": [
+        88,
+        46
+      ]
+    },
+    "埃迪": {
+      "config_path": "assets\\village\\agents\\埃迪\\agent.json",
+      "status": {
+        "poignancy": 65
+      },
+      "schedule": {
+        "create": "20240214-08:00:00",
+        "daily_schedule": [
+          {
+            "idx": 0,
+            "describe": "睡觉",
+            "start": 0,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 1,
+            "describe": "睡觉",
+            "start": 60,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 2,
+            "describe": "睡觉",
+            "start": 120,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 3,
+            "describe": "睡觉",
+            "start": 180,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 4,
+            "describe": "睡觉",
+            "start": 240,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 5,
+            "describe": "睡觉",
+            "start": 300,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 6,
+            "describe": "睡觉",
+            "start": 360,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 7,
+            "describe": "起床并完成早晨例行工作，刷牙洗脸整理仪容",
+            "start": 420,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 8,
+            "describe": "在宿舍吃早餐，准备好上课需要的学习材料",
+            "start": 480,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "去食堂打早餐",
+                "start": 480,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "吃早餐",
+                "start": 490,
+                "duration": 20
+              },
+              {
+                "idx": 2,
+                "describe": "收拾餐具和餐桌",
+                "start": 510,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "整理今天音乐理论课需要的教材和笔记本",
+                "start": 515,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "检查课程表和作业要求",
+                "start": 525,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "装好书包和上课用品",
+                "start": 535,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 9,
+            "describe": "在宿舍预习音乐理论课程内容，复习上周的和声学笔记",
+            "start": 540,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "回顾上周和声学的课堂笔记",
+                "start": 540,
+                "duration": 15
+              },
+              {
+                "idx": 1,
+                "describe": "查阅不理解的和声术语与概念",
+                "start": 555,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "练习和声分析的习题",
+                "start": 565,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "预习今天对位法与曲式分析的教材内容",
+                "start": 580,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "总结关键要点并记录待提问的问题",
+                "start": 590,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 10,
+            "describe": "在奥克山学院上音乐理论课，学习对位法与曲式分析",
+            "start": 600,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "复习上节课的和声学知识",
+                "start": 600,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "学习对位法的基本规则与分类",
+                "start": 605,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "练习写作二声部对位旋律",
+                "start": 615,
+                "duration": 15
+              },
+              {
+                "idx": 3,
+                "describe": "学习曲式结构的基本类型",
+                "start": 630,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "分析经典音乐作品的曲式",
+                "start": 640,
+                "duration": 15
+              },
+              {
+                "idx": 5,
+                "describe": "课堂讨论与答疑",
+                "start": 655,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 11,
+            "describe": "继续在奥克山学院上音乐理论课，参与课堂作品讨论",
+            "start": 660,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "进入教室并做好讨论准备",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "听取同学展示音乐作品",
+                "start": 665,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "分析作品的和声与对位结构",
+                "start": 675,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "记录讨论中的要点与灵感",
+                "start": 685,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "发表对作品的看法与建议",
+                "start": 695,
+                "duration": 15
+              },
+              {
+                "idx": 5,
+                "describe": "参与小组交流讨论",
+                "start": 710,
+                "duration": 10
+              }
+            ]
+          },
+          {
+            "idx": 12,
+            "describe": "在学院食堂吃午餐，补充能量",
+            "start": 720,
+            "duration": 60,
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "走到学院食堂",
+                "start": 720,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "排队选餐和付款",
+                "start": 725,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "找座位坐下",
+                "start": 735,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "吃午餐",
+                "start": 740,
+                "duration": 25
+              },
+              {
+                "idx": 4,
+                "describe": "吃饭时查看手机放松",
+                "start": 765,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "收拾餐盘离开食堂",
+                "start": 775,
+                "duration": 5
+              }
+            ]
+          },
+          {
+            "idx": 13,
+            "describe": "在奥克山学院继续上课，学习更多音乐理论中的调式与转调技巧",
+            "start": 780,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 14,
+            "describe": "在奥克山学院继续上课，学习更多音乐理论中20世纪现代作曲技法",
+            "start": 840,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 15,
+            "describe": "步行前往霍布斯咖啡馆，开始音乐合成项目的研究",
+            "start": 900,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 16,
+            "describe": "在霍布斯咖啡馆学习并制作音乐合成项目，调试合成器音色",
+            "start": 960,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 17,
+            "describe": "在霍布斯咖啡馆吃晚饭，点一份三明治和咖啡",
+            "start": 1020,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 18,
+            "describe": "继续在霍布斯咖啡馆完成音乐合成项目的编曲部分",
+            "start": 1080,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 19,
+            "describe": "继续在霍布斯咖啡馆完善音乐合成项目的混音和母带处理",
+            "start": 1140,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 20,
+            "describe": "步行回到宿舍，开始探索不同音乐风格（如爵士、古典、电子）",
+            "start": 1200,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 21,
+            "describe": "在宿舍聆听和分析不同风格的音乐作品，记录灵感",
+            "start": 1260,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 22,
+            "describe": "在宿舍放松，整理一天的学习内容，写学习日志",
+            "start": 1320,
+            "duration": 60,
+            "decompose": {}
+          },
+          {
+            "idx": 23,
+            "describe": "上床睡觉，为第二天的学习养精蓄锐",
+            "start": 1380,
+            "duration": 60,
+            "decompose": {}
+          }
+        ]
+      },
+      "associate": {
+        "memory": {
+          "event": [
+            "node_55",
+            "node_53",
+            "node_51",
+            "node_49",
+            "node_47",
+            "node_46",
+            "node_44",
+            "node_43",
+            "node_41",
+            "node_39",
+            "node_38",
+            "node_36",
+            "node_35",
+            "node_34",
+            "node_33",
+            "node_31",
+            "node_30",
+            "node_28",
+            "node_26",
+            "node_24",
+            "node_22",
+            "node_20",
+            "node_18",
+            "node_16",
+            "node_14",
+            "node_12",
+            "node_10",
+            "node_8",
+            "node_7",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2"
+          ],
+          "chat": [],
+          "thought": [
+            "node_0"
+          ],
+          "relationship": [],
+          "goal": [
+            "node_1"
+          ],
+          "summary": [
+            "node_56",
+            "node_54",
+            "node_52",
+            "node_50",
+            "node_48",
+            "node_45",
+            "node_42",
+            "node_40",
+            "node_37",
+            "node_32",
+            "node_29",
+            "node_27",
+            "node_25",
+            "node_23",
+            "node_21",
+            "node_19",
+            "node_17",
+            "node_15",
+            "node_13",
+            "node_11",
+            "node_9",
+            "node_6"
+          ],
+          "skill": [],
+          "conflict": []
+        }
+      },
+      "chats": [],
+      "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。",
+      "action": {
+        "event": {
+          "subject": "埃迪",
+          "predicate": "此时",
+          "object": "排队选餐和付款",
+          "describe": "排队选餐和付款",
+          "address": [
+            "the Ville",
+            "奥克山学院",
+            "走廊"
+          ],
+          "emoji": "排队选餐和付款"
+        },
+        "obj_event": {
+          "subject": "走廊",
+          "predicate": "此时",
+          "object": "排满了等待点餐的人",
+          "describe": "排满了等待点餐的人",
+          "address": [
+            "the Ville",
+            "奥克山学院",
+            "走廊"
+          ],
+          "emoji": ""
+        },
+        "start": "20240214-12:05:00",
+        "duration": 10
+      },
+      "coord": [
+        111,
+        34
+      ]
+    }
+  },
+  "memory_governance": {
+    "relationship_update": true,
+    "summary_merge": true,
+    "summary_poignancy_max": 3,
+    "summary_threshold": 3,
+    "summary_window": 12,
+    "conflict_detection": true,
+    "conflict_window": 30,
+    "skill_from_conflict": true
+  },
+  "step": 26
+}

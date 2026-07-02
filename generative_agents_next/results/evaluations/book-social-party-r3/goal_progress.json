@@ -1,0 +1,36 @@
+{
+  "informed": [
+    "伊莎贝拉",
+    "埃迪",
+    "山姆",
+    "玛丽亚"
+  ],
+  "accepted": [
+    "伊莎贝拉",
+    "埃迪",
+    "山姆",
+    "玛丽亚"
+  ],
+  "arrived": [
+    "伊莎贝拉",
+    "埃迪"
+  ],
+  "rejected_or_unavailable": [
+    "埃迪"
+  ],
+  "accepted_not_arrived": [
+    "山姆",
+    "玛丽亚"
+  ],
+  "missing": [
+    "这些角色有承诺但未在目标时间窗到场：山姆、玛丽亚",
+    "这些角色明确拒绝或表示时间冲突：埃迪"
+  ],
+  "criteria": {
+    "has_event_diffusion": true,
+    "has_commitment": true,
+    "has_attendance": true,
+    "has_no_unfulfilled_commitment": false
+  },
+  "goal_completion_rate": 0.75
+}

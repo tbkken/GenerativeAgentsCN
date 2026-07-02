@@ -1,0 +1,140 @@
+{
+  "checkpoint": "results/checkpoints/book-social-party-r3",
+  "generated_at": "2026-07-02T20:14:01",
+  "agents": {
+    "伊莎贝拉": {
+      "total_nodes": 282,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 129,
+        "chat": 18,
+        "relationship": 18,
+        "summary": 94,
+        "conflict": 2,
+        "skill": 2
+      },
+      "advanced_nodes": 117,
+      "source_traced_advanced_nodes": 117,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "山姆": 11,
+        "玛丽亚": 2,
+        "埃迪": 5
+      },
+      "conflict_nodes": 2,
+      "summary_nodes": 94,
+      "skill_nodes": 2,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "埃迪": {
+      "total_nodes": 213,
+      "type_counts": {
+        "thought": 20,
+        "goal": 1,
+        "event": 108,
+        "summary": 74,
+        "chat": 5,
+        "relationship": 5
+      },
+      "advanced_nodes": 80,
+      "source_traced_advanced_nodes": 80,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 5
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 74,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "山姆": {
+      "total_nodes": 247,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 119,
+        "chat": 12,
+        "relationship": 12,
+        "summary": 83,
+        "conflict": 1,
+        "skill": 1
+      },
+      "advanced_nodes": 98,
+      "source_traced_advanced_nodes": 98,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 11,
+        "汤姆": 1
+      },
+      "conflict_nodes": 1,
+      "summary_nodes": 83,
+      "skill_nodes": 1,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "汤姆": {
+      "total_nodes": 172,
+      "type_counts": {
+        "thought": 1,
+        "goal": 1,
+        "event": 96,
+        "summary": 72,
+        "chat": 1,
+        "relationship": 1
+      },
+      "advanced_nodes": 74,
+      "source_traced_advanced_nodes": 74,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "山姆": 1
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 72,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "玛丽亚": {
+      "total_nodes": 139,
+      "type_counts": {
+        "thought": 1,
+        "goal": 1,
+        "event": 77,
+        "summary": 56,
+        "chat": 2,
+        "relationship": 2
+      },
+      "advanced_nodes": 59,
+      "source_traced_advanced_nodes": 59,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 2
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 56,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    }
+  },
+  "totals": {
+    "total_nodes": 1053,
+    "advanced_nodes": 428,
+    "source_traced_advanced_nodes": 428,
+    "relationship_nodes": 38,
+    "goal_nodes": 5,
+    "summary_nodes": 379,
+    "skill_nodes": 3,
+    "conflict_nodes": 3,
+    "imported_nodes": 0,
+    "source_trace_rate": 1.0
+  }
+}

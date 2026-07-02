@@ -1,0 +1,126 @@
+{
+  "experiment": "book-social-party-r1",
+  "event": "valentine_party",
+  "keywords": [
+    "情人节",
+    "派对",
+    "五点",
+    "5点",
+    "17:00",
+    "霍布斯咖啡馆"
+  ],
+  "target_place": "霍布斯咖啡馆",
+  "window_start": "20240214-17:00",
+  "window_end": "20240214-19:00",
+  "checkpoint_count": 72,
+  "final_time": "20240214-19:50",
+  "diffusion": {
+    "mention_count": 45,
+    "known_agents": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "汤姆",
+      "玛丽亚"
+    ],
+    "known_agent_count": 5
+  },
+  "commitments": {
+    "accepted": [
+      "伊莎贝拉",
+      "埃迪"
+    ],
+    "accepted_count": 2,
+    "rejected": [],
+    "rejected_count": 0
+  },
+  "attendance": {
+    "arrived": [
+      "伊莎贝拉",
+      "埃迪",
+      "汤姆"
+    ],
+    "arrived_count": 3
+  },
+  "goal_progress": {
+    "informed": [
+      "伊莎贝拉",
+      "埃迪",
+      "山姆",
+      "汤姆",
+      "玛丽亚"
+    ],
+    "accepted": [
+      "伊莎贝拉",
+      "埃迪"
+    ],
+    "arrived": [
+      "伊莎贝拉",
+      "埃迪",
+      "汤姆"
+    ],
+    "rejected_or_unavailable": [],
+    "accepted_not_arrived": [],
+    "missing": [],
+    "criteria": {
+      "has_event_diffusion": true,
+      "has_commitment": true,
+      "has_attendance": true,
+      "has_no_unfulfilled_commitment": true
+    },
+    "goal_completion_rate": 1.0
+  },
+  "memory_summary": {
+    "伊莎贝拉": {
+      "chat": 17,
+      "conflict": 2,
+      "event": 156,
+      "goal": 1,
+      "relationship": 17,
+      "skill": 2,
+      "summary": 110,
+      "thought": 35
+    },
+    "玛丽亚": {
+      "chat": 3,
+      "conflict": 0,
+      "event": 119,
+      "goal": 1,
+      "relationship": 3,
+      "skill": 0,
+      "summary": 95,
+      "thought": 18
+    },
+    "山姆": {
+      "chat": 9,
+      "conflict": 0,
+      "event": 140,
+      "goal": 1,
+      "relationship": 9,
+      "skill": 0,
+      "summary": 100,
+      "thought": 18
+    },
+    "汤姆": {
+      "chat": 3,
+      "conflict": 0,
+      "event": 105,
+      "goal": 1,
+      "relationship": 3,
+      "skill": 0,
+      "summary": 78,
+      "thought": 18
+    },
+    "埃迪": {
+      "chat": 4,
+      "conflict": 0,
+      "event": 128,
+      "goal": 1,
+      "relationship": 4,
+      "skill": 0,
+      "summary": 82,
+      "thought": 18
+    }
+  },
+  "reflection_candidates": 0
+}

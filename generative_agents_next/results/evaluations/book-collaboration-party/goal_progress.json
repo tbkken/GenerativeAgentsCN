@@ -1,0 +1,32 @@
+{
+  "informed": [
+    "伊莎贝拉",
+    "克劳斯",
+    "埃迪",
+    "玛丽亚"
+  ],
+  "accepted": [
+    "埃迪",
+    "玛丽亚"
+  ],
+  "arrived": [
+    "伊莎贝拉",
+    "克劳斯",
+    "埃迪",
+    "玛丽亚"
+  ],
+  "rejected_or_unavailable": [
+    "伊莎贝拉"
+  ],
+  "accepted_not_arrived": [],
+  "missing": [
+    "这些角色明确拒绝或表示时间冲突：伊莎贝拉"
+  ],
+  "criteria": {
+    "has_event_diffusion": true,
+    "has_commitment": true,
+    "has_attendance": true,
+    "has_no_unfulfilled_commitment": true
+  },
+  "goal_completion_rate": 1.0
+}

@@ -1,0 +1,28 @@
+{
+  "informed": [
+    "伊莎贝拉",
+    "埃迪",
+    "山姆",
+    "汤姆",
+    "玛丽亚"
+  ],
+  "accepted": [
+    "伊莎贝拉",
+    "埃迪"
+  ],
+  "arrived": [
+    "伊莎贝拉",
+    "埃迪",
+    "汤姆"
+  ],
+  "rejected_or_unavailable": [],
+  "accepted_not_arrived": [],
+  "missing": [],
+  "criteria": {
+    "has_event_diffusion": true,
+    "has_commitment": true,
+    "has_attendance": true,
+    "has_no_unfulfilled_commitment": true
+  },
+  "goal_completion_rate": 1.0
+}

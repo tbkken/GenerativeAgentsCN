@@ -407,23 +407,98 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 | `results/evaluations/book-social-party-r*/report.md` | 每次运行的证据报告。 |
 | `results/evaluations/book-social-party-batch/batch_summary.json` | 三次运行的均值和每次运行行记录。 |
 
-## 36.17 实验结果分析（待填写）
+## 36.17 实验结果分析
 
-实验完成后，优先写稳定性，不写戏剧化故事。
+第 36 章的实验不是挑一次好看的派对回放，而是把同一配置跑三次，再比较传播、承诺、到场和失败样例。`book-social-party-r1/r2/r3` 都已经生成 `metrics.json`，批量汇总文件位于 `generative_agents_next/results/evaluations/book-social-party-batch/batch_summary.json`。
 
-| 分析项 | 读取文件 | 填写口径 |
+| 项目 | 结果 |
+| --- | --- |
+| 批量运行数 | `3` |
+| 成功生成 metrics 的运行数 | `3` |
+| 角色 | 伊莎贝拉、玛丽亚、山姆、汤姆、埃迪 |
+| 目标事件 | `valentine_party` |
+| 目标地点 | 霍布斯咖啡馆 |
+| 目标窗口 | `2024-02-14 17:00` 到 `19:00` |
+
+### 三次运行总览
+
+| run | checkpoint 数 | 最终时间 | mentions | known_agents | accepted | rejected | arrived | goal_completion_rate |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `book-social-party-r1` | `72` | `20240214-19:50` | `45` | `5` | `2` | `0` | `3` | `1.0` |
+| `book-social-party-r2` | `72` | `20240214-19:50` | `30` | `3` | `3` | `0` | `3` | `1.0` |
+| `book-social-party-r3` | `66` | `20240214-18:50` | `45` | `4` | `4` | `1` | `2` | `0.75` |
+
+批量均值如下：
+
+| 指标 | 均值 |
+| --- | ---: |
+| `mentions` | `40.0` |
+| `known_agents` | `4.0` |
+| `accepted` | `3.0` |
+| `rejected` | `0.3333` |
+| `arrived` | `2.6667` |
+| `goal_completion_rate` | `0.9167` |
+
+### 传播稳定性
+
+三次运行都形成了派对信息传播，但覆盖范围不同。
+
+| run | 知情角色 | 代表性证据 |
 | --- | --- | --- |
-| 三次运行是否都成功 | `batch_summary.json` 的 `successful_metric_files` | 缺失 metrics 的 run 要单独说明，不纳入均值。 |
-| 传播稳定性 | `averages.mentions`、每个 run 的 `known_agents` | 哪些角色稳定知道派对，哪些只在某次运行知道。 |
-| 到场稳定性 | 每个 run 的 `arrived` | 到场是否稳定，还是一次偶然。 |
-| 目标完成率方差 | `goal_completion_rate` 行记录 | 说明成功标准在哪些 run 中成立。 |
-| 失败分类 | 每个 run 的 `report.md` | 找出共同断点：没相遇、没提及、没记住、没更新计划、没到场。 |
+| `r1` | 伊莎贝拉、埃迪、山姆、汤姆、玛丽亚 | `09:20` 伊莎贝拉告诉山姆“下午5点到7点我们在店里办个小派对”；后续山姆、埃迪、汤姆、玛丽亚都进入相关对话。 |
+| `r2` | 伊莎贝拉、埃迪、山姆 | `09:30` 伊莎贝拉提醒山姆五点派对；`11:30` 山姆主动问需要帮忙布置什么。 |
+| `r3` | 伊莎贝拉、埃迪、山姆、玛丽亚 | `08:10` 伊莎贝拉邀请山姆；`13:10` 玛丽亚说“我肯定要来，正好学习完可以放松一下”。 |
 
-如果三次运行差异很大，结论不应写成“系统能稳定组织派对”，而应写成“该配置下派对传播高度依赖偶遇和日程，稳定性不足”。这类失败比一次成功故事更有价值。
+稳定结论是：派对信息在三次运行中都会被提及，并且每次至少覆盖三名角色。不稳定结论也同样重要：覆盖角色从 3 人到 5 人不等，说明传播深度仍然依赖角色相遇、日程位置和对话触发。
+
+### 到场稳定性
+
+三次运行都有人在目标窗口进入霍布斯咖啡馆，但到场名单并不完全一致。
+
+| run | 到场角色 | 关键帧 |
+| --- | --- | --- |
+| `r1` | 伊莎贝拉、埃迪、汤姆 | `17:00` 伊莎贝拉在柜台后面；`17:10` 汤姆到顾客座位；`18:50` 埃迪到钢琴。 |
+| `r2` | 伊莎贝拉、埃迪、山姆 | `17:00` 伊莎贝拉、山姆和埃迪同时出现在咖啡馆不同区域。 |
+| `r3` | 伊莎贝拉、埃迪 | `17:00` 伊莎贝拉在烹饪区，埃迪到柜台后面。 |
+
+到场均值是 `2.6667`，说明行动落地不是偶然单点，但也不能写成“所有承诺者稳定到场”。`r3` 中山姆和玛丽亚有承诺候选，却没有被 `movement.json` 验证到场，因此 `has_no_unfulfilled_commitment=false`，目标完成率降为 `0.75`。
+
+### 失败样例比均值更有用
+
+`book-social-party-r3` 暴露了两个关键边界。
+
+| 边界 | 证据 | 解释 |
+| --- | --- | --- |
+| 承诺未到场 | `reflection_candidates.json` 生成 2 条候选：山姆、玛丽亚。 | 山姆在 `16:30` 说“等派对开始我和林晓一定过来坐坐”，玛丽亚在 `13:10` 说“我肯定要来”，但两人没有进入 `arrived`。 |
+| 自动抽取会互相冲突 | 埃迪同时出现在 `accepted` 和 `rejected`。 | `17:20` 埃迪先说还要赶回去做合成项目，随后又说六点左右赶过来；脚本把这段对话拆成拒绝和接受两个信号，人工报告必须解释时序。 |
+
+`r3` 的最终 checkpoint 是 `20240214-18:50`，比目标窗口结束时间早 10 分钟。当前证据足以说明 17:00 到 18:50 的到场情况，但不能声称已经观察到 19:00 之后的所有后续行动。
+
+### 批量实验结论
+
+| 观察 | 结论 | 不能推出什么 |
+| --- | --- | --- |
+| 三次都有 `metrics.json` 和 `report.md` | 批量评价链路已经可用。 | 不能说明仿真行为已经稳定，只能说明指标产物稳定生成。 |
+| `known_agents` 均值为 `4.0` | 派对信息通常能传播到多数实验角色。 | 不能说明每个角色都知道完整时间、地点和行动要求。 |
+| `arrived` 均值为 `2.6667` | 霍布斯咖啡馆到场现象在三次运行中重复出现。 | 不能把到场直接等同于具体任务完成。 |
+| `goal_completion_rate` 均值为 `0.9167` | 两次完全通过，第三次暴露承诺未兑现。 | 不能只报均值忽略 `r3` 的失败候选。 |
+
+这一轮社会仿真 social simulation 的结论应限定在当前配置内：5 个角色、同一地图、同一事件和三次运行中，派对传播和到场都能重复出现，但传播覆盖、承诺抽取和到场名单存在明显方差。下一步要把批量实验扩展为对照实验 controlled experiment，例如只改变角色数量、只改变关系记忆、只改变模型 provider，才能解释差异来自哪里。
+
+### 复查入口
+
+| 文件 | 用途 |
+| --- | --- |
+| `generative_agents_next/results/evaluations/book-social-party-batch/batch_summary.json` | 查看三次运行汇总和均值。 |
+| `generative_agents_next/results/evaluations/book-social-party-r*/metrics.json` | 查看每次运行的传播、承诺、到场和目标完成率。 |
+| `generative_agents_next/results/evaluations/book-social-party-r*/report.md` | 查看每次运行的证据摘录。 |
+| `generative_agents_next/results/checkpoints/book-social-party-r*/conversation.json` | 复查派对信息如何传播。 |
+| `generative_agents_next/results/compressed/book-social-party-r*/movement.json` | 复查 17:00-19:00 的到场帧。 |
+| `generative_agents_next/results/evaluations/book-social-party-r3/reflection_candidates.json` | 复查山姆和玛丽亚的承诺未到场候选。 |
 
 ## 36.18 本章小结
 
-社会仿真升级 social simulation upgrade 要把“小镇故事”变成“可重复、可统计、可比较的实验”。当前项目已经有关键原料：`start.py` 保存断点 checkpoint 和对话记录 conversation，`compress.py` 生成时间线 simulation 与移动回放 movement，现有 `book-party-extended` 等结果可以作为证据样例。下一步不是盲目扩大角色数量，而是补实验配置 experiment config、批量运行 batch runs、传播统计 diffusion metrics、到场统计 attendance metrics、方差分析 variance、对照实验 controlled experiment、事件数据集 event dataset 和自动报告 report。
+社会仿真升级 social simulation upgrade 要把“小镇故事”变成“可重复、可统计、可比较的实验”。当前项目已经有关键原料：`start.py` 保存断点 checkpoint 和对话记录 conversation，`compress.py` 生成时间线 simulation 与移动回放 movement；本章进一步跑通了 `book-social-party-r1/r2/r3` 三次同配置实验，并生成 `batch_summary.json`。下一步不是盲目扩大角色数量，而是把实验配置 experiment config、对照变量 controlled variable、事件数据集 event dataset 和更细的失败分类 failure taxonomy 固化下来。
 
 社会仿真结论的可信性至少取决于四件事：有没有多次运行 run，指标是否能回查原始证据，失败样例有没有进入报告，结论是否限定在当前配置内。下一章进入评价体系 evaluation，把这些统计结果进一步整理成可审计的指标文件和人工报告。
 
@@ -441,5 +516,5 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 - Local output: `generative_agents_next/results/checkpoints/<实验名>/simulate-*.json`
 - Local output: `generative_agents_next/results/compressed/<实验名>/simulation.md`
 - Local output: `generative_agents_next/results/compressed/<实验名>/movement.json`
-- Local pending experiment: `generative_agents_next/results/evaluations/book-social-party-batch/batch_summary.json`
+- Local output: `generative_agents_next/results/evaluations/book-social-party-batch/batch_summary.json`
 - Local evidence figure scaffold: `docs/book/scaffolds/part_04_05/ch24_38_evidence_figures.py`

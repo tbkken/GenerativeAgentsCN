@@ -1,0 +1,135 @@
+{
+  "checkpoint": "results/checkpoints/book-collaboration-party",
+  "generated_at": "2026-07-02T20:14:02",
+  "agents": {
+    "亚当": {
+      "total_nodes": 149,
+      "type_counts": {
+        "thought": 16,
+        "goal": 1,
+        "event": 85,
+        "summary": 47
+      },
+      "advanced_nodes": 48,
+      "source_traced_advanced_nodes": 48,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {},
+      "conflict_nodes": 0,
+      "summary_nodes": 47,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "伊莎贝拉": {
+      "total_nodes": 263,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 129,
+        "summary": 95,
+        "chat": 10,
+        "relationship": 10
+      },
+      "advanced_nodes": 106,
+      "source_traced_advanced_nodes": 106,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "克劳斯": 3,
+        "埃迪": 4,
+        "玛丽亚": 3
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 95,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "克劳斯": {
+      "total_nodes": 250,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 123,
+        "summary": 98,
+        "chat": 5,
+        "relationship": 5
+      },
+      "advanced_nodes": 104,
+      "source_traced_advanced_nodes": 104,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 3,
+        "玛丽亚": 2
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 98,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "埃迪": {
+      "total_nodes": 267,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 142,
+        "summary": 94,
+        "chat": 6,
+        "relationship": 6
+      },
+      "advanced_nodes": 101,
+      "source_traced_advanced_nodes": 101,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 4,
+        "玛丽亚": 2
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 94,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    },
+    "玛丽亚": {
+      "total_nodes": 249,
+      "type_counts": {
+        "thought": 18,
+        "goal": 1,
+        "event": 126,
+        "summary": 90,
+        "chat": 7,
+        "relationship": 7
+      },
+      "advanced_nodes": 98,
+      "source_traced_advanced_nodes": 98,
+      "source_trace_rate": 1.0,
+      "relationship_targets": {
+        "伊莎贝拉": 3,
+        "克劳斯": 2,
+        "埃迪": 2
+      },
+      "conflict_nodes": 0,
+      "summary_nodes": 90,
+      "skill_nodes": 0,
+      "goal_nodes": 1,
+      "imported_nodes": 0,
+      "loaded_from": []
+    }
+  },
+  "totals": {
+    "total_nodes": 1178,
+    "advanced_nodes": 457,
+    "source_traced_advanced_nodes": 457,
+    "relationship_nodes": 28,
+    "goal_nodes": 5,
+    "summary_nodes": 424,
+    "skill_nodes": 0,
+    "conflict_nodes": 0,
+    "imported_nodes": 0,
+    "source_trace_rate": 1.0
+  }
+}
