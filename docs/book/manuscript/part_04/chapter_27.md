@@ -59,7 +59,7 @@ flowchart LR
 
 - 增加新角色：本地记者 `林晓`。
 - 增加新地点：霍布斯咖啡馆里的 `社区公告板`。
-- 增加新关系：林晓认识伊莎贝拉，准备采访山姆；汤姆可能借采访表达对山姆的不信任。
+- 增加新关系：林晓 Lin Xiao 认识伊莎贝拉 Isabella Rodriguez，准备采访山姆 Sam Moore；汤姆 Tom Moreno 可能借采访表达对山姆 Sam Moore 的不信任。
 
 这里的“新地点”不是新建一栋建筑，而是在现有霍布斯咖啡馆中增加一个 `game_object` 级别的地点。这样既能真实触碰后端地址系统，又不需要读者一上来就改 Tiled 地图资源。完整新建筑会涉及 `tilemap.json`、tileset 图片、碰撞层和前端资源加载，风险更高，应该放到读者熟悉 `maze.json` 以后再做。
 
@@ -72,9 +72,9 @@ flowchart LR
 | 3 | `frontend/static/assets/village/agents/林晓/texture.png` | 新增前端行走纹理 | 回放页面角色无法加载精灵 |
 | 4 | `start.py` | 把 `林晓` 加入 `personas` 白名单 | `--agents "林晓"` 直接报 `Unknown agents` |
 | 5 | `frontend/static/assets/village/maze.json` | 把一个咖啡馆 tile 改成 `社区公告板` | 后端没有这个地点，角色选址会落空 |
-| 6 | `伊莎贝拉/agent.json` | 增加她对社区公告板和林晓的认知 | 关系和地点只存在于林晓视角 |
-| 7 | `山姆/agent.json` | 增加他对林晓采访的认知 | 竞选信息不会自然进入采访对话 |
-| 8 | `汤姆/agent.json` | 增加他对采访场景的认知 | 反对山姆的关系不容易进入实验 |
+| 6 | `伊莎贝拉/agent.json` | 增加她对社区公告板和林晓 Lin Xiao 的认知 | 关系和地点只存在于林晓 Lin Xiao 视角 |
+| 7 | `山姆/agent.json` | 增加他对林晓 Lin Xiao 采访的认知 | 竞选信息不会自然进入采访对话 |
+| 8 | `汤姆/agent.json` | 增加他对采访场景的认知 | 反对山姆 Sam Moore 的关系不容易进入实验 |
 
 这一张表就是读者的施工清单。接下来逐个展开。
 
@@ -89,14 +89,14 @@ generative_agents/frontend/static/assets/village/agents/<角色名>/
   texture.png
 ```
 
-新增林晓时，先建立目录：
+新增林晓 Lin Xiao 时，先建立目录：
 
 ```bash
 cd generative_agents
 mkdir -p frontend/static/assets/village/agents/林晓
 ```
 
-`portrait.png` 和 `texture.png` 是二进制资源，但不能偷懒复制现有角色。林晓是新增的中国本地记者，头像和行走纹理应该是她自己的形象。这里使用生成头像作为基础，再把同一形象整理成前端可加载的 3 列、4 行行走纹理。
+`portrait.png` 和 `texture.png` 是二进制资源，但不能偷懒复制现有角色。林晓 Lin Xiao 是新增的中国本地记者，头像和行走纹理应该是她自己的形象。这里使用生成头像作为基础，再把同一形象整理成前端可加载的 3 列、4 行行走纹理。
 
 运行用文件放在：
 
@@ -107,13 +107,13 @@ generative_agents/frontend/static/assets/village/agents/林晓/texture.png
 
 书中为了让读者看清楚，下面展示的是放大预览图。实际运行文件仍然分别是 `32x32` 和 `96x128`。
 
-![图 27-3：林晓头像资源预览](../../assets/chapter_27/ch27_linxiao_portrait_preview.png)
+![图 27-3：林晓 Lin Xiao 头像资源预览](../../assets/chapter_27/ch27_linxiao_portrait_preview.png)
 
-*图 27-3：林晓头像资源预览。运行文件为 `frontend/static/assets/village/agents/林晓/portrait.png`，尺寸为 `32x32`，书中使用放大预览展示短发、青绿色外套和记者气质。*
+*图 27-3：林晓 Lin Xiao 头像资源预览。运行文件为 `frontend/static/assets/village/agents/林晓/portrait.png`，尺寸为 `32x32`，书中使用放大预览展示短发、青绿色外套和记者气质。*
 
-![图 27-4：林晓行走纹理资源预览](../../assets/chapter_27/ch27_linxiao_texture_preview.png)
+![图 27-4：林晓 Lin Xiao 行走纹理资源预览](../../assets/chapter_27/ch27_linxiao_texture_preview.png)
 
-*图 27-4：林晓行走纹理资源预览。运行文件为 `frontend/static/assets/village/agents/林晓/texture.png`，尺寸为 `96x128`，按下、左、右、上四个方向组织为 3 列 x 4 行，和 `sprite.json` 的帧定义一致。*
+*图 27-4：林晓 Lin Xiao 行走纹理资源预览。运行文件为 `frontend/static/assets/village/agents/林晓/texture.png`，尺寸为 `96x128`，按下、左、右、上四个方向组织为 3 列 x 4 行，和 `sprite.json` 的帧定义一致。*
 
 前端回放里不需要为每个新角色手写加载代码。`frontend/templates/main_script.html` 会根据回放数据中的 `persona_init_pos` 循环加载：
 
@@ -221,7 +221,7 @@ generative_agents/frontend/static/assets/village/agents/林晓/agent.json
 
 如果地图里没有这个地址，角色一旦决定睡觉，就会随机落到其他地址，实验会变得不可解释。
 
-第三，`scratch.learned` 和 `currently` 已经写入新关系，但不是写死结果。林晓认识伊莎贝拉、计划采访山姆，这只是行为倾向，不保证她一定支持山姆。
+第三，`scratch.learned` 和 `currently` 已经写入新关系，但不是写死结果。林晓 Lin Xiao 认识伊莎贝拉 Isabella Rodriguez、计划采访山姆 Sam Moore，这只是行为倾向，不保证她一定支持山姆 Sam Moore。
 
 第四，`spatial.tree` 里必须有 `社区公告板`。后端地图知道这个地点还不够，角色自己的空间记忆也要知道，否则 `_determine_action()` 很难把行动落到这个新对象上。
 
@@ -241,7 +241,7 @@ personas = [
 ]
 ```
 
-新增林晓以后，要改成：
+新增林晓 Lin Xiao 以后，要改成：
 
 ```diff
 -    "亚瑟", "伊莎贝拉",  # 酒吧老板、咖啡馆老板
@@ -258,7 +258,7 @@ if unknown_agents:
 
 也就是说，`--agents "林晓"` 不会直接去文件夹里找 `agent.json`。它会先看 `personas` 列表。忘记这一步，实验还没碰到大语言模型 LLM 就会失败。
 
-这一步还会影响压缩结果。`compress.py` 会从 `start.py` 导入 `personas`，并用这个列表写 `simulation.md` 的基础人设。林晓如果没有进入 `personas`，即使你通过其他方式拼出了运行配置，压缩报告也不会把她当成标准角色记录。
+这一步还会影响压缩结果。`compress.py` 会从 `start.py` 导入 `personas`，并用这个列表写 `simulation.md` 的基础人设。林晓 Lin Xiao 如果没有进入 `personas`，即使你通过其他方式拼出了运行配置，压缩报告也不会把她当成标准角色记录。
 
 ## 27.7 新增地点：社区公告板
 
@@ -334,7 +334,7 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 
 只改 `maze.json` 不够。角色是否会选择某个地点，还取决于自己的空间记忆 `spatial.tree`。
 
-林晓的 `agent.json` 已经包含：
+林晓 Lin Xiao 的 `agent.json` 已经包含：
 
 ```json
 "霍布斯咖啡馆": {
@@ -350,7 +350,7 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 }
 ```
 
-还要把同样的对象补进伊莎贝拉和山姆的空间记忆。以伊莎贝拉为例，原来是：
+还要把同样的对象补进伊莎贝拉 Isabella Rodriguez 和山姆 Sam Moore 的空间记忆。以伊莎贝拉 Isabella Rodriguez 为例，原来是：
 
 ```json
 "霍布斯咖啡馆": {
@@ -381,7 +381,7 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 }
 ```
 
-本实验命令会运行伊莎贝拉、山姆和汤姆，所以三份现有角色文件都要补空间记忆：
+本实验命令会运行伊莎贝拉 Isabella Rodriguez、山姆 Sam Moore 和汤姆 Tom Moreno，所以三份现有角色文件都要补空间记忆：
 
 | 文件 | 修改位置 | 必须新增 |
 | --- | --- | --- |
@@ -389,9 +389,9 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 | `frontend/static/assets/village/agents/山姆/agent.json` | `spatial.tree.the Ville.霍布斯咖啡馆.咖啡馆` | `"社区公告板"` |
 | `frontend/static/assets/village/agents/汤姆/agent.json` | `spatial.tree.the Ville.霍布斯咖啡馆.咖啡馆` | `"社区公告板"` |
 
-这不是为了让三个人都一定去公告板，而是让他们在需要选择咖啡馆对象时具备同一套空间词汇。否则汤姆可能知道咖啡馆，却不知道公告板这个对象。
+这不是为了让三个人都一定去公告板，而是让他们在需要选择咖啡馆对象时具备同一套空间词汇。否则汤姆 Tom Moreno 可能知道咖啡馆，却不知道公告板这个对象。
 
-## 27.9 写入新关系：林晓、伊莎贝拉、山姆和汤姆
+## 27.9 写入新关系：林晓 Lin Xiao、伊莎贝拉 Isabella Rodriguez、山姆 Sam Moore 和汤姆 Tom Moreno
 
 关系不是单独的 `relationships.json` 文件。当前项目里，初始关系主要写在角色自然语言字段中，尤其是：
 
@@ -401,7 +401,7 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 
 这意味着新增关系要写进具体角色文件。
 
-先改伊莎贝拉：
+先改伊莎贝拉 Isabella Rodriguez：
 
 ```text
 文件：generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
@@ -414,13 +414,13 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。她也邀请本地记者林晓在社区公告板旁收集居民留言，希望林晓能帮忙把派对和社区活动告诉更多居民。"
 ```
 
-再改伊莎贝拉的 `scratch.learned`：
+再改伊莎贝拉 Isabella Rodriguez 的 `scratch.learned`：
 
 ```json
 "learned": "伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。她和本地记者林晓关系友好，经常请林晓记录咖啡馆里的社区活动。"
 ```
 
-再改山姆：
+再改山姆 Sam Moore：
 
 ```text
 文件：generative_agents/frontend/static/assets/village/agents/山姆/agent.json
@@ -433,13 +433,13 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 "currently": "山姆和他结婚40年的妻子詹妮弗住在一起，他空闲时间都在打理公园，他还是个狂热的读者。山姆打算在即将到来的选举中竞选地方市长，他正在告诉邻居们这件事。他知道本地记者林晓正在霍布斯咖啡馆采访居民，愿意向她解释自己的竞选想法。"
 ```
 
-再改山姆的 `scratch.learned`：
+再改山姆 Sam Moore 的 `scratch.learned`：
 
 ```json
 "learned": "山姆是一名退役海军军官，他喜欢分享自己在军队的故事。他总有许多有趣的故事和建议。山姆尊重本地记者林晓的谨慎态度，希望通过采访让居民更了解他的竞选计划。"
 ```
 
-如果实验中加入汤姆，用他制造关系张力：
+如果实验中加入汤姆 Tom Moreno，用他制造关系张力：
 
 ```text
 文件：generative_agents/frontend/static/assets/village/agents/汤姆/agent.json
@@ -449,10 +449,10 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 可以改成：
 
 ```json
-"currently": "汤姆和他的妻子简住在一起，负责管理商店的日常运营，并帮助顾客完成订单。汤姆对下个月即将举行的地方市长选举也很感兴趣。他不喜欢山姆，并且听说本地记者林晓正在霍布斯咖啡馆采访居民，可能会向她表达自己对山姆竞选承诺的怀疑。"
+"currently": "汤姆 Tom Moreno 和他的妻子简 Jane Moreno 住在一起，负责管理商店的日常运营，并帮助顾客完成订单。汤姆 Tom Moreno 对下个月即将举行的地方市长选举也很感兴趣。他不喜欢山姆 Sam Moore，并且听说本地记者林晓 Lin Xiao 正在霍布斯咖啡馆采访居民，可能会向她表达自己对山姆 Sam Moore 竞选承诺的怀疑。"
 ```
 
-这里没有写“林晓最后支持山姆”或“汤姆一定说服林晓”。这些是结果，不能硬写。初始关系只提供倾向，结果要交给相遇、对话、记忆和反思。
+这里没有写“林晓 Lin Xiao 最后支持山姆 Sam Moore”或“汤姆 Tom Moreno 一定说服林晓 Lin Xiao”。这些是结果，不能硬写。初始关系只提供倾向，结果要交给相遇、对话、记忆和反思。
 
 ## 27.10 为什么这些改动缺一不可
 
@@ -460,10 +460,10 @@ generative_agents/frontend/static/assets/village/tilemap/tilemap.json
 
 ```mermaid
 flowchart TD
-    AgentFile["林晓/agent.json"] --> Init["Agent 初始化"]
+    AgentFile["林晓 Lin Xiao/agent.json"] --> Init["Agent 初始化"]
     Portrait["portrait.png"] --> Report["首页与报告头像"]
     Texture["texture.png"] --> Replay["前端回放角色纹理"]
-    Registry["start.py personas"] --> CLI["--agents 林晓 通过白名单"]
+    Registry["start.py personas"] --> CLI["--agents 林晓 Lin Xiao 通过白名单"]
     Maze["maze.json 社区公告板"] --> Address["Maze.address_tiles"]
     Spatial["角色 spatial.tree"] --> Choice["地点选择 determine_object"]
     Relation["currently / learned"] --> Chat["对话和关系记忆"]
@@ -482,7 +482,7 @@ flowchart TD
 
 第一，角色是否能被命令行识别。这个条件由 `start.py` 的 `personas` 决定。
 
-第二，资源文件是否完整。林晓目录下必须有：
+第二，资源文件是否完整。林晓 Lin Xiao 目录下必须有：
 
 ```text
 agent.json
@@ -513,7 +513,7 @@ print(target, maze.address_tiles[target])
 
 这个脚本要在 `generative_agents` 目录下运行，因为它需要导入 `modules.maze`。
 
-## 27.12 可执行实验：林晓采访社区公告板
+## 27.12 可执行实验：林晓 Lin Xiao 采访社区公告板
 
 现在可以设计一个短实验。实验名字固定为：
 
@@ -521,7 +521,7 @@ print(target, maze.address_tiles[target])
 book-extension-linxiao
 ```
 
-运行前必须先完成前文所有文件改动：林晓目录和三份资源文件存在，`start.py` 已注册林晓，`maze.json` 已加入 `社区公告板`，伊莎贝拉、山姆、汤姆的 `spatial.tree` 和关系字段已经更新。下面命令不是替你创建这些改动，而是验证这些改动是否能支撑一次真实仿真。
+运行前必须先完成前文所有文件改动：林晓 Lin Xiao 目录和三份资源文件存在，`start.py` 已注册林晓 Lin Xiao，`maze.json` 已加入 `社区公告板`，伊莎贝拉 Isabella Rodriguez、山姆 Sam Moore、汤姆 Tom Moreno 的 `spatial.tree` 和关系字段已经更新。下面命令不是替你创建这些改动，而是验证这些改动是否能支撑一次真实仿真。
 
 运行命令：
 
@@ -538,9 +538,9 @@ python compress.py --name book-extension-linxiao
 
 这个实验只跑 4 个角色、24 个 step、每步 10 分钟。目标不是观察一整天，而是验证三件事：
 
-1. 新角色林晓能初始化、生成日程、移动和写入压缩结果。
+1. 新角色林晓 Lin Xiao 能初始化、生成日程、移动和写入压缩结果。
 2. 新地点 `社区公告板` 能出现在地址、行动或对话语境中。
-3. 林晓和伊莎贝拉、山姆、汤姆之间的关系倾向能进入对话或记忆。
+3. 林晓 Lin Xiao 和伊莎贝拉 Isabella Rodriguez、山姆 Sam Moore、汤姆 Tom Moreno 之间的关系倾向能进入对话或记忆。
 
 运行后重点检查这些文件：
 
@@ -594,8 +594,8 @@ python compress.py --name book-extension-linxiao
 | `generative_agents/results/checkpoints/book-extension-linxiao/book-extension-linxiao.log` | 日志 log 中出现 `林晓.reset`、`林晓 -> wake_up`、`林晓 -> schedule_init`、`林晓 -> schedule_daily` 和 `林晓.summary` | 先确认角色初始化、起床时间、初始日程和每日计划都跑过，再检索 `Traceback`、`ERROR`、`Exception` |
 | `generative_agents/results/checkpoints/book-extension-linxiao/conversation.json` | 记录了 8 个发生对话的时间点 | 看时间、说话双方和 `@` 后面的空间地址，判断关系是否真的进入对话 |
 | `generative_agents/results/compressed/book-extension-linxiao/simulation.md` | 把 4 个角色从 09:30 到 13:20 的活动和对话压成人类可读时间线 | 先读角色基础人设，再读每个时间点的位置、活动和对话 |
-| `generative_agents/results/compressed/book-extension-linxiao/movement.json` | `persona_init_pos` 包含林晓，`all_movement` 包含 1441 个可回放帧 | `all_movement` 是增量帧 incremental frame，某一帧为空不代表角色消失，要从初始状态一路累积更新 |
-| `generative_agents/results/checkpoints/book-extension-linxiao/storage/林晓/associate/docstore.json` | 林晓生成 61 条记忆节点 memory node：1 条想法 thought、55 条事件 event、5 条对话 chat | 看 `node_type`、`create`、`address` 和 `text`，判断仿真是否把经历写入本地记忆 |
+| `generative_agents/results/compressed/book-extension-linxiao/movement.json` | `persona_init_pos` 包含林晓 Lin Xiao，`all_movement` 包含 1441 个可回放帧 | `all_movement` 是增量帧 incremental frame，某一帧为空不代表角色消失，要从初始状态一路累积更新 |
+| `generative_agents/results/checkpoints/book-extension-linxiao/storage/林晓/associate/docstore.json` | 林晓 Lin Xiao 生成 61 条记忆节点 memory node：1 条想法 thought、55 条事件 event、5 条对话 chat | 看 `node_type`、`create`、`address` 和 `text`，判断仿真是否把经历写入本地记忆 |
 
 `movement.json` 中的初始位置如下：
 
@@ -608,19 +608,19 @@ python compress.py --name book-extension-linxiao
 }
 ```
 
-这说明新增角色林晓已经进入前端回放 movement 的角色列表。只看这段还不够，因为“角色能初始化”不等于“角色能行动”。继续看压缩后的时间线：
+这说明新增角色林晓 Lin Xiao 已经进入前端回放 movement 的角色列表。只看这段还不够，因为“角色能初始化”不等于“角色能行动”。继续看压缩后的时间线：
 
-| 时间 | 林晓位置 | 林晓行为 |
+| 时间 | 林晓 Lin Xiao 位置 | 林晓 Lin Xiao 行为 |
 | --- | --- | --- |
-| 09:50 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 询问伊莎贝拉对情人节派对筹备情况的看法 |
-| 10:20 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 询问山姆参选镇长的初衷与个人背景 |
+| 09:50 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 询问伊莎贝拉 Isabella Rodriguez 对情人节派对筹备情况的看法 |
+| 10:20 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 询问山姆 Sam Moore 参选镇长的初衷与个人背景 |
 | 11:00 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 追问选民关心的几个关键议题 |
 | 11:40 | 霍布斯咖啡馆，咖啡馆，社区公告板 | 采访第三位居民，了解其对情人节派对的期待 |
 | 12:20 | 霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位 | 等待餐点 |
 | 12:40 | 霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位 | 翻阅上午的采访笔记 |
-| 13:20 | 莫雷诺家族的房子，公共休息室，公共休息室桌子 | 整理上午采访伊莎贝拉和山姆的笔记 |
+| 13:20 | 莫雷诺家族的房子，公共休息室，公共休息室桌子 | 整理上午采访伊莎贝拉 Isabella Rodriguez 和山姆 Sam Moore 的笔记 |
 
-这条轨迹是新增角色验证的关键：林晓不是只出现在配置里，而是围绕“采访、公告板、竞选、派对”连续生成了行动。
+这条轨迹是新增角色验证的关键：林晓 Lin Xiao 不是只出现在配置里，而是围绕“采访、公告板、竞选、派对”连续生成了行动。
 
 新增地点的证据也很直接。`conversation.json` 在 09:50 记录了下面这条对话标题：
 
@@ -635,18 +635,18 @@ python compress.py --name book-extension-linxiao
 伊莎贝拉：早上好，林晓！看到你真高兴，派对的筹备才刚起步呢，通知已经贴上公告板了，下午1点我正式开始收集聚会材料，预计5点左右会把派对的具体安排告诉店里的顾客们。
 ```
 
-这里有三层信息。第一，空间地址已经落到 `社区公告板`，说明后端地图 maze 能识别这个游戏对象 game object。第二，林晓说“刚从公告板那边过来”，说明地点名称进入了语言模型 LLM 的语境。第三，伊莎贝拉把情人节派对和公告板连接起来，说明新地点不是摆设，而是成为传播社区信息的场景。
+这里有三层信息。第一，空间地址已经落到 `社区公告板`，说明后端地图 maze 能识别这个游戏对象 game object。第二，林晓 Lin Xiao 说“刚从公告板那边过来”，说明地点名称进入了语言模型 LLM 的语境。第三，伊莎贝拉 Isabella Rodriguez 把情人节派对和公告板连接起来，说明新地点不是摆设，而是成为传播社区信息的场景。
 
 关系验证要分开看，不能只写一句“关系成功”。这次实验有三条关系链路被触发，一条关系链路没有完全触发。
 
 | 关系链路 | 是否触发 | 证据 |
 | --- | --- | --- |
-| 林晓和伊莎贝拉 | 触发 | 09:50、11:00 两次对话都围绕派对、公告板、居民反馈展开 |
-| 林晓和山姆 | 触发 | 11:40、12:20、12:40 三次对话都围绕竞选采访展开 |
-| 山姆和伊莎贝拉 | 触发 | 10:20 山姆向伊莎贝拉提到自己竞选，伊莎贝拉回应“我记得林晓之前也跟我聊起过你的参选” |
-| 林晓和汤姆 | 未完全触发 | 11:10 汤姆只和伊莎贝拉在柳树市场和药店对话，没有在 24 个 step 内和林晓相遇 |
+| 林晓 Lin Xiao 和伊莎贝拉 Isabella Rodriguez | 触发 | 09:50、11:00 两次对话都围绕派对、公告板、居民反馈展开 |
+| 林晓 Lin Xiao 和山姆 Sam Moore | 触发 | 11:40、12:20、12:40 三次对话都围绕竞选采访展开 |
+| 山姆 Sam Moore 和伊莎贝拉 Isabella Rodriguez | 触发 | 10:20 山姆 Sam Moore 向伊莎贝拉 Isabella Rodriguez 提到自己竞选，伊莎贝拉 Isabella Rodriguez 回应“我记得林晓 Lin Xiao 之前也跟我聊起过你的参选” |
+| 林晓 Lin Xiao 和汤姆 Tom Moreno | 未完全触发 | 11:10 汤姆 Tom Moreno 只和伊莎贝拉 Isabella Rodriguez 在柳树市场和药店对话，没有在 24 个 step 内和林晓 Lin Xiao 相遇 |
 
-山姆和林晓的对话最能证明“新增关系”已经被仿真系统接住：
+山姆 Sam Moore 和林晓 Lin Xiao 的对话最能证明“新增关系”已经被仿真系统接住：
 
 ```text
 山姆：看来情人节派对很受大家期待啊，林记者。说起来，我刚才一直在等你忙完——我这边关于竞选市长的想法已经准备好跟你好好聊聊了，现在方便吗？
@@ -654,9 +654,9 @@ python compress.py --name book-extension-linxiao
 山姆：我参选最想让居民看到的，其实很简单——一个真正愿意为大家跑腿办事的镇长。
 ```
 
-这段对话不是随机寒暄。它同时用到了山姆的竞选设定、林晓的记者设定、霍布斯咖啡馆的公共空间设定，以及前文写入角色关系中的“林晓计划采访山姆”。这就是配置改动生效后的业务结果。
+这段对话不是随机寒暄。它同时用到了山姆 Sam Moore 的竞选设定、林晓 Lin Xiao 的记者设定、霍布斯咖啡馆的公共空间设定，以及前文写入角色关系中的“林晓 Lin Xiao 计划采访山姆 Sam Moore”。这就是配置改动生效后的业务结果。
 
-本地记忆 storage 也生成了对应节点。林晓的 `docstore.json` 中有 61 条节点，类型分布如下：
+本地记忆 storage 也生成了对应节点。林晓 Lin Xiao 的 `docstore.json` 中有 61 条节点，类型分布如下：
 
 | 记忆类型 | 数量 | 代表含义 |
 | --- | ---: | --- |
@@ -675,9 +675,9 @@ python compress.py --name book-extension-linxiao
 }
 ```
 
-这条记忆说明，系统没有把“采访山姆”只留在对话记录 conversation 里，而是把它压缩成后续可检索的对话 chat 记忆。下一轮仿真时，林晓再次遇到山姆，就有机会把“跑腿镇长”“志愿者团队”这些内容作为上下文取出来。
+这条记忆说明，系统没有把“采访山姆 Sam Moore”只留在对话记录 conversation 里，而是把它压缩成后续可检索的对话 chat 记忆。下一轮仿真时，林晓 Lin Xiao 再次遇到山姆 Sam Moore，就有机会把“跑腿镇长”“志愿者团队”这些内容作为上下文取出来。
 
-本次实验也暴露出一个输出质量问题。13:10 的山姆对伊莎贝拉对话中出现了结构化输出残留：
+本次实验也暴露出一个输出质量问题。13:10 的山姆 Sam Moore 对伊莎贝拉 Isabella Rodriguez 对话中出现了结构化输出残留：
 
 ```text
 山姆：{"res": "伊莎贝拉，谢谢你的咖啡和款待，明天的情人节派对我会准时到的。"}}
@@ -689,13 +689,13 @@ python compress.py --name book-extension-linxiao
 
 | 验证目标 | 结论 | 证据 |
 | --- | --- | --- |
-| 新角色 | 通过 | 林晓出现在日志 log、仿真摘要 simulation、运动回放 movement 和本地记忆 storage 中，并连续行动到 13:20 |
+| 新角色 | 通过 | 林晓 Lin Xiao 出现在日志 log、仿真摘要 simulation、运动回放 movement 和本地记忆 storage 中，并连续行动到 13:20 |
 | 新地点 | 通过，但限于语义层 | `社区公告板` 出现在行动地址和对话地址中；如果要让读者在前端看到新的视觉物件，还需要继续检查瓦片地图 tilemap 和瓦片素材集 tileset |
-| 新关系 | 部分通过 | 林晓-伊莎贝拉、林晓-山姆、山姆-伊莎贝拉触发；林晓-汤姆未在 24 个 step 内触发 |
+| 新关系 | 部分通过 | 林晓 Lin Xiao-伊莎贝拉 Isabella Rodriguez、林晓 Lin Xiao-山姆 Sam Moore、山姆 Sam Moore-伊莎贝拉 Isabella Rodriguez 触发；林晓 Lin Xiao-汤姆 Tom Moreno 未在 24 个 step 内触发 |
 | 记忆落盘 | 通过 | `storage/林晓/associate/docstore.json` 生成 61 条节点，包含事件 event 和对话 chat |
 | 输出质量 | 有瑕疵 | 13:10 出现一次 JSON 残留 JSON residue，需要在后续工程优化中处理 |
 
-因此，本章的配置扩展示例已经验证了“新增角色、新增地点、新增关系”这条主链路。更准确的说法是：林晓、社区公告板、采访山姆这条主线成功；汤姆对山姆的怀疑没有在本次短实验中进入林晓采访链路。想专门验证汤姆这条冲突关系，可以把实验步数增加到 36 或 48，或者把汤姆的上午活动更明确地引导到霍布斯咖啡馆。
+因此，本章的配置扩展示例已经验证了“新增角色、新增地点、新增关系”这条主链路。更准确的说法是：林晓 Lin Xiao、社区公告板、采访山姆 Sam Moore 这条主线成功；汤姆 Tom Moreno 对山姆 Sam Moore 的怀疑没有在本次短实验中进入林晓 Lin Xiao 采访链路。想专门验证汤姆 Tom Moreno 这条冲突关系，可以把实验步数增加到 36 或 48，或者把汤姆 Tom Moreno 的上午活动更明确地引导到霍布斯咖啡馆。
 
 ## 27.14 本章小结
 
@@ -711,8 +711,8 @@ python compress.py --name book-extension-linxiao
 | 空间记忆 | 相关角色的 `spatial.tree` 也要加入 `社区公告板`，否则角色不一定能主动选择它。 |
 | 新关系 | 关系写在角色自然语言字段中，尤其是 `currently`、`scratch.learned` 和 `scratch.daily_plan`。 |
 | 关系边界 | 初始设定只写倾向，不写死结果；对话、记忆和反思要交给仿真生成。 |
-| 实验验证 | `book-extension-linxiao` 真实结果证明林晓、社区公告板和采访山姆主链路成立。 |
-| 结果判断 | 实验不能只写“成功”。林晓-汤姆关系未完全触发，13:10 还出现一次 JSON 残留 JSON residue，这些都要进入结论。 |
+| 实验验证 | `book-extension-linxiao` 真实结果证明林晓 Lin Xiao、社区公告板和采访山姆 Sam Moore 主链路成立。 |
+| 结果判断 | 实验不能只写“成功”。林晓 Lin Xiao-汤姆 Tom Moreno 关系未完全触发，13:10 还出现一次 JSON 残留 JSON residue，这些都要进入结论。 |
 
 下一章讲如何用中文本地模型重跑论文思想：把实验关注点从“改小镇内容”转向“换模型后行为质量如何变化”。
 

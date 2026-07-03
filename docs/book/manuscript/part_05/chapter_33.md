@@ -2,19 +2,19 @@
 
 ## 33.1 从一次没有落地的邀请开始
 
-`book-party-extended` 实验里，伊莎贝拉在 11:30 向玛丽亚发出邀请：
+`book-party-extended` 实验里，伊莎贝拉 Isabella Rodriguez 在 11:30 向玛丽亚 Maria Lopez 发出邀请：
 
 ```text
 玛丽亚，今天的三明治看起来很美味呢！下午五点的情人节派对你一定要来哦，我已经准备好了一些特别的安排。
 ```
 
-玛丽亚的回答也很明确：
+玛丽亚 Maria Lopez 的回答也很明确：
 
 ```text
 哇，情人节派对？听起来太棒了！我五点刚好有休息时间，肯定会去参加的！
 ```
 
-这两句来自 `conversation.json` 的 `20240214-11:30` 对话记录。只看对话，邀请似乎成功，但 17:00 附近的移动回放 movement 给出了具体的行为：`movement.json` 在 frame `3241` 的快照里，伊莎贝拉已经在 `霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位` 迎接客人，玛丽亚仍在 `奥克山学院宿舍，玛丽亚的房间，书桌`。这不是简单的“模型没写好故事”，而是反思系统 reflection system 没有把“承诺 accepted”和“到场 arrived”拆成可复核的结果 outcome。
+这两句来自 `conversation.json` 的 `20240214-11:30` 对话记录。只看对话，邀请似乎成功，但 17:00 附近的移动回放 movement 给出了具体的行为：`movement.json` 在 frame `3241` 的快照里，伊莎贝拉 Isabella Rodriguez 已经在 `霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位` 迎接客人，玛丽亚 Maria Lopez 仍在 `奥克山学院宿舍，玛丽亚的房间，书桌`。这不是简单的“模型没写好故事”，而是反思系统 reflection system 没有把“承诺 accepted”和“到场 arrived”拆成可复核的结果 outcome。
 
 当前项目中的反思 reflection 需要从 `生成高层想法 thought` 推进到 `行动后复盘 post-action review -> 经验 lesson -> 可复用技能 skill -> 下一次行动`。反思式学习 Reflexion 和 Voyager 指向同一个工程约束：失败证据必须回到 `conversation.json`、`movement.json`、`simulation.md`、断点 checkpoint 和指标 metrics / 报告 report，而不是只在角色内心独白里变得更深刻。
 
@@ -99,7 +99,7 @@ flowchart TD
 | 后续行动 action reuse | thought 可被后续检索召回，影响计划或对话上下文。 | `Agent.make_schedule()`、`Agent._determine_action()` | 没有保证 lesson 进入计划 planning 或行动选择 action selection。 |
 | 评价 evaluation | 第 29 章已有指标脚本可抽取行动、承诺和到场线索。 | `docs/book/scaffolds/part_04_05/ch29_evaluate_simulation.py`、`reflection_candidates.json` | 反思本身还需要质量评分，区分证据充分、证据冲突和证据缺失。 |
 
-派对案例的关键不是“系统会不会反思”，而是旧反思会把山姆或玛丽亚的对话写成高层 thought，却不会形成这样的判断：某人有承诺，但在目标时间窗没有被 `movement.json` 验证到场。经验学习从这里进入 outcome、lesson、skill 和失败触发。
+派对案例的关键不是“系统会不会反思”，而是旧反思会把山姆 Sam Moore 或玛丽亚 Maria Lopez 的对话写成高层 thought，却不会形成这样的判断：某人有承诺，但在目标时间窗没有被 `movement.json` 验证到场。经验学习从这里进入 outcome、lesson、skill 和失败触发。
 
 ## 33.4 升级点一：结果标签 outcome
 
@@ -158,8 +158,8 @@ def build_reflection_candidates(event_board, mentions):
 | 标签 | 判定口径 | 强证据 | 弱证据 | 派对实验样例 |
 | --- | --- | --- | --- | --- |
 | 成功 success | 目标被明确达成。 | 对方明确接受，并在 movement 中到场。 | `simulation.md` 事后摘要。 | 需要同时看到承诺和到场。 |
-| 部分 partial | 对方知道信息，但承诺或执行不完整。 | 对话中表示兴趣，movement 未到场。 | 日程里提到活动但无位置证据。 | 玛丽亚 11:30 接受，17:00 附近未到咖啡馆，可标 partial。 |
-| 失败 failed | 对方拒绝，或目标没有传达。 | 对话里明确拒绝；后续无行动证据。 | 关键词未命中。 | 山姆因与詹妮弗晚餐，无法 17:00 参加。 |
+| 部分 partial | 对方知道信息，但承诺或执行不完整。 | 对话中表示兴趣，movement 未到场。 | 日程里提到活动但无位置证据。 | 玛丽亚 Maria Lopez 11:30 接受，17:00 附近未到咖啡馆，可标 partial。 |
+| 失败 failed | 对方拒绝，或目标没有传达。 | 对话里明确拒绝；后续无行动证据。 | 关键词未命中。 | 山姆 Sam Moore 因与詹妮弗 Jennifer Moore 晚餐，无法 17:00 参加。 |
 | 未知 unknown | 证据不足，不能判断。 | 缺少 conversation 或 movement。 | 只有角色设定。 | 压缩结果缺少某段原始对话时使用。 |
 
 
@@ -270,7 +270,7 @@ ${similar_lessons}
 }
 ```
 
-以派对实验里的“承诺但未到场”候选为例，lesson 不能写成“伊莎贝拉应该更努力邀请大家”。更稳的写法是：
+以派对实验里的“承诺但未到场”候选为例，lesson 不能写成“伊莎贝拉 Isabella Rodriguez 应该更努力邀请大家”。更稳的写法是：
 
 ```json
 {
@@ -332,7 +332,7 @@ ${similar_lessons}
 }
 ```
 
-这条 skill 比单条 lesson 更克制：它不说“山姆这个人不可靠”，也不把一次失败写成角色评价；它只保留可迁移的行动策略：承诺要记录，到场要复核，确认要低打扰。
+这条 skill 比单条 lesson 更克制：它不说“山姆 Sam Moore 这个人不可靠”，也不把一次失败写成角色评价；它只保留可迁移的行动策略：承诺要记录，到场要复核，确认要低打扰。
 
 要让 lesson-derived skill 真正进入系统，需要补三处工程接口。
 
@@ -414,7 +414,7 @@ ${context}
 }
 ```
 
-这一步的边界很重要：skill 是上下文，不是命令。它可以提醒伊莎贝拉“活动开始前要确认承诺”，但不能强迫她无视当前地点、日程和关系状态去执行固定话术。真正有效的经验学习，要能留下 `use_skill_ids`、证据来源和后续 outcome，否则无法判断这条 skill 是否真的改善了下一次行动。
+这一步的边界很重要：skill 是上下文，不是命令。它可以提醒伊莎贝拉 Isabella Rodriguez“活动开始前要确认承诺”，但不能强迫她无视当前地点、日程和关系状态去执行固定话术。真正有效的经验学习，要能留下 `use_skill_ids`、证据来源和后续 outcome，否则无法判断这条 skill 是否真的改善了下一次行动。
 
 ## 33.9 失败驱动反思 trigger
 
@@ -588,7 +588,7 @@ $$
 +        )
 ```
 
-这段逻辑解决上下文承诺 contextual commitment。实际对话经常是上一句提到活动，下一句才说“下午没问题”。如果只统计单句关键词，山姆在 `20240214-09:30` 的承诺会被漏掉；如果只看“不能”“一定”这类孤立词，又可能把“不能袖手旁观”“下午一定会准备好甜点”误判成拒绝或接受。脚本先用关键词建立同一段对话的事件上下文，再只把上下文里的行动承诺计入 `accepted`。
+这段逻辑解决上下文承诺 contextual commitment。实际对话经常是上一句提到活动，下一句才说“下午没问题”。如果只统计单句关键词，山姆 Sam Moore 在 `20240214-09:30` 的承诺会被漏掉；如果只看“不能”“一定”这类孤立词，又可能把“不能袖手旁观”“下午一定会准备好甜点”误判成拒绝或接受。脚本先用关键词建立同一段对话的事件上下文，再只把上下文里的行动承诺计入 `accepted`。
 
 反思候选不是 LLM 总结出来的内心独白，而是由事件板 event board 的差集生成。
 
@@ -637,7 +637,7 @@ $$
 | --- | --- | --- |
 | 实验名 | `book-reflection-party` | 输出目录统一使用这个名字。 |
 | 工作目录 | `generative_agents_next` | 使用 Part 5 的升级目录，不改原始 `generative_agents`。 |
-| 角色 agents | 伊莎贝拉、玛丽亚、山姆、汤姆 | 保留派对组织者、潜在参与者和普通到场者。 |
+| 角色 agents | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、山姆 Sam Moore、汤姆 Tom Moreno | 保留派对组织者、潜在参与者和普通到场者。 |
 | 事件 event | `valentine_party` | 写入 `metrics.json` 和 `report.md` 的事件名。 |
 | 关键词 keywords | `情人节,派对,五点,5点,17:00,霍布斯咖啡馆` | 用于定位传播对话和事件上下文。 |
 | 目标地点 target-place | `霍布斯咖啡馆` | `collect_attendance()` 只匹配包含该地点的移动记录。 |
@@ -668,7 +668,7 @@ python analyze_experiment.py --name book-reflection-party --event valentine_part
 
 ## 33.12 实验结果分析
 
-这一轮实际生成 69 个 checkpoint，时间范围是 `20240214-08:00` 到 `20240214-19:20`。虽然命令使用 `--step 70`，最终产物停在 19:20，但已经覆盖 17:00-19:00 的目标窗口。四个角色仍是伊莎贝拉、玛丽亚、山姆和汤姆；`conversation.json` 中出现 5 段对话，主要围绕山姆、伊莎贝拉、汤姆和派对/竞选信息展开。
+这一轮实际生成 69 个 checkpoint，时间范围是 `20240214-08:00` 到 `20240214-19:20`。虽然命令使用 `--step 70`，最终产物停在 19:20，但已经覆盖 17:00-19:00 的目标窗口。四个角色仍是伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、山姆 Sam Moore 和汤姆 Tom Moreno；`conversation.json` 中出现 5 段对话，主要围绕山姆 Sam Moore、伊莎贝拉 Isabella Rodriguez、汤姆 Tom Moreno 和派对/竞选信息展开。
 
 ```mermaid
 flowchart LR
@@ -689,12 +689,12 @@ flowchart LR
 
 | 阶段 | 时间 | 发生的事 | 产生的证据 |
 | --- | --- | --- | --- |
-| 初始化 | `08:00` | 伊莎贝拉开店，山姆前往霍布斯咖啡馆，汤姆营业，玛丽亚睡觉。 | 每个角色生成阶段目标 `goal`。 |
-| 甜点与派对线索 | `08:30` | 山姆询问情人节新品，提到詹妮弗对草莓过敏，请伊莎贝拉下午留一份无草莓甜点。 | `conversation.json` 命中情人节关键词，但不是派对到场承诺。 |
-| 布置承诺 | `09:30` | 伊莎贝拉邀请山姆下午帮忙布置公园花园派对现场，山姆回答“下午没问题”，并说会顺路帮忙布置。 | `collect_mentions()` 用上下文承诺标记山姆为 `accepted`。 |
-| 午间确认 | `12:10` | 山姆再次提到取甜点和帮忙，伊莎贝拉说派对五点开始，公园那边还差桌子和音响。 | 事件继续传播，但地点从霍布斯咖啡馆扩展到公园布置现场。 |
-| 到场窗口 | `17:00-19:00` | 伊莎贝拉在霍布斯咖啡馆准备接待；汤姆在 19:00 到霍布斯咖啡馆；山姆没有出现在目标地点窗口。 | `movement.json` 给出到场证据，`reflection_candidates.json` 生成山姆候选。 |
-| 事后对话 | `19:20` | 汤姆到咖啡馆休息，并询问记者林晓。伊莎贝拉说派对刚刚结束。 | 这是事后线索，不应反推山姆已经到场。 |
+| 初始化 | `08:00` | 伊莎贝拉 Isabella Rodriguez 开店，山姆 Sam Moore 前往霍布斯咖啡馆，汤姆 Tom Moreno 营业，玛丽亚 Maria Lopez 睡觉。 | 每个角色生成阶段目标 `goal`。 |
+| 甜点与派对线索 | `08:30` | 山姆 Sam Moore 询问情人节新品，提到詹妮弗 Jennifer Moore 对草莓过敏，请伊莎贝拉 Isabella Rodriguez 下午留一份无草莓甜点。 | `conversation.json` 命中情人节关键词，但不是派对到场承诺。 |
+| 布置承诺 | `09:30` | 伊莎贝拉 Isabella Rodriguez 邀请山姆 Sam Moore 下午帮忙布置公园花园派对现场，山姆 Sam Moore 回答“下午没问题”，并说会顺路帮忙布置。 | `collect_mentions()` 用上下文承诺标记山姆 Sam Moore 为 `accepted`。 |
+| 午间确认 | `12:10` | 山姆 Sam Moore 再次提到取甜点和帮忙，伊莎贝拉 Isabella Rodriguez 说派对五点开始，公园那边还差桌子和音响。 | 事件继续传播，但地点从霍布斯咖啡馆扩展到公园布置现场。 |
+| 到场窗口 | `17:00-19:00` | 伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆准备接待；汤姆 Tom Moreno 在 19:00 到霍布斯咖啡馆；山姆 Sam Moore 没有出现在目标地点窗口。 | `movement.json` 给出到场证据，`reflection_candidates.json` 生成山姆 Sam Moore 候选。 |
+| 事后对话 | `19:20` | 汤姆 Tom Moreno 到咖啡馆休息，并询问记者林晓 Lin Xiao。伊莎贝拉 Isabella Rodriguez 说派对刚刚结束。 | 这是事后线索，不应反推山姆 Sam Moore 已经到场。 |
 
 ### 原始事件链
 
@@ -702,10 +702,10 @@ flowchart LR
 
 | 时间 | 原始对话事实 | 评价脚本判断 |
 | --- | --- | --- |
-| `20240214-08:30` | 山姆请伊莎贝拉下午为詹妮弗准备无草莓甜点。 | 命中情人节，但不是派对到场承诺。 |
-| `20240214-09:30` | 伊莎贝拉说想找人布置公园花园派对现场，山姆回答“下午没问题”，并说“顺路帮忙布置”。 | 山姆进入 `accepted`。这句本身没有重复“派对”，所以需要上下文承诺识别。 |
-| `20240214-12:10` | 山姆说派对现场布置有需要可以开口，伊莎贝拉说派对五点开始，公园那边还差桌子和音响。 | 强化山姆知道派对和布置任务，但不单独新增 accepted。 |
-| `20240214-19:20` | 汤姆到咖啡馆时，伊莎贝拉说派对刚刚结束。 | 事后信息，不能当作山姆履约证据。 |
+| `20240214-08:30` | 山姆 Sam Moore 请伊莎贝拉 Isabella Rodriguez 下午为詹妮弗 Jennifer Moore 准备无草莓甜点。 | 命中情人节，但不是派对到场承诺。 |
+| `20240214-09:30` | 伊莎贝拉 Isabella Rodriguez 说想找人布置公园花园派对现场，山姆 Sam Moore 回答“下午没问题”，并说“顺路帮忙布置”。 | 山姆 Sam Moore 进入 `accepted`。这句本身没有重复“派对”，所以需要上下文承诺识别。 |
+| `20240214-12:10` | 山姆 Sam Moore 说派对现场布置有需要可以开口，伊莎贝拉 Isabella Rodriguez 说派对五点开始，公园那边还差桌子和音响。 | 强化山姆 Sam Moore 知道派对和布置任务，但不单独新增 accepted。 |
+| `20240214-19:20` | 汤姆 Tom Moreno 到咖啡馆时，伊莎贝拉 Isabella Rodriguez 说派对刚刚结束。 | 事后信息，不能当作山姆 Sam Moore 履约证据。 |
 
 ### 指标总览
 
@@ -715,25 +715,25 @@ flowchart LR
 | --- | --- | --- |
 | checkpoint 数量 | 69 | 08:00 到 19:20，覆盖派对目标窗口。 |
 | 对话命中 mentions | 11 | 包含关键词命中和同段对话里的上下文承诺。 |
-| 知情角色 known_agents | 伊莎贝拉、山姆 | 只有两人通过对话进入派对传播链。 |
-| 接受承诺 accepted | 山姆 | 山姆承诺下午顺路帮忙布置。 |
-| 到场角色 arrived | 伊莎贝拉、汤姆 | 17:00-19:00 内出现在霍布斯咖啡馆目标地点。 |
-| accepted_not_arrived | 山姆 | 承诺者没有在目标地点窗口出现。 |
-| 反思候选 reflection_candidates | 1 | 山姆生成 `commitment_not_verified_by_movement` 候选。 |
+| 知情角色 known_agents | 伊莎贝拉 Isabella Rodriguez、山姆 Sam Moore | 只有两人通过对话进入派对传播链。 |
+| 接受承诺 accepted | 山姆 Sam Moore | 山姆 Sam Moore 承诺下午顺路帮忙布置。 |
+| 到场角色 arrived | 伊莎贝拉 Isabella Rodriguez、汤姆 Tom Moreno | 17:00-19:00 内出现在霍布斯咖啡馆目标地点。 |
+| accepted_not_arrived | 山姆 Sam Moore | 承诺者没有在目标地点窗口出现。 |
+| 反思候选 reflection_candidates | 1 | 山姆 Sam Moore 生成 `commitment_not_verified_by_movement` 候选。 |
 | goal_completion_rate | 0.75 | 四项条件中，`has_no_unfulfilled_commitment=false`。 |
-| thought 节点 | 伊莎贝拉 18，山姆 18 | 原始反思机制确实触发，但它生成的是高层 thought，不是 outcome lesson。 |
+| thought 节点 | 伊莎贝拉 Isabella Rodriguez 18，山姆 Sam Moore 18 | 原始反思机制确实触发，但它生成的是高层 thought，不是 outcome lesson。 |
 | skill 节点 | 1 | 来自第 32 章冲突检测链路，不是本章 lesson 生成。 |
 
 各角色的记忆分布如下。
 
 | 角色 | event | chat | thought | relationship | summary | skill | conflict |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 伊莎贝拉 | 115 | 5 | 18 | 5 | 81 | 1 | 1 |
-| 山姆 | 96 | 4 | 18 | 4 | 67 | 0 | 0 |
-| 汤姆 | 113 | 1 | 1 | 1 | 80 | 0 | 0 |
-| 玛丽亚 | 99 | 0 | 1 | 0 | 79 | 0 | 0 |
+| 伊莎贝拉 Isabella Rodriguez | 115 | 5 | 18 | 5 | 81 | 1 | 1 |
+| 山姆 Sam Moore | 96 | 4 | 18 | 4 | 67 | 0 | 0 |
+| 汤姆 Tom Moreno | 113 | 1 | 1 | 1 | 80 | 0 | 0 |
+| 玛丽亚 Maria Lopez | 99 | 0 | 1 | 0 | 79 | 0 | 0 |
 
-这张表说明两件事。第一，原始反思 reflection 已经在伊莎贝拉和山姆身上触发，`reflect_insights` 生成了多条高层 thought。第二，本章新增的反思候选不是这些 thought 的改写，而是来自外部评价链：承诺在 `conversation.json`，到场在 `movement.json`，二者不一致才生成候选。
+这张表说明两件事。第一，原始反思 reflection 已经在伊莎贝拉 Isabella Rodriguez 和山姆 Sam Moore 身上触发，`reflect_insights` 生成了多条高层 thought。第二，本章新增的反思候选不是这些 thought 的改写，而是来自外部评价链：承诺在 `conversation.json`，到场在 `movement.json`，二者不一致才生成候选。
 
 ### 反思候选
 
@@ -757,7 +757,7 @@ flowchart LR
 ]
 ```
 
-这条候选不能直接写成“山姆没有参加派对，所以失败”。更准确的判断是：山姆承诺的是“下午顺路帮忙布置”，而 `analyze_experiment.py` 的到场目标是 `霍布斯咖啡馆` 的 17:00-19:00 窗口；对话里又出现“公园花园派对现场”“公园那边还差桌子和音响”。因此它是一个高价值反思候选，但需要人工确认目标地点：失败可能来自山姆没有到霍布斯咖啡馆，也可能来自实验评价目标把“公园布置现场”和“咖啡馆派对地点”混成了一个目标。
+这条候选不能直接写成“山姆 Sam Moore 没有参加派对，所以失败”。更准确的判断是：山姆 Sam Moore 承诺的是“下午顺路帮忙布置”，而 `analyze_experiment.py` 的到场目标是 `霍布斯咖啡馆` 的 17:00-19:00 窗口；对话里又出现“公园花园派对现场”“公园那边还差桌子和音响”。因此它是一个高价值反思候选，但需要人工确认目标地点：失败可能来自山姆 Sam Moore 没有到霍布斯咖啡馆，也可能来自实验评价目标把“公园布置现场”和“咖啡馆派对地点”混成了一个目标。
 
 反思升级的边界也在这里显出来：反思候选不是最终裁决，而是把“承诺、目标地点、时间窗口、到场证据”绑在一起，让后续 self-evaluation prompt 或人工审核有材料可判。
 
@@ -765,7 +765,7 @@ flowchart LR
 
 | 升级点 | 实验结果 | 判断 |
 | --- | --- | --- |
-| 结果标签 outcome | 山姆候选写入 `outcome="failed"`。 | 初步跑通，但当前只有 failed 候选，没有 success/partial 的完整结构。 |
+| 结果标签 outcome | 山姆 Sam Moore 候选写入 `outcome="failed"`。 | 初步跑通，但当前只有 failed 候选，没有 success/partial 的完整结构。 |
 | 自我评估 prompt | 本轮没有接入 LLM prompt。 | 只完成证据侧候选，不宣称角色会自我评估。 |
 | 经验 lesson | 候选中写入固定 lesson 文本。 | 可作为下一步 prompt 输入，但还不是角色自己的经验生成。 |
 | 技能记忆 skill memory | 未从候选生成 skill。 | 当前唯一 skill 来自冲突检测，不来自本章反思学习。 |
@@ -777,10 +777,10 @@ flowchart LR
 
 | 文件 | 用途 |
 | --- | --- |
-| `generative_agents_next/results/checkpoints/book-reflection-party/conversation.json` | 查看山姆 09:30 的上下文承诺。 |
+| `generative_agents_next/results/checkpoints/book-reflection-party/conversation.json` | 查看山姆 Sam Moore 09:30 的上下文承诺。 |
 | `generative_agents_next/results/compressed/book-reflection-party/movement.json` | 查看 17:00-19:00 目标地点到场证据。 |
 | `generative_agents_next/results/evaluations/book-reflection-party/metrics.json` | 查看传播、承诺、到场、完成率和反思候选数量。 |
-| `generative_agents_next/results/evaluations/book-reflection-party/reflection_candidates.json` | 查看山姆的失败候选和证据原话。 |
+| `generative_agents_next/results/evaluations/book-reflection-party/reflection_candidates.json` | 查看山姆 Sam Moore 的失败候选和证据原话。 |
 | `generative_agents_next/results/compressed/book-reflection-party/memory_metrics.json` | 查看 thought、skill、relationship 等记忆分布。 |
 
 本轮实验的结论是：第 33 章已经把“承诺未验证”从故事阅读变成了可复查 JSON，证明外部评价链能生成反思候选。尚未完成的是把候选交给角色内部 self-evaluation、生成 lesson/skill，并让下一次计划或对话真正使用这些经验。
@@ -807,7 +807,7 @@ flowchart LR
 | 论文依据 | Generative Agents 提供反思基线，Reflexion 提供语言反馈与 episodic memory，Voyager 提供技能库和自我验证，ReAct 提供 reason-act-observe 闭环。 |
 | 可落地升级 | outcome、自我评估 self-evaluation、lesson-derived skill、失败触发 trigger 和质量评分组成最小闭环。 |
 | 验证要求 | 结论必须回到 conversation、movement、simulation、checkpoint 和指标 metrics / 报告 report。 |
-| 实验落点 | `book-reflection-party` 生成 69 个 checkpoint、1 条反思候选；山姆的上下文承诺未被目标地点到场验证。 |
+| 实验落点 | `book-reflection-party` 生成 69 个 checkpoint、1 条反思候选；山姆 Sam Moore 的上下文承诺未被目标地点到场验证。 |
 
 下一章进入规划系统升级。反思 learning 让角色从过去的失败中拿到经验；规划 planning 要解决的是：这些经验、目标 goal 和当前环境如何共同决定下一步行动。
 

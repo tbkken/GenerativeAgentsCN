@@ -4,7 +4,7 @@
 
 第 17 章讲感知，并把感知侧的数据结构落到事件 Event：地图格子 tile 暴露事件 Event，智能体感知函数 `percept()` 再把事件 Event 包装成概念节点 Concept，放入当前概念缓存 `self.concepts`。如果这些感知结果不存下来，它们只能影响当前仿真步 step。生成式智能体 Generative Agents 的关键是让经历进入长期行为链路。
 
-先看一个真实案例。`book-smoke` 这次仿真运行到 2024-02-13 09:40 时，克劳斯在奥克山学院图书馆桌子旁阅读并批注学术文章。业务上，这不是一条“日志”，而是一段经历：克劳斯在什么地方，做了什么，这件事后来能不能被他想起来。
+先看一个真实案例。`book-smoke` 这次仿真运行到 2024-02-13 09:40 时，克劳斯 Klaus Mueller 在奥克山学院图书馆桌子旁阅读并批注学术文章。业务上，这不是一条“日志”，而是一段经历：克劳斯 Klaus Mueller 在什么地方，做了什么，这件事后来能不能被他想起来。
 
 输入事件 Event 可以这样读：
 
@@ -22,10 +22,10 @@
 
 | 业务环节 | 项目里的结果 | 读法 |
 | --- | --- | --- |
-| 识别经历 | 克劳斯正在图书馆桌子旁阅读并批注文章。 | 这是一条关于克劳斯自己的行动经历。 |
+| 识别经历 | 克劳斯 Klaus Mueller 正在图书馆桌子旁阅读并批注文章。 | 这是一条关于克劳斯 Klaus Mueller 自己的行动经历。 |
 | 归入记忆类型 | 节点类型 `node_type = event`。 | 它不是对话 chat，也不是想法 thought，而是事件 event。 |
 | 补充地点 | 地址 address 为 `the Ville:奥克山学院:图书馆:图书馆桌子`。 | 后续能知道这件事发生在图书馆桌子旁。 |
-| 补充时间 | 创建时间 create 和访问时间 access 都是 `20240213-09:40:00`。 | 这条经历从 09:40 开始进入克劳斯记忆。 |
+| 补充时间 | 创建时间 create 和访问时间 access 都是 `20240213-09:40:00`。 | 这条经历从 09:40 开始进入克劳斯 Klaus Mueller 记忆。 |
 | 补充重要性 | 重要性字段 poignancy 为 `2`。 | 它有一定重要性，但不是强烈人生事件。 |
 | 生成记忆身份 | 节点编号 node id 为 `node_2`。 | 后续断点 checkpoint 不重复保存整段文本，只保存这个编号。 |
 
@@ -49,7 +49,7 @@
 }
 ```
 
-到 10:00 断点 checkpoint 中，克劳斯的事件 event 记忆列表已经变成：
+到 10:00 断点 checkpoint 中，克劳斯 Klaus Mueller 的事件 event 记忆列表已经变成：
 
 ```json
 {
@@ -59,7 +59,7 @@
 }
 ```
 
-这组结果要从业务角度读。`node_2` 代表“克劳斯在 09:40 阅读并批注学术文章”这段经历；`node_5`、`node_4`、`node_3` 是后来 10:00 左右新增的经历，所以排在它前面。后续如果系统需要回答“克劳斯上午在图书馆做过什么”“他为什么会继续写论文”，记忆检索就可以把这些节点找回来，变成提示词 prompt 上下文。
+这组结果要从业务角度读。`node_2` 代表“克劳斯 Klaus Mueller 在 09:40 阅读并批注学术文章”这段经历；`node_5`、`node_4`、`node_3` 是后来 10:00 左右新增的经历，所以排在它前面。后续如果系统需要回答“克劳斯 Klaus Mueller 上午在图书馆做过什么”“他为什么会继续写论文”，记忆检索就可以把这些节点找回来，变成提示词 prompt 上下文。
 
 带着这个案例，再看生成式智能体 Generative Agents 的长期记忆系统，就不只是看类名了。它主要由四个对象组成：
 
@@ -119,7 +119,7 @@ figure: docs/book/assets/chapter_18/ch18_memory_retrieval_chain.png
 
 *图 18-2：记忆节点在项目里的真实数据剖面。左侧是输入事件 Event，中间展示事件 event、聊天 chat、想法 thought 三类记忆如何变成文本节点 TextNode、元数据 metadata 和向量嵌入 embedding，右侧展示文档存储 docstore、向量存储 vector store、索引存储 index store 的保存形态，以及检索后返回的概念描述 `Concept.describe`。*
 
-图中的事件 event 样例来自 `book-smoke` 断点中克劳斯的关联记忆 Associate；聊天 chat 和想法 thought 样例来自 `book-config-ai-seminar` 断点中阿伊莎的关联记忆 Associate。右侧的 `docstore.json`、`default__vector_store.json` 和 `index_store.json` 都是对应角色存储目录里的真实索引文件。
+图中的事件 event 样例来自 `book-smoke` 断点中克劳斯 Klaus Mueller 的关联记忆 Associate；聊天 chat 和想法 thought 样例来自 `book-config-ai-seminar` 断点中阿伊莎 Ayesha Khan 的关联记忆 Associate。右侧的 `docstore.json`、`default__vector_store.json` 和 `index_store.json` 都是对应角色存储目录里的真实索引文件。
 
 这行输出可以这样读：
 
@@ -1016,7 +1016,7 @@ flowchart TD
 self.associate.retrieve_chats("玛丽亚")
 ```
 
-会检索关于“对话 玛丽亚”的聊天 chat 节点 nodes。这个设计简单，但有效。对话记忆通常包含双方名字和摘要，使用“对话 + 人名”可以取回相关对话。不过，它依赖中文摘要中包含对方信息。如果摘要生成质量差，检索也会受影响。
+会检索关于“对话 玛丽亚 Maria Lopez”的聊天 chat 节点 nodes。这个设计简单，但有效。对话记忆通常包含双方名字和摘要，使用“对话 + 人名”可以取回相关对话。不过，它依赖中文摘要中包含对方信息。如果摘要生成质量差，检索也会受影响。
 
 对话检索的输入-处理-输出如下：
 
@@ -1448,7 +1448,7 @@ relevance_scores = self._normalize(
 )
 ```
 
-默认权重是 3。这说明语义相关性是最重要的分量。如果查询文本 query 是“玛丽亚”，与玛丽亚相关的记忆应该优先。但相关性 relevance 不是唯一标准。一个非常相关但很普通、很久远的记忆，可能不如一个稍微相关但重要且新近的记忆。这就是三因素检索的意义。
+默认权重是 3。这说明语义相关性是最重要的分量。如果查询文本 query 是“玛丽亚 Maria Lopez”，与玛丽亚 Maria Lopez 相关的记忆应该优先。但相关性 relevance 不是唯一标准。一个非常相关但很普通、很久远的记忆，可能不如一个稍微相关但重要且新近的记忆。这就是三因素检索的意义。
 
 ## 18.21 重要性 importance 分数
 
@@ -1580,7 +1580,7 @@ results/checkpoints/<sim>/
         index_config.json
 ```
 
-也就是说，记忆按智能体 agent 隔离保存。克劳斯有自己的 `storage/克劳斯/associate/`，阿伊莎有自己的 `storage/阿伊莎/associate/`。事件 event、聊天 chat、想法 thought 不是三个文件夹，而是同一个关联记忆 Associate 里的三类节点编号 node id 列表：
+也就是说，记忆按智能体 agent 隔离保存。克劳斯 Klaus Mueller 有自己的 `storage/克劳斯/associate/`，阿伊莎 Ayesha Khan 有自己的 `storage/阿伊莎/associate/`。事件 event、聊天 chat、想法 thought 不是三个文件夹，而是同一个关联记忆 Associate 里的三类节点编号 node id 列表：
 
 ```json
 {

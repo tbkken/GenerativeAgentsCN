@@ -2,12 +2,12 @@
 
 ## 32.1 当前记忆能保存事实，但还不能治理事实
 
-当前项目不是“没有记忆”，它已经能保存事件、对话和反思，也能在 `checkpoint` 与 `conversation.json` 里留下证据。真正的缺口是记忆治理 memory governance：系统保存了“下午五点邀请玛丽亚”，但没有把“承诺”、“关系变化”、“冲突裁决”、“下游用途”变成可稳定检索和验证的对象。
+当前项目不是“没有记忆”，它已经能保存事件、对话和反思，也能在 `checkpoint` 与 `conversation.json` 里留下证据。真正的缺口是记忆治理 memory governance：系统保存了“下午五点邀请玛丽亚 Maria Lopez”，但没有把“承诺”、“关系变化”、“冲突裁决”、“下游用途”变成可稳定检索和验证的对象。
 
 | 追问问题 | 当前已有证据 | 当前缺口 | 对应升级方向 |
 | --- | --- | --- | --- |
-| 玛丽亚答应参加派对了吗？ | `conversation.json` 里有 11:30 的原始对话。 | 承诺只停留在聊天文本和摘要中，不能直接追到证据节点。 | 来源 source、证据 evidence |
-| 玛丽亚和伊莎贝拉的关系是否变近？ | 对话、后续行动和反思可能包含线索。 | 关系 relationship 不是稳定记忆类型，容易被一次临时摘要覆盖。 | 关系记忆 relationship memory |
+| 玛丽亚 Maria Lopez 答应参加派对了吗？ | `conversation.json` 里有 11:30 的原始对话。 | 承诺只停留在聊天文本和摘要中，不能直接追到证据节点。 | 来源 source、证据 evidence |
+| 玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez 的关系是否变近？ | 对话、后续行动和反思可能包含线索。 | 关系 relationship 不是稳定记忆类型，容易被一次临时摘要覆盖。 | 关系记忆 relationship memory |
 | 派对到底是 17:00 还是 19:00？ | 多条 event、chat 或 thought 可能各自保存时间信息。 | 系统没有冲突检测和裁决记录，互斥事实可能同时进入长期记忆。 | 冲突检测 conflict detection |
 | 这条记忆以后服务计划、对话还是评价？ | 当前只有 `event/thought/chat` 三类节点。 | 记忆缺少下游用途 downstream use，检索时难以按任务选择。 | 场景化检索 contextual retrieval |
 
@@ -23,7 +23,7 @@
 | 扩展记忆类型 memory types | MemGPT: Towards LLMs as Operating Systems | 论文提出 `virtual context management`，并让系统管理 `different memory tiers`。 | `Associate` 不应只有三类自然语言节点；工作记忆、长期记忆、摘要、技能和冲突需要分层或分类型保存。 |
 | 记忆合并与摘要 merge / summary | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 论文强调从对话中动态 `extracting, consolidating, and retrieving` 关键信息。 | 日常重复事件不应全部平铺进检索结果；低价值重复事件要合并为 `summary`，同时保留 `source_nodes`。 |
 | 记忆保留与遗忘 retention / forgetting | MemoryBank: Enhancing Large Language Models with Long-Term Memory | 论文强调 `summon relevant memories`、`continuous memory updates`，并允许系统 `forget and reinforce memory`。 | 本章的摘要合并还只是第一步；后续应继续增加过期、降权、强化和删除策略，避免旧记忆长期污染。 |
-| 结构化关系记忆 relationship memory | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 论文进一步提出图结构记忆，用来捕捉对话元素之间的复杂关系。 | 伊莎贝拉和玛丽亚的关系不能只靠一次 `summarize_relation` 临时生成；需要写入 `relationship` 节点，记录对象、强度、证据和置信度。 |
+| 结构化关系记忆 relationship memory | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 论文进一步提出图结构记忆，用来捕捉对话元素之间的复杂关系。 | 伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 的关系不能只靠一次 `summarize_relation` 临时生成；需要写入 `relationship` 节点，记录对象、强度、证据和置信度。 |
 | 来源与结构化属性 source / metadata | A-MEM: Agentic Memory for LLM Agents | 论文为新记忆生成包含 `contextual descriptions, keywords, and tags` 的结构化笔记，并建立动态链接。 | 高级记忆必须带 metadata：核心字段是 `source_nodes/source_type/generated_by/downstream_use`，发生冲突时再写入 `conflict_with`。 |
 | 冲突检测 conflict detection | Evaluating Very Long-Term Conversational Memory of LLM Agents | LoCoMo 构造最多 35 个会话的长期对话，并指出模型理解 `long-range temporal and causal dynamics` 仍然困难。 | 派对时间、承诺、位置和关系变化必须有 `conflict` 节点。冲突字段是本项目的工程扩展，用来把时间/因果错误显式暴露出来。 |
 | 跨实验长期记忆 long-term memory | MemGPT: Towards LLMs as Operating Systems；Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 两篇论文都把多轮、多会话场景作为长期记忆的核心压力测试。 | `--resume` 不是长期记忆迁移；跨实验加载必须显式传参，并记录 `loaded_from/source_experiment/source_node_id`。 |
@@ -125,7 +125,7 @@ generative_agents_next/results/checkpoints/<实验名>/storage/<角色>/associat
 agents.<角色>.associate.memory.relationship
 ```
 
-本轮 `book-memory-governance-full` 实验中，伊莎贝拉对玛丽亚的关系节点摘录，来自：
+本轮 `book-memory-governance-full` 实验中，伊莎贝拉 Isabella Rodriguez 对玛丽亚 Maria Lopez 的关系节点摘录，来自：
 
 ```text
 generative_agents_next/results/checkpoints/book-memory-governance-full/storage/伊莎贝拉/associate/docstore.json
@@ -358,7 +358,7 @@ $source_nodes
 +    ) or {}
 ```
 
-这段代码说明关系更新不是全局广播，而是角色自己的主观记忆。伊莎贝拉对玛丽亚的关系、玛丽亚对伊莎贝拉的关系分别更新，二者可以不完全一致。`current` 取当前角色已有关系状态，`related_memories` 只取对当前对话有帮助的关系、聊天和事件记忆，`source_nodes` 指向刚刚写入的 `chat` 节点。
+这段代码说明关系更新不是全局广播，而是角色自己的主观记忆。伊莎贝拉 Isabella Rodriguez 对玛丽亚 Maria Lopez 的关系、玛丽亚 Maria Lopez 对伊莎贝拉 Isabella Rodriguez 的关系分别更新，二者可以不完全一致。`current` 取当前角色已有关系状态，`related_memories` 只取对当前对话有帮助的关系、聊天和事件记忆，`source_nodes` 指向刚刚写入的 `chat` 节点。
 
 最终写入的是一个 `relationship` 类型节点。
 
@@ -460,15 +460,15 @@ $source_nodes
 
 ## 32.6 升级方向三：记忆合并 merge 与摘要 summary
 
-长期运行会产生大量低价值重复事件。伊莎贝拉在咖啡馆的一上午可能连续出现：
+长期运行会产生大量低价值重复事件。伊莎贝拉 Isabella Rodriguez 在咖啡馆的一上午可能连续出现：
 
 | 原始事件 event | 是否适合合并 | 原因 |
 | --- | --- | --- |
-| 伊莎贝拉 打开咖啡馆大门并开灯 | 可合并 | 属于日常开店流程。 |
-| 伊莎贝拉 检查并调试咖啡机 | 可合并 | 与开店准备同主题。 |
-| 伊莎贝拉 摆放糕点并整理展示柜 | 可合并 | 与开店准备同主题。 |
-| 伊莎贝拉 邀请玛丽亚 17:00 参加派对 | 不应简单合并 | 包含明确承诺和时间。 |
-| 山姆表示 17:00 已和詹妮弗约好晚餐 | 不应简单合并 | 包含拒绝与冲突时间线。 |
+| 伊莎贝拉 Isabella Rodriguez 打开咖啡馆大门并开灯 | 可合并 | 属于日常开店流程。 |
+| 伊莎贝拉 Isabella Rodriguez 检查并调试咖啡机 | 可合并 | 与开店准备同主题。 |
+| 伊莎贝拉 Isabella Rodriguez 摆放糕点并整理展示柜 | 可合并 | 与开店准备同主题。 |
+| 伊莎贝拉 Isabella Rodriguez 邀请玛丽亚 Maria Lopez 17:00 参加派对 | 不应简单合并 | 包含明确承诺和时间。 |
+| 山姆 Sam Moore 表示 17:00 已和詹妮弗 Jennifer Moore 约好晚餐 | 不应简单合并 | 包含拒绝与冲突时间线。 |
 
 本轮实现了两层东西：第一层是真正接入运行的确定性摘要规则 `Associate.maybe_create_summary()`；第二层是后续可切换到 LLM 判断的提示词 `memory_merge.txt` 和 `Scratch.prompt_memory_merge()`。这两层必须分开讲，否则读者会误以为本轮实验里的 `summary` 节点是由 LLM prompt 直接生成的。
 
@@ -668,9 +668,9 @@ $merge_policy
 | 冲突类型 | 例子 | 行为风险 |
 | --- | --- | --- |
 | 时间冲突 time conflict | 派对时间是 17:00；派对时间是 19:00 | 角色到错时间，评价误判。 |
-| 关系冲突 relationship conflict | 汤姆不信任山姆；汤姆非常支持山姆 | 对话态度摇摆。 |
-| 承诺冲突 commitment conflict | 玛丽亚答应参加；玛丽亚同一时间有考试 | 计划和移动证据不一致。 |
-| 位置冲突 location conflict | 克劳斯说在图书馆；movement 显示在宿舍 | 报告可能把摘要当强证据。 |
+| 关系冲突 relationship conflict | 汤姆 Tom Moreno 不信任山姆 Sam Moore；汤姆 Tom Moreno 非常支持山姆 Sam Moore | 对话态度摇摆。 |
+| 承诺冲突 commitment conflict | 玛丽亚 Maria Lopez 答应参加；玛丽亚 Maria Lopez 同一时间有考试 | 计划和移动证据不一致。 |
+| 位置冲突 location conflict | 克劳斯 Klaus Mueller 说在图书馆；movement 显示在宿舍 | 报告可能把摘要当强证据。 |
 
 本轮同样实现了两层：当前真正生效的是规则检测 `Associate.maybe_detect_conflict()`；LLM 版本的冲突判断已经有 `memory_conflict_check.txt` 和 `Scratch.prompt_memory_conflict_check()`，但还没有替换当前规则。
 
@@ -726,7 +726,7 @@ $similar_memories
 }
 ```
 
-这个 prompt 解决的是规则检测很难处理的边界：自然变化不是冲突。比如“玛丽亚和伊莎贝拉从陌生变熟悉”是关系演进，不是互斥事实；但“同一时间点派对地点既是咖啡馆又是公园”才是冲突。
+这个 prompt 解决的是规则检测很难处理的边界：自然变化不是冲突。比如“玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez 从陌生变熟悉”是关系演进，不是互斥事实；但“同一时间点派对地点既是咖啡馆又是公园”才是冲突。
 
 相对路径：`generative_agents_next/modules/prompt/scratch.py`
 
@@ -930,7 +930,7 @@ flowchart TD
 +    agent_config.setdefault("associate", {})["long_term_memory"] = long_term_memory
 ```
 
-`start.py` 只生成全局配置；真正分发到角色，是 `Game` 创建每个 `Agent` 时做的。这里会把当前角色名写进 `long_term_memory["agent_name"]`，保证伊莎贝拉只优先读取旧实验中伊莎贝拉自己的 `docstore.json`，不会默认导入别人的个人记忆。
+`start.py` 只生成全局配置；真正分发到角色，是 `Game` 创建每个 `Agent` 时做的。这里会把当前角色名写进 `long_term_memory["agent_name"]`，保证伊莎贝拉 Isabella Rodriguez 只优先读取旧实验中伊莎贝拉 Isabella Rodriguez 自己的 `docstore.json`，不会默认导入别人的个人记忆。
 
 ### Associate 如何导入旧 docstore
 
@@ -1450,24 +1450,24 @@ flowchart LR
 
 | 阶段 | 时间 | 发生的事 | 产生的证据 |
 | --- | --- | --- | --- |
-| 初始化 | `08:00` | 伊莎贝拉开咖啡馆，玛丽亚仍在睡觉，山姆开始打理公园，汤姆吃完早餐。系统为四个角色生成当天日程。 | 每个角色各 1 条 `goal` 节点，来源是初始计划节点。 |
+| 初始化 | `08:00` | 伊莎贝拉 Isabella Rodriguez 开咖啡馆，玛丽亚 Maria Lopez 仍在睡觉，山姆 Sam Moore 开始打理公园，汤姆 Tom Moreno 吃完早餐。系统为四个角色生成当天日程。 | 每个角色各 1 条 `goal` 节点，来源是初始计划节点。 |
 | 日常事件累积 | `08:00-10:50` | 咖啡馆开门、整理柜台、打理花园、检查库存、准备学习等低强度事件不断写入。 | `event` 节点持续增长，低价值重复事件开始触发 `summary`。 |
-| 派对信息传播 | `11:10` | 伊莎贝拉告诉玛丽亚下午 5 点到 7 点有情人节派对，玛丽亚说直播后会来。 | `conversation.json` 出现第一段 6 轮对话；双方各写入 1 条 `relationship`。 |
-| 关系递进 | `12:20-13:00` | 玛丽亚点轻食和玫瑰拿铁，询问装饰；随后又确认派对活动和六点左右到场。 | 对话总数达到 4 段，双方关系节点各达到 4 条。 |
+| 派对信息传播 | `11:10` | 伊莎贝拉 Isabella Rodriguez 告诉玛丽亚 Maria Lopez 下午 5 点到 7 点有情人节派对，玛丽亚 Maria Lopez 说直播后会来。 | `conversation.json` 出现第一段 6 轮对话；双方各写入 1 条 `relationship`。 |
+| 关系递进 | `12:20-13:00` | 玛丽亚 Maria Lopez 点轻食和玫瑰拿铁，询问装饰；随后又确认派对活动和六点左右到场。 | 对话总数达到 4 段，双方关系节点各达到 4 条。 |
 | 离线压缩与评价 | `13:50` 之后 | `compress.py` 汇总 docstore，评价脚本统计传播、承诺和到场边界。 | `memory_metrics.json`、`simulation.md`、`evaluations/report.md`。 |
 
 ### 原始事件链
 
-`conversation.json` 是这次实验的强证据。它记录了谁在什么时间、什么地点、对谁说了什么。四段对话都发生在伊莎贝拉和玛丽亚之间，正好形成一条关系变化链。
+`conversation.json` 是这次实验的强证据。它记录了谁在什么时间、什么地点、对谁说了什么。四段对话都发生在伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 之间，正好形成一条关系变化链。
 
 | 时间 | 原始对话中的事实 | 触发的记忆变化 |
 | --- | --- | --- |
-| `20240214-11:10` | 伊莎贝拉介绍 17:00-19:00 的情人节派对、玫瑰拿铁、爱心摩卡和折扣；玛丽亚说直播后会来，估计六点左右到。 | 伊莎贝拉写入 `node_59`，玛丽亚写入 `node_17`；双方从普通互动变成“有明确派对承诺的友好顾客关系”。 |
-| `20240214-12:20` | 玛丽亚点鸡肉牛油果三明治和玫瑰拿铁，继续询问咖啡馆是否有情人节装饰。 | 伊莎贝拉写入 `node_89`，玛丽亚写入 `node_45`；好感和熟悉度继续上升。 |
-| `20240214-12:40` | 玛丽亚问伊莎贝拉是不是在忙，伊莎贝拉说正在回复老顾客并确认派对宣传。 | 伊莎贝拉写入 `node_96`，玛丽亚写入 `node_55`；这次不是强承诺，只提高熟悉度。 |
-| `20240214-13:00` | 伊莎贝拉提醒五点开始，玛丽亚再次说直播完六点左右到，并询问派对活动。 | 伊莎贝拉写入 `node_110`，玛丽亚写入 `node_59`；伊莎贝拉侧还触发 `node_108` 冲突节点和 `node_109` 技能节点。 |
+| `20240214-11:10` | 伊莎贝拉 Isabella Rodriguez 介绍 17:00-19:00 的情人节派对、玫瑰拿铁、爱心摩卡和折扣；玛丽亚 Maria Lopez 说直播后会来，估计六点左右到。 | 伊莎贝拉 Isabella Rodriguez 写入 `node_59`，玛丽亚 Maria Lopez 写入 `node_17`；双方从普通互动变成“有明确派对承诺的友好顾客关系”。 |
+| `20240214-12:20` | 玛丽亚 Maria Lopez 点鸡肉牛油果三明治和玫瑰拿铁，继续询问咖啡馆是否有情人节装饰。 | 伊莎贝拉 Isabella Rodriguez 写入 `node_89`，玛丽亚 Maria Lopez 写入 `node_45`；好感和熟悉度继续上升。 |
+| `20240214-12:40` | 玛丽亚 Maria Lopez 问伊莎贝拉 Isabella Rodriguez 是不是在忙，伊莎贝拉 Isabella Rodriguez 说正在回复老顾客并确认派对宣传。 | 伊莎贝拉 Isabella Rodriguez 写入 `node_96`，玛丽亚 Maria Lopez 写入 `node_55`；这次不是强承诺，只提高熟悉度。 |
+| `20240214-13:00` | 伊莎贝拉 Isabella Rodriguez 提醒五点开始，玛丽亚 Maria Lopez 再次说直播完六点左右到，并询问派对活动。 | 伊莎贝拉 Isabella Rodriguez 写入 `node_110`，玛丽亚 Maria Lopez 写入 `node_59`；伊莎贝拉 Isabella Rodriguez 侧还触发 `node_108` 冲突节点和 `node_109` 技能节点。 |
 
-评价脚本还从这些对话里提取了派对事件的传播状态：`known_agents=["伊莎贝拉","玛丽亚"]`，`accepted=["玛丽亚"]`，`arrived=[]`。这表示系统捕获到了“玛丽亚知道并口头答应”，但实验结束在 13:50，没有进入 17:00-19:00 的到场窗口。
+评价脚本还从这些对话里提取了派对事件的传播状态：`known_agents=["伊莎贝拉","玛丽亚"]`，`accepted=["玛丽亚"]`，`arrived=[]`。这表示系统捕获到了“玛丽亚 Maria Lopez 知道并口头答应”，但实验结束在 13:50，没有进入 17:00-19:00 的到场窗口。
 
 ### 指标总览
 
@@ -1479,7 +1479,7 @@ flowchart LR
 | 总记忆节点 total_nodes | 390 | 四个角色的 docstore 节点总数。 |
 | 高级记忆 advanced_nodes | 173 | 包含 `relationship/goal/summary/skill/conflict`。 |
 | 来源追踪率 source_trace_rate | 173 / 173 = 1.0 | 高级记忆全部带 `source_nodes` 或 `source_node_id`。 |
-| 关系记忆 relationship_nodes | 8 | 伊莎贝拉和玛丽亚各 4 条，和 4 段对话一一对应。 |
+| 关系记忆 relationship_nodes | 8 | 伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 各 4 条，和 4 段对话一一对应。 |
 | 目标记忆 goal_nodes | 4 | 每个角色都把日程生成结果沉淀为阶段目标。 |
 | 摘要记忆 summary_nodes | 159 | 重复日常事件被识别并写成摘要索引。 |
 | 冲突记忆 conflict_nodes | 1 | 系统发现 1 条时间相关冲突，需要人工判定是否过于敏感。 |
@@ -1490,12 +1490,12 @@ flowchart LR
 
 | 角色 | 总节点 | event | chat | thought | relationship | goal | summary | conflict | skill |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 伊莎贝拉 | 131 | 65 | 4 | 1 | 4 | 1 | 54 | 1 | 1 |
-| 玛丽亚 | 89 | 44 | 4 | 1 | 4 | 1 | 35 | 0 | 0 |
-| 山姆 | 89 | 50 | 0 | 1 | 0 | 1 | 37 | 0 | 0 |
-| 汤姆 | 81 | 46 | 0 | 1 | 0 | 1 | 33 | 0 | 0 |
+| 伊莎贝拉 Isabella Rodriguez | 131 | 65 | 4 | 1 | 4 | 1 | 54 | 1 | 1 |
+| 玛丽亚 Maria Lopez | 89 | 44 | 4 | 1 | 4 | 1 | 35 | 0 | 0 |
+| 山姆 Sam Moore | 89 | 50 | 0 | 1 | 0 | 1 | 37 | 0 | 0 |
+| 汤姆 Tom Moreno | 81 | 46 | 0 | 1 | 0 | 1 | 33 | 0 | 0 |
 
-这张表有两个判断价值。第一，新记忆类型已经进入持久化结构，`goal`、`summary`、`relationship`、`conflict`、`skill` 都能从 docstore 中统计出来。第二，关系记忆只在真实对话发生后生成，山姆和汤姆没有参与对话，所以没有被系统编造关系节点。
+这张表有两个判断价值。第一，新记忆类型已经进入持久化结构，`goal`、`summary`、`relationship`、`conflict`、`skill` 都能从 docstore 中统计出来。第二，关系记忆只在真实对话发生后生成，山姆 Sam Moore 和汤姆 Tom Moreno 没有参与对话，所以没有被系统编造关系节点。
 
 ### 升级方向一：扩展记忆类型
 
@@ -1509,19 +1509,19 @@ flowchart LR
 
 ### 升级方向二：结构化关系记忆 relationship memory
 
-实验观察：4 段对话生成 8 条关系记忆，伊莎贝拉对玛丽亚 4 条，玛丽亚对伊莎贝拉 4 条。关系不是一次性摘要，而是跟随对话逐步变化。
+实验观察：4 段对话生成 8 条关系记忆，伊莎贝拉 Isabella Rodriguez 对玛丽亚 Maria Lopez 4 条，玛丽亚 Maria Lopez 对伊莎贝拉 Isabella Rodriguez 4 条。关系不是一次性摘要，而是跟随对话逐步变化。
 
 证据文件：`conversation.json` 记录四段原始对话；`storage/伊莎贝拉/associate/docstore.json` 和 `storage/玛丽亚/associate/docstore.json` 记录双方视角的 `relationship` 节点。
 
-效果判断：伊莎贝拉视角的关系链是 `node_59 -> node_89 -> node_96 -> node_110`。她对玛丽亚的 `affinity` 从 1 升到 3，`trust` 保持 1，`familiarity` 从 1 升到 4。玛丽亚视角的关系链是 `node_17 -> node_45 -> node_55 -> node_59`。她对伊莎贝拉的 `affinity` 从 1 升到 2，`trust` 保持 0，`familiarity` 从 1 升到 4。
+效果判断：伊莎贝拉 Isabella Rodriguez 视角的关系链是 `node_59 -> node_89 -> node_96 -> node_110`。她对玛丽亚 Maria Lopez 的 `affinity` 从 1 升到 3，`trust` 保持 1，`familiarity` 从 1 升到 4。玛丽亚 Maria Lopez 视角的关系链是 `node_17 -> node_45 -> node_55 -> node_59`。她对伊莎贝拉 Isabella Rodriguez 的 `affinity` 从 1 升到 2，`trust` 保持 0，`familiarity` 从 1 升到 4。
 
-这个结果说明关系更新有幅度控制：12:40 的简单寒暄没有让好感和信任跳变，只增加熟悉度；13:00 的再次确认派对和活动信息，才让伊莎贝拉侧的好感继续上升。关系节点还带有 `target`、`source_nodes`、`confidence` 和 `downstream_use`，能回到具体聊天节点。
+这个结果说明关系更新有幅度控制：12:40 的简单寒暄没有让好感和信任跳变，只增加熟悉度；13:00 的再次确认派对和活动信息，才让伊莎贝拉 Isabella Rodriguez 侧的好感继续上升。关系节点还带有 `target`、`source_nodes`、`confidence` 和 `downstream_use`，能回到具体聊天节点。
 
-局限：这轮只有伊莎贝拉和玛丽亚发生对话，不能验证多人关系网络的复杂传播。山姆和汤姆没有 `relationship` 节点，这是正确边界，不是缺失。
+局限：这轮只有伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 发生对话，不能验证多人关系网络的复杂传播。山姆 Sam Moore 和汤姆 Tom Moreno 没有 `relationship` 节点，这是正确边界，不是缺失。
 
 ### 升级方向三：记忆合并 merge 与摘要 summary
 
-实验观察：四个角色合计生成 159 条 `summary` 节点。样例包括“咖啡馆顾客座位在 08:20 附近出现多条相似日常事件”“山姆在公园花园附近重复打理花园”等低价值重复记忆。
+实验观察：四个角色合计生成 159 条 `summary` 节点。样例包括“咖啡馆顾客座位在 08:20 附近出现多条相似日常事件”“山姆 Sam Moore 在公园花园附近重复打理花园”等低价值重复记忆。
 
 证据文件：`memory_metrics.json` 给出数量；各角色 `docstore.json` 中的 `summary` 节点带 `source_nodes`、`confidence=0.7`、`generated_by=memory_merge`、`downstream_use=planning,reflection`。
 
@@ -1531,13 +1531,13 @@ flowchart LR
 
 ### 升级方向四：冲突检测 conflict detection
 
-实验观察：伊莎贝拉生成 1 条 `conflict` 节点 `node_108`，随后生成 1 条 `skill` 节点 `node_109`。冲突来源是初始日程和 13:00 对话摘要之间的时间说法。
+实验观察：伊莎贝拉 Isabella Rodriguez 生成 1 条 `conflict` 节点 `node_108`，随后生成 1 条 `skill` 节点 `node_109`。冲突来源是初始日程和 13:00 对话摘要之间的时间说法。
 
 证据文件：`storage/伊莎贝拉/associate/docstore.json`。`node_108` 的 `source_nodes` 是 `node_0` 和 `node_107`，`resolution_status=unresolved`，`downstream_use=planning,dialogue,reflection`。
 
 效果判断：系统已经能把潜在冲突显式写入记忆流，并把它转成后续规划或对话前要核对的经验。过去这类问题可能只散落在对话里，现在有了可追踪节点。
 
-局限：这条冲突更像“时间窗口内的到场偏移”，不一定是真正互斥。计划是 17:00-19:00，玛丽亚说六点左右到，严格说仍在派对窗口内。当前规则把不同时间表达都当成冲突，说明检测过于敏感。后续需要区分 `contradiction`、`delay`、`overlap` 和 `clarification` 类事实，否则会制造误报。
+局限：这条冲突更像“时间窗口内的到场偏移”，不一定是真正互斥。计划是 17:00-19:00，玛丽亚 Maria Lopez 说六点左右到，严格说仍在派对窗口内。当前规则把不同时间表达都当成冲突，说明检测过于敏感。后续需要区分 `contradiction`、`delay`、`overlap` 和 `clarification` 类事实，否则会制造误报。
 
 ### 升级方向五：跨实验长期记忆 long-term memory
 
@@ -1576,8 +1576,8 @@ flowchart LR
 | 项目 | 结果 | 解释 |
 | --- | --- | --- |
 | `mention_count` | 11 | 关键词命中 11 次，说明情人节派对信息在对话中反复出现。 |
-| `known_agents` | 伊莎贝拉、玛丽亚 | 只有两人真正知道本次派对信息。 |
-| `accepted_commitments` | 1 | 玛丽亚口头承诺直播后过来。 |
+| `known_agents` | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez | 只有两人真正知道本次派对信息。 |
+| `accepted_commitments` | 1 | 玛丽亚 Maria Lopez 口头承诺直播后过来。 |
 | `arrived_agents` | 0 | 实验停在 13:50，没有覆盖 17:00-19:00 的到场窗口。 |
 | `reflection_candidates` | 1 | “承诺需要 movement 复核”被识别成反思候选。 |
 
@@ -1590,8 +1590,8 @@ flowchart LR
 | 文件 | 用途 |
 | --- | --- |
 | `generative_agents_next/results/checkpoints/book-memory-governance-full/conversation.json` | 查看四段原始对话，确认派对信息、承诺和关系变化来源。 |
-| `generative_agents_next/results/checkpoints/book-memory-governance-full/storage/伊莎贝拉/associate/docstore.json` | 查看伊莎贝拉侧的 `relationship/conflict/skill/summary/goal` 节点。 |
-| `generative_agents_next/results/checkpoints/book-memory-governance-full/storage/玛丽亚/associate/docstore.json` | 查看玛丽亚侧的关系递进链。 |
+| `generative_agents_next/results/checkpoints/book-memory-governance-full/storage/伊莎贝拉/associate/docstore.json` | 查看伊莎贝拉 Isabella Rodriguez 侧的 `relationship/conflict/skill/summary/goal` 节点。 |
+| `generative_agents_next/results/checkpoints/book-memory-governance-full/storage/玛丽亚/associate/docstore.json` | 查看玛丽亚 Maria Lopez 侧的关系递进链。 |
 | `generative_agents_next/results/compressed/book-memory-governance-full/memory_metrics.json` | 查看总节点数、类型分布、来源追踪率和导入节点数。 |
 | `generative_agents_next/results/evaluations/book-memory-governance-full/report.md` | 查看事件传播、口头承诺、到场边界和反思候选。 |
 
@@ -1620,7 +1620,7 @@ flowchart LR
 | 当前实现 | `Associate`、`Concept`、`Event` 和 `LlamaIndex` 组成记忆流 memory stream，`generative_agents_next` 在其上增加治理 metadata。 |
 | 提示词 prompt 链路 | `poignancy_*`、`summarize_relation`、`generate_chat`、`reflect_*` 共同影响记忆写入和使用。 |
 | 检索机制 | 当前检索叠加新近度 recency、相关性 relevance 和重要性 importance，但 `retrieve_focus()` 默认只查 `event + thought`。 |
-| 关键结果 | 高级记忆来源追踪率达到 1.0；伊莎贝拉和玛丽亚形成 8 条关系记忆；摘要节点达到 159 条；冲突检测产生 1 条需要修正规则的误报。 |
+| 关键结果 | 高级记忆来源追踪率达到 1.0；伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 形成 8 条关系记忆；摘要节点达到 159 条；冲突检测产生 1 条需要修正规则的误报。 |
 | 可落地升级 | memory types、关系记忆、来源字段、摘要合并、冲突检测和场景化检索已经进入实验目录。 |
 | 未验证能力 | 本轮 `imported_nodes=0`，跨实验长期记忆还需要单独运行 `--load-long-term-memory` 实验。 |
 | 风险边界 | 记忆越强，越要重视幻觉、偏见、隐私、可复现性和回滚能力。 |

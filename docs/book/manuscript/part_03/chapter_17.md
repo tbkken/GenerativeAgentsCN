@@ -12,7 +12,7 @@ self.reflect()
 
 本章专门讲第一步：智能体感知函数 `Agent.percept()`。感知是整个生成式智能体系统的入口。如果智能体 agent 看不到世界，它就无法形成记忆。如果看到了错误事件，后续计划和对话也会错。如果它能看到全局世界，信息扩散和偶遇就失去意义。所以，感知机制的目标不是“看得越多越好”，而是“在合理限制下看到当前附近发生的事”。
 
-先看一个真实业务案例。`book-smoke` 断点里，克劳斯位于坐标 `coord = [119, 24]`，位置是奥克山学院图书馆桌子附近；本章证据 trace 也用同一个坐标还原这一帧的空间感知结果。业务上，这一步不是“读取地图 JSON”，而是回答一个更直观的问题：克劳斯站在图书馆桌子旁时，附近有什么东西值得他注意？
+先看一个真实业务案例。`book-smoke` 断点里，克劳斯 Klaus Mueller 位于坐标 `coord = [119, 24]`，位置是奥克山学院图书馆桌子附近；本章证据 trace 也用同一个坐标还原这一帧的空间感知结果。业务上，这一步不是“读取地图 JSON”，而是回答一个更直观的问题：克劳斯 Klaus Mueller 站在图书馆桌子旁时，附近有什么东西值得他注意？
 
 输入状态可以这样读：
 
@@ -33,9 +33,9 @@ self.reflect()
 
 | 业务环节 | 项目里的结果 | 读法 |
 | --- | --- | --- |
-| 确认角色位置 | 当前坐标 coord 为 `[119, 24]`。 | 克劳斯不是从全局地图开始看，而是从自己脚下的位置开始看。 |
+| 确认角色位置 | 当前坐标 coord 为 `[119, 24]`。 | 克劳斯 Klaus Mueller 不是从全局地图开始看，而是从自己脚下的位置开始看。 |
 | 划出候选视野 | 视野半径 vision_r 为 8，得到 `17 x 17 = 289` 个地图格子 tile。 | 这一步回答“附近有哪些格子可能看得到”。 |
-| 保留同一场所 | 同一图书馆场所 arena 内剩下 67 个地图格子 tile。 | 这一步避免克劳斯隔墙看到别的房间。 |
+| 保留同一场所 | 同一图书馆场所 arena 内剩下 67 个地图格子 tile。 | 这一步避免克劳斯 Klaus Mueller 隔墙看到别的房间。 |
 | 收集附近事件 | 同场所内读到 3 个地图格子事件 tile events。 | 感知不是直接读角色设定，而是读格子上暴露出来的事件 Event。 |
 | 注意力处理 | 按距离排序，再受注意力带宽 attention bandwidth 限制。 | 如果附近事件很多，角色也只能关注一部分。 |
 | 写入当前感知 | 形成本步概念缓存 `self.concepts`。 | 这些是当前仿真步 step 能用于反应 reaction 的观察材料。 |
@@ -50,7 +50,7 @@ self.reflect()
 ]
 ```
 
-输出结果要从业务角度读。克劳斯这一步主要看到的是图书馆里的对象空闲状态：书架、桌子、沙发都处于空闲。它们可以进入当前感知缓存 `self.concepts`，帮助角色判断现场环境；但这些都是空闲事件，通常不会写入长期关联记忆 Associate。换句话说，第 17 章的感知输出不是“必然生成记忆”，而是先生成“我此刻看见了什么”。第 18 章再讲其中有价值的事件如何变成长期记忆。
+输出结果要从业务角度读。克劳斯 Klaus Mueller 这一步主要看到的是图书馆里的对象空闲状态：书架、桌子、沙发都处于空闲。它们可以进入当前感知缓存 `self.concepts`，帮助角色判断现场环境；但这些都是空闲事件，通常不会写入长期关联记忆 Associate。换句话说，第 17 章的感知输出不是“必然生成记忆”，而是先生成“我此刻看见了什么”。第 18 章再讲其中有价值的事件如何变成长期记忆。
 
 带着这个案例，再看 Generative Agents 的感知链路：
 
@@ -117,7 +117,7 @@ figure: docs/book/assets/chapter_17/ch17_perception_funnel.png
 
 | 输出片段 | 对应源码或文件 | 读法 |
 | --- | --- | --- |
-| `coord=(119, 24)` | 回放移动文件 `movement.json` | 这是阿伊莎和克劳斯在第 13 章实验中出现过的真实回放坐标，不是另造的示例坐标。 |
+| `coord=(119, 24)` | 回放移动文件 `movement.json` | 这是阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 在第 13 章实验中出现过的真实回放坐标，不是另造的示例坐标。 |
 | `scope_count=289` | 视野范围函数 `Maze.get_scope()` 与 `vision_r=8` | `17 x 17` 个地图格子 tiles 先进入候选范围。 |
 | `same_arena_tiles=67` | 智能体感知函数 `Agent.percept()` 的场所 arena 过滤 | 289 个候选格子里，只有同一图书馆场所的 67 个格子继续参与事件收集。 |
 | `events_in_same_arena=3` | 地图格子事件 `tile.get_events()` | 这一帧同场所内有书架、图书馆桌子、图书馆沙发三个对象事件进入后续排序与截断。 |
@@ -126,9 +126,9 @@ figure: docs/book/assets/chapter_17/ch17_perception_funnel.png
 
 在多智能体仿真中，感知必须受限。如果每个智能体 agent 都能读取全局状态，那么：
 
-- 伊莎贝拉不用邀请别人，所有人都能知道派对。
-- 山姆不用竞选传播，所有人都能知道他参选。
-- 克劳斯和玛丽亚不用相遇，也能知道彼此状态。
+- 伊莎贝拉 Isabella Rodriguez 不用邀请别人，所有人都能知道派对。
+- 山姆 Sam Moore 不用竞选传播，所有人都能知道他参选。
+- 克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 不用相遇，也能知道彼此状态。
 - 信息扩散不再是社会现象，而是全局共享变量。
 
 因此，Generative Agents 让智能体 agent 只感知附近区域。这一点对应论文中的观察机制：智能体 agent 只能根据自身所在环境观察到局部事件。局部感知是社会涌现的前提。信息之所以能扩散，是因为它一开始不在每个人那里。关系之所以能形成，是因为角色需要相遇、对话和记忆。
@@ -388,7 +388,7 @@ Step 2: Describe the state of ${object}.
 Output:
 ```
 
-这个提示词 prompt 的输入是物品 object、角色 agent 和动作 action，输出结构 schema 是一个短字符串 `str`。它的作用不是让角色“看见”物品，而是把角色行动转成别人能看见的对象状态。例如克劳斯在图书馆桌子前写论文时，物品状态 prompt 可以生成：
+这个提示词 prompt 的输入是物品 object、角色 agent 和动作 action，输出结构 schema 是一个短字符串 `str`。它的作用不是让角色“看见”物品，而是把角色行动转成别人能看见的对象状态。例如克劳斯 Klaus Mueller 在图书馆桌子前写论文时，物品状态 prompt 可以生成：
 
 ```text
 上面放着写作用的纸笔
@@ -624,7 +624,7 @@ recent_nodes = set(n.describe for n in recent_nodes)
 if event.get_describe() not in recent_nodes:
 ```
 
-如果近期已经有同样描述，就不重复处理。这避免智能体 agent 每一步都把同一个附近事件重复写入记忆流 memory stream。例如，克劳斯连续几步坐在书桌前读书。玛丽亚每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
+如果近期已经有同样描述，就不重复处理。这避免智能体 agent 每一步都把同一个附近事件重复写入记忆流 memory stream。例如，克劳斯 Klaus Mueller 连续几步坐在书桌前读书。玛丽亚 Maria Lopez 每一步都看到同一事件，如果不去重，她的记忆里会塞满重复记录：
 
 ```text
 克劳斯正在读书。
@@ -906,13 +906,13 @@ priority = [i for i in self.concepts if i.event.subject in agents]
 c.event.subject != self.name
 ```
 
-因为智能体 agent 自己的事件也在地图格子 tile 上。如果不滤掉，它可能把自己当前行为当成外部事件来反应。例如，克劳斯正在读书。他的地图格子 tile 上有：
+因为智能体 agent 自己的事件也在地图格子 tile 上。如果不滤掉，它可能把自己当前行为当成外部事件来反应。例如，克劳斯 Klaus Mueller 正在读书。他的地图格子 tile 上有：
 
 ```text
 克劳斯此时读书
 ```
 
-如果不排除，克劳斯可能“感知到克劳斯正在读书”，再把它作为反应焦点 reaction focus。这没有意义。过滤自身事件让现场反应 reaction 主要面向外部世界。
+如果不排除，克劳斯 Klaus Mueller 可能“感知到克劳斯 Klaus Mueller 正在读书”，再把它作为反应焦点 reaction focus。这没有意义。过滤自身事件让现场反应 reaction 主要面向外部世界。
 
 ## 17.17 感知日志
 
@@ -940,7 +940,7 @@ self.logger.info(
 
 ## 17.18 感知如何驱动信息扩散
 
-信息扩散依赖感知。以情人节派对为例。伊莎贝拉与阿伊莎对话后，地图格子 tile 上可能出现对话事件。附近角色如果在同一场所 arena 且注意力范围内，就可能感知到：
+信息扩散依赖感知。以情人节派对为例。伊莎贝拉 Isabella Rodriguez 与阿伊莎 Ayesha Khan 对话后，地图格子 tile 上可能出现对话事件。附近角色如果在同一场所 arena 且注意力范围内，就可能感知到：
 
 ```text
 伊莎贝拉 对话 阿伊莎
@@ -950,7 +950,7 @@ self.logger.info(
 
 ```mermaid
 flowchart TD
-    Chat["伊莎贝拉与阿伊莎发生对话"] --> TileEvent["对话摘要写成地图格子事件 tile event"]
+    Chat["伊莎贝拉 Isabella Rodriguez 与阿伊莎 Ayesha Khan 发生对话"] --> TileEvent["对话摘要写成地图格子事件 tile event"]
     TileEvent --> Nearby{"附近智能体是否在同一场所 arena 且进入注意力带宽"}
     Nearby -->|否| Broken["传播链在感知阶段中断"]
     Nearby -->|是| Percept["附近智能体感知到对话事件"]
@@ -964,13 +964,13 @@ flowchart TD
 
 ## 17.19 感知如何驱动关系形成
 
-关系形成也依赖感知。克劳斯和玛丽亚形成关系，首先必须相遇或互相观察。如果克劳斯看到了玛丽亚：
+关系形成也依赖感知。克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 形成关系，首先必须相遇或互相观察。如果克劳斯 Klaus Mueller 看到了玛丽亚 Maria Lopez：
 
 ```text
 玛丽亚此时在咖啡馆学习
 ```
 
-这个事件 event 可能进入克劳斯的记忆 memory。如果随后触发对话，对话摘要会进入聊天记忆 chat memory。之后反思 reflection 可能生成想法 thought：
+这个事件 event 可能进入克劳斯 Klaus Mueller 的记忆 memory。如果随后触发对话，对话摘要会进入聊天记忆 chat memory。之后反思 reflection 可能生成想法 thought：
 
 ```text
 克劳斯认为玛丽亚喜欢探索新想法。

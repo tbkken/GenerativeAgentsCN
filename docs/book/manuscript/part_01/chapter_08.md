@@ -64,7 +64,7 @@ retrieved = self.associate.retrieve_focus(focus)
 | `retrieve_thought` | 与想法有关的记忆 | 帮助角色延续关系判断和自我理解 |
 | `retrieve_currently` | 更新后的当前状态 | 成为生成日程的直接上下文 |
 
-例如，伊莎贝拉前一天已经开始准备情人节派对，第二天的 `currently` 就不能还停留在“她想办派对”。更合理的状态是：她已经邀请了一些人，还需要继续准备咖啡馆和提醒朋友。
+例如，伊莎贝拉 Isabella Rodriguez 前一天已经开始准备情人节派对，第二天的 `currently` 就不能还停留在“她想办派对”。更合理的状态是：她已经邀请了一些人，还需要继续准备咖啡馆和提醒朋友。
 
 ```mermaid
 flowchart TD
@@ -184,7 +184,7 @@ event = memory.Event(
 self._add_concept("thought", event, expire=self.schedule.create + datetime.timedelta(days=30))
 ```
 
-这一步让计划不只是 scheduler 的内部数据，也成为角色可回忆的内容。别人问伊莎贝拉今天忙什么，她可以说自己在准备派对。别人问克劳斯下午有没有空，他可以参考自己的日程。后续 Reflection 也可以把计划和实际经历放在一起，形成更高层的判断。这符合论文的核心思想：memory stream 不只记录外部事件，也记录智能体自己的计划、想法和解释。
+这一步让计划不只是 scheduler 的内部数据，也成为角色可回忆的内容。别人问伊莎贝拉 Isabella Rodriguez 今天忙什么，她可以说自己在准备派对。别人问克劳斯 Klaus Mueller 下午有没有空，他可以参考自己的日程。后续 Reflection 也可以把计划和实际经历放在一起，形成更高层的判断。这符合论文的核心思想：memory stream 不只记录外部事件，也记录智能体自己的计划、想法和解释。
 
 ## 8.8 递归拆解
 
@@ -293,8 +293,8 @@ obj_event = self.make_event(address[-1], obj_describe, address)
 
 | 事件 | 含义 |
 | --- | --- |
-| 角色事件 | 克劳斯此时阅读研究资料 |
-| 对象事件 | 书桌此时被克劳斯用于阅读研究资料 |
+| 角色事件 | 克劳斯 Klaus Mueller 此时阅读研究资料 |
+| 对象事件 | 书桌此时被克劳斯 Klaus Mueller 用于阅读研究资料 |
 
 其他角色感知附近 tile 时，就能看到这些事件。Planning 由此进入世界模型，而不是停留在文本计划里。
 
@@ -761,7 +761,7 @@ Planning 失败通常不是一句 prompt 写得不好，而是链路上某个环
 | 地点不合理 | 空间记忆或地址选择错误 | `Spatial`、`determine_sector`、`determine_arena`、`determine_object` |
 | 行动频繁跳变 | 当前 action 没有稳定持续 | `Action.duration`、`Action.finished()` |
 
-例如，伊莎贝拉明明在 `currently` 中要准备情人节派对，但日程里完全没有派对相关行动，就要沿着这条链路检查：
+例如，伊莎贝拉 Isabella Rodriguez 明明在 `currently` 中要准备情人节派对，但日程里完全没有派对相关行动，就要沿着这条链路检查：
 
 ```text
 persona/currently

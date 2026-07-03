@@ -2,15 +2,15 @@
 
 ## 34.1 17:00 的派对为什么仍需要目标规划
 
-17:00 到了，伊莎贝拉的日程 schedule 是成功的。`generative_agents/results/checkpoints/book-party-extended/simulate-20240214-1700.json` 显示，她的当前行动 action 是“在门口热情迎接到来的顾客，引导他们入座”，地址 address 落在 `the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位`。这说明当前规划系统已经能完成一条重要链路：从全天日程，到分钟级拆解，再到地图 Maze 上的具体行动。
+17:00 到了，伊莎贝拉 Isabella Rodriguez 的日程 schedule 是成功的。`generative_agents/results/checkpoints/book-party-extended/simulate-20240214-1700.json` 显示，她的当前行动 action 是“在门口热情迎接到来的顾客，引导他们入座”，地址 address 落在 `the Ville -> 霍布斯咖啡馆 -> 咖啡馆 -> 咖啡馆顾客座位`。这说明当前规划系统已经能完成一条重要链路：从全天日程，到分钟级拆解，再到地图 Maze 上的具体行动。
 
-同一个断点里，玛丽亚暴露出另一种失败。她在 11:30 的 `conversation.json` 里明确答应参加 17:00 情人节派对，17:00 的行动却是“起身活动肩颈，做简单拉伸”，地址仍在 `the Ville -> 奥克山学院宿舍 -> 玛丽亚的房间 -> 书桌`。她的后续日程继续围绕 Twitch 直播休息、晚饭和晚间直播推进。这里不是“没有日程”，而是“日程没有被目标缺口修正”：系统知道伊莎贝拉要办派对，却没有持续追踪谁被邀请、谁承诺、谁到场、谁需要提醒。
+同一个断点里，玛丽亚 Maria Lopez 暴露出另一种失败。她在 11:30 的 `conversation.json` 里明确答应参加 17:00 情人节派对，17:00 的行动却是“起身活动肩颈，做简单拉伸”，地址仍在 `the Ville -> 奥克山学院宿舍 -> 玛丽亚的房间 -> 书桌`。她的后续日程继续围绕 Twitch 直播休息、晚饭和晚间直播推进。这里不是“没有日程”，而是“日程没有被目标缺口修正”：系统知道伊莎贝拉 Isabella Rodriguez 要办派对，却没有持续追踪谁被邀请、谁承诺、谁到场、谁需要提醒。
 
 | 证据 | 当前系统已经做到 | 暴露出的规划缺口 |
 | --- | --- | --- |
-| 伊莎贝拉 17:00 checkpoint | 派对日程被拆成迎宾、饮品、致辞、互动等子任务。 | 主办者行动正确，不等于目标整体完成。 |
-| 玛丽亚 11:30 conversation | 对话里出现明确承诺：“五点刚好有休息时间，肯定会去参加”。 | 承诺没有进入可追踪的目标进度 progress。 |
-| 玛丽亚 17:00 checkpoint | 行动和地址仍在宿舍书桌。 | 系统没有在 17:00 前根据缺口提醒、确认或改派行动。 |
+| 伊莎贝拉 Isabella Rodriguez 17:00 checkpoint | 派对日程被拆成迎宾、饮品、致辞、互动等子任务。 | 主办者行动正确，不等于目标整体完成。 |
+| 玛丽亚 Maria Lopez 11:30 conversation | 对话里出现明确承诺：“五点刚好有休息时间，肯定会去参加”。 | 承诺没有进入可追踪的目标进度 progress。 |
+| 玛丽亚 Maria Lopez 17:00 checkpoint | 行动和地址仍在宿舍书桌。 | 系统没有在 17:00 前根据缺口提醒、确认或改派行动。 |
 | 后续评价 metrics | `accepted_not_arrived` 能被离线分析发现。 | 发现缺口发生在实验分析阶段，还没有回流到规划主链路。 |
 
 规划升级 planning upgrade 的重点不是把角色改造成任务机器，而是在现有生活日程上叠加一层目标约束：显式目标 active goal、候选行动 candidate actions、目标进度 progress 和行动反馈 feedback。日程负责“这个人今天像谁一样生活”，目标负责“重要任务是否被持续推进并接受证据检验”。
@@ -167,11 +167,11 @@ flowchart TD
 
 | 文件 | 可验证内容 |
 | --- | --- |
-| `generative_agents_next/results/checkpoints/book-goal-party/simulate-20240214-0800.json` | 伊莎贝拉 `associate.memory.goal=["node_1"]`。 |
+| `generative_agents_next/results/checkpoints/book-goal-party/simulate-20240214-0800.json` | 伊莎贝拉 Isabella Rodriguez `associate.memory.goal=["node_1"]`。 |
 | `generative_agents_next/results/checkpoints/book-goal-party/storage/伊莎贝拉/associate/docstore.json` | `node_1` 的 `node_type="goal"`、`predicate="目标"`、`generated_by="schedule_daily"`。 |
 | `generative_agents_next/results/compressed/book-goal-party/memory_metrics.json` | 四个角色共 `goal_nodes=4`，每个角色 1 个 goal 节点。 |
 
-伊莎贝拉的 `node_1` metadata 是：
+伊莎贝拉 Isabella Rodriguez 的 `node_1` metadata 是：
 
 ```json
 {
@@ -227,7 +227,7 @@ ${existing_daily_plan}
 }
 ```
 
-对伊莎贝拉来说，输出可以是“午后确认玛丽亚是否仍能 17:00 到场”“不要反复打扰已经拒绝的山姆”“17:00 前回到咖啡馆完成布置”。这些约束再进入 `schedule_daily`，比直接要求模型生成“最优派对计划”更稳。
+对伊莎贝拉 Isabella Rodriguez 来说，输出可以是“午后确认玛丽亚 Maria Lopez 是否仍能 17:00 到场”“不要反复打扰已经拒绝的山姆 Sam Moore”“17:00 前回到咖啡馆完成布置”。这些约束再进入 `schedule_daily`，比直接要求模型生成“最优派对计划”更稳。
 
 ## 34.6 升级点三：多候选行动 candidate actions
 
@@ -235,9 +235,9 @@ ${existing_daily_plan}
 
 | 候选行动 candidate action | 目标贡献 goal contribution | 自然性 naturalness | 可行性 feasibility | 证据依据 |
 | --- | --- | --- | --- | --- |
-| 继续布置咖啡馆 | 中 | 高 | 高 | 伊莎贝拉当前在咖啡馆，日程包含派对准备。 |
-| 找玛丽亚确认 17:00 是否到场 | 高 | 中 | 取决于位置和关系 | 玛丽亚已承诺，但 movement 显示可能离开咖啡馆。 |
-| 邀请山姆短暂停留或转述祝福 | 低到中 | 高 | 中 | 山姆有晚餐冲突，不能强推到场。 |
+| 继续布置咖啡馆 | 中 | 高 | 高 | 伊莎贝拉 Isabella Rodriguez 当前在咖啡馆，日程包含派对准备。 |
+| 找玛丽亚 Maria Lopez 确认 17:00 是否到场 | 高 | 中 | 取决于位置和关系 | 玛丽亚 Maria Lopez 已承诺，但 movement 显示可能离开咖啡馆。 |
+| 邀请山姆 Sam Moore 短暂停留或转述祝福 | 低到中 | 高 | 中 | 山姆 Sam Moore 有晚餐冲突，不能强推到场。 |
 | 去公园随机邀请更多居民 | 中 | 低 | 取决于路径 | 可能破坏咖啡馆老板人设和当前任务。 |
 
 建议新增三个 prompt，不必一开始做复杂树搜索。
@@ -295,7 +295,7 @@ generative_agents_next/data/prompts/goal_evaluate_progress.txt
 }
 ```
 
-这里必须区分四个层级：知道信息 informed、承诺 accepted、到达 arrived、事后摘要 summarized。派对实验中，玛丽亚的对话承诺是 accepted；17:00 附近未在咖啡馆则不能算 arrived。
+这里必须区分四个层级：知道信息 informed、承诺 accepted、到达 arrived、事后摘要 summarized。派对实验中，玛丽亚 Maria Lopez 的对话承诺是 accepted；17:00 附近未在咖啡馆则不能算 arrived。
 
 ## 34.8 升级点五：轻量工具调用 tool use
 
@@ -309,7 +309,7 @@ generative_agents_next/data/prompts/goal_evaluate_progress.txt
 | 最近对话 `get_recent_conversations(agent)` | `conversation.json` 或 chat memory | 本人参与过的对话可知 | 判断是否重复邀请。 | 中 |
 | 目标传播 `get_event_spread(keyword)` | 实验分析脚本 | 角色不可知，只用于评价 evaluation | 生成指标 metrics / 报告 report。 | 高，不能进入角色提示词 prompt。 |
 
-工具调用的边界非常重要。伊莎贝拉可以知道自己是否邀请过玛丽亚，也可以看见咖啡馆附近的人；她不应该无条件知道全镇所有人的实时位置。实验分析工具可以用来写报告 report，但不能直接喂给角色生成行动。
+工具调用的边界非常重要。伊莎贝拉 Isabella Rodriguez 可以知道自己是否邀请过玛丽亚 Maria Lopez，也可以看见咖啡馆附近的人；她不应该无条件知道全镇所有人的实时位置。实验分析工具可以用来写报告 report，但不能直接喂给角色生成行动。
 
 ## 34.9 升级点六：行动反馈 feedback
 
@@ -379,7 +379,7 @@ generative_agents_next/data/prompts/goal_evaluate_progress.txt
 | --- | --- |
 | 实验名 | `book-goal-party` |
 | 工作目录 | `generative_agents_next` |
-| 角色 agents | 伊莎贝拉、玛丽亚、山姆、汤姆 |
+| 角色 agents | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、山姆 Sam Moore、汤姆 Tom Moreno |
 | 检查对象 | `goal` 记忆节点、`goal_progress.json`、目标完成率 |
 | 成功边界 | 能区分 informed、accepted、arrived、rejected，不把承诺当到场 |
 
@@ -410,7 +410,7 @@ python analyze_experiment.py --name book-goal-party --event valentine_party --ke
 | 实验目录 | `generative_agents_next/results/checkpoints/book-goal-party/` |
 | checkpoint 数 | 74 |
 | 最终时间 | `20240214-20:10` |
-| 角色 | 伊莎贝拉、玛丽亚、山姆、汤姆 |
+| 角色 | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、山姆 Sam Moore、汤姆 Tom Moreno |
 | 压缩输出 | `results/compressed/book-goal-party/` |
 | 评价输出 | `results/evaluations/book-goal-party/` |
 | 目标完成率 | `0.75` |
@@ -421,12 +421,12 @@ python analyze_experiment.py --name book-goal-party --event valentine_party --ke
 
 | 角色 | total_nodes | goal_nodes | source_trace_rate | goal 来源 |
 | --- | ---: | ---: | ---: | --- |
-| 伊莎贝拉 | 281 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
-| 玛丽亚 | 175 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
-| 山姆 | 230 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
-| 汤姆 | 226 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
+| 伊莎贝拉 Isabella Rodriguez | 281 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
+| 玛丽亚 Maria Lopez | 175 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
+| 山姆 Sam Moore | 230 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
+| 汤姆 Tom Moreno | 226 | 1 | 1.0 | `source_nodes=["node_0"]`，`source_type="schedule"` |
 
-伊莎贝拉的 `docstore.json` 中，`node_1` 的 metadata 是 `node_type="goal"`，`predicate="目标"`，`confidence=0.75`，`generated_by="schedule_daily"`，`downstream_use="planning,reflection"`。这说明目标节点不是凭空生成的，它来自 08:00 生成的日程 thought，并保留了下游用途。
+伊莎贝拉 Isabella Rodriguez 的 `docstore.json` 中，`node_1` 的 metadata 是 `node_type="goal"`，`predicate="目标"`，`confidence=0.75`，`generated_by="schedule_daily"`，`downstream_use="planning,reflection"`。这说明目标节点不是凭空生成的，它来自 08:00 生成的日程 thought，并保留了下游用途。
 
 ```json
 {
@@ -445,20 +445,20 @@ python analyze_experiment.py --name book-goal-party --event valentine_party --ke
 
 ### 原始证据链
 
-本轮 `conversation.json` 有 16 条事件命中，核心传播链集中在伊莎贝拉和玛丽亚之间。
+本轮 `conversation.json` 有 16 条事件命中，核心传播链集中在伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 之间。
 
 | 时间 | 原始事件 | 目标规划含义 |
 | --- | --- | --- |
-| `11:40` | 伊莎贝拉邀请玛丽亚下午五点参加情人节派对。 | 事件传播成立，`known_by` 至少包含伊莎贝拉和玛丽亚。 |
-| `11:40` | 玛丽亚说“五点一定到”，并询问是否需要帮忙。 | 形成承诺 accepted，是强对话证据。 |
-| `13:00` | 玛丽亚主动提出帮忙贴派对宣传材料。 | 目标相关行动继续出现，但仍是对话和局部行动证据。 |
-| `14:00` | 玛丽亚帮忙搬桌椅，伊莎贝拉确认派对马上开始。 | 派对准备推进，说明角色没有变成纯任务机器。 |
-| `14:20` | 玛丽亚提到喝完咖啡后帮忙弄完气球和彩带。 | 承诺延续，但仍需要后续 movement 验证。 |
-| `15:20` | 玛丽亚调直播设备，伊莎贝拉说林晓下午会来。 | 传播线索扩展到外部提及，但林晓不在本轮四角色实验里。 |
-| `17:00` | `movement.json` 中伊莎贝拉在霍布斯咖啡馆顾客座位。 | 主办者到场成立。 |
-| `17:00` | 同一帧中玛丽亚在奥克山学院宿舍电脑前。 | 玛丽亚承诺未被目标时间窗到场验证。 |
+| `11:40` | 伊莎贝拉 Isabella Rodriguez 邀请玛丽亚 Maria Lopez 下午五点参加情人节派对。 | 事件传播成立，`known_by` 至少包含伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez。 |
+| `11:40` | 玛丽亚 Maria Lopez 说“五点一定到”，并询问是否需要帮忙。 | 形成承诺 accepted，是强对话证据。 |
+| `13:00` | 玛丽亚 Maria Lopez 主动提出帮忙贴派对宣传材料。 | 目标相关行动继续出现，但仍是对话和局部行动证据。 |
+| `14:00` | 玛丽亚 Maria Lopez 帮忙搬桌椅，伊莎贝拉 Isabella Rodriguez 确认派对马上开始。 | 派对准备推进，说明角色没有变成纯任务机器。 |
+| `14:20` | 玛丽亚 Maria Lopez 提到喝完咖啡后帮忙弄完气球和彩带。 | 承诺延续，但仍需要后续 movement 验证。 |
+| `15:20` | 玛丽亚 Maria Lopez 调直播设备，伊莎贝拉 Isabella Rodriguez 说林晓 Lin Xiao 下午会来。 | 传播线索扩展到外部提及，但林晓 Lin Xiao 不在本轮四角色实验里。 |
+| `17:00` | `movement.json` 中伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆顾客座位。 | 主办者到场成立。 |
+| `17:00` | 同一帧中玛丽亚 Maria Lopez 在奥克山学院宿舍电脑前。 | 玛丽亚 Maria Lopez 承诺未被目标时间窗到场验证。 |
 
-`frame 3241` 是最关键的移动证据。它对应 `20240214-17:00`：伊莎贝拉的位置是“霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位”；玛丽亚的位置是“奥克山学院宿舍，玛丽亚的房间，电脑”；山姆在家，汤姆在柳树市场。这里不能用 14:00 的帮忙布置来替代 17:00 的到场。
+`frame 3241` 是最关键的移动证据。它对应 `20240214-17:00`：伊莎贝拉 Isabella Rodriguez 的位置是“霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位”；玛丽亚 Maria Lopez 的位置是“奥克山学院宿舍，玛丽亚 Maria Lopez 的房间，电脑”；山姆 Sam Moore 在家，汤姆 Tom Moreno 在柳树市场。这里不能用 14:00 的帮忙布置来替代 17:00 的到场。
 
 ### 目标进度如何计算
 
@@ -467,9 +467,9 @@ python analyze_experiment.py --name book-goal-party --event valentine_party --ke
 | 字段 | 实验结果 | 证据解释 |
 | --- | --- | --- |
 | `informed` | `["伊莎贝拉", "玛丽亚"]` | 两人都在对话中明确谈到派对。 |
-| `accepted` | `["伊莎贝拉", "玛丽亚"]` | 玛丽亚有明确到场承诺；伊莎贝拉作为主办者的邀请和确认被规则计入 accepted，分析时应视为主办方承诺。 |
-| `arrived` | `["伊莎贝拉"]` | 目标时间窗内只有伊莎贝拉被 movement 验证在霍布斯咖啡馆。 |
-| `accepted_not_arrived` | `["玛丽亚"]` | 玛丽亚有承诺，但 17:00-19:00 未被 movement 验证到场。 |
+| `accepted` | `["伊莎贝拉", "玛丽亚"]` | 玛丽亚 Maria Lopez 有明确到场承诺；伊莎贝拉 Isabella Rodriguez 作为主办者的邀请和确认被规则计入 accepted，分析时应视为主办方承诺。 |
+| `arrived` | `["伊莎贝拉"]` | 目标时间窗内只有伊莎贝拉 Isabella Rodriguez 被 movement 验证在霍布斯咖啡馆。 |
+| `accepted_not_arrived` | `["玛丽亚"]` | 玛丽亚 Maria Lopez 有承诺，但 17:00-19:00 未被 movement 验证到场。 |
 | `missing` | `["这些角色有承诺但未在目标时间窗到场：玛丽亚"]` | 缺口定位到“承诺未兑现”，不是传播失败。 |
 
 四个检查项中，`has_event_diffusion=true`、`has_commitment=true`、`has_attendance=true`、`has_no_unfulfilled_commitment=false`，所以目标完成率是：
@@ -478,7 +478,7 @@ $$
 \frac{3}{4}=0.75
 $$
 
-这个 `0.75` 不是“派对成功 75%”的文学评分，而是证据层检查项的通过比例。它最有价值的地方，是把“玛丽亚答应了”和“玛丽亚到了”拆开。
+这个 `0.75` 不是“派对成功 75%”的文学评分，而是证据层检查项的通过比例。它最有价值的地方，是把“玛丽亚 Maria Lopez 答应了”和“玛丽亚 Maria Lopez 到了”拆开。
 
 ### 六个升级点逐项验收
 
@@ -489,11 +489,11 @@ $$
 | 多候选行动 candidate actions | 没有生成候选列表和评分。 | 无 `candidate_actions` 输出 | 仍是设计方向。 |
 | 目标进度 progress | 能输出 informed、accepted、arrived、missing。 | `goal_progress.json` | 已实现离线评价。 |
 | 轻量工具 tool use | 分析脚本读取 conversation 与 movement。 | `analyze_experiment.py` | 只用于评价，不进入角色 prompt。 |
-| 行动反馈 feedback | 生成 1 条反思候选，指向玛丽亚承诺未到场。 | `reflection_candidates.json` | 已能生成反馈样例，未写回下一轮规划。 |
+| 行动反馈 feedback | 生成 1 条反思候选，指向玛丽亚 Maria Lopez 承诺未到场。 | `reflection_candidates.json` | 已能生成反馈样例，未写回下一轮规划。 |
 
 ### 结论边界
 
-本轮实验可以下结论：`generative_agents_next` 已经具备目标记忆落盘、来源追踪、目标进度离线评价和失败反馈候选生成能力。它不能下结论：角色已经会根据 `goal_progress.missing` 主动调整日程、主动提醒玛丽亚、重新邀请其他人，或在 17:00 前选择更优候选行动。
+本轮实验可以下结论：`generative_agents_next` 已经具备目标记忆落盘、来源追踪、目标进度离线评价和失败反馈候选生成能力。它不能下结论：角色已经会根据 `goal_progress.missing` 主动调整日程、主动提醒玛丽亚 Maria Lopez、重新邀请其他人，或在 17:00 前选择更优候选行动。
 
 下一步真正要改的是规划主链路：把 `goal_progress.missing` 进入 `schedule_revise()` 或 `_determine_action()` 前的候选行动评分。只有那一步完成，目标 goal 才不只是“可见状态”，而是会影响行动选择的规划约束。
 

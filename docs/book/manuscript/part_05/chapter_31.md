@@ -37,10 +37,10 @@ flowchart LR
 | 2023.12 | Concordia / 生成式智能体建模 Generative Agent-Based Modeling | Generative agent-based modeling with actions grounded in physical, social, or digital space using Concordia | 落地的基于智能体模型 grounded agent-based models | 用 Maze、Tile、address 和 movement 约束社会仿真，不只看语言输出 | 第 36 章 |
 | 2024.02 | 平台 AgentScope | AgentScope: A Flexible yet Robust Multi-Agent Platform | 可配置、可观测、可扩展的多智能体平台 multi-agent platform | 增加实验配置、状态观测、日志、指标 metrics 和报告 report | 第 35-36 章 |
 | 2024.07 | AI Agents That Matter | AI Agents That Matter | 智能体评价要记录基线 baseline、成本 cost、重复性和公平比较 | 每次升级都保留默认系统基线、成本摘要和失败样例 | 第 37 章 |
-| 2025.01 | DeepSeek-R1 | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning | 推理模型 reasoning model 让复杂复盘和规划更可用 | 反思、目标规划和失败复盘可路由到更强推理模型 | 第 38 章 |
+| 2025.01 | DeepSeek-R1 | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning | 推理模型 reasoning model 让复杂复盘和规划更可用 | 反思、目标规划和失败复盘可路由到更强推理模型 | 第五部分小结 |
 | 2025.02 | 平台 AgentSociety | AgentSociety: Large-Scale Simulation of LLM-Driven Generative Agents Advances Understanding of Human Behaviors and Society | 大规模 LLM 社会仿真中的画像、调度、成本和统计问题 | 先把小规模多次运行 run 做成批量社会仿真实验 | 第 36 章 |
 | 2025.04 | Mem0 | Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory | 生产级长期记忆 production memory、跨会话记忆和个性化 | 为高级记忆增加来源 source、置信度 confidence、合并 merge 和冲突检测 conflict detection | 第 32 章 |
-| 2025.05 | Qwen3 | Qwen3 Technical Report | 中文模型、本地模型 local model 与推理/非推理模式选择 | 把模型 provider、提示词 prompt 类型和成本记录纳入模型路由 model routing | 第 38 章 |
+| 2025.05 | Qwen3 | Qwen3 Technical Report | 中文模型、本地模型 local model 与推理/非推理模式选择 | 把模型 provider、提示词 prompt 类型和成本记录纳入模型路由 model routing | 第五部分小结 |
 
 ## 31.1 从前沿概念的项目落点开始
 
@@ -192,11 +192,11 @@ Smallville 式小镇故事很适合展示社会涌现，但单次故事不是严
 
 | 升级方向 | 当前限制 | 升级做法 | 项目落点 |
 | --- | --- | --- | --- |
-| 调用统计 call summary | 现有 `LLMModel` 只记录成功、失败、重试摘要，成本口径还不完整。 | 先把 caller 级统计写进评价报告，再决定是否扩展成本字段。 | `generative_agents_next/modules/model/llm_model.py`、第 38 章 |
-| 模型路由 model routing | 当前 `create_llm_model()` 基本按配置创建单一模型。 | 后续按 `func_hint` 区分日常对话、反思、目标规划和结构化输出。 | 第 38 章路线图，暂未实现 |
+| 调用统计 call summary | 现有 `LLMModel` 只记录成功、失败、重试摘要，成本口径还不完整。 | 先把 caller 级统计写进评价报告，再决定是否扩展成本字段。 | `generative_agents_next/modules/model/llm_model.py`、第五部分小结 |
+| 模型路由 model routing | 当前 `create_llm_model()` 基本按配置创建单一模型。 | 后续按 `func_hint` 区分日常对话、反思、目标规划和结构化输出。 | 第五部分小结，暂未实现 |
 | 本地模型 local model | Ollama 支持存在，但不是所有 prompt 都适合小模型。 | 只在评价指标能比较质量和失败率后引入。 | `generative_agents/modules/model/llm_model.py` |
-| 速率限制 rate limit | 并发实验会触发供应商 429。 | 实验命令分批运行，后续加 caller 级退避、队列或路由。 | 第 38 章风险边界 |
-| 成本质量对照 cost-quality | 便宜不等于更好。 | 同一实验在不同模型配置下比较 metrics、report、失败样例和成本。 | 第 37 章评价体系、第 38 章 |
+| 速率限制 rate limit | 并发实验会触发供应商 429。 | 实验命令分批运行，后续加 caller 级退避、队列或路由。 | 第五部分小结风险边界 |
+| 成本质量对照 cost-quality | 便宜不等于更好。 | 同一实验在不同模型配置下比较 metrics、report、失败样例和成本。 | 第 37 章评价体系、第五部分小结 |
 
 ## 31.11 工程可观测性 observability
 

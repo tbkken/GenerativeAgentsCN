@@ -2,7 +2,7 @@
 
 本章节，我们来尝试只改配置，构造一个新的小场景，观察 Generative Agents 如何从角色设定、空间位置和日程目标中生成新的行为。
 
-场景的实验名为 `book-config-ai-seminar`。已有角色“阿伊莎”和“克劳斯”在这里作为两个配置槽位，临时改成一场“生成式智能体校园应用讨论会”的参与者。整个过程只触碰两个 `agent.json`，不修改 `start.py`、不新增 prompt、不改地图、不改智能体逻辑。
+场景的实验名为 `book-config-ai-seminar`。已有角色“阿伊莎 Ayesha Khan”和“克劳斯 Klaus Mueller”在这里作为两个配置槽位，临时改成一场“生成式智能体校园应用讨论会”的参与者。整个过程只触碰两个 `agent.json`，不修改 `start.py`、不新增 prompt、不改地图、不改智能体逻辑。
 
 ## 13.1 配置迁移
 
@@ -43,7 +43,7 @@ if args.agents:
 
 尽管如此，配置层仍然可以做很多事。`--agents "阿伊莎,克劳斯"` 选择的是两个已注册角色槽位，而角色的背景、目标、生活习惯、当天计划和初始坐标都来自各自的 `agent.json`。只改这两个 JSON，就能把默认人物临时改造成新的实验人物。
 
-角色名仍然使用“阿伊莎”和“克劳斯”，角色设定改成“生成式智能体校园应用讨论会”的两位参与者。配置迁移的完整链路由此展开。
+角色名仍然使用“阿伊莎 Ayesha Khan”和“克劳斯 Klaus Mueller”，角色设定改成“生成式智能体校园应用讨论会”的两位参与者。配置迁移的完整链路由此展开。
 
 ## 13.3 先设计场景，再写 JSON
 
@@ -57,13 +57,13 @@ if args.agents:
 | --- | --- | --- |
 | 实验名 | `book-config-ai-seminar` | `--name book-config-ai-seminar` |
 | 时间 | `20240213-10:00` | `--start "20240213-10:00"` |
-| 参与者 | 阿伊莎、克劳斯 | `--agents "阿伊莎,克劳斯"` |
+| 参与者 | 阿伊莎 Ayesha Khan、克劳斯 Klaus Mueller | `--agents "阿伊莎,克劳斯"` |
 | 地点 | 奥克山学院，图书馆，图书馆桌子 | `coord: [119, 24]` |
-| 阿伊莎的任务 | 主持生成式智能体校园应用讨论 | `currently`、`scratch.daily_plan` |
-| 克劳斯的任务 | 从社会影响和公平性角度提问 | `currently`、`scratch.daily_plan` |
+| 阿伊莎 Ayesha Khan 的任务 | 主持生成式智能体校园应用讨论 | `currently`、`scratch.daily_plan` |
+| 克劳斯 Klaus Mueller 的任务 | 从社会影响和公平性角度提问 | `currently`、`scratch.daily_plan` |
 | 运行长度 | 2 个 step，每步 10 分钟 | `--step 2 --stride 10` |
 
-场景设计要落在项目已有地图上。地点复用原地图里的奥克山学院图书馆，角色复用已注册的阿伊莎和克劳斯。配置迁移先在现有边界内做出一个新的可信情境。
+场景设计要落在项目已有地图上。地点复用原地图里的奥克山学院图书馆，角色复用已注册的阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller。配置迁移先在现有边界内做出一个新的可信情境。
 
 `coord: [119, 24]` 不是从地图截图里猜出来的，而是从地图配置文件反查出来的。地图文件在：
 
@@ -105,7 +105,7 @@ python -c "import json; m=json.load(open('frontend/static/assets/village/maze.js
 
 控制台日志里的 `coord[119,24]: the Ville:奥克山学院:图书馆:图书馆桌子`，就是这条地图配置在运行时被后端读入后的结果。以后换场景时，先用 `maze.json` 找到目标地点的坐标，再把其中一个非碰撞坐标填进角色的 `agent.json`。
 
-## 13.4 备份并修改阿伊莎的配置
+## 13.4 备份并修改阿伊莎 Ayesha Khan 的配置
 
 要改的文件是：
 
@@ -122,7 +122,7 @@ Copy-Item "frontend/static/assets/village/agents/阿伊莎/agent.json" "$env:TEM
 Copy-Item "frontend/static/assets/village/agents/克劳斯/agent.json" "$env:TEMP/klaus.agent.json"
 ```
 
-阿伊莎的配置不需要整份重写。保留 `name`、`portrait`、`spatial` 等字段，只改三个关键部分：初始坐标、当前状态、角色心理草稿。
+阿伊莎 Ayesha Khan 的配置不需要整份重写。保留 `name`、`portrait`、`spatial` 等字段，只改三个关键部分：初始坐标、当前状态、角色画像字段 `scratch`。
 
 ```json
 {
@@ -141,17 +141,17 @@ Copy-Item "frontend/static/assets/village/agents/克劳斯/agent.json" "$env:TEM
 
 这段配置有四个观察点。
 
-`coord` 把阿伊莎放到图书馆桌子旁。它不是自然语言设定，而是前端地图坐标；如果坐标和目标地点不一致，角色会在回放里出现在错误的位置。
+`coord` 把阿伊莎 Ayesha Khan 放到图书馆桌子旁。它不是自然语言设定，而是前端地图坐标；如果坐标和目标地点不一致，角色会在回放里出现在错误的位置。
 
-`currently` 是角色的当前大目标。它告诉模型阿伊莎此刻关心什么，也把克劳斯和上午 10 点的会面写进上下文。
+`currently` 是角色的当前大目标。它告诉模型阿伊莎 Ayesha Khan 此刻关心什么，也把克劳斯 Klaus Mueller 和上午 10 点的会面写进上下文。
 
-`scratch.learned` 给角色长期背景。这里把阿伊莎从“莎士比亚语言研究”改成“关注生成式智能体的学生”，但仍保留“细读”这个能力，让新设定和旧人物气质之间有连续性。
+`scratch.learned` 给角色长期背景。这里把阿伊莎 Ayesha Khan 从“莎士比亚语言研究”改成“关注生成式智能体的学生”，但仍保留“细读”这个能力，让新设定和旧人物气质之间有连续性。
 
 `scratch.daily_plan` 把目标压进当天日程。只有 `currently` 还不够，日程字段会影响模型如何拆解一天的计划，也会影响 10 点这一段是否真的围绕讨论会展开。
 
-## 13.5 修改克劳斯的配置
+## 13.5 修改克劳斯 Klaus Mueller 的配置
 
-克劳斯的配置要和阿伊莎形成互补。阿伊莎负责“细读智能体行为”，克劳斯负责“社会影响和公平性问题”。两个角色必须有共同主题，也必须有视角差异，否则对话容易变成互相复述。
+克劳斯 Klaus Mueller 的配置要和阿伊莎 Ayesha Khan 形成互补。阿伊莎 Ayesha Khan 负责“细读智能体行为”，克劳斯 Klaus Mueller 负责“社会影响和公平性问题”。两个角色必须有共同主题，也必须有视角差异，否则对话容易变成互相复述。
 
 ```json
 {
@@ -168,7 +168,7 @@ Copy-Item "frontend/static/assets/village/agents/克劳斯/agent.json" "$env:TEM
 }
 ```
 
-这段配置的重点是“互相指向”。阿伊莎的 `currently` 里写到克劳斯，克劳斯的 `currently` 里写到阿伊莎；两人的 `daily_plan` 都把上午 10 点、奥克山学院图书馆、生成式智能体讨论写清楚。多智能体仿真不是把两个孤立人设扔到地图上，而是要给他们一个足够明确的共同场域。
+这段配置的重点是“互相指向”。阿伊莎 Ayesha Khan 的 `currently` 里写到克劳斯 Klaus Mueller，克劳斯 Klaus Mueller 的 `currently` 里写到阿伊莎 Ayesha Khan；两人的 `daily_plan` 都把上午 10 点、奥克山学院图书馆、生成式智能体讨论写清楚。多智能体仿真不是把两个孤立人设扔到地图上，而是要给他们一个足够明确的共同场域。
 
 保存完两个 JSON 后，就可以启动自定义实验了。
 
@@ -186,7 +186,7 @@ cd generative_agents
 python start.py --name book-config-ai-seminar --start "20240213-10:00" --step 2 --stride 10 --agents "阿伊莎,克劳斯" --verbose info --log book-config-ai-seminar.log
 ```
 
-这条命令的含义很直接：从 2024 年 2 月 13 日 10:00 开始，只运行阿伊莎和克劳斯两个角色，连续推进两次，每次推进 10 分钟，并把日志写到 checkpoint 目录下。
+这条命令的含义很直接：从 2024 年 2 月 13 日 10:00 开始，只运行阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 两个角色，连续推进两次，每次推进 10 分钟，并把日志写到 checkpoint 目录下。
 
 如果控制台偶尔出现下面这样的模型调用重试信息，不要立刻判定实验失败：
 
@@ -198,7 +198,7 @@ LLMModel.completion() caused an error: not enough values to unpack (expected 3, 
 
 ## 13.7 控制台输出不是普通日志
 
-启动仿真后，控制台会先打印两个角色的 reset 摘要。下面是阿伊莎的代表性片段：
+启动仿真后，控制台会先打印两个角色的 reset 摘要。下面是阿伊莎 Ayesha Khan 的代表性片段：
 
 ```text
 ----------                         阿伊莎.reset                          ----------
@@ -212,7 +212,7 @@ tile:
     e_2: 克劳斯 此时 空闲 @ the Ville:奥克山学院:图书馆:图书馆桌子
 ```
 
-这段输出先验证配置有没有被加载。`currently` 已经是新场景，`coord[119,24]` 已经落到图书馆桌子，`events` 里同时出现阿伊莎和克劳斯，说明两个角色被放在了同一个可交互空间。读控制台时先看这些硬证据，再看模型生成了什么。
+这段输出先验证配置有没有被加载。`currently` 已经是新场景，`coord[119,24]` 已经落到图书馆桌子，`events` 里同时出现阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，说明两个角色被放在了同一个可交互空间。读控制台时先看这些硬证据，再看模型生成了什么。
 
 接着进入第一个仿真步：
 
@@ -233,7 +233,7 @@ tile:
 
 这不是普通流水日志。它把一个智能体在一个 step 内经历的关键阶段按顺序摊开：先生成当天日程，再感知周围概念，然后决定行动地点、场所、对象，最后描述对象状态。配置正是在这条推理链条中变成具体行为。
 
-阿伊莎的日程摘要中出现了新设定：
+阿伊莎 Ayesha Khan 的日程摘要中出现了新设定：
 
 ```text
 10:00~11:00: 在奥克山学院图书馆桌子旁主持生成式智能体校园应用讨论会，与克劳斯从社会影响角度交流:
@@ -245,7 +245,7 @@ tile:
 
 这段输出说明 `scratch.daily_plan` 没有停留在静态文本里。模型把“一场讨论会”拆成了可执行的小时间片：整理桌面、介绍议程、分享阅读笔记、讨论细读方法。配置写得越具体，日程拆解越容易落到可观察动作上。
 
-克劳斯的输出继续推进到对话决策：
+克劳斯 Klaus Mueller 的输出继续推进到对话决策：
 
 ```text
 克劳斯 percept 0/4 concepts
@@ -302,7 +302,7 @@ generative_agents/results/checkpoints/book-config-ai-seminar/conversation.json
 }
 ```
 
-这段对话同时命中了两个人设。克劳斯从“公平性问题”切入，阿伊莎用“细读方式拆解决策路径”回应。两个关键词都来自配置：克劳斯的 `learned` 和 `daily_plan` 里有社会影响、公平性；阿伊莎的 `learned` 和 `currently` 里有文学细读、智能体行为观察。
+这段对话同时命中了两个人设。克劳斯 Klaus Mueller 从“公平性问题”切入，阿伊莎 Ayesha Khan 用“细读方式拆解决策路径”回应。两个关键词都来自配置：克劳斯 Klaus Mueller 的 `learned` 和 `daily_plan` 里有社会影响、公平性；阿伊莎 Ayesha Khan 的 `learned` 和 `currently` 里有文学细读、智能体行为观察。
 
 对话继续向具体案例展开：
 
@@ -341,7 +341,7 @@ http://127.0.0.1:5000/?name=book-config-ai-seminar&step=1&speed=0&zoom=0.75
 
 `simulation.md` 前面会列出基础人设。它可能包含项目中的全量角色档案，不要被这部分带偏。本次真正参与仿真的角色，要看后面的活动记录、对话记录，以及 `movement.json` 里的角色列表。
 
-本次 `simulation.md` 中，阿伊莎的人设已经变成新实验设定：
+本次 `simulation.md` 中，阿伊莎 Ayesha Khan 的人设已经变成新实验设定：
 
 ```markdown
 ## 阿伊莎
@@ -353,7 +353,7 @@ http://127.0.0.1:5000/?name=book-config-ai-seminar&step=1&speed=0&zoom=0.75
 当前状态：阿伊莎正在组织一次关于生成式智能体如何服务校园学习的讨论会。她约了克劳斯上午10点在奥克山学院图书馆桌子旁交流，准备把文学研究中的细读方法和智能体行为观察结合起来。
 ```
 
-克劳斯的人设也同步变成社会影响视角：
+克劳斯 Klaus Mueller 的人设也同步变成社会影响视角：
 
 ```markdown
 ## 克劳斯
@@ -381,7 +381,7 @@ http://127.0.0.1:5000/?name=book-config-ai-seminar&step=1&speed=0&zoom=0.75
 活动：克劳斯与阿伊莎以奖学金分配中"参与度评分"为例，用细读方法拆解校园智能体的采集边界、价值偏向与权力预设，探讨是否应量化社区隐形互助活动。
 ```
 
-这段时间线告诉我们三件事。第一，两个角色都在同一个具体空间。第二，阿伊莎的行动承担主持者角色，克劳斯的行动承担议题推动者角色。第三，对话结果已经反过来凝结成活动描述，进入了后续状态。
+这段时间线告诉我们三件事。第一，两个角色都在同一个具体空间。第二，阿伊莎 Ayesha Khan 的行动承担主持者角色，克劳斯 Klaus Mueller 的行动承担议题推动者角色。第三，对话结果已经反过来凝结成活动描述，进入了后续状态。
 
 10:10 的活动记录显示状态继续推进：
 

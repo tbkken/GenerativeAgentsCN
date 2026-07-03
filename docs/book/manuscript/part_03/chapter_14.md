@@ -2,14 +2,14 @@
 
 ## 14.1 核心问题
 
-第 13 章把阿伊莎和克劳斯放到奥克山学院图书馆桌子旁。第 14 章沿着这次回放往下拆：回放移动文件 `movement.json` 里的 `[119, 24]` 如何被世界地图 Maze、地图格子 Tile、空间记忆 Spatial 和智能体 Agent 解释成地点、视野、记忆与行动。
+第 13 章把阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 放到奥克山学院图书馆桌子旁。第 14 章沿着这次回放往下拆：回放移动文件 `movement.json` 里的 `[119, 24]` 如何被世界地图 Maze、地图格子 Tile、空间记忆 Spatial 和智能体 Agent 解释成地点、视野、记忆与行动。
 
 Generative Agents 不是普通聊天系统。它的智能体必须生活在一个共享空间里。如果没有世界模型，下面这些问题都无法回答：
 
-- 阿伊莎和克劳斯为什么都在图书馆桌子旁？
+- 阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 为什么都在图书馆桌子旁？
 - `[119, 24]` 对应哪一个地图格子 Tile 和哪一段地址？
 - 两人为什么在同一场所 arena 内可以看见彼此？
-- 阿伊莎计划睡觉时会去哪个房间？
+- 阿伊莎 Ayesha Khan 计划睡觉时会去哪个房间？
 - 图书馆桌子这个语义地址 address 为什么会对应多个候选地图格子 Tile？
 - 某个对象是否正在被占用？
 - 两个角色是否会在同一地点相遇？
@@ -80,7 +80,7 @@ flowchart TD
 | 场所 arena | `arena` | 地址层级中的“具体场所”，位于大区域和具体对象之间。例如“奥克山学院”是大区域，“图书馆”是场所。 | `tile_address_keys`、地图格子取地址函数 `Tile.get_address("arena")`、智能体感知函数 `Agent.percept()` | 场所是感知过滤的重要边界。同一视野内，不同场所的事件不会直接进入注意力，避免角色隔着房间乱感知。 |
 | 碰撞标记 collision | `collision` | 表示这个地图格子是否阻挡移动。墙、封闭家具、不可通行区域通常会带有碰撞标记。 | `Tile.collision`、邻居取格函数 `Maze.get_around(no_collision=True)`、寻路函数 `Maze.find_path()` | 寻路会避开带碰撞标记的地图格子。没有它，角色就可能穿墙、走进家具或进入不可达区域。 |
 | 视野范围 vision / vision radius | `vision_r` | 感知范围，不是前端视觉效果。项目用感知半径从角色当前位置向四周取一片地图格子。 | `data/config.json` 的 `agent.percept.vision_r`、视野计算函数 `Maze.get_scope()` | 后文看到 `vision_scope_count: 289` 时，要理解它来自感知半径 8 的 17x17 方形范围。 |
-| 空间记忆 spatial memory | `Spatial` | 某个角色自己的地点知识，记录这个角色知道哪些地点，以及某些行为应该去哪里。 | `generative_agents/modules/memory/spatial.py`、每个角色 `agent.json` 里的 `spatial.tree` 和 `spatial.address` | 空间记忆不是全局地图。阿伊莎知道“睡觉”要去自己的床，靠的是她自己的空间记忆，不是世界地图自动推断。 |
+| 空间记忆 spatial memory | `Spatial` | 某个角色自己的地点知识，记录这个角色知道哪些地点，以及某些行为应该去哪里。 | `generative_agents/modules/memory/spatial.py`、每个角色 `agent.json` 里的 `spatial.tree` 和 `spatial.address` | 空间记忆不是全局地图。阿伊莎 Ayesha Khan 知道“睡觉”要去自己的床，靠的是她自己的空间记忆，不是世界地图自动推断。 |
 | 地点树 spatial tree | `tree` | 空间记忆里的地点树，表示角色主观上知道哪些区域、场所和对象。它不是机器学习里的决策树，也不是向量索引树。 | `agent.json` 的 `spatial.tree`、空间记忆取叶子函数 `Spatial.get_leaves()`、空间记忆加叶子函数 `Spatial.add_leaf()` | 计划落地时，系统会从地点树中取候选大区域、场所和对象；感知到新对象时，也会把语义地址写回地点树。 |
 | 当前行动 action | `action` | 智能体当前正在执行的行为封装，包含角色事件、对象事件、开始时间、持续时间和结束时间。 | `generative_agents/modules/memory/action.py`、智能体行动字段 `Agent.action` | 当前行动把“角色打算做什么”变成“在哪里做、做多久、对象状态如何变化”；后续断点 checkpoint 和回放都会读取它。 |
 | 回放移动坐标 movement | `movement` | 回放数据中的移动坐标。压缩结果会把每个角色在每一帧的位置写成 `movement: [x, y]`。 | `generative_agents/results/compressed/*/movement.json`、压缩脚本 `generative_agents/compress.py` | 前端渲染引擎根据它播放角色移动；本章脚手架也用它把第 13 章回放帧重新交给世界地图对象解释。 |
@@ -112,7 +112,7 @@ flowchart TD
 
 ### 可运行脚手架：先把世界模型跑出来
 
-源码片段只有在运行结果旁边才有意义。第 14 章配套了一个最小脚手架，专门把第 13 章的 `book-config-ai-seminar` 回放结果放回世界模型中观察。它不调用大语言模型 LLM，也不依赖外部 API，只读取项目里的真实地图、真实感知配置、阿伊莎的真实角色配置，以及第 13 章生成的回放移动文件 `movement.json`。
+源码片段只有在运行结果旁边才有意义。第 14 章配套了一个最小脚手架，专门把第 13 章的 `book-config-ai-seminar` 回放结果放回世界模型中观察。它不调用大语言模型 LLM，也不依赖外部 API，只读取项目里的真实地图、真实感知配置、阿伊莎 Ayesha Khan 的真实角色配置，以及第 13 章生成的回放移动文件 `movement.json`。
 
 从仓库根目录运行：
 
@@ -357,7 +357,7 @@ image: docs/book/assets/chapter_14/ch14_world_model_demo.png
 
 ![图 14-2：第 13 章回放帧在真实小镇地图中的地图格子、视野和地址候选范围](../../assets/chapter_14/ch14_world_model_demo.png)
 
-*图 14-2：第 14 章脚手架从第 13 章的 `book-config-ai-seminar` 回放结果下钻世界模型。底图来自前端真实的瓦片地图 tile map 和瓦片素材集 tileset / tile set；紫色是阿伊莎和克劳斯所在的地图格子 Tile，橙色是“图书馆桌子”这个语义地址 address 对应的 4 个候选地图格子，黄色是默认视野范围 vision，蓝色是同一场所 arena 内的可感知候选地图格子，深色轮廓是碰撞标记 collision 对应的不可通行地图格子。*
+*图 14-2：第 14 章脚手架从第 13 章的 `book-config-ai-seminar` 回放结果下钻世界模型。底图来自前端真实的瓦片地图 tile map 和瓦片素材集 tileset / tile set；紫色是阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 所在的地图格子 Tile，橙色是“图书馆桌子”这个语义地址 address 对应的 4 个候选地图格子，黄色是默认视野范围 vision，蓝色是同一场所 arena 内的可感知候选地图格子，深色轮廓是碰撞标记 collision 对应的不可通行地图格子。*
 
 这段输出把后面的源码片段连成了一个完整链路。
 
@@ -365,15 +365,15 @@ image: docs/book/assets/chapter_14/ch14_world_model_demo.png
 | --- | --- | --- |
 | `size: width=140, height=100` | 世界地图初始化函数 `Maze.__init__()` | `maze.json` 中的地图尺寸被加载成后端二维地图格子 Tile 网格。 |
 | `source_replay` 与 `frame: 1` | `movement.json` | 脚手架读取第 13 章压缩后的真实回放帧，而不是重新构造一个独立示例。 |
-| `coord: (119, 24)` | `movement.json` 中的 `movement` | 回放坐标直接来自阿伊莎和克劳斯在第 13 章的仿真输出。 |
+| `coord: (119, 24)` | `movement.json` 中的 `movement` | 回放坐标直接来自阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 在第 13 章的仿真输出。 |
 | `tile_address` | 地图取格函数 `Maze.tile_at()`、地图格子地址 `Tile.address` | `[119, 24]` 被后端解释为 `the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子`。 |
 | `address_tile_count: 4` | `Maze.address_tiles` | 一个语义地址 address 可以对应多个地图格子 Tile，“图书馆桌子”在地图上有 4 个候选格子。 |
 | `percept_config` 与 `vision_scope_count: 289` | `data/config.json`、视野计算函数 `Maze.get_scope()` | 项目默认 `vision_r=8`，所以形成 17x17 的方形视野范围，共 289 个地图格子。 |
 | `same_arena_tiles_in_scope: 67` | 智能体感知函数 `Agent.percept()` 的场所 arena 过滤 | 视野范围不是全部可感知事件，还要经过同一场所过滤。 |
 | `阿伊莎.find_address('准备睡觉')` | 空间记忆找地址函数 `Spatial.find_address()` | 角色自己的空间记忆能把“睡觉”这类行为映射到自己的床。 |
-| `阿伊莎已知图书馆对象` | 空间记忆地点树 `Spatial.tree` | 阿伊莎的主观空间记忆中已经知道图书馆沙发、图书馆桌子和书架。 |
+| `阿伊莎已知图书馆对象` | 空间记忆地点树 `Spatial.tree` | 阿伊莎 Ayesha Khan 的主观空间记忆中已经知道图书馆沙发、图书馆桌子和书架。 |
 
-这些输出值都有明确来源。`source_replay` 来自第 13 章生成的 `generative_agents/results/compressed/book-config-ai-seminar/movement.json`；`maze_json` 来自项目真实地图；`data_config` 来自项目默认感知配置；`agent_json` 来自阿伊莎的角色配置。脚手架把同一帧回放交给世界地图 Maze、地图格子 Tile 和空间记忆 Spatial 解释：坐标落在哪个地图格子，地图格子属于哪个语义地址，地址有多少候选格，默认视野覆盖多少地图格子，同一场所 arena 中还剩多少可感知候选。
+这些输出值都有明确来源。`source_replay` 来自第 13 章生成的 `generative_agents/results/compressed/book-config-ai-seminar/movement.json`；`maze_json` 来自项目真实地图；`data_config` 来自项目默认感知配置；`agent_json` 来自阿伊莎 Ayesha Khan 的角色配置。脚手架把同一帧回放交给世界地图 Maze、地图格子 Tile 和空间记忆 Spatial 解释：坐标落在哪个地图格子，地图格子属于哪个语义地址，地址有多少候选格，默认视野覆盖多少地图格子，同一场所 arena 中还剩多少可感知候选。
 
 有了这个脚手架，后面读地图格子 Tile、世界地图 Maze、空间记忆 Spatial 和智能体感知函数 `Agent.percept()` 时，就不是在背类名，而是在解释一个已经跑出来的现象。
 
@@ -472,7 +472,7 @@ generative_agents/frontend/static/assets/village/maze.json
 }
 ```
 
-第一条只说明 `[80, 12]` 这个地图格子 Tile 不可通行。第二条同时说明它属于“乔治的公寓 -> 浴室”，并且不可通行。第三条就是第 13 章回放中阿伊莎和克劳斯所在的图书馆桌子地图格子，它没有碰撞标记，因此角色可以站在这里。
+第一条只说明 `[80, 12]` 这个地图格子 Tile 不可通行。第二条同时说明它属于“乔治 Giorgio Rossi 的公寓 -> 浴室”，并且不可通行。第三条就是第 13 章回放中阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 所在的图书馆桌子地图格子，它没有碰撞标记，因此角色可以站在这里。
 
 几个基础字段要重点理解。`world` 是世界名称。当前项目里仍然是：
 
@@ -555,8 +555,8 @@ the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子
 
 | 配置片段 | 实际含义 | 运行时完整地址 |
 | --- | --- | --- |
-| `"address": ["乔治的公寓"]` | 大区域 sector 是“乔治的公寓”，没有细分到具体房间。 | `the Ville -> 乔治的公寓` |
-| `"address": ["乔治的公寓", "浴室"]` | 大区域 sector 是“乔治的公寓”，场所 arena 是“浴室”。 | `the Ville -> 乔治的公寓 -> 浴室` |
+| `"address": ["乔治的公寓"]` | 大区域 sector 是“乔治 Giorgio Rossi 的公寓”，没有细分到具体房间。 | `the Ville -> 乔治的公寓` |
+| `"address": ["乔治的公寓", "浴室"]` | 大区域 sector 是“乔治 Giorgio Rossi 的公寓”，场所 arena 是“浴室”。 | `the Ville -> 乔治的公寓 -> 浴室` |
 | `"address": ["奥克山学院", "图书馆", "图书馆桌子"]` | 大区域 sector 是“奥克山学院”，场所 arena 是“图书馆”，游戏对象 game_object 是“图书馆桌子”。 | `the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子` |
 
 因此，大区域 sector、场所 arena 和游戏对象 game_object 的“清单”，本质上是从所有特殊地图格子 Tile 的 `address` 数组汇总出来的。第 13 章用到的奥克山学院相关配置可以这样看：
@@ -565,8 +565,8 @@ the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子
 | --- | --- | --- |
 | 奥克山学院 | 图书馆 | 书架、图书馆桌子、图书馆沙发 |
 | 奥克山学院 | 教室 | 教室学生座位、教室讲台、黑板 |
-| 奥克山学院宿舍 | 阿伊莎的房间 | 书桌、壁橱、床、架子 |
-| 奥克山学院宿舍 | 克劳斯的房间 | 书桌、壁橱、床、游戏机 |
+| 奥克山学院宿舍 | 阿伊莎 Ayesha Khan 的房间 | 书桌、壁橱、床、架子 |
+| 奥克山学院宿舍 | 克劳斯 Klaus Mueller 的房间 | 书桌、壁橱、床、游戏机 |
 | 霍布斯咖啡馆 | 咖啡馆 | 冰箱、厨房水槽、咖啡馆柜台后面、咖啡馆顾客座位、烹饪区、钢琴 |
 
 全图里能汇总出 19 个大区域 sector，例如：
@@ -1048,7 +1048,7 @@ class Spatial:
             self.address["睡觉"] = self.address["living_area"] + ["床"]
 ```
 
-`tree` 是角色知道的地点树。`address` 是一些常用行为到地址的快捷映射。第 13 章实验使用阿伊莎，她的 `agent.json` 中有这样的空间记忆：
+`tree` 是角色知道的地点树。`address` 是一些常用行为到地址的快捷映射。第 13 章实验使用阿伊莎 Ayesha Khan，她的 `agent.json` 中有这样的空间记忆：
 
 ```json
 "spatial": {
@@ -1209,7 +1209,7 @@ generative_agents/data/config.json
 }
 ```
 
-第 14 章脚手架直接读取这个默认配置，所以输出 `percept_config: mode=box, vision_r=8, att_bandwidth=8` 和 `vision_scope_count: 289`。289 来自 17x17 的方形视野。阿伊莎和克劳斯所在的 `[119, 24]` 附近虽然有 289 个地图格子 Tile 会先进入空间范围，但实际能进入注意力的事件还要继续受场所 arena 过滤和注意力带宽 `att_bandwidth` 限制。
+第 14 章脚手架直接读取这个默认配置，所以输出 `percept_config: mode=box, vision_r=8, att_bandwidth=8` 和 `vision_scope_count: 289`。289 来自 17x17 的方形视野。阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 所在的 `[119, 24]` 附近虽然有 289 个地图格子 Tile 会先进入空间范围，但实际能进入注意力的事件还要继续受场所 arena 过滤和注意力带宽 `att_bandwidth` 限制。
 
 然后智能体感知函数 `Agent.percept()` 在这些地图格子 Tile 中筛选同一场所 arena 的事件 events。真实源码可以分三段读：
 
@@ -1497,7 +1497,7 @@ Requirements:
 The object most relevant to the current activity is:
 ```
 
-对象选择 `determine_object` 的输入进一步收窄，只剩当前活动 activity 和候选对象 objects。它不再解释角色设定，也不再放入完整日程，因为目标场所 arena 已经确定。对克劳斯这类案例来说，如果当前活动是“阅读并批注选中的学术文章”，候选对象里有“图书馆桌子”，模型就应该返回“图书馆桌子”。这一步之后，语义地址 address 才真正到达第四层：
+对象选择 `determine_object` 的输入进一步收窄，只剩当前活动 activity 和候选对象 objects。它不再解释角色设定，也不再放入完整日程，因为目标场所 arena 已经确定。对克劳斯 Klaus Mueller 这类案例来说，如果当前活动是“阅读并批注选中的学术文章”，候选对象里有“图书馆桌子”，模型就应该返回“图书馆桌子”。这一步之后，语义地址 address 才真正到达第四层：
 
 ```text
 the Ville -> 奥克山学院 -> 图书馆 -> 图书馆桌子
@@ -1638,7 +1638,7 @@ flowchart TD
 
 代码逻辑图显示：社交不是随机广播，而是先由世界模型和感知结果提供“附近有谁”的概念，再由聊天或等待分支决定是否改变当前行动。
 
-如果选中另一个智能体 Agent，就可能进入聊天函数 `_chat_with()`。这意味着对话不是全局随机发生，而是由空间相遇触发。第 13 章中，阿伊莎和克劳斯能进入对话，第一层条件就是两人同在“奥克山学院 -> 图书馆 -> 图书馆桌子”这个地址附近；后面的反应函数 `_reaction()` 再决定是否真正聊天。如果世界模型不限制相遇，对话传播就会变成广播。
+如果选中另一个智能体 Agent，就可能进入聊天函数 `_chat_with()`。这意味着对话不是全局随机发生，而是由空间相遇触发。第 13 章中，阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 能进入对话，第一层条件就是两人同在“奥克山学院 -> 图书馆 -> 图书馆桌子”这个地址附近；后面的反应函数 `_reaction()` 再决定是否真正聊天。如果世界模型不限制相遇，对话传播就会变成广播。
 
 ## 14.19 世界模型如何服务对象占用
 
@@ -1934,7 +1934,7 @@ flowchart TD
 | 系统作用 | 世界模型同时服务感知、计划、社交、对象占用和回放。 |
 | 当前边界 | 地图生成、地址回退 fallback、场所 arena 感知简化和对象语义依赖提示词 prompt，都是后续扩展风险。 |
 
-下一章讲智能体初始化：从角色配置文件 `agent.json` 进入智能体构造函数 `Agent.__init__()`，看角色设定如何进入人格草稿 Scratch、空间记忆 Spatial、日程 Schedule、关联记忆 Associate 和当前行动 action。
+下一章讲智能体初始化：从角色配置文件 `agent.json` 进入智能体构造函数 `Agent.__init__()`，看角色设定如何进入提示词组装器 Scratch、空间记忆 Spatial、日程 Schedule、关联记忆 Associate 和当前行动 action。
 
 ## 参考资料
 

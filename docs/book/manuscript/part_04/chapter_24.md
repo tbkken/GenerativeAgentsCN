@@ -4,7 +4,7 @@
 
 第四部分开始做实验。
 
-第一组实验复现论文中最经典的现象：Isabella 的情人节派对传播。论文中，Isabella Rodriguez 计划在 Hobbs Cafe 举办情人节派对。她邀请居民，居民通过对话得知活动，有些人调整计划并到场。生成式智能体 Generative Agents 中，伊莎贝拉的中文设定保留了这条线索：
+第一组实验复现论文中最经典的现象：伊莎贝拉 Isabella Rodriguez 的情人节派对传播。论文中，伊莎贝拉 Isabella Rodriguez 计划在 Hobbs Cafe 举办情人节派对。她邀请居民，居民通过对话得知活动，有些人调整计划并到场。生成式智能体 Generative Agents 中，伊莎贝拉 Isabella Rodriguez 的中文设定保留了这条线索：
 
 ```text
 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。
@@ -36,10 +36,10 @@
 
 ```mermaid
 flowchart LR
-    I[伊莎贝拉<br/>派对发起者] -->|直接邀请| M[玛丽亚]
-    I -->|直接邀请| A[阿伊莎/亚当]
-    M -->|转述| K[克劳斯]
-    A -->|对话提及| E[埃迪]
+    I[伊莎贝拉 Isabella Rodriguez<br/>派对发起者] -->|直接邀请| M[玛丽亚 Maria Lopez]
+    I -->|直接邀请| A[阿伊莎 Ayesha Khan/亚当 Adam Smith]
+    M -->|转述| K[克劳斯 Klaus Mueller]
+    A -->|对话提及| E[埃迪 Eddy Lin]
     K --> P{17:00-19:00<br/>霍布斯咖啡馆}
     E --> P
     M --> P
@@ -58,7 +58,7 @@ flowchart LR
 
 情人节派对传播不是单一功能测试。它同时验证多个模块。
 
- - 第一，角色设定 persona / 当前状态 currently。伊莎贝拉必须知道自己要办派对。
+ - 第一，角色设定 persona / 当前状态 currently。伊莎贝拉 Isabella Rodriguez 必须知道自己要办派对。
  - 第二，规划 planning。她的日程中应该出现与派对准备或邀请有关的行为。
  - 第三，空间落地 spatial grounding。相关行为应该落到霍布斯咖啡馆或合理地点。
  - 第四，反应 reaction / 对话 dialogue。她遇到别人时，应该有机会发起对话。
@@ -71,7 +71,7 @@ flowchart LR
 
 ## 24.3 实验角色选择
 
-本章采用 10 人版本作为主实验。这个规模比 6 人小样本更接近论文里的开放小镇：既保留派对源头、学院圈和咖啡馆常客，也加入山姆、约翰、拉托亚和乔治，用来观察派对信息在更复杂公共关系中的传播。建议使用：
+本章采用 10 人版本作为主实验。这个规模比 6 人小样本更接近论文里的开放小镇：既保留派对源头、学院圈和咖啡馆常客，也加入山姆 Sam Moore、约翰 John Lin、拉托亚 Latoya Williams 和乔治 Giorgio Rossi，用来观察派对信息在更复杂公共关系中的传播。建议使用：
 
 ```text
 伊莎贝拉
@@ -98,19 +98,19 @@ flowchart TB
     Q4["问题 4<br/>派对是否进入更大的公共社交圈？"]
     Q5["问题 5<br/>竞选等旁支话题是否干扰派对线索？"]
 
-    I["伊莎贝拉<br/>源头 source<br/>发起派对、准备咖啡馆、发出邀请"]
+    I["伊莎贝拉 Isabella Rodriguez<br/>源头 source<br/>发起派对、准备咖啡馆、发出邀请"]
     Relay["传播观察位 relay observation"]
-    A["阿伊莎<br/>学院 / 咖啡馆连接点"]
-    E["埃迪<br/>学院 / 社区连接点"]
-    AD["亚当<br/>反例 / 错过观察位<br/>可能因个人计划拒绝"]
+    A["阿伊莎 Ayesha Khan<br/>学院 / 咖啡馆连接点"]
+    E["埃迪 Eddy Lin<br/>学院 / 社区连接点"]
+    AD["亚当 Adam Smith<br/>反例 / 错过观察位<br/>可能因个人计划拒绝"]
     Cross["交叉观察位 cross observation"]
-    M["玛丽亚<br/>咖啡馆常客"]
-    K["克劳斯<br/>学院附近活动"]
+    M["玛丽亚 Maria Lopez<br/>咖啡馆常客"]
+    K["克劳斯 Klaus Mueller<br/>学院附近活动"]
     Public["公共圈 public circle"]
-    S["山姆<br/>社区长者 / 咖啡馆和公园活动"]
-    J["约翰<br/>市场和药店节点"]
-    L["拉托亚<br/>艺术家共居空间 / 公共场所"]
-    G["乔治<br/>分析型角色 / 公共话题节点"]
+    S["山姆 Sam Moore<br/>社区长者 / 咖啡馆和公园活动"]
+    J["约翰 John Lin<br/>市场和药店节点"]
+    L["拉托亚 Latoya Williams<br/>艺术家共居空间 / 公共场所"]
+    G["乔治 Giorgio Rossi<br/>分析型角色 / 公共话题节点"]
 
     EV1["证据：conversation.json<br/>是否出现邀请话术"]
     EV2["证据：conversation.json / simulation.md<br/>是否出现二跳传播"]
@@ -143,22 +143,22 @@ flowchart TB
 
 *图 24-3：10 人派对传播实验的角色分工。*
 
-这张图可以这样读：伊莎贝拉承担“源头 source”角色，用来观察派对信息是否被发出；阿伊莎和埃迪承担“传播观察位 relay observation”，用来观察信息能否从咖啡馆扩散到学院和社区；亚当承担“反例 / 错过观察位”，用来提醒我们“知道派对”不等于“一定参加派对”；玛丽亚和克劳斯承担“交叉观察位 cross observation”，因为他们常去霍布斯咖啡馆或学院附近，适合同时观察派对传播和关系形成。山姆、约翰、拉托亚和乔治把实验从 6 人熟人圈扩展到社区公共圈：他们能暴露派对信息是否进入市场、公园、艺术家共居空间和普通公共话题，也能暴露竞选等旁支话题是否稀释派对线索。
+这张图可以这样读：伊莎贝拉 Isabella Rodriguez 承担“源头 source”角色，用来观察派对信息是否被发出；阿伊莎 Ayesha Khan 和埃迪 Eddy Lin 承担“传播观察位 relay observation”，用来观察信息能否从咖啡馆扩散到学院和社区；亚当 Adam Smith 承担“反例 / 错过观察位”，用来提醒我们“知道派对”不等于“一定参加派对”；玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 承担“交叉观察位 cross observation”，因为他们常去霍布斯咖啡馆或学院附近，适合同时观察派对传播和关系形成。山姆 Sam Moore、约翰 John Lin、拉托亚 Latoya Williams 和乔治 Giorgio Rossi 把实验从 6 人熟人圈扩展到社区公共圈：他们能暴露派对信息是否进入市场、公园、艺术家共居空间和普通公共话题，也能暴露竞选等旁支话题是否稀释派对线索。
 
 如果只看人物之间的自然关系，可以把任务信息先拿掉，只保留角色之间的生活圈交集：
 
 ```mermaid
 graph LR
-    I["伊莎贝拉<br/>霍布斯咖啡馆老板"]
-    A["阿伊莎<br/>奥克山学院学生<br/>文学研究"]
-    E["埃迪<br/>奥克山学院学生<br/>音乐项目"]
-    AD["亚当<br/>社区哲学家 / 写作者"]
-    M["玛丽亚<br/>奥克山学院学生<br/>咖啡馆常客"]
-    K["克劳斯<br/>奥克山学院学生<br/>社会学研究"]
-    S["山姆<br/>社区长者<br/>公园 / 咖啡馆"]
-    J["约翰<br/>药店店主<br/>市场节点"]
-    L["拉托亚<br/>摄影师<br/>艺术家共居空间"]
-    G["乔治<br/>数学家<br/>公共话题节点"]
+    I["伊莎贝拉 Isabella Rodriguez<br/>霍布斯咖啡馆老板"]
+    A["阿伊莎 Ayesha Khan<br/>奥克山学院学生<br/>文学研究"]
+    E["埃迪 Eddy Lin<br/>奥克山学院学生<br/>音乐项目"]
+    AD["亚当 Adam Smith<br/>社区哲学家 / 写作者"]
+    M["玛丽亚 Maria Lopez<br/>奥克山学院学生<br/>咖啡馆常客"]
+    K["克劳斯 Klaus Mueller<br/>奥克山学院学生<br/>社会学研究"]
+    S["山姆 Sam Moore<br/>社区长者<br/>公园 / 咖啡馆"]
+    J["约翰 John Lin<br/>药店店主<br/>市场节点"]
+    L["拉托亚 Latoya Williams<br/>摄影师<br/>艺术家共居空间"]
+    G["乔治 Giorgio Rossi<br/>数学家<br/>公共话题节点"]
 
     I ---|"咖啡馆老板 ↔ 常客"| M
     I ---|"咖啡馆场景可相遇"| A
@@ -198,7 +198,7 @@ graph LR
 
 *图 24-4：10 人派对实验的人物自然关系。*
 
-这张图只表达人物之间的自然接触机会，不表达派对信息已经沿某条边传播。学院圈把阿伊莎、埃迪、玛丽亚和克劳斯连在一起；咖啡馆把伊莎贝拉、玛丽亚、克劳斯、埃迪、亚当、山姆、拉托亚和乔治连接起来；市场和药店把约翰、埃迪、山姆和拉托亚放进另一条公共接触线。山姆和约翰之间的虚线表示竞选话题可能形成干扰项：读实验结果时，要区分“派对信息扩散”和“其他公共话题扩散”。先用这张人物关系图判断哪些相遇是自然的，再用上一张任务分工图判断这些相遇服务哪个实验问题。
+这张图只表达人物之间的自然接触机会，不表达派对信息已经沿某条边传播。学院圈把阿伊莎 Ayesha Khan、埃迪 Eddy Lin、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 连在一起；咖啡馆把伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller、埃迪 Eddy Lin、亚当 Adam Smith、山姆 Sam Moore、拉托亚 Latoya Williams 和乔治 Giorgio Rossi 连接起来；市场和药店把约翰 John Lin、埃迪 Eddy Lin、山姆 Sam Moore 和拉托亚 Latoya Williams 放进另一条公共接触线。山姆 Sam Moore 和约翰 John Lin 之间的虚线表示竞选话题可能形成干扰项：读实验结果时，要区分“派对信息扩散”和“其他公共话题扩散”。先用这张人物关系图判断哪些相遇是自然的，再用上一张任务分工图判断这些相遇服务哪个实验问题。
 
 ## 24.4 实验时间设置
 
@@ -208,7 +208,7 @@ graph LR
 20240214-08:00
 ```
 
-这样从早上开始，伊莎贝拉有足够时间：
+这样从早上开始，伊莎贝拉 Isabella Rodriguez 有足够时间：
 
 - 准备材料。
 - 遇到居民。
@@ -268,7 +268,7 @@ llm:
     total: S:8,F:0/R:8
 ```
 
-这段日志说明伊莎贝拉已经被派对设定牵引到咖啡馆行动线上。`wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 是日程链路；`percept` 是感知；`summary` 是本仿真步 step 的状态快照。若这里的行动 action 完全没有咖啡馆、派对准备或顾客服务，就先回头检查伊莎贝拉的 `currently` 和运行日期，不要等 84 仿真步 step 全部结束后才发现实验条件错了。
+这段日志说明伊莎贝拉 Isabella Rodriguez 已经被派对设定牵引到咖啡馆行动线上。`wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 是日程链路；`percept` 是感知；`summary` 是本仿真步 step 的状态快照。若这里的行动 action 完全没有咖啡馆、派对准备或顾客服务，就先回头检查伊莎贝拉 Isabella Rodriguez 的 `currently` 和运行日期，不要等 84 仿真步 step 全部结束后才发现实验条件错了。
 
 运行结束后执行压缩：
 
@@ -289,7 +289,7 @@ results/checkpoints/book-party-extended/conversation.json
 | 文件 | 先看什么 | 在派对实验中回答什么问题 |
 | --- | --- | --- |
 | `simulation.md` | 时间线、活动记录、对话摘录 | 派对故事线是否出现，谁在什么时间提到派对 |
-| `conversation.json` | 对话时间、说话双方、地点、具体话术 | 派对信息是否真的从伊莎贝拉传给别人 |
+| `conversation.json` | 对话时间、说话双方、地点、具体话术 | 派对信息是否真的从伊莎贝拉 Isabella Rodriguez 传给别人 |
 | `movement.json` | 17:00-19:00 附近角色位置和行动 action | 被邀请者是否在派对时段到达并停留在咖啡馆 |
 
 证据逻辑图：
@@ -317,8 +317,8 @@ flowchart TD
 ```
 
 这段原文说明了三件事。
-- 第一，派对信息有明确来源：伊莎贝拉。
-- 第二，接收者是亚当。
+- 第一，派对信息有明确来源：伊莎贝拉 Isabella Rodriguez。
+- 第二，接收者是亚当 Adam Smith。
 - 第三，结果不是“成功参加”，而是“知道但婉拒”。
 
 所以做派对传播实验时，不能把“被邀请”直接等同于“会到场”。后面还要看 `movement.json` 中 17:00-19:00 的位置和行动 action。
@@ -339,8 +339,8 @@ http://127.0.0.1:5000/?name=book-party-extended&speed=3&zoom=0.6
 
 这里模拟 14 小时，从 08:00 到 22:00。新增角色会让读者看到派对实验不只发生在一个咖啡馆小圈子里：
 
-- 山姆带来竞选信息干扰。
-- 约翰、拉托亚、乔治适合观察信息传播。
+- 山姆 Sam Moore 带来竞选信息干扰。
+- 约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi 适合观察信息传播。
 
 10 人实验更接近论文端到端行为，但成本更高，日志也更长。读结果时要特别区分两类线索：第一类是派对邀请、转述和到场；第二类是角色自己的日常任务、竞选话题和普通闲聊。只有能落回 `conversation.json`、`simulation.md` 和 `movement.json` 的派对线索，才算有效证据。
 
@@ -365,7 +365,7 @@ results/compressed/book-party-extended/simulation.md
 
 重点观察下面现象，用于判断实验结果：
 
-1. 伊莎贝拉早上是否提到派对准备。
+1. 伊莎贝拉 Isabella Rodriguez 早上是否提到派对准备。
 2. 她是否与其他角色对话。
 3. 对话中是否明确提到时间和地点。
 4. 被邀请者后续活动是否改变。
@@ -395,13 +395,13 @@ results/checkpoints/book-party-extended/conversation.json
 
 | 时间 | 发起者 | 接收者 | 地点 | 是否提到时间 | 是否提到地点 | 是否形成承诺 |
 |---|---|---|---|---|---|---|
-| 09:40 | 伊莎贝拉 | 阿伊莎 | 霍布斯咖啡馆 | 是 | 是 | 待判断 |
+| 09:40 | 伊莎贝拉 Isabella Rodriguez | 阿伊莎 Ayesha Khan | 霍布斯咖啡馆 | 是 | 是 | 待判断 |
 
-这张表用于追踪传播路径。如果阿伊莎后来告诉克劳斯，就记录：
+这张表用于追踪传播路径。如果阿伊莎 Ayesha Khan 后来告诉克劳斯 Klaus Mueller，就记录：
 
 | 时间 | 发起者 | 接收者 | 信息来源 | 内容 |
 |---|---|---|---|---|
-| 11:20 | 阿伊莎 | 克劳斯 | 伊莎贝拉邀请 | 提到派对 |
+| 11:20 | 阿伊莎 Ayesha Khan | 克劳斯 Klaus Mueller | 伊莎贝拉 Isabella Rodriguez 邀请 | 提到派对 |
 
 这比只统计最后有多少人知道更重要。
 
@@ -449,19 +449,19 @@ results/compressed/book-party-extended/movement.json
 角色知道时间、地点，并在后续计划或对话中使用该信息。
 ```
 
-例如，阿伊莎可能会这样说：
+例如，阿伊莎 Ayesha Khan 可能会这样说：
 
 ```text
 我听伊莎贝拉说今晚咖啡馆有派对。
 ```
 
-这是弱标准。如果 `conversation.json` 中确实有伊莎贝拉告诉阿伊莎：
+这是弱标准。如果 `conversation.json` 中确实有伊莎贝拉 Isabella Rodriguez 告诉阿伊莎 Ayesha Khan：
 
 ```text
 2月14日下午5点至7点在霍布斯咖啡馆
 ```
 
-就是中标准。如果阿伊莎下午调整计划去咖啡馆，就是强标准。
+就是中标准。如果阿伊莎 Ayesha Khan 下午调整计划去咖啡馆，就是强标准。
 
 判断逻辑图：
 
@@ -541,7 +541,7 @@ generative_agents/results/compressed/book-party-extended/movement.json
 
 `movement.json` 中的 `start_datetime` 是 `2024-02-14T08:00:00`，`stride` 是 `10`，说明它确实对应前面那条 2 月 14 日 08:00 开始、每步 10 分钟的主实验。
 
-这里有一个容易踩坑的细节：`simulation.md` 的“基础人设”部分会从当前源码里的全局角色表读取。如果你在压缩前后又修改过 `start.py`，例如后续章节新增了林晓，那么 `simulation.md` 开头可能会出现不属于本次命令的角色人设。判断本次实验时，不要只看这个静态人设区，而要以 `checkpoint`、`conversation.json` 和 `movement.json` 中真实参与仿真的角色为准。
+这里有一个容易踩坑的细节：`simulation.md` 的“基础人设”部分会从当前源码里的全局角色表读取。如果你在压缩前后又修改过 `start.py`，例如后续章节新增了林晓 Lin Xiao，那么 `simulation.md` 开头可能会出现不属于本次命令的角色人设。判断本次实验时，不要只看这个静态人设区，而要以 `checkpoint`、`conversation.json` 和 `movement.json` 中真实参与仿真的角色为准。
 
 这次 `simulation.md` 中，派对线索已经进入故事主线：
 
@@ -559,46 +559,46 @@ generative_agents/results/compressed/book-party-extended/movement.json
 
 | 时间 | 对话关系 | 证据摘要 | 可得结论 |
 | --- | --- | --- | --- |
-| 10:40 | 山姆 -> 伊莎贝拉 | 伊莎贝拉邀请山姆留下参加下午五点的情人节派对；山姆因为要和妻子共度情人节晚餐，没有直接答应 | 山姆知道派对，但不能判定到场 |
-| 11:30 | 伊莎贝拉 -> 玛丽亚 | 伊莎贝拉邀请玛丽亚参加下午五点派对，说明有特调饮品、爱心点心和浪漫装饰 | 玛丽亚明确知道时间、地点和内容 |
-| 12:20 | 伊莎贝拉 -> 玛丽亚 | 伊莎贝拉再次确认玛丽亚五点会来，玛丽亚回答“当然会去” | 玛丽亚有参加意图 |
-| 14:20 | 玛丽亚 -> 伊莎贝拉 | 玛丽亚确认“派对是在五点开始”，并表示复习结束后帮忙布置 | 玛丽亚保留了时间信息，并参与准备 |
-| 15:10 | 伊莎贝拉 -> 玛丽亚 | 伊莎贝拉请玛丽亚挂爱心气球布置派对 | 派对准备行为成立 |
-| 17:10 | 乔治 -> 伊莎贝拉 | 乔治询问“玛丽亚的那个惊喜派对准备得怎么样”，伊莎贝拉回答一切就绪 | 乔治表达出现场知情，但上游来源未记录 |
-| 18:00 | 克劳斯 -> 伊莎贝拉 | 克劳斯到咖啡馆吃东西，伊莎贝拉说“正好赶上我们的情人节派对” | 克劳斯在派对窗口被纳入现场 |
-| 18:10 | 埃迪 -> 伊莎贝拉 | 埃迪帮忙分发游戏卡片，配合派对游戏区 | 埃迪不是只路过，而是参与派对执行；上游来源未记录 |
-| 18:30 | 伊莎贝拉 -> 克劳斯 | 伊莎贝拉邀请克劳斯参与“情话配对”小游戏 | 克劳斯参加派对活动成立 |
-| 19:00 | 伊莎贝拉 -> 克劳斯 | 伊莎贝拉说“派对刚结束”，克劳斯感谢三明治和咖啡 | 派对结束节点成立 |
-| 19:30 | 埃迪 -> 伊莎贝拉 | 埃迪问“派对结束了？”，并提到派对上音乐效果不错 | 埃迪有派对后回顾证据 |
+| 10:40 | 山姆 Sam Moore -> 伊莎贝拉 Isabella Rodriguez | 伊莎贝拉 Isabella Rodriguez 邀请山姆 Sam Moore 留下参加下午五点的情人节派对；山姆 Sam Moore 因为要和妻子共度情人节晚餐，没有直接答应 | 山姆 Sam Moore 知道派对，但不能判定到场 |
+| 11:30 | 伊莎贝拉 Isabella Rodriguez -> 玛丽亚 Maria Lopez | 伊莎贝拉 Isabella Rodriguez 邀请玛丽亚 Maria Lopez 参加下午五点派对，说明有特调饮品、爱心点心和浪漫装饰 | 玛丽亚 Maria Lopez 明确知道时间、地点和内容 |
+| 12:20 | 伊莎贝拉 Isabella Rodriguez -> 玛丽亚 Maria Lopez | 伊莎贝拉 Isabella Rodriguez 再次确认玛丽亚 Maria Lopez 五点会来，玛丽亚 Maria Lopez 回答“当然会去” | 玛丽亚 Maria Lopez 有参加意图 |
+| 14:20 | 玛丽亚 Maria Lopez -> 伊莎贝拉 Isabella Rodriguez | 玛丽亚 Maria Lopez 确认“派对是在五点开始”，并表示复习结束后帮忙布置 | 玛丽亚 Maria Lopez 保留了时间信息，并参与准备 |
+| 15:10 | 伊莎贝拉 Isabella Rodriguez -> 玛丽亚 Maria Lopez | 伊莎贝拉 Isabella Rodriguez 请玛丽亚 Maria Lopez 挂爱心气球布置派对 | 派对准备行为成立 |
+| 17:10 | 乔治 Giorgio Rossi -> 伊莎贝拉 Isabella Rodriguez | 乔治 Giorgio Rossi 询问“玛丽亚 Maria Lopez 的那个惊喜派对准备得怎么样”，伊莎贝拉 Isabella Rodriguez 回答一切就绪 | 乔治 Giorgio Rossi 表达出现场知情，但上游来源未记录 |
+| 18:00 | 克劳斯 Klaus Mueller -> 伊莎贝拉 Isabella Rodriguez | 克劳斯 Klaus Mueller 到咖啡馆吃东西，伊莎贝拉 Isabella Rodriguez 说“正好赶上我们的情人节派对” | 克劳斯 Klaus Mueller 在派对窗口被纳入现场 |
+| 18:10 | 埃迪 Eddy Lin -> 伊莎贝拉 Isabella Rodriguez | 埃迪 Eddy Lin 帮忙分发游戏卡片，配合派对游戏区 | 埃迪 Eddy Lin 不是只路过，而是参与派对执行；上游来源未记录 |
+| 18:30 | 伊莎贝拉 Isabella Rodriguez -> 克劳斯 Klaus Mueller | 伊莎贝拉 Isabella Rodriguez 邀请克劳斯 Klaus Mueller 参与“情话配对”小游戏 | 克劳斯 Klaus Mueller 参加派对活动成立 |
+| 19:00 | 伊莎贝拉 Isabella Rodriguez -> 克劳斯 Klaus Mueller | 伊莎贝拉 Isabella Rodriguez 说“派对刚结束”，克劳斯 Klaus Mueller 感谢三明治和咖啡 | 派对结束节点成立 |
+| 19:30 | 埃迪 Eddy Lin -> 伊莎贝拉 Isabella Rodriguez | 埃迪 Eddy Lin 问“派对结束了？”，并提到派对上音乐效果不错 | 埃迪 Eddy Lin 有派对后回顾证据 |
 
 再看位置。下面不是简单看某一帧，而是从每个 checkpoint 的完整状态整理出角色在霍布斯咖啡馆的出现窗口：
 
 | 角色 | 霍布斯咖啡馆出现窗口 | 是否可判定参加派对 | 证据边界 |
 | --- | --- | --- | --- |
-| 伊莎贝拉 | 08:00-20:50 | 是 | 源头角色，负责准备、邀请、主持、收尾 |
-| 乔治 | 08:00-18:10 | 是 | 17:10 在咖啡馆与伊莎贝拉讨论派对准备，但邀请来源不明 |
-| 克劳斯 | 17:50-18:50 | 是 | 18:00 到场，18:30 参加小游戏，19:00 被确认派对刚结束 |
-| 埃迪 | 12:00-20:40 | 是 | 18:10 分发游戏卡片，19:30 和 20:10 有派对后回顾 |
-| 玛丽亚 | 11:00-15:00 | 不确认 | 多次被邀请并帮忙布置，但 17:00-19:00 未在咖啡馆 |
-| 山姆 | 09:10-11:50 | 不确认 | 10:40 知道派对，但派对窗口没有到场位置证据 |
-| 阿伊莎 | 12:20-12:40 | 否 | 没有派对窗口位置，也没有派对传播证据 |
-| 亚当 | 10:20-16:30 | 否 | 下午 5 点前离开咖啡馆，未进入派对窗口 |
-| 约翰 | 20:20-20:50 | 否 | 到达时间晚于派对结束，更像普通晚间到访 |
-| 拉托亚 | 无 | 否 | 没有到达咖啡馆的位置证据 |
+| 伊莎贝拉 Isabella Rodriguez | 08:00-20:50 | 是 | 源头角色，负责准备、邀请、主持、收尾 |
+| 乔治 Giorgio Rossi | 08:00-18:10 | 是 | 17:10 在咖啡馆与伊莎贝拉 Isabella Rodriguez 讨论派对准备，但邀请来源不明 |
+| 克劳斯 Klaus Mueller | 17:50-18:50 | 是 | 18:00 到场，18:30 参加小游戏，19:00 被确认派对刚结束 |
+| 埃迪 Eddy Lin | 12:00-20:40 | 是 | 18:10 分发游戏卡片，19:30 和 20:10 有派对后回顾 |
+| 玛丽亚 Maria Lopez | 11:00-15:00 | 不确认 | 多次被邀请并帮忙布置，但 17:00-19:00 未在咖啡馆 |
+| 山姆 Sam Moore | 09:10-11:50 | 不确认 | 10:40 知道派对，但派对窗口没有到场位置证据 |
+| 阿伊莎 Ayesha Khan | 12:20-12:40 | 否 | 没有派对窗口位置，也没有派对传播证据 |
+| 亚当 Adam Smith | 10:20-16:30 | 否 | 下午 5 点前离开咖啡馆，未进入派对窗口 |
+| 约翰 John Lin | 20:20-20:50 | 否 | 到达时间晚于派对结束，更像普通晚间到访 |
+| 拉托亚 Latoya Williams | 无 | 否 | 没有到达咖啡馆的位置证据 |
 
-这个表里最值得注意的是玛丽亚和山姆。玛丽亚在对话里明确说过会参加，还帮忙布置，但 checkpoint 显示她没有出现在 17:00-19:00 的派对窗口；因此只能判定为“知道并参与准备”，不能判定为“参加派对”。山姆也是同理：他在上午知道派对，后续摘要里甚至出现“给山姆的惊喜”这样的回顾，但 `movement.json` 和 checkpoint 没有支持他在派对时段到场。严格写报告时，这种文本回顾要标记为“摘要漂移”，不能反过来覆盖位置证据。
+这个表里最值得注意的是玛丽亚 Maria Lopez 和山姆 Sam Moore。玛丽亚 Maria Lopez 在对话里明确说过会参加，还帮忙布置，但 checkpoint 显示她没有出现在 17:00-19:00 的派对窗口；因此只能判定为“知道并参与准备”，不能判定为“参加派对”。山姆 Sam Moore 也是同理：他在上午知道派对，后续摘要里甚至出现“给山姆 Sam Moore 的惊喜”这样的回顾，但 `movement.json` 和 checkpoint 没有支持他在派对时段到场。严格写报告时，这种文本回顾要标记为“摘要漂移”，不能反过来覆盖位置证据。
 
 这次实验可以这样归纳：
 
 | 判断项 | 结果 | 说明 |
 | --- | --- | --- |
-| 派对是否生成 | 成立 | 伊莎贝拉从上午准备到晚上收尾，行动线完整 |
-| 是否有明确邀请 | 成立 | 山姆、玛丽亚有明确邀请证据 |
-| 是否有多人知道 | 成立 | 山姆、玛丽亚、乔治、克劳斯、埃迪均在对话中接触或表达派对信息 |
-| 是否有多人到场 | 成立但有限 | 伊莎贝拉、乔治、克劳斯、埃迪具备现场证据 |
-| 是否出现二跳传播 | 不明显 | 主要还是伊莎贝拉作为源头扩散，缺少“被邀请者再邀请别人”的强证据 |
+| 派对是否生成 | 成立 | 伊莎贝拉 Isabella Rodriguez 从上午准备到晚上收尾，行动线完整 |
+| 是否有明确邀请 | 成立 | 山姆 Sam Moore、玛丽亚 Maria Lopez 有明确邀请证据 |
+| 是否有多人知道 | 成立 | 山姆 Sam Moore、玛丽亚 Maria Lopez、乔治 Giorgio Rossi、克劳斯 Klaus Mueller、埃迪 Eddy Lin 均在对话中接触或表达派对信息 |
+| 是否有多人到场 | 成立但有限 | 伊莎贝拉 Isabella Rodriguez、乔治 Giorgio Rossi、克劳斯 Klaus Mueller、埃迪 Eddy Lin 具备现场证据 |
+| 是否出现二跳传播 | 不明显 | 主要还是伊莎贝拉 Isabella Rodriguez 作为源头扩散，缺少“被邀请者再邀请别人”的强证据 |
 | 是否全员参加 | 不成立 | 10 人里只有部分角色进入派对窗口 |
-| 是否有异常 | 有 | 玛丽亚承诺参加却未到场；山姆的后续回顾缺少位置支撑 |
+| 是否有异常 | 有 | 玛丽亚 Maria Lopez 承诺参加却未到场；山姆 Sam Moore 的后续回顾缺少位置支撑 |
 
 所以，本次 `book-party-extended` 是一次合格的机制复现，而不是一次完美的论文数字复刻。它复现出了派对准备、邀请、时间地点保留、现场活动、派对结束和部分角色到场；同时也暴露出生成式仿真中很常见的问题：知道不等于到场，承诺不等于执行，摘要不等于证据。
 
@@ -606,17 +606,17 @@ generative_agents/results/compressed/book-party-extended/movement.json
 
 对这次 10 人实验，结论不要写成“10 人都参加了派对”。更准确的写法是：
 
-1. 伊莎贝拉成功生成了派对相关日程和行动。
-2. 派对信息在对话中触达或覆盖了山姆、玛丽亚、乔治、克劳斯和埃迪。
+1. 伊莎贝拉 Isabella Rodriguez 成功生成了派对相关日程和行动。
+2. 派对信息在对话中触达或覆盖了山姆 Sam Moore、玛丽亚 Maria Lopez、乔治 Giorgio Rossi、克劳斯 Klaus Mueller 和埃迪 Eddy Lin。
 3. 派对时间“五点”和地点“霍布斯咖啡馆”在多轮对话中被保留。
-4. 乔治、克劳斯、埃迪在派对窗口有现场参与证据。
-5. 玛丽亚和山姆知道派对，但没有足够的派对窗口位置证据，不能硬判为参加。
+4. 乔治 Giorgio Rossi、克劳斯 Klaus Mueller、埃迪 Eddy Lin 在派对窗口有现场参与证据。
+5. 玛丽亚 Maria Lopez 和山姆 Sam Moore 知道派对，但没有足够的派对窗口位置证据，不能硬判为参加。
 
 这就是生成式社会仿真的专业读法：不是替模型美化结果，而是把“信息知道”“行动承诺”“真实到场”“事后摘要”分开。只要这四层证据分得清，读者就能理解为什么一次看似热闹的派对，最后在实验报告里要写成“部分传播成功，部分执行失败”。
 
-## 24.15 常见失败一：伊莎贝拉没有邀请别人
+## 24.15 常见失败一：伊莎贝拉 Isabella Rodriguez 没有邀请别人
 
-如果伊莎贝拉一直准备材料，但没有对话邀请，可能原因是：
+如果伊莎贝拉 Isabella Rodriguez 一直准备材料，但没有对话邀请，可能原因是：
 
 - 她没有遇到其他角色。
 - `decide_chat` 返回 False。
@@ -625,7 +625,7 @@ generative_agents/results/compressed/book-party-extended/movement.json
 
 可以按下面方法排查：
 
-1. 看 `simulation.md` 中伊莎贝拉位置。
+1. 看 `simulation.md` 中伊莎贝拉 Isabella Rodriguez 位置。
 2. 看其他角色是否经过霍布斯咖啡馆。
 3. 看日志中 `decide_chat` 输出。
 4. 调整角色集合，加入更可能去咖啡馆的角色。
@@ -641,7 +641,7 @@ generative_agents/results/compressed/book-party-extended/movement.json
 
 可以按下面方法排查：
 
-1. 看伊莎贝拉 `currently`。
+1. 看伊莎贝拉 Isabella Rodriguez `currently`。
 2. 看提示词 prompt 日志中 `generate_chat` 是否包含派对信息。
 3. 看 `summarize_chats` 输出是否保留时间地点。
 4. 必要时加强 `generate_chat` 或 `summarize_chats` 提示词 prompt。
@@ -741,7 +741,7 @@ flowchart TD
 | 本章内容 | 核心结论 |
 | --- | --- |
 | 实验目标 | 派对传播同时验证角色设定 persona、规划 planning、对话 dialogue、记忆 memory、反思 reflection 和回放 replay。 |
-| 角色选择 | 本章主实验使用伊莎贝拉、阿伊莎、埃迪、亚当、玛丽亚、克劳斯、山姆、约翰、拉托亚、乔治。 |
+| 角色选择 | 本章主实验使用伊莎贝拉 Isabella Rodriguez、阿伊莎 Ayesha Khan、埃迪 Eddy Lin、亚当 Adam Smith、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller、山姆 Sam Moore、约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi。 |
 | 起始时间 | 2 月 14 日 08:00 能覆盖派对前后的关键信息传播窗口。 |
 | 结果生成 | 运行后用 `compress.py` 生成 `simulation.md` 和 `movement.json`。 |
 | 传播证据 | `conversation.json` 是追踪邀请和传播路径的关键材料。 |

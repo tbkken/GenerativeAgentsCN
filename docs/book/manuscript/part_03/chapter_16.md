@@ -143,7 +143,7 @@ flowchart TD
 
 *图 16-2：角色集合选择分支。手动角色参数 `--agents`、角色数量参数 `--agent-count` 和默认角色列表 `personas` 会走不同路径，但最终都会汇入角色配置 `config["agents"]`。*
 
-这不是小细节。当前项目是同一时间戳下的顺序更新仿真：克劳斯先行动，玛丽亚后行动；如果克劳斯的行动改变了地图事件，玛丽亚在同一个时间点内可能感知到更新后的世界。
+这不是小细节。当前项目是同一时间戳下的顺序更新仿真：克劳斯 Klaus Mueller 先行动，玛丽亚 Maria Lopez 后行动；如果克劳斯 Klaus Mueller 的行动改变了地图事件，玛丽亚 Maria Lopez 在同一个时间点内可能感知到更新后的世界。
 
 ## 16.4 新仿真与断点恢复
 
@@ -616,7 +616,7 @@ flowchart TD
 
 ### 空间落地 prompt：循环视角只看状态变化
 
-第 16 章脚手架输出里，克劳斯和玛丽亚都有一组提示词调用 completion calls：
+第 16 章脚手架输出里，克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 都有一组提示词调用 completion calls：
 
 ```text
 wake_up, schedule_init, schedule_daily, schedule_decompose,
@@ -634,7 +634,7 @@ determine_sector, determine_arena, determine_object, describe_object
 | 对象选择 determine_object | 当前活动、候选游戏对象 game object | 目标对象 object | 语义地址 address 增加第四层，后续可寻路到对象。 |
 | 物品状态 describe_object | 角色、行动、对象 | 对象状态短句 | 生成对象事件 obj_event，写回地图格子 Tile。 |
 
-因此，克劳斯的“起草论文开头段落”不会停留在自然语言里，而会落成下面这类地址：
+因此，克劳斯 Klaus Mueller 的“起草论文开头段落”不会停留在自然语言里，而会落成下面这类地址：
 
 ```text
 the Ville:奥克山学院:图书馆:图书馆桌子
@@ -764,7 +764,7 @@ flowchart TD
 docs/book/scaffolds/part_03/ch16_simulation_loop_demo.py
 ```
 
-它加载真实地图配置 `maze.json`、真实克劳斯和玛丽亚的角色配置 `agent.json`，实际构造智能体 Agent 对象，并用真实角色思考包装函数 `Game.agent_think()` 调用智能体思考函数 `Agent.think()`。为了让输出稳定，脚手架把智能体补全函数 `Agent.completion()` 替换成确定性替身 deterministic stub，把关联记忆写入替换成轻量概念对象；它不调用外部大语言模型 LLM，也不写入仓库内断点 checkpoint。脚手架展示的是循环顺序，不是模型生成质量。
+它加载真实地图配置 `maze.json`、真实克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 的角色配置 `agent.json`，实际构造智能体 Agent 对象，并用真实角色思考包装函数 `Game.agent_think()` 调用智能体思考函数 `Agent.think()`。为了让输出稳定，脚手架把智能体补全函数 `Agent.completion()` 替换成确定性替身 deterministic stub，把关联记忆写入替换成轻量概念对象；它不调用外部大语言模型 LLM，也不写入仓库内断点 checkpoint。脚手架展示的是循环顺序，不是模型生成质量。
 
 核心替换代码如下：
 
@@ -872,11 +872,11 @@ python docs/book/scaffolds/part_03/ch16_simulation_loop_demo.py
 python docs/book/scaffolds/part_03/ch16_simulation_step_figure.py
 ```
 
-它复用同一套仿真循环脚手架数据，再读取真实小镇地图、克劳斯和玛丽亚的角色头像与角色配置，生成图 16-9。
+它复用同一套仿真循环脚手架数据，再读取真实小镇地图、克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 的角色头像与角色配置，生成图 16-9。
 
 ![图 16-9：一个仿真步 step 如何推进两个智能体 Agent](../../assets/chapter_16/ch16_simulation_step_overview.png)
 
-*图 16-9：一个仿真步 step 如何推进两个智能体 Agent。左侧是真实小镇地图上的移动路径：克劳斯从宿舍床位走向图书馆桌子，玛丽亚从宿舍床位走向教室学生座位。右侧是同一仿真步 step 中每个角色的输入状态 status、提示词调用 completion calls、行动结果 action、返回路径 path 和服务端状态 server status。底部显示本步会写入的断点 checkpoint、对话 conversation，以及全局计时器 Timer 如何从 09:30 推进到 09:40。*
+*图 16-9：一个仿真步 step 如何推进两个智能体 Agent。左侧是真实小镇地图上的移动路径：克劳斯 Klaus Mueller 从宿舍床位走向图书馆桌子，玛丽亚 Maria Lopez 从宿舍床位走向教室学生座位。右侧是同一仿真步 step 中每个角色的输入状态 status、提示词调用 completion calls、行动结果 action、返回路径 path 和服务端状态 server status。底部显示本步会写入的断点 checkpoint、对话 conversation，以及全局计时器 Timer 如何从 09:30 推进到 09:40。*
 
 图 16-9 的价值不在于多画一张流程图，而在于把终端输出放回小镇世界中。左侧说明移动路径 path 是世界地图 Maze 寻路的结果；右侧说明仿真循环函数 `SimulateServer.simulate()` 并不直接生成行为，而是按角色顺序调用角色思考包装函数 `Game.agent_think()`，再把智能体思考函数 `Agent.think()` 返回的路径、行动和摘要写回服务端状态。
 
@@ -895,7 +895,7 @@ python docs/book/scaffolds/part_03/ch16_simulation_step_figure.py
 | `simulate-20240213-0930.json` | 断点 checkpoint 写入代码 | 文件名来自当前全局计时器 Timer |
 | `after_forward: 20240213-09:40` | 时间推进函数 `timer.forward(stride)` | 仿真步 step 完成后时间才推进 |
 
-脚手架里克劳斯从宿舍床位 `[126,46]` 出发，当前行动落到 `the Ville:奥克山学院:图书馆:图书馆桌子`，路径终点是 `[119,24]`。这个坐标不是手写解释出来的，它来自真实世界地图 Maze 的地址取格函数 `get_address_tiles()` 和寻路函数 `find_path()`。玛丽亚同理，从宿舍床位走向教室学生座位。看到这里，就能把“日程文字 -> 行动地址 -> 移动路径 path -> 仿真服务 server 坐标更新”这条链路连起来。
+脚手架里克劳斯 Klaus Mueller 从宿舍床位 `[126,46]` 出发，当前行动落到 `the Ville:奥克山学院:图书馆:图书馆桌子`，路径终点是 `[119,24]`。这个坐标不是手写解释出来的，它来自真实世界地图 Maze 的地址取格函数 `get_address_tiles()` 和寻路函数 `find_path()`。玛丽亚 Maria Lopez 同理，从宿舍床位走向教室学生座位。看到这里，就能把“日程文字 -> 行动地址 -> 移动路径 path -> 仿真服务 server 坐标更新”这条链路连起来。
 
 ## 16.14 完整仿真的调试顺序
 

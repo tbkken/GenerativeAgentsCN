@@ -6,11 +6,11 @@
 
 | 初始化要解决的问题 | 没处理好会怎样 | 初始化完成后 |
 | --- | --- | --- |
-| 角色身份从哪里来 | 模型只看到临时任务，角色没有稳定个性 | 人格草稿 Scratch 持有年龄、性格、经历、生活习惯和当前关注点 |
+| 角色身份从哪里来 | 模型只看到临时任务，角色没有稳定个性 | 提示词组装器 Scratch 持有年龄、性格、经历、生活习惯和当前关注点 |
 | 角色住在哪里 | 角色有名字但没有空间落点 | 初始坐标 coord 落到地图格子 Tile，并生成当前行动 Action |
 | 角色知道哪些地点 | 后续计划无法稳定选择地点 | 空间记忆 Spatial 保存角色视角下的地点树 tree 和快捷地址 address |
 | 角色如何记住事件 | 每次运行都像重新开始 | 关联记忆 Associate 为每个角色建立独立存储目录 |
-| 角色如何调用模型 | 提示词 prompt 找不到身份上下文 | 人格基础描述函数 `Scratch._base_desc()` 把角色设定写进多类提示词 prompt |
+| 角色如何调用模型 | 提示词 prompt 找不到身份上下文 | 基础描述函数 `Scratch._base_desc()` 把角色设定写进多类提示词 prompt |
 | 角色如何恢复运行 | 断点 checkpoint 之后状态断裂 | 已保存的 `status`、`schedule`、`associate`、`currently`、`action` 覆盖初始种子 |
 
 ```mermaid
@@ -19,7 +19,7 @@ flowchart LR
     Seed["角色种子 agent.json"] --> Merge
     Resume["断点状态 checkpoint"] --> Merge
     Merge --> Init["智能体构造函数 Agent.__init__()"]
-    Init --> Scratch["人格草稿 Scratch"]
+    Init --> Scratch["提示词组装器 Scratch"]
     Init --> Spatial["空间记忆 Spatial"]
     Init --> Schedule["日程 Schedule"]
     Init --> Associate["关联记忆 Associate"]
@@ -172,41 +172,41 @@ python docs/book/scaffolds/part_03/ch15_agent_roster_figure.py
 
 ![图 15-2：25 个智能体 Agent 的角色群像](../../assets/chapter_15/ch15_agent_roster.png)
 
-*图 15-2：25 个智能体 Agent 的角色群像。读这张图时，先看角色属于哪个生活单元，再看年龄、性格底色和初始房间；这些字段随后会进入人格草稿 Scratch、空间记忆 Spatial 和初始行动 Action。*
+*图 15-2：25 个智能体 Agent 的角色群像。读这张图时，先看角色属于哪个生活单元，再看年龄、性格底色和初始房间；这些字段随后会进入提示词组装器 Scratch、空间记忆 Spatial 和初始行动 Action。*
 
 | 角色 | 年龄 | 性格底色 innate | 居住地址 living_area |
 | --- | --- | --- | --- |
-| 阿伊莎 | 20 | 好奇、坚定、独立 | the Ville / 奥克山学院宿舍 / 阿伊莎的房间 |
-| 克劳斯 | 20 | 善良、好奇、热情 | the Ville / 奥克山学院宿舍 / 克劳斯的房间 |
-| 玛丽亚 | 21 | 精力充沛、热情、好学 | the Ville / 奥克山学院宿舍 / 玛丽亚的房间 |
-| 沃尔夫冈 | 21 | 勤奋、热情、敬业 | the Ville / 奥克山学院宿舍 / 沃尔夫冈的房间 |
-| 梅 | 44 | 培养、善良、耐心 | the Ville / 林氏家族的房子 / 梅和约翰的卧室 |
-| 约翰 | 45 | 耐心、善良、有条理 | the Ville / 林氏家族的房子 / 梅和约翰的卧室 |
-| 埃迪 | 19 | 好奇、分析、音乐 | the Ville / 林氏家族的房子 / 埃迪的卧室 |
-| 简 | 46 | 友好、乐于助人、有条理 | the Ville / 莫雷诺家族的房子 / 汤姆和简的卧室 |
-| 汤姆 | 52 | 粗鲁、好斗、精力充沛 | the Ville / 莫雷诺家族的房子 / 汤姆和简的卧室 |
-| 卡门 | 33 | 友好、外向、乐于助人 | the Ville / 塔玛拉和卡门的家 / 卡门的房间 |
-| 塔玛拉 | 30 | 富有想象力，耐心，善良 | the Ville / 塔玛拉和卡门的家 / 塔玛拉的房间 |
-| 亚瑟 | 42 | 友好、外向、慷慨 | the Ville / 亚瑟的公寓 / 主人房 |
-| 伊莎贝拉 | 34 | 友好、外向、好客 | the Ville / 伊莎贝拉的公寓 / 主人房 |
-| 山姆 | 65 | 聪明、足智多谋、幽默 | the Ville / 摩尔家族的房子 / 主人房 |
-| 詹妮弗 | 68 | 聪明、有经验、热情 | the Ville / 摩尔家族的房子 / 主人房 |
-| 弗朗西斯科 | 23 | 外向、友好、诚实 | the Ville / 艺术家共居空间 / 弗朗西斯科的房间 |
-| 海莉 | 30 | 富有想象力、精力充沛、足智多谋 | the Ville / 艺术家共居空间 / 海莉的房间 |
-| 拉吉夫 | 27 | 耐心、可靠、开朗 | the Ville / 艺术家共居空间 / 拉吉夫的房间 |
-| 拉托亚 | 25 | 有条理、有逻辑、细心 | the Ville / 艺术家共居空间 / 拉托亚的房间 |
-| 阿比盖尔 | 25 | 思想开放、好奇、坚定 | the Ville / 艺术家共居空间 / 阿比盖尔的房间 |
-| 卡洛斯 | 32 | 直率、狂野、不友好 | the Ville / 卡洛斯的公寓 / 主人房 |
-| 乔治 | 41 | 分析、逻辑、古怪 | the Ville / 乔治的公寓 / 主人房 |
-| 瑞恩 | 29 | 善于分析、务实、有上进心 | the Ville / 瑞恩的公寓 / 主人房 |
-| 山本百合子 | 28 | 有条理、可靠、注重细节 | the Ville / 山本百合子的房子 / 主人房 |
-| 亚当 | 36 | 深思熟虑、善于反思、富有智慧 | the Ville / 亚当的家 / 主人房 |
+| 阿伊莎 Ayesha Khan | 20 | 好奇、坚定、独立 | the Ville / 奥克山学院宿舍 / 阿伊莎 Ayesha Khan 的房间 |
+| 克劳斯 Klaus Mueller | 20 | 善良、好奇、热情 | the Ville / 奥克山学院宿舍 / 克劳斯 Klaus Mueller 的房间 |
+| 玛丽亚 Maria Lopez | 21 | 精力充沛、热情、好学 | the Ville / 奥克山学院宿舍 / 玛丽亚 Maria Lopez 的房间 |
+| 沃尔夫冈 Wolfgang Schulz | 21 | 勤奋、热情、敬业 | the Ville / 奥克山学院宿舍 / 沃尔夫冈 Wolfgang Schulz 的房间 |
+| 梅 Mei Lin | 44 | 培养、善良、耐心 | the Ville / 林氏家族的房子 / 梅 Mei Lin 和约翰 John Lin 的卧室 |
+| 约翰 John Lin | 45 | 耐心、善良、有条理 | the Ville / 林氏家族的房子 / 梅 Mei Lin 和约翰 John Lin 的卧室 |
+| 埃迪 Eddy Lin | 19 | 好奇、分析、音乐 | the Ville / 林氏家族的房子 / 埃迪 Eddy Lin 的卧室 |
+| 简 Jane Moreno | 46 | 友好、乐于助人、有条理 | the Ville / 莫雷诺家族的房子 / 汤姆 Tom Moreno 和简 Jane Moreno 的卧室 |
+| 汤姆 Tom Moreno | 52 | 粗鲁、好斗、精力充沛 | the Ville / 莫雷诺家族的房子 / 汤姆 Tom Moreno 和简 Jane Moreno 的卧室 |
+| 卡门 Carmen Ortiz | 33 | 友好、外向、乐于助人 | the Ville / 塔玛拉 Tamara Taylor 和卡门 Carmen Ortiz 的家 / 卡门 Carmen Ortiz 的房间 |
+| 塔玛拉 Tamara Taylor | 30 | 富有想象力，耐心，善良 | the Ville / 塔玛拉 Tamara Taylor 和卡门 Carmen Ortiz 的家 / 塔玛拉 Tamara Taylor 的房间 |
+| 亚瑟 Arthur Burton | 42 | 友好、外向、慷慨 | the Ville / 亚瑟 Arthur Burton 的公寓 / 主人房 |
+| 伊莎贝拉 Isabella Rodriguez | 34 | 友好、外向、好客 | the Ville / 伊莎贝拉 Isabella Rodriguez 的公寓 / 主人房 |
+| 山姆 Sam Moore | 65 | 聪明、足智多谋、幽默 | the Ville / 摩尔家族的房子 / 主人房 |
+| 詹妮弗 Jennifer Moore | 68 | 聪明、有经验、热情 | the Ville / 摩尔家族的房子 / 主人房 |
+| 弗朗西斯科 Francisco Lopez | 23 | 外向、友好、诚实 | the Ville / 艺术家共居空间 / 弗朗西斯科 Francisco Lopez 的房间 |
+| 海莉 Hailey Johnson | 30 | 富有想象力、精力充沛、足智多谋 | the Ville / 艺术家共居空间 / 海莉 Hailey Johnson 的房间 |
+| 拉吉夫 Rajiv Patel | 27 | 耐心、可靠、开朗 | the Ville / 艺术家共居空间 / 拉吉夫 Rajiv Patel 的房间 |
+| 拉托亚 Latoya Williams | 25 | 有条理、有逻辑、细心 | the Ville / 艺术家共居空间 / 拉托亚 Latoya Williams 的房间 |
+| 阿比盖尔 Abigail Chen | 25 | 思想开放、好奇、坚定 | the Ville / 艺术家共居空间 / 阿比盖尔 Abigail Chen 的房间 |
+| 卡洛斯 Carlos Gomez | 32 | 直率、狂野、不友好 | the Ville / 卡洛斯 Carlos Gomez 的公寓 / 主人房 |
+| 乔治 Giorgio Rossi | 41 | 分析、逻辑、古怪 | the Ville / 乔治 Giorgio Rossi 的公寓 / 主人房 |
+| 瑞恩 Ryan Park | 29 | 善于分析、务实、有上进心 | the Ville / 瑞恩 Ryan Park 的公寓 / 主人房 |
+| 山本百合子 Yuriko Yamamoto | 28 | 有条理、可靠、注重细节 | the Ville / 山本百合子 Yuriko Yamamoto 的房子 / 主人房 |
+| 亚当 Adam Smith | 36 | 深思熟虑、善于反思、富有智慧 | the Ville / 亚当 Adam Smith 的家 / 主人房 |
 
 表中只列了最适合快速对照的字段。每个角色的完整设定还包括 `currently`、`learned`、`lifestyle`、`daily_plan` 和空间地点树 `spatial.tree`，这些字段决定角色进入提示词 prompt 和空间系统后的具体行为。
 
 ## 15.5 agent.json 的真实结构
 
-以伊莎贝拉为例，角色配置文件位于：
+以伊莎贝拉 Isabella Rodriguez 为例，角色配置文件位于：
 
 ```text
 generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
@@ -251,23 +251,23 @@ generative_agents/frontend/static/assets/village/agents/伊莎贝拉/agent.json
 
 | 字段 | 中文意思 | 进入哪个模块 | 对行为的影响 |
 | --- | --- | --- | --- |
-| `name` | 角色名 | 智能体 Agent、人格草稿 Scratch、事件 Event | 决定日志、事件主体、提示词 prompt 中的角色名称 |
+| `name` | 角色名 | 智能体 Agent、提示词组装器 Scratch、事件 Event | 决定日志、事件主体、提示词 prompt 中的角色名称 |
 | `portrait` | 角色头像路径 | 前端 Phaser | 决定回放或前端展示时使用哪个角色图像 |
 | `coord` | 初始坐标 | 世界地图 Maze、地图格子 Tile、行动 Action | 决定角色初始化时站在哪个地点 |
-| `currently` | 当前关注点 | 人格草稿 Scratch | 影响日程、对话、反思和下一步行动的主题 |
-| `scratch.age` | 年龄 | 人格草稿 Scratch | 影响身份阶段、作息和语言风格 |
-| `scratch.innate` | 先天特质 | 人格草稿 Scratch | 给角色稳定的性格底色 |
-| `scratch.learned` | 后天经历 | 人格草稿 Scratch | 给角色职业、知识和价值判断提供背景 |
-| `scratch.lifestyle` | 生活习惯 | 人格草稿 Scratch、日程提示词 prompt | 影响起床、睡觉、工作和休息节奏 |
-| `scratch.daily_plan` | 通常一天安排 | 人格草稿 Scratch、日程提示词 prompt | 给当天计划生成提供默认骨架 |
+| `currently` | 当前关注点 | 提示词组装器 Scratch | 影响日程、对话、反思和下一步行动的主题 |
+| `scratch.age` | 年龄 | 角色画像字段 scratch、提示词组装器 Scratch | 影响身份阶段、作息和语言风格 |
+| `scratch.innate` | 先天特质 | 角色画像字段 scratch、提示词组装器 Scratch | 给角色稳定的性格底色 |
+| `scratch.learned` | 后天经历 | 角色画像字段 scratch、提示词组装器 Scratch | 给角色职业、知识和价值判断提供背景 |
+| `scratch.lifestyle` | 生活习惯 | 角色画像字段 scratch、提示词组装器 Scratch、日程提示词 prompt | 影响起床、睡觉、工作和休息节奏 |
+| `scratch.daily_plan` | 通常一天安排 | 角色画像字段 scratch、提示词组装器 Scratch、日程提示词 prompt | 给当天计划生成提供默认骨架 |
 | `spatial.address.living_area` | 居住地址 | 空间记忆 Spatial | 初始化时自动派生睡觉地址 `睡觉` |
 | `spatial.tree` | 角色知道的地点树 | 空间记忆 Spatial | 让角色在计划落地时拥有自己的空间视角 |
 
-`agent.json` 的关键不是“写得像人物小传”，而是字段最终都要进入运行模块。`currently` 进入人格草稿 Scratch，`coord` 进入世界地图 Maze 和行动 Action，`spatial` 进入空间记忆 Spatial，`scratch` 进入几乎所有大语言模型 LLM 提示词 prompt 的基础上下文。
+`agent.json` 的关键不是“写得像人物小传”，而是字段最终都要进入运行模块。`currently` 进入提示词组装器 Scratch，`coord` 进入世界地图 Maze 和行动 Action，`spatial` 进入空间记忆 Spatial，`scratch` 作为角色画像字段进入几乎所有大语言模型 LLM 提示词 prompt 的基础上下文。
 
 ## 15.6 角色设定如何进入提示词 prompt
 
-角色设定进入大语言模型 LLM 的主入口是人格草稿 Scratch。智能体构造函数 `Agent.__init__()` 中的代码非常短：
+角色设定进入大语言模型 LLM 的主入口是提示词组装器 Scratch。智能体构造函数 `Agent.__init__()` 中的代码非常短：
 
 ```python
 self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
@@ -277,20 +277,20 @@ self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
 
 ```mermaid
 flowchart LR
-    Name["角色名 name"] --> Scratch["人格草稿 Scratch"]
+    Name["角色名 name"] --> Scratch["提示词组装器 Scratch"]
     Current["当前关注 currently"] --> Scratch
-    Persona["人格字段 scratch"] --> Scratch
+    Persona["角色画像字段 scratch"] --> Scratch
     Scratch --> Base["基础描述函数 _base_desc()"]
     Scratch --> Prompts["各类提示词方法 prompt_xxx()"]
 ```
 
-人格草稿 Scratch 保存三类信息：
+提示词组装器 Scratch 保存三类输入：
 
 | 代码名 | 中文意思 | 来源 |
 | --- | --- | --- |
 | `name` | 角色名 | `agent.json.name` |
 | `currently` | 当前关注点 | `agent.json.currently` 或断点 checkpoint |
-| `config` | 人格字段集合 | `agent.json.scratch` |
+| `config` | 角色画像字段集合 | `agent.json.scratch` |
 
 基础提示词模板位于：
 
@@ -335,9 +335,9 @@ Today is ${date}. ${currently}
 | `${lifestyle}` | 生活习惯 lifestyle | `agent.json.scratch.lifestyle` | 影响起床、睡觉、工作和休息节奏。 |
 | `${daily_plan}` | 日常计划 daily plan | `agent.json.scratch.daily_plan` | 给日程生成 Schedule 一个常规生活骨架。 |
 | `${date}` | 当前日期 date | 全局计时器 Timer 的 `daily_format_cn()` | 让模型知道今天是几月几日、星期几。 |
-| `${currently}` | 当前关注 currently | `agent.json.currently` 或断点 checkpoint | 决定角色眼下的目标，例如伊莎贝拉正在筹备情人节派对。 |
+| `${currently}` | 当前关注 currently | `agent.json.currently` 或断点 checkpoint | 决定角色眼下的目标，例如伊莎贝拉 Isabella Rodriguez 正在筹备情人节派对。 |
 
-人格基础描述函数 `Scratch._base_desc()` 负责填充模板：
+基础描述函数 `Scratch._base_desc()` 负责填充模板：
 
 ```python
 def _base_desc(self):
@@ -362,22 +362,22 @@ def _base_desc(self):
 | --- | --- |
 | 输入 | 角色名 name、年龄 age、先天特质 innate、后天经历 learned、生活习惯 lifestyle、日常计划 daily_plan、当前日期 date、当前关注 currently。 |
 | 处理逻辑 | 用提示词构建函数 `build_prompt("base_desc")` 读取 `base_desc.txt`，把变量替换成真实角色字段。 |
-| 输出 | 一段完整的人格基础描述 base description，作为后续提示词 prompt 的公共上下文。 |
+| 输出 | 一段完整的基础角色描述 base description，作为后续提示词 prompt 的公共上下文。 |
 
 代码逻辑图：
 
 ```mermaid
 flowchart TD
-    Fields["人格字段 age / innate / learned / lifestyle / daily_plan"] --> Payload["模板变量 payload"]
+    Fields["角色画像字段 age / innate / learned / lifestyle / daily_plan"] --> Payload["模板变量 payload"]
     Date["小镇日期 daily_format_cn()"] --> Payload
     Current["当前关注 currently"] --> Payload
     Payload --> Builder["提示词构建函数 build_prompt('base_desc')"]
     Template["提示词模板 base_desc.txt"] --> Builder
-    Builder --> Text["人格基础描述文本"]
+    Builder --> Text["基础角色描述文本"]
     Text --> Downstream["起床、日程、重要性、对话、反思提示词 prompt"]
 ```
 
-伊莎贝拉在 `2024-02-14` 早上初始化后，基础提示词会被填成：
+伊莎贝拉 Isabella Rodriguez 在 `2024-02-14` 早上初始化后，基础提示词会被填成：
 
 ```text
 姓名: 伊莎贝拉
@@ -401,7 +401,7 @@ flowchart TD
 | 重要性评分 poignancy_event / poignancy_chat | 把 `base_desc` 和事件 event 放在一起 | 让同一事件对不同角色有不同重要性。 |
 | 对话生成 generate_chat | 把 `base_desc`、记忆 memory、地点 address、当前对话 conversation 放在一起 | 决定角色如何用自己的身份说话。 |
 
-这里要分清两件事。第 15 章的初始化阶段不会把 `base_desc` 直接发给大语言模型 LLM；脚手架里展示的“基础提示词预览 Base prompt preview”只是把模板填好给读者看。真正调用模型发生在后续 `Agent.completion("wake_up")`、`Agent.completion("schedule_init")`、`Agent.completion("generate_chat")` 等行为阶段。也就是说，初始化负责准备人格上下文，后续章节负责把这个上下文送进具体任务 prompt。
+这里要分清两件事。第 15 章的初始化阶段不会把 `base_desc` 直接发给大语言模型 LLM；脚手架里展示的“基础提示词预览 Base prompt preview”只是把模板填好给读者看。真正调用模型发生在后续 `Agent.completion("wake_up")`、`Agent.completion("schedule_init")`、`Agent.completion("generate_chat")` 等行为阶段。也就是说，初始化负责准备角色上下文，后续章节负责把这个上下文送进具体任务 prompt。
 
 角色身份连续性主要就来自这里：模型每次被要求生成行为时，都会先看到同一套人物身份、生活习惯和当前关注点。
 
@@ -490,7 +490,7 @@ flowchart TD
     Config["完整角色配置 config"] --> Identity["身份与共享环境 name / maze / conversation / logger"]
     Config --> Runtime["运行配置 percept_config / think_config / chat_iter"]
     Config --> Memory["长期模块 Spatial / Schedule / Associate"]
-    Config --> Prompt["人格草稿 Scratch"]
+    Config --> Prompt["提示词组装器 Scratch"]
     Config --> State["当前状态 status / plan / last_record"]
     Identity --> Agent["可运行智能体 Agent"]
     Runtime --> Agent
@@ -508,7 +508,7 @@ flowchart TD
 | 空间记忆 | `spatial` | 角色知道的地点树和快捷地址 | 计划落地、睡觉、随机选址都依赖它 |
 | 日程系统 | `schedule` | 一天计划与细粒度分解 | 决定当前时段应该做什么 |
 | 关联记忆 | `associate`、`concepts`、`chats` | 事件、想法、对话及当前感知缓存 | 支撑检索、反思和关系记忆 |
-| 人格草稿 | `scratch` | 角色设定和当前关注点 | 构造各类大语言模型 LLM 提示词 prompt 的基础上下文 |
+| 提示词组装器 | `scratch` | 角色设定和当前关注点 | 构造各类大语言模型 LLM 提示词 prompt 的基础上下文 |
 | 当前状态 | `status`、`plan`、`last_record`、`action`、`coord`、`path` | 反思计数、前端移动计划、记录时间、当前行动、坐标、移动路径 | 支撑连续仿真、回放和断点 checkpoint |
 
 空间记忆 Spatial 初始化时还有一个小动作：如果角色有居住地址 `living_area`，但没有显式配置睡觉地址，系统会自动补出中文键 `睡觉`。
@@ -530,7 +530,7 @@ flowchart TD
     Add --> Later["后续睡觉行为可定位到床"]
 ```
 
-伊莎贝拉的居住地址是 `the Ville -> 伊莎贝拉的公寓 -> 主人房`，所以睡觉地址会自动变成 `the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床`。这个细节会在后续 `think()` 判断角色睡觉时发挥作用。
+伊莎贝拉 Isabella Rodriguez 的居住地址是 `the Ville -> 伊莎贝拉的公寓 -> 主人房`，所以睡觉地址会自动变成 `the Ville -> 伊莎贝拉的公寓 -> 主人房 -> 床`。这个细节会在后续 `think()` 判断角色睡觉时发挥作用。
 
 ## 15.9 初始行动 Action 如何写入世界地图 Maze
 
@@ -625,7 +625,7 @@ flowchart TD
 docs/book/scaffolds/part_03/ch15_agent_init_demo.py
 ```
 
-脚手架加载真实的伊莎贝拉 `agent.json`、公共 `data/config.json` 和真实 `maze.json`，然后实际构造一个智能体 Agent 对象。它不会调用模型重置函数 `reset()`、智能体思考函数 `think()` 或智能体补全函数 `completion()`，因此不会触发大语言模型 LLM 或向量嵌入 embedding 请求；脚手架只演示初始化阶段已经完成的对象装配。为了避免读取私密接口密钥 API key，脚手架把关联记忆 Associate 的向量嵌入 embedding 配置改成本地 Ollama 形式，但不插入记忆节点，因此不会发起向量请求。
+脚手架加载真实的伊莎贝拉 Isabella Rodriguez `agent.json`、公共 `data/config.json` 和真实 `maze.json`，然后实际构造一个智能体 Agent 对象。它不会调用模型重置函数 `reset()`、智能体思考函数 `think()` 或智能体补全函数 `completion()`，因此不会触发大语言模型 LLM 或向量嵌入 embedding 请求；脚手架只演示初始化阶段已经完成的对象装配。为了避免读取私密接口密钥 API key，脚手架把关联记忆 Associate 的向量嵌入 embedding 配置改成本地 Ollama 形式，但不插入记忆节点，因此不会发起向量请求。
 
 从仓库根目录运行：
 
@@ -647,7 +647,7 @@ docs/book/scaffolds/part_03/ch15_agent_init_demo.py
 地图地址 tile_address: the Ville:伊莎贝拉的公寓:主人房:床
 当前关注 currently: 伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
 
-人格草稿字段 Scratch fields
+角色画像字段 scratch fields
 age: 34
 innate: 友好、外向、好客
 learned: 伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
@@ -685,14 +685,14 @@ daily_plan: 伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台�
 | --- | --- | --- |
 | `角色配置 agent_config` | `frontend/static/assets/village/agents/伊莎贝拉/agent.json` | 脚手架使用真实角色种子，不是手写样例 |
 | `运行配置 runtime_config` | `generative_agents/data/config.json` | 公共感知、模型、日程和记忆配置来自项目文件 |
-| `初始坐标 coord` | 智能体构造函数 `Agent.__init__()`、地图取格函数 `Maze.tile_at()` | `[72, 14]` 落在伊莎贝拉公寓主人房的床上 |
-| `当前关注 currently` | 人格草稿 `Scratch(self.name, currently, scratch)` | 情人节派对目标进入人格草稿 Scratch |
-| `人格草稿字段 Scratch fields` | `agent.scratch.config` | 年龄、性格、经历、生活习惯和日常计划已进入提示词 prompt 上下文 |
+| `初始坐标 coord` | 智能体构造函数 `Agent.__init__()`、地图取格函数 `Maze.tile_at()` | `[72, 14]` 落在伊莎贝拉 Isabella Rodriguez 公寓主人房的床上 |
+| `当前关注 currently` | 提示词组装器 `Scratch(self.name, currently, scratch)` | 情人节派对目标进入提示词组装器 Scratch 的当前关注 currently |
+| `角色画像字段 scratch fields` | `agent.scratch.config` | 年龄、性格、经历、生活习惯和日常计划已进入提示词 prompt 上下文 |
 | `睡觉地址 sleep_address` | 空间记忆构造函数 `Spatial.__init__()` | `living_area + ["床"]` 自动派生睡觉地址 |
 | `关联记忆节点数 associate_nodes` | 关联记忆索引 `Associate.index.nodes_num` | 关联记忆系统已初始化，新角色暂时没有记忆节点 |
 | `日程条目数 schedule_items` | 日程列表 `Schedule.daily_schedule` | 日程对象已创建，但还没有调用大语言模型 LLM 生成当天计划 |
 | `初始行动 Initial action` | 行动类 `memory.Action`、事件类 `memory.Event`、智能体移动函数 `Agent.move()` | 角色事件和床的对象事件已经写入地图格子 Tile |
-| `基础提示词预览` | 人格基础描述函数 `Scratch._base_desc()` | 可以直接看到 `agent.json` 如何变成提示词 prompt 文本 |
+| `基础提示词预览` | 基础描述函数 `Scratch._base_desc()` | 可以直接看到 `agent.json` 如何变成提示词 prompt 文本 |
 
 脚手架输出对应的对象装配路径如下：
 
@@ -700,7 +700,7 @@ daily_plan: 伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台�
 flowchart TD
     Files["真实文件 agent.json / data/config.json / maze.json"] --> Build["脚手架构造智能体 Agent"]
     Build --> Identity["身份与坐标输出 name / coord / tile_address"]
-    Build --> Scratch["人格草稿 Scratch fields"]
+    Build --> Scratch["角色画像字段 scratch fields"]
     Build --> Spatial["空间记忆 Spatial memory"]
     Build --> Runtime["运行模块 Runtime modules"]
     Build --> Action["初始行动 Initial action"]
@@ -762,7 +762,7 @@ self.scratch.prompt_wake_up()
 
 ```mermaid
 flowchart LR
-    Hint["调用提示标识 func_hint"] --> Method["人格草稿方法 Scratch.prompt_xxx()"]
+    Hint["调用提示标识 func_hint"] --> Method["提示词方法 Scratch.prompt_xxx()"]
     Method --> Template["提示词模板 data/prompts/*.txt"]
     Template --> Result["提示词结果 Result"]
     Result --> Model["模型补全调用函数 LLMModel.completion()"]
@@ -770,7 +770,7 @@ flowchart LR
     Parsed --> Behavior["日程、行动、对话或反思"]
 ```
 
-*图 15-4：从智能体补全函数 `Agent.completion()` 到行为结果的提示词 prompt 调用链。初始化提供人格草稿 Scratch 和模型配置，真正的行为生成发生在后续智能体思考循环函数 `think()` 中。*
+*图 15-4：从智能体补全函数 `Agent.completion()` 到行为结果的提示词 prompt 调用链。初始化提供提示词组装器 Scratch 和模型配置，真正的行为生成发生在后续智能体思考循环函数 `think()` 中。*
 
 断点 checkpoint 保存由智能体序列化函数 `Agent.to_dict()` 负责：
 
@@ -814,7 +814,7 @@ flowchart TD
 | 公共配置 | `percept`、`schedule`、`think`、`associate` 都存在 | 大语言模型 LLM 或向量嵌入 embedding 提供方 provider 配置不完整 | `generative_agents/data/config.json` |
 | 关联记忆 | 新角色 `associate_nodes` 为 0，恢复角色能加载已有节点 | 断点 checkpoint JSON 与存储索引 storage index 不一致 | `results/checkpoints/<sim>/storage/<角色名>/associate` |
 | 当前行动 | 初始化后能看到角色事件和对象事件 | 地图上没有角色状态，周围角色感知不到它 | 智能体移动函数 `Agent.move()`、地图格子事件 `Tile.events` |
-| 基础提示词 prompt | 人格基础描述函数 `_base_desc()` 能看到角色身份和当前关注 | 模型行为泛化、缺少目标感 | `data/prompts/base_desc.txt`、人格基础描述函数 `Scratch._base_desc()` |
+| 基础提示词 prompt | 基础描述函数 `_base_desc()` 能看到角色身份和当前关注 | 模型行为泛化、缺少目标感 | `data/prompts/base_desc.txt`、基础描述函数 `Scratch._base_desc()` |
 
 初始化排查可以画成下面这张图：
 
@@ -865,8 +865,8 @@ python start.py --name init-check --start "20240213-09:30" --step 1 --stride 10 
 | 配置来源 | `data/config.json` 提供公共运行参数，`agent.json` 提供角色种子，断点 checkpoint 提供恢复状态 |
 | 角色清单 | 项目固定提供 25 个角色，`start.py` 的 `personas` 是默认角色入口 |
 | 角色字段 | `currently`、`scratch`、`spatial` 和 `coord` 分别进入提示词 prompt、空间记忆和地图状态 |
-| 基础提示词 | `base_desc.txt` 是角色设定进入大语言模型 LLM 的核心模板，人格草稿 Scratch 会把真实角色字段填进去 |
-| prompt 边界 | 初始化阶段不直接调用模型；它准备 `base_desc`，后续日程、记忆评分、对话和反思 prompt 会复用这段人格上下文 |
+| 基础提示词 | `base_desc.txt` 是角色设定进入大语言模型 LLM 的核心模板，提示词组装器 Scratch 会把真实角色字段填进去 |
+| prompt 边界 | 初始化阶段不直接调用模型；它准备 `base_desc`，后续日程、记忆评分、对话和反思 prompt 会复用这段角色上下文 |
 | 装配链路 | 入口脚本 `start.py` 生成配置骨架，游戏容器构造函数 `Game.__init__()` 合并配置，智能体构造函数 `Agent.__init__()` 创建运行模块 |
 | 当前行动 | 初始行动 Action 会写入世界地图 Maze，让角色真正出现在世界里 |
 | 断点恢复 | 断点 checkpoint 中的 `status`、`schedule`、`associate`、`currently`、`action` 会覆盖初始种子 |

@@ -2,7 +2,7 @@
 
 ## 37.1 要解决的问题：把故事判断变成可复查评价
 
-第 36 章已经把多次运行整理成实验包，但实验包本身不会自动告诉我们“派对是否可信”。`book-collaboration-party` 的回放很容易让人产生成功印象：2024-02-14 12:30，伊莎贝拉告诉克劳斯“今天下午5点到7点我们这儿有情人节派对”；16:10，玛丽亚提醒克劳斯“派对5点就开始了”；17:00，`movement.json` 显示伊莎贝拉、玛丽亚和克劳斯出现在霍布斯咖啡馆，17:40 埃迪也到场。
+第 36 章已经把多次运行整理成实验包，但实验包本身不会自动告诉我们“派对是否可信”。`book-collaboration-party` 的回放很容易让人产生成功印象：2024-02-14 12:30，伊莎贝拉 Isabella Rodriguez 告诉克劳斯 Klaus Mueller“今天下午5点到7点我们这儿有情人节派对”；16:10，玛丽亚 Maria Lopez 提醒克劳斯 Klaus Mueller“派对5点就开始了”；17:00，`movement.json` 显示伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 出现在霍布斯咖啡馆，17:40 埃迪 Eddy Lin 也到场。
 
 这段故事好读，但评价不能停在“我觉得它发生了”。工程上的问题是：
 
@@ -362,8 +362,8 @@ python analyze_experiment.py --event valentine_party --batch-names "book-social-
 | 实验 | 最后时间 | checkpoint | mentions | known | accepted | rejected | arrived | goal | 反思候选 | 读法 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | `book-memory-governance-full` | `13:50` | 36 | 11 | 2 | 1 | 0 | 0 | 0.6667 | 1 | 时间窗没有覆盖 17:00，不能把未到场写成最终失败。 |
-| `book-reflection-party` | `19:20` | 69 | 11 | 2 | 1 | 0 | 2 | 0.75 | 1 | 有到场角色，但承诺者山姆未被验证到场。 |
-| `book-goal-party` | `20:10` | 74 | 16 | 2 | 2 | 0 | 1 | 0.75 | 1 | 伊莎贝拉到场，玛丽亚有承诺未到场候选。 |
+| `book-reflection-party` | `19:20` | 69 | 11 | 2 | 1 | 0 | 2 | 0.75 | 1 | 有到场角色，但承诺者山姆 Sam Moore 未被验证到场。 |
+| `book-goal-party` | `20:10` | 74 | 16 | 2 | 2 | 0 | 1 | 0.75 | 1 | 伊莎贝拉 Isabella Rodriguez 到场，玛丽亚 Maria Lopez 有承诺未到场候选。 |
 | `book-collaboration-party` | `19:40` | 71 | 28 | 4 | 2 | 1 | 4 | 1.0 | 0 | 传播、承诺和到场闭环最完整。 |
 | `book-social-party-r1` | `19:50` | 72 | 45 | 5 | 2 | 0 | 3 | 1.0 | 0 | 派对窗口覆盖完整，目标项通过。 |
 | `book-social-party-r2` | `19:50` | 72 | 30 | 3 | 3 | 0 | 3 | 1.0 | 0 | 知情人数少于 r1，但承诺者均到场。 |
@@ -379,8 +379,8 @@ python analyze_experiment.py --event valentine_party --batch-names "book-social-
 | --- | ---: | --- |
 | `checkpoint_count` | 71 | 仿真覆盖到 2024-02-14 19:40，包含派对窗口。 |
 | `mention_count` | 28 | 派对、五点、布置、帮忙、音乐等事实被多次提及。 |
-| `known_agent_count` | 4 | 伊莎贝拉、克劳斯、埃迪、玛丽亚进入事件板。 |
-| `accepted_count` | 2 | 埃迪和玛丽亚被抽取为承诺候选。 |
+| `known_agent_count` | 4 | 伊莎贝拉 Isabella Rodriguez、克劳斯 Klaus Mueller、埃迪 Eddy Lin、玛丽亚 Maria Lopez 进入事件板。 |
+| `accepted_count` | 2 | 埃迪 Eddy Lin 和玛丽亚 Maria Lopez 被抽取为承诺候选。 |
 | `arrived_count` | 4 | 四名角色在目标窗口进入霍布斯咖啡馆。 |
 | `goal_completion_rate` | 1.0 | 传播、承诺、到场和未兑现承诺检查通过。 |
 
@@ -388,10 +388,10 @@ python analyze_experiment.py --event valentine_party --batch-names "book-social-
 
 | 环节 | 原始证据 | 判断 |
 | --- | --- | --- |
-| 传播 diffusion | `12:30` 伊莎贝拉告诉克劳斯“今天下午5点到7点我们这儿有情人节派对”。 | 事件事实从组织者传给顾客。 |
-| 协作 commitment | `14:30` 埃迪回答“没问题，交给我吧”。 | 可作为帮忙承诺候选。 |
-| 二次传播 retransmission | `16:10` 玛丽亚提醒克劳斯“派对5点就开始了”。 | 信息不只停留在伊莎贝拉一侧。 |
-| 到场 attendance | `17:00` 伊莎贝拉、玛丽亚、克劳斯在咖啡馆，`17:40` 埃迪到场。 | 承诺和行动可以回到 `movement.json` 验证。 |
+| 传播 diffusion | `12:30` 伊莎贝拉 Isabella Rodriguez 告诉克劳斯 Klaus Mueller“今天下午5点到7点我们这儿有情人节派对”。 | 事件事实从组织者传给顾客。 |
+| 协作 commitment | `14:30` 埃迪 Eddy Lin 回答“没问题，交给我吧”。 | 可作为帮忙承诺候选。 |
+| 二次传播 retransmission | `16:10` 玛丽亚 Maria Lopez 提醒克劳斯 Klaus Mueller“派对5点就开始了”。 | 信息不只停留在伊莎贝拉 Isabella Rodriguez 一侧。 |
+| 到场 attendance | `17:00` 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller 在咖啡馆，`17:40` 埃迪 Eddy Lin 到场。 | 承诺和行动可以回到 `movement.json` 验证。 |
 
 ### 失败候选样例
 
@@ -399,11 +399,11 @@ python analyze_experiment.py --event valentine_party --batch-names "book-social-
 
 | 实验 | 角色 | 证据摘录 | 边界 |
 | --- | --- | --- | --- |
-| `book-memory-governance-full` | 玛丽亚 | `11:10` 说“我下午直播完肯定过来捧场”。 | 实验只跑到 `13:50`，不能验证 17:00 后到场。 |
-| `book-reflection-party` | 山姆 | `09:30` 说“下午没问题！我正好要去你那儿取詹妮弗的甜点”。 | `arrived` 里有伊莎贝拉和汤姆，但没有山姆。 |
-| `book-goal-party` | 玛丽亚 | `11:40` 说“我五点一定到”。 | 实验覆盖到 `20:10`，需要回查日程和移动断点。 |
-| `book-social-party-r3` | 山姆 | `16:30` 说“等派对开始我和林晓一定过来坐坐”。 | 有承诺候选，未在 `arrived` 中出现。 |
-| `book-social-party-r3` | 玛丽亚 | `13:10` 说“我肯定要来”，`14:10` 又提出帮忙吹气球。 | 对话承诺充分，但未被移动证据验证。 |
+| `book-memory-governance-full` | 玛丽亚 Maria Lopez | `11:10` 说“我下午直播完肯定过来捧场”。 | 实验只跑到 `13:50`，不能验证 17:00 后到场。 |
+| `book-reflection-party` | 山姆 Sam Moore | `09:30` 说“下午没问题！我正好要去你那儿取詹妮弗 Jennifer Moore 的甜点”。 | `arrived` 里有伊莎贝拉 Isabella Rodriguez 和汤姆 Tom Moreno，但没有山姆 Sam Moore。 |
+| `book-goal-party` | 玛丽亚 Maria Lopez | `11:40` 说“我五点一定到”。 | 实验覆盖到 `20:10`，需要回查日程和移动断点。 |
+| `book-social-party-r3` | 山姆 Sam Moore | `16:30` 说“等派对开始我和林晓 Lin Xiao 一定过来坐坐”。 | 有承诺候选，未在 `arrived` 中出现。 |
+| `book-social-party-r3` | 玛丽亚 Maria Lopez | `13:10` 说“我肯定要来”，`14:10` 又提出帮忙吹气球。 | 对话承诺充分，但未被移动证据验证。 |
 
 这些候选适合进入第 33 章的经验学习链路：评价脚本定位失败，人工或 self-evaluation 再判断是否生成 lesson。不能直接把候选写成“某角色不可靠”，因为失败可能来自时间窗、地点映射、计划修订、路线选择或正则误判。
 
@@ -426,8 +426,8 @@ python analyze_experiment.py --event valentine_party --batch-names "book-social-
 | --- | --- | --- |
 | 正则候选不是人工裁决 | `book-collaboration-party` 中 `rejected=["伊莎贝拉"]`，需要回查原话确认是否真是拒绝。 | 报告保留候选，正式结论必须人工复核。 |
 | 时间窗不足 | `book-memory-governance-full` 最后时间是 `13:50`。 | 写成“未覆盖到场验证”，不是“到场失败”。 |
-| 同一角色状态可能冲突 | `book-social-party-r3` 中埃迪同时有接受和拒绝候选。 | 保留时序，不能压成一个最终标签。 |
-| 到场不等于任务完成 | 埃迪到达咖啡馆，不自动等于音乐或布置任务完成。 | 后续需要任务级文件或行动证据。 |
+| 同一角色状态可能冲突 | `book-social-party-r3` 中埃迪 Eddy Lin 同时有接受和拒绝候选。 | 保留时序，不能压成一个最终标签。 |
+| 到场不等于任务完成 | 埃迪 Eddy Lin 到达咖啡馆，不自动等于音乐或布置任务完成。 | 后续需要任务级文件或行动证据。 |
 | 成本统计尚未进入 metrics | `metrics.json` 没有 LLM 请求数和失败率字段。 | 不能声称本章已经完成成本评价。 |
 
 ### 复查入口

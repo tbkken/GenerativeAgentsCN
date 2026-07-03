@@ -4,7 +4,7 @@
 
 上一章复现了情人节派对传播，本章节我们来学习另外一个传播扩散案例，镇长竞选信息扩散，这是论文中另一条经典社会现象。
 
-在论文中，Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。生成式智能体 Generative Agents 中，山姆保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
+在论文中，山姆 Sam Moore 有竞选镇长的意图。信息通过对话传播给其他居民。生成式智能体 Generative Agents 中，山姆 Sam Moore 保留了这条设定。这个实验和派对实验类似，但更复杂。派对信息主要是：
 
 ```text
 时间 + 地点 + 是否参加
@@ -26,14 +26,14 @@
 1. 镇长竞选实验验证哪些模块？
 2. 角色应该如何选择？
 3. 如何运行 10 人竞选扩散实验？
-4. 如何判断“知道山姆竞选”？
+4. 如何判断“知道山姆 Sam Moore 竞选”？
 5. 如何记录居民态度？
 6. 如何避免把幻觉当传播？
 7. 如何比较竞选扩散和派对传播的差异？
 
 ```mermaid
 flowchart LR
-    Sam["Sam<br/>竞选意图"] --> Direct["直接对话对象"]
+    Sam["山姆 Sam Moore<br/>竞选意图"] --> Direct["直接对话对象"]
     Direct --> Memory["对方写入记忆"]
     Memory --> Retell["后续转述"]
     Retell --> Others["更多居民获知"]
@@ -42,18 +42,18 @@ flowchart LR
     Attitude --> Evidence["对话记录 conversation / 时间线 simulation 证据"]
 ```
 
-*图 25-1：山姆竞选信息扩散路径。竞选实验不只看消息有没有传播，还要看不同角色如何根据身份和关系形成不同态度。*
+*图 25-1：山姆 Sam Moore 竞选信息扩散路径。竞选实验不只看消息有没有传播，还要看不同角色如何根据身份和关系形成不同态度。*
 
 ![图 25-2：镇长竞选信息扩散证据板](../../assets/chapter_25/ch25_election_evidence_board.png)
 
-*图 25-2：镇长竞选信息扩散证据板。图片以山姆、汤姆和约翰的真实头像 portrait 与角色配置 agent.json 为锚点，把 conversation.json、simulation.md、movement.json 和 checkpoint memory 组织成证据链，突出信息源头、传播路径、态度分化和“幻觉知道”判定红线。*
+*图 25-2：镇长竞选信息扩散证据板。图片以山姆 Sam Moore、汤姆 Tom Moreno 和约翰 John Lin 的真实头像 portrait 与角色配置 agent.json 为锚点，把 conversation.json、simulation.md、movement.json 和 checkpoint memory 组织成证据链，突出信息源头、传播路径、态度分化和“幻觉知道”判定红线。*
 
 ## 25.2 实验目标
 
 本实验目标有三层。
 
-- 第一层，信息是否扩散。仿真开始时，山姆知道自己要竞选镇长。运行后，其他角色是否知道？
-- 第二层，扩散路径是否可追踪。谁从山姆那里听到？谁又告诉别人？每条路径是否能在 `conversation.json` 中找到？
+- 第一层，信息是否扩散。仿真开始时，山姆 Sam Moore 知道自己要竞选镇长。运行后，其他角色是否知道？
+- 第二层，扩散路径是否可追踪。谁从山姆 Sam Moore 那里听到？谁又告诉别人？每条路径是否能在 `conversation.json` 中找到？
 - 第三层，态度是否有差异。居民是否表现出支持、怀疑、反对或追问？
 
 这三层对应不同能力：
@@ -64,7 +64,7 @@ flowchart LR
 
 ## 25.3 推荐角色
 
-本章采用 10 人版本作为主实验。这个规模既保留山姆、汤姆、约翰、拉托亚、乔治和伊莎贝拉这组竞选核心角色，也加入阿伊莎、亚当、玛丽亚和克劳斯，用来观察竞选信息是否进入学院和咖啡馆社交圈。建议使用：
+本章采用 10 人版本作为主实验。这个规模既保留山姆 Sam Moore、汤姆 Tom Moreno、约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi 和伊莎贝拉 Isabella Rodriguez 这组竞选核心角色，也加入阿伊莎 Ayesha Khan、亚当 Adam Smith、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller，用来观察竞选信息是否进入学院和咖啡馆社交圈。建议使用：
 
 ```text
 山姆
@@ -81,18 +81,18 @@ flowchart LR
 
 这样选择的理由如下：
 
-山姆是信息源。汤姆是关键反对或怀疑节点。项目设定中，汤姆对山姆并不友好，适合观察负面态度。约翰、拉托亚、乔治适合观察信息传播。伊莎贝拉在咖啡馆，容易成为社交枢纽。阿伊莎、亚当、玛丽亚和克劳斯把实验扩展到学院、写作者和咖啡馆常客圈。
+山姆 Sam Moore 是信息源。汤姆 Tom Moreno 是关键反对或怀疑节点。项目设定中，汤姆 Tom Moreno 对山姆 Sam Moore 并不友好，适合观察负面态度。约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi 适合观察信息传播。伊莎贝拉 Isabella Rodriguez 在咖啡馆，容易成为社交枢纽。阿伊莎 Ayesha Khan、亚当 Adam Smith、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 把实验扩展到学院、写作者和咖啡馆常客圈。
 
 ```mermaid
 flowchart TD
     Goal["10 人实验任务 task<br/>验证镇长竞选信息扩散"]
-    Sam["山姆 Sam<br/>信息源 source<br/>currently 写明正在竞选"]
-    Tom["汤姆 Tom<br/>反对压力 opposition<br/>不喜欢山姆"]
-    John["约翰 John<br/>询问节点 inquiry<br/>关心谁参加选举"]
-    Latoya["拉托亚 LaToya<br/>传播观察 observation<br/>选举是交谈核心话题"]
-    George["乔治 George<br/>议题深化 policy discussion<br/>经常谈论选举"]
-    Isabella["伊莎贝拉 Isabella<br/>咖啡馆枢纽 cafe hub<br/>公共对话场景"]
-    Extended["扩展圈 extended circle<br/>阿伊莎 / 亚当 / 玛丽亚 / 克劳斯"]
+    Sam["山姆 Sam Moore<br/>信息源 source<br/>currently 写明正在竞选"]
+    Tom["汤姆 Tom Moreno<br/>反对压力 opposition<br/>不喜欢山姆 Sam Moore"]
+    John["约翰 John Lin<br/>询问节点 inquiry<br/>关心谁参加选举"]
+    Latoya["拉托亚 Latoya Williams<br/>传播观察 observation<br/>选举是交谈核心话题"]
+    George["乔治 Giorgio Rossi<br/>议题深化 policy discussion<br/>经常谈论选举"]
+    Isabella["伊莎贝拉 Isabella Rodriguez<br/>咖啡馆枢纽 cafe hub<br/>公共对话场景"]
+    Extended["扩展圈 extended circle<br/>阿伊莎 Ayesha Khan / 亚当 Adam Smith / 玛丽亚 Maria Lopez / 克劳斯 Klaus Mueller"]
     Evidence["证据闭环 evidence<br/>conversation.json / simulation.md / movement.json"]
     Verdict["实验结论 verdict<br/>知道人数 + 传播路径 + 态度差异 + 幻觉知道"]
 
@@ -109,35 +109,35 @@ flowchart TD
     Evidence --> Verdict
 ```
 
-*图 25-3：镇长竞选实验任务关系图。山姆负责提供竞选信息源头，汤姆负责制造态度压力，约翰、拉托亚和乔治负责观察竞选话题是否被询问、转述和深化，伊莎贝拉负责提供咖啡馆公共场景，阿伊莎、亚当、玛丽亚和克劳斯负责观察竞选信息是否进入学院、写作者和咖啡馆常客圈。*
+*图 25-3：镇长竞选实验任务关系图。山姆 Sam Moore 负责提供竞选信息源头，汤姆 Tom Moreno 负责制造态度压力，约翰 John Lin、拉托亚 Latoya Williams 和乔治 Giorgio Rossi 负责观察竞选话题是否被询问、转述和深化，伊莎贝拉 Isabella Rodriguez 负责提供咖啡馆公共场景，阿伊莎 Ayesha Khan、亚当 Adam Smith、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 负责观察竞选信息是否进入学院、写作者和咖啡馆常客圈。*
 
 再看人物关系。下面这张图不表示竞选信息已经传播，而是说明这些角色为什么适合放在同一组实验中：他们分别处在公园、市场、咖啡馆和学院等自然接触圈里，竞选话题可以通过这些场景进入对话。
 
 ```mermaid
 flowchart LR
     subgraph Source["竞选源头 source"]
-        Sam["山姆 Sam<br/>退役军官 / 公园 / 咖啡馆<br/>正在告诉邻居竞选"]
+        Sam["山姆 Sam Moore<br/>退役军官 / 公园 / 咖啡馆<br/>正在告诉邻居竞选"]
     end
 
     subgraph Market["柳树市场和药店 Market"]
-        Tom["汤姆 Tom<br/>店主<br/>不喜欢山姆"]
-        John["约翰 John<br/>药店店主<br/>主动询问谁参选"]
+        Tom["汤姆 Tom Moreno<br/>店主<br/>不喜欢山姆 Sam Moore"]
+        John["约翰 John Lin<br/>药店店主<br/>主动询问谁参选"]
     end
 
     subgraph Cafe["霍布斯咖啡馆 Cafe"]
-        Isabella["伊莎贝拉 Isabella<br/>咖啡馆老板<br/>公共社交枢纽"]
-        Adam["亚当 Adam<br/>写作者<br/>关心地方选举"]
+        Isabella["伊莎贝拉 Isabella Rodriguez<br/>咖啡馆老板<br/>公共社交枢纽"]
+        Adam["亚当 Adam Smith<br/>写作者<br/>关心地方选举"]
     end
 
     subgraph College["奥克山学院 College"]
-        Aisha["阿伊莎 Aisha<br/>文学学生"]
-        Maria["玛丽亚 Maria<br/>物理学生 / 咖啡馆常客"]
-        Klaus["克劳斯 Klaus<br/>社会学学生 / 咖啡馆吃饭"]
+        Aisha["阿伊莎 Ayesha Khan<br/>文学学生"]
+        Maria["玛丽亚 Maria Lopez<br/>物理学生 / 咖啡馆常客"]
+        Klaus["克劳斯 Klaus Mueller<br/>社会学学生 / 咖啡馆吃饭"]
     end
 
     subgraph Observers["跨圈观察者 observers"]
-        Latoya["拉托亚 LaToya<br/>摄影师<br/>选举是核心话题"]
-        George["乔治 George<br/>数学家<br/>经常谈论选举"]
+        Latoya["拉托亚 Latoya Williams<br/>摄影师<br/>选举是核心话题"]
+        George["乔治 Giorgio Rossi<br/>数学家<br/>经常谈论选举"]
     end
 
     Sam -->|竞选信息源头| John
@@ -155,7 +155,7 @@ flowchart LR
     George ---|市场或咖啡馆相遇| John
 ```
 
-*图 25-4：镇长竞选实验人物关系图。实线表示自然接触机会或话题触发机会，虚线表示汤姆对山姆的负面态度关系。读实验结果时，先用这张图判断哪些相遇是自然的，再回到 `conversation.json` 验证信息是否真的传播。*
+*图 25-4：镇长竞选实验人物关系图。实线表示自然接触机会或话题触发机会，虚线表示汤姆 Tom Moreno 对山姆 Sam Moore 的负面态度关系。读实验结果时，先用这张图判断哪些相遇是自然的，再回到 `conversation.json` 验证信息是否真的传播。*
 
 ## 25.4 运行命令
 
@@ -178,7 +178,7 @@ python start.py --name book-election-extended --resume --step 56 --stride 10 --v
 
 ```mermaid
 flowchart TD
-    Command["运行竞选实验命令"] --> Sam["检查山姆 currently 与首个摘要 summary"]
+    Command["运行竞选实验命令"] --> Sam["检查山姆 Sam Moore currently 与首个摘要 summary"]
     Sam --> Sim["推进仿真仿真步 step"]
     Sim --> Log["观察 S/F/R 与 JSON 解析稳定性"]
     Log --> Conversation["读取 conversation.json"]
@@ -187,7 +187,7 @@ flowchart TD
     Attitude --> Report["写入实验记录"]
 ```
 
-竞选实验启动后，第一眼先看山姆的 `reset` 和第一个 `summary`。山姆的 `currently` 应该明确包含“竞选地方市长”之类的设定；后续 `summary` 中应该出现打理公园、与邻居交谈、检查竞选材料、讨论政策等行动。如果日志里山姆只是在做普通家务，说明实验没有被竞选事件牵引起来。
+竞选实验启动后，第一眼先看山姆 Sam Moore 的 `reset` 和第一个 `summary`。山姆 Sam Moore 的 `currently` 应该明确包含“竞选地方市长”之类的设定；后续 `summary` 中应该出现打理公园、与邻居交谈、检查竞选材料、讨论政策等行动。如果日志里山姆 Sam Moore 只是在做普通家务，说明实验没有被竞选事件牵引起来。
 
 控制台还要看 `S/F/R`。竞选实验对结构化输出很敏感，因为一次错误的地点选择或对话判断，就可能让传播路径断掉。`F` 持续增加，或者反复出现 JSON 解析失败时，不要急着读 `simulation.md`，先处理模型输出稳定性。
 
@@ -209,7 +209,7 @@ results/compressed/book-election-extended/movement.json
 
 | 文件 | 先看什么 | 在竞选实验中回答什么问题 |
 | --- | --- | --- |
-| `simulation.md` | 山姆相关时间线、活动和对话摘要 | 竞选话题是否进入小镇故事线 |
+| `simulation.md` | 山姆 Sam Moore 相关时间线、活动和对话摘要 | 竞选话题是否进入小镇故事线 |
 | `conversation.json` | 谁向谁提到竞选、在哪个地点、具体说了什么 | 信息扩散路径是否可追踪，态度是否来自真实对话 |
 | `movement.json` | 角色在关键时间段的位置和行动 action | 竞选话题是否发生在合理场景中，角色是否只是路过 |
 
@@ -224,7 +224,7 @@ flowchart TD
     Movement --> Verdict["判断传播路径和态度差异是否成立"]
 ```
 
-竞选实验不要只问“多少人知道山姆竞选”。还要问：他们从哪里知道，是否正确转述，是否表达支持、怀疑、反对或观望。`conversation.json` 通常是最关键的证据文件；`simulation.md` 用来快速定位线索；`movement.json` 用来确认对话和行动是否落在合理地点。
+竞选实验不要只问“多少人知道山姆 Sam Moore 竞选”。还要问：他们从哪里知道，是否正确转述，是否表达支持、怀疑、反对或观望。`conversation.json` 通常是最关键的证据文件；`simulation.md` 用来快速定位线索；`movement.json` 用来确认对话和行动是否落在合理地点。
 
 仓库内置 `example` 已经包含竞选相关对话，可以先用它练习证据读取。例如 `20240213-12:20` 附近有这样一段：
 
@@ -237,18 +237,18 @@ flowchart TD
 山姆：我希望我们能够找到那些最能打动选民的关键点，并确保我的竞选计划既全面又具有吸引力。
 ```
 
-这段原文比单纯搜索“镇长”更有价值。它能证明山姆不是只在自言自语，而是在和乔治讨论竞选反馈；也能看出话题已经从“我要竞选”推进到“民意调查、教育政策、经济政策、社区安全”等具体议题。记录实验时，这类片段应该进入“内容摘要”和“态度/议题”两列。
+这段原文比单纯搜索“镇长”更有价值。它能证明山姆 Sam Moore 不是只在自言自语，而是在和乔治 Giorgio Rossi 讨论竞选反馈；也能看出话题已经从“我要竞选”推进到“民意调查、教育政策、经济政策、社区安全”等具体议题。记录实验时，这类片段应该进入“内容摘要”和“态度/议题”两列。
 
-`example` 中还有更早的种子对话。`20240213-06:00`，山姆告诉詹妮弗：
+`example` 中还有更早的种子对话。`20240213-06:00`，山姆 Sam Moore 告诉詹妮弗 Jennifer Moore：
 
 ```text
 我打算去约翰逊公园打理一下花坛和修剪一些灌木。
 今天也是个宣传我的竞选计划的好机会。
 ```
 
-这类早期对话适合标记为“信息源头”；中午与乔治的策略讨论适合标记为“议题深化”。竞选实验的证据表不应该只记录“谁知道”，还要记录信息处在什么阶段：宣布、询问、转述、支持、怀疑、策略讨论，还是政策细化。
+这类早期对话适合标记为“信息源头”；中午与乔治 Giorgio Rossi 的策略讨论适合标记为“议题深化”。竞选实验的证据表不应该只记录“谁知道”，还要记录信息处在什么阶段：宣布、询问、转述、支持、怀疑、策略讨论，还是政策细化。
 
-掌握这种读法后，再读 10 人日志才有意义。否则日志变长以后，只会更难判断信息到底怎么传播。10 人实验中的阿伊莎、亚当、玛丽亚和克劳斯不是为了堆人数，而是为了观察竞选信息是否跨出山姆、汤姆、约翰、拉托亚、乔治和伊莎贝拉组成的核心圈，进入学院、写作者和咖啡馆常客圈。
+掌握这种读法后，再读 10 人日志才有意义。否则日志变长以后，只会更难判断信息到底怎么传播。10 人实验中的阿伊莎 Ayesha Khan、亚当 Adam Smith、玛丽亚 Maria Lopez 和克劳斯 Klaus Mueller 不是为了堆人数，而是为了观察竞选信息是否跨出山姆 Sam Moore、汤姆 Tom Moreno、约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi 和伊莎贝拉 Isabella Rodriguez 组成的核心圈，进入学院、写作者和咖啡馆常客圈。
 
 ## 25.5 观察关键词
 
@@ -274,7 +274,7 @@ flowchart TD
 为居民服务
 ```
 
-这些也可能是竞选信息。建议人工读一遍山姆相关对话。
+这些也可能是竞选信息。建议人工读一遍山姆 Sam Moore 相关对话。
 
 ## 25.6 信息扩散记录表
 
@@ -282,10 +282,10 @@ flowchart TD
 
 | 时间 | 来源 | 接收者 | 地点 | 内容摘要 | 证据文件 |
 |---|---|---|---|---|---|
-| 09:20 | 山姆 | 伊莎贝拉 | 霍布斯咖啡馆 | 山姆提到竞选镇长 | conversation.json |
-| 10:10 | 伊莎贝拉 | 约翰 | 霍布斯咖啡馆 | 伊莎贝拉转述山姆竞选 | conversation.json |
+| 09:20 | 山姆 Sam Moore | 伊莎贝拉 Isabella Rodriguez | 霍布斯咖啡馆 | 山姆 Sam Moore 提到竞选镇长 | conversation.json |
+| 10:10 | 伊莎贝拉 Isabella Rodriguez | 约翰 John Lin | 霍布斯咖啡馆 | 伊莎贝拉 Isabella Rodriguez 转述山姆 Sam Moore 竞选 | conversation.json |
 
-每条传播都要有证据。如果某个角色后来说知道山姆竞选，但没有上游对话或记忆 memory，就不能算真实传播。
+每条传播都要有证据。如果某个角色后来说知道山姆 Sam Moore 竞选，但没有上游对话或记忆 memory，就不能算真实传播。
 
 ## 25.7 态度记录表
 
@@ -293,9 +293,9 @@ flowchart TD
 
 | 角色 | 是否知道 | 信息来源 | 态度 | 证据 |
 |---|---|---|---|---|
-| 汤姆 | 是 | 山姆直接对话 | 怀疑/反对 | 对话中质疑山姆 |
-| 约翰 | 是 | 伊莎贝拉转述 | 观望 | 只表示听说 |
-| 拉托亚 | 是 | 山姆直接对话 | 支持 | 表示愿意了解更多 |
+| 汤姆 Tom Moreno | 是 | 山姆 Sam Moore 直接对话 | 怀疑/反对 | 对话中质疑山姆 Sam Moore |
+| 约翰 John Lin | 是 | 伊莎贝拉 Isabella Rodriguez 转述 | 观望 | 只表示听说 |
+| 拉托亚 Latoya Williams | 是 | 山姆 Sam Moore 直接对话 | 支持 | 表示愿意了解更多 |
 
 态度分类不要过细。建议使用：
 
@@ -309,7 +309,7 @@ flowchart TD
 
 用固定枚举更容易保持实验记录一致。
 
-## 25.8 如何判断“知道山姆竞选”
+## 25.8 如何判断“知道山姆 Sam Moore 竞选”
 
 同样使用三层标准。弱标准：
 
@@ -335,29 +335,29 @@ flowchart TD
 flowchart TD
     Candidate["角色疑似知道竞选"] --> Evidence{"是否有对话或记忆来源"}
     Evidence -->|否| Leak["标记为幻觉知道或设定泄漏"]
-    Evidence -->|是| Content{"是否包含山姆与竞选镇长"}
+    Evidence -->|是| Content{"是否包含山姆 Sam Moore 与竞选镇长"}
     Content -->|否| Weak["只算弱相关线索"]
     Content -->|是| Attitude{"是否表达态度"}
     Attitude -->|否| Known["知道竞选"]
     Attitude -->|是| KnownAttitude["知道竞选并形成态度"]
 ```
 
-例如，约翰可能会这样说：
+例如，约翰 John Lin 可能会这样说：
 
 ```text
 我听说山姆在考虑竞选镇长。
 ```
 
-这是弱标准。如果能找到伊莎贝拉告诉约翰，就是中标准。如果约翰后来问山姆政策，就是强标准。
+这是弱标准。如果能找到伊莎贝拉 Isabella Rodriguez 告诉约翰 John Lin，就是中标准。如果约翰 John Lin 后来问山姆 Sam Moore 政策，就是强标准。
 
-## 25.9 汤姆的实验价值
+## 25.9 汤姆 Tom Moreno 的实验价值
 
-汤姆是这个实验中的关键角色。因为竞选不是派对。派对传播更偏活动邀请。竞选传播会触发态度和关系。如果所有人都礼貌支持山姆，仿真会显得过度合作。汤姆可以帮助测试：
+汤姆 Tom Moreno 是这个实验中的关键角色。因为竞选不是派对。派对传播更偏活动邀请。竞选传播会触发态度和关系。如果所有人都礼貌支持山姆 Sam Moore，仿真会显得过度合作。汤姆 Tom Moreno 可以帮助测试：
 
 - 模型是否保留角色既有态度。
 - 对话是否允许怀疑和反对。
 - `summarize_relation` 是否能体现负面关系。
-- 山姆是否会根据反对意见调整话术。
+- 山姆 Sam Moore 是否会根据反对意见调整话术。
 
 这能暴露指令调优模型过度礼貌的问题。论文也指出，模型可能过于合作、不善拒绝。镇长竞选实验正适合观察这一点。
 
@@ -386,29 +386,29 @@ flowchart TD
 
 理想运行中，应该看到：
 
-1. 山姆主动或被动提到竞选。
-2. 至少一名居民得知山姆参选。
+1. 山姆 Sam Moore 主动或被动提到竞选。
+2. 至少一名居民得知山姆 Sam Moore 参选。
 3. 至少一条二次传播路径。
-4. 汤姆表现出不同于普通支持者的态度。
-5. 后续对话中有人提到山姆竞选。
+4. 汤姆 Tom Moreno 表现出不同于普通支持者的态度。
+5. 后续对话中有人提到山姆 Sam Moore 竞选。
 
-如果只看到山姆自言自语，没有传播，说明社交触发不足。如果所有人都无条件支持，说明角色差异不足。如果很多人凭空知道山姆竞选，说明幻觉或共享信息污染。
+如果只看到山姆 Sam Moore 自言自语，没有传播，说明社交触发不足。如果所有人都无条件支持，说明角色差异不足。如果很多人凭空知道山姆 Sam Moore 竞选，说明幻觉或共享信息污染。
 
-## 25.12 常见失败一：山姆不谈竞选
+## 25.12 常见失败一：山姆 Sam Moore 不谈竞选
 
 可能原因包括下面几类：
 
-- 山姆日程没有竞选相关活动。
+- 山姆 Sam Moore 日程没有竞选相关活动。
 - `currently` 没被提示词 prompt 使用。
-- 山姆没有遇到其他人。
+- 山姆 Sam Moore 没有遇到其他人。
 - decide_chat 返回 False。
 
 可以按下面步骤排查：
 
-1. 看山姆 `agent.json` 的 currently。
-2. 看山姆日程 schedule。
-3. 看山姆活动地点。
-4. 看对话记录 conversation 是否有山姆对话。
+1. 看山姆 Sam Moore `agent.json` 的 currently。
+2. 看山姆 Sam Moore 日程 schedule。
+3. 看山姆 Sam Moore 活动地点。
+4. 看对话记录 conversation 是否有山姆 Sam Moore 对话。
 5. 必要时延长仿真步 step 或加入更容易相遇的角色。
 
 ## 25.13 常见失败二：竞选信息传播但态度单一
@@ -430,7 +430,7 @@ flowchart TD
 
 ## 25.14 常见失败三：幻觉知道
 
-如果一个角色从未接触山姆，也没有听别人提到，却说知道竞选，就是幻觉。处理方式和派对实验一样：
+如果一个角色从未接触山姆 Sam Moore，也没有听别人提到，却说知道竞选，就是幻觉。处理方式和派对实验一样：
 
 - 回查对话记录 conversation。
 - 回查记忆 memory。
@@ -440,7 +440,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Claim["角色声称知道竞选"] --> Direct{"是否和山姆聊过"}
+    Claim["角色声称知道竞选"] --> Direct{"是否和山姆 Sam Moore 聊过"}
     Direct -->|是| Valid["直接来源成立"]
     Direct -->|否| Retell{"是否有人转述"}
     Retell -->|是| Valid
@@ -477,27 +477,27 @@ generative_agents/results/compressed/book-election-extended/movement.json
 
 | 关键词 | 出现次数 | 阅读含义 |
 | --- | ---: | --- |
-| `竞选` | 39 | 山姆竞选线进入故事主线 |
+| `竞选` | 39 | 山姆 Sam Moore 竞选线进入故事主线 |
 | `市长` | 24 | 这次运行更多使用“市长”，而不是“镇长” |
 | `选举` | 21 | 选举作为公共话题出现 |
 | `候选` | 31 | 多个角色在行动摘要里研究或讨论候选人 |
 | `政策` | 18 | 出现政策网络、政策建议、政策主张等内容 |
 | `镇长` | 2 | 如果只搜“镇长”，会漏掉大部分证据 |
-| `怀疑` | 3 | 汤姆线出现负面态度 |
+| `怀疑` | 3 | 汤姆 Tom Moreno 线出现负面态度 |
 | `反对` | 1 | 负面态度存在，但不算大规模对立 |
 
-`conversation.json` 中共有 20 段对话包含山姆、竞选、市长、选举、候选、政策等相关词；其中能作为“竞选传播”强证据的，主要有下面几条：
+`conversation.json` 中共有 20 段对话包含山姆 Sam Moore、竞选、市长、选举、候选、政策等相关词；其中能作为“竞选传播”强证据的，主要有下面几条：
 
 | 时间 | 关系 | 地点 | 阶段 | 证据结论 |
 | --- | --- | --- | --- | --- |
-| 08:30 | 伊莎贝拉 -> 山姆 | 霍布斯咖啡馆 | 源头确认 | 伊莎贝拉看到山姆在看竞选计划，山姆说明重点是社区服务、公园改造和居民安全 |
-| 09:40 | 山姆 -> 伊莎贝拉 | 霍布斯咖啡馆 | 策略结合 | 山姆提议把竞选活动中的邻里交流环节和情人节派对结合 |
-| 16:30 | 汤姆 -> 约翰 | 柳树市场和药店 | 负面伏笔 | 汤姆说晚上要聊山姆竞选承诺能否兑现 |
-| 17:30 | 汤姆 -> 约翰 | 柳树市场和药店 | 怀疑扩散 | 汤姆说要“掰扯山姆竞选时吹的牛皮”，约翰愿意继续聊 |
-| 18:10 | 伊莎贝拉 -> 乔治 | 霍布斯咖啡馆 | 二跳传播 | 伊莎贝拉向乔治转述山姆的竞选理念：社区服务、经济公平、透明决策 |
-| 18:30 | 山姆 -> 乔治 | 霍布斯咖啡馆 | 议题深化 | 山姆和乔治讨论用图论建模候选人政策网络，优化社区走访策略 |
-| 20:20 | 约翰 -> 汤姆 | 莫雷诺家族的房子 | 态度固化 | 约翰主动问山姆承诺是否靠谱，汤姆判断“十有八九是空头支票” |
-| 20:50 | 约翰 -> 汤姆 | 霍布斯咖啡馆 | 继续打探 | 约翰建议汤姆去问别人对市长选举的看法，汤姆准备询问山姆那套说辞 |
+| 08:30 | 伊莎贝拉 Isabella Rodriguez -> 山姆 Sam Moore | 霍布斯咖啡馆 | 源头确认 | 伊莎贝拉 Isabella Rodriguez 看到山姆 Sam Moore 在看竞选计划，山姆 Sam Moore 说明重点是社区服务、公园改造和居民安全 |
+| 09:40 | 山姆 Sam Moore -> 伊莎贝拉 Isabella Rodriguez | 霍布斯咖啡馆 | 策略结合 | 山姆 Sam Moore 提议把竞选活动中的邻里交流环节和情人节派对结合 |
+| 16:30 | 汤姆 Tom Moreno -> 约翰 John Lin | 柳树市场和药店 | 负面伏笔 | 汤姆 Tom Moreno 说晚上要聊山姆 Sam Moore 竞选承诺能否兑现 |
+| 17:30 | 汤姆 Tom Moreno -> 约翰 John Lin | 柳树市场和药店 | 怀疑扩散 | 汤姆 Tom Moreno 说要“掰扯山姆 Sam Moore 竞选时吹的牛皮”，约翰 John Lin 愿意继续聊 |
+| 18:10 | 伊莎贝拉 Isabella Rodriguez -> 乔治 Giorgio Rossi | 霍布斯咖啡馆 | 二跳传播 | 伊莎贝拉 Isabella Rodriguez 向乔治 Giorgio Rossi 转述山姆 Sam Moore 的竞选理念：社区服务、经济公平、透明决策 |
+| 18:30 | 山姆 Sam Moore -> 乔治 Giorgio Rossi | 霍布斯咖啡馆 | 议题深化 | 山姆 Sam Moore 和乔治 Giorgio Rossi 讨论用图论建模候选人政策网络，优化社区走访策略 |
+| 20:20 | 约翰 John Lin -> 汤姆 Tom Moreno | 莫雷诺家族的房子 | 态度固化 | 约翰 John Lin 主动问山姆 Sam Moore 承诺是否靠谱，汤姆 Tom Moreno 判断“十有八九是空头支票” |
+| 20:50 | 约翰 John Lin -> 汤姆 Tom Moreno | 霍布斯咖啡馆 | 继续打探 | 约翰 John Lin 建议汤姆 Tom Moreno 去问别人对市长选举的看法，汤姆 Tom Moreno 准备询问山姆 Sam Moore 那套说辞 |
 
 这张表说明，竞选信息不是简单地“全员知道”。它形成了两条不同性质的链路。
 
@@ -508,7 +508,7 @@ generative_agents/results/compressed/book-election-extended/movement.json
 山姆 -> 乔治
 ```
 
-这条链路从“山姆正在准备竞选计划”推进到“邻里茶话会、情人节派对、政策网络、社区走访策略”。乔治不是只知道“山姆要竞选”，而是把自己的图论视角带进了竞选策略讨论。
+这条链路从“山姆 Sam Moore 正在准备竞选计划”推进到“邻里茶话会、情人节派对、政策网络、社区走访策略”。乔治 Giorgio Rossi 不是只知道“山姆 Sam Moore 要竞选”，而是把自己的图论视角带进了竞选策略讨论。
 
 第二条是药店和家庭里的怀疑链：
 
@@ -517,41 +517,41 @@ generative_agents/results/compressed/book-election-extended/movement.json
 约翰 -> 汤姆
 ```
 
-这条链路没有直接和山姆对话，但它保留了汤姆对山姆的负面态度。汤姆不只是礼貌支持，而是质疑竞选承诺是否能兑现，还用“空头支票”“漂亮话”等表达怀疑。这正是本章把汤姆放进实验里的价值：它证明角色关系可以制造态度差异。
+这条链路没有直接和山姆 Sam Moore 对话，但它保留了汤姆 Tom Moreno 对山姆 Sam Moore 的负面态度。汤姆 Tom Moreno 不只是礼貌支持，而是质疑竞选承诺是否能兑现，还用“空头支票”“漂亮话”等表达怀疑。这正是本章把汤姆 Tom Moreno 放进实验里的价值：它证明角色关系可以制造态度差异。
 
 再看角色层面的结论：
 
 | 角色 | 竞选信息状态 | 态度 | 证据边界 |
 | --- | --- | --- | --- |
-| 山姆 | 强成立 | 候选人自我推动 | 多次行动和对话围绕竞选计划、邻里交流、政策网络 |
-| 伊莎贝拉 | 强成立 | 合作 / 支持 | 08:30、09:40 与山姆讨论竞选活动如何结合社区活动，18:10 转述给乔治 |
-| 乔治 | 强成立 | 分析型合作 | 18:10 向伊莎贝拉追问政策主张，18:30 与山姆讨论图论建模 |
-| 汤姆 | 强成立 | 怀疑 / 反对 | 16:30、17:30、20:20 多次质疑山姆竞选承诺 |
-| 约翰 | 强成立 | 观望中带怀疑 | 与汤姆多轮讨论山姆承诺是否靠谱，并建议去咖啡馆打探 |
-| 拉托亚 | 弱成立 | 未知 | 行动摘要中有市长选举和候选人讨论，但没有找到竞选相关对话来源 |
-| 亚当 | 弱成立 | 未知 | 行动摘要中研究候选人资料，但缺少上游传播对话 |
-| 玛丽亚 | 弱相关 | 未知 | 主要知道山姆会参与派对和带食物，竞选证据不足 |
-| 阿伊莎 | 不计入 | 未知 | `政策` 多与文学/社会学研究有关，不是山姆竞选 |
-| 克劳斯 | 不计入 | 未知 | `政策建议` 多属于中产阶级化论文，不是竞选传播 |
+| 山姆 Sam Moore | 强成立 | 候选人自我推动 | 多次行动和对话围绕竞选计划、邻里交流、政策网络 |
+| 伊莎贝拉 Isabella Rodriguez | 强成立 | 合作 / 支持 | 08:30、09:40 与山姆 Sam Moore 讨论竞选活动如何结合社区活动，18:10 转述给乔治 Giorgio Rossi |
+| 乔治 Giorgio Rossi | 强成立 | 分析型合作 | 18:10 向伊莎贝拉 Isabella Rodriguez 追问政策主张，18:30 与山姆 Sam Moore 讨论图论建模 |
+| 汤姆 Tom Moreno | 强成立 | 怀疑 / 反对 | 16:30、17:30、20:20 多次质疑山姆 Sam Moore 竞选承诺 |
+| 约翰 John Lin | 强成立 | 观望中带怀疑 | 与汤姆 Tom Moreno 多轮讨论山姆 Sam Moore 承诺是否靠谱，并建议去咖啡馆打探 |
+| 拉托亚 Latoya Williams | 弱成立 | 未知 | 行动摘要中有市长选举和候选人讨论，但没有找到竞选相关对话来源 |
+| 亚当 Adam Smith | 弱成立 | 未知 | 行动摘要中研究候选人资料，但缺少上游传播对话 |
+| 玛丽亚 Maria Lopez | 弱相关 | 未知 | 主要知道山姆 Sam Moore 会参与派对和带食物，竞选证据不足 |
+| 阿伊莎 Ayesha Khan | 不计入 | 未知 | `政策` 多与文学/社会学研究有关，不是山姆 Sam Moore 竞选 |
+| 克劳斯 Klaus Mueller | 不计入 | 未知 | `政策建议` 多属于中产阶级化论文，不是竞选传播 |
 
-所以，本次实验的有效传播人数不能按“行动摘要里出现过候选人”粗暴计算。按强证据标准，山姆、伊莎贝拉、乔治、汤姆、约翰 5 人成立；拉托亚和亚当属于“行动层面弱相关，但缺少对话来源”；玛丽亚只算派对线弱相关；阿伊莎和克劳斯的 `政策` 关键词不属于竞选线。
+所以，本次实验的有效传播人数不能按“行动摘要里出现过候选人”粗暴计算。按强证据标准，山姆 Sam Moore、伊莎贝拉 Isabella Rodriguez、乔治 Giorgio Rossi、汤姆 Tom Moreno、约翰 John Lin 5 人成立；拉托亚 Latoya Williams 和亚当 Adam Smith 属于“行动层面弱相关，但缺少对话来源”；玛丽亚 Maria Lopez 只算派对线弱相关；阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 的 `政策` 关键词不属于竞选线。
 
 本次实验还暴露两个重要边界。
 
 第一，关键词必须组合搜索。`镇长` 只出现 2 次，但 `市长`、`选举`、`候选` 出现很多。读者如果只搜“镇长”，会误判实验失败。
 
-第二，文本中多次提到“林晓”，但林晓不在本次 10 人 agent 列表里。因此她只能算对话里的外部人物或背景线索，不能算本次仿真的传播节点。报告里可以写“角色提到了林晓”，但不能写“林晓在本次实验中参与传播”。
+第二，文本中多次提到“林晓 Lin Xiao”，但林晓 Lin Xiao 不在本次 10 人 agent 列表里。因此她只能算对话里的外部人物或背景线索，不能算本次仿真的传播节点。报告里可以写“角色提到了林晓 Lin Xiao”，但不能写“林晓 Lin Xiao 在本次实验中参与传播”。
 
 最终结论可以写成下面这样：
 
 | 判断项 | 结果 | 说明 |
 | --- | --- | --- |
-| 山姆是否谈竞选 | 成立 | 08:30 开始就有竞选计划和社区活动讨论 |
-| 是否出现传播 | 成立 | 伊莎贝拉向乔治转述，汤姆和约翰形成独立讨论链 |
-| 是否出现态度差异 | 成立 | 伊莎贝拉/乔治偏合作，汤姆/约翰偏怀疑 |
-| 是否出现政策深化 | 成立 | 乔治把候选人政策网络和社区走访策略纳入讨论 |
-| 是否跨出核心圈 | 部分成立 | 进入乔治和约翰，但学院圈的阿伊莎/克劳斯没有进入竞选线 |
-| 是否有弱证据或污染 | 有 | 拉托亚、亚当有候选人行动摘要但缺少对话来源；林晓是外部提及人物 |
+| 山姆 Sam Moore 是否谈竞选 | 成立 | 08:30 开始就有竞选计划和社区活动讨论 |
+| 是否出现传播 | 成立 | 伊莎贝拉 Isabella Rodriguez 向乔治 Giorgio Rossi 转述，汤姆 Tom Moreno 和约翰 John Lin 形成独立讨论链 |
+| 是否出现态度差异 | 成立 | 伊莎贝拉 Isabella Rodriguez/乔治 Giorgio Rossi 偏合作，汤姆 Tom Moreno/约翰 John Lin 偏怀疑 |
+| 是否出现政策深化 | 成立 | 乔治 Giorgio Rossi 把候选人政策网络和社区走访策略纳入讨论 |
+| 是否跨出核心圈 | 部分成立 | 进入乔治 Giorgio Rossi 和约翰 John Lin，但学院圈的阿伊莎 Ayesha Khan/克劳斯 Klaus Mueller 没有进入竞选线 |
+| 是否有弱证据或污染 | 有 | 拉托亚 Latoya Williams、亚当 Adam Smith 有候选人行动摘要但缺少对话来源；林晓 Lin Xiao 是外部提及人物 |
 
 这次 `book-election-extended` 比派对实验更能体现“可信行为”的判断难度。派对实验主要看信息和到场；竞选实验必须同时看信息来源、态度差异、政策内容、角色关系和外部人物边界。合格的结论不是“竞选传播成功了”这么简单，而是：核心传播链成立，态度差异成立，二跳传播成立，但跨学院圈扩散有限，并存在行动摘要弱证据与外部人物提及需要标注。
 
@@ -559,14 +559,14 @@ generative_agents/results/compressed/book-election-extended/movement.json
 
 建议记录以下指标。信息指标：
 
-- 知道山姆竞选的人数。
+- 知道山姆 Sam Moore 竞选的人数。
 - 一跳传播人数。
 - 二跳传播人数。
 - 无证据知道人数。
 
 社交指标可以这样设计：
 
-- 山姆发起竞选相关对话次数。
+- 山姆 Sam Moore 发起竞选相关对话次数。
 - 其他人转述竞选次数。
 - 涉及政策或社区问题的对话次数。
 
@@ -579,7 +579,7 @@ generative_agents/results/compressed/book-election-extended/movement.json
 
 行为指标可以这样设计：
 
-- 山姆是否调整后续对话策略。
+- 山姆 Sam Moore 是否调整后续对话策略。
 - 是否出现竞选相关计划。
 
 这些指标比单纯“知道人数”更完整。
@@ -617,7 +617,7 @@ generative_agents/results/compressed/book-election-extended/movement.json
 
 ## 25.18 扩展实验
 
-可以设计几组扩展。第一，对比有无汤姆。观察负面角色是否影响竞选话题质量。第二，加入更多公共场所角色。看咖啡馆和市场是否成为传播中心。第三，调整 `generate_chat` 提示词 prompt。减少过度礼貌，看是否增加真实分歧。第四，调整反思 reflection。看居民是否形成关于山姆的长期政治态度。第五，跨天运行。看第二天是否还有人记得山姆竞选。竞选实验比派对更适合观察长期观点形成。
+可以设计几组扩展。第一，对比有无汤姆 Tom Moreno。观察负面角色是否影响竞选话题质量。第二，加入更多公共场所角色。看咖啡馆和市场是否成为传播中心。第三，调整 `generate_chat` 提示词 prompt。减少过度礼貌，看是否增加真实分歧。第四，调整反思 reflection。看居民是否形成关于山姆 Sam Moore 的长期政治态度。第五，跨天运行。看第二天是否还有人记得山姆 Sam Moore 竞选。竞选实验比派对更适合观察长期观点形成。
 
 ## 25.19 本章小结
 
@@ -625,11 +625,11 @@ generative_agents/results/compressed/book-election-extended/movement.json
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 信息源 | 山姆是竞选信息源，汤姆是关键态度测试角色。 |
+| 信息源 | 山姆 Sam Moore 是竞选信息源，汤姆 Tom Moreno 是关键态度测试角色。 |
 | 评价重点 | 实验要同时记录知道、支持、怀疑、反对和观望。 |
-| 推荐角色 | 本章主实验使用山姆、汤姆、约翰、拉托亚、乔治、伊莎贝拉、阿伊莎、亚当、玛丽亚、克劳斯。 |
+| 推荐角色 | 本章主实验使用山姆 Sam Moore、汤姆 Tom Moreno、约翰 John Lin、拉托亚 Latoya Williams、乔治 Giorgio Rossi、伊莎贝拉 Isabella Rodriguez、阿伊莎 Ayesha Khan、亚当 Adam Smith、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller。 |
 | 关键证据 | 运行后重点检查 `conversation.json` 和 `simulation.md`。 |
-| 真实结果 | `book-election-extended` 形成了咖啡馆正向合作链和药店怀疑链，强证据知道者为山姆、伊莎贝拉、乔治、汤姆、约翰。 |
+| 真实结果 | `book-election-extended` 形成了咖啡馆正向合作链和药店怀疑链，强证据知道者为山姆 Sam Moore、伊莎贝拉 Isabella Rodriguez、乔治 Giorgio Rossi、汤姆 Tom Moreno、约翰 John Lin。 |
 | 知道标准 | 判断知道竞选必须有信息来源证据。 |
 | 态度分类 | 支持、怀疑、反对、观望、未知，比单一“知道/不知道”更有信息量。 |
 | 失败暴露 | 竞选实验更容易暴露过度礼貌和角色差异不足。 |

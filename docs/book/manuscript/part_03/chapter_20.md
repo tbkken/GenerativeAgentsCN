@@ -81,12 +81,12 @@ figure: docs/book/assets/chapter_20/ch20_social_loop.png
 | `conversation_keys=1` | `results/checkpoints/book-config-ai-seminar/conversation.json` | 已有实验中至少有一个仿真时间点触发了真实对话记录。 |
 | `conversation_entries=1` | 对话写回链路 `_chat_with()` | 一条对话会先写入全局 `conversation.json`，再通过 `schedule_chat()` 改写双方日程，后续反思再把聊天影响压成想法 thought。 |
 
-先看这条真实对话的业务闭环。2024 年 2 月 13 日 10:00，克劳斯和阿伊莎在奥克山学院的图书馆桌子相遇。克劳斯发起对话，话题不是泛泛问候，而是“生成式智能体在校园治理中可能放大的公平性问题”。阿伊莎随后追问“参与度评分”的采集边界。这个结果说明，社交模块真正输出的不是几句漂亮文本，而是一次带地点、人物、话题、后续记忆价值的信息交换。
+先看这条真实对话的业务闭环。2024 年 2 月 13 日 10:00，克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 在奥克山学院的图书馆桌子相遇。克劳斯 Klaus Mueller 发起对话，话题不是泛泛问候，而是“生成式智能体在校园治理中可能放大的公平性问题”。阿伊莎 Ayesha Khan 随后追问“参与度评分”的采集边界。这个结果说明，社交模块真正输出的不是几句漂亮文本，而是一次带地点、人物、话题、后续记忆价值的信息交换。
 
 | 环节 | 项目中的真实数据 | 读法 |
 | --- | --- | --- |
-| 输入 | 克劳斯和阿伊莎处在同一个小镇空间 `the Ville / 奥克山学院 / 图书馆 / 图书馆桌子`，感知结果进入当前概念 `self.concepts`。 | 空间相遇先成立，社交才有触发基础。 |
-| 处理 | `_reaction()` 选中阿伊莎作为关注对象焦点 focus，`get_relation()` 检索两人的关系记忆 relation memory，`decide_chat` 判断可以聊天，`generate_chat` 逐轮生成对话。 | 社交是“感知 -> 关系检索 -> 决策 -> 生成”的链路，不是直接调用一个聊天接口。 |
+| 输入 | 克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 处在同一个小镇空间 `the Ville / 奥克山学院 / 图书馆 / 图书馆桌子`，感知结果进入当前概念 `self.concepts`。 | 空间相遇先成立，社交才有触发基础。 |
+| 处理 | `_reaction()` 选中阿伊莎 Ayesha Khan 作为关注对象焦点 focus，`get_relation()` 检索两人的关系记忆 relation memory，`decide_chat` 判断可以聊天，`generate_chat` 逐轮生成对话。 | 社交是“感知 -> 关系检索 -> 决策 -> 生成”的链路，不是直接调用一个聊天接口。 |
 | 输出 | `conversation.json` 出现键 `20240213-10:00`，其中保存 `克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子` 以及 8 轮发言。 | 结果被持久化为可复盘的对话记录 conversation，后续还能被压缩进 `simulation.md`。 |
 | 写回 | `summarize_chats` 生成对话摘要，`schedule_chat()` 把摘要写成双方当前行动 action，反思 reflection 再把聊天影响写成想法 thought。 | 对话会改变日程 schedule 和记忆 memory，所以它能影响下一步行为。 |
 
@@ -219,10 +219,10 @@ other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
 }
 ```
 
-这说明当前焦点 focus 会触发一次关系检索。例如，克劳斯看到玛丽亚，系统不会只把“玛丽亚在这里”交给聊天提示词 prompt。它还会检索：
+这说明当前焦点 focus 会触发一次关系检索。例如，克劳斯 Klaus Mueller 看到玛丽亚 Maria Lopez，系统不会只把“玛丽亚 Maria Lopez 在这里”交给聊天提示词 prompt。它还会检索：
 
-- 与玛丽亚相关的事件。
-- 与玛丽亚相关的想法。
+- 与玛丽亚 Maria Lopez 相关的事件。
+- 与玛丽亚 Maria Lopez 相关的想法。
 
 社交行为因此具有历史感。角色是否聊天、说什么、如何称呼对方，都可以受过往关系影响。
 
@@ -410,7 +410,7 @@ class decide_chatResponse(BaseModel):
     res: bool = Field(description="是否主动发起对话，true 表示会主动对话，false 表示不会")
 ```
 
-回调函数 callback 会把 `true`、`yes`、`是`、`1` 都解析成 `True`。失败兜底 failsafe 是 `False`，也就是模型失败时默认不打断原日程。对克劳斯和阿伊莎的图书馆案例来说，`decide_chat` 拿到的输入包含“克劳斯正在整理研究资料”“阿伊莎在同一空间”“两人和研究话题有关”这些线索，于是聊天路径继续往下执行。
+回调函数 callback 会把 `true`、`yes`、`是`、`1` 都解析成 `True`。失败兜底 failsafe 是 `False`，也就是模型失败时默认不打断原日程。对克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 的图书馆案例来说，`decide_chat` 拿到的输入包含“克劳斯 Klaus Mueller 正在整理研究资料”“阿伊莎 Ayesha Khan 在同一空间”“两人和研究话题有关”这些线索，于是聊天路径继续往下执行。
 
 这一步把“是否聊天”从“看见人就聊”升级为情境判断。例如：
 
@@ -432,7 +432,7 @@ relations = [
 ]
 ```
 
-这里生成两个摘要，而不是一个全局关系。克劳斯怎么看玛丽亚，不一定等于玛丽亚怎么看克劳斯。山姆怎么看汤姆，也不等于汤姆怎么看山姆。对话生成时，双方各用自己的关系摘要。这让对话具有不对称性。如果所有角色共享一份关系状态，对话会更像剧本，而不是个体社会互动。
+这里生成两个摘要，而不是一个全局关系。克劳斯 Klaus Mueller 怎么看玛丽亚 Maria Lopez，不一定等于玛丽亚 Maria Lopez 怎么看克劳斯 Klaus Mueller。山姆 Sam Moore 怎么看汤姆 Tom Moreno，也不等于汤姆 Tom Moreno 怎么看山姆 Sam Moore。对话生成时，双方各用自己的关系摘要。这让对话具有不对称性。如果所有角色共享一份关系状态，对话会更像剧本，而不是个体社会互动。
 
 关系摘要提示词 prompt 位于 `generative_agents/data/prompts/summarize_relation.txt`。
 
@@ -467,8 +467,8 @@ Using the background description and examples above, summarize the relationship 
 | 变量 | 来源 | 含义 |
 | --- | --- | --- |
 | 背景描述 `context` | `agent.associate.retrieve_focus([other_name], 50)` | 围绕对方名字检索出来的事件 events 和想法 thoughts。 |
-| 角色名 `agent` | 当前智能体 agent | 摘要的主视角，例如克劳斯。 |
-| 对方名 `another` | `other_name` | 被总结关系的对象，例如阿伊莎。 |
+| 角色名 `agent` | 当前智能体 agent | 摘要的主视角，例如克劳斯 Klaus Mueller。 |
+| 对方名 `another` | `other_name` | 被总结关系的对象，例如阿伊莎 Ayesha Khan。 |
 
 输出结构 schema 是：
 
@@ -505,7 +505,7 @@ nodes = agent.associate.retrieve_focus([other_name], 50)
 
 | 环节 | 数据 | 对对话的影响 |
 | --- | --- | --- |
-| 输入 | 对方名字 `other_name`，例如“阿伊莎”。 | 名字本身就是检索焦点 focus。 |
+| 输入 | 对方名字 `other_name`，例如“阿伊莎 Ayesha Khan”。 | 名字本身就是检索焦点 focus。 |
 | 处理 | 关联记忆 Associate 在事件 events 和想法 thoughts 中做相似检索。 | 召回两人过去共同经历、评价和近期想法。 |
 | 输出 | 一句自然语言关系摘要 `relations[0]` 或 `relations[1]`。 | 进入 `generate_chat`，决定下一句对话的语气和内容边界。 |
 
@@ -579,7 +579,7 @@ Based on the <conversation> and <conversation principles> above, ${agent} now sa
 
 | 变量 | 来源 | 含义 |
 | --- | --- | --- |
-| 基础描述 `base_desc` | 角色草稿 Scratch 的姓名、性格、生活方式、当前目标等信息 | 让发言符合角色设定，而不是变成通用助手口吻。 |
+| 基础描述 `base_desc` | 提示词组装器 Scratch 中的姓名、性格、生活方式、当前目标等信息 | 让发言符合角色设定，而不是变成通用助手口吻。 |
 | 记忆 `memory` | `agent.associate.retrieve_focus(focus, 15)` | 围绕关系摘要、对方当前行为和最近对话检索出来的记忆。 |
 | 地点 `address` | `agent.get_tile().get_address()` | 当前空间地址，例如“图书馆，图书馆桌子”。 |
 | 当前时间 `current_time` | `utils.get_timer().get_date("%H:%M")` | 让问候、活动和时间段一致。 |
@@ -881,7 +881,7 @@ class summarize_chatsResponse(BaseModel):
 - 日程修订。
 - 后续反思 reflection。
 
-完整对话适合日志。摘要适合记忆和检索。如果摘要质量差，后续社交记忆会变差。克劳斯和阿伊莎的案例里，摘要至少应该保留“校园治理”“公平性问题”“参与度评分采集边界”这些关键词。派对邀请场景里，摘要必须包含时间、地点和邀请意图，否则后续无法传播。
+完整对话适合日志。摘要适合记忆和检索。如果摘要质量差，后续社交记忆会变差。克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 的案例里，摘要至少应该保留“校园治理”“公平性问题”“参与度评分采集边界”这些关键词。派对邀请场景里，摘要必须包含时间、地点和邀请意图，否则后续无法传播。
 
 ## 20.19 schedule_chat：写回双方
 
@@ -940,7 +940,7 @@ event = memory.Event(
 
 | 字段 | 中文意思 | 对后续行为的影响 |
 | --- | --- | --- |
-| 主体 `subject` | 谁正在发生这件事 | 对发起者来说是“克劳斯”，对接收者来说会变成“阿伊莎”。 |
+| 主体 `subject` | 谁正在发生这件事 | 对发起者来说是“克劳斯 Klaus Mueller”，对接收者来说会变成“阿伊莎 Ayesha Khan”。 |
 | 谓词 `predicate` | 事件类型 | `"对话"` 让记忆模块把它识别成聊天事件，而不是普通活动。 |
 | 对象 `object` | 与谁对话 | 用于后续检索与某人的聊天记忆 chat memory。 |
 | 描述 `describe` | 对话摘要 | 进入日程、记忆和反思，是后续信息传播的核心文本。 |
@@ -1142,8 +1142,8 @@ return "A" in response
 
 ```mermaid
 flowchart TD
-    Goal["当前目标 currently：伊莎贝拉准备情人节派对"] --> Plan["日程 schedule 安排邀请居民"]
-    Plan --> Meet{"空间相遇：是否遇到阿伊莎"}
+    Goal["当前目标 currently：伊莎贝拉 Isabella Rodriguez 准备情人节派对"] --> Plan["日程 schedule 安排邀请居民"]
+    Plan --> Meet{"空间相遇：是否遇到阿伊莎 Ayesha Khan"}
     Meet -->|否| Stop1["传播暂停：没有社交触发"]
     Meet -->|是| Decide{"聊天决策 decide_chat 是否成功"}
     Decide -->|否| Stop2["传播暂停：继续原计划"]
@@ -1154,9 +1154,9 @@ flowchart TD
     Summary --> Keep{"摘要是否保留关键事实"}
     Keep -->|否| Weak
     Keep -->|是| Write["双方写回 schedule_chat 和聊天记忆 chat memory"]
-    Write --> Retrieve{"阿伊莎后续是否检索到派对记忆"}
+    Write --> Retrieve{"阿伊莎 Ayesha Khan 后续是否检索到派对记忆"}
     Retrieve -->|否| Stop3["传播停止：记忆没有被召回"]
-    Retrieve -->|是| Spread["阿伊莎可能把派对告诉其他人"]
+    Retrieve -->|是| Spread["阿伊莎 Ayesha Khan 可能把派对告诉其他人"]
 ```
 
 这个传播不是全局变量。它需要每一步都成功。如果聊天决策 `decide_chat` 返回 False，传播断。如果对话生成 `generate_chat` 没提派对，传播断。如果对话摘要 `summarize_chats` 丢了时间地点，传播质量下降。如果聊天记忆 chat memory 后续检索失败，传播不会继续。这就是为什么社交模块是复现实验核心。
@@ -1172,7 +1172,7 @@ flowchart TD
 
 ## 20.25 社交如何支撑关系形成
 
-关系形成也依赖社交闭环。以克劳斯和玛丽亚为例：
+关系形成也依赖社交闭环。以克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 为例：
 
 ```mermaid
 flowchart TD
@@ -1287,7 +1287,7 @@ flowchart TD
 
 | 本章内容 | 核心结论 |
 | --- | --- |
-| 真实社交案例 | `conversation.json` 中的克劳斯和阿伊莎对话展示了“空间相遇、关系检索、对话生成、摘要写回”的完整业务闭环。 |
+| 真实社交案例 | `conversation.json` 中的克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 对话展示了“空间相遇、关系检索、对话生成、摘要写回”的完整业务闭环。 |
 | 社交数据结构 | 关注对象焦点 focus、关系上下文 relation context、对话列表 chats、全局对话记录 conversation 和对话事件 Event 共同承载社交状态。 |
 | 社交入口 | 社交从感知函数 `percept()` 后的现场反应函数 `_reaction()` 开始。 |
 | 关注对象焦点 focus 选择 | 现场反应函数 `_reaction()` 优先选择其他智能体 agent 作为关注对象焦点 focus。 |

@@ -326,12 +326,12 @@ def collect_attendance(movement, target_place, window_start=None, window_end=Non
 
 | run | `arrived` | `arrived_count` | 结果判断 |
 | --- | --- | ---: | --- |
-| `book-social-party-r1` | 伊莎贝拉、埃迪、汤姆 | `3` | 有到场，且没有承诺未到场候选。 |
-| `book-social-party-r2` | 伊莎贝拉、埃迪、山姆 | `3` | 有到场，目标完成率为 `1.0`。 |
-| `book-social-party-r3` | 伊莎贝拉、埃迪 | `2` | 有到场，但山姆、玛丽亚有承诺未到场候选。 |
+| `book-social-party-r1` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、汤姆 Tom Moreno | `3` | 有到场，且没有承诺未到场候选。 |
+| `book-social-party-r2` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore | `3` | 有到场，目标完成率为 `1.0`。 |
+| `book-social-party-r3` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin | `2` | 有到场，但山姆 Sam Moore、玛丽亚 Maria Lopez 有承诺未到场候选。 |
 | 均值 | - | `2.6667` | 当前配置下，到场现象重复出现，但名单不稳定。 |
 
-`report.md` 会保留首个命中帧，方便回查。例如 `book-social-party-r1` 的到场证据里，伊莎贝拉在 `17:00`、汤姆在 `17:10`、埃迪在 `18:50` 首次命中霍布斯咖啡馆。这个证据比 `simulation.md` 摘要更强，因为它来自逐帧位置回放。
+`report.md` 会保留首个命中帧，方便回查。例如 `book-social-party-r1` 的到场证据里，伊莎贝拉 Isabella Rodriguez 在 `17:00`、汤姆 Tom Moreno 在 `17:10`、埃迪 Eddy Lin 在 `18:50` 首次命中霍布斯咖啡馆。这个证据比 `simulation.md` 摘要更强，因为它来自逐帧位置回放。
 
 | 常见误判 | 原因 | 正确处理 |
 | --- | --- | --- |
@@ -728,14 +728,14 @@ lines = [
 | 报告项 | `book-social-party-r3` 数值 | 说明 |
 | --- | ---: | --- |
 | `mentions` | `45` | 事件相关对话不少，传播不是空的。 |
-| `known_agents` | `4` | 伊莎贝拉、埃迪、山姆、玛丽亚进入事件上下文。 |
+| `known_agents` | `4` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore、玛丽亚 Maria Lopez 进入事件上下文。 |
 | `accepted_commitments` | `4` | 脚本识别到四名承诺候选。 |
-| `rejected_commitments` | `1` | 埃迪同时出现拒绝或时间冲突信号，需要人工看时序。 |
-| `arrived_agents` | `2` | 目标窗口内只验证到伊莎贝拉和埃迪到场。 |
-| `reflection_candidates` | `2` | 山姆、玛丽亚形成承诺未到场候选。 |
+| `rejected_commitments` | `1` | 埃迪 Eddy Lin 同时出现拒绝或时间冲突信号，需要人工看时序。 |
+| `arrived_agents` | `2` | 目标窗口内只验证到伊莎贝拉 Isabella Rodriguez 和埃迪 Eddy Lin 到场。 |
+| `reflection_candidates` | `2` | 山姆 Sam Moore、玛丽亚 Maria Lopez 形成承诺未到场候选。 |
 | `goal_completion_rate` | `0.75` | 四项条件里 `has_no_unfulfilled_commitment=false`。 |
 
-这张表不是最终叙事，而是复查入口。真正写实验结论时，必须继续打开 `report.md` 里的传播证据和到场证据。例如 `r3` 的报告能看到玛丽亚在 `13:10` 说“我肯定要来”，但到场证据只列出 `17:00` 的伊莎贝拉和埃迪；这才支撑“承诺未到场候选”的判断。反过来，埃迪同时出现在 `accepted` 和 `rejected` 中，也提醒读者不要只看计数，要回到原话时序解释。
+这张表不是最终叙事，而是复查入口。真正写实验结论时，必须继续打开 `report.md` 里的传播证据和到场证据。例如 `r3` 的报告能看到玛丽亚 Maria Lopez 在 `13:10` 说“我肯定要来”，但到场证据只列出 `17:00` 的伊莎贝拉 Isabella Rodriguez 和埃迪 Eddy Lin；这才支撑“承诺未到场候选”的判断。反过来，埃迪 Eddy Lin 同时出现在 `accepted` 和 `rejected` 中，也提醒读者不要只看计数，要回到原话时序解释。
 
 自动报告当前没有完成四件事：
 
@@ -770,7 +770,7 @@ lines = [
 | `mentions` 均值为 `40.0` | “派对相关话题在对话中反复出现。” | “发生了 40 次有效传播。” | `metrics.json` 的 `diffusion`，再查原话。 |
 | `arrived` 均值为 `2.6667` | “目标窗口内，霍布斯咖啡馆到场命中在三次运行中重复出现。” | “平均 2.6667 人参加了派对。” | `movement.json`、`report.md` 到场证据。 |
 | `goal_completion_rate` 均值为 `0.9167` | “按当前四项工程条件，两次完全通过，一次因承诺未到场候选降为 0.75。” | “派对任务成功率是 91.67%。” | `goal_progress.json`、`reflection_candidates.json`。 |
-| `r3` 结束于 `18:50` | “`r3` 没覆盖完整 17:00-19:00 窗口，后 10 分钟不能下结论。” | “`r3` 中山姆和玛丽亚确定没有到场。” | 最后 checkpoint、`movement.json`。 |
+| `r3` 结束于 `18:50` | “`r3` 没覆盖完整 17:00-19:00 窗口，后 10 分钟不能下结论。” | “`r3` 中山姆 Sam Moore 和玛丽亚 Maria Lopez 确定没有到场。” | 最后 checkpoint、`movement.json`。 |
 
 结论还要按用途分级：
 
@@ -932,9 +932,9 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 
 | run | 事件上下文角色 | 证据摘录 | 解释 |
 | --- | --- | --- | --- |
-| `r1` | 伊莎贝拉、埃迪、山姆、汤姆、玛丽亚 | `09:20` 伊莎贝拉向山姆说明下午派对；后续多名角色进入相关对话。 | 覆盖最广，`known_agents=5`。 |
-| `r2` | 伊莎贝拉、埃迪、山姆 | `09:30` 伊莎贝拉提醒山姆五点派对；`11:30` 山姆询问布置帮助。 | 事件对话更集中，`mentions=30`。 |
-| `r3` | 伊莎贝拉、埃迪、山姆、玛丽亚 | `08:10` 伊莎贝拉邀请山姆；`13:10` 玛丽亚明确表达想来。 | 话题热度接近 `r1`，但覆盖少一名角色。 |
+| `r1` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore、汤姆 Tom Moreno、玛丽亚 Maria Lopez | `09:20` 伊莎贝拉 Isabella Rodriguez 向山姆 Sam Moore 说明下午派对；后续多名角色进入相关对话。 | 覆盖最广，`known_agents=5`。 |
+| `r2` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore | `09:30` 伊莎贝拉 Isabella Rodriguez 提醒山姆 Sam Moore 五点派对；`11:30` 山姆 Sam Moore 询问布置帮助。 | 事件对话更集中，`mentions=30`。 |
+| `r3` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore、玛丽亚 Maria Lopez | `08:10` 伊莎贝拉 Isabella Rodriguez 邀请山姆 Sam Moore；`13:10` 玛丽亚 Maria Lopez 明确表达想来。 | 话题热度接近 `r1`，但覆盖少一名角色。 |
 
 这组结果可以写成：在当前关键词下，三次运行都能抽取到派对相关对话，并且每次至少覆盖三名事件上下文角色。它不能写成：派对信息稳定传播给所有角色。当前 `known_agents` 来自发言者集合，不是听话者集合，也不是完整事实保真评分。
 
@@ -944,9 +944,9 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 
 | run | 到场角色 | 首个命中证据 | 解释 |
 | --- | --- | --- | --- |
-| `r1` | 伊莎贝拉、埃迪、汤姆 | 伊莎贝拉 `17:00`，汤姆 `17:10`，埃迪 `18:50`。 | 到场命中 3 人。 |
-| `r2` | 伊莎贝拉、埃迪、山姆 | `17:00` 三人都出现在咖啡馆不同区域。 | 到场命中 3 人，目标完成率为 `1.0`。 |
-| `r3` | 伊莎贝拉、埃迪 | `17:00` 两人出现在咖啡馆。 | 到场命中 2 人，并出现承诺未到场候选。 |
+| `r1` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、汤姆 Tom Moreno | 伊莎贝拉 Isabella Rodriguez `17:00`，汤姆 Tom Moreno `17:10`，埃迪 Eddy Lin `18:50`。 | 到场命中 3 人。 |
+| `r2` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin、山姆 Sam Moore | `17:00` 三人都出现在咖啡馆不同区域。 | 到场命中 3 人，目标完成率为 `1.0`。 |
+| `r3` | 伊莎贝拉 Isabella Rodriguez、埃迪 Eddy Lin | `17:00` 两人出现在咖啡馆。 | 到场命中 2 人，并出现承诺未到场候选。 |
 
 这组结果可以写成：霍布斯咖啡馆到场命中在三次运行中重复出现。它不能写成：所有承诺者都稳定参加派对。脚本当前只做地点子串和时间窗口匹配，没有判断角色当时的行动目的。
 
@@ -956,9 +956,9 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 
 | 失败线索 | 证据 | 判断 |
 | --- | --- | --- |
-| 承诺未到场 | `reflection_candidates.json` 生成 2 条候选：山姆、玛丽亚。 | 山姆在 `16:30` 承诺“派对开始”后过来，玛丽亚在 `13:10` 说“我肯定要来”，但二者没有进入 `arrived`。 |
+| 承诺未到场 | `reflection_candidates.json` 生成 2 条候选：山姆 Sam Moore、玛丽亚 Maria Lopez。 | 山姆 Sam Moore 在 `16:30` 承诺“派对开始”后过来，玛丽亚 Maria Lopez 在 `13:10` 说“我肯定要来”，但二者没有进入 `arrived`。 |
 | 目标进度下降 | `goal_progress.json` 中 `has_no_unfulfilled_commitment=false`。 | 四项条件里只有承诺兑现失败，因此 `goal_completion_rate=0.75`。 |
-| 拒绝和接受并存 | `goal_progress.json` 中埃迪出现在 `rejected_or_unavailable`，同时也在 `accepted` 和 `arrived` 中。 | 自动抽取捕捉到时间冲突信号，但人工报告需要解释前后时序。 |
+| 拒绝和接受并存 | `goal_progress.json` 中埃迪 Eddy Lin 出现在 `rejected_or_unavailable`，同时也在 `accepted` 和 `arrived` 中。 | 自动抽取捕捉到时间冲突信号，但人工报告需要解释前后时序。 |
 | 时间窗口不完整 | `r3` 最终 checkpoint 是 `20240214-18:50`。 | 当前证据能覆盖 17:00 到 18:50，不能证明 18:50 到 19:00 之后没有后续到场。 |
 
 失败样例说明，本章升级的价值不只是“算出一个均值”，而是让承诺、到场和失败候选分层保存。没有 `reflection_candidates.json`，`r3` 很容易被平均数掩盖。
@@ -978,7 +978,7 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 | 记忆治理或模型能力导致了结果差异。 | 本轮不是对照实验，没有 treatment batch。 |
 | `mentions=40.0` 表示 40 次有效传播。 | `mentions` 是关键词和上下文命中。 |
 | `arrived=2.6667` 表示平均参加派对人数。 | `arrived` 是地点窗口命中。 |
-| `r3` 中山姆和玛丽亚确定没有到场。 | `r3` 只运行到 `18:50`，目标窗口还剩 10 分钟。 |
+| `r3` 中山姆 Sam Moore 和玛丽亚 Maria Lopez 确定没有到场。 | `r3` 只运行到 `18:50`，目标窗口还剩 10 分钟。 |
 
 本轮结果应写成：在当前 5 人、同一地图、同一事件口径和 3 次运行内，系统已经能把多次派对仿真整理成可比较实验包；派对相关对话和到场命中重复出现，但覆盖角色、承诺抽取和到场名单存在差异。下一步要做的不是继续讲单次故事，而是增加对照实验和更完整的事件数据集。
 
@@ -991,7 +991,7 @@ python analyze_experiment.py --name book-social-party-r1 --event valentine_party
 | `generative_agents_next/results/evaluations/book-social-party-r*/report.md` | 查看每次运行的传播证据和到场证据摘录。 |
 | `generative_agents_next/results/evaluations/book-social-party-r*/event_board.json` | 查看事件板上的 `known_by/accepted/rejected/arrived`。 |
 | `generative_agents_next/results/evaluations/book-social-party-r*/goal_progress.json` | 查看四项目标条件和缺失原因。 |
-| `generative_agents_next/results/evaluations/book-social-party-r3/reflection_candidates.json` | 复查山姆和玛丽亚的承诺未到场候选。 |
+| `generative_agents_next/results/evaluations/book-social-party-r3/reflection_candidates.json` | 复查山姆 Sam Moore 和玛丽亚 Maria Lopez 的承诺未到场候选。 |
 | `generative_agents_next/results/checkpoints/book-social-party-r*/conversation.json` | 回到原始对话，复查事件事实是否保真。 |
 | `generative_agents_next/results/compressed/book-social-party-r*/movement.json` | 回到移动回放，复查 17:00-19:00 到场帧。 |
 

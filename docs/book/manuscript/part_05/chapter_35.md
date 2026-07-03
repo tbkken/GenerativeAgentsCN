@@ -2,7 +2,7 @@
 
 ## 35.1 派对准备卡在“谁负责”
 
-`book-party-extended` 的回放里，伊莎贝拉在霍布斯咖啡馆反复向玛丽亚提到下午五点的情人节派对。对话里能看到邀请、承诺、布置彩带和爱心气球，`simulation.md` 里也会出现“伊莎贝拉请玛丽亚帮忙挂爱心气球布置派对，玛丽亚欣然应允”这样的活动摘要。问题在于，当前项目只能把这件事保存成自然对话 conversation、日程 schedule 和移动回放 movement，不能把它保存成一个团队任务 team task。
+`book-party-extended` 的回放里，伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆反复向玛丽亚 Maria Lopez 提到下午五点的情人节派对。对话里能看到邀请、承诺、布置彩带和爱心气球，`simulation.md` 里也会出现“伊莎贝拉 Isabella Rodriguez 请玛丽亚 Maria Lopez 帮忙挂爱心气球布置派对，玛丽亚 Maria Lopez 欣然应允”这样的活动摘要。问题在于，当前项目只能把这件事保存成自然对话 conversation、日程 schedule 和移动回放 movement，不能把它保存成一个团队任务 team task。
 
 这就是多智能体协作升级 multi-agent collaboration 的现场：自然偶遇已经能让消息传播起来，但系统还不知道“谁接了任务、任务做到哪一步、失败卡在哪里、证据从哪段对话来”。
 
@@ -20,8 +20,8 @@
 
 | 场景 | 当前自然偶遇 natural encounter | 组织化协作 organized collaboration |
 | --- | --- | --- |
-| 派对邀请 | 伊莎贝拉和玛丽亚聊天，摘要写入日程 schedule。 | 事件板 event board 记录玛丽亚接受“布置气球”任务。 |
-| 音乐安排 | 埃迪可能在咖啡馆弹钢琴，但没有任务归属。 | 工作组 workgroup 把“确认音乐”分给埃迪，并记录接受或拒绝。 |
+| 派对邀请 | 伊莎贝拉 Isabella Rodriguez 和玛丽亚 Maria Lopez 聊天，摘要写入日程 schedule。 | 事件板 event board 记录玛丽亚 Maria Lopez 接受“布置气球”任务。 |
+| 音乐安排 | 埃迪 Eddy Lin 可能在咖啡馆弹钢琴，但没有任务归属。 | 工作组 workgroup 把“确认音乐”分给埃迪 Eddy Lin，并记录接受或拒绝。 |
 | 到场判断 | 通过 `movement.json` 看角色是否到霍布斯咖啡馆。 | 到场 attendance 与任务完成 task completion 一起进入报告 report。 |
 | 失败解释 | 只能人工翻 `conversation.json`、`simulation.md` 和断点 checkpoint。 | 失败模式 failure mode 直接绑定证据路径 evidence path。 |
 
@@ -225,7 +225,7 @@ flowchart TD
 }
 ```
 
-这份事件板说明：派对事实至少被四名角色提及；埃迪和玛丽亚被抽取为承诺候选；四名角色在目标窗口内到达霍布斯咖啡馆。但 `rejected=["伊莎贝拉"]` 是一个需要人工复核的误判，来源是对话里“能不能帮忙拍照记录一下”这类否定词结构。事件板把候选暴露出来，不能替代最终裁决。
+这份事件板说明：派对事实至少被四名角色提及；埃迪 Eddy Lin 和玛丽亚 Maria Lopez 被抽取为承诺候选；四名角色在目标窗口内到达霍布斯咖啡馆。但 `rejected=["伊莎贝拉"]` 是一个需要人工复核的误判，来源是对话里“能不能帮忙拍照记录一下”这类否定词结构。事件板把候选暴露出来，不能替代最终裁决。
 
 ### 事件板和目标进度的关系
 
@@ -253,7 +253,7 @@ flowchart TD
 
 公共事件板 event board 解决“协作事实能不能被看见”，临时工作组 temporary workgroup 解决“事件里的人临时承担什么协作身份”。两者不能混成一件事：`known_by` 说明角色知道事件，`accepted` 说明角色表达了承诺，`arrived` 说明角色出现在地点；只有把这些证据合并，才能形成工作组视图。
 
-临时工作组不是长期人格 persona，也不是永久组织。伊莎贝拉可以在情人节派对里成为发起人 organizer，但她的角色设定不会因此变成“项目经理”；埃迪可以在派对里成为音乐或气氛 helper，但这不改变他在小镇里的日常身份。
+临时工作组不是长期人格 persona，也不是永久组织。伊莎贝拉 Isabella Rodriguez 可以在情人节派对里成为发起人 organizer，但她的角色设定不会因此变成“项目经理”；埃迪 Eddy Lin 可以在派对里成为音乐或气氛 helper，但这不改变他在小镇里的日常身份。
 
 ### 当前落地形态
 
@@ -272,11 +272,11 @@ flowchart TD
 
 | 临时身份 | 证据来源 | 本轮证据 | 工程含义 | 边界 |
 | --- | --- | --- | --- | --- |
-| 发起人 organizer | 对话原话、角色行为、事件语境 | 伊莎贝拉多次介绍“下午5点到7点”的情人节派对，并在 `17:00` 位于霍布斯咖啡馆柜台后面迎接顾客。 | 她是事件源头和现场主导者候选。 | 当前没有 `organizer` 字段，也没有权限模型。 |
-| 帮手 helper | `event_board.accepted` 与原话 | 埃迪说“没问题，交给我吧”，玛丽亚说“需要帮忙吗”“可以帮你一起想想需要买什么”。 | 他们进入承诺候选，可用于后续任务拆分。 | 还不能细分为“绑气球”“音乐”“采购”等任务卡。 |
-| 参与者 participant | `event_board.arrived` 与 `movement.json` | 伊莎贝拉、玛丽亚、克劳斯、埃迪都在 `17:00-19:00` 出现在霍布斯咖啡馆。 | 到场可以验证事件形成了群体行动。 | 到场不等于完成具体协作任务。 |
+| 发起人 organizer | 对话原话、角色行为、事件语境 | 伊莎贝拉 Isabella Rodriguez 多次介绍“下午5点到7点”的情人节派对，并在 `17:00` 位于霍布斯咖啡馆柜台后面迎接顾客。 | 她是事件源头和现场主导者候选。 | 当前没有 `organizer` 字段，也没有权限模型。 |
+| 帮手 helper | `event_board.accepted` 与原话 | 埃迪 Eddy Lin 说“没问题，交给我吧”，玛丽亚 Maria Lopez 说“需要帮忙吗”“可以帮你一起想想需要买什么”。 | 他们进入承诺候选，可用于后续任务拆分。 | 还不能细分为“绑气球”“音乐”“采购”等任务卡。 |
+| 参与者 participant | `event_board.arrived` 与 `movement.json` | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller、埃迪 Eddy Lin 都在 `17:00-19:00` 出现在霍布斯咖啡馆。 | 到场可以验证事件形成了群体行动。 | 到场不等于完成具体协作任务。 |
 | 知情者 informed | `event_board.known_by` | 四名角色都在对话中提到派对、时间、地点或帮忙。 | 事件传播范围可被统计。 | 知情不等于接受任务。 |
-| 待复核对象 review-needed | `event_board.rejected` | 伊莎贝拉进入 `rejected`，但这是“能不能帮忙拍照记录一下”触发的否定词误判。 | 评价层暴露了抽取风险。 | 不能把这个字段直接当成真实拒绝。 |
+| 待复核对象 review-needed | `event_board.rejected` | 伊莎贝拉 Isabella Rodriguez 进入 `rejected`，但这是“能不能帮忙拍照记录一下”触发的否定词误判。 | 评价层暴露了抽取风险。 | 不能把这个字段直接当成真实拒绝。 |
 
 按照这份证据，本轮临时工作组只能写成“评价层视图”：
 
@@ -433,11 +433,11 @@ flowchart TD
 
 | 时间 | 原话片段 | 规则输出 | 正确读法 |
 | --- | --- | --- | --- |
-| `20240214-12:30` | 伊莎贝拉说“今天下午5点到7点我们这儿有情人节派对，欢迎来参加哦”。 | 事件提及，`commitment=""` | 这是邀请和传播，不是接受。 |
-| `20240214-14:30` | 埃迪说“需要我帮忙吗”。 | `accepted` 候选 | 更准确地说是帮忙提议，后续“没问题，交给我吧”才强化了承诺。 |
-| `20240214-16:10` | 玛丽亚说“好呀！一起走吧……去咖啡馆看看伊莎贝拉那边布置得怎么样了”。 | `accepted` 候选 | 可以作为到场和协助意图，但还不是具体任务完成。 |
-| `20240214-13:20` | 伊莎贝拉说“问问林晓能不能帮忙拍照记录一下”。 | `rejected` 候选 | 这是误判；“能不能帮忙”不是拒绝。 |
-| `20240214-16:40` | 玛丽亚和埃迪讨论派对音乐。 | 只保留为事件提及 | 当前没有 `progress` 字段，不能写成音乐任务已完成。 |
+| `20240214-12:30` | 伊莎贝拉 Isabella Rodriguez 说“今天下午5点到7点我们这儿有情人节派对，欢迎来参加哦”。 | 事件提及，`commitment=""` | 这是邀请和传播，不是接受。 |
+| `20240214-14:30` | 埃迪 Eddy Lin 说“需要我帮忙吗”。 | `accepted` 候选 | 更准确地说是帮忙提议，后续“没问题，交给我吧”才强化了承诺。 |
+| `20240214-16:10` | 玛丽亚 Maria Lopez 说“好呀！一起走吧……去咖啡馆看看伊莎贝拉 Isabella Rodriguez 那边布置得怎么样了”。 | `accepted` 候选 | 可以作为到场和协助意图，但还不是具体任务完成。 |
+| `20240214-13:20` | 伊莎贝拉 Isabella Rodriguez 说“问问林晓 Lin Xiao 能不能帮忙拍照记录一下”。 | `rejected` 候选 | 这是误判；“能不能帮忙”不是拒绝。 |
+| `20240214-16:40` | 玛丽亚 Maria Lopez 和埃迪 Eddy Lin 讨论派对音乐。 | 只保留为事件提及 | 当前没有 `progress` 字段，不能写成音乐任务已完成。 |
 
 这张表决定了 35.6 的结论：当前对话协议已经能把部分自然语言变成事件板候选，但候选不是事实裁决。`accepted` 需要回查原话确认是不是承诺，`rejected` 需要排除“能不能”这类问句误判，`progress` 需要后续新增字段。
 
@@ -518,7 +518,7 @@ generative_agents_next/results/checkpoints/book-collaboration-party/storage/
 
 ```mermaid
 flowchart TD
-    A["角色私有存储<br/>storage/伊莎贝拉/associate"] --> D["latest_checkpoint()<br/>最终状态"]
+    A["角色私有存储<br/>storage/伊莎贝拉 Isabella Rodriguez/associate"] --> D["latest_checkpoint()<br/>最终状态"]
     B["conversation.json<br/>自然对话证据"] --> E["collect_mentions()<br/>事件提及与承诺候选"]
     C["movement.json<br/>移动回放"] --> F["collect_attendance()<br/>到场证据"]
     D --> G["metrics.memory_summary<br/>私有记忆计数"]
@@ -536,7 +536,7 @@ flowchart TD
 
 ### 私有记忆和共享证据的区别
 
-`metrics.json` 里有 `memory_summary`，但它只是统计每个角色私有 `associate` 中的记忆类型数量。例如伊莎贝拉有 `chat`、`event`、`relationship`、`summary`、`thought` 等计数；这些计数不能说明她和玛丽亚共享了一份事件状态。
+`metrics.json` 里有 `memory_summary`，但它只是统计每个角色私有 `associate` 中的记忆类型数量。例如伊莎贝拉 Isabella Rodriguez 有 `chat`、`event`、`relationship`、`summary`、`thought` 等计数；这些计数不能说明她和玛丽亚 Maria Lopez 共享了一份事件状态。
 
 | 容易混淆的说法 | 更准确的说法 |
 | --- | --- |
@@ -577,7 +577,7 @@ generative_agents_next/results/checkpoints/<实验名>/storage/shared/<event_id>
 | 冲突层级 | 当前字段 | 生成位置 | 本轮结果 | 正确读法 |
 | --- | --- | --- | --- | --- |
 | 拒绝或不可用 rejected / unavailable | `event_board.rejected`、`goal_progress.rejected_or_unavailable` | `detect_commitment()`、`build_event_board()`、`build_goal_progress()` | `["伊莎贝拉"]` | 这是候选冲突；本轮实际是“能不能帮忙”误判。 |
-| 承诺未兑现 unfulfilled commitment | `goal_progress.accepted_not_arrived` | `build_goal_progress()` | `[]` | 埃迪和玛丽亚进入 `accepted`，并且都在目标窗口到场。 |
+| 承诺未兑现 unfulfilled commitment | `goal_progress.accepted_not_arrived` | `build_goal_progress()` | `[]` | 埃迪 Eddy Lin 和玛丽亚 Maria Lopez 进入 `accepted`，并且都在目标窗口到场。 |
 | 失败反思候选 failed outcome | `reflection_candidates.json` | `build_reflection_candidates()` | `[]` | 没有出现“承诺了但 movement 未验证到场”的失败样例。 |
 | 无到场证据 no attendance | `goal_progress.missing` | `build_goal_progress()` | 未触发 | 因为四名角色都在 `17:00-19:00` 到过霍布斯咖啡馆。 |
 | 具体任务冲突 task conflict | 尚无字段 | 需要 `team_tasks.json` | 不能判断 | 不能说音乐、布置、拍照任务是否完成或冲突。 |
@@ -677,12 +677,12 @@ generative_agents_next/results/checkpoints/<实验名>/storage/shared/<event_id>
 
 | 观察 | 证据 | 判断 |
 | --- | --- | --- |
-| 埃迪和玛丽亚承诺候选都到场。 | `accepted_not_arrived=[]`，`reflection_candidates=[]`。 | 没有出现“承诺未兑现”的失败。 |
-| 伊莎贝拉被标成拒绝或不可用。 | `rejected_or_unavailable=["伊莎贝拉"]`。 | 这是规则误判，不是真实拒绝。 |
+| 埃迪 Eddy Lin 和玛丽亚 Maria Lopez 承诺候选都到场。 | `accepted_not_arrived=[]`，`reflection_candidates=[]`。 | 没有出现“承诺未兑现”的失败。 |
+| 伊莎贝拉 Isabella Rodriguez 被标成拒绝或不可用。 | `rejected_or_unavailable=["伊莎贝拉"]`。 | 这是规则误判，不是真实拒绝。 |
 | 目标完成率仍为 `1.0`。 | 四个 `criteria` 都为 `true`。 | 它只说明传播、承诺、到场、承诺兑现检查通过；不说明冲突字段都准确。 |
 | 没有任务级冲突。 | 未生成 `team_tasks.json`、`conflicts.jsonl`。 | 不能判断“音乐是否完成”“拍照任务是否被改派”。 |
 
-误判来源可以回到原话复核：伊莎贝拉说的是“问问林晓能不能帮忙拍照记录一下”，其中“能不能”命中了拒绝规则里的 `不能`。这类句子不是拒绝，而是询问可行性。冲突处理把它暴露出来是有价值的；自动把它当成真实冲突则是错误的。
+误判来源可以回到原话复核：伊莎贝拉 Isabella Rodriguez 说的是“问问林晓 Lin Xiao 能不能帮忙拍照记录一下”，其中“能不能”命中了拒绝规则里的 `不能`。这类句子不是拒绝，而是询问可行性。冲突处理把它暴露出来是有价值的；自动把它当成真实冲突则是错误的。
 
 ```mermaid
 flowchart TD
@@ -795,7 +795,7 @@ flowchart TD
 | --- | --- | --- |
 | 核心指标 | `mentions=28`、`known_agents=4`、`accepted_commitments=2`、`rejected_commitments=1`、`arrived_agents=4`、`goal_completion_rate=1.0` | 派对信息传播、承诺候选和到场证据都被评价层捕获。 |
 | 传播证据 | 从 `20240214-12:30` 到 `19:30`，报告展示前 20 条命中原话。 | 可以看到邀请、帮忙、音乐讨论和到场后的对话脉络。 |
-| 到场证据 | `17:00` 伊莎贝拉、玛丽亚、克劳斯到场，`17:40` 埃迪到场。 | 到场判断来自 `movement.json` 的 frame 和地点，不是对话摘要。 |
+| 到场证据 | `17:00` 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller 到场，`17:40` 埃迪 Eddy Lin 到场。 | 到场判断来自 `movement.json` 的 frame 和地点，不是对话摘要。 |
 | 目标进度 | `accepted_not_arrived=[]`，`rejected_or_unavailable=["伊莎贝拉"]`。 | 承诺未兑现为空，但拒绝候选需要人工复核。 |
 
 ### 当前还缺的可视化
@@ -835,7 +835,7 @@ flowchart TD
 | 事件 event | `valentine_party` | 评价脚本写入报告和 JSON 的事件名。 |
 | 目标地点 | `霍布斯咖啡馆` | `collect_attendance()` 用地点子串匹配 movement。 |
 | 目标窗口 | `20240214-17:00` 到 `20240214-19:00` | 只在这个窗口内判断派对到场。 |
-| 角色 agents | 伊莎贝拉、玛丽亚、埃迪、克劳斯、亚当 | 前四名参与派对链路，亚当提供未参与角色的对照状态。 |
+| 角色 agents | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、埃迪 Eddy Lin、克劳斯 Klaus Mueller、亚当 Adam Smith | 前四名参与派对链路，亚当 Adam Smith 提供未参与角色的对照状态。 |
 
 真实结果以本轮产物为准：`results/evaluations/book-collaboration-party/metrics.json` 记录 `checkpoint_count=71`，`final_time=20240214-19:40`。日志里最初出现过 `Step[1/72]`，但运行中断后通过 resume 完成到 `Step[71/71]`；后续分析按最终 71 个 checkpoint 计算。
 
@@ -929,7 +929,7 @@ results/evaluations/book-collaboration-party/
 | 目标进度生成 | `goal_completion_rate`、`accepted_not_arrived`、`missing` 存在。 | `goal_progress.json` |
 | 报告生成 | 核心指标、传播证据、到场证据、事件板都能在报告中看到。 | `report.md` |
 
-到场判断只能在完整覆盖目标窗口后解读。承诺判断必须回查原话，特别是 `rejected` 这类字段；本轮的伊莎贝拉拒绝候选就是规则误判，不能直接写成真实拒绝。
+到场判断只能在完整覆盖目标窗口后解读。承诺判断必须回查原话，特别是 `rejected` 这类字段；本轮的伊莎贝拉 Isabella Rodriguez 拒绝候选就是规则误判，不能直接写成真实拒绝。
 
 ## 35.11 实验结果分析
 
@@ -941,7 +941,7 @@ results/evaluations/book-collaboration-party/
 | --- | --- | --- |
 | checkpoint 数 | `71` | `metrics.checkpoint_count` |
 | 时间范围 | `20240214-08:00` 到 `20240214-19:40` | `metrics.final_time`、最后一个 checkpoint |
-| 角色 | 伊莎贝拉、玛丽亚、埃迪、克劳斯、亚当 | 启动命令与 checkpoint 配置 |
+| 角色 | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、埃迪 Eddy Lin、克劳斯 Klaus Mueller、亚当 Adam Smith | 启动命令与 checkpoint 配置 |
 | 目标窗口 | `20240214-17:00` 到 `20240214-19:00` | `metrics.window_start/window_end` |
 | 目标地点 | 霍布斯咖啡馆 | `metrics.target_place` |
 | 对话命中 | `28` 条 | `metrics.diffusion.mention_count` |
@@ -950,7 +950,7 @@ results/evaluations/book-collaboration-party/
 | 到场角色 | `4` 名 | `event_board.arrived` |
 | 反思候选 | `0` 条 | `reflection_candidates.json` |
 
-亚当没有进入 `known_by`、`accepted` 或 `arrived`，这不是失败。他在这轮实验里提供了未参与角色的对照：并不是所有运行角色都会被事件板自动拉进派对链路。
+亚当 Adam Smith 没有进入 `known_by`、`accepted` 或 `arrived`，这不是失败。他在这轮实验里提供了未参与角色的对照：并不是所有运行角色都会被事件板自动拉进派对链路。
 
 ### 证据链总览
 
@@ -974,20 +974,20 @@ flowchart TD
 
 | 时间 | 发生的事 | 证据文件 | 协作含义 |
 | --- | --- | --- | --- |
-| `12:30` | 伊莎贝拉告诉克劳斯，下午 5 点到 7 点咖啡馆有情人节派对。 | `conversation.json` | 事件事实开始从组织者传给顾客。 |
-| `12:50` | 埃迪主动问“下午 5 到 7 点有派对，你会去吗”，伊莎贝拉确认派对安排。 | `conversation.json` | 事件被第二个角色主动提起，不只是伊莎贝拉单向广播。 |
-| `13:20` | 玛丽亚说“派对听起来很有趣！需要帮忙吗”，随后讨论拍照角、鲜花和气球。 | `conversation.json` | 出现协作意图，但还不是可写回的团队任务。 |
-| `14:30` | 埃迪看到彩带，询问是否需要帮忙；伊莎贝拉请他绑气球，埃迪回答“没问题，交给我吧”。 | `conversation.json` | 形成明确的帮忙承诺候选。 |
-| `16:10` | 玛丽亚提醒克劳斯 5 点开始，并说一起去咖啡馆看看布置情况。 | `conversation.json` | 事件从组织者外扩，参与者之间发生二次传播。 |
-| `16:40` | 玛丽亚和埃迪讨论派对音乐、混响和电子元素。 | `conversation.json` | 出现任务相关讨论，但当前没有 `progress` 字段，不能写成音乐任务完成。 |
-| `17:00-17:40` | 伊莎贝拉、玛丽亚、克劳斯和埃迪先后出现在霍布斯咖啡馆。 | `movement.json` | 到场证据成立，不能只靠口头承诺判断。 |
+| `12:30` | 伊莎贝拉 Isabella Rodriguez 告诉克劳斯 Klaus Mueller，下午 5 点到 7 点咖啡馆有情人节派对。 | `conversation.json` | 事件事实开始从组织者传给顾客。 |
+| `12:50` | 埃迪 Eddy Lin 主动问“下午 5 到 7 点有派对，你会去吗”，伊莎贝拉 Isabella Rodriguez 确认派对安排。 | `conversation.json` | 事件被第二个角色主动提起，不只是伊莎贝拉 Isabella Rodriguez 单向广播。 |
+| `13:20` | 玛丽亚 Maria Lopez 说“派对听起来很有趣！需要帮忙吗”，随后讨论拍照角、鲜花和气球。 | `conversation.json` | 出现协作意图，但还不是可写回的团队任务。 |
+| `14:30` | 埃迪 Eddy Lin 看到彩带，询问是否需要帮忙；伊莎贝拉 Isabella Rodriguez 请他绑气球，埃迪 Eddy Lin 回答“没问题，交给我吧”。 | `conversation.json` | 形成明确的帮忙承诺候选。 |
+| `16:10` | 玛丽亚 Maria Lopez 提醒克劳斯 Klaus Mueller 5 点开始，并说一起去咖啡馆看看布置情况。 | `conversation.json` | 事件从组织者外扩，参与者之间发生二次传播。 |
+| `16:40` | 玛丽亚 Maria Lopez 和埃迪 Eddy Lin 讨论派对音乐、混响和电子元素。 | `conversation.json` | 出现任务相关讨论，但当前没有 `progress` 字段，不能写成音乐任务完成。 |
+| `17:00-17:40` | 伊莎贝拉 Isabella Rodriguez、玛丽亚 Maria Lopez、克劳斯 Klaus Mueller 和埃迪 Eddy Lin 先后出现在霍布斯咖啡馆。 | `movement.json` | 到场证据成立，不能只靠口头承诺判断。 |
 
 ### 六个升级方向验收
 
 | 升级方向 | 实验观察 | 证据文件 | 效果判断 | 边界 |
 | --- | --- | --- | --- | --- |
 | 公共事件板 event board | `known_by`、`accepted`、`rejected`、`arrived` 四类集合已生成。 | `event_board.json` | 自然对话和移动回放已经被整理成离线事件视图。 | `event_board.tasks` 是评价任务，不是角色真实任务卡。 |
-| 临时工作组 temporary workgroup | 伊莎贝拉可作为发起人候选，埃迪和玛丽亚可作为帮手候选，克劳斯是参与者候选。 | `event_board.json`、`report.md` | 能从证据推导工作组投影。 | 没有 `Workgroup` 类，也没有 `team_tasks.json`。 |
+| 临时工作组 temporary workgroup | 伊莎贝拉 Isabella Rodriguez 可作为发起人候选，埃迪 Eddy Lin 和玛丽亚 Maria Lopez 可作为帮手候选，克劳斯 Klaus Mueller 是参与者候选。 | `event_board.json`、`report.md` | 能从证据推导工作组投影。 | 没有 `Workgroup` 类，也没有 `team_tasks.json`。 |
 | 协作对话协议 dialogue act | `accepted=["埃迪","玛丽亚"]`，`rejected=["伊莎贝拉"]`。 | `event_board.json`、`report.md` | 规则能抽取承诺候选和拒绝候选。 | `rejected` 是误判；当前没有 `progress`、`task_done` 等动作。 |
 | 共享记忆 shared memory | `results/evaluations/book-collaboration-party/` 下生成一组共享证据文件。 | `metrics.json`、`report.md`、`goal_progress.json` | 评价层共享证据已落地。 | 没有 `storage/shared/<event_id>/`，角色运行时不会读取这些文件。 |
 | 协作冲突处理 conflict resolution | `rejected_or_unavailable=["伊莎贝拉"]`，`accepted_not_arrived=[]`，`reflection_candidates=[]`。 | `goal_progress.json`、`reflection_candidates.json` | 拒绝候选和承诺未兑现候选的暴露路径已存在。 | 没有 `conflicts.jsonl`，不能自动裁决误判或改派任务。 |
@@ -999,10 +999,10 @@ flowchart TD
 
 | 字段 | 实际结果 | 读法 |
 | --- | --- | --- |
-| `known_by` | 伊莎贝拉、克劳斯、埃迪、玛丽亚 | 四名角色在对话中说出过派对、时间、地点、帮忙或布置等相关事实。 |
-| `accepted` | 埃迪、玛丽亚 | 埃迪的“没问题，交给我吧”和玛丽亚的“一起走吧”被抽取为承诺候选。 |
-| `rejected` | 伊莎贝拉 | 自动规则误把“能不能帮忙拍照记录一下”里的“不能”识别成拒绝信号。 |
-| `arrived` | 伊莎贝拉、克劳斯、埃迪、玛丽亚 | 四名角色在 `17:00-19:00` 目标窗口内到达霍布斯咖啡馆。 |
+| `known_by` | 伊莎贝拉 Isabella Rodriguez、克劳斯 Klaus Mueller、埃迪 Eddy Lin、玛丽亚 Maria Lopez | 四名角色在对话中说出过派对、时间、地点、帮忙或布置等相关事实。 |
+| `accepted` | 埃迪 Eddy Lin、玛丽亚 Maria Lopez | 埃迪 Eddy Lin 的“没问题，交给我吧”和玛丽亚 Maria Lopez 的“一起走吧”被抽取为承诺候选。 |
+| `rejected` | 伊莎贝拉 Isabella Rodriguez | 自动规则误把“能不能帮忙拍照记录一下”里的“不能”识别成拒绝信号。 |
+| `arrived` | 伊莎贝拉 Isabella Rodriguez、克劳斯 Klaus Mueller、埃迪 Eddy Lin、玛丽亚 Maria Lopez | 四名角色在 `17:00-19:00` 目标窗口内到达霍布斯咖啡馆。 |
 
 `goal_progress.json` 的四个检查项全部为 `true`，因此 `goal_completion_rate=1.0`。这个数只能说明四项离线检查通过：事件有传播、有人表达承诺、有角色到场、接受承诺者没有缺席。它不能说明派对任务全部完成，也不能说明 `rejected` 字段没有误判。
 
@@ -1012,12 +1012,12 @@ flowchart TD
 
 | 时间 | frame | 角色 | 位置与动作 |
 | --- | ---: | --- | --- |
-| `20240214-17:00` | `3241` | 伊莎贝拉 | 在霍布斯咖啡馆柜台后面，动作是“在门口等候并欢迎第一批到来的顾客”。 |
-| `20240214-17:00` | `3241` | 玛丽亚 | 到达霍布斯咖啡馆顾客座位。 |
-| `20240214-17:00` | `3241` | 克劳斯 | 到达霍布斯咖啡馆顾客座位。 |
-| `20240214-17:40` | `3481` | 埃迪 | 到达霍布斯咖啡馆顾客座位。 |
+| `20240214-17:00` | `3241` | 伊莎贝拉 Isabella Rodriguez | 在霍布斯咖啡馆柜台后面，动作是“在门口等候并欢迎第一批到来的顾客”。 |
+| `20240214-17:00` | `3241` | 玛丽亚 Maria Lopez | 到达霍布斯咖啡馆顾客座位。 |
+| `20240214-17:00` | `3241` | 克劳斯 Klaus Mueller | 到达霍布斯咖啡馆顾客座位。 |
+| `20240214-17:40` | `3481` | 埃迪 Eddy Lin | 到达霍布斯咖啡馆顾客座位。 |
 
-到场证据证明角色出现在目标地点，不能证明具体任务完成。埃迪到场不等于音乐任务完成，玛丽亚到场不等于布置任务完成；这些需要 `team_tasks.json` 和任务进度字段。
+到场证据证明角色出现在目标地点，不能证明具体任务完成。埃迪 Eddy Lin 到场不等于音乐任务完成，玛丽亚 Maria Lopez 到场不等于布置任务完成；这些需要 `team_tasks.json` 和任务进度字段。
 
 ### 异常与边界
 

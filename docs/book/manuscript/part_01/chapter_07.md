@@ -45,15 +45,15 @@ flowchart LR
 
 ### 低层事件不等于长期认知
 
-- “克劳斯和玛丽亚在咖啡馆聊天”是一条事件。
-- “克劳斯认为玛丽亚也喜欢探索新想法”是一个认知。
-- “克劳斯愿意继续和玛丽亚交流”则是一个可能影响未来行为的社交倾向。
+- “克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 在咖啡馆聊天”是一条事件。
+- “克劳斯 Klaus Mueller 认为玛丽亚 Maria Lopez 也喜欢探索新想法”是一个认知。
+- “克劳斯 Klaus Mueller 愿意继续和玛丽亚 Maria Lopez 交流”则是一个可能影响未来行为的社交倾向。
 
 这三者不是同一层东西。Memory stream 保存低层事件，但可信行为需要高层认知。Reflection 的作用，就是在低层记忆和高层行为之间建立一层解释结构。
 
 ### 行为连续性需要抽象
 
-如果智能体没有抽象能力，它的行为连续性只能依赖重复检索过去事件。这样很脆弱。比如克劳斯再次遇到玛丽亚时，系统可能检索到“在咖啡馆聊天”，但没有检索到“共同兴趣”。于是他只会寒暄，而不会表现出“上次交流改变了我对你的认识”。有了 Reflection，系统可以把一组碎片经验变成 thought：
+如果智能体没有抽象能力，它的行为连续性只能依赖重复检索过去事件。这样很脆弱。比如克劳斯 Klaus Mueller 再次遇到玛丽亚 Maria Lopez 时，系统可能检索到“在咖啡馆聊天”，但没有检索到“共同兴趣”。于是他只会寒暄，而不会表现出“上次交流改变了我对你的认识”。有了 Reflection，系统可以把一组碎片经验变成 thought：
 
 ```text
 克劳斯发现玛丽亚虽然专业不同，但同样喜欢探索新想法，未来可以继续和她交流。
@@ -428,9 +428,9 @@ Requirements:
 
 | 原始证据 | 过度推断 | 更合理的 insight |
 | --- | --- | --- |
-| 玛丽亚认真听克劳斯讲话。 | 玛丽亚已经爱上了克劳斯。 | 克劳斯认为玛丽亚愿意倾听自己的研究想法。 |
-| 阿伊莎答应了解派对。 | 阿伊莎一定会参加派对。 | 阿伊莎知道派对时间，并可能考虑参加。 |
-| 居民询问山姆的竞选。 | 居民已经支持山姆。 | 山姆意识到居民开始关注他的竞选。 |
+| 玛丽亚 Maria Lopez 认真听克劳斯 Klaus Mueller 讲话。 | 玛丽亚 Maria Lopez 已经爱上了克劳斯 Klaus Mueller。 | 克劳斯 Klaus Mueller 认为玛丽亚 Maria Lopez 愿意倾听自己的研究想法。 |
+| 阿伊莎 Ayesha Khan 答应了解派对。 | 阿伊莎 Ayesha Khan 一定会参加派对。 | 阿伊莎 Ayesha Khan 知道派对时间，并可能考虑参加。 |
+| 居民询问山姆 Sam Moore 的竞选。 | 居民已经支持山姆 Sam Moore。 | 山姆 Sam Moore 意识到居民开始关注他的竞选。 |
 
 *表 7-4：Insight 的证据边界。Reflection 可以抽象，但不能把弱证据写成强结论。*
 
@@ -462,19 +462,19 @@ event
       -> self / relation / goal understanding
 ```
 
-## 7.11 Klaus 与 Maria 案例
+## 7.11 克劳斯 Klaus Mueller 与 玛丽亚 Maria Lopez 案例
 
-Klaus 与 Maria 的案例展示了 Reflection 如何改变社交选择。
+克劳斯 Klaus Mueller 与 玛丽亚 Maria Lopez 的案例展示了 Reflection 如何改变社交选择。
 
 | 层次 | 内容 |
 | --- | --- |
-| 初始条件 | Klaus 是社会学学生，Maria 是物理学生，两人都愿意探索新想法。 |
-| 低层记忆 | 他们在咖啡馆聊天，Maria 认真回应 Klaus 的研究话题。 |
-| 反思问题 | Klaus 与 Maria 是否有共同兴趣？ |
-| 可能 insight | Klaus 认为 Maria 愿意讨论开放性问题，未来可以继续交流。 |
-| 后续行为 | Klaus 更可能主动接近 Maria，或在对话中延续共同兴趣。 |
+| 初始条件 | 克劳斯 Klaus Mueller 是社会学学生，玛丽亚 Maria Lopez 是物理学生，两人都愿意探索新想法。 |
+| 低层记忆 | 他们在咖啡馆聊天，玛丽亚 Maria Lopez 认真回应 克劳斯 Klaus Mueller 的研究话题。 |
+| 反思问题 | 克劳斯 Klaus Mueller 与 玛丽亚 Maria Lopez 是否有共同兴趣？ |
+| 可能 insight | 克劳斯 Klaus Mueller 认为 玛丽亚 Maria Lopez 愿意讨论开放性问题，未来可以继续交流。 |
+| 后续行为 | 克劳斯 Klaus Mueller 更可能主动接近 玛丽亚 Maria Lopez，或在对话中延续共同兴趣。 |
 
-*表 7-6：Klaus 与 Maria 的反思链路。关系不是静态标签，而是由事件、问题、证据和 insight 逐步生成。*
+*表 7-6：克劳斯 Klaus Mueller 与 玛丽亚 Maria Lopez 的反思链路。关系不是静态标签，而是由事件、问题、证据和 insight 逐步生成。*
 
 脚本会直接写出如下内容：
 
@@ -496,10 +496,10 @@ Reflection 的价值要看 thought 是否进入后续行为链路。
 
 | 影响对象 | 示例 thought | 可能改变的行为 |
 | --- | --- | --- |
-| 自我认知 | 伊莎贝拉重视社区活动，并愿意主动组织居民参与。 | 她更可能继续邀请居民、安排派对准备。 |
-| 关系记忆 | 阿伊莎认为伊莎贝拉正在认真组织社区活动。 | 阿伊莎更可能帮忙传播派对消息。 |
-| 计划更新 | 山姆认为居民更关心实际生活问题。 | 他后续竞选对话更可能询问居民需求。 |
-| 社交选择 | Klaus 认为 Maria 适合继续交流。 | Klaus 更可能主动找 Maria 聊天。 |
+| 自我认知 | 伊莎贝拉 Isabella Rodriguez 重视社区活动，并愿意主动组织居民参与。 | 她更可能继续邀请居民、安排派对准备。 |
+| 关系记忆 | 阿伊莎 Ayesha Khan 认为伊莎贝拉 Isabella Rodriguez 正在认真组织社区活动。 | 阿伊莎 Ayesha Khan 更可能帮忙传播派对消息。 |
+| 计划更新 | 山姆 Sam Moore 认为居民更关心实际生活问题。 | 他后续竞选对话更可能询问居民需求。 |
+| 社交选择 | 克劳斯 Klaus Mueller 认为 玛丽亚 Maria Lopez 适合继续交流。 | 克劳斯 Klaus Mueller 更可能主动找 玛丽亚 Maria Lopez 聊天。 |
 
 *表 7-7：Reflection 对行为链路的影响。Thought 必须被后续检索和使用，否则只是日志。*在项目中，thought 写入 `Associate` 后，可以被 `retrieve_thoughts()` 和 `retrieve_focus()` 取出。计划、对话、反应相关 prompt 都可能读到这些记忆。
 
@@ -583,7 +583,7 @@ From ${agent}'s perspective, describe the most interesting part of the conversat
 | `reflect_chat_planing.txt` | `res` | `str` | 写成 `对于 {name} 的计划：...` |
 | `reflect_chat_memory.txt` | `res` | `str` | 写成 `{name} ...` |
 
-伊莎贝拉邀请阿伊莎参加派对后，系统不应该只保存“她们聊过天”。更有用的 thought 是：
+伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan 参加派对后，系统不应该只保存“她们聊过天”。更有用的 thought 是：
 
 ```text
 阿伊莎知道了派对时间。
@@ -619,7 +619,7 @@ Reflection 有收益，也有成本。调试时可以把问题压成三张表。
 | --- | --- |
 | 日志 | `Agent.reflect()` 是否打印角色名、累计 poignancy、阈值和 concept 数量。 |
 | 记忆 | checkpoint 中 `Associate.memory["thought"]` 是否新增内容。 |
-| 行为 | Klaus 是否更常接近 Maria，是否引用共同兴趣，是否改变对话和计划。 |
+| 行为 | 克劳斯 Klaus Mueller 是否更常接近 玛丽亚 Maria Lopez，是否引用共同兴趣，是否改变对话和计划。 |
 
 *表 7-11：如何观察 Reflection。最终标准不是写入成功，而是行为改变。*
 
@@ -648,7 +648,7 @@ Reflection 会在后续章节反复出现。
 | 第 10 章 Dialogue | 对话会依赖双方关系记忆，并把聊天摘要写回 memory stream。 |
 | 第 11 章评价方法 | 消融实验会观察去掉 Reflection 后的高层认知退化。 |
 | 第 21 章源码深读 | 拆 `Agent.reflect()`、prompt、证据、写回和参数。 |
-| 第四部分复现实验 | 设计 Klaus/Maria 关系形成实验和 Reflection 消融实验。 |
+| 第四部分复现实验 | 设计 克劳斯 Klaus Mueller/玛丽亚 Maria Lopez 关系形成实验和 Reflection 消融实验。 |
 | 第五部分前沿演进 | 对比 Reflexion、自我改进、长期记忆治理和经验压缩。 |
 
 *表 7-13：Reflection 与后续章节的关系。它是从“记住过去”走向“解释过去”的关键机制。*

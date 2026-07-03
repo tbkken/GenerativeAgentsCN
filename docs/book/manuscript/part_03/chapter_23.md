@@ -81,7 +81,7 @@ figure: docs/book/assets/chapter_23/ch23_replay_dataflow.png
 generative_agents/results/checkpoints/book-party-pair/simulate-20240214-0800.json
 ```
 
-其中伊莎贝拉的状态可以压缩成下面这段：
+其中伊莎贝拉 Isabella Rodriguez 的状态可以压缩成下面这段：
 
 ```json
 {
@@ -108,7 +108,7 @@ generative_agents/results/checkpoints/book-party-pair/simulate-20240214-0800.jso
 }
 ```
 
-这段断点 checkpoint 是输入 input。它告诉我们：当前小镇时间是 2024 年 2 月 14 日 08:00，伊莎贝拉位于瓦片坐标 coordinate `[78, 19]`，当前行动 action 是“打开咖啡馆大门并开灯”，行动地点 address 是霍布斯咖啡馆柜台后面。
+这段断点 checkpoint 是输入 input。它告诉我们：当前小镇时间是 2024 年 2 月 14 日 08:00，伊莎贝拉 Isabella Rodriguez 位于瓦片坐标 coordinate `[78, 19]`，当前行动 action 是“打开咖啡馆大门并开灯”，行动地点 address 是霍布斯咖啡馆柜台后面。
 
 压缩后，移动回放文件 `movement.json` 会出现下面这些帧：
 
@@ -277,7 +277,7 @@ time / step / stride
 
 这样读，断点 checkpoint 就是“某个时间点的小镇快照”，而不是一大团难读的 JSON。
 
-以 `simulate-20240214-0800.json` 为例，阿伊莎在 08:00 的状态可以读成一句话：
+以 `simulate-20240214-0800.json` 为例，阿伊莎 Ayesha Khan 在 08:00 的状态可以读成一句话：
 
 ```text
 阿伊莎位于 [118, 57]，在奥克山学院宿舍的书桌前阅读莎士比亚相关文献；
@@ -298,7 +298,7 @@ if key not in self.conversation.keys():
 self.conversation[key].append({f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats})
 ```
 
-真实结果中的一段对话可以整理成下面这种结构。下面片段来自 `example` 回放中 `20240213-06:00` 的山姆和詹妮弗对话，省略了部分字段外壳：
+真实结果中的一段对话可以整理成下面这种结构。下面片段来自 `example` 回放中 `20240213-06:00` 的山姆 Sam Moore 和詹妮弗 Jennifer Moore 对话，省略了部分字段外壳：
 
 ```json
 {
@@ -465,7 +465,7 @@ flowchart TD
 | `sec_per_step` | 每帧秒数 seconds per step | 前端用它计算时间流逝节奏。 |
 | `persona_init_pos` | 角色初始位置 persona initial position | 前端创建角色精灵 sprite 时的出生坐标。 |
 | `all_movement` | 全量移动帧 all movement | 每一帧角色在哪里、显示什么行动。 |
-| `all_movement.description` | 角色描述 description | 角色详情面板显示的当前状态 currently 和草稿状态 scratch。 |
+| `all_movement.description` | 角色描述 description | 角色详情面板显示的当前状态 currently 和角色画像字段 scratch。 |
 | `all_movement.conversation` | 对话记录 conversation | 前端按时间键显示聊天文本。 |
 
 以 `book-party-pair/movement.json` 为例，节选如下：
@@ -542,7 +542,7 @@ flowchart TD
     Json --> Living["居住地址 living_area"]
     Json --> Coord["初始坐标 coord"]
     Json --> Current["当前状态 currently"]
-    Json --> Scratch["草稿状态 scratch"]
+    Json --> Scratch["角色画像字段 scratch"]
     Living --> Location["转换为人类可读地点 location"]
     Coord --> Frame0["写入第 0 帧 movement['0']"]
     Location --> Frame0
@@ -576,11 +576,11 @@ flowchart TD
     Path --> Frames["展开为移动回放帧 movement frames"]
 ```
 
-以伊莎贝拉 08:00 的移动为例：
+以伊莎贝拉 Isabella Rodriguez 08:00 的移动为例：
 
 | 数据项 | 值 | 来源 |
 | --- | --- | --- |
-| 起点 source coord | `[72, 14]` | 第 0 帧，来自伊莎贝拉 `agent.json` 初始坐标。 |
+| 起点 source coord | `[72, 14]` | 第 0 帧，来自伊莎贝拉 Isabella Rodriguez `agent.json` 初始坐标。 |
 | 终点 target coord | `[78, 19]` | 断点 checkpoint `simulate-20240214-0800.json`。 |
 | 地点 location | `霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面` | `action.event.address` 去掉顶层世界名 `the Ville`。 |
 | 路径 path | `[72,14] -> ... -> [78,19]` | `Maze.find_path()` 根据世界地图 maze 计算。 |
@@ -669,7 +669,7 @@ flowchart TD
     Predicate --> Display
 ```
 
-伊莎贝拉 08:00 的帧变化很直观：
+伊莎贝拉 Isabella Rodriguez 08:00 的帧变化很直观：
 
 | 回放帧 | 坐标 movement | 行动 action | 读法 |
 | --- | --- | --- | --- |
@@ -755,7 +755,7 @@ def extract_description():
     return markdown_content
 ```
 
-这里有一个容易忽略的细节：基础人设来自 `start.py` 中的全量角色列表 `personas`，不是只来自本次断点 checkpoint 中的两个角色。因此 `book-party-pair/simulation.md` 的开头会出现阿伊莎、克劳斯、玛丽亚、伊莎贝拉等全量角色人设；但后面的活动记录只来自本次断点中的 `agents`。
+这里有一个容易忽略的细节：基础人设来自 `start.py` 中的全量角色列表 `personas`，不是只来自本次断点 checkpoint 中的两个角色。因此 `book-party-pair/simulation.md` 的开头会出现阿伊莎 Ayesha Khan、克劳斯 Klaus Mueller、玛丽亚 Maria Lopez、伊莎贝拉 Isabella Rodriguez 等全量角色人设；但后面的活动记录只来自本次断点中的 `agents`。
 
 接着，`generate_report()` 遍历断点 checkpoint，提取活动变化：
 
@@ -817,7 +817,7 @@ for chats in conversation[json_data['time']]:
 | 价值 | 说明 | 例子 |
 | --- | --- | --- |
 | 人类可读 | 不用打开前端，也能按时间线阅读小镇发生了什么。 | `08:00 伊莎贝拉打开咖啡馆大门并开灯`。 |
-| 可引用 | 写实验报告时，可以引用某个时间点某个角色的活动和对话。 | 派对实验引用“伊莎贝拉何时开始准备咖啡馆”。 |
+| 可引用 | 写实验报告时，可以引用某个时间点某个角色的活动和对话。 | 派对实验引用“伊莎贝拉 Isabella Rodriguez 何时开始准备咖啡馆”。 |
 | 可审计 | 如果某个角色声称知道派对，可以回查时间线，看它什么时候听到。 | 对照 `conversation.json` 查传播路径。 |
 
 生成式智能体 Generative Agents 的难点不只是“让角色动起来”，还包括“让研究者能解释角色为什么这样动”。时间线报告 `simulation.md` 就是连接故事体验和实验证据的材料。
@@ -1045,9 +1045,9 @@ movement.json
 
 | 实验 | 先看什么 | 再查什么 | 核心问题 |
 | --- | --- | --- | --- |
-| 情人节派对传播 | 时间线报告 `simulation.md`、对话文件 `conversation.json` | 断点 checkpoint 的行动 action、记忆 memory | 伊莎贝拉什么时候邀请谁，被邀请者是否在正确时间到达咖啡馆？ |
-| 镇长竞选信息扩散 | 对话文件 `conversation.json`、时间线报告 `simulation.md` | 记忆存储 storage、反思 reflection | 山姆是否谈到竞选，谁听到了，谁又告诉别人？ |
-| 关系形成实验 | 对话记录 conversation、角色位置 movement | 社交记忆 social memory、日程 schedule | 克劳斯和玛丽亚是否多次相遇，后续活动是否更接近？ |
+| 情人节派对传播 | 时间线报告 `simulation.md`、对话文件 `conversation.json` | 断点 checkpoint 的行动 action、记忆 memory | 伊莎贝拉 Isabella Rodriguez 什么时候邀请谁，被邀请者是否在正确时间到达咖啡馆？ |
+| 镇长竞选信息扩散 | 对话文件 `conversation.json`、时间线报告 `simulation.md` | 记忆存储 storage、反思 reflection | 山姆 Sam Moore 是否谈到竞选，谁听到了，谁又告诉别人？ |
+| 关系形成实验 | 对话记录 conversation、角色位置 movement | 社交记忆 social memory、日程 schedule | 克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 是否多次相遇，后续活动是否更接近？ |
 | 自定义小镇事件 | 移动回放文件 `movement.json`、断点 checkpoint | 地图地址 address、角色配置 agent.json | 新事件是否落在正确地点，角色行动是否符合设定？ |
 
 这些实验都可以从 `simulation.md` 和 `conversation.json` 开始分析。如果要统计位置和到场，则看移动回放文件 `movement.json` 或断点 checkpoint 中的坐标 coord 和行动 action。

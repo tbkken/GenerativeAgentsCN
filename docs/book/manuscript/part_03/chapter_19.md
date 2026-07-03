@@ -22,7 +22,7 @@
 7. 对话和等待如何改写日程？
 8. 当前日程系统有哪些失败模式和升级方向？
 
-先看一个真实业务案例：为什么克劳斯会在 09:50 坐到奥克山学院图书馆的桌子前，开始写“低收入社区中产阶级化影响”的论文段落。这个结果不是地图随机刷出来的，也不是感知 percept 临时决定的，而是日程 Schedule 一层一层落下来的。
+先看一个真实业务案例：为什么克劳斯 Klaus Mueller 会在 09:50 坐到奥克山学院图书馆的桌子前，开始写“低收入社区中产阶级化影响”的论文段落。这个结果不是地图随机刷出来的，也不是感知 percept 临时决定的，而是日程 Schedule 一层一层落下来的。
 
 ```json
 {
@@ -38,16 +38,16 @@
 }
 ```
 
-这段输入已经给出三层约束。第一层是当前目标 currently：克劳斯今天围绕研究论文行动。第二层是粗粒度计划 rough plan：09:00 到 10:00，他应该在图书馆安静角落写论文和查文献。第三层是当前时间 time：09:50 已经落在这一小时的后半段。日程系统接下来要做的事情，就是把“这一小时做研究”压到“此刻做什么、在哪里做、持续多久”。
+这段输入已经给出三层约束。第一层是当前目标 currently：克劳斯 Klaus Mueller 今天围绕研究论文行动。第二层是粗粒度计划 rough plan：09:00 到 10:00，他应该在图书馆安静角落写论文和查文献。第三层是当前时间 time：09:50 已经落在这一小时的后半段。日程系统接下来要做的事情，就是把“这一小时做研究”压到“此刻做什么、在哪里做、持续多久”。
 
 | 业务步骤 | 项目里的数据 | 读者要看到的含义 |
 | --- | --- | --- |
 | 生成日计划 | 日程生成 `make_schedule()` 调用五个日程提示词 prompt | 模型先生成起床时间、日程大纲、小时级日程，再处理拆解和修订。 |
-| 保存粗计划 | `Schedule.daily_schedule[9]` | 09:00-10:00 是克劳斯写论文和查文献的时间段。 |
+| 保存粗计划 | `Schedule.daily_schedule[9]` | 09:00-10:00 是克劳斯 Klaus Mueller 写论文和查文献的时间段。 |
 | 拆成子计划 | `rough_plan["decompose"]` | 一小时被拆成整理桌面、回顾笔记、检索文献、阅读批注、列提纲、开始写段落等动作。 |
 | 选择当前子计划 | 当前计划 `Schedule.current_plan()` | 09:50 命中最后一个子计划：开始撰写论文中关于中产阶级化影响的段落。 |
 | 落到世界动作 | 动作生成 `_determine_action()` | 子计划被转成行动 Action、角色事件 event 和对象事件 obj_event。 |
-| 写入回放状态 | `simulate-20240213-1000.json` | 前端回放程序看到克劳斯在图书馆桌子前写论文。 |
+| 写入回放状态 | `simulate-20240213-1000.json` | 前端回放程序看到克劳斯 Klaus Mueller 在图书馆桌子前写论文。 |
 
 输出结果长这样：
 
@@ -70,7 +70,7 @@
 }
 ```
 
-用业务语言读，这就是一句话：克劳斯今天的目标是写论文，09:00-10:00 的日程把他安排到图书馆，09:50 的子计划把他推到写作段落，动作生成模块再把这件事绑定到图书馆桌子。日程 Schedule 是时间上的骨架，动作 Action 是世界里的落点。
+用业务语言读，这就是一句话：克劳斯 Klaus Mueller 今天的目标是写论文，09:00-10:00 的日程把他安排到图书馆，09:50 的子计划把他推到写作段落，动作生成模块再把这件事绑定到图书馆桌子。日程 Schedule 是时间上的骨架，动作 Action 是世界里的落点。
 
 高频术语先统一一下。本章后面会反复出现这些概念：
 
@@ -121,7 +121,7 @@ figure: docs/book/assets/chapter_19/ch19_schedule_pipeline.png
 
 ![图 19-2：真实日程 Schedule 如何落到分钟级行动](../../assets/chapter_19/ch19_schedule_pipeline.png)
 
-*图 19-2：真实日程 Schedule 如何把克劳斯送到图书馆桌子前。图中读取的是 `book-smoke` 断点 checkpoint：左侧是真实地图切片与克劳斯坐标，中间是角色画像和当前目标 currently，右侧是 09:00-10:00 的粗计划 plan、09:50 命中的子计划 decompose，以及最终写入回放文件的行动 Action。*
+*图 19-2：真实日程 Schedule 如何把克劳斯 Klaus Mueller 送到图书馆桌子前。图中读取的是 `book-smoke` 断点 checkpoint：左侧是真实地图切片与克劳斯 Klaus Mueller 坐标，中间是角色画像和当前目标 currently，右侧是 09:00-10:00 的粗计划 plan、09:50 命中的子计划 decompose，以及最终写入回放文件的行动 Action。*
 
 这行输出可以这样读：
 
@@ -157,7 +157,7 @@ figure: docs/book/assets/chapter_19/ch19_schedule_pipeline.png
 - 晚上社交或休息。
 - 睡觉。
 
-这个结构让行为连续、稳定、可预期。在多智能体系统里，日程还有一个重要作用：制造相遇。如果伊莎贝拉常在咖啡馆，克劳斯和玛丽亚也常去咖啡馆，他们就有机会相遇。如果山姆在公共地点谈竞选，居民就可能听到。所以，日程不是装饰。它是社会互动发生的时间骨架。
+这个结构让行为连续、稳定、可预期。在多智能体系统里，日程还有一个重要作用：制造相遇。如果伊莎贝拉 Isabella Rodriguez 常在咖啡馆，克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 也常去咖啡馆，他们就有机会相遇。如果山姆 Sam Moore 在公共地点谈竞选，居民就可能听到。所以，日程不是装饰。它是社会互动发生的时间骨架。
 
 ## 19.3 日程 Schedule 数据结构
 
@@ -198,7 +198,7 @@ class Schedule:
 
 开始时间 `start` 和持续时间 `duration` 都是分钟数。子计划 `decompose` 保存拆解结果。这说明日程 Schedule 是时间表，不是自然语言段落。
 
-在 `book-smoke` 断点 checkpoint 里，克劳斯 09:00-10:00 的真实日计划 daily schedule 是下面这样：
+在 `book-smoke` 断点 checkpoint 里，克劳斯 Klaus Mueller 09:00-10:00 的真实日计划 daily schedule 是下面这样：
 
 ```json
 {
@@ -344,9 +344,9 @@ flowchart TD
 
 用输入、处理、输出的方式看，`make_schedule()` 的工程闭环如下：
 
-| 环节 | 内容 | 在克劳斯案例里的对应物 |
+| 环节 | 内容 | 在克劳斯 Klaus Mueller 案例里的对应物 |
 | --- | --- | --- |
-| 输入 | 角色设定 base_desc、生活方式 lifestyle、当前目标 currently、近期记忆 memory、当前日期 | 克劳斯正在写低收入社区中产阶级化影响论文。 |
+| 输入 | 角色设定 base_desc、生活方式 lifestyle、当前目标 currently、近期记忆 memory、当前日期 | 克劳斯 Klaus Mueller 正在写低收入社区中产阶级化影响论文。 |
 | 处理 | 依次调用起床时间 wake_up、日程大纲 schedule_init、小时日程 schedule_daily，并在需要时调用日程拆解 schedule_decompose | 先生成一天计划，再把 09:00-10:00 的论文写作拆成 7 个子任务。 |
 | 输出 | 日计划 `Schedule.daily_schedule`、写入记忆的计划想法 thought、当前可执行计划 current plan | 09:50 命中“开始撰写论文中关于中产阶级化影响的段落”。 |
 
@@ -378,7 +378,7 @@ self.scratch.currently = self.completion("retrieve_currently", plan, thought)
 | --- | --- | --- | --- |
 | 计划检索提示词 retrieve_plan | 关联记忆节点 retrieved、角色名 agent、当前日期 date | `res: List[str]` | 从记忆里整理出若干条和今天计划相关的描述。 |
 | 想法检索提示词 retrieve_thought | 关联记忆节点 retrieved、角色名 agent | `res: str` | 用一句话概括角色此刻的想法和感受。 |
-| 当前状态更新提示词 retrieve_currently | 昨天状态 currently、计划线索 plan、想法总结 thought、当前日期 current_time | `res: str` | 生成新的当前目标 currently，写回人格草稿 Scratch。 |
+| 当前状态更新提示词 retrieve_currently | 昨天状态 currently、计划线索 plan、想法总结 thought、当前日期 current_time | `res: str` | 生成新的当前目标 currently，写回提示词组装器 Scratch 的当前关注 currently。 |
 
 这里的 `plan` 不是 `Schedule.daily_schedule` 里的粗计划 plan，而是一组从记忆中抽出来的计划线索。`thought` 也不是长期记忆里的想法节点 thought，而是一句用于更新当前状态的临时总结。最后写回的 `self.scratch.currently`，才会进入后面的起床时间 wake_up、日程大纲 schedule_init 和小时日程 schedule_daily。
 
@@ -391,14 +391,14 @@ flowchart TD
     Retrieve --> Thought["生成想法总结 retrieve_thought"]
     Plan --> Current["更新当前状态 retrieve_currently"]
     Thought --> Current
-    Current --> Scratch["更新人格草稿 Scratch.currently"]
+    Current --> Scratch["更新提示词组装器 Scratch.currently"]
 ```
 
 这是日程系统最容易被忽略的设计。它让角色的新一天不是从原始 `agent.json` 重新开始，而是从过去经历接续。例如：
 
-- 伊莎贝拉昨天邀请了很多人，今天可能继续准备派对。
-- 山姆昨天和居民谈过竞选，今天可能继续拜访居民。
-- 克劳斯昨天遇到玛丽亚，今天可能有新的社交倾向。
+- 伊莎贝拉 Isabella Rodriguez 昨天邀请了很多人，今天可能继续准备派对。
+- 山姆 Sam Moore 昨天和居民谈过竞选，今天可能继续拜访居民。
+- 克劳斯 Klaus Mueller 昨天遇到玛丽亚 Maria Lopez，今天可能有新的社交倾向。
 
 如果没有这一步，仿真会每天重启人格状态。
 
@@ -438,7 +438,7 @@ Based on the information above, output the wake-up hour for ${agent}. Output onl
 | --- | --- | --- |
 | 角色设定 base_desc | `Scratch._base_desc()` 读取 `agent.json` 后拼出的完整角色画像 | 包含姓名、年龄、先天特质、后天经历、生活习惯、日常计划、当前日期和当前目标。它让模型先知道“这个人是谁”。 |
 | 生活方式 lifestyle | `agent.json` 中 `scratch.lifestyle` 字段 | 只抽出作息习惯，例如几点睡、几点醒、几点吃饭。起床提示词 prompt 会把它再强调一遍，因为这里最关键的信息就是作息。 |
-| 角色名 agent | `self.name` | 只是角色名字符串，例如“克劳斯”，不是完整的智能体 Agent 对象。它被放进“输出某某的起床时间”这句话里。 |
+| 角色名 agent | `self.name` | 只是角色名字符串，例如“克劳斯 Klaus Mueller”，不是完整的智能体 Agent 对象。它被放进“输出某某的起床时间”这句话里。 |
 
 输出结构 schema 是：
 
@@ -455,7 +455,7 @@ res: int
 | `7` | 07:00 起床。 |
 | `11` | 11:00 起床，这是代码允许的最晚起床小时。 |
 
-以克劳斯为例，`wake_up.txt` 填充后接近下面这样：
+以克劳斯 Klaus Mueller 为例，`wake_up.txt` 填充后接近下面这样：
 
 ```text
 姓名: 克劳斯
@@ -700,7 +700,7 @@ Requirements:
 | 日程大纲 daily_schedule | 上一步 `schedule_init` 返回的活动列表，用分号拼接 | 提供“一天大概做什么”的自然语言骨架。 |
 | 小时模板 hourly_schedule | `prompt_schedule_daily()` 根据 wake_up 生成 | 给出 24 小时槽位；起床前已经写成“睡觉”，起床后等待模型补活动。 |
 
-如果克劳斯的起床时间 wake_up 是 `7`，小时模板 hourly_schedule 会接近下面这样：
+如果克劳斯 Klaus Mueller 的起床时间 wake_up 是 `7`，小时模板 hourly_schedule 会接近下面这样：
 
 ```text
 [0:00] 睡觉
@@ -823,7 +823,7 @@ flowchart TD
 
 这一步让角色知道自己的计划。计划不仅存在于 `Schedule`，也成为记忆流 memory stream 中的想法 thought。后续对话、反思和新一天计划都可能检索到它。这体现了论文思想：计划也是智能体经验的一部分。
 
-克劳斯的断点 checkpoint 里可以看到真实写入的想法 thought：
+克劳斯 Klaus Mueller 的断点 checkpoint 里可以看到真实写入的想法 thought：
 
 ```text
 这是 克劳斯 在 2024年02月13日（星期二）09:30 的计划：
@@ -840,7 +840,7 @@ flowchart TD
 晚上11点睡觉
 ```
 
-这个想法 thought 不是展示文本，而是会进入关联记忆 Associate。下一次生成新日程或对话时，克劳斯可以检索到“自己今天原本打算怎么安排”。日程 Schedule 解决“现在该做什么”，记忆 memory 解决“为什么我会这么安排”。
+这个想法 thought 不是展示文本，而是会进入关联记忆 Associate。下一次生成新日程或对话时，克劳斯 Klaus Mueller 可以检索到“自己今天原本打算怎么安排”。日程 Schedule 解决“现在该做什么”，记忆 memory 解决“为什么我会这么安排”。
 
 ## 19.13 当前计划 current_plan()
 
@@ -1007,7 +1007,7 @@ List[Tuple[str, int]]
 
 这里的 `str` 是子任务描述，`int` 是持续分钟数。它不是开始时间，也不是结束时间；开始时间由代码从粗计划 plan 的 `start` 开始累加出来。回调函数 callback 会把模型可能返回的字典、列表或元组统一清洗成 `(describe, duration)`；如果模型结果不可用，失败兜底 failsafe 会用粗计划 plan 的原始描述按 10 分钟粒度补出一组子任务。
 
-克劳斯的写论文任务就是这种输出被代码写回后的结果。模型不需要输出 `start`，只需要输出每段子任务的描述和时长：
+克劳斯 Klaus Mueller 的写论文任务就是这种输出被代码写回后的结果。模型不需要输出 `start`，只需要输出每段子任务的描述和时长：
 
 ```text
 ("在图书馆安静角落找好位置并整理桌面", 5)
@@ -1077,7 +1077,7 @@ flowchart TD
 
 每个子计划也包含四个字段，需要逐项查看：
 
-| 字段 | 含义 | 克劳斯 09:50 子计划示例 |
+| 字段 | 含义 | 克劳斯 Klaus Mueller 09:50 子计划示例 |
 | --- | --- | --- |
 | `idx` | 子计划在当前粗计划里的序号。 | `6`，表示第 7 个子任务。 |
 | `describe` | 当前子任务的自然语言描述。 | `开始撰写论文中关于中产阶级化影响的段落`。 |
@@ -1112,7 +1112,7 @@ memory.Action(
 )
 ```
 
-克劳斯 09:50 的真实行动 Action 可以按下面方式读：
+克劳斯 Klaus Mueller 09:50 的真实行动 Action 可以按下面方式读：
 
 ```json
 {
@@ -1265,7 +1265,7 @@ flowchart TD
     Keep --> Resume
 ```
 
-这会重写当前计划的子计划。例如，本来 10:00-11:00 写论文。10:20-10:35 和玛丽亚聊天。修订后可能是：
+这会重写当前计划的子计划。例如，本来 10:00-11:00 写论文。10:20-10:35 和玛丽亚 Maria Lopez 聊天。修订后可能是：
 
 ```text
 10:00-10:20 写论文
@@ -1361,13 +1361,13 @@ flowchart TD
 
 日程系统让行为更可信，不是因为它让角色“更聪明”，而是因为它给行为加了时间骨架。一个可信角色不应该每 10 分钟随机换目标，也不应该上午写论文、下一步突然去厨房做饭而没有任何解释。日程 Schedule 提供的就是这种连续性。
 
-| 可信性来源 | 项目里的机制 | 读者可以观察什么 | 克劳斯案例 |
+| 可信性来源 | 项目里的机制 | 读者可以观察什么 | 克劳斯 Klaus Mueller 案例 |
 | --- | --- | --- | --- |
-| 作息规律 | 起床时间 wake_up、小时日程 schedule_daily | 角色不会全天随机活动，睡眠、吃饭、工作有稳定节奏。 | 克劳斯早上 7 点起床，上午进入图书馆写论文。 |
+| 作息规律 | 起床时间 wake_up、小时日程 schedule_daily | 角色不会全天随机活动，睡眠、吃饭、工作有稳定节奏。 | 克劳斯 Klaus Mueller 早上 7 点起床，上午进入图书馆写论文。 |
 | 目标连续性 | 当前目标 currently、日程大纲 schedule_init、日计划 daily_schedule | 当前行动来自当天计划，不是每个仿真步 step 临时生成。 | “写中产阶级化论文”从 currently 延续到 09:00-10:00 的粗计划 plan。 |
 | 时间约束 | 粗计划 plan 的 `start` / `duration`，子计划 decompose 的分钟切分 | 行动会占用时间；对话、等待也会切开原计划。 | 09:50 的子计划只持续 10 分钟，不会无限写下去。 |
 | 空间落地 | 动作生成 `_determine_action()`、语义地址 address、行动 Action | 计划最终要落到地点和对象，而不是只停留在文字。 | 写论文被落到 `奥克山学院 -> 图书馆 -> 图书馆桌子`。 |
-| 可解释性 | `Schedule.daily_schedule`、`plan["decompose"]`、断点 checkpoint | 打开日程和断点，就能解释“为什么此刻在这里做这件事”。 | `simulate-*.json` 里能看到克劳斯的计划、行动、地址和持续时间。 |
+| 可解释性 | `Schedule.daily_schedule`、`plan["decompose"]`、断点 checkpoint | 打开日程和断点，就能解释“为什么此刻在这里做这件事”。 | `simulate-*.json` 里能看到克劳斯 Klaus Mueller 的计划、行动、地址和持续时间。 |
 
 所以，论文中的规划 planning 模块不是一个抽象概念。它在项目里对应一组能被打开、检查、修改的数据结构：`currently` 决定今天围绕什么行动，`daily_schedule` 决定一天怎么分段，`decompose` 决定当前分钟做什么，行动 Action 决定这件事落到哪里。
 
@@ -1400,7 +1400,7 @@ currently -> schedule_init -> schedule_daily -> decompose -> schedule_revise -> 
 | 实验 | 修改变量 | 运行方式 | 观察对象 | 预期现象 |
 | --- | --- | --- | --- | --- |
 | 不同角色作息 | 不同角色的生活方式 lifestyle | 同时运行多个角色 | 起床时间 wake_up、日计划 daily_schedule | 早睡早起角色更早进入白天活动；夜猫子角色起床更晚。 |
-| 当前目标影响日程 | `agent.json.currently` | 修改伊莎贝拉的当前目标 currently，再重新生成日程 | `schedule_init`、`schedule_daily` | 如果 currently 写成筹备派对，日程中应该出现邀请、准备、布置等活动。 |
+| 当前目标影响日程 | `agent.json.currently` | 修改伊莎贝拉 Isabella Rodriguez 的当前目标 currently，再重新生成日程 | `schedule_init`、`schedule_daily` | 如果 currently 写成筹备派对，日程中应该出现邀请、准备、布置等活动。 |
 | 日程拆解粒度 | 粗计划 plan 的活动描述和持续时间 | 选择一个 60 分钟任务，触发 schedule_decompose | `plan["decompose"]` | 子计划应该覆盖完整 60 分钟，且每项是可观察动作。 |
 | 对话插入日程 | 让两个角色在同一场所相遇并聊天 | 运行到触发 `_chat_with()` | `schedule_revise` 输出、修订后的 `plan["decompose"]` | 对话时间段应该插入当前计划，剩余计划继续向后排列。 |
 | 等待插入日程 | 让两个角色竞争同一对象或等待对方行动结束 | 运行到触发 `_wait_other()` | 当前行动 Action、修订后的 decompose | 等待应占用一段时间，而不是只写日志。 |

@@ -204,7 +204,7 @@ flowchart LR
 
 | 字段 | 中文意思 | 进入哪里 | 典型例子 |
 | --- | --- | --- | --- |
-| `prompt` | 最终发给模型的提示词文本。 | 传入 `provider._completion()`。 | “根据上述提示，输出克劳斯的起床时间。” |
+| `prompt` | 最终发给模型的提示词文本。 | 传入 `provider._completion()`。 | “根据上述提示，输出克劳斯 Klaus Mueller 的起床时间。” |
 | `callback` | 模型输出后的业务校验或转换。 | `LLMModel.completion()` 解析后执行。 | 起床时间大于 11 时截断为 11。 |
 | `failsafe` | 失败时的兜底结果 failsafe。 | 重试耗尽或返回假值时使用。 | `wake_up` 默认返回 8。 |
 | `return_type` | Pydantic 输出结构 schema。 | 传给 provider 或 `parse_structured_output()`。 | `res: int`、`res: bool`、`res: dict[str, str]`。 |

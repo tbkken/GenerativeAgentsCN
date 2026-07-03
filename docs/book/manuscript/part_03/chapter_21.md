@@ -81,7 +81,7 @@ figure: docs/book/assets/chapter_21/ch21_reflection_pipeline.png
 | `reflect_prompt_count=4` | `reflect_focus`、`reflect_insights`、`reflect_chat_planing`、`reflect_chat_memory` | 反思包括经历反思和聊天反思两条线，不只是生成一句总结。 |
 | `evidence_persisted_in_metadata=False` | `Associate.add_node()` | 当前源码会把证据 evidence 传进 `_add_concept()`，但底层元数据 metadata 没保存 `filling` 字段；读反思结果时要知道这个证据链边界。 |
 
-先用小镇实验里的真实状态看反思的业务数据流。10:10 的 checkpoint 中，克劳斯和阿伊莎已经完成了一段关于“校园智能体公平性”的对话，但两人的累计重要性 poignancy 还很低：
+先用小镇实验里的真实状态看反思的业务数据流。10:10 的 checkpoint 中，克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 已经完成了一段关于“校园智能体公平性”的对话，但两人的累计重要性 poignancy 还很低：
 
 ```text
 阿伊莎 status.poignancy = 6
@@ -103,7 +103,7 @@ poignancy_max = 150
 }
 ```
 
-克劳斯的 `docstore.json` 里，`node_1` 是这次对话形成的事件 event：
+克劳斯 Klaus Mueller 的 `docstore.json` 里，`node_1` 是这次对话形成的事件 event：
 
 ```json
 {
@@ -123,7 +123,7 @@ poignancy_max = 150
 }
 ```
 
-阿伊莎的 `docstore.json` 里，同一段对话以聊天记忆 chat memory 的形式保存：
+阿伊莎 Ayesha Khan 的 `docstore.json` 里，同一段对话以聊天记忆 chat memory 的形式保存：
 
 ```json
 {
@@ -996,18 +996,18 @@ flowchart TD
 
 ## 21.20 反思实验怎么设计
 
-反思实验要把“触发反思”和“观察行为变化”分开设计。克劳斯/玛丽亚 Klaus/Maria 是观察关系反思的好案例，也可以沿用克劳斯/阿伊莎的校园公平性讨论做计划反思。
+反思实验要把“触发反思”和“观察行为变化”分开设计。克劳斯 Klaus Mueller/玛丽亚 Maria Lopez 是观察关系反思的好案例，也可以沿用克劳斯 Klaus Mueller/阿伊莎 Ayesha Khan 的校园公平性讨论做计划反思。
 
 | 实验目标 | 修改变量 | 运行方式 | 观察对象 | 预期现象 |
 | --- | --- | --- | --- | --- |
 | 观察阈值触发 | `poignancy_max` | 分别运行高阈值和低阈值版本。 | 反思日志、`status.poignancy`、新增想法 thought 数量。 | 低阈值更快触发反思，高阈值需要更多重要事件。 |
-| 观察关系反思 | Klaus/Maria 的相遇次数和对话内容 | 运行开启反思 reflection on / 关闭反思 reflection off 两个版本。 | `summarize_relation`、后续 `generate_chat`、双方 `memory["thought"]`。 | 开启反思后，下一次关系摘要更具体，对话更有历史感。 |
-| 观察计划反思 | 克劳斯/阿伊莎讨论后的后续日程 | 保持对话相同，比较是否触发 `reflect_chat_planing`。 | `reflect_chat_planing` 输出、后续日程 schedule。 | 反思应把讨论中的计划影响写成 thought，并可能影响后续安排。 |
+| 观察关系反思 | 克劳斯 Klaus Mueller/玛丽亚 Maria Lopez 的相遇次数和对话内容 | 运行开启反思 reflection on / 关闭反思 reflection off 两个版本。 | `summarize_relation`、后续 `generate_chat`、双方 `memory["thought"]`。 | 开启反思后，下一次关系摘要更具体，对话更有历史感。 |
+| 观察计划反思 | 克劳斯 Klaus Mueller/阿伊莎 Ayesha Khan 讨论后的后续日程 | 保持对话相同，比较是否触发 `reflect_chat_planing`。 | `reflect_chat_planing` 输出、后续日程 schedule。 | 反思应把讨论中的计划影响写成 thought，并可能影响后续安排。 |
 | 观察证据质量 | 反思输入节点集合 `nodes` | 手动保留/移除关键事件 event。 | `reflect_focus`、`reflect_insights`、证据编号 evidence。 | 关键证据缺失时，洞察更泛或更容易过度推断。 |
 | 观察持久化边界 | 是否保存 `filling/evidence` | 比较当前实现和保存证据 evidence 的改造版。 | `docstore.json` 元数据 metadata、可解释性输出。 | 保存证据 evidence 后，可以从想法 thought 追溯到原始节点。 |
 | 观察后续行为 | 新增想法 thought 是否被召回 | 反思后继续运行多步仿真。 | `retrieve_focus()`、日程提示词 prompt、对话提示词 prompt、行为变化。 | 有效反思不只产生文本，还会影响计划、对话或关系。 |
 
-Klaus/Maria 实验可以重点比较下面这些结果：
+克劳斯 Klaus Mueller/玛丽亚 Maria Lopez 实验可以重点比较下面这些结果：
 
 - 两人是否相遇。
 - 是否对话。

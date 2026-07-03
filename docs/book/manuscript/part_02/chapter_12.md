@@ -62,7 +62,7 @@ generative_agents/results/compressed/example/
 }
 ```
 
-这段数据可以这样读。`start_datetime` 是回放顶部显示的小镇起点。`stride: 10` 表示每个仿真 step 推进 10 分钟。`persona_init_pos` 保存角色进入地图时的初始坐标，例如阿伊莎在 `[118, 61]`，伊莎贝拉在 `[72, 14]`。`all_movement["1"]` 是第 1 帧，里面每个角色都有 `location`、`movement` 和 `action`。其中 `location` 是给人读的地点文本，`movement` 是给前端定位角色的坐标，`action` 是回放界面里可以显示的动作标签。
+这段数据可以这样读。`start_datetime` 是回放顶部显示的小镇起点。`stride: 10` 表示每个仿真 step 推进 10 分钟。`persona_init_pos` 保存角色进入地图时的初始坐标，例如阿伊莎 Ayesha Khan 在 `[118, 61]`，伊莎贝拉 Isabella Rodriguez 在 `[72, 14]`。`all_movement["1"]` 是第 1 帧，里面每个角色都有 `location`、`movement` 和 `action`。其中 `location` 是给人读的地点文本，`movement` 是给前端定位角色的坐标，`action` 是回放界面里可以显示的动作标签。
 
 这就解释了前端为什么能播放小镇：它不是凭空生成动画，而是在逐帧读取 `movement.json`。如果角色没有出现在预期地点，先看 `movement` 和 `location`。如果动作标签不对，先看 `action`。但如果要解释“为什么模型选择了这个行动”，`movement.json` 不够用，还要回到 checkpoint、日程和 prompt。
 
@@ -197,7 +197,7 @@ generative_agents/data/config.json
 }
 ```
 
-这段 JSON 最外层只有一个 `agent`。这说明它不是某一个角色的人设，而是所有角色共用的运行底座。阿伊莎、克劳斯、伊莎贝拉的性格、生活习惯和初始位置来自各自的 `agent.json`；但它们“看多远”“一次对话聊几轮”“用哪个模型思考”“用哪个 embedding 检索记忆”，都先从这里取得默认规则。
+这段 JSON 最外层只有一个 `agent`。这说明它不是某一个角色的人设，而是所有角色共用的运行底座。阿伊莎 Ayesha Khan、克劳斯 Klaus Mueller、伊莎贝拉 Isabella Rodriguez 的性格、生活习惯和初始位置来自各自的 `agent.json`；但它们“看多远”“一次对话聊几轮”“用哪个模型思考”“用哪个 embedding 检索记忆”，都先从这里取得默认规则。
 
 可以按六块来读这个文件：
 
@@ -284,9 +284,9 @@ llm:
   total: S:9,F:0/R:9
 ```
 
-这段输出可以分四层读。`reset` 说明角色已经被放进地图：阿伊莎从宿舍床铺坐标 `[118,61]` 开始，记忆节点数是 0，LLM 调用次数也是 0。`Simulate Step[1/2]` 说明仿真进入第 1 步，小镇时间是 2024 年 2 月 13 日 09:30。`阿伊莎 -> wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 不是普通日志，而是一次次 prompt 调用：系统先生成起床时间和一天大纲，再生成小时级日程，最后把当前小时拆成更细的动作。`determine_sector`、`determine_arena`、`determine_object` 和 `describe_object` 则把抽象计划落到具体空间对象上。
+这段输出可以分四层读。`reset` 说明角色已经被放进地图：阿伊莎 Ayesha Khan 从宿舍床铺坐标 `[118,61]` 开始，记忆节点数是 0，LLM 调用次数也是 0。`Simulate Step[1/2]` 说明仿真进入第 1 步，小镇时间是 2024 年 2 月 13 日 09:30。`阿伊莎 -> wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 不是普通日志，而是一次次 prompt 调用：系统先生成起床时间和一天大纲，再生成小时级日程，最后把当前小时拆成更细的动作。`determine_sector`、`determine_arena`、`determine_object` 和 `describe_object` 则把抽象计划落到具体空间对象上。
 
-`summary` 是本 step 最值得读的部分。它告诉读者，阿伊莎当前 action 已经从“学习莎士比亚”落到了“在宿舍书桌前精读关于双关语与隐喻的分析”，对象状态是“书桌堆放着分析资料”。`associate.nodes: 1` 表示记忆系统已经写入节点。`S:9,F:0/R:9` 表示 9 次 LLM completion 成功，0 次最终失败，共发起 9 次请求尝试。这个数字很适合第一次排查：如果 `F` 不为 0，或者控制台反复出现 JSON 解析失败，就不要急着看回放，先处理模型和结构化输出问题。
+`summary` 是本 step 最值得读的部分。它告诉读者，阿伊莎 Ayesha Khan 当前 action 已经从“学习莎士比亚”落到了“在宿舍书桌前精读关于双关语与隐喻的分析”，对象状态是“书桌堆放着分析资料”。`associate.nodes: 1` 表示记忆系统已经写入节点。`S:9,F:0/R:9` 表示 9 次 LLM completion 成功，0 次最终失败，共发起 9 次请求尝试。这个数字很适合第一次排查：如果 `F` 不为 0，或者控制台反复出现 JSON 解析失败，就不要急着看回放，先处理模型和结构化输出问题。
 
 第 2 个 step 的输出会更像一个正在运转的 agent：
 
@@ -308,7 +308,7 @@ llm:
   total: S:15,F:0/R:15
 ```
 
-这里的 `percept 2/4 concepts` 说明阿伊莎在当前视野中处理了 4 个候选概念，其中 2 个有效写入记忆。`associate.nodes` 从 1 增加到 3，说明第 2 步不只是生成了下一句动作，还把环境对象和自身行动写进了记忆系统。控制台读到这里，读者已经能判断：日程生成、感知、空间定位、动作生成和记忆写入都在工作。
+这里的 `percept 2/4 concepts` 说明阿伊莎 Ayesha Khan 在当前视野中处理了 4 个候选概念，其中 2 个有效写入记忆。`associate.nodes` 从 1 增加到 3，说明第 2 步不只是生成了下一句动作，还把环境对象和自身行动写进了记忆系统。控制台读到这里，读者已经能判断：日程生成、感知、空间定位、动作生成和记忆写入都在工作。
 
 运行成功后，会出现 checkpoint 目录：
 
@@ -340,9 +340,9 @@ generative_agents/results/checkpoints/book-smoke/
 }
 ```
 
-`stride: 10` 对应启动命令中的 `--stride 10`。`time` 是当前 checkpoint 的小镇时间。`step: 2` 表示这是第 2 个仿真步结束后的状态。`agents` 下面只有阿伊莎和克劳斯，说明 `--agent-count 2` 已经生效。如果这里出现 25 个角色，说明启动参数没有按预期限制 agent 数量。
+`stride: 10` 对应启动命令中的 `--stride 10`。`time` 是当前 checkpoint 的小镇时间。`step: 2` 表示这是第 2 个仿真步结束后的状态。`agents` 下面只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，说明 `--agent-count 2` 已经生效。如果这里出现 25 个角色，说明启动参数没有按预期限制 agent 数量。
 
-再看阿伊莎的日程。`simulate-20240213-0930.json` 中，09:00 到 10:00 的小时计划被拆成更细的动作：
+再看阿伊莎 Ayesha Khan 的日程。`simulate-20240213-0930.json` 中，09:00 到 10:00 的小时计划被拆成更细的动作：
 
 ```json
 {
@@ -365,7 +365,7 @@ generative_agents/results/checkpoints/book-smoke/
 }
 ```
 
-`start: 540` 表示当天第 540 分钟，也就是 09:00。`duration: 60` 表示这个小时计划持续 60 分钟。`decompose` 是 `schedule_decompose` 的结果，它把“继续阅读文学评论文章”拆成 10 到 15 分钟粒度的子任务。第 1 个 step 中，阿伊莎执行的是 09:20 到 09:35 的“精读关于双关语与隐喻的分析”；第 2 个 step 中，她推进到 09:35 到 09:50 的“精读关于韵律与节奏的论述”。这就是短期行为连续性的来源。
+`start: 540` 表示当天第 540 分钟，也就是 09:00。`duration: 60` 表示这个小时计划持续 60 分钟。`decompose` 是 `schedule_decompose` 的结果，它把“继续阅读文学评论文章”拆成 10 到 15 分钟粒度的子任务。第 1 个 step 中，阿伊莎 Ayesha Khan 执行的是 09:20 到 09:35 的“精读关于双关语与隐喻的分析”；第 2 个 step 中，她推进到 09:35 到 09:50 的“精读关于韵律与节奏的论述”。这就是短期行为连续性的来源。
 
 再看第 2 个 step 里的当前 action：
 
@@ -407,7 +407,7 @@ generative_agents/results/checkpoints/book-smoke/
 }
 ```
 
-`index_config.json` 只告诉读者节点数量。真正的内容在 `docstore.json`。以阿伊莎为例，里面可以看到 3 个节点：
+`index_config.json` 只告诉读者节点数量。真正的内容在 `docstore.json`。以阿伊莎 Ayesha Khan 为例，里面可以看到 3 个节点：
 
 ```text
 node_0 thought: 这是 阿伊莎 在 2024年02月13日（星期二）09:30 的计划...
@@ -475,9 +475,9 @@ generative_agents/results/compressed/book-smoke/
 }
 ```
 
-这段节选直接对应本次启动命令。`start_datetime` 是 `--start "20240213-09:30"` 转换后的 ISO 时间。`persona_init_pos` 只有阿伊莎和克劳斯，说明 `--agent-count 2` 生效。`all_movement["1"]` 说明第一个回放帧里，阿伊莎要去宿舍书桌，克劳斯要去图书馆桌子。`conversation` 里的两个时间点都是空字符串，说明这两个 step 没有产生对话。这不是坏结果，反而说明最小仿真的目标只是验证链路，不是强行制造社交。
+这段节选直接对应本次启动命令。`start_datetime` 是 `--start "20240213-09:30"` 转换后的 ISO 时间。`persona_init_pos` 只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，说明 `--agent-count 2` 生效。`all_movement["1"]` 说明第一个回放帧里，阿伊莎 Ayesha Khan 要去宿舍书桌，克劳斯 Klaus Mueller 要去图书馆桌子。`conversation` 里的两个时间点都是空字符串，说明这两个 step 没有产生对话。这不是坏结果，反而说明最小仿真的目标只是验证链路，不是强行制造社交。
 
-第一次压缩后的完整 `movement.json` 包含 122 帧，角色列表只有阿伊莎和克劳斯，起始时间是 `2024-02-13T09:30:00`，步长是 10 分钟。这一步很关键。Generative Agents 的价值不只是“模型生成了文本”，而是仿真结果能被复盘。没有压缩结果，只能看零散日志；有了 `movement.json` 和 `simulation.md`，才能判断角色是否真的在小镇中持续行动。
+第一次压缩后的完整 `movement.json` 包含 122 帧，角色列表只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，起始时间是 `2024-02-13T09:30:00`，步长是 10 分钟。这一步很关键。Generative Agents 的价值不只是“模型生成了文本”，而是仿真结果能被复盘。没有压缩结果，只能看零散日志；有了 `movement.json` 和 `simulation.md`，才能判断角色是否真的在小镇中持续行动。
 
 ## 12.5 回放仿真
 
@@ -489,7 +489,7 @@ http://127.0.0.1:5000/?name=book-smoke&step=0&speed=2&zoom=0.8
 
 ![图 12-3：book-smoke 最小仿真的回放页面](../../assets/chapter_12/fig-12-4-book-smoke-replay.png)
 
-*图 12-3：`book-smoke` 最小仿真的回放页面。底部只剩阿伊莎和克劳斯两个角色，说明 `--agent-count 2` 已经生效。*
+*图 12-3：`book-smoke` 最小仿真的回放页面。底部只剩阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 两个角色，说明 `--agent-count 2` 已经生效。*
 
 如果服务还没启动，先运行：
 
@@ -542,7 +542,7 @@ generative_agents/results/compressed/book-smoke/simulation.md
 活动：精读关于韵律与节奏的论述
 ```
 
-这段比表格更接近读者实际会看到的文件。`# 20240213-09:30` 是 checkpoint 时间，不是现实世界时间。`位置` 说明行动落在小镇地址树上，不只是模型说“我在学习”。`活动` 是当前 action 的人类可读摘要。09:30 时阿伊莎和克劳斯都有活动；09:40 只出现阿伊莎，是因为 `generate_report()` 会跳过与上次完全相同的状态，Markdown 不是每个 step 的完整快照，而是更适合阅读的变化记录。
+这段比表格更接近读者实际会看到的文件。`# 20240213-09:30` 是 checkpoint 时间，不是现实世界时间。`位置` 说明行动落在小镇地址树上，不只是模型说“我在学习”。`活动` 是当前 action 的人类可读摘要。09:30 时阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 都有活动；09:40 只出现阿伊莎 Ayesha Khan，是因为 `generate_report()` 会跳过与上次完全相同的状态，Markdown 不是每个 step 的完整快照，而是更适合阅读的变化记录。
 
 阅读 `simulation.md` 时，建议先按顺序看五类信息：
 
@@ -554,7 +554,7 @@ generative_agents/results/compressed/book-smoke/simulation.md
 | 4 | 对话内容 | 对话是否符合角色身份和当前场景 |
 | 5 | 前后连续性 | 后一个时间点是否承接前一个时间点的计划、地点或对话 |
 
-前四项回答“这次仿真是否跑起来”，第五项才开始回答“这个 agent 是否可信”。例如，阿伊莎如果 09:30 在写论文，09:40 继续围绕莎士比亚语言做笔记，这说明角色的短期行为有连续性；如果她突然出现在不相关地点，并且行动与前文没有联系，就要回到 checkpoint、日程 prompt 或地点选择逻辑继续排查。
+前四项回答“这次仿真是否跑起来”，第五项才开始回答“这个 agent 是否可信”。例如，阿伊莎 Ayesha Khan 如果 09:30 在写论文，09:40 继续围绕莎士比亚语言做笔记，这说明角色的短期行为有连续性；如果她突然出现在不相关地点，并且行动与前文没有联系，就要回到 checkpoint、日程 prompt 或地点选择逻辑继续排查。
 
 如果只跑 2 个 step，故事不会很精彩，这是正常的。最小仿真不用于复现论文里的派对传播，而是用于确认项目链路完整：启动、思考、保存、压缩、回放、阅读。
 
@@ -602,7 +602,7 @@ http://127.0.0.1:5000/?name=book-smoke&step=3&speed=2&zoom=0.8
 
 重新压缩后，`movement.json` 从第一次压缩时的 122 帧扩展到 243 帧，`simulation.md` 也新增了 `20240213-09:50` 和 `20240213-10:00` 两段记录。
 
-| 小镇时间 | 阿伊莎 | 克劳斯 |
+| 小镇时间 | 阿伊莎 Ayesha Khan | 克劳斯 Klaus Mueller |
 | --- | --- | --- |
 | `20240213-09:50` | 继续停留在前一段“精读关于韵律与节奏的论述”动作中，状态被 checkpoint 延续 | 开始撰写论文中关于中产阶级化影响的段落 |
 | `20240213-10:00` | 整理书本和笔记本准备出门 | 继续围绕中产阶级化影响段落写作，记忆节点增加到 6 个 |

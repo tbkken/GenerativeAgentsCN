@@ -75,7 +75,7 @@ relations = [
 | A 对 B 的理解 | A 根据自己的记忆如何看待 B |
 | B 对 A 的理解 | B 根据自己的记忆如何看待 A |
 
-同一段关系在两个人心中可能不同。克劳斯对玛丽亚的理解，不一定等于玛丽亚对克劳斯的理解。山姆认为自己在积极竞选，汤姆可能认为山姆令人反感。`summarize_relation()` 会围绕对方名字检索记忆：
+同一段关系在两个人心中可能不同。克劳斯 Klaus Mueller 对玛丽亚 Maria Lopez 的理解，不一定等于玛丽亚 Maria Lopez 对克劳斯 Klaus Mueller 的理解。山姆 Sam Moore 认为自己在积极竞选，汤姆 Tom Moreno 可能认为山姆 Sam Moore 令人反感。`summarize_relation()` 会围绕对方名字检索记忆：
 
 ```python
 nodes = agent.associate.retrieve_focus([other_name], 50)
@@ -184,7 +184,7 @@ flowchart TD
 
 ## 10.7 对话如何影响 Planning
 
-Planning 和 Dialogue 是双向关系。计划影响对话。一个人正在赶去上班，可能不会长聊；一个人正在准备派对，可能会主动邀请别人。对话也影响计划。伊莎贝拉邀请阿伊莎参加派对，阿伊莎可能把晚上计划改为去咖啡馆。克劳斯遇到玛丽亚后，可能把之后一段时间改为继续交流或参加相关活动。短期上，对话通过 `schedule_chat()` 和 `revise_schedule()` 占用当前时间。长期上，对话摘要进入记忆，后续 Reflection 可能把它升成 thought，再影响明天或之后的计划。
+Planning 和 Dialogue 是双向关系。计划影响对话。一个人正在赶去上班，可能不会长聊；一个人正在准备派对，可能会主动邀请别人。对话也影响计划。伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan 参加派对，阿伊莎 Ayesha Khan 可能把晚上计划改为去咖啡馆。克劳斯 Klaus Mueller 遇到玛丽亚 Maria Lopez 后，可能把之后一段时间改为继续交流或参加相关活动。短期上，对话通过 `schedule_chat()` 和 `revise_schedule()` 占用当前时间。长期上，对话摘要进入记忆，后续 Reflection 可能把它升成 thought，再影响明天或之后的计划。
 
 ```text
 当前计划
@@ -199,7 +199,7 @@ Planning 和 Dialogue 是双向关系。计划影响对话。一个人正在赶�
 
 ## 10.8 情人节派对为什么依赖 Dialogue
 
-论文中的情人节派对不是全局广播。它依赖一次次对话传播。首先，伊莎贝拉的 `currently` 中有派对目标。这个目标会影响她的计划，她可能安排采购、准备、邀请居民、布置咖啡馆。其次，当伊莎贝拉遇到其他居民时，Reacting 可能触发聊天。如果 `decide_chat` 判断当前场景适合，她会主动提到派对。然后，对话摘要进入双方记忆。被邀请者后续可能在计划中考虑是否参加，也可能在遇到别人时继续传播。最后，Reflection 可能把这些对话升为 thought：
+论文中的情人节派对不是全局广播。它依赖一次次对话传播。首先，伊莎贝拉 Isabella Rodriguez 的 `currently` 中有派对目标。这个目标会影响她的计划，她可能安排采购、准备、邀请居民、布置咖啡馆。其次，当伊莎贝拉 Isabella Rodriguez 遇到其他居民时，Reacting 可能触发聊天。如果 `decide_chat` 判断当前场景适合，她会主动提到派对。然后，对话摘要进入双方记忆。被邀请者后续可能在计划中考虑是否参加，也可能在遇到别人时继续传播。最后，Reflection 可能把这些对话升为 thought：
 
 ```text
 伊莎贝拉认为阿伊莎可能会参加情人节派对。
@@ -210,7 +210,7 @@ Planning 和 Dialogue 是双向关系。计划影响对话。一个人正在赶�
 
 ```mermaid
 flowchart LR
-    Current["伊莎贝拉的派对目标"] --> Plan["安排准备和邀请"]
+    Current["伊莎贝拉 Isabella Rodriguez 的派对目标"] --> Plan["安排准备和邀请"]
     Plan --> Meet["空间相遇"]
     Meet --> Chat["对话邀请"]
     Chat --> Memory["写入双方记忆"]
