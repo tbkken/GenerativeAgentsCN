@@ -121,108 +121,93 @@ flowchart LR
    - 5.9 记忆流 Memory Stream 的局限
    - 5.10 本章小结
 
-6. [第 6 章 论文架构三：Retrieval](part_01/chapter_06.md)
+6. [第 6 章 论文架构三：检索 Retrieval](part_01/chapter_06.md)
    - 6.1 不能读取全部记忆
-   - 6.2 Retrieval 的三个维度
-   - 6.3 三个维度缺一不可
-   - 6.4 系统中如何完成一次检索
-   - 6.5 检索接口和输入输出
-   - 6.6 三因素在代码中如何合成
-   - 6.7 Focus：检索必须带着问题发生
-   - 6.8 两个小镇案例
-   - 6.9 检索失败的后果
-   - 6.10 检索权重是一种行为设计
-   - 6.11 本章小结
+   - 6.2 检索 Retrieval 的输入-处理-输出
+   - 6.3 三因素模型：近期性 recency、重要性 importance、相关性 relevance 缺一不可
+   - 6.4 项目中如何完成一次检索
+   - 6.5 检索接口和输出形态
+   - 6.6 检索结果如何进入提示词 prompt
+   - 6.7 综合检索分数 final score
+   - 6.8 焦点问题 focus：检索必须带着问题发生
+   - 6.9 两个小镇案例
+   - 6.10 检索失败的后果
+   - 6.11 检索权重是一种行为设计
+   - 6.12 本章小结
 
-7. [第 7 章 论文架构四：Reflection](part_01/chapter_07.md)
-   - 7.1 核心问题
-   - 7.2 原始观察的局限
-   - 7.3 Reflection 不是总结聊天记录
-   - 7.4 Reflection 在整体架构中的位置
-   - 7.5 何时触发 Reflection
-   - 7.6 Reflection 的输入边界
-   - 7.7 从候选记忆到焦点问题
-   - 7.8 围绕焦点问题检索证据
-   - 7.9 生成有证据的 insight
-   - 7.10 thought 写回 Memory Stream
-   - 7.11 克劳斯 Klaus Mueller 与 玛丽亚 Maria Lopez 案例
-   - 7.12 Reflection 影响什么
-   - 7.13 对话后的 Reflection
-   - 7.14 成本、失败模式与观察方法
-   - 7.15 本项目的实现差异
-   - 7.16 后续章节如何使用 Reflection
-   - 7.17 本章小结
+7. [第 7 章 论文架构四：反思 Reflection](part_01/chapter_07.md)
+   - 7.1 原始经历为什么不够
+   - 7.2 业务闭环：克劳斯 Klaus Mueller 如何把咖啡馆交流变成想法 thought
+   - 7.3 反思 Reflection 不是聊天总结
+   - 7.4 何时触发反思 Reflection
+   - 7.5 候选输入边界
+   - 7.6 从候选记忆到焦点问题 focus
+   - 7.7 围绕焦点问题检索证据 evidence
+   - 7.8 生成洞察 insight
+   - 7.9 写回想法 thought
+   - 7.10 对话后的反思 Reflection
+   - 7.11 克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 案例
+   - 7.12 失败诊断与观察入口
+   - 7.13 本章小结
 
-8. [第 8 章 论文架构五：Planning](part_01/chapter_08.md)
-   - 8.1 Planning 解决什么
-   - 8.2 从“会聊天”到“会生活”
-   - 8.3 新一天不是从空白开始
-   - 8.4 起床时间
-   - 8.5 一天大纲
-   - 8.6 小时级日程
-   - 8.7 计划也要写入记忆
-   - 8.8 递归拆解
-   - 8.9 当前计划如何被取出
-   - 8.10 计划落到空间
-   - 8.11 Action 的时间边界
-   - 8.12 Planning 的真实 prompt
-   - 8.13 Planning 的常见失败
-   - 8.14 本章小结
+8. [第 8 章 论文架构五：规划 Planning](part_01/chapter_08.md)
+   - 8.1 规划 Planning 解决什么
+   - 8.2 业务闭环：伊莎贝拉 Isabella Rodriguez 如何把派对目标变成行动
+   - 8.3 从“会聊天”到“会生活”
+   - 8.4 新一天状态 currently 如何接上记忆
+   - 8.5 起床时间 wake_up：作息从提示词进入日程
+   - 8.6 一天大纲 schedule_init：先定生活主线
+   - 8.7 小时日程 schedule_daily：把一天变成时间骨架
+   - 8.8 日程 Schedule 的保存结构
+   - 8.9 计划也要写入记忆流 Memory Stream
+   - 8.10 递归拆解 schedule_decompose：把粗计划变成子任务
+   - 8.11 当前计划 current_plan() 如何被取出
+   - 8.12 空间落地 spatial grounding：计划进入地图
+   - 8.13 行动 Action 的时间边界
+   - 8.14 提示词 prompt 链路总表
+   - 8.15 规划 Planning 的常见失败
+   - 8.16 本章小结
 
-9. [第 9 章 论文架构六：Reacting](part_01/chapter_09.md)
-   - 9.1 Reacting 解决什么
-   - 9.2 Reacting 在运行循环中的位置
-   - 9.3 反应来自感知
-   - 9.4 Reaction 的两个主要动作
-   - 9.5 什么时候不该反应
-   - 9.6 Waiting：空间冲突下的反应
-   - 9.7 revise_schedule：把打断写回计划
-   - 9.8 镇长竞选为什么依赖 Reacting
-   - 9.9 Reacting 的真实 prompt
-   - 9.10 Reacting 的常见失败
-   - 9.11 本章小结
+9. [第 9 章 论文架构六：反应 Reacting](part_01/chapter_09.md)
+   - 9.1 反应 Reacting 解决什么
+   - 9.2 闭环案例：克劳斯 Klaus Mueller 为什么等待
+   - 9.3 运行入口：make_plan() 先处理现场
+   - 9.4 感知 Perception 输出什么
+   - 9.5 _reaction() 的三层判断
+   - 9.6 等待 Waiting：空间冲突如何落地
+   - 9.7 聊天触发 chat trigger：只判断是否开口
+   - 9.8 行动 Action 与日程 Schedule 如何写回
+   - 9.9 常见失败与检查位置
+   - 9.10 本章小结
 
-10. [第 10 章 论文架构七：Dialogue](part_01/chapter_10.md)
-   - 10.1 Dialogue 解决什么
-   - 10.2 先决定是否聊天
-   - 10.3 关系摘要不是全局关系表
-   - 10.4 多轮对话如何生成
-   - 10.5 避免复读和无限聊天
-   - 10.6 对话写回
-   - 10.7 对话如何影响 Planning
-   - 10.8 情人节派对为什么依赖 Dialogue
-   - 10.9 有记忆的对话和无记忆的对话
-   - 10.10 Dialogue 的真实 prompt
-   - 10.11 Dialogue 的常见失败
-   - 10.12 本章小结
+10. [第 10 章 论文架构七：对话 Dialogue](part_01/chapter_10.md)
+   - 10.1 对话 Dialogue 解决什么
+   - 10.2 闭环案例：伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan
+   - 10.3 第 9 章交接：从开口裁决进入对话
+   - 10.4 关系摘要 summarize_relation：两个人的视角不同
+   - 10.5 生成一句话 generate_chat：逐句推进
+   - 10.6 复读检查与结束判断
+   - 10.7 对话写回：文本变成状态
+   - 10.8 对话如何影响后续规划 Planning
+   - 10.9 常见失败与检查位置
+   - 10.10 本章小结
 
-11. [第 11 章 论文的评价方法](part_01/chapter_11.md)
-   - 11.1 评价问题
-   - 11.2 演示之外的评价
-   - 11.3 论文的两阶段评价
-   - 11.4 Controlled Evaluation：采访智能体
+11. [第 11 章 论文的评价方法 Evaluation](part_01/chapter_11.md)
+   - 11.1 评价 Evaluation 解决什么
+   - 11.2 闭环案例：阿伊莎 Ayesha Khan 是否真的知道派对
+   - 11.3 两层评价：受控评价 Controlled Evaluation 与端到端评价 End-to-End Evaluation
+   - 11.4 受控评价 Controlled Evaluation：采访智能体
    - 11.5 五类访谈能力
-   - 11.6 消融条件：到底哪个模块有用
-   - 11.7 消融设计的注意点
-   - 11.8 人类评估者如何比较
-   - 11.9 受控评价的主要结论
-   - 11.10 论文承认的记忆问题
-   - 11.11 Reflection 的实验证据
-   - 11.12 End-to-End Evaluation：两天小镇仿真
-   - 11.13 信息扩散的测量
-   - 11.14 关系形成的测量
-   - 11.15 群体协同行动的测量
-   - 11.16 端到端评价的三个社会现象
-   - 11.17 论文承认的端到端失败边界
-   - 11.18 失败不是坏事，而是评价资产
-   - 11.19 从论文评价到 Generative Agents 评价
-   - 11.20 Generative Agents 中可以观察哪些证据
-   - 11.21 本书后续实验应遵守的原则
-   - 11.22 评价“可信”时要避免的误区
-   - 11.23 与 2023-2026 前沿评价的连接
-   - 11.24 第一部分总结：论文到底贡献了什么
-   - 11.25 评价 prompt 的工程边界
-   - 11.26 本章小结
+   - 11.6 访谈回答如何进入提示词 prompt
+   - 11.7 消融实验 Ablation：哪些模块真的有用
+   - 11.8 人类评估 Human Evaluation 如何比较回答
+   - 11.9 受控评价 Controlled Evaluation 的结论和错误边界
+   - 11.10 端到端评价 End-to-End Evaluation：两天小镇仿真
+   - 11.11 三类社会现象如何测量
+   - 11.12 从论文评价到本项目证据链
+   - 11.13 失败边界和常见误区
+   - 11.14 评价视角下的论文贡献
+   - 11.15 本章小结
 
 ### 第二部分：项目上手与功能体验
 

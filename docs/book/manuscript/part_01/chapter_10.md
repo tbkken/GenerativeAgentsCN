@@ -1,284 +1,107 @@
-# 第 10 章 论文架构七：Dialogue
+# 第 10 章 论文架构七：对话 Dialogue
 
-## 10.1 Dialogue 解决什么
+反应 Reacting 决定角色是否开口；对话 Dialogue 处理开口以后发生什么。对话不是两段文本轮流生成，而是一条工程链路：关系摘要、逐句生成、复读检查、结束判断、对话摘要、记忆写回和日程占用。
 
-Reacting 决定角色是否应该开口。Dialogue 解决开口以后发生什么。在 Generative Agents 中，对话不是一段孤立文本。它要回答五个问题：
+![图 10-1：对话 Dialogue 证据链](../../assets/chapter_10/ch10_dialogue_evidence_console.png)
 
-| 问题 | 为什么重要 |
-| --- | --- |
-| 是否应该聊天 | 居民不会每次擦肩而过都长聊 |
-| 双方是什么关系 | 朋友、陌生人、竞争者说话方式不同 |
-| 这一轮该说什么 | 对话要符合场景、身份、记忆和当前任务 |
-| 什么时候结束 | 对话不能无限循环 |
-| 聊完以后怎么办 | 对话必须进入记忆和日程，否则只是装饰 |
+## 10.1 对话 Dialogue 解决什么
 
-Dialogue 的价值不只在“说得像人”。更重要的是，对话会改变双方记忆，进而影响后续计划、反应和社会信息传播。
+一个可信对话系统至少要回答五个问题。
 
-```mermaid
-flowchart LR
-    Decide["决定聊天"] --> Relation["生成双方关系摘要"]
-    Relation --> Chat["逐轮生成对话"]
-    Chat --> Stop["判断是否结束"]
-    Stop --> Summary["总结对话"]
-    Summary --> Memory["写回双方记忆"]
-    Summary --> Schedule["修改日程"]
-```
-
-*图 10-1：Dialogue 的完整链路。对话从是否开口开始，到写回记忆和日程才算结束。*
-
-## 10.2 先决定是否聊天
-
-对话不是遇见人就自动发生。`_chat_with()` 会先检索最近与对方的聊天记录：
-
-```python
-chats = self.associate.retrieve_chats(other.name)
-if chats:
-    delta = utils.get_timer().get_delta(chats[0].create)
-    if delta < 60:
-        return False
-```
-
-如果一小时内聊过，就不再聊天。这个限制很实际，否则居民会在短时间内反复寒暄。随后系统调用：
-
-```python
-if not self.completion("decide_chat", self, other, focus, chats):
-    return False
-```
-
-`decide_chat.txt` 会基于以下信息判断是否应该主动对话：
-
-| 输入 | 中文意思 | 判断作用 |
+| 问题 | 没有这个环节会怎样 | 项目中的处理 |
 | --- | --- | --- |
-| 当前上下文 | 眼前发生了什么 | 判断此时开口是否自然 |
-| 当前时间 | 现在几点 | 判断是否适合聊天 |
-| 上次聊天历史 | 最近是否聊过 | 避免重复对话 |
-| 当前角色状态 | 自己在忙什么 | 判断是否有空开口 |
-| 对方角色状态 | 对方在做什么 | 判断是否应该打扰 |
+| 是否应该开口 | 角色一见面就聊天 | 第 9 章的聊天触发 chat trigger 判断 |
+| 双方是什么关系 | 所有人说话像第一次见面 | `summarize_relation` 生成关系摘要 |
+| 下一句说什么 | 只按当前场景临场编 | `generate_chat` 读取身份、记忆、场景和已有对话 |
+| 什么时候结束 | 对话无限循环或突然断掉 | 复读检查和结束判断 |
+| 聊完以后去哪 | 文本打印完就消失 | `conversation.json`、对话摘要、双方记忆和日程写回 |
 
-这一步把 Dialogue 从“生成文本”前移到“是否应该说话”。社会仿真里，这比文本本身更重要。
+第 10 章的核心不是“模型会说话”，而是“说过的话会改变小镇状态”。只有对话进入记忆 Memory、行动 Action 和日程 Schedule，它才是人工社会的一部分。
 
-## 10.3 关系摘要不是全局关系表
+## 10.2 闭环案例：伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan
 
-如果决定聊天，系统会先总结双方关系：
+情人节派对不是系统广播。伊莎贝拉 Isabella Rodriguez 需要在小镇里遇到别人，判断当前适合开口，然后把邀请说出来。阿伊莎 Ayesha Khan 听到以后，这段对话必须进入双方记忆，后续才可能影响她的计划。
+
+本章用下面这段代表性对话贯穿源码链路。
+
+```json
+{
+  "time": "20240213-18:40",
+  "place": ["小镇", "霍布斯咖啡馆", "咖啡馆", "桌子"],
+  "participants": ["伊莎贝拉", "阿伊莎"],
+  "chats": [
+    ["伊莎贝拉", "今晚 7 点在霍布斯咖啡馆有情人节派对，你愿意来吗？"],
+    ["阿伊莎", "听起来很棒。我会调整晚上的安排，尽量过去。"]
+  ],
+  "chat_summary": "伊莎贝拉邀请阿伊莎参加情人节派对，阿伊莎表示愿意调整晚上的安排。"
+}
+```
+
+这段 JSON 可以拆成四个工程对象。
+
+| 对象 | 数据形状 | 作用 |
+| --- | --- | --- |
+| 原始对话 `chats` | `[(speaker, text), ...]` | 多轮生成和复读检查的上下文 |
+| 对话日志 conversation | `time -> location -> chats` | 写入 `conversation.json`，方便回放和复盘 |
+| 对话摘要 chat summary | 一句自然语言摘要 | 写入双方记忆和行动事件 |
+| 对话行动 Action | `predicate="对话"` 的事件 event | 占用当前时间，并触发日程修订 |
+
+后面的源码、prompt 和数据结构都围绕这条邀请链展开。
+
+## 10.3 第 9 章交接：从开口裁决进入对话
+
+第 9 章已经讲过 `_chat_with()` 如何判断是否开口。进入第 10 章时，可以把前置条件看成已经成立：双方日程已初始化，没有在睡觉，没有正在对话，60 分钟内没有重复聊天，`decide_chat` 返回 true。
+
+真正的对话链从这里开始。
 
 ```python
+self.logger.info("{} decides chat with {}".format(self.name, other.name))
+start, chats = utils.get_timer().get_date(), []
 relations = [
     self.completion("summarize_relation", self, other.name),
     other.completion("summarize_relation", other, self.name),
 ]
-```
 
-这里生成的是两个关系摘要，不是一个全局关系标签。
-
-| 关系摘要 | 含义 |
-| --- | --- |
-| A 对 B 的理解 | A 根据自己的记忆如何看待 B |
-| B 对 A 的理解 | B 根据自己的记忆如何看待 A |
-
-同一段关系在两个人心中可能不同。克劳斯 Klaus Mueller 对玛丽亚 Maria Lopez 的理解，不一定等于玛丽亚 Maria Lopez 对克劳斯 Klaus Mueller 的理解。山姆 Sam Moore 认为自己在积极竞选，汤姆 Tom Moreno 可能认为山姆 Sam Moore 令人反感。`summarize_relation()` 会围绕对方名字检索记忆：
-
-```python
-nodes = agent.associate.retrieve_focus([other_name], 50)
-```
-
-然后生成一句关系描述。这样，对话不是只根据当前画面说话，而是带着历史感。
-
-## 10.4 多轮对话如何生成
-
-关系摘要生成后，系统开始多轮对话。
-
-```python
 for i in range(self.chat_iter):
-    text = self.completion("generate_chat", self, other, relations[0], chats)
+    text = self.completion(
+        "generate_chat", self, other, relations[0], chats
+    )
     ...
-    text = other.completion("generate_chat", other, self, relations[1], chats)
+    text = other.completion(
+        "generate_chat", other, self, relations[1], chats
+    )
 ```
 
-`generate_chat.txt` 的输入包括：
-
-| 输入 | 作用 |
-| --- | --- |
-| 角色基础描述 | 保持说话人身份一致 |
-| 角色记忆 | 让对话能引用过去经历 |
-| 当前位置 | 让话题贴合场景 |
-| 当前时间 | 控制问候、活动和时间感 |
-| 最近对话背景 | 避免重复寒暄 |
-| 当前场景 | 说明为什么现在会开口 |
-| 已有对话记录 | 让下一句接得上前文 |
-| 对话原则 | 控制自然度、长度和不重复 |
-
-对话原则要求输出 1 到 3 句话，不能重复已有内容，要符合性格和当前情境，并且直接输出角色要说的话。这比“把两个人的设定塞进 prompt 里让模型聊”要稳得多，因为它把身份、记忆、场景、关系和已有上下文都放进了生成链路。
-
-## 10.5 避免复读和无限聊天
-
-多轮对话必须有退出机制。Generative Agents 会检查重复：
-
-```python
-generate_chat_check_repeat
-```
-
-也会判断话题是否结束：
-
-```python
-decide_chat_terminate
-```
-
-这两个机制分别处理两个问题：
-
-| 机制 | 解决的问题 |
-| --- | --- |
-| `generate_chat_check_repeat` | 防止角色重复说相同内容 |
-| `decide_chat_terminate` | 防止对话无限继续 |
-
-没有这两个判断，对话很容易出现两种失败：一是互相复读，二是明明话题已经结束还继续硬聊。
-
-## 10.6 对话写回
-
-对话结束后，系统不会只把文本打印出来。它会做三件事。第一，记录原始对话：
-
-```python
-self.conversation[key].append({f"{self.name} -> {other.name} @ ...": chats})
-```
-
-第二，生成对话摘要：
-
-```python
-chat_summary = self.completion("summarize_chats", chats)
-```
-
-第三，把聊天写入双方日程：
-
-```python
-self.schedule_chat(chats, chat_summary, start, duration, other)
-other.schedule_chat(chats, chat_summary, start, duration, self)
-```
-
-`schedule_chat()` 会创建一个“对话”事件，并调用 `revise_schedule()`：
-
-```python
-event = memory.Event(
-    self.name,
-    "对话",
-    other.name,
-    describe=chats_summary,
-    address=address or self.get_tile().get_address(),
-    emoji=f"💬",
-)
-self.revise_schedule(event, start, duration)
-```
-
-这说明聊天会占用真实时间。对话不是免费的文本输出，它会改变当前 action，也会影响日程。
-
-```mermaid
-flowchart TD
-    Raw["原始多轮对话"] --> Summary["对话摘要"]
-    Summary --> EventA["A 的对话事件"]
-    Summary --> EventB["B 的对话事件"]
-    EventA --> MemoryA["写入 A 的记忆"]
-    EventB --> MemoryB["写入 B 的记忆"]
-    EventA --> ScheduleA["修订 A 的日程"]
-    EventB --> ScheduleB["修订 B 的日程"]
-```
-
-*图 10-2：对话写回。Dialogue 的结束点不是最后一句话，而是双方记忆和日程都被更新。*
-
-## 10.7 对话如何影响 Planning
-
-Planning 和 Dialogue 是双向关系。计划影响对话。一个人正在赶去上班，可能不会长聊；一个人正在准备派对，可能会主动邀请别人。对话也影响计划。伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan 参加派对，阿伊莎 Ayesha Khan 可能把晚上计划改为去咖啡馆。克劳斯 Klaus Mueller 遇到玛丽亚 Maria Lopez 后，可能把之后一段时间改为继续交流或参加相关活动。短期上，对话通过 `schedule_chat()` 和 `revise_schedule()` 占用当前时间。长期上，对话摘要进入记忆，后续 Reflection 可能把它升成 thought，再影响明天或之后的计划。
-
-```text
-当前计划
-  -> 是否适合聊天
-  -> 对话发生
-  -> 摘要写入记忆
-  -> 可能触发反思
-  -> 后续 planning 读取这些记忆
-```
-
-这就是生成式智能体比普通 NPC 更有连续性的地方。一次聊天不只是一次文本交换，而是未来行为的材料。
-
-## 10.8 情人节派对为什么依赖 Dialogue
-
-论文中的情人节派对不是全局广播。它依赖一次次对话传播。首先，伊莎贝拉 Isabella Rodriguez 的 `currently` 中有派对目标。这个目标会影响她的计划，她可能安排采购、准备、邀请居民、布置咖啡馆。其次，当伊莎贝拉 Isabella Rodriguez 遇到其他居民时，Reacting 可能触发聊天。如果 `decide_chat` 判断当前场景适合，她会主动提到派对。然后，对话摘要进入双方记忆。被邀请者后续可能在计划中考虑是否参加，也可能在遇到别人时继续传播。最后，Reflection 可能把这些对话升为 thought：
-
-```text
-伊莎贝拉认为阿伊莎可能会参加情人节派对。
-阿伊莎知道伊莎贝拉正在邀请居民参加派对。
-```
-
-派对传播依赖的是这条链路：
-
-```mermaid
-flowchart LR
-    Current["伊莎贝拉 Isabella Rodriguez 的派对目标"] --> Plan["安排准备和邀请"]
-    Plan --> Meet["空间相遇"]
-    Meet --> Chat["对话邀请"]
-    Chat --> Memory["写入双方记忆"]
-    Memory --> Reflection["形成相关 thought"]
-    Reflection --> Next["影响后续计划和传播"]
-```
-
-*图 10-3：情人节派对的对话传播链路。社会事件不是广播出来的，而是在对话、记忆和反思中扩散。*
-
-## 10.9 有记忆的对话和无记忆的对话
-
-如果对话只依赖当前场景，会出现很多问题。
-
-| 问题 | 无记忆对话的表现 | 有记忆对话的表现 |
+| 变量 | 中文含义 | 在案例中的含义 |
 | --- | --- | --- |
-| 重复寒暄 | 角色反复自我介绍 | 系统知道最近聊过什么 |
-| 关系无差异 | 朋友、陌生人、竞争者说话一样 | 关系摘要影响语气和话题 |
-| 信息传播断裂 | 听过派对的人后面像第一次听说 | 对话摘要进入后续检索 |
-| 对话不改变未来 | 聊完就结束 | 后续计划和反思能读取这次对话 |
+| `start` | 对话开始时间 | `20240213-18:40` |
+| `chats` | 当前对话记录 | 从空列表开始，逐句追加 |
+| `relations[0]` | 伊莎贝拉 Isabella Rodriguez 视角的关系摘要 | 她如何理解阿伊莎 Ayesha Khan |
+| `relations[1]` | 阿伊莎 Ayesha Khan 视角的关系摘要 | 她如何理解伊莎贝拉 Isabella Rodriguez |
+| `chat_iter` | 最大对话轮数 | 防止对话无限生成 |
 
-Generative Agents 的对话实现把当前场景、关系摘要、近期记忆、历史聊天和对话写回连在一起，所以对话才会成为社会仿真的一部分。
+对话 Dialogue 因此不是单次 prompt，而是一条受控循环。每次生成一句话，系统都要决定这句话能不能留下，以及对话是否该结束。
 
-## 10.10 Dialogue 的真实 prompt
+## 10.4 关系摘要 summarize_relation：两个人的视角不同
 
-Dialogue 不是一个 prompt 完成的，而是一条 prompt 链。
+关系摘要不是全局人物关系表，而是当前角色根据自己的记忆检索结果，对另一个人的一句话理解。伊莎贝拉 Isabella Rodriguez 可能把阿伊莎 Ayesha Khan 视为咖啡馆和社区活动里的熟人；阿伊莎 Ayesha Khan 可能把伊莎贝拉 Isabella Rodriguez 视为正在组织派对的人。
 
-| 阶段 | Prompt | 输出 |
-| --- | --- | --- |
-| 是否聊天 | `decide_chat.txt` | `res: bool`，是否主动对话。 |
-| 关系摘要 | `summarize_relation.txt` | `res: str`，一句话关系描述。 |
-| 生成发言 | `generate_chat.txt` | `res: str`，角色说出的 1 到 3 句话。 |
-| 检查复读 | `generate_chat_check_repeat.txt` | `res: bool`，新发言是否重复。 |
-| 判断结束 | `decide_chat_terminate.txt` | `res: bool`，对话是否告一段落。 |
-| 总结对话 | `summarize_chats.txt` | `res: str`，不超过 100 字的摘要。 |
+包装函数会围绕对方名字检索记忆。
 
-`decide_chat.txt` 的完整模板如下：
-
-```text
-背景：
-"""
-${context}
-
-现在是 ${date}。${chat_history}
-
-${agent_status}
-${another_status}
-"""
-
-根据上述背景判断，${agent} 是否有可能主动与 ${another} 对话？只用“是”或“否”回答：
+```python
+def prompt_summarize_relation(self, agent, other_name):
+    nodes = agent.associate.retrieve_focus([other_name], 50)
+    prompt = self.build_prompt(
+        "summarize_relation",
+        {
+            "context": "\n".join(["{}. {}".format(idx, n.describe) for idx, n in enumerate(nodes)]),
+            "agent": agent.name,
+            "another": other_name,
+        }
+    )
 ```
 
-完整的英文对照如下：
-
-```text
-Background:
-"""
-${context}
-
-It is now ${date}. ${chat_history}
-
-${agent_status}
-${another_status}
-"""
-
-Based on the background above, is ${agent} likely to actively start a conversation with ${another}? Answer only "yes" or "no":
-```
-
-`summarize_relation.txt` 的完整模板如下：
+提示词 prompt `generative_agents/data/prompts/summarize_relation.txt`：
 
 ```text
 背景描述：
@@ -292,21 +115,48 @@ ${context}
 参考上述背景描述和输出示例，用一句话总结 ${agent} 和 ${another} 之间的关系：
 ```
 
-完整的英文对照如下：
+英文含义：
 
 ```text
-Background description:
-"""
-${context}
-"""
-
-Output example 1: Joe and Tom are friends.
-Output example 2: Irene and John are playing a game.
-
-Using the background description and output examples above, summarize the relationship between ${agent} and ${another} in one sentence:
+Given the retrieved background, summarize the relationship between ${agent} and ${another} in one sentence.
 ```
 
-`generate_chat.txt` 的完整模板如下：
+输出结构 schema 和回调 callback：
+
+```python
+class summarize_relationResponse(BaseModel):
+    res: str = Field(description="一句话描述两人之间的关系，以第三人称表述")
+
+def _callback(response):
+    return response.strip() or failsafe
+
+failsafe = agent.name + " 正在看着 " + other_name
+```
+
+代表性输出可以是：
+
+```json
+{
+  "isabella_view": "伊莎贝拉和阿伊莎在社区活动中相识，伊莎贝拉认为阿伊莎可能愿意参加咖啡馆派对。",
+  "ayesha_view": "阿伊莎知道伊莎贝拉正在筹备情人节派对，并把她视为社区活动的组织者。"
+}
+```
+
+这一步给后续发言提供语气和背景。没有关系摘要，模型只能按“两个陌生人在咖啡馆相遇”写；有了关系摘要，邀请就能自然落到派对和社区活动上。
+
+## 10.5 生成一句话 generate_chat：逐句推进
+
+每一轮对话只生成当前角色的一句话。项目没有把整段对话一次性交给模型写完，因为那样很难控制复读、终止和双方记忆视角。
+
+```python
+text = self.completion("generate_chat", self, other, relations[0], chats)
+chats.append((self.name, text))
+
+text = other.completion("generate_chat", other, self, relations[1], chats)
+chats.append((other.name, text))
+```
+
+提示词 prompt `generative_agents/data/prompts/generate_chat.txt`：
 
 ```text
 以下是对 ${agent} 的简要描述：
@@ -335,36 +185,67 @@ ${conversation}
 基于以上<对话记录>和<对话原则>，现在 ${agent} 会对 ${another} 说：
 ```
 
-完整的英文对照如下：
+英文含义：
 
 ```text
-Here is a brief description of ${agent}:
-${base_desc}
-
-Here are ${agent}'s memories:
-${memory}
-
-Current location: ${address}
-Current time: ${current_time}
-
-${previous_context}${current_context}
-${agent} starts a conversation with ${another}. Here is their conversation record:
-<conversation record>
-${conversation}
-</conversation record>
-
-<conversation principles>
-- ${agent} will not repeat content that already appears in <conversation record>.
-- The conversation content should fit the agent's personality and current situation.
-- The language should be natural and fluent, matching everyday conversation.
-- Keep the length within 1 to 3 sentences.
-- Output only ${agent}'s dialogue content. Do not add any other information.
-</conversation principles>
-
-Based on the <conversation record> and <conversation principles> above, ${agent} will now say to ${another}:
+Use the agent profile, retrieved memory, location, time, current situation, and existing conversation record to generate the next 1-3 natural sentences spoken by ${agent}. Do not repeat previous content.
 ```
 
-`generate_chat_check_repeat.txt` 的完整模板如下：
+关键变量如下。
+
+| 变量 | 中文含义 | 在派对邀请案例中的作用 |
+| --- | --- | --- |
+| `${base_desc}` | 角色基础设定 | 伊莎贝拉 Isabella Rodriguez 的组织者身份、阿伊莎 Ayesha Khan 的生活背景 |
+| `${memory}` | 检索出的相关记忆 | 派对准备、咖啡馆、与对方相关的记录 |
+| `${address}` | 当前地点 | 霍布斯咖啡馆 |
+| `${current_time}` | 当前时间 | 晚上派对临近时更适合邀请 |
+| `${current_context}` | 当前场景 | 一方看到另一方正在做什么 |
+| `${conversation}` | 已有对话记录 | 让下一句接住前文，不重复寒暄 |
+
+代表性对话链如下。
+
+```json
+[
+  ["伊莎贝拉", "今晚 7 点在霍布斯咖啡馆有情人节派对，你愿意来吗？"],
+  ["阿伊莎", "听起来很棒。我会调整晚上的安排，尽量过去。"],
+  ["伊莎贝拉", "太好了，我会在咖啡馆准备点心和音乐，见到你会很开心。"],
+  ["阿伊莎", "那就这么说定了，我晚些时候过去看看。"]
+]
+```
+
+这里的每一句都依赖已有对话记录。第一句负责发出邀请，第二句回应意愿，第三句补充派对信息，第四句形成轻量承诺。对话不是闲聊文本，而是派对信息从伊莎贝拉 Isabella Rodriguez 进入阿伊莎 Ayesha Khan 记忆的通道。
+
+## 10.6 复读检查与结束判断
+
+多轮对话必须有刹车。项目用了两个判断：复读检查防止重复同一句，结束判断防止话题已经结束还继续生成。
+
+```python
+if i > 0:
+    end = self.completion(
+        "generate_chat_check_repeat", self, chats, text
+    )
+    if end:
+        break
+
+    chats.append((self.name, text))
+    end = self.completion(
+        "decide_chat_terminate", self, other, chats
+    )
+    if end:
+        break
+```
+
+```mermaid
+flowchart TD
+    A["生成一句话 generate_chat"] --> B{"是否复读<br/>generate_chat_check_repeat"}
+    B -->|是| E["停止对话"]
+    B -->|否| C["追加到 chats"]
+    C --> D{"是否告一段落<br/>decide_chat_terminate"}
+    D -->|是| E
+    D -->|否| F["换对方继续生成"]
+```
+
+复读检查提示词 prompt `generative_agents/data/prompts/generate_chat_check_repeat.txt`：
 
 ```text
 <对话记录>
@@ -378,21 +259,7 @@ ${content}
 ${agent} 在<新对话>中所说的内容，是否在<对话记录>中出现过？只用“是”或“否”回答：
 ```
 
-完整的英文对照如下：
-
-```text
-<conversation record>
-${conversation}
-</conversation record>
-
-<new dialogue>
-${content}
-</new dialogue>
-
-Did what ${agent} said in <new dialogue> already appear in <conversation record>? Answer only "yes" or "no":
-```
-
-`decide_chat_terminate.txt` 的完整模板如下：
+结束判断提示词 prompt `generative_agents/data/prompts/decide_chat_terminate.txt`：
 
 ```text
 <对话记录>
@@ -409,24 +276,47 @@ ${conversation}
 根据以上<对话记录>和<判断逻辑>分析，${agent} 和 ${another} 的对话是否已经告一段落。只用“是”或“否”回答：
 ```
 
-完整的英文对照如下：
+两个判断的输出结构都很小。
 
-```text
-<conversation record>
-${conversation}
-</conversation record>
+| 判断 | 输出结构 schema | 回调 callback | 兜底值 failsafe |
+| --- | --- | --- | --- |
+| 复读检查 | `res: bool`，true 表示重复 | `true / yes / 是 / 1` 转成 true | `False` |
+| 结束判断 | `res: bool`，true 表示结束 | `true / yes / 是 / 1` 转成 true | `False` |
 
-<judgment logic>
-If the last sentence is a question, the conversation has not ended.
-If the last sentence asks the other person for help, the conversation has not ended.
-If the last sentence asks for the other person's opinion, the conversation has not ended.
-If the last sentence expects the other person to continue discussing, the conversation has not ended.
-</judgment logic>
+这两个 failsafe 都是 `False`，表示模型判断失败时默认不提前终止。这个选择保守地保护对话完整性，但也要求 `chat_iter` 限制最大轮数。
 
-Based on the <conversation record> and <judgment logic> above, analyze whether the conversation between ${agent} and ${another} has come to an end. Answer only "yes" or "no":
+## 10.7 对话写回：文本变成状态
+
+对话结束后，系统先保存原始对话，再生成摘要，最后写回双方日程和记忆。
+
+```python
+key = utils.get_timer().get_date("%Y%m%d-%H:%M")
+if key not in self.conversation.keys():
+    self.conversation[key] = []
+self.conversation[key].append({f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats})
+
+chat_summary = self.completion("summarize_chats", chats)
+duration = int(sum([len(c[1]) for c in chats]) / 240)
+self.schedule_chat(chats, chat_summary, start, duration, other)
+other.schedule_chat(chats, chat_summary, start, duration, self)
 ```
 
-`summarize_chats.txt` 的完整模板如下：
+原始对话会进入 `conversation.json`。
+
+```json
+{
+  "20240213-18:40": [
+    {
+      "伊莎贝拉 -> 阿伊莎 @ 小镇，霍布斯咖啡馆，咖啡馆，桌子": [
+        ["伊莎贝拉", "今晚 7 点在霍布斯咖啡馆有情人节派对，你愿意来吗？"],
+        ["阿伊莎", "听起来很棒。我会调整晚上的安排，尽量过去。"]
+      ]
+    }
+  ]
+}
+```
+
+摘要提示词 prompt `generative_agents/data/prompts/summarize_chats.txt`：
 
 ```text
 对话：
@@ -437,52 +327,99 @@ ${conversation}
 用不超过100字的短句总结上述对话：
 ```
 
-完整的英文对照如下：
+英文含义：
 
 ```text
-Conversation:
-"""
-${conversation}
-"""
-
-Summarize the conversation above in a short sentence of no more than 100 Chinese characters:
+Summarize the conversation in one short sentence of no more than 100 Chinese characters.
 ```
 
-这条 prompt 链的关键不在“模型会说话”，而在系统把每个风险点都拆开控制：先判断要不要说，再总结关系，再生成一句话，再检查重复，再判断是否结束，最后写成摘要进入记忆。
+输出结构 schema 和兜底值 failsafe：
 
-## 10.11 Dialogue 的常见失败
+```python
+class summarize_chatsResponse(BaseModel):
+    res: str = Field(description="对话内容的简短摘要，一句话概括对话主题")
 
-Dialogue 的失败不一定表现为“话说得不好”。很多时候，文本看起来还行，但系统链路已经断了。
+def _callback(response):
+    return response.strip()
 
-| 失败现象 | 表现 | 检查位置 |
+failsafe = "{} 和 {} 之间的普通对话".format(chats[0][0], chats[1][0])
+```
+
+`schedule_chat()` 把摘要变成双方当前行动。
+
+```python
+def schedule_chat(self, chats, chats_summary, start, duration, other, address=None):
+    self.chats.extend(chats)
+    event = memory.Event(
+        self.name,
+        "对话",
+        other.name,
+        describe=chats_summary,
+        address=address or self.get_tile().get_address(),
+        emoji=f"💬",
+    )
+    self.revise_schedule(event, start, duration)
+```
+
+写回后的行动事件可以这样读。
+
+```json
+{
+  "event": {
+    "subject": "阿伊莎",
+    "predicate": "对话",
+    "object": "伊莎贝拉",
+    "describe": "伊莎贝拉邀请阿伊莎参加情人节派对，阿伊莎表示愿意调整晚上的安排。",
+    "address": ["小镇", "霍布斯咖啡馆", "咖啡馆", "桌子"],
+    "emoji": "💬"
+  },
+  "duration": 1
+}
+```
+
+`self.chats.extend(chats)` 还会把原始对话暂存在角色状态中。第 7 章反思 Reflection 会读取 `self.chats`，生成“对计划的影响”和“对记忆的影响”两类想法 thought。对话 Dialogue 因此会继续影响未来计划，而不是停在当前这一轮文本。
+
+## 10.8 对话如何影响后续规划 Planning
+
+对话 Dialogue 和规划 Planning 的关系是双向的。计划影响角色是否愿意聊天，对话也会改变后续计划。
+
+| 方向 | 数据来源 | 影响 |
 | --- | --- | --- |
-| 频繁重复聊天 | 一小时内反复寒暄 | `retrieve_chats()`、60 分钟限制 |
-| 关系不明显 | 所有人说话语气相同 | `summarize_relation`、相关记忆检索 |
-| 对话复读 | 多轮中重复同一句 | `generate_chat_check_repeat` |
-| 对话停不下来 | 场景已经结束还继续聊 | `decide_chat_terminate` |
-| 对话不影响行为 | 聊完没有任何后续变化 | `summarize_chats`、`schedule_chat()`、memory 写回 |
-| 信息无法传播 | 角色听过但后面想不起 | chat summary 重要性和检索链路 |
+| 规划 Planning -> 对话 Dialogue | 当前行动、路径、时间、日程压力 | 决定是否适合开口、能聊多久 |
+| 对话 Dialogue -> 行动 Action | `schedule_chat()` 写入对话事件 | 当前时间被对话占用 |
+| 对话 Dialogue -> 记忆 Memory | `summarize_chats` 和 `self.chats` | 双方之后可以检索到这次邀请 |
+| 记忆 Memory -> 反思 Reflection | 第 7 章的对话后反思 | 生成关于计划和关系的想法 thought |
+| 反思 Reflection -> 规划 Planning | 次日或后续日程生成 | 角色可能把派对、约定或关系变化放进计划 |
 
-调试 Dialogue 时，不能只看生成文本是否自然。更重要的是看这段对话有没有进入双方记忆，并在之后被检索、反思和计划使用。
+伊莎贝拉 Isabella Rodriguez 的邀请要成为社会事件，必须走完这条链。她说出邀请只是第一步；阿伊莎 Ayesha Khan 的记忆能在后续被检索出来，才说明派对信息真正进入了小镇。
 
-## 10.12 本章小结
+## 10.9 常见失败与检查位置
 
-Dialogue 把角色之间的相遇变成可持续的社会关系。它不是“让两个模型互相聊天”，而是从是否聊天、双方关系、多轮生成、重复检查、结束判断、摘要写回一路走完。
+对话 Dialogue 的失败不一定表现为文本难看。很多时候，生成内容看起来正常，但工程链路已经断了。
 
-| 本章内容 | 核心结论 |
-| --- | --- |
-| 是否聊天 | 对话先经过 `decide_chat`，不是遇见人就自动发生。 |
-| 双方关系 | 系统分别总结 A 对 B、B 对 A 的关系理解。 |
-| 多轮生成 | `generate_chat` 同时读取身份、记忆、场景、时间和已有对话。 |
-| 退出机制 | 重复检查和终止判断避免复读与无限聊天。 |
-| 写回机制 | 对话摘要进入双方记忆，并通过 `schedule_chat()` 占用日程时间。 |
-| 社会传播 | 情人节派对、关系形成和信息扩散都依赖对话写回。 |
+| 表现 | 常见原因 | 检查位置 | 修正方向 |
+| --- | --- | --- | --- |
+| 角色频繁重复聊天 | 一小时限制或聊天历史检索失效 | `retrieve_chats()`、`delta < 60` | 检查第 9 章聊天触发条件 |
+| 所有人语气相同 | 关系摘要或角色记忆太弱 | `summarize_relation`、`generate_chat` | 检查检索记忆和 `base_desc` |
+| 多轮中复读 | 复读检查没有命中 | `generate_chat_check_repeat.txt` | 检查新句子是否被正确送入 `${content}` |
+| 对话停不下来 | 结束判断过宽或 `chat_iter` 太高 | `decide_chat_terminate.txt`、`chat_iter` | 检查最后一句是否仍是问题或请求 |
+| 对话不影响行为 | 对话没有写回行动和日程 | `schedule_chat()`、`revise_schedule()` | 检查 `predicate="对话"` 的事件是否生成 |
+| 信息无法传播 | 摘要没有进入后续检索 | `summarize_chats`、关联记忆 Associate | 检查 chat 节点和摘要文本 |
 
-下一章进入论文评价方法。论文的主要架构已经完整：persona 定义角色，memory 保存经历，retrieval 想起相关内容，reflection 形成高层理解，planning 生成生活，reacting 处理现场变化，dialogue 推动社会信息传播。
+调试顺序可以按本章链路走：是否开口已经成立，关系摘要是否有差异，逐句生成是否读取记忆，退出判断是否有效，摘要和行动是否写回。
+
+## 10.10 本章小结
+
+对话 Dialogue 把一次相遇变成可持续的社会关系。它不是“让两个模型互相聊天”，而是从关系摘要、逐句生成、复读检查、结束判断、摘要写回到日程占用一路闭合。
+
+判断一个对话系统是否可信，可以看四件事：它是否有开口边界，是否带着关系和记忆说话，是否能自然结束，是否把对话写回双方记忆和日程。只有这四件事成立，情人节派对这类社会事件才有传播路径。
+
+下一章进入论文架构的整体串联。记忆 Memory、反思 Reflection、规划 Planning、反应 Reacting 和对话 Dialogue 会合在一起，形成虚拟小镇的行为闭环。
 
 ## 参考资料
 
 - Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. *Generative Agents: Interactive Simulacra of Human Behavior*. arXiv: https://arxiv.org/abs/2304.03442
 - ar5iv full text: https://ar5iv.labs.arxiv.org/html/2304.03442
 - Generative Agents local source: `generative_agents/modules/agent.py`
-- Generative Agents local prompts: `generative_agents/data/prompts/decide_chat.txt`, `generative_agents/data/prompts/summarize_relation.txt`, `generative_agents/data/prompts/generate_chat.txt`, `generative_agents/data/prompts/generate_chat_check_repeat.txt`, `generative_agents/data/prompts/decide_chat_terminate.txt`, `generative_agents/data/prompts/summarize_chats.txt`
+- Generative Agents local source: `generative_agents/modules/prompt/scratch.py`
+- Generative Agents local prompts: `generative_agents/data/prompts/summarize_relation.txt`, `generative_agents/data/prompts/generate_chat.txt`, `generative_agents/data/prompts/generate_chat_check_repeat.txt`, `generative_agents/data/prompts/decide_chat_terminate.txt`, `generative_agents/data/prompts/summarize_chats.txt`

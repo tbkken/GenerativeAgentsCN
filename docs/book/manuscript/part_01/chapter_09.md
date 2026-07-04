@@ -1,234 +1,297 @@
-# 第 9 章 论文架构六：Reacting
+# 第 9 章 论文架构六：反应 Reacting
 
-## 9.1 Reacting 解决什么
+规划 Planning 给角色一条原计划，反应 Reacting 处理现场变化是否足以打断原计划。它不负责生成完整对话，也不负责重新设计一天日程；它只回答一个关键问题：眼前这件事，要不要改变当前行动。
 
-Planning 让角色有自己的生活安排。Reacting 处理另一件事：计划遇到现场变化时，角色该不该改。真实生活不会严格按日程执行。一个人计划去图书馆，路上可能遇到朋友；准备使用浴室，可能发现别人正在里面；准备拉票，可能碰到一个对自己态度冷淡的居民。如果智能体只执行计划，它会像机械日程表。如果它对每个事件都反应，又会像被环境牵着走的聊天机器人。Reacting 要处理的就是这条边界：
+![图 9-1：反应 Reacting：计划遇到现场变化](../../assets/chapter_09/ch09_reacting_decision_console.png)
 
-| 场景 | 不反应的问题 | 过度反应的问题 | 合理反应 |
+## 9.1 反应 Reacting 解决什么
+
+可信的小镇生活不能只靠日程执行。
+
+| 现场变化 | 只执行计划会怎样 | 过度反应会怎样 | 反应 Reacting 的判断 |
 | --- | --- | --- | --- |
-| 路上遇到熟人 | 像没看见人 | 每次遇见都长聊 | 根据关系、时间和任务判断是否聊天 |
-| 目标对象被占用 | 两个人同时使用同一对象 | 任何占用都停下来 | 冲突明显时等待或改计划 |
-| 听到新信息 | 信息无法传播 | 一听到就立刻改变人生目标 | 重要信息进入记忆，影响后续行动 |
-| 计划被打断 | 继续执行原计划，时间重叠 | 原计划完全崩掉 | 把打断写回日程，并修订剩余计划 |
+| 路上遇到熟人 | 像没看见人，社会关系不起作用 | 每次遇见都长聊 | 根据关系、时间、近期聊天记录判断是否开口 |
+| 目标地点被占用 | 两个人同时使用同一对象 | 任何占用都停下来 | 只有目标地址和对方位置冲突时等待 |
+| 听到新信息 | 信息无法进入后续行为 | 一听到就改变整天计划 | 重要信息先进入记忆，再影响后续行动 |
+| 计划被打断 | 原计划和新行动时间重叠 | 原计划完全丢失 | 把新行动插入当前子计划，并修订剩余部分 |
 
-Reacting 的核心不是“更主动”，而是“在合适时机改变原计划”。
+反应 Reacting 的工程边界很窄：它发生在行动循环中，先看附近事件 event，再判断聊天 chat、等待 wait 或继续原行动。第 10 章再展开对话 Dialogue 如何生成内容，第 19 章再展开日程 Schedule 如何完整修订。
 
-## 9.2 Reacting 在运行循环中的位置
+## 9.2 闭环案例：克劳斯 Klaus Mueller 为什么等待
 
-Generative Agents 中，清醒的智能体会在 `think()` 中执行三个动作：
+先看一个完整现场。克劳斯 Klaus Mueller 正要去奥克山学院图书馆的书桌阅读研究资料，玛丽亚 Maria Lopez 已经在同一个书桌阅读。这个场景不需要长篇社交推理，它只需要一个常识判断：同一个书桌已经被占用，克劳斯 Klaus Mueller 应该等一下，而不是和玛丽亚 Maria Lopez 重叠在同一个对象上。
 
-```python
-self.percept()
-self.make_plan(agents)
-self.reflect()
-```
+现场输入可以压成四组数据。
 
-顺序很重要。先感知，再决定是否调整行动，最后才反思。Reacting 就发生在 `make_plan()` 里。
-
-```python
-if self._reaction(agents):
-    return
-if self.path:
-    return
-if self.action.finished():
-    self.action = self._determine_action()
-```
-
-这段代码可以翻译成三句话：
-
-| 代码判断 | 中文意思 | 行为结果 |
-| --- | --- | --- |
-| `self._reaction(agents)` | 现场是否触发聊天或等待 | 如果触发，优先处理反应 |
-| `self.path` | 角色是否已经在移动路线上 | 如果正在移动，继续走 |
-| `self.action.finished()` | 当前行动是否结束 | 结束后才根据计划确定新行动 |
-
-Reacting 的优先级高于新行动生成。现场事件足够重要时，系统不会机械地继续计划。
-
-```mermaid
-flowchart TD
-    Percept["感知附近事件"] --> Reaction{"是否需要反应"}
-    Reaction -- 是 --> React["聊天 / 等待 / 修订日程"]
-    Reaction -- 否 --> Moving{"是否正在移动"}
-    Moving -- 是 --> Path["继续当前路径"]
-    Moving -- 否 --> Finished{"当前行动结束了吗"}
-    Finished -- 否 --> Continue["继续当前行动"]
-    Finished -- 是 --> Plan["按 Planning 生成新行动"]
-```
-
-*图 9-1：Reacting 在行动循环中的优先级。现场反应先于新行动生成，但不会随意覆盖未结束的行动。*
-
-## 9.3 反应来自感知
-
-Reacting 不能凭空发生。它依赖 `percept()` 收集到的附近事件。`percept()` 会把附近可见事件转成 `self.concepts`。随后 `_reaction()` 从这些 concept 中选择一个焦点：
-
-```python
-if agents:
-    priority = [i for i in self.concepts if _focus(i)]
-    if priority:
-        focus = random.choice(priority)
-if not focus:
-    priority = [i for i in self.concepts if not _ignore(i)]
-    if priority:
-        focus = random.choice(priority)
-```
-
-这段逻辑有两层优先级：
-
-| 优先级 | 选择对象 | 原因 |
-| --- | --- | --- |
-| 第一层 | 其他 agent 的事件 | 看到人比看到物体更可能触发社会互动 |
-| 第二层 | 非空闲事件 | 避免对“空闲”状态过度反应 |
-
-如果焦点事件来自另一个角色，系统会取出对方对象，并检索与对方相关的记忆：
-
-```python
-other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
-```
-
-`get_relation()` 返回：
-
-```python
-return {
-    "node": node,
-    "events": self.retrieve_events(node.describe),
-    "thoughts": self.retrieve_thoughts(node.describe),
+```json
+{
+  "agent": "克劳斯",
+  "self_event": {
+    "subject": "克劳斯",
+    "predicate": "此时",
+    "object": "阅读研究资料",
+    "address": ["小镇", "奥克山学院", "图书馆", "书桌"]
+  },
+  "self_path": [[118, 24], [119, 24]],
+  "other": "玛丽亚",
+  "other_event": {
+    "subject": "玛丽亚",
+    "predicate": "此时",
+    "object": "阅读研究资料",
+    "address": ["小镇", "奥克山学院", "图书馆", "书桌"]
+  },
+  "other_tile_address": ["小镇", "奥克山学院", "图书馆", "书桌"]
 }
 ```
 
-这说明 Reacting 不是只看眼前画面。角色是否要跟某个人说话，取决于现场事件，也取决于过去关系和相关想法。
+这组数据依次通过以下判断阶段：
 
-## 9.4 Reaction 的两个主要动作
-
-Generative Agents 中 `_reaction()` 主要尝试两类动作：
-
-```python
-if self._chat_with(other, focus):
-    return True
-if self._wait_other(other, focus):
-    return True
-return False
-```
-
-| 动作 | 处理的问题 | 典型场景 |
+| 阶段 | 判断 | 结果 |
 | --- | --- | --- |
-| `_chat_with()` | 社会互动 | 路上遇到熟人，当前关系和情境适合聊天 |
-| `_wait_other()` | 空间冲突 | 自己想使用某个地点或对象，但对方已经占用 |
+| 焦点 focus | 玛丽亚 Maria Lopez 是附近可见智能体 agent | 选中她的事件作为焦点 |
+| 跳过 skip | 双方有地址、没有睡觉、事件不是待开始、小镇时间未到 23 点 | 可以继续判断 |
+| 聊天触发 chat trigger | 当前主要问题不是社交开口 | 不进入聊天分支 |
+| 等待 Waiting | 克劳斯 Klaus Mueller 有路径 path，目标地址等于玛丽亚 Maria Lopez 所在瓦片 tile 地址 | 进入等待判断 |
+| 行动 Action | 等待判断返回选项 A | 写入等待事件 |
+| 日程 Schedule | 新等待行动插入当前子计划 | 剩余计划重新排布 |
 
-这两个动作看起来简单，却分别对应论文里两种关键能力：社会信息传播和常识性行为约束。聊天让情人节派对、镇长竞选、关系变化有传播路径。等待让角色不会穿模式地同时使用同一个浴室、床、书桌或工作台。
+等待判断的代表性输出很小。
 
-## 9.5 什么时候不该反应
-
-可信行为不只是“会反应”，也包括“知道什么时候不反应”。Generative Agents 用 `_skip_react()` 过滤不合适场景：
-
-```python
-if utils.get_timer().daily_duration(mode="hour") >= 23:
-    return True
-if _skip(self.get_event()) or _skip(other.get_event()):
-    return True
-return False
+```json
+{
+  "res": "A"
+}
 ```
 
-`_chat_with()` 还有更多限制。
+这不是一句说明文字，而是分支裁决：`A` 表示等待玛丽亚 Maria Lopez 完成当前行动，再继续自己的行动。代码把它写成新的行动 Action。
 
-| 限制 | 中文意思 | 为什么需要 |
+```json
+{
+  "event": {
+    "subject": "克劳斯",
+    "predicate": "waiting to start",
+    "object": "阅读研究资料",
+    "address": ["小镇", "奥克山学院", "图书馆", "书桌"],
+    "emoji": "⌛"
+  },
+  "start": "20240213-10:15:00",
+  "duration": 20
+}
+```
+
+这一条等待事件 event 就是第 9 章的主线结果：现场变化进入当前行动，并继续影响日程、移动和回放。
+
+```mermaid
+flowchart TD
+    A["计划行动<br/>克劳斯 Klaus Mueller 去书桌阅读"] --> B["感知 Perception<br/>看到玛丽亚 Maria Lopez 在同一书桌"]
+    B --> C{"反应 Reacting<br/>是否打断原计划？"}
+    C -->|不需要| D["继续原行动"]
+    C -->|聊天 chat| E["进入对话 Dialogue"]
+    C -->|等待 wait| F["写入等待行动 Action"]
+    F --> G["修订日程 Schedule"]
+```
+
+## 9.3 运行入口：make_plan() 先处理现场
+
+反应 Reacting 在 `make_plan()` 的最前面。角色每一步先尝试处理现场，再决定是否继续移动或生成新行动。
+
+```python
+def make_plan(self, agents):
+    if self._reaction(agents):
+        return
+    if self.path:
+        return
+    if self.action.finished():
+        self.action = self._determine_action()
+```
+
+| 代码判断 | 中文含义 | 行为结果 |
 | --- | --- | --- |
-| 时间太晚 | 23 点以后跳过反应 | 避免深夜频繁社交 |
-| 自己或对方在睡觉 | 睡觉状态不触发互动 | 保持日常常识 |
-| 事件尚未开始 | 待开始事件不反应 | 避免对未来事件过早反应 |
-| 对方正在移动 | 移动中不聊天 | 避免路上不断打断 |
-| 双方已经在对话 | 不重复开启对话 | 避免对话嵌套 |
-| 最近 60 分钟聊过 | 不再重复聊天 | 避免反复寒暄 |
+| `self._reaction(agents)` | 现场是否触发聊天或等待 | 如果触发，直接返回，不再生成新行动 |
+| `self.path` | 移动路径 path 是否存在 | 如果正在移动，继续走当前路径 |
+| `self.action.finished()` | 当前行动 Action 是否结束 | 结束后才按规划 Planning 生成新行动 |
 
-没有这些限制，小镇会很快变成过度社交系统。每个人不停打招呼、重复聊天、打断日程，看起来热闹，但并不可信。
+这段顺序决定了反应 Reacting 的优先级：现场足够重要时，角色不会机械地继续计划；现场不重要时，角色也不会被任何事件牵着走。
 
-## 9.6 Waiting：空间冲突下的反应
+## 9.4 感知 Perception 输出什么
 
-等待处理的是一种很普通、但很重要的现实情况：
-
-```text
-我正要去做某件事，但另一个人已经在那个地点或对象上做事。
-```
-
-系统会先判断是否应该等待：
+反应 Reacting 的输入不是一句聊天文本，而是感知 Perception 产生的概念节点 concept。`percept()` 会从附近地图格子 tile 中收集事件 event，去重后放进 `self.concepts`。
 
 ```python
-if not self.completion("decide_wait", self, other, focus):
+self.concepts, valid_num = [], 0
+for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
+    recent_nodes = (
+        self.associate.retrieve_events() + self.associate.retrieve_chats()
+    )
+    recent_nodes = set(n.describe for n in recent_nodes)
+    if event.get_describe() not in recent_nodes:
+        if event.object == "idle" or event.object == "空闲":
+            node = Concept.from_event(
+                "idle_" + str(idx), "event", event, poignancy=1
+            )
+        else:
+            valid_num += 1
+            node_type = "chat" if event.fit(self.name, "对话") else "event"
+            node = self._add_concept(node_type, event)
+            self.status["poignancy"] += node.poignancy
+        self.concepts.append(node)
+self.concepts = [c for c in self.concepts if c.event.subject != self.name]
+```
+
+一个进入 `self.concepts` 的节点可以这样读。
+
+```json
+{
+  "node_id": "event_42",
+  "node_type": "event",
+  "describe": "玛丽亚 此时 阅读研究资料 @ 小镇:奥克山学院:图书馆:书桌",
+  "event": {
+    "subject": "玛丽亚",
+    "predicate": "此时",
+    "object": "阅读研究资料",
+    "address": ["小镇", "奥克山学院", "图书馆", "书桌"]
+  },
+  "poignancy": 3,
+  "create": "20240213-10:15:00",
+  "expire": "20240314-10:15:00",
+  "access": "20240213-10:15:00"
+}
+```
+
+| 字段 | 中文含义 | 后续作用 |
+| --- | --- | --- |
+| `node_id` | 概念节点 concept 的索引编号 | 后续检索、证据引用和调试定位 |
+| `node_type` | 节点类型，事件 event、聊天 chat 或想法 thought | 决定写入哪类关联记忆 Associate |
+| `describe` | 可检索的自然语言描述 | 进入向量索引 embedding，并用于关系检索 |
+| `event.subject` | 行动主体 | `_reaction()` 用它判断焦点是不是其他智能体 agent |
+| `event.predicate` | 事件关系 | `待开始` 会被跳过；`对话` 用于避免对话嵌套 |
+| `event.object` | 行动内容或对象 | `空闲` 会轻量处理，普通事件会评分并写入记忆 |
+| `event.address` | 世界地图 Maze 中的空间地址 | `_wait_other()` 用它判断空间冲突 |
+| `poignancy` | 触动程度 poignancy | 累加到反思 Reflection 的触发阈值 |
+| `create / expire / access` | 创建、过期和访问时间 | 参与记忆有效期和检索 Retrieval 排序 |
+
+对第 9 章来说，最关键的是 `subject` 和 `address`：前者决定“要不要把玛丽亚 Maria Lopez 当作反应对象”，后者决定“是否和克劳斯 Klaus Mueller 的目标地点冲突”。
+
+## 9.5 `_reaction()` 的三层判断
+
+`_reaction()` 很短。它先选焦点 focus，再尝试聊天触发 chat trigger，最后尝试等待 Waiting。
+
+```python
+def _reaction(self, agents=None, ignore_words=None):
+    focus = None
+    ignore_words = ignore_words or ["空闲"]
+
+    def _focus(concept):
+        return concept.event.subject in agents
+
+    def _ignore(concept):
+        return any(i in concept.describe for i in ignore_words)
+
+    if agents:
+        priority = [i for i in self.concepts if _focus(i)]
+        if priority:
+            focus = random.choice(priority)
+    if not focus:
+        priority = [i for i in self.concepts if not _ignore(i)]
+        if priority:
+            focus = random.choice(priority)
+    if not focus or focus.event.subject not in agents:
+        return
+    other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
+
+    if self._chat_with(other, focus):
+        return True
+    if self._wait_other(other, focus):
+        return True
     return False
 ```
 
-`decide_wait` prompt 中的判断很接近日常常识：
+这段代码有三层门禁。
 
-| 场景 | 是否等待 | 原因 |
+| 门禁 | 判断内容 | 不通过时 |
 | --- | --- | --- |
-| 两个人都要使用浴室 | 等待 | 同一对象不能自然地同时使用 |
-| 一人洗衣服，一人吃午饭 | 不等待 | 行为没有直接冲突 |
-| 对方坐在自己要用的书桌前 | 可能等待 | 取决于对象是否唯一、任务是否冲突 |
+| 焦点 focus | 有没有其他智能体 agent 的可见事件 | 直接不反应 |
+| 跳过 skip | 当前时间、双方状态、事件地址是否适合反应 | 聊天和等待都不触发 |
+| 分支 branch | 聊天或等待是否命中各自条件 | 继续原行动 |
 
-如果决定等待，系统创建等待事件：
-
-```python
-event = memory.Event(
-    self.name,
-    "waiting to start",
-    self.get_event().get_describe(False),
-    address=self.get_event().address,
-    emoji=f"⌛",
-)
-self.revise_schedule(event, start, duration)
-```
-
-等待不是“什么都不做”。它是一段有时间、有地点、有原因的 action。
-
-```mermaid
-flowchart LR
-    Target["原计划目标"] --> Occupied["目标地点或对象被占用"]
-    Occupied --> Decide["判断是否冲突"]
-    Decide -- 无冲突 --> Continue["继续原计划"]
-    Decide -- 有冲突 --> Wait["创建等待事件"]
-    Wait --> Revise["修订日程"]
-```
-
-*图 9-2：等待机制。Reacting 不只处理聊天，也处理空间对象冲突。*
-
-## 9.7 revise_schedule：把打断写回计划
-
-Reacting 一旦发生，原计划就不能原封不动。Generative Agents 用 `revise_schedule()` 把打断写回日程：
+全局跳过 skip 由 `_skip_react()` 处理。
 
 ```python
-self.action = memory.Action(event, start=start, duration=duration)
-plan, _ = self.schedule.current_plan()
-if len(plan["decompose"]) > 0:
-    plan["decompose"] = self.completion(
-        "schedule_revise", self.action, self.schedule
+def _skip_react(self, other):
+    def _skip(event):
+        if not event.address or "sleeping" in event.get_describe(False) or "睡觉" in event.get_describe(False):
+            return True
+        if event.predicate == "待开始":
+            return True
+        return False
+
+    if utils.get_timer().daily_duration(mode="hour") >= 23:
+        return True
+    if _skip(self.get_event()) or _skip(other.get_event()):
+        return True
+    return False
+```
+
+不反应清单按三层门禁分开看。
+
+| 层级 | 不反应条件 | 源码条件 | 抑制的失败 |
+| --- | --- | --- | --- |
+| 焦点 focus | 没有可处理概念 | `not focus` | 没有现场事件时编造互动 |
+| 焦点 focus | 焦点不是其他智能体 agent | `focus.event.subject not in agents` | 对物体、地点、空闲状态社交反应 |
+| 跳过 skip | 23 点以后 | `daily_duration(mode="hour") >= 23` | 深夜频繁互动 |
+| 跳过 skip | 自己或对方没有地址 | `not event.address` | 生成没有空间落点的互动 |
+| 跳过 skip | 自己或对方正在睡觉 | 描述含 `sleeping` 或 `睡觉` | 睡眠状态被打断 |
+| 跳过 skip | 自己或对方事件尚未开始 | `event.predicate == "待开始"` | 对未来计划提前反应 |
+| 分支 branch | 聊天和等待都没有命中 | `_chat_with()` 与 `_wait_other()` 都为 `False` | 反应系统过度接管日程 |
+
+这张表是调试入口，不是主流程。主流程只需要记住一句话：先确认现场对象，再过滤不该反应的状态，最后只在聊天或等待分支命中时改写行动。
+
+## 9.6 等待 Waiting：空间冲突如何落地
+
+等待 Waiting 是本章主案例。它处理的不是“想不想交流”，而是“目标空间是否被别人占用”。
+
+```python
+def _wait_other(self, other, focus):
+    if self._skip_react(other):
+        return False
+    if not self.path:
+        return False
+    if self.get_event().address != other.get_tile().get_address():
+        return False
+    if not self.completion("decide_wait", self, other, focus):
+        return False
+    self.logger.info("{} decides wait to {}".format(self.name, other.name))
+    start = utils.get_timer().get_date()
+    t = other.action.end - start
+    duration = int(t.total_seconds() / 60)
+    event = memory.Event(
+        self.name,
+        "waiting to start",
+        self.get_event().get_describe(False),
+        address=self.get_event().address,
+        emoji=f"⌛",
     )
+    self.revise_schedule(event, start, duration)
 ```
 
-例如，克劳斯 Klaus Mueller 原计划 10:00 到 11:00 阅读论文。10:15 遇到玛丽亚 Maria Lopez 并聊了 15 分钟。原来的子计划不能继续保持不变，否则时间会重叠。更合理的修订是：
+| 条件 | 中文含义 | 不满足时 |
+| --- | --- | --- |
+| `_skip_react(other)` 为 false | 当前状态适合反应 | 不等待 |
+| `self.path` 存在 | 自己正在前往目标地点 | 不等待 |
+| `self.get_event().address == other.get_tile().get_address()` | 目标地址正是对方所在位置 | 不等待 |
+| `decide_wait` 返回选项 A | 模型判断应该等待 | 不等待 |
 
-```text
-10:00-10:15 阅读论文
-10:15-10:30 与玛丽亚对话
-10:30-11:00 继续阅读论文
-```
+等待判断只有一次模型调用：`self.completion("decide_wait", self, other, focus)`。项目中有两个 prompt 文件，是因为 `decide_wait_example.txt` 只是少样本示例 few-shot 的片段模板，不会单独调用模型；最终发送给模型的是 `decide_wait.txt`。
 
-这就是论文中“意外事件触发重规划”的工程体现。Reacting 不是在计划旁边插一段文本，而是修改角色接下来的行为安排。
+| 文件或变量 | 角色 | 是否调用大语言模型 LLM |
+| --- | --- | --- |
+| `decide_wait_example.txt` | 渲染示例 1、示例 2 和当前任务 | 否 |
+| `examples_1` | “同一浴室，应等待”的固定示例 | 否 |
+| `examples_2` | “不同区域，不等待”的固定示例 | 否 |
+| `task` | 当前小镇现场的待判断问题 | 否 |
+| `decide_wait.txt` | 唯一发送给模型的等待判断提示词 prompt | 是 |
 
-## 9.8 镇长竞选为什么依赖 Reacting
-
-山姆 Sam Moore 的镇长竞选不是靠系统广播完成的。如果山姆 Sam Moore 只是有一个静态设定“正在竞选”，小镇不会自然出现竞选传播。要让竞选进入社会生活，他必须：
-
-1. 在计划中安排竞选相关行动。
-2. 在空间中遇到居民。
-3. 判断当前场景是否适合开口。
-4. 根据关系和现场生成竞选话题。
-5. 让居民记住这次对话。
-6. 让居民之后可能把这件事告诉别人。
-
-这里尤其能看到 Reacting 的价值。山姆 Sam Moore 不能站在一个地方向全镇广播；竞选信息是在一次次偶遇、判断、对话和记忆写回中扩散的。汤姆 Tom Moreno 不喜欢山姆 Sam Moore 这一点也会影响反应。如果汤姆 Tom Moreno 遇到山姆 Sam Moore，他未必会热情支持，可能会冷淡、怀疑，甚至回避。可信行为不要求所有人配合剧情，而要求每个人根据自己的设定和经历合理行动。
-
-## 9.9 Reacting 的真实 prompt
-
-Reacting 本身先由代码选择焦点事件，再交给 prompt 做具体判断。本章涉及两类真实 prompt：等待判断和日程修订。`decide_wait.txt` 负责把少样本示例和当前任务拼起来：
+等待判断提示词 prompt `generative_agents/data/prompts/decide_wait.txt`：
 
 ```text
 示例1：
@@ -243,7 +306,7 @@ ${task}
 不要输出推理过程，直接输出答案：
 ```
 
-完整的英文对照如下：
+英文含义：
 
 ```text
 Example 1:
@@ -252,13 +315,11 @@ ${examples_1}
 Example 2:
 ${examples_2}
 
-Based on the examples above, answer which option is most suitable for the following task:
-${task}
-
-Do not output the reasoning process. Output only the answer:
+Based on the examples above, choose the most suitable option for the current task.
+Output only the answer.
 ```
 
-其中每个示例都使用 `decide_wait_example.txt`：
+片段模板 `generative_agents/data/prompts/decide_wait_example.txt`：
 
 ```text
 背景：
@@ -274,150 +335,185 @@ ${agent} 看到 ${another_status}
 ${reason}${answer}
 ```
 
-完整的英文对照如下：
+输出结构 schema 和回调 callback：
+
+```python
+class decide_waitResponse(BaseModel):
+    res: str = Field(description="选择的选项，'A' 表示等待，'B' 表示继续当前行动")
+
+def _callback(response):
+    return "A" in response
+
+failsafe = False
+```
+
+在克劳斯 Klaus Mueller 的案例里，选项 A 是“等待玛丽亚 Maria Lopez 完成阅读研究资料，然后再阅读研究资料”，选项 B 是“现在继续阅读研究资料”。同一书桌冲突成立，返回 `A` 后才会写入等待行动 Action。
+
+## 9.7 聊天触发 chat trigger：只判断是否开口
+
+聊天触发 chat trigger 是另一个分支，但它不是第 9 章的主线。第 9 章只判断是否开口；真正的多轮对话生成、终止、总结和记忆写入由第 10 章对话 Dialogue 展开。
+
+```python
+def _chat_with(self, other, focus):
+    if len(self.schedule.daily_schedule) < 1 or len(other.schedule.daily_schedule) < 1:
+        return False
+    if self._skip_react(other):
+        return False
+    if other.path:
+        return False
+    if self.get_event().fit(predicate="对话") or other.get_event().fit(predicate="对话"):
+        return False
+
+    chats = self.associate.retrieve_chats(other.name)
+    if chats:
+        delta = utils.get_timer().get_delta(chats[0].create)
+        if delta < 60:
+            return False
+
+    if not self.completion("decide_chat", self, other, focus, chats):
+        return False
+```
+
+聊天触发 chat trigger 的硬条件如下。
+
+| 不开口条件 | 源码条件 | 抑制的失败 |
+| --- | --- | --- |
+| 任一方日程尚未初始化 | `len(daily_schedule) < 1` | 初始化阶段提前写入社交事件 |
+| 对方正在移动 | `other.path` | 对方在路上被频繁截停 |
+| 任一方已经在对话 | `fit(predicate="对话")` | 对话嵌套对话 |
+| 60 分钟内已经聊过 | `delta < 60` | 同一对角色反复寒暄 |
+| 聊天判断提示词 prompt 返回否 | `not completion("decide_chat", ...)` | 关系、场景或话题不足时硬聊 |
+
+聊天判断提示词 prompt `generative_agents/data/prompts/decide_chat.txt`：
 
 ```text
-Background:
+背景：
 """
 ${context}
-It is now ${date}.
-${status}
-${agent} sees that ${another_status}
+
+现在是 ${date}。${chat_history}
+
+${agent_status}
+${another_status}
 """
-Question: Think step by step. Among the following two options, what should ${agent} do?
-Option A: wait for ${another} to finish ${another_action}, and then ${action}
-Option B: continue to ${action} now
-${reason}${answer}
+
+根据上述背景判断，${agent} 是否有可能主动与 ${another} 对话？只用“是”或“否”回答：
 ```
 
-`decide_wait` 的返回 schema 是 `res: str`。代码只关心输出里是否包含 `A`：包含 `A` 就等待，否则继续当前行动。`schedule_revise.txt` 负责在新活动插入后续写剩余日程：
+英文含义：
 
 ```text
-根据新的活动调整日程安排。
-
-示例：
-"""
-智能体：凯莉
-原始计划：
-[08:00 至 09:00] 吃早餐
-[09:00 至 10:00] 制定课程计划
-
-新活动：与朋友聊天（持续30分钟，从09:15开始）
-调整后的计划：
-[08:00 至 09:15] 吃早餐
-[09:15 至 09:45] 与朋友聊天
-[09:45 至 10:00] 制定课程计划
-"""
-
-确保返回的数据格式遵守schema：
-[
-  ("08:00", "09:15", "吃早餐"),
-  ("09:15", "09:45", "与朋友聊天"),
-  ("09:45", "10:00", "制定课程计划")
-]
-
-参考示例，为以下情况调整日程：
-"""
-智能体：${agent}
-原始计划：
-${original_plan}
-
-新活动：${event}（持续${duration}分钟）
-调整后的计划：
-${new_plan}
-"""
-
-确保返回的数据格式遵守schema：
-[
-  ("开始时间", "结束时间", "活动描述"),
-  ("开始时间", "结束时间", "活动描述"),
-  ...
-]
-
-续写时间表中剩余的部分（必须在 ${end} 前结束）：
+Given the relationship context, current time, recent chat history, and both agents' current states, decide whether ${agent} is likely to proactively talk with ${another}. Answer only yes or no.
 ```
 
-完整的英文对照如下：
+输出结构 schema 和回调 callback：
 
-```text
-Adjust the schedule based on the new activity.
+```python
+class decide_chatResponse(BaseModel):
+    res: bool = Field(description="是否主动发起对话，true 表示会主动对话，false 表示不会")
 
-Example:
-"""
-Agent: Kelly
-Original plan:
-[08:00 to 09:00] eat breakfast
-[09:00 to 10:00] prepare a lesson plan
+def _callback(response):
+    if isinstance(response, bool):
+        return response
+    return str(response).strip().lower() in ("true", "yes", "是", "1")
 
-New activity: chat with a friend (lasting 30 minutes, starting at 09:15)
-Adjusted plan:
-[08:00 to 09:15] eat breakfast
-[09:15 to 09:45] chat with a friend
-[09:45 to 10:00] prepare a lesson plan
-"""
-
-Make sure the returned data follows the schema:
-[
-  ("08:00", "09:15", "eat breakfast"),
-  ("09:15", "09:45", "chat with a friend"),
-  ("09:45", "10:00", "prepare a lesson plan")
-]
-
-Following the example, adjust the schedule for the following situation:
-"""
-Agent: ${agent}
-Original plan:
-${original_plan}
-
-New activity: ${event} (lasting ${duration} minutes)
-Adjusted plan:
-${new_plan}
-"""
-
-Make sure the returned data follows the schema:
-[
-  ("start time", "end time", "activity description"),
-  ("start time", "end time", "activity description"),
-  ...
-]
-
-Continue writing the remaining part of the schedule. It must end before ${end}:
+failsafe = False
 ```
 
-`schedule_revise` 的返回 schema 是 `res: list[tuple[str, str, str]]`，也就是“开始时间、结束时间、活动描述”。代码再把它转换回 `decompose` 结构。
+第 9 章到这里为止只产生一个布尔判断。判断为 `True` 以后，对话 Dialogue 机制才开始接管。
 
-## 9.10 Reacting 的常见失败
+## 9.8 行动 Action 与日程 Schedule 如何写回
 
-Reacting 的失败通常出现在两个极端：完全不反应，或者反应过度。
+反应 Reacting 一旦命中分支，就必须改变可执行状态。等待 Waiting 会构造等待事件，聊天触发 chat trigger 会在对话结束后构造对话事件，两者最后都调用 `revise_schedule()`。
 
-| 失败现象 | 表现 | 检查位置 |
+```python
+def schedule_chat(self, chats, chats_summary, start, duration, other, address=None):
+    self.chats.extend(chats)
+    event = memory.Event(
+        self.name,
+        "对话",
+        other.name,
+        describe=chats_summary,
+        address=address or self.get_tile().get_address(),
+        emoji=f"💬",
+    )
+    self.revise_schedule(event, start, duration)
+```
+
+```python
+def revise_schedule(self, event, start, duration):
+    self.action = memory.Action(event, start=start, duration=duration)
+    plan, _ = self.schedule.current_plan()
+    if len(plan["decompose"]) > 0:
+        plan["decompose"] = self.completion(
+            "schedule_revise", self.action, self.schedule
+        )
+```
+
+| 分支 | 写入的事件 event | 下游状态 |
 | --- | --- | --- |
-| 看见人也无反应 | 角色像没感知到别人 | `percept()`、`self.concepts`、`_focus()` |
-| 对任何人都聊天 | 小镇变成寒暄机器 | `decide_chat`、60 分钟限制、关系摘要 |
-| 对空间冲突无反应 | 两人同时使用同一对象 | `_wait_other()`、`decide_wait` |
-| 反应后计划不变 | 聊天和原任务时间重叠 | `revise_schedule()`、`schedule_revise` |
-| 信息传播过快 | 一件事瞬间传遍小镇 | 聊天频率、相遇概率、记忆检索 |
+| 等待 Waiting | `predicate="waiting to start"`，`object` 是原行动描述 | 当前行动 Action 改成等待 |
+| 对话 Dialogue | `predicate="对话"`，`object` 是对方姓名，`describe` 是对话摘要 | 当前行动 Action 改成对话 |
+| 日程修订 Schedule Revision | `schedule_revise` 返回新的子计划 decompose | 当前粗计划的剩余部分重新排布 |
 
-Reacting 的调试重点不是单看输出文字，而是看行为链路是否闭合：感知到事件，判断要不要反应，生成反应动作，写回日程，并影响后续行为。聊天相关的 `decide_chat`、`generate_chat`、`summarize_chats` 等完整模板放在第 10 章。Reacting 只决定现场是否进入互动；Dialogue 才负责把互动展开成对话。
+`schedule_revise` 是第 19 章日程 Schedule 的主讲内容。第 9 章只保留接口层含义：反应动作不是写在旁边的一段注释，而是成为新的 `Action`，再推动 `plan["decompose"]` 更新。
 
-## 9.11 本章小结
+写回前后的结构可以这样看。
 
-Reacting 让智能体在计划和现场之间做选择。它不推翻 Planning，而是在遇到人、空间冲突和新信息时，判断是否应该打断、等待、聊天或修订日程。
+```json
+{
+  "before": {
+    "action": "阅读研究资料",
+    "decompose": [
+      {"idx": 0, "describe": "阅读论文并记录重点", "start": 600, "duration": 60}
+    ]
+  },
+  "insert": {
+    "action": "等待玛丽亚完成阅读研究资料",
+    "start": 615,
+    "duration": 20
+  },
+  "after": {
+    "decompose": [
+      {"idx": 0, "describe": "等待玛丽亚完成阅读研究资料", "start": 615, "duration": 20},
+      {"idx": 1, "describe": "继续阅读论文并记录重点", "start": 635, "duration": 40}
+    ]
+  }
+}
+```
 
-| 本章内容 | 核心结论 |
-| --- | --- |
-| 运行位置 | Reacting 在 `make_plan()` 中优先于新行动生成。 |
-| 感知输入 | 反应来自附近事件，尤其是其他 agent 的事件。 |
-| 关系记忆 | 是否反应不只看眼前，也看过去关系和相关 thought。 |
-| 聊天与等待 | `_chat_with()` 处理社会互动，`_wait_other()` 处理空间冲突。 |
-| 跳过规则 | 深夜、睡觉、移动中、近期聊过等条件会抑制反应。 |
-| 日程修订 | `revise_schedule()` 把意外事件写回剩余计划。 |
+这个 JSON 摘要表达的是状态变化，不是项目直接输出的完整 checkpoint。真实 checkpoint 中还会包含角色状态、记忆、路径和地图信息；本章只抓住反应 Reacting 改写行动的那一段。
 
-下一章进入 Dialogue。Reacting 决定角色是否开口，Dialogue 决定开口以后怎么说、说多久、如何总结，以及这段对话如何进入双方记忆。
+## 9.9 常见失败与检查位置
+
+反应 Reacting 的失败通常不是模型一句话写错，而是输入、门禁、分支或写回链路断开。
+
+| 输出症状 | 常见原因 | 检查位置 | 修正方向 |
+| --- | --- | --- | --- |
+| 看见人也无反应 | 附近事件没有进入 `self.concepts` | `percept()`、`att_bandwidth`、地图格子 tile 事件 | 检查可见范围、事件写入和自身事件过滤 |
+| 焦点选错 | 空闲事件或物体事件压过人物事件 | `_reaction()`、`_focus()`、`_ignore()` | 检查 `ignore_words` 和事件 subject |
+| 对任何人都聊天 | 跳过规则太弱或聊天判断太宽 | `_chat_with()`、`decide_chat.txt` | 检查 60 分钟限制、当前行动和关系上下文 |
+| 对空间冲突无反应 | 目标地址和对方位置没有对齐 | `_wait_other()`、`self.path`、`get_tile().get_address()` | 检查行动地址和地图对象 |
+| 等待过多 | `decide_wait` 把无冲突场景判成等待 | `decide_wait.txt`、`decide_wait_example.txt` | 强化“不同区域不冲突”的示例 |
+| 反应后计划不变 | 新行动没有写回子计划 | `revise_schedule()`、`schedule_revise.txt` | 检查当前粗计划是否有 `decompose` |
+| 时间重叠 | 修订输出的开始结束时间不连续 | `prompt_schedule_revise()` | 检查 `HH:MM` 输出和时长转换 |
+
+调试顺序也按本章主线来：先看感知 Perception 是否有事件，再看焦点 focus 是否选对，再看跳过 skip 是否误挡，最后看聊天 chat、等待 wait 和日程写回。
+
+## 9.10 本章小结
+
+反应 Reacting 是规划 Planning 和对话 Dialogue 之间的决策层。规划 Planning 给角色原计划，感知 Perception 把现场事件带进来，反应 Reacting 判断这件事是否足以改变当前行动。
+
+第 9 章的关键判断有三个：附近事件 event 是否形成焦点 focus，当前状态是否应该跳过 skip，聊天 chat 或等待 wait 是否命中分支。三者都闭合时，现场变化才会写成新的行动 Action，并继续影响日程 Schedule。
+
+下一章进入对话 Dialogue。反应 Reacting 只决定角色是否开口；对话 Dialogue 决定开口以后怎么说、说多久、何时结束，以及这段对话如何进入双方记忆。
 
 ## 参考资料
 
 - Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. *Generative Agents: Interactive Simulacra of Human Behavior*. arXiv: https://arxiv.org/abs/2304.03442
 - ar5iv full text: https://ar5iv.labs.arxiv.org/html/2304.03442
 - Generative Agents local source: `generative_agents/modules/agent.py`
-- Generative Agents local prompts: `generative_agents/data/prompts/decide_wait.txt`, `generative_agents/data/prompts/decide_wait_example.txt`, `generative_agents/data/prompts/schedule_revise.txt`
+- Generative Agents local source: `generative_agents/modules/memory/event.py`
+- Generative Agents local source: `generative_agents/modules/memory/associate.py`
+- Generative Agents local source: `generative_agents/modules/prompt/scratch.py`
+- Generative Agents local prompts: `generative_agents/data/prompts/decide_chat.txt`, `generative_agents/data/prompts/decide_wait.txt`, `generative_agents/data/prompts/decide_wait_example.txt`, `generative_agents/data/prompts/schedule_revise.txt`
