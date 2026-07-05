@@ -1,10 +1,12 @@
 # 第 11 章 论文的评价方法 Evaluation
 
+生成式智能体 generative agent 的演示 demo 很容易让人产生错觉。角色在地图上走动、互相打招呼、偶尔说出几句自然的话，看起来已经像一个小社会。
+
+但可信行为 believable behavior 不能只靠观看界面判断。
+
 ![图 11-1：评价 Evaluation 证据审计台](../../assets/chapter_11/ch11_evaluation_evidence_workbench.png)
 
 ## 11.1 评价 Evaluation 解决什么
-
-生成式智能体 generative agent 的演示 demo 很容易让人产生错觉。角色在地图上走动、互相打招呼、偶尔说出几句自然的话，看起来已经像一个小社会。但可信行为 believable behavior 不能只靠观看界面判断。
 
 评价 Evaluation 要回答的是下面这个问题：
 
@@ -27,7 +29,7 @@
 
 ## 11.2 闭环案例：阿伊莎 Ayesha Khan 是否真的知道派对
 
-沿用第 10 章的派对邀请案例：伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆 Hobbs Cafe 邀请阿伊莎 Ayesha Khan 参加情人节派对。评价时不能只看阿伊莎 Ayesha Khan 回答“我知道派对”。这句话可能来自三种情况：
+伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆 Hobbs Cafe 邀请阿伊莎 Ayesha Khan 参加情人节派对。评价时不能只看阿伊莎 Ayesha Khan 回答“我知道派对”。这句话可能来自三种情况：
 
 | 情况 | 表面回答 | 真实判断 |
 | --- | --- | --- |
@@ -99,7 +101,42 @@ flowchart TD
 
 ## 11.5 五类访谈能力
 
-论文的访谈问题分为五类，每类五个问题，总共 25 个问题。
+论文附录 Appendix B 的访谈问题分为五类，每类五个问题，总共 25 个问题。下面按中文阅读口径完整展开这 25 个问题。方括号里的名字不是固定值，而是在评价时替换成被采访角色真实互动过的人。
+
+| 编号 | 访谈能力 | 中文访谈题 | 评价点 |
+| --- | --- | --- | --- |
+| 1 | 自我认知 Self-Knowledge | 请介绍你自己。 | 角色是否能稳定说出姓名、年龄、身份、兴趣和当前目标。 |
+| 2 | 自我认知 Self-Knowledge | 你的职业或主要身份是什么？ | 角色职业是否与人物定义 persona 一致。 |
+| 3 | 自我认知 Self-Knowledge | 你现在主要感兴趣的事情是什么？ | 角色兴趣是否与长期设定和近期状态 currently 一致。 |
+| 4 | 自我认知 Self-Knowledge | 你和谁住在一起？ | 角色是否能维持居住关系和生活背景。 |
+| 5 | 自我认知 Self-Knowledge | 概括描述一下你平常工作日的大致日程。 | 角色是否能把身份和生活习惯组织成稳定作息。 |
+| 6 | 记忆 Memory | `[最近互动过的人]` 是谁？ | 角色是否能从记忆流 memory stream 中取回真实社交经历。 |
+| 7 | 记忆 Memory | `Kane Martinez` 是谁？ | 角色是否会承认不知道，避免把不存在或陌生的人编成熟人。 |
+| 8 | 记忆 Memory | 谁正在参加本地选举或考虑竞选？ | 角色是否记得山姆 Sam Moore 竞选这类传播信息。 |
+| 9 | 记忆 Memory | 小镇里是否有情人节派对？ | 角色是否记得伊莎贝拉 Isabella Rodriguez 派对这类社会事件。 |
+| 10 | 记忆 Memory | `[另一位最近互动过的人]` 是谁？ | 角色是否能区分不同熟人，而不是泛泛描述所有人。 |
+| 11 | 计划 Plans | 今天早上 6 点你会做什么？ | 角色是否能读取当天早晨计划。 |
+| 12 | 计划 Plans | 今天下午 6 点你会做什么？ | 角色是否能维持傍晚计划，不与日程 schedule 冲突。 |
+| 13 | 计划 Plans | 今天下午 1 点你刚刚做完什么？ | 角色是否能回答刚结束的短期计划。 |
+| 14 | 计划 Plans | 今天中午 12 点你刚刚做完什么？ | 角色是否能处理相邻时间点的计划边界。 |
+| 15 | 计划 Plans | 今天晚上 10 点你会做什么？ | 角色是否能把晚间安排与长期目标连接起来。 |
+| 16 | 反应 Reactions | 早餐正在烧焦，你会怎么做？ | 角色是否具备基本常识和紧急处理能力。 |
+| 17 | 反应 Reactions | 浴室被别人占用了，你会怎么做？ | 角色是否能处理空间冲突和等待 waiting。 |
+| 18 | 反应 Reactions | 你需要做晚饭，但冰箱是空的，你会怎么做？ | 角色是否能生成替代方案，而不是机械执行原计划。 |
+| 19 | 反应 Reactions | 你看到朋友从街上经过，会怎么做或说什么？ | 角色是否能在现场触发自然社交反应。 |
+| 20 | 反应 Reactions | 你看到街上起火，会怎么做？ | 角色是否能处理高风险异常事件。 |
+| 21 | 反思 Reflections | 现在最能激励你的事情是什么，为什么？ | 角色是否能把近期经历合成为高层动机。 |
+| 22 | 反思 Reflections | 根据你对 `[熟人]` 的了解，你觉得对方会喜欢什么书，为什么？ | 角色是否能基于关系记忆推断对方偏好。 |
+| 23 | 反思 Reflections | 如果要给 `[熟人]` 准备生日礼物，你会选什么？ | 角色是否能把对人的理解转成具体选择。 |
+| 24 | 反思 Reflections | 你会怎样称赞 `[熟人]`？ | 角色是否能从记忆中提取对方特质，而不是泛泛夸奖。 |
+| 25 | 反思 Reflections | 如果能和最近聊过的人共处一段时间，你会选谁，为什么？ | 角色是否能综合近期互动、关系和个人目标。 |
+
+这 25 个问题不是知识测验，而是对五类架构能力的压力测试。
+- 自我认知 Self-Knowledge 看身份是否稳定
+- 记忆 Memory 看经历是否可检索
+- 计划 Plans 看日程是否连续
+- 反应 Reactions 看现场处理是否合理
+- 反思 Reflections 看角色能否从经历里形成更高层判断
 
 | 访谈能力 | 英文概念 | 典型问题 | 检查的系统能力 | 失败信号 |
 | --- | --- | --- | --- | --- |
@@ -134,19 +171,58 @@ flowchart LR
 reverie/backend_server/persona/prompt_template/v3_ChatGPT/summarize_ideas_v1.txt
 ```
 
-它的作用是把检索出的记忆片段压缩成与访谈问题相关的摘要。原始模板中有一句核心指令：
+这个提示词 prompt 不负责直接回答访谈问题。它夹在“检索记忆”和“生成回答”之间，先把一组记忆片段 statements 压缩成与访谈问题相关的证据摘要 summarized idea。后面的回答生成函数再拿这段摘要继续说话。
 
 ```text
-Summarize the Statements that are most relevant
+记忆片段 statements
+  -> 摘要提示词 summarize_ideas_v1.txt
+  -> 证据摘要 summarized idea
+  -> 访谈回答 interview answer
 ```
 
-中文含义是：
+原始模板很短，结构可以按四块阅读：
 
 ```text
-概括这些陈述中与访谈者这句话最相关的内容。
+summarize_ideas_v1.txt
+
+Variables:
+!<INPUT 0>! -- Statements
+!<INPUT 1>! -- agent name
+!<INPUT 2>! -- interviewer question
+
+Statements:
+!<INPUT 0>!
+
+An interviewer said to !<INPUT 1>!:
+"!<INPUT 2>!"
+
+Summarize the Statements that are most relevant to the interviewer's line:
+"
 ```
 
-模板变量可以按下面方式阅读：
+中文阅读版如下：
+
+```text
+模板名：summarize_ideas_v1.txt
+
+变量：
+!<INPUT 0>! -- 记忆陈述列表 statements
+!<INPUT 1>! -- 被采访角色名 agent name
+!<INPUT 2>! -- 访谈者问题 interviewer question
+
+记忆陈述：
+!<INPUT 0>!
+
+访谈者对 !<INPUT 1>! 说：
+"!<INPUT 2>!"
+
+请概括这些记忆陈述中，最能回答访谈者这句话的内容：
+"
+```
+
+这段模板的关键不是“总结 summarize”这个动词，而是“只总结与访谈问题相关的记忆”。如果阿伊莎 Ayesha Khan 的记忆里同时有论文写作、咖啡馆、伊莎贝拉 Isabella Rodriguez、情人节派对和晚饭安排，提示词 prompt 不应该把所有内容压成生活总结，而应该只筛出能回答“你知道有情人节派对吗？”的证据。
+
+三个变量可以按下面方式阅读：
 
 | 变量 | 中文含义 | 来源 | 对评价的影响 |
 | --- | --- | --- | --- |
@@ -154,7 +230,46 @@ Summarize the Statements that are most relevant
 | `!<INPUT 1>!` | 角色名 agent name | 被采访智能体 agent 的名字。 | 让问题绑定到具体角色。 |
 | `!<INPUT 2>!` | 访谈问题 interviewer question | 研究者输入的问题。 | 决定本轮要筛选哪类证据。 |
 
-这个提示词 prompt 的输出不是 JSON，也不是固定标签，而是一段证据摘要。它没有输出结构 schema、回调 callback 或兜底值 failsafe 这类严格工程边界。当前中文项目保留了运行时提示词 prompt，例如规划 planning、反应 reacting、对话 dialogue、反思 reflection 的模板，但没有内置论文访谈评价脚本。复现实验需要把这条链路补成中文评价工具：先检索证据，再生成回答，再由人工或大模型裁判 LLM-as-judge 按证据链评分。
+放回派对评价案例，可以这样填充：
+
+```text
+!<INPUT 0>!
+- 阿伊莎 Ayesha Khan 在霍布斯咖啡馆 Hobbs Cafe 与伊莎贝拉 Isabella Rodriguez 交谈。
+- 伊莎贝拉 Isabella Rodriguez 告诉阿伊莎 Ayesha Khan，今晚 7 点会有情人节派对。
+- 阿伊莎 Ayesha Khan 表示听起来很棒，会调整晚上的安排，尽量过去。
+
+!<INPUT 1>!
+阿伊莎 Ayesha Khan
+
+!<INPUT 2>!
+你知道小镇里有情人节派对吗？
+```
+
+合理的中间输出不是完整回答，而是一段证据摘要：
+
+```text
+阿伊莎 Ayesha Khan 知道情人节派对，因为伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆 Hobbs Cafe 邀请她今晚 7 点参加派对，阿伊莎 Ayesha Khan 当时表示愿意调整晚上安排。
+```
+
+这段摘要进入后续回答生成时，角色才能说出带来源的回答：
+
+```text
+我知道。伊莎贝拉 Isabella Rodriguez 在霍布斯咖啡馆 Hobbs Cafe 跟我提过今晚 7 点的情人节派对，我当时说会尽量调整安排过去。
+```
+
+如果 `!<INPUT 0>!` 里没有任何派对相关记忆，提示词 prompt 的合理输出应该是“没有相关陈述”，而不是凭空补一句“阿伊莎听说过派对”。这就是评价 prompt 的工程价值：它把“角色会不会说得像真的”改成“角色能不能从自己的记忆里拿出证据”。
+
+这个提示词 prompt 的边界也很清楚：
+
+| 项目 | 结论 |
+| --- | --- |
+| 输出结构 schema | 没有 JSON schema，输出是一段自然语言摘要。 |
+| 回调 callback | 原始项目没有复杂 callback，只把摘要作为字符串交给下一步回答生成。 |
+| 兜底值 failsafe | 没有强制兜底值；如果检索不到证据，工程实现应显式返回“没有相关记忆”。 |
+| 主要风险 | 模型可能把不相关记忆也揉进摘要，或把弱线索写成确定事实。 |
+| 复现建议 | 中文评价脚本应保留来源节点 `node_id`、原始陈述、摘要和最终回答，方便人工复核。 |
+
+当前中文项目保留了运行时提示词 prompt，例如规划 planning、反应 reacting、对话 dialogue、反思 reflection 的模板，但没有内置论文访谈评价脚本。复现实验需要把这条链路补成中文评价工具：先检索证据，再生成摘要，再生成回答，最后由人工或大模型裁判 LLM-as-judge 按证据链评分。
 
 ## 11.7 消融实验 Ablation：哪些模块真的有用
 
