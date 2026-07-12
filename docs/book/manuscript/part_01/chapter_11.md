@@ -87,6 +87,18 @@ flowchart TD
 
 受控评价 Controlled Evaluation 利用智能体 agent 的自然语言接口，直接采访角色。论文不是只看后台日志，而是向角色提出一组问题，然后比较不同架构版本的回答可信度。
 
+论文把因变量 dependent variable 定义为行为可信度 believability of behavior。评价对象不是“回答是否正确命中标准答案”，而是“回答作为这个角色的行为是否可信”。为了让比较可控，论文从完整架构运行两天后抽取角色历史，让不同架构条件基于同一份历史回答同一批访谈问题。
+
+受控评价 Controlled Evaluation 的实验流程可以压成下面这张表：
+
+| 步骤 | 论文做法 | 评价意义 |
+| --- | --- | --- |
+| 生成角色历史 | 先让完整架构在 Smallville 中运行两个游戏日。 | 角色已经积累观察 observation、计划 planning、反思 reflection 和社交经历。 |
+| 提出访谈问题 | 五类问题，每类五个，共 25 个。 | 覆盖自我认知、记忆、计划、反应和反思。 |
+| 构造五个条件 | 完整架构、三个消融架构、人类 crowdworker 回答。 | 比较每个模块被拿掉后的可信度变化。 |
+| 交给人类评估 | 100 名评估者查看回放和记忆流 memory stream，再排序回答可信度。 | 外部评估者根据证据判断，而不是研究者直接宣布结果。 |
+| 统计排序结果 | 用 TrueSkill、Kruskal-Wallis、Dunn 检验和 Holm-Bonferroni 校正分析。 | 把主观排序变成可比较的数值和显著性判断。 |
+
 典型问题包括：
 
 ```text
@@ -110,11 +122,11 @@ flowchart TD
 | 3 | 自我认知 Self-Knowledge | 你现在主要感兴趣的事情是什么？ | 角色兴趣是否与长期设定和近期状态 currently 一致。 |
 | 4 | 自我认知 Self-Knowledge | 你和谁住在一起？ | 角色是否能维持居住关系和生活背景。 |
 | 5 | 自我认知 Self-Knowledge | 概括描述一下你平常工作日的大致日程。 | 角色是否能把身份和生活习惯组织成稳定作息。 |
-| 6 | 记忆 Memory | `[最近互动过的人]` 是谁？ | 角色是否能从记忆流 memory stream 中取回真实社交经历。 |
-| 7 | 记忆 Memory | `Kane Martinez` 是谁？ | 角色是否会承认不知道，避免把不存在或陌生的人编成熟人。 |
+| 6 | 记忆 Memory | `[最近互动过的人，例如沃尔夫冈 Wolfgang Schulz]` 是谁？ | 角色是否能从记忆流 memory stream 中取回真实社交经历。 |
+| 7 | 记忆 Memory | 凯恩 Kane Martinez 是谁？ | 角色是否会承认不知道，避免把不存在或陌生的人编成熟人。 |
 | 8 | 记忆 Memory | 谁正在参加本地选举或考虑竞选？ | 角色是否记得山姆 Sam Moore 竞选这类传播信息。 |
 | 9 | 记忆 Memory | 小镇里是否有情人节派对？ | 角色是否记得伊莎贝拉 Isabella Rodriguez 派对这类社会事件。 |
-| 10 | 记忆 Memory | `[另一位最近互动过的人]` 是谁？ | 角色是否能区分不同熟人，而不是泛泛描述所有人。 |
+| 10 | 记忆 Memory | `[另一位最近互动过的人，例如阿伊莎 Ayesha Khan]` 是谁？ | 角色是否能区分不同熟人，而不是泛泛描述所有人。 |
 | 11 | 计划 Plans | 今天早上 6 点你会做什么？ | 角色是否能读取当天早晨计划。 |
 | 12 | 计划 Plans | 今天下午 6 点你会做什么？ | 角色是否能维持傍晚计划，不与日程 schedule 冲突。 |
 | 13 | 计划 Plans | 今天下午 1 点你刚刚做完什么？ | 角色是否能回答刚结束的短期计划。 |
@@ -279,21 +291,25 @@ Summarize the Statements that are most relevant to the interviewer's line:
 如果去掉某个模块，可信度是否下降？
 ```
 
-论文比较完整架构和多个削弱条件。关键不是让每个版本重新运行两天小镇，而是在相同角色历史上限制可访问的记忆类型，再比较访谈回答。
+论文比较完整架构和多个削弱条件。关键不是让每个版本重新运行两天小镇，而是在相同角色历史上限制可访问的记忆类型，再比较访谈回答。这里的“记忆类型”不是泛泛的记忆 memory，而是论文在记忆流 memory stream 中区分的观察 observation、规划 planning 和反思 reflection。
 
 | 条件 | 英文名称 | 可访问内容 | 被移除内容 | 主要暴露的问题 |
 | --- | --- | --- | --- | --- |
 | 完整架构 | Full Architecture | 观察 observation、规划 planning、反思 reflection 等完整记忆。 | 无。 | 作为最强条件。 |
 | 无反思 | No Reflection | 观察 observation 和规划 planning。 | 反思记忆 reflection memory。 | 难以综合多条经历形成高层判断。 |
 | 无反思无规划 | No Reflection + No Planning | 观察 observation。 | 反思 reflection、规划 planning。 | 能记事实，但难以回答未来计划和目标连续性。 |
-| 无观察无反思无规划 | No Observation + No Reflection + No Planning | 角色设定 persona 等静态背景。 | 观察 observation、反思 reflection、规划 planning。 | 回答接近临场编造，缺少真实经历支撑。 |
+| 无观察无反思无规划 | No Observation + No Reflection + No Planning | 角色设定 persona 等静态背景，不能访问记忆流 memory stream 中的观察、计划和反思。 | 观察 observation、反思 reflection、规划 planning。 | 回答接近临场编造，代表当时大语言模型 LLM 角色代理的基线状态。 |
 | 人类基线 | Human Crowdworker-Authored Condition | 人类写作的回答。 | 不是智能体架构条件。 | 提供基本行为可信度参照。 |
 
-同一条仿真历史、同一组访谈问题、不同可访问信息，这样的设计能把模块贡献分离出来。如果每个削弱版本都重新跑两天，小镇事件会分叉，角色遇到的人、听到的信息、形成的关系都不同，回答就难以直接比较。
+同一条仿真历史、同一组访谈问题、不同可访问信息，这样的设计能把模块贡献分离出来。如果每个削弱版本都重新跑两天，小镇事件会分叉，角色遇到的人、听到的信息、形成的关系都不同，回答就难以直接比较。论文也指出，这种做法可能低估了完整架构和消融架构之间的真实差异：消融架构如果从头运行两天，未必能积累出同样丰富的历史。
 
 ## 11.8 人类评估 Human Evaluation 如何比较回答
 
 论文让 100 名人类评估者比较同一个智能体 agent 在不同条件下的回答。评估者不是凭空看答案，而是能查看角色生活回放和记忆流 memory stream。否则，一个角色说“我知道情人节派对”听起来合理，但无法判断它到底有没有听过邀请。
+
+实验采用被试内设计 within-subjects design：同一名评估者会看到同一个角色、同一个问题下来自多个条件的回答，然后按可信度 believability 从高到低排序。界面不是一次展示全部 25 个问题，而是从五类问题中各随机抽取一个问题，展示该角色在五个条件下的回答。
+
+人类 crowdworker 基线也不是专家答案。论文为 25 个角色分别招募一个 crowdworker，让对方观看该角色的小镇回放并检查记忆流 memory stream，然后模仿该角色回答访谈问题。第一作者还检查了“概括描述你平常工作日的大致日程”这类回答是否连贯、是否像该角色；有 4 组不合格回答被重新生成。
 
 人类评估 Human Evaluation 的输入、处理和输出可以这样拆：
 
@@ -319,7 +335,25 @@ Summarize the Statements that are most relevant to the interviewer's line:
 
 论文的受控评价 Controlled Evaluation 得到一个清晰趋势：完整架构最可信，移除模块后表现逐步下降。
 
-可以按下面顺序理解：
+这个结论有具体数值。论文把 100 名人类评估者的排序数据转换成 TrueSkill 评分，均值 μ 越高，表示该条件在可信度排序中越常胜出。
+
+| 条件 | TrueSkill 均值 μ | 标准差 σ | 读法 |
+| --- | ---: | ---: | --- |
+| 完整架构 Full Architecture | 29.89 | 0.72 | 最可信。完整记忆、规划和反思都可用。 |
+| 无反思 No Reflection | 26.88 | 0.69 | 第二。能记住事实和计划，但综合判断变弱。 |
+| 无反思无规划 No Reflection + No Planning | 25.64 | 0.68 | 第三。能访问观察 observation，但计划连续性下降。 |
+| 人类 crowdworker 基线 Human Crowdworker | 22.95 | 0.69 | 第四。提供基础行为能力参照，不代表专家上限。 |
+| 无观察无反思无规划 No Observation + No Reflection + No Planning | 21.21 | 0.70 | 最弱。不能访问记忆流 memory stream 中的核心经历。 |
+
+统计检验也支持这个排序：
+
+| 指标 | 论文结果 | 含义 |
+| --- | --- | --- |
+| Kruskal-Wallis 检验 | `H(4) = 150.29, p < 0.001` | 五个条件整体排序差异显著。 |
+| Dunn 事后检验 | 除 crowdworker 基线与完全消融基线外，其余两两差异均 `p < 0.001`。 | 完整架构与各消融条件之间不是偶然差异。 |
+| Cohen's d 效应量 | 完整架构对完全消融基线 `d = 8.16`。 | 完整架构相对完全消融基线有极大差异。 |
+
+因此，论文里的排序不是主观口号，而是：
 
 ```text
 完整架构
@@ -337,13 +371,14 @@ Summarize the Statements that are most relevant to the interviewer's line:
 | 规划 Planning | 能回答未来计划和当前日程。 | 行动没有时间连续性。 |
 | 反思 Reflection | 能把多条经历合成高层想法 thought。 | 只能说“不确定”，或只复述单条事实。 |
 
-论文也保留了错误边界：
+论文也保留了错误边界，而且给了具体案例：
 
-| 错误类型 | 表现 | 评价时的处理 |
+| 错误类型 | 论文案例 | 评价时的处理 |
 | --- | --- | --- |
-| 检索失败 | 角色明明听过某件事，回答时没有取回相关记忆。 | 标记为召回失败，不直接说角色从未知道。 |
-| 记忆不完整 | 角色只取回部分信息，回答含糊或缺少关键来源。 | 回查检索结果和原始记忆节点。 |
-| 记忆修饰 | 角色在真实记忆基础上添加不存在的细节。 | 把“听起来自然”与“证据真实”分开。 |
+| 检索失败 retrieval failure | 拉吉夫 Rajiv Patel 听过山姆 Sam Moore 的竞选信息，但回答地方选举问题时表现得不清楚。 | 标记为召回失败，不直接说角色从未知道。 |
+| 记忆不完整 incomplete retrieval | 汤姆 Tom Moreno 记得自己要在派对上和伊莎贝拉 Isabella Rodriguez 讨论竞选，却没有取回“派对确实存在”的来源记忆。 | 回查检索结果和原始记忆节点，区分“知道行动安排”和“知道事件来源”。 |
+| 记忆修饰 memory embellishment | 伊莎贝拉 Isabella Rodriguez 知道山姆 Sam Moore 竞选，却补出“他明天会宣布”的不存在细节。 | 把“听起来自然”与“证据真实”分开。 |
+| 世界知识误串 world-knowledge contamination | 山本百合子 Yuriko Yamamoto 把邻居亚当 Adam Smith 联想到《国富论》作者。 | 检查回答是否来自角色记忆，而不是模型预训练知识。 |
 
 记忆流 memory stream 不是可信行为的终点。保存经历只是第一步，正确检索、正确引用、不过度补全，才构成可评价的记忆能力。
 
@@ -359,7 +394,7 @@ Summarize the Statements that are most relevant to the interviewer's line:
 | 关系形成 | Relationship Formation | 居民是否通过互动真正认识彼此。 |
 | 群体协同行动 | Collective Coordination | 多个角色是否能把邀请、记忆、日程和到场行动连起来。 |
 
-这三类结果都不能只看最终数字。派对有多少人到场只是输出 output；谁告诉了谁、谁记住了、谁调整了计划、谁错过了时间，才是机制证据。
+这三类结果属于描述性测量 descriptive measurement。论文不是把小镇压成一个总分，而是分别观察信息、关系和行动三条社会链路。派对有多少人到场只是输出 output；谁告诉了谁、谁记住了、谁调整了计划、谁错过了时间，才是机制证据。
 
 ## 11.11 三类社会现象如何测量
 
@@ -379,7 +414,7 @@ Summarize the Statements that are most relevant to the interviewer's line:
 你知道谁在竞选镇长吗？
 ```
 
-回答 yes 不是最终裁决。论文还检查记忆流 memory stream，确认声称知道的角色确实有信息来源。没有来源的 yes 只能算幻觉 hallucination。
+回答 yes 不是最终裁决。论文先把回答标成 yes/no，再检查记忆流 memory stream，确认声称知道的角色确实有上游对话来源。没有来源的 yes 只能算幻觉 hallucination。论文中塔玛拉 Tamara Taylor 对两个问题都不知道，克劳斯 Klaus Mueller 则能说出派对来自伊莎贝拉 Isabella Rodriguez、竞选来自山姆 Sam Moore。
 
 ### 关系形成 Relationship Formation
 
@@ -390,6 +425,18 @@ Summarize the Statements that are most relevant to the interviewer's line:
 | 节点 node | 一个小镇居民。 |
 | 边 edge | 两个居民都声称认识对方。 |
 | 网络密度 network density | 已形成关系边占所有可能关系边的比例。 |
+
+网络密度 network density 的计算公式是：
+
+$$
+\eta = \frac{2|E|}{|V|(|V|-1)}
+$$
+
+| 符号 | 中文含义 |
+| --- | --- |
+| `η` | 网络密度 network density。 |
+| `V` | 节点集合 vertices，这里是 25 个智能体 agent。 |
+| `E` | 边集合 edges，两名角色互相声称认识对方时形成一条边。 |
 
 论文报告的网络密度 network density 从 0.167 增加到 0.74。这个增长说明两天仿真后，小镇居民之间的互相认识显著增加。论文同时报告了幻觉边界：453 个“是否认识某人”的回答中，有 6 个被发现是幻觉，占 1.3%。关系增长和错误率要一起看。
 
@@ -404,7 +451,7 @@ Summarize the Statements that are most relevant to the interviewer's line:
 5. 被邀请者把计划调整到正确时间。
 6. 被邀请者在正确地点出现。
 
-论文结果显示：12 个智能体 agent 被邀请，5 个智能体 agent 到达霍布斯咖啡馆 Hobbs Cafe 参加派对；未到场者中，3 个表示有计划冲突，4 个表示感兴趣但没有形成到场计划。
+论文结果显示：除伊莎贝拉 Isabella Rodriguez 之外，共有 12 个智能体 agent 听到了霍布斯咖啡馆 Hobbs Cafe 的派对邀请；情人节当天，12 个受邀者里有 5 个智能体 agent 到场参加派对。研究者继续采访 7 个未到场者，其中 3 个表示有计划冲突，4 个表示感兴趣但当天没有形成到场计划。
 
 这个结果的价值在于它不完美。全部到场会更像脚本；有人参加、有人冲突、有人有兴趣但计划没有落地，反而暴露出开放仿真系统的真实边界。
 
@@ -448,11 +495,10 @@ Summarize the Statements that are most relevant to the interviewer's line:
 
 | 失败边界 | 表现 | 检查位置 | 改进方向 |
 | --- | --- | --- | --- |
-| 检索失败 retrieval failure | 角色听过某事，但回答时说不知道。 | 记忆检索结果、访谈上下文摘要。 | 改进检索权重、时间衰减和相关性排序。 |
-| 记忆修饰 memory embellishment | 回答加入不存在的细节。 | 原始记忆节点与回答对照。 | 引入引用证据、回答前校验和裁判模型。 |
-| 空间选择错误 spatial error | 角色知道多个地点后，去到不典型地点。 | 地点选择、行动 action、`movement.json`。 | 加入空间约束、开放时间和偏好权重。 |
-| 物理规范误判 physical norm error | 浴室容量、商店关门时间等被违反。 | 地图配置、对象容量、时间规则。 | 把环境规范显式写成约束。 |
-| 过度礼貌 over-politeness | 角色不拒绝别人，兴趣被对话带偏。 | 对话记录、关系变化、后续计划。 | 增加拒绝能力、个人目标权重和社会边界。 |
+| 记忆扩大后的空间选择错误 spatial error | 角色学到更多地点后，午饭地点可能从咖啡馆转向酒吧这类不典型地点。 | 地点选择、行动 action、`movement.json`。 | 加入空间约束、开放时间、场所用途和偏好权重。 |
+| 物理规范误判 physical norm error | 宿舍浴室实际只能容纳一人，角色却按“宿舍浴室通常多人可用”的常识进入；商店 5 点后关闭，角色仍可能进入。 | 地图配置、对象容量、时间规则。 | 把环境规范显式写进空间状态，例如“一人浴室 one-person bathroom”。 |
+| 指令微调导致过度礼貌 instruction-tuning over-politeness | 对话过于正式，角色很少拒绝不符合自身兴趣的建议。伊莎贝拉 Isabella Rodriguez 会接受与自己兴趣不一致的派对建议。 | 对话记录、关系变化、后续计划。 | 增加拒绝能力、个人目标权重和社会边界。 |
+| 记忆检索和修饰 memory retrieval / embellishment | 角色听过某事但没取回，或在真实记忆上补出不存在细节。 | 记忆检索结果、原始记忆节点、访谈上下文摘要。 | 改进检索排序，引入来源引用、回答前校验和裁判模型。 |
 | 一次运行下结论 single-run overclaim | 用一次仿真证明系统稳定有效。 | 实验设计和结果报告。 | 多次运行、不同模型、不同种子和对照组。 |
 
 评价可信行为 believable behavior 最容易踩的误区也可以压成一张表：

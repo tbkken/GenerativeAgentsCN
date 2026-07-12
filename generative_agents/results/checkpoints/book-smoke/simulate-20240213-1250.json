@@ -1,6 +1,6 @@
 {
   "stride": 10,
-  "time": "20240213-10:00",
+  "time": "20240213-12:50",
   "maze": {
     "path": "assets\\village\\maze.json"
   },
@@ -41,7 +41,7 @@
     "玛丽亚": {
       "config_path": "assets\\village\\agents\\玛丽亚\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 36
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -183,14 +183,106 @@
             "describe": "前往霍布斯咖啡馆学习物理",
             "start": 660,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "打包笔记本和教科书",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "步行到霍布斯咖啡馆",
+                "start": 665,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "到达咖啡馆并点饮料",
+                "start": 680,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "打开笔记本电脑和教科书",
+                "start": 685,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "复习最近的物理课程笔记",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "伊莎贝拉给正在复习电磁学的玛丽亚送上一杯拿铁咖啡，并提醒她注意休息。",
+                "start": 700,
+                "duration": 0
+              },
+              {
+                "idx": 6,
+                "describe": "做练习题巩固概念",
+                "start": 700,
+                "duration": 15
+              },
+              {
+                "idx": 7,
+                "describe": "记录关键公式和难点",
+                "start": 715,
+                "duration": 5
+              }
+            ]
           },
           {
             "idx": 12,
             "describe": "在霍布斯咖啡馆吃午餐",
             "start": 720,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "在咖啡馆找座位坐下并放好随身物品",
+                "start": 720,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "看菜单并点餐",
+                "start": 725,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "等待餐点准备",
+                "start": 730,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "吃午餐",
+                "start": 740,
+                "duration": 20
+              },
+              {
+                "idx": 4,
+                "describe": "边吃边回复Twitch观众的消息",
+                "start": 760,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "喝水稍作休息",
+                "start": 770,
+                "duration": 5
+              },
+              {
+                "idx": 6,
+                "describe": "收拾桌面并准备离开",
+                "start": 775,
+                "duration": 5
+              }
+            ]
           },
           {
             "idx": 13,
@@ -273,54 +365,98 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_29",
+            "node_28",
+            "node_27",
+            "node_26",
+            "node_25",
+            "node_24",
+            "node_23",
+            "node_22",
+            "node_21",
+            "node_20",
+            "node_18",
+            "node_17",
+            "node_16",
+            "node_15",
+            "node_14",
+            "node_13",
+            "node_12",
+            "node_11",
+            "node_10",
+            "node_9",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
-          "chat": []
+          "chat": [
+            "node_19"
+          ]
         }
       },
-      "chats": [],
+      "chats": [
+        [
+          "伊莎贝拉",
+          "嗨，玛丽亚！在复习功课呢？需要来杯咖啡提提神吗？"
+        ],
+        [
+          "玛丽亚",
+          "嗨，伊莎贝拉！是啊，在复习电磁学的笔记呢。麻烦来杯拿铁吧，正好需要提提神！"
+        ],
+        [
+          "伊莎贝拉",
+          "好的，一杯拿铁马上来！电磁学确实挺费脑子的，别太辛苦了，学累了就休息一下。"
+        ]
+      ],
       "currently": "玛丽亚正在攻读物理学位，并在Twitch上直播游戏以赚取额外收入。她几乎每天都会去霍布斯咖啡馆学习和吃饭。",
       "action": {
         "event": {
           "subject": "玛丽亚",
           "predicate": "此时",
-          "object": "闹钟响起，慢慢醒来",
-          "describe": "闹钟响起，慢慢醒来",
+          "object": "喝水稍作休息",
+          "describe": "喝水稍作休息",
           "address": [
             "the Ville",
-            "奥克山学院宿舍",
-            "女卫生间",
-            "厕所"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
-          "emoji": "闹钟响起，慢慢醒来"
+          "emoji": "喝水稍作休息"
         },
         "obj_event": {
-          "subject": "厕所",
+          "subject": "咖啡馆顾客座位",
           "predicate": "此时",
-          "object": "闲置待使用",
-          "describe": "闲置待使用",
+          "object": "正供人坐下休息",
+          "describe": "正供人坐下休息",
           "address": [
             "the Ville",
-            "奥克山学院宿舍",
-            "女卫生间",
-            "厕所"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
+        "start": "20240213-12:50:00",
         "duration": 5
       },
       "coord": [
-        130,
-        53
+        78,
+        21
       ]
     },
     "伊莎贝拉": {
       "config_path": "assets\\village\\agents\\伊莎贝拉\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 52
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -444,14 +580,88 @@
             "describe": "在柜台前接待顾客，开始整理派对需要的装饰品清单",
             "start": 660,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "招呼顾客并为顾客点单",
+                "start": 660,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "准备饮品并提供给顾客",
+                "start": 670,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "收银结账，招待下一位顾客",
+                "start": 680,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "整理柜台，拿出笔记本开始列装饰品清单",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "伊莎贝拉给正在复习电磁学的玛丽亚送上一杯拿铁咖啡，并提醒她注意休息。",
+                "start": 700,
+                "duration": 0
+              },
+              {
+                "idx": 5,
+                "describe": "列出派对需要的装饰品清单（气球、彩带等）",
+                "start": 700,
+                "duration": 10
+              },
+              {
+                "idx": 6,
+                "describe": "招待顾客，继续完善装饰品清单",
+                "start": 710,
+                "duration": 10
+              }
+            ]
           },
           {
             "idx": 12,
             "describe": "在咖啡馆吃午饭，同时照看柜台",
             "start": 720,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "在柜台前接待顾客并留意店内情况",
+                "start": 720,
+                "duration": 15
+              },
+              {
+                "idx": 1,
+                "describe": "去取准备好的午餐",
+                "start": 735,
+                "duration": 5
+              },
+              {
+                "idx": 2,
+                "describe": "在咖啡馆角落吃午饭，同时留意柜台动态",
+                "start": 740,
+                "duration": 25
+              },
+              {
+                "idx": 3,
+                "describe": "回应到柜台的顾客点单需求",
+                "start": 765,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "收拾餐具并擦拭餐桌",
+                "start": 775,
+                "duration": 5
+              }
+            ]
           },
           {
             "idx": 13,
@@ -541,50 +751,94 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_29",
+            "node_28",
+            "node_27",
+            "node_26",
+            "node_25",
+            "node_24",
+            "node_23",
+            "node_22",
+            "node_21",
+            "node_20",
+            "node_18",
+            "node_17",
+            "node_16",
+            "node_15",
+            "node_14",
+            "node_13",
+            "node_12",
+            "node_11",
+            "node_10",
+            "node_9",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
-          "chat": []
+          "chat": [
+            "node_19"
+          ]
         }
       },
-      "chats": [],
+      "chats": [
+        [
+          "伊莎贝拉",
+          "嗨，玛丽亚！在复习功课呢？需要来杯咖啡提提神吗？"
+        ],
+        [
+          "玛丽亚",
+          "嗨，伊莎贝拉！是啊，在复习电磁学的笔记呢。麻烦来杯拿铁吧，正好需要提提神！"
+        ],
+        [
+          "伊莎贝拉",
+          "好的，一杯拿铁马上来！电磁学确实挺费脑子的，别太辛苦了，学累了就休息一下。"
+        ]
+      ],
       "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。她也邀请本地记者林晓在社区公告板旁收集居民留言，希望林晓能帮忙把派对和社区活动告诉更多居民。",
       "action": {
         "event": {
           "subject": "伊莎贝拉",
           "predicate": "此时",
-          "object": "整理情人节派对的宣传要点和话术",
-          "describe": "整理情人节派对的宣传要点和话术",
+          "object": "回应到柜台的顾客点单需求",
+          "describe": "回应到柜台的顾客点单需求",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
           ],
-          "emoji": "整理情人节派对的宣传要点和话术"
+          "emoji": "回应到柜台的顾客点单需求"
         },
         "obj_event": {
-          "subject": "书桌",
+          "subject": "咖啡馆柜台后面",
           "predicate": "此时",
-          "object": "摆满情人节宣传材料",
-          "describe": "摆满情人节宣传材料",
+          "object": "正在接收顾客点单",
+          "describe": "正在接收顾客点单",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
+        "start": "20240213-12:45:00",
         "duration": 10
       },
       "coord": [
-        73,
-        16
+        78,
+        19
       ]
     }
   },
-  "step": 1
+  "step": 18
 }

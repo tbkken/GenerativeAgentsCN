@@ -1,6 +1,6 @@
 {
   "stride": 10,
-  "time": "20240213-10:00",
+  "time": "20240213-11:20",
   "maze": {
     "path": "assets\\village\\maze.json"
   },
@@ -41,7 +41,7 @@
     "玛丽亚": {
       "config_path": "assets\\village\\agents\\玛丽亚\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 14
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -183,7 +183,50 @@
             "describe": "前往霍布斯咖啡馆学习物理",
             "start": 660,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "打包笔记本和教科书",
+                "start": 660,
+                "duration": 5
+              },
+              {
+                "idx": 1,
+                "describe": "步行到霍布斯咖啡馆",
+                "start": 665,
+                "duration": 15
+              },
+              {
+                "idx": 2,
+                "describe": "到达咖啡馆并点饮料",
+                "start": 680,
+                "duration": 5
+              },
+              {
+                "idx": 3,
+                "describe": "打开笔记本电脑和教科书",
+                "start": 685,
+                "duration": 5
+              },
+              {
+                "idx": 4,
+                "describe": "复习最近的物理课程笔记",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "做练习题巩固概念",
+                "start": 700,
+                "duration": 15
+              },
+              {
+                "idx": 6,
+                "describe": "记录关键公式和难点",
+                "start": 715,
+                "duration": 5
+              }
+            ]
           },
           {
             "idx": 12,
@@ -273,7 +316,21 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_13",
+            "node_12",
+            "node_11",
+            "node_10",
+            "node_9",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
@@ -286,41 +343,41 @@
         "event": {
           "subject": "玛丽亚",
           "predicate": "此时",
-          "object": "闹钟响起，慢慢醒来",
-          "describe": "闹钟响起，慢慢醒来",
+          "object": "步行到霍布斯咖啡馆",
+          "describe": "步行到霍布斯咖啡馆",
           "address": [
             "the Ville",
-            "奥克山学院宿舍",
-            "女卫生间",
-            "厕所"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
-          "emoji": "闹钟响起，慢慢醒来"
+          "emoji": "步行到霍布斯咖啡馆"
         },
         "obj_event": {
-          "subject": "厕所",
+          "subject": "咖啡馆顾客座位",
           "predicate": "此时",
-          "object": "闲置待使用",
-          "describe": "闲置待使用",
+          "object": "空闲着等待入座",
+          "describe": "空闲着等待入座",
           "address": [
             "the Ville",
-            "奥克山学院宿舍",
-            "女卫生间",
-            "厕所"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
-        "duration": 5
+        "start": "20240213-11:05:00",
+        "duration": 15
       },
       "coord": [
-        130,
-        53
+        76,
+        25
       ]
     },
     "伊莎贝拉": {
       "config_path": "assets\\village\\agents\\伊莎贝拉\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 28
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -444,7 +501,44 @@
             "describe": "在柜台前接待顾客，开始整理派对需要的装饰品清单",
             "start": 660,
             "duration": 60,
-            "decompose": {}
+            "decompose": [
+              {
+                "idx": 0,
+                "describe": "招呼顾客并为顾客点单",
+                "start": 660,
+                "duration": 10
+              },
+              {
+                "idx": 1,
+                "describe": "准备饮品并提供给顾客",
+                "start": 670,
+                "duration": 10
+              },
+              {
+                "idx": 2,
+                "describe": "收银结账，招待下一位顾客",
+                "start": 680,
+                "duration": 10
+              },
+              {
+                "idx": 3,
+                "describe": "整理柜台，拿出笔记本开始列装饰品清单",
+                "start": 690,
+                "duration": 10
+              },
+              {
+                "idx": 4,
+                "describe": "列出派对需要的装饰品清单（气球、彩带等）",
+                "start": 700,
+                "duration": 10
+              },
+              {
+                "idx": 5,
+                "describe": "招待顾客，继续完善装饰品清单",
+                "start": 710,
+                "duration": 10
+              }
+            ]
           },
           {
             "idx": 12,
@@ -541,7 +635,20 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_12",
+            "node_11",
+            "node_10",
+            "node_9",
+            "node_8",
+            "node_7",
+            "node_6",
+            "node_5",
+            "node_4",
+            "node_3",
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
@@ -554,37 +661,37 @@
         "event": {
           "subject": "伊莎贝拉",
           "predicate": "此时",
-          "object": "整理情人节派对的宣传要点和话术",
-          "describe": "整理情人节派对的宣传要点和话术",
+          "object": "收银结账，招待下一位顾客",
+          "describe": "收银结账，招待下一位顾客",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
           ],
-          "emoji": "整理情人节派对的宣传要点和话术"
+          "emoji": "收银结账，招待下一位顾客"
         },
         "obj_event": {
-          "subject": "书桌",
+          "subject": "咖啡馆柜台后面",
           "predicate": "此时",
-          "object": "摆满情人节宣传材料",
-          "describe": "摆满情人节宣传材料",
+          "object": "正忙着招待顾客",
+          "describe": "正忙着招待顾客",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆柜台后面"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
+        "start": "20240213-11:20:00",
         "duration": 10
       },
       "coord": [
-        73,
-        16
+        78,
+        19
       ]
     }
   },
-  "step": 1
+  "step": 9
 }

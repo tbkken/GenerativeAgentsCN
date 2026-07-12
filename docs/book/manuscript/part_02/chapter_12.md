@@ -1,163 +1,68 @@
 # 第 12 章 把 Generative Agents 跑起来
 
-Generative Agents 是一个可以启动、观察和复盘的项目。第一次运行不要直接开 25 个智能体，先跑一个最小仿真，确认启动、模型调用、checkpoint、压缩和回放链路全部打通，有了手感之后，再把 25 个智能体启动起来。
+第一次运行 Generative Agents，不能只验证“程序没有报错”。如果冒烟测试 Smoke Test 太短，项目只会生成日程、行动和记忆，第一部分讲过的反应 Reacting、对话 Dialogue、记忆流 Memory Stream 和回放 replay 仍然不会进入同一条证据链。
 
-推荐路径如下：
-
-```mermaid
-flowchart LR
-    Repo["进入项目"] --> Example["先看内置回放"]
-    Example --> Config["确认模型配置"]
-    Config --> Run["运行最小仿真"]
-    Run --> Compress["压缩结果"]
-    Compress --> Replay["浏览器回放"]
-    Replay --> Read["阅读 simulation.md"]
-    Read --> Next["再进入功能体验"]
-```
-
-*图 12-1：第一次运行 Generative Agents 的推荐路径。先看现成结果，再跑小规模实验，最后再进入源码和功能拆解。*
-
-## 12.1 先看一个现成回放
-
-当前仓库已经包含一个示例回放：
+本章使用同一场真实实验作为证据：
 
 ```text
-generative_agents/results/compressed/example/
+book-smoke
 ```
 
-这个目录里有两个最重要的文件：
+`book-smoke` 从 `20240213-10:00` 开始，只运行玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez 两个角色，分三段推进到 `20240213-15:20`。这场实验足够小，日志还能读；又足够完整，能看到日程 Planning、空间行动 Action、感知 Perception、反应 Reacting、对话 Dialogue、聊天记忆 chat memory、压缩结果 compressed result、浏览器回放 replay 和断点恢复 resume。
 
-| 文件 | 用途 | 重点观察 |
+![图 12-1：book-smoke 冒烟测试工作台](../../assets/chapter_12/ch12_smoke_evidence_workbench.png)
+
+*图 12-1：`book-smoke` 冒烟测试 Smoke Test 的证据工作台。左侧是启动命令和标准输出 stdout，右侧是断点 checkpoint、记忆 storage、压缩结果 compressed result 和浏览器回放 replay。*
+
+## 12.1 综合冒烟测试 Smoke Test 要验证什么
+
+`book-smoke` 的目标是把第一部分的核心能力压到一条可检查的运行链路里：
+
+```text
+角色设定 Persona
+-> 日程 Planning
+-> 空间行动 Action
+-> 感知 Perception
+-> 反应 Reacting
+-> 对话 Dialogue
+-> 记忆流 Memory Stream
+-> 压缩结果 compressed result
+-> 浏览器回放 replay
+-> 断点恢复 resume
+```
+
+本章不把它写成大规模社会实验。它只回答一个工程问题：项目能不能从命令行启动，真实调用模型，把小镇时间推起来，让角色在咖啡馆里行动、相遇、对话、写入记忆，并把结果压缩成可回放、可复盘、可续跑的文件。
+
+| 验证点 | 证据文件或输出 | 成功信号 |
 | --- | --- | --- |
-| `movement.json` | 给前端回放使用的数据 | 角色位置、动作、对话、回放帧 |
-| `simulation.md` | 给人阅读的仿真时间线 | 每个时间点谁在哪里、做了什么、说了什么 |
+| 指定角色启动 | `book-smoke.log`、checkpoint 的 `agents` 字段 | 只出现玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez |
+| 日程 Planning 生成 | 标准输出 stdout | 出现 `wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` |
+| 空间行动 Action 落地 | `simulate-*.json` | `action.event.address` 落到霍布斯咖啡馆、宿舍、供应店等空间 |
+| 感知 Perception 发生 | 标准输出 stdout | 出现 `percept x/y concepts` |
+| 反应 Reacting 命中 | `conversation.json`、`action.event.predicate="对话"` | 11:40 和 14:20 都产生真实对话 |
+| 对话 Dialogue 写回 | `conversation.json` | 保存逐轮发言和对话地点 |
+| 记忆流 Memory Stream 写入 | `storage/<角色>/associate/docstore.json` | 两个角色都出现 `node_type="chat"` 的记忆节点 |
+| 压缩结果 compressed result | `movement.json`、`simulation.md` | 回放数据和人类可读时间线同时生成 |
+| 浏览器回放 replay | `replay.py` 页面截图 | 地图上能看到咖啡馆对话 |
+| 断点恢复 resume | `book-smoke-resume-1.log`、`book-smoke-resume-2.log` | 从已有 checkpoint 继续推进，而不是从头重跑 |
 
-先不要急着打开网页。读者可以先看一小段真实数据。下面是从 `example/movement.json` 中节选并省略其他角色后的片段：
+反思 Reflection 在这场冒烟测试中只验证边界。最终断点中，玛丽亚 Maria Lopez 的触动程度 poignancy 为 `87`，伊莎贝拉 Isabella Rodriguez 为 `111`，都没有达到当前配置的 `poignancy_max=150`。因此本章不声称触发了反思；它只证明对话、记忆和状态已经形成了后续反思可读取的输入。
 
-```json
-{
-  "start_datetime": "2024-02-13T06:00:00",
-  "stride": 10,
-  "sec_per_step": 10,
-  "persona_init_pos": {
-    "阿伊莎": [118, 61],
-    "克劳斯": [126, 46],
-    "伊莎贝拉": [72, 14],
-    "山姆": [36, 65]
-  },
-  "all_movement": {
-    "1": {
-      "阿伊莎": {
-        "location": "奥克山学院宿舍，阿伊莎的房间，床",
-        "movement": [118, 61],
-        "action": "起床并拉开窗帘"
-      },
-      "伊莎贝拉": {
-        "location": "伊莎贝拉的公寓，主人房，床",
-        "movement": [72, 14],
-        "action": "缓慢醒来并伸展身体"
-      }
-    }
-  }
-}
+## 12.2 运行前检查：目录、模型配置和环境变量
+
+运行命令在项目运行目录执行：
+
+```powershell
+cd D:\code\GenerativeAgentsCN\generative_agents
 ```
 
-这段数据可以这样读。`start_datetime` 是回放顶部显示的小镇起点。`stride: 10` 表示每个仿真 step 推进 10 分钟。`persona_init_pos` 保存角色进入地图时的初始坐标，例如阿伊莎 Ayesha Khan 在 `[118, 61]`，伊莎贝拉 Isabella Rodriguez 在 `[72, 14]`。`all_movement["1"]` 是第 1 帧，里面每个角色都有 `location`、`movement` 和 `action`。其中 `location` 是给人读的地点文本，`movement` 是给前端定位角色的坐标，`action` 是回放界面里可以显示的动作标签。
-
-这就解释了前端为什么能播放小镇：它不是凭空生成动画，而是在逐帧读取 `movement.json`。如果角色没有出现在预期地点，先看 `movement` 和 `location`。如果动作标签不对，先看 `action`。但如果要解释“为什么模型选择了这个行动”，`movement.json` 不够用，还要回到 checkpoint、日程和 prompt。
-
-同一份结果也会把对话压进 `movement.json`。例如 `example/movement.json` 中 `20240213-06:00` 的对话文本包含：
-
-```text
-地点：the Ville，摩尔家族的房子，主人房，床
-
-詹妮弗：早上好，山姆。你今天打算去花园里忙活些什么呢？
-山姆：早上好，詹妮弗。我打算去约翰逊公园打理一下花坛和修剪一些灌木。今天也是个宣传我的竞选计划的好机会。
-詹妮弗：听起来不错，山姆。记得多喝水，别太累了。祝你在公园里和竞选上都有个美好的一天！
-```
-
-这段内容解释了左上角对话记录从哪里来。它也提醒读者：回放页面里的对话，不只是聊天气泡，而是后续做信息传播实验的证据。
-
-再看 `simulation.md`。下面是 `example/simulation.md` 中同一时间点的代表性片段：
-
-```markdown
-# 20240213-06:00
-
-## 活动记录：
-
-### 阿伊莎
-位置：the Ville，奥克山学院宿舍，阿伊莎的房间，床
-活动：起床并拉开窗帘
-
-### 伊莎贝拉
-位置：the Ville，伊莎贝拉的公寓，主人房，床
-活动：缓慢醒来并伸展身体
-
-## 对话记录：
-
-### 詹妮弗 -> 山姆 @ the Ville，摩尔家族的房子，主人房，床
-
-`詹妮弗`
-> 早上好，山姆。你今天打算去花园里忙活些什么呢？
-
-`山姆`
-> 早上好，詹妮弗。我打算去约翰逊公园打理一下花坛和修剪一些灌木。今天也是个宣传我的竞选计划的好机会。
-```
-
-这段 Markdown 比 JSON 更适合人读。`# 20240213-06:00` 是小镇时间，`位置` 是角色所在的空间地址，`活动` 是这一时刻压缩出来的行为描述，`对话记录` 则按“谁对谁说话、在哪说、说了什么”整理。读 `simulation.md` 时，第一步不是追源码，而是问三个问题：这个角色在哪里，正在做什么，有没有和别人交换信息。
-
-理解了这两个文件分别如何承载“前端回放”和“人类复盘”之后，再打开浏览器看回放就不会只是看热闹了。现在先进入项目运行目录：
-
-```bash
-cd generative_agents
-```
-
-后续命令都在 `generative_agents/` 目录下执行。本机如果没有全局 `python` 命令，先激活项目虚拟环境，或者把下面命令中的 `python` 替换成 `../.venv/bin/python`。
-
-先启动本地回放服务：
-
-```bash
-python replay.py
-```
-
-然后在浏览器中打开示例回放地址：
-
-```text
-http://127.0.0.1:5000/?name=example&step=0&speed=2&zoom=0.6
-```
-
-![图 12-2：内置 example 回放页面](../../assets/chapter_12/fig-12-2-example-replay.png)
-
-*图 12-2：内置 `example` 回放页面。页面已经加载出小镇地图、顶部控制按钮、对话记录和底部 25 个角色头像。*
-
-这个页面展示的是 Phaser 前端回放。页面会呈现小镇地图、角色位置、移动路径和对话气泡。这里先建立一个直观印象：Generative Agents 不是聊天窗口，而是一个会随时间推进的虚拟小镇。
-
-这张截图可以这样读：
-
-| 界面区域 | 看到什么 | 说明什么 |
-| --- | --- | --- |
-| 顶部控制条 | 运行、暂停、显示对话、隐藏对话、当前小镇时间 | 回放不是静态图片，而是按仿真时间推进的动画 |
-| 左上对话记录 | 角色之间的对话内容和地点 | 对话被压缩进回放数据，可以在前端展示 |
-| 中央地图 | 房间、道路、树木、角色位置和行动标签 | 行动已经落到具体空间，不只是生成一句文本 |
-| 底部角色栏 | 25 个角色头像和姓名 | `example` 是完整小镇回放，不是两三个角色的测试样例 |
-
-同一份结果还可以直接读 Markdown：
-
-```text
-generative_agents/results/compressed/example/simulation.md
-```
-
-浏览器回放适合观察空间和移动，`simulation.md` 适合观察行为叙事和对话内容。两者合起来，构成最适合上手的入口。
-
-## 12.2 确认环境和模型配置
-
-看完现成回放后，再准备运行自己的小实验。项目的模型配置在：
+模型配置文件：
 
 ```text
 generative_agents/data/config.json
 ```
 
-不要只确认这个文件存在。第一次打开它时，应该先读出它的层级。下面是当前 `config.json` 的代表性原文，省略了缩进之外的无关留白：
+本章只需要关注这几组配置：
 
 ```json
 {
@@ -167,10 +72,6 @@ generative_agents/data/config.json
       "vision_r": 8,
       "att_bandwidth": 8
     },
-    "schedule": {
-      "max_try": 5,
-      "diversity": 5
-    },
     "think": {
       "llm": {
         "provider": "minimax",
@@ -179,7 +80,6 @@ generative_agents/data/config.json
         "api_key": "",
         "max_tokens": 8192
       },
-      "interval": 1000,
       "poignancy_max": 150
     },
     "chat_iter": 4,
@@ -197,451 +97,575 @@ generative_agents/data/config.json
 }
 ```
 
-这段 JSON 最外层只有一个 `agent`。这说明它不是某一个角色的人设，而是所有角色共用的运行底座。阿伊莎 Ayesha Khan、克劳斯 Klaus Mueller、伊莎贝拉 Isabella Rodriguez 的性格、生活习惯和初始位置来自各自的 `agent.json`；但它们“看多远”“一次对话聊几轮”“用哪个模型思考”“用哪个 embedding 检索记忆”，都先从这里取得默认规则。
-
-可以按六块来读这个文件：
-
-| 配置块 | 当前原文 | 读法 |
+| 配置项 | 中文含义 | 对冒烟测试的影响 |
 | --- | --- | --- |
-| `agent.percept` | `mode: "box"`、`vision_r: 8`、`att_bandwidth: 8` | 角色以方形视野观察附近 tile，半径是 8，每步最多关注 8 个事件。 |
-| `agent.schedule` | `max_try: 5`、`diversity: 5` | 生成日程时允许多次尝试，并要求活动有一定多样性。 |
-| `agent.think.llm` | `provider: "minimax"`、`model: "MiniMax-M3"` | 日程、地点选择、对话、重要性评分和反思等 LLM 调用都走这组配置。 |
-| `agent.think` | `interval: 1000`、`poignancy_max: 150` | `interval` 是思考间隔参数，`poignancy_max` 是反思触发阈值，重要性累计到 150 才会进入 reflection。 |
-| `agent.associate` | `embedding.model: "embo-01"`、`retention: 8` | 记忆写入和召回使用 MiniMax embedding，检索时保留有限数量的候选记忆。 |
-| `agent.chat_iter` | `4` | 一次对话最多推进 4 轮，避免两个角色无限聊下去。 |
+| 感知半径 `vision_r` | 角色每一步能观察多大范围 | 决定 `percept x/y concepts` 的候选事件数量 |
+| 对话轮数 `chat_iter` | 一次对话最多生成多少轮 | 本章 14:20 的对话展开到 8 句，受这个配置约束 |
+| 思考模型 `think.llm` | 大语言模型 LLM 配置 | 起床、日程、地点选择、对话生成都依赖它 |
+| 触动阈值 `poignancy_max` | 触发反思 Reflection 的累计阈值 | 本章最终没有达到 `150`，所以反思不触发 |
+| 向量嵌入 `associate.embedding` | 记忆检索用的 embedding 配置 | 写入记忆和后续检索都需要它 |
 
-把这几块连起来看，就能理解一个关键事实：Generative Agents 的“人格”不只来自角色卡，也来自运行参数。`vision_r` 太小，角色可能看不见关键事件；`chat_iter` 太小，对话来不及交换信息；`poignancy_max` 太高，角色很久不反思；embedding 配错，记忆检索会失败。第一次运行前读 `config.json`，不是为了背字段，而是确认这套小镇的感知、思考、对话和记忆链路都能工作。
+`api_key` 留空不是错误。MiniMax 的密钥从环境变量 environment variable 读取：
 
-本次实跑使用 `MiniMax-M3` 作为 LLM，使用 `embo-01` 作为 embedding。`config.json` 中的 `api_key` 可以留空，运行时通过 `MINIMAX_API_KEY` 环境变量传入密钥；如果把密钥写进 `config.json`，也能运行，但不要把带密钥的配置提交到公开仓库。
-
-常见模型配置方式可以这样判断：
-
-| 场景 | 配置方式 | 适合情况 |
-| --- | --- | --- |
-| 本机有 Ollama | `provider: "ollama"`，`base_url` 指向本机服务 | 想低成本反复实验 |
-| 使用 OpenAI 兼容接口 | `provider: "openai"`，填写 `base_url`、`api_key`、`model` | 想用云端模型获得更稳定输出 |
-| 使用 MiniMax | `provider: "minimax"` | 想测试 MiniMax-M 系列模型，并接受 provider 特殊处理 |
-
-在 Generative Agents 中，模型配置直接决定系统链路能否成立。起床时间、日程生成、地点选择、对话、重要性评分、反思和结构化输出都依赖 LLM；如果 provider、model、base_url 或 embedding 配错，问题首先是运行链路没有打通，而不是小镇行为本身不可信。
-
-## 12.3 运行一个最小仿真
-
-第一次自己跑，不要直接开 25 个角色。最小实验只需要 2 个角色、2 个 step，就能验证启动、模型调用、checkpoint 写入和压缩回放链路是否正常。
-
-```bash
-python start.py \
-  --name book-smoke \
-  --start "20240213-09:30" \
-  --step 2 \
-  --stride 10 \
-  --agent-count 2 \
-  --verbose info \
-  --log book-smoke.log
+```powershell
+$env:MINIMAX_API_KEY
 ```
 
-这条命令里的参数含义如下：
+配置检查只回答一个问题：启动链路是否具备模型调用、向量嵌入 embedding、记忆写入和长时间续跑的基础条件。
 
-| 参数 | 含义 | 建议 |
+## 12.3 启动 book-smoke：角色列表、命令和标准输出 stdout
+
+`start.py` 同时支持两种角色选择方式：
+
+```python
+parser.add_argument("--agent-count", type=int, default=0, help="Limit the number of agents for a lightweight local run")
+parser.add_argument("--agents", type=str, default="", help="Comma-separated agent names to run")
+
+if args.agents:
+    selected_personas = [a.strip() for a in args.agents.split(",") if a.strip()]
+elif args.agent_count > 0:
+    selected_personas = personas[:args.agent_count]
+```
+
+`--agent-count 2` 依赖源码里的角色列表顺序。综合冒烟测试必须稳定复现具体人物，因此本章直接使用 `--agents` 写明角色列表：
+
+```powershell
+python start.py --name book-smoke --start "20240213-10:00" --step 8 --stride 10 --agents "玛丽亚,伊莎贝拉" --verbose info --log book-smoke.log
+```
+
+如果本地已经存在同名实验，重新生成前可以删除旧结果：
+
+```powershell
+Remove-Item -Recurse -Force results/checkpoints/book-smoke, results/compressed/book-smoke
+```
+
+这条删除命令只在需要覆盖同名实验时执行。日常试跑可以换一个新名字，例如 `book-smoke-local`。
+
+| 参数 | 中文含义 | 本章取值的作用 |
 | --- | --- | --- |
-| `--name book-smoke` | 本次仿真的名称 | 名称不能和已有结果重复 |
-| `--start "20240213-09:30"` | 小镇起始时间 | 使用固定时间方便复现实验 |
-| `--step 2` | 运行 2 个仿真步 | 第一次只验证链路，不追求故事丰富 |
-| `--stride 10` | 每一步推进 10 分钟 | 2 步会覆盖 20 分钟小镇时间 |
-| `--agent-count 2` | 只取前 2 个角色运行 | 降低模型调用成本和等待时间 |
-| `--verbose info` | 日志级别 | 避免 debug 日志干扰第一次排查 |
-| `--log book-smoke.log` | 把日志写入 checkpoint 目录 | 方便跑完后回看控制台输出 |
+| `--name book-smoke` | 实验名称 | 决定 checkpoint 和压缩结果目录名 |
+| `--start "20240213-10:00"` | 小镇起始时间 | 从 2024 年 2 月 13 日 10:00 开始 |
+| `--step 8` | 第一段仿真步数 | 先跑到 11:10，观察角色是否进入咖啡馆前的生活轨迹 |
+| `--stride 10` | 每步推进分钟数 | 每个 step 推进 10 分钟 |
+| `--agents "玛丽亚,伊莎贝拉"` | 指定角色列表 | 固定运行玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez |
+| `--verbose info` | 日志级别 | 保留关键调用链，避免 debug 输出淹没证据 |
+| `--log book-smoke.log` | 日志文件 | 写入 `results/checkpoints/book-smoke/book-smoke.log` |
 
-命令启动后，控制台输出不是普通流水账，而是 agent 仿真的第一份证据。下面节选本次 `book-smoke.log`，省略真实墙钟时间和部分重复行：
+日志路径：
 
 ```text
----------- 阿伊莎.reset ----------
-coord[118,61]: the Ville:奥克山学院宿舍:阿伊莎的房间:床
-associate:
-  nodes: 0
-llm:
-  total: S:0,F:0/R:0
-
-========== Simulate Step[1/2, time: 2024-02-13 09:30:00] ==========
-阿伊莎 is making schedule...
-阿伊莎 -> wake_up
-阿伊莎 -> schedule_init
-阿伊莎 -> schedule_daily
-阿伊莎 -> schedule_decompose
-阿伊莎 percept 0/4 concepts
-阿伊莎 is determining action...
-阿伊莎 -> determine_sector
-阿伊莎 -> determine_arena
-阿伊莎 -> determine_object
-阿伊莎 -> describe_object
-
----------- 阿伊莎.summary @ 20240213-09:30:00 ----------
-action:
-  event: 精读关于双关语与隐喻的分析 @ the Ville:奥克山学院宿舍:阿伊莎的房间:书桌
-  object: 堆放着分析资料 @ the Ville:奥克山学院宿舍:阿伊莎的房间:书桌
-associate:
-  nodes: 1
-llm:
-  total: S:9,F:0/R:9
+generative_agents/results/checkpoints/book-smoke/book-smoke.log
 ```
 
-这段输出可以分四层读。`reset` 说明角色已经被放进地图：阿伊莎 Ayesha Khan 从宿舍床铺坐标 `[118,61]` 开始，记忆节点数是 0，LLM 调用次数也是 0。`Simulate Step[1/2]` 说明仿真进入第 1 步，小镇时间是 2024 年 2 月 13 日 09:30。`阿伊莎 -> wake_up`、`schedule_init`、`schedule_daily`、`schedule_decompose` 不是普通日志，而是一次次 prompt 调用：系统先生成起床时间和一天大纲，再生成小时级日程，最后把当前小时拆成更细的动作。`determine_sector`、`determine_arena`、`determine_object` 和 `describe_object` 则把抽象计划落到具体空间对象上。
+Windows 下日志文件按本地 GBK 编码保存。如果直接用 UTF-8 打开出现乱码，换成 GBK 或系统默认中文编码即可。
 
-`summary` 是本 step 最值得读的部分。它告诉读者，阿伊莎 Ayesha Khan 当前 action 已经从“学习莎士比亚”落到了“在宿舍书桌前精读关于双关语与隐喻的分析”，对象状态是“书桌堆放着分析资料”。`associate.nodes: 1` 表示记忆系统已经写入节点。`S:9,F:0/R:9` 表示 9 次 LLM completion 成功，0 次最终失败，共发起 9 次请求尝试。这个数字很适合第一次排查：如果 `F` 不为 0，或者控制台反复出现 JSON 解析失败，就不要急着看回放，先处理模型和结构化输出问题。
-
-第 2 个 step 的输出会更像一个正在运转的 agent：
+第一段日志的代表性原文：
 
 ```text
-========== Simulate Step[2/2, time: 2024-02-13 09:40:00] ==========
-阿伊莎 percept 2/4 concepts
-阿伊莎 is determining action...
-阿伊莎 -> determine_sector
-阿伊莎 -> determine_arena
-阿伊莎 -> determine_object
-阿伊莎 -> describe_object
-
----------- 阿伊莎.summary @ 20240213-09:40:00 ----------
-action:
-  event: 精读关于韵律与节奏的论述 @ the Ville:奥克山学院:图书馆:图书馆桌子
-associate:
-  nodes: 3
-llm:
-  total: S:15,F:0/R:15
+==========       Simulate Step[1/8, time: 2024-02-13 10:00:00]        ==========
+玛丽亚 is making schedule...
+玛丽亚 -> wake_up
+玛丽亚 -> schedule_init
+玛丽亚 -> schedule_daily
+玛丽亚 -> poignancy_event
+玛丽亚 -> schedule_decompose
+玛丽亚 percept 0/5 concepts
+玛丽亚 is determining action...
+玛丽亚 -> determine_sector
+玛丽亚 -> determine_object
+玛丽亚 -> describe_object
 ```
 
-这里的 `percept 2/4 concepts` 说明阿伊莎 Ayesha Khan 在当前视野中处理了 4 个候选概念，其中 2 个有效写入记忆。`associate.nodes` 从 1 增加到 3，说明第 2 步不只是生成了下一句动作，还把环境对象和自身行动写进了记忆系统。控制台读到这里，读者已经能判断：日程生成、感知、空间定位、动作生成和记忆写入都在工作。
+这段输出已经把第一部分的多个模块串起来：日程 Planning 生成一天计划，触动程度 poignancy 计算记忆重要性，感知 Perception 读取附近概念，空间落地把计划变成具体行动 Action。
 
-运行成功后，会出现 checkpoint 目录：
+第 8 个 step 结束时：
+
+```text
+==========       Simulate Step[8/8, time: 2024-02-13 11:10:00]        ==========
+玛丽亚 -> poignancy_event
+玛丽亚 -> poignancy_event
+玛丽亚 percept 2/5 concepts
+玛丽亚 is determining action...
+玛丽亚 -> determine_sector
+玛丽亚 -> determine_object
+玛丽亚 -> describe_object
+```
+
+第一段没有对话，这是正常的。此时玛丽亚 Maria Lopez 已经走到霍布斯咖啡馆，伊莎贝拉 Isabella Rodriguez 正在柜台招呼顾客，系统还需要继续推进，才会出现稳定的对话触发。
+
+## 12.4 断点 checkpoint：从行动到首次对话
+
+第一段运行结束后，checkpoint 目录已经生成：
 
 ```text
 generative_agents/results/checkpoints/book-smoke/
 ```
 
-本次运行生成了下面这些结果文件：
+代表性断点：
 
-| 文件 | 作用 | 读法 |
+| 文件 | 小镇时间 | 观察重点 |
 | --- | --- | --- |
-| `book-smoke.log` | 本次运行日志 | 回看 prompt 调用链、summary、LLM 成功/失败次数 |
-| `simulate-20240213-0930.json` | 第 1 个 step 的完整仿真状态 | 检查 `time=20240213-09:30`、`step=1`、两个 agent 状态 |
-| `simulate-20240213-0940.json` | 第 2 个 step 的完整仿真状态 | 检查 `time=20240213-09:40`、`step=2`、动作和记忆是否推进 |
-| `conversation.json` | 仿真过程中产生的对话记录 | 本次没有触发对话，所以内容是 `{}` |
-| `storage/阿伊莎/`、`storage/克劳斯/` | 两个角色各自的记忆索引和持久化存储 | 看 `associate/index_config.json` 和 `associate/docstore.json` |
+| `simulate-20240213-1000.json` | `20240213-10:00` | 两个角色初始化日程和第一步行动 |
+| `simulate-20240213-1110.json` | `20240213-11:10` | 玛丽亚到达咖啡馆，伊莎贝拉在柜台工作 |
+| `simulate-20240213-1200.json` | `20240213-12:00` | 首次对话已经写入记忆 |
+| `simulate-20240213-1420.json` | `20240213-14:20` | 第二次对话命中，行动被改写为对话 |
+| `simulate-20240213-1520.json` | `20240213-15:20` | 长时间续跑后的最终状态 |
 
-先看 `simulate-20240213-0940.json` 的顶层结构。可以节选为：
+`simulate-20240213-1110.json` 中，两个角色已经进入同一个生活场景：
 
 ```json
 {
-  "stride": 10,
-  "time": "20240213-09:40",
-  "step": 2,
+  "time": "20240213-11:10",
+  "step": 8,
   "agents": {
-    "阿伊莎": { "...": "..." },
-    "克劳斯": { "...": "..." }
+    "玛丽亚": {
+      "coord": [76, 23],
+      "status": {"poignancy": 13},
+      "action": {
+        "event": {
+          "subject": "玛丽亚",
+          "predicate": "此时",
+          "object": "步行到霍布斯咖啡馆",
+          "describe": "步行到霍布斯咖啡馆",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
+        }
+      },
+      "associate": {"memory": {"event": 12, "thought": 1, "chat": 0}}
+    },
+    "伊莎贝拉": {
+      "coord": [78, 19],
+      "status": {"poignancy": 28},
+      "action": {
+        "event": {
+          "subject": "伊莎贝拉",
+          "predicate": "此时",
+          "object": "招呼顾客并为顾客点单",
+          "describe": "招呼顾客并为顾客点单",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆柜台后面"]
+        }
+      },
+      "associate": {"memory": {"event": 12, "thought": 1, "chat": 0}}
+    }
   }
 }
 ```
 
-`stride: 10` 对应启动命令中的 `--stride 10`。`time` 是当前 checkpoint 的小镇时间。`step: 2` 表示这是第 2 个仿真步结束后的状态。`agents` 下面只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，说明 `--agent-count 2` 已经生效。如果这里出现 25 个角色，说明启动参数没有按预期限制 agent 数量。
+这段断点可以按输入 input、处理 process、输出 output 读：
 
-再看阿伊莎 Ayesha Khan 的日程。`simulate-20240213-0930.json` 中，09:00 到 10:00 的小时计划被拆成更细的动作：
+| 层次 | 字段 | 含义 |
+| --- | --- | --- |
+| 输入 input | `coord`、`time`、角色日程 | 两个角色在 11:10 已经接近霍布斯咖啡馆 |
+| 处理 process | `action.event.address` | 计划被落到咖啡馆顾客座位和柜台后面 |
+| 输出 output | `associate.memory`、`status.poignancy` | 行动和环境事件写入记忆，触动程度继续累计 |
+
+继续推进后，`simulate-20240213-1200.json` 显示首次对话已经进入两个角色的记忆：
 
 ```json
 {
-  "idx": 9,
-  "describe": "继续阅读文学评论文章，深入理解伊丽莎白时代戏剧的语言特征",
-  "start": 540,
-  "duration": 60,
-  "decompose": [
-    {
-      "describe": "精读关于双关语与隐喻的分析",
-      "start": 560,
-      "duration": 15
+  "time": "20240213-12:00",
+  "step": 13,
+  "agents": {
+    "玛丽亚": {
+      "status": {"poignancy": 26},
+      "associate": {"memory": {"event": 20, "thought": 1, "chat": 1}},
+      "action": {
+        "event": {
+          "describe": "在咖啡馆找座位坐下并放好随身物品",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
+        }
+      }
     },
+    "伊莎贝拉": {
+      "status": {"poignancy": 43},
+      "associate": {"memory": {"event": 21, "thought": 1, "chat": 1}},
+      "action": {
+        "event": {
+          "describe": "招待顾客，继续完善装饰品清单",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "社区公告板"]
+        }
+      }
+    }
+  }
+}
+```
+
+`chat: 1` 是本章的第一个关键成功信号。它说明对话不只是写进全局 `conversation.json`，也进入了每个角色自己的关联记忆 Associate。
+
+## 12.5 对话 conversation 与记忆 storage：Part 01 能力是否闭环
+
+对话文件路径：
+
+```text
+generative_agents/results/checkpoints/book-smoke/conversation.json
+```
+
+`book-smoke` 产生了两次对话：
+
+```json
+{
+  "20240213-11:40": [
     {
-      "describe": "精读关于韵律与节奏的论述",
-      "start": 575,
-      "duration": 15
+      "伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面": [
+        ["伊莎贝拉", "嗨，玛丽亚！在复习功课呢？需要来杯咖啡提提神吗？"],
+        ["玛丽亚", "嗨，伊莎贝拉！是啊，在复习电磁学的笔记呢。麻烦来杯拿铁吧，正好需要提提神！"],
+        ["伊莎贝拉", "好的，一杯拿铁马上来！电磁学确实挺费脑子的，别太辛苦了，学累了就休息一下。"]
+      ]
+    }
+  ],
+  "20240213-14:20": [
+    {
+      "玛丽亚 -> 伊莎贝拉 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位": [
+        ["玛丽亚", "嘿，伊莎贝拉！你一直这么忙，有时间休息一下吗？刚才那杯拿铁真的很提神，谢谢你。"],
+        ["伊莎贝拉", "嘿，玛丽亚，不客气！你学习那么认真，我才要感谢你来店里陪我们呢。不过别太埋头苦读了，记得适时休息一下，明天还有情人节派对要来玩哦！"],
+        ["玛丽亚", "情人节派对？太棒了，我一定会去的！正好休息一下，庆祝一下最近的学习成果。你到时候会忙前忙后地招待大家，还是也能一起嗨呀？"]
+      ]
     }
   ]
 }
 ```
 
-`start: 540` 表示当天第 540 分钟，也就是 09:00。`duration: 60` 表示这个小时计划持续 60 分钟。`decompose` 是 `schedule_decompose` 的结果，它把“继续阅读文学评论文章”拆成 10 到 15 分钟粒度的子任务。第 1 个 step 中，阿伊莎 Ayesha Khan 执行的是 09:20 到 09:35 的“精读关于双关语与隐喻的分析”；第 2 个 step 中，她推进到 09:35 到 09:50 的“精读关于韵律与节奏的论述”。这就是短期行为连续性的来源。
+这里保留了 14:20 对话的前三句。完整文件中，这次对话继续谈到玛丽亚 Maria Lopez 帮忙布置情人节派对、直播展示咖啡馆、伊莎贝拉 Isabella Rodriguez 准备特调咖啡和甜点。
 
-再看第 2 个 step 里的当前 action：
-
-```json
-{
-  "coord": [119, 24],
-  "action": {
-    "describe": "精读关于韵律与节奏的论述",
-    "address": ["the Ville", "奥克山学院", "图书馆", "图书馆桌子"],
-    "start": "20240213-09:35:00",
-    "duration": 15
-  },
-  "status": {
-    "poignancy": 6
-  },
-  "associate": {
-    "event": ["node_2", "node_1"],
-    "thought": ["node_0"],
-    "chat": []
-  }
-}
-```
-
-这里能看到三件事。第一，`coord` 已经从初始宿舍位置推进到 `[119,24]`，动作落在图书馆桌子上。第二，`action.start` 和 `duration` 与前面的 `decompose` 对上，说明 schedule 不是孤立文本，而是在驱动当前行为。第三，`associate` 中已经有 event 和 thought，没有 chat，说明这次最小仿真产生了行动记忆和计划记忆，但没有产生对话记忆。
-
-`conversation.json` 也要读。它的完整内容是：
-
-```json
-{}
-```
-
-空对象不是错误。本次只跑两个角色、两个 step，而且两人没有触发对话，所以没有 conversation 记录。这个文件的价值在于排除误判：如果后续做派对传播实验，`conversation.json` 仍然是 `{}`，才需要怀疑角色没有相遇、没有触发聊天，或者 `decide_chat` 一直返回 false。
-
-最后看 `storage`。本次两个角色的索引配置都是：
+14:20 的断点把对话写成了当前行动 Action：
 
 ```json
 {
-  "max_nodes": 3
-}
-```
-
-`index_config.json` 只告诉读者节点数量。真正的内容在 `docstore.json`。以阿伊莎 Ayesha Khan 为例，里面可以看到 3 个节点：
-
-```text
-node_0 thought: 这是 阿伊莎 在 2024年02月13日（星期二）09:30 的计划...
-node_1 event: 书桌 堆放着分析资料
-node_2 event: 阿伊莎 精读关于双关语与隐喻的分析
-```
-
-这三条说明 memory stream 已经启动。`thought` 保存当天计划，`event` 保存环境对象状态和角色行动。到这里，第一次运行要确认的就不是“两件事”，而是三件事：控制台日志走到 `Simulate Step[2/2]` 并输出 summary；两个 checkpoint JSON 能读出正确的 `time`、`step` 和 agent 状态；`conversation.json` 与 `storage` 的内容符合本次最小实验的预期。
-
-## 12.4 压缩结果
-
-checkpoint 适合系统恢复，不适合人类直接阅读。下一步要把 checkpoint 压缩成回放数据：
-
-```bash
-python compress.py --name book-smoke
-```
-
-命令成功时，控制台会输出：
-
-```text
-Compression completed.
-```
-
-压缩成功后，会生成：
-
-```text
-generative_agents/results/compressed/book-smoke/
-```
-
-压缩结果里重点看两个文件：
-
-| 文件 | 适合谁看 | 说明 |
-| --- | --- | --- |
-| `movement.json` | 前端和数据分析脚本 | 保存角色位置、动作、对话和回放帧 |
-| `simulation.md` | 文本阅读和审稿 | 按时间线呈现每个角色的行动和对话 |
-
-第一次压缩后的 `book-smoke/movement.json` 可以节选成下面这样：
-
-```json
-{
-  "start_datetime": "2024-02-13T09:30:00",
-  "stride": 10,
-  "persona_init_pos": {
-    "阿伊莎": [118, 61],
-    "克劳斯": [126, 46]
-  },
-  "all_movement": {
-    "1": {
-      "阿伊莎": {
-        "location": "奥克山学院宿舍，阿伊莎的房间，书桌",
-        "movement": [118, 61],
-        "action": "前往 奥克山学院宿舍，阿伊莎的房间，书桌"
-      },
-      "克劳斯": {
-        "location": "奥克山学院，图书馆，图书馆桌子",
-        "movement": [126, 46],
-        "action": "前往 奥克山学院，图书馆，图书馆桌子"
+  "time": "20240213-14:20",
+  "step": 27,
+  "agents": {
+    "玛丽亚": {
+      "status": {"poignancy": 64},
+      "associate": {"memory": {"event": 48, "thought": 1, "chat": 1}},
+      "action": {
+        "event": {
+          "subject": "玛丽亚",
+          "predicate": "对话",
+          "object": "伊莎贝拉",
+          "describe": "玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆顾客座位"]
+        },
+        "duration": 2
       }
     },
-    "conversation": {
-      "20240213-09:30": "",
-      "20240213-09:40": ""
+    "伊莎贝拉": {
+      "status": {"poignancy": 84},
+      "associate": {"memory": {"event": 49, "thought": 1, "chat": 2}},
+      "action": {
+        "event": {
+          "subject": "伊莎贝拉",
+          "predicate": "对话",
+          "object": "玛丽亚",
+          "describe": "玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "咖啡馆柜台后面"]
+        },
+        "duration": 2
+      }
     }
   }
 }
 ```
 
-这段节选直接对应本次启动命令。`start_datetime` 是 `--start "20240213-09:30"` 转换后的 ISO 时间。`persona_init_pos` 只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，说明 `--agent-count 2` 生效。`all_movement["1"]` 说明第一个回放帧里，阿伊莎 Ayesha Khan 要去宿舍书桌，克劳斯 Klaus Mueller 要去图书馆桌子。`conversation` 里的两个时间点都是空字符串，说明这两个 step 没有产生对话。这不是坏结果，反而说明最小仿真的目标只是验证链路，不是强行制造社交。
+这就是反应 Reacting 的证据：角色原本有自己的日程和行动，现场相遇后，当前行动 Action 被改写成 `predicate="对话"` 的事件。
 
-第一次压缩后的完整 `movement.json` 包含 122 帧，角色列表只有阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller，起始时间是 `2024-02-13T09:30:00`，步长是 10 分钟。这一步很关键。Generative Agents 的价值不只是“模型生成了文本”，而是仿真结果能被复盘。没有压缩结果，只能看零散日志；有了 `movement.json` 和 `simulation.md`，才能判断角色是否真的在小镇中持续行动。
-
-## 12.5 回放仿真
-
-如果 `replay.py` 已经在运行，可以直接打开：
+聊天记忆 chat memory 写在每个角色自己的本地索引里：
 
 ```text
-http://127.0.0.1:5000/?name=book-smoke&step=0&speed=2&zoom=0.8
+generative_agents/results/checkpoints/book-smoke/storage/玛丽亚/associate/docstore.json
+generative_agents/results/checkpoints/book-smoke/storage/伊莎贝拉/associate/docstore.json
 ```
 
-![图 12-3：book-smoke 最小仿真的回放页面](../../assets/chapter_12/fig-12-4-book-smoke-replay.png)
+代表性节点：
 
-*图 12-3：`book-smoke` 最小仿真的回放页面。底部只剩阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 两个角色，说明 `--agent-count 2` 已经生效。*
+| 角色 | 节点 | `node_type` | 文本 `text` | `poignancy` |
+| --- | --- | --- | --- | --- |
+| 伊莎贝拉 Isabella Rodriguez | `node_19` | `chat` | 伊莎贝拉给正在复习电磁学的玛丽亚送上一杯拿铁咖啡，并提醒她注意休息。 | 2 |
+| 玛丽亚 Maria Lopez | `node_19` | `chat` | 伊莎贝拉给正在复习电磁学的玛丽亚送上一杯拿铁咖啡，并提醒她注意休息。 | 2 |
+| 伊莎贝拉 Isabella Rodriguez | `node_49` | `chat` | 玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。 | 4 |
+| 玛丽亚 Maria Lopez | `node_50` | `chat` | 玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。 | 6 |
 
-如果服务还没启动，先运行：
+同一段对话会被双方各自保存。`subject` 和 `object` 会随角色视角变化，文本摘要基本一致，触动程度 poignancy 可能不同。这正是记忆流 Memory Stream 的工程含义：同一个世界事件进入不同角色的个人记忆后，会拥有各自的归属、重要性和后续检索入口。
 
-```bash
-python replay.py
+最终断点 `simulate-20240213-1520.json` 给出长时间运行后的累计状态：
+
+```json
+{
+  "time": "20240213-15:20",
+  "step": 33,
+  "agents": {
+    "玛丽亚": {
+      "status": {"poignancy": 87},
+      "associate": {"memory": {"event": 60, "thought": 1, "chat": 2}},
+      "action": {
+        "event": {
+          "describe": "阅读物理教材新章节",
+          "address": ["the Ville", "霍布斯咖啡馆", "咖啡馆", "社区公告板"]
+        }
+      }
+    },
+    "伊莎贝拉": {
+      "status": {"poignancy": 111},
+      "associate": {"memory": {"event": 63, "thought": 1, "chat": 2}},
+      "action": {
+        "event": {
+          "describe": "清点派对装饰材料（气球、彩带等）",
+          "address": ["the Ville", "哈维奥克供应店", "供应店", "供应店产品货架"]
+        }
+      }
+    }
+  }
+}
 ```
 
-回放页面有几个常用参数：
+到这里，Part 01 的主链路已经出现：人物定义 Persona 进入运行，日程 Planning 生成生活节奏，空间行动 Action 落到具体地址，感知 Perception 让角色看见现场，反应 Reacting 触发对话 Dialogue，对话又写回记忆流 Memory Stream。
 
-| 参数 | 含义 | 示例 |
-| --- | --- | --- |
-| `name` | 压缩结果名称 | `book-smoke` |
-| `step` | 从第几个仿真步开始播放 | `0` 表示从头开始 |
-| `speed` | 播放速度，0 最慢，5 最快 | `2` 适合观察 |
-| `zoom` | 地图缩放比例 | `0.8` 适合初看 |
+## 12.6 压缩结果 compressed result：movement.json 与 simulation.md
 
-如果浏览器提示找不到数据文件，通常说明还没有执行 `compress.py --name book-smoke`，或者 `name` 参数和压缩目录不一致。
+checkpoint 适合恢复运行，不适合直接阅读。压缩命令把断点结果转成前端回放和文本复盘材料：
 
-图 12-3 需要重点看三个地方。第一，顶部时间显示为 2024 年 2 月 13 日上午 9 点 30 分后的小镇时间，说明回放读取了 `movement.json` 中的仿真起点。第二，底部角色栏只有两个头像，说明本次不是完整小镇，而是最小仿真。第三，画面仍然是同一张 Smallville 地图，说明缩小 agent 数量不会改变世界模型，只是减少参与仿真的角色。
-
-## 12.6 阅读行为
-
-回放页面呈现空间，`simulation.md` 呈现行为，路径如下：
-
-```text
-generative_agents/results/compressed/book-smoke/simulation.md
-```
-
-本次 `simulation.md` 前面会先列出基础人设，时间线从 `# 20240213-09:30` 开始。原文片段如下：
-
-```markdown
-# 20240213-09:30
-
-## 活动记录：
-
-### 阿伊莎
-位置：the Ville，奥克山学院宿舍，阿伊莎的房间，书桌
-活动：精读关于双关语与隐喻的分析
-
-### 克劳斯
-位置：the Ville，奥克山学院，图书馆，图书馆桌子
-活动：阅读并批注选中的学术文章
-
-# 20240213-09:40
-
-## 活动记录：
-
-### 阿伊莎
-位置：the Ville，奥克山学院，图书馆，图书馆桌子
-活动：精读关于韵律与节奏的论述
-```
-
-这段比表格更接近读者实际会看到的文件。`# 20240213-09:30` 是 checkpoint 时间，不是现实世界时间。`位置` 说明行动落在小镇地址树上，不只是模型说“我在学习”。`活动` 是当前 action 的人类可读摘要。09:30 时阿伊莎 Ayesha Khan 和克劳斯 Klaus Mueller 都有活动；09:40 只出现阿伊莎 Ayesha Khan，是因为 `generate_report()` 会跳过与上次完全相同的状态，Markdown 不是每个 step 的完整快照，而是更适合阅读的变化记录。
-
-阅读 `simulation.md` 时，建议先按顺序看五类信息：
-
-| 阅读顺序 | 观察点 | 判断问题 |
-| --- | --- | --- |
-| 1 | 时间线 | 仿真是否按 `start` 和 `stride` 正常推进 |
-| 2 | 角色行动 | 每个角色是否有清楚的行动描述 |
-| 3 | 地点变化 | 角色是否真的在地图上移动，而不是只生成文本 |
-| 4 | 对话内容 | 对话是否符合角色身份和当前场景 |
-| 5 | 前后连续性 | 后一个时间点是否承接前一个时间点的计划、地点或对话 |
-
-前四项回答“这次仿真是否跑起来”，第五项才开始回答“这个 agent 是否可信”。例如，阿伊莎 Ayesha Khan 如果 09:30 在写论文，09:40 继续围绕莎士比亚语言做笔记，这说明角色的短期行为有连续性；如果她突然出现在不相关地点，并且行动与前文没有联系，就要回到 checkpoint、日程 prompt 或地点选择逻辑继续排查。
-
-如果只跑 2 个 step，故事不会很精彩，这是正常的。最小仿真不用于复现论文里的派对传播，而是用于确认项目链路完整：启动、思考、保存、压缩、回放、阅读。
-
-## 12.7 断点恢复
-
-项目支持从已有 checkpoint 继续运行。假设 `book-smoke` 已经运行过，可以继续追加 2 个 step：
-
-```bash
-python start.py \
-  --name book-smoke \
-  --resume \
-  --step 2 \
-  --stride 10 \
-  --verbose info
-```
-
-断点恢复会读取下面这个 checkpoint 目录：
-
-```text
-generative_agents/results/checkpoints/book-smoke/
-```
-
-恢复运行后，还需要重新压缩：
-
-```bash
+```powershell
 python compress.py --name book-smoke
 ```
 
-重新压缩后，再打开从第 3 个 step 开始的回放地址：
+压缩结果目录：
 
 ```text
-http://127.0.0.1:5000/?name=book-smoke&step=3&speed=2&zoom=0.8
+generative_agents/results/compressed/book-smoke/
 ```
 
-![图 12-4：book-smoke 断点恢复后的回放页面](../../assets/chapter_12/fig-12-6-book-smoke-resume.png)
-
-*图 12-4：`book-smoke` 断点恢复后的回放页面。顶部时间已经推进到 2024 年 2 月 13 日 09:50 后，说明回放从追加后的第 3 个 step 开始。*
-
-断点恢复后的 checkpoint 目录新增了两个文件：
-
-| 新增文件 | 含义 |
-| --- | --- |
-| `simulate-20240213-0950.json` | 恢复运行后的第 3 个 step |
-| `simulate-20240213-1000.json` | 恢复运行后的第 4 个 step |
-
-重新压缩后，`movement.json` 从第一次压缩时的 122 帧扩展到 243 帧，`simulation.md` 也新增了 `20240213-09:50` 和 `20240213-10:00` 两段记录。
-
-| 小镇时间 | 阿伊莎 Ayesha Khan | 克劳斯 Klaus Mueller |
+| 文件 | 用途 | 读法 |
 | --- | --- | --- |
-| `20240213-09:50` | 继续停留在前一段“精读关于韵律与节奏的论述”动作中，状态被 checkpoint 延续 | 开始撰写论文中关于中产阶级化影响的段落 |
-| `20240213-10:00` | 整理书本和笔记本准备出门 | 继续围绕中产阶级化影响段落写作，记忆节点增加到 6 个 |
+| `movement.json` | 前端回放 replay 数据 | 看角色坐标、动作、帧和对话气泡 |
+| `simulation.md` | 人类阅读的仿真时间线 | 看每个小镇时间点谁在哪里、做什么、说什么 |
 
-断点恢复的意义是让长时间实验可控：先跑很短的片段，确认效果，再逐步延长，而不是一次性跑完整天。图 12-4 的顶部时间和新增 checkpoint 文件，是判断恢复成功的两个最直接证据。
+`movement.json` 的顶层结构：
 
-## 12.8 第一次运行的排错表
+```json
+{
+  "start_datetime": "2024-02-13T10:00:00",
+  "stride": 10,
+  "sec_per_step": 10,
+  "persona_init_pos": {
+    "玛丽亚": [123, 57],
+    "伊莎贝拉": [72, 14]
+  },
+  "all_movement": {
+    "1": {},
+    "2": {},
+    "conversation": {
+      "20240213-11:40": "\n地点：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面\n\n伊莎贝拉：嗨，玛丽亚！在复习功课呢？需要来杯咖啡提提神吗？\n...",
+      "20240213-14:20": "\n地点：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位\n\n玛丽亚：嘿，伊莎贝拉！你一直这么忙，有时间休息一下吗？刚才那杯拿铁真的很提神，谢谢你。\n..."
+    }
+  }
+}
+```
 
-第一次启动项目时，问题通常集中在环境、模型、结果目录和回放数据四类。
+`start_datetime` 是回放起点。`persona_init_pos` 是角色初始坐标。数字键 `"1"`、`"2"` 一直延伸到后续帧，保存每一帧的角色位置和动作。对话不在顶层，而在 `all_movement["conversation"]` 里；如果查错路径，会误以为回放没有对话。
+
+`simulation.md` 中 11:40 的片段：
+
+```markdown
+# 20240213-11:40
+
+## 活动记录：
+
+### 伊莎贝拉
+位置：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+活动：伊莎贝拉给正在复习电磁学的玛丽亚送上一杯拿铁咖啡，并提醒她注意休息。
+
+## 对话记录：
+
+### 伊莎贝拉 -> 玛丽亚 @ the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+
+`伊莎贝拉`
+> 嗨，玛丽亚！在复习功课呢？需要来杯咖啡提提神吗？
+
+`玛丽亚`
+> 嗨，伊莎贝拉！是啊，在复习电磁学的笔记呢。麻烦来杯拿铁吧，正好需要提提神！
+```
+
+14:20 的片段：
+
+```markdown
+# 20240213-14:20
+
+## 活动记录：
+
+### 玛丽亚
+位置：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆顾客座位
+活动：玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。
+
+### 伊莎贝拉
+位置：the Ville，霍布斯咖啡馆，咖啡馆，咖啡馆柜台后面
+活动：玛丽亚（游戏主播）与咖啡馆老板伊莎贝拉约定情人节派对，玛丽亚将帮忙布置并直播，伊莎贝拉准备特调咖啡和甜点。
+```
+
+`movement.json` 面向前端，回答“角色如何移动和显示”。`simulation.md` 面向复盘，回答“这段仿真读起来发生了什么”。两者来自同一组 checkpoint，只是服务不同阅读场景。
+
+## 12.7 浏览器回放 replay：确认咖啡馆对话真的出现
+
+启动回放服务：
+
+```powershell
+python replay.py
+```
+
+打开首次对话附近的回放：
+
+```text
+http://127.0.0.1:5000/?name=book-smoke&step=11&speed=0&zoom=0.75
+```
+
+![图 12-2：book-smoke 11:40 咖啡馆对话回放](../../assets/chapter_12/fig-12-4-book-smoke-replay.png)
+
+*图 12-2：`book-smoke` 在 11:40 的浏览器回放 replay。画面上方显示伊莎贝拉 Isabella Rodriguez 与玛丽亚 Maria Lopez 的拿铁对话，地图位置落在霍布斯咖啡馆。*
+
+回放地址中的参数：
+
+| 参数 | 中文含义 | 本章取值 |
+| --- | --- | --- |
+| `name` | 压缩结果名称 | `book-smoke` |
+| `step` | 回放起始步 | `11`，对应 11:40 附近 |
+| `speed` | 播放速度 | `0`，停住画面便于截图 |
+| `zoom` | 地图缩放比例 | `0.75` |
+
+打开第二次对话附近的回放：
+
+```text
+http://127.0.0.1:5000/?name=book-smoke&step=27&speed=0&zoom=0.75
+```
+
+![图 12-3：book-smoke 14:20 派对讨论回放](../../assets/chapter_12/fig-12-6-book-smoke-resume.png)
+
+*图 12-3：`book-smoke` 在 14:20 的浏览器回放 replay。玛丽亚 Maria Lopez 和伊莎贝拉 Isabella Rodriguez 讨论情人节派对、直播、特调咖啡和甜点，说明长时间续跑后的社交事件也进入了可视化结果。*
+
+回放页面要确认三件事：第一，顶部小镇时间和 `simulation.md` 对得上；第二，地图上角色位置确实在霍布斯咖啡馆；第三，对话气泡来自 `movement.json` 的 `all_movement["conversation"]`，不是手工写在网页里的静态文本。
+
+## 12.8 断点恢复 resume：继续跑到对话和长时间状态
+
+第一段运行到 11:10，还没有产生对话。继续运行时，不需要从 10:00 重跑，直接使用断点恢复 resume：
+
+```powershell
+python start.py --name book-smoke --resume --step 5 --stride 10 --verbose info --log book-smoke-resume-1.log
+```
+
+这段从 11:20 推进到 12:00，产生了 11:40 的首次对话。日志中的关键链路：
+
+```text
+==========       Simulate Step[9/13, time: 2024-02-13 11:20:00]       ==========
+玛丽亚 -> poignancy_event
+玛丽亚 percept 1/5 concepts
+
+----------              玛丽亚.summary @ 20240213-11:40:00               ----------
+玛丽亚 -> decide_chat
+status:
+  poignancy: 21
+concepts:
+  node_15:
+    event(P.1): 咖啡馆顾客座位 正被坐着使用 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+
+==========      Simulate Step[13/13, time: 2024-02-13 12:00:00]       ==========
+玛丽亚 -> schedule_decompose
+玛丽亚 -> poignancy_event
+玛丽亚 percept 2/5 concepts
+```
+
+`decide_chat` 是反应 Reacting 链路中的开口裁决。它出现后，再去看 `conversation.json` 和 `storage/<角色>/associate/docstore.json`，就能看到对话和聊天记忆。
+
+继续做第二次恢复：
+
+```powershell
+python start.py --name book-smoke --resume --step 20 --stride 10 --verbose info --log book-smoke-resume-2.log
+```
+
+这段从 12:10 推进到 15:20，并在 14:20 产生第二次对话。代表性日志：
+
+```text
+伊莎贝拉 -> schedule_revise
+
+----------              玛丽亚.summary @ 20240213-14:20:00               ----------
+name: 玛丽亚
+tile:
+  coord[76,23]: the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+status:
+  poignancy: 64
+concepts:
+  node_46:
+    event(P.1): 咖啡馆顾客座位 正承载着读者阅读 @ the Ville:霍布斯咖啡馆:咖啡馆:咖啡馆顾客座位
+```
+
+长时间续跑的最后一个 step：
+
+```text
+==========      Simulate Step[33/33, time: 2024-02-13 15:20:00]       ==========
+玛丽亚 percept 0/4 concepts
+玛丽亚 is determining action...
+玛丽亚 -> determine_sector
+玛丽亚 -> determine_object
+玛丽亚 -> describe_object
+
+llm:
+  model: MiniMax-M3
+  summary:
+    total: S:100,F:1/R:100
+    llm_normal: S:100,F:1/R:100
+```
+
+最后的 `F:1` 说明长时间运行中有一次模型调用在重试后仍失败。这个实验仍然完成了 checkpoint、conversation、storage、compressed result 和 replay；如果要获得完全干净的模型统计，可以在模型服务压力较小时重新执行最后一段 resume。
+
+恢复后重新压缩：
+
+```powershell
+python compress.py --name book-smoke
+```
+
+断点恢复 resume 的判断标准不是“日志里每一行都完美”，而是三个产物同时成立：
+
+| 证据 | 成功信号 |
+| --- | --- |
+| `simulate-20240213-1520.json` | `step=33`，小镇时间继续推进到 15:20 |
+| `conversation.json` | 存在 `20240213-11:40` 和 `20240213-14:20` 两次对话 |
+| `compressed/book-smoke/` | `movement.json` 和 `simulation.md` 都包含这两次对话 |
+
+## 12.9 排错表与本章小结
+
+第一次启动失败时，先按结果链路排查，不要直接怀疑智能体设计。
 
 | 现象 | 常见原因 | 处理方式 |
 | --- | --- | --- |
-| `name already exists` | 仿真名称已经有 checkpoint | 换一个 `--name`，或使用 `--resume` |
-| LLM 调用失败 | `config.json` 中 provider、model、base_url 或 api_key 不正确 | 先确认模型服务能被访问，再跑最小仿真 |
-| embedding 失败 | 本地 embedding 模型没有拉取或接口地址不对 | 检查 `agent.associate.embedding` 配置 |
-| MiniMax 调用中出现临时 `SSLEOFError` | 远端连接偶发中断 | 如果最终 checkpoint 正常生成，可以忽略；如果反复出现，重新运行或检查网络 |
-| 回放页面提示数据不存在 | 只运行了 `start.py`，还没执行 `compress.py` | 先运行 `python compress.py --name <name>` |
-| 回放能打开但没有预期角色 | `--agent-count` 或 `--agents` 限制了运行角色 | 检查启动命令中的角色参数 |
-| `simulation.md` 很短 | step 太少 | 先确认链路，再逐步增加 step |
+| `name already exists` | 同名 checkpoint 已经存在 | 换一个 `--name`，或确认后删除旧目录再重跑 |
+| `--agent-count 2` 跑出的角色不符合预期 | 依赖源码中的角色列表顺序 | 使用 `--agents "玛丽亚,伊莎贝拉"` 明确指定 |
+| 第一段没有对话 | 角色还没有稳定相遇，或 `decide_chat` 未命中 | 使用 `--resume` 继续推进，不要把无对话直接判为失败 |
+| `conversation.json` 为空 | 没有任何对话真正写回 | 查 `decide_chat` 日志、角色位置和 `action.event.predicate` |
+| `movement.json` 顶层找不到对话 | 对话不在顶层字段 | 查看 `all_movement["conversation"]` |
+| 日志乱码 | Windows 日志按 GBK 保存 | 用 GBK 或系统默认中文编码打开 |
+| 日志里 `F` 不为 0 | 模型服务限流、过载或结构化输出失败 | 看失败发生在哪一步；必要时从最近 checkpoint 续跑 |
+| 回放页面找不到数据 | 只运行了 `start.py`，没有压缩 | 执行 `python compress.py --name book-smoke` |
+| 回放角色数量不对 | URL 的 `name` 指向旧压缩目录 | 重新压缩，确认打开的是 `book-smoke` |
+| 没有反思 Reflection | `poignancy` 没达到 `poignancy_max` | 冒烟测试中这是正常边界；反思触发留给第 7 章脚本和后续源码章 |
 
-这张表不覆盖所有异常，只处理第一轮启动最常见的问题。Generative Agents 是多模块系统，运行失败时不要立刻怀疑论文思想，先确认项目链路是否完整。
+`book-smoke` 跑通后，项目已经完成一条综合运行闭环：
 
-## 12.9 小结
+```text
+start.py
+-> checkpoint
+-> conversation.json
+-> storage/<角色>/associate/docstore.json
+-> compress.py
+-> movement.json / simulation.md
+-> replay.py
+-> resume
+```
 
-到这里，项目已经完成一次最小闭环：看到示例回放，跑出自己的 checkpoint，再把结果压缩成可回放、可阅读的材料。
+本章最终确认三类证据：
 
-| 已完成动作 | 意义 |
+| 目录或文件 | 证明什么 |
 | --- | --- |
-| 打开 `example` 回放 | 不需要模型也能先看到项目效果 |
-| 检查 `config.json` | 知道 LLM 和 embedding 是运行前提 |
-| 运行 `book-smoke` 最小仿真 | 验证启动、模型调用和 checkpoint 链路 |
-| 执行 `compress.py` | 把系统状态转成回放和阅读材料 |
-| 打开 `replay.py` 页面 | 观察小镇地图、角色移动和对话 |
-| 阅读 `simulation.md` | 用文本方式复盘角色行为 |
-| 尝试 `--resume` | 理解长时间仿真如何分段运行 |
+| `results/checkpoints/book-smoke/` | 系统状态可以落盘和恢复 |
+| `results/checkpoints/book-smoke/conversation.json` | 角色相遇后能触发真实对话 |
+| `results/checkpoints/book-smoke/storage/` | 对话、行动和想法写入角色自己的记忆索引 |
+| `results/compressed/book-smoke/` | 仿真结果可以被回放和文本复盘 |
 
-这些操作结果已经落到三个地方：`results/checkpoints/book-smoke/` 保存可恢复的系统状态，`results/compressed/book-smoke/movement.json` 支持浏览器回放，`results/compressed/book-smoke/simulation.md` 支持文本复盘。只要这三个产物同时存在，Generative Agents 的最小运行闭环就成立。
-
-下一章沿着已经跑通的项目，一项项体验它提供的核心能力：角色定义、日程、感知、记忆、对话、反思、回放和模型适配。先知道每个功能长什么样，第三部分再深入看这些功能是怎么写出来的。
+这四类证据同时存在，Generative Agents 的上手闭环就成立了。下一章继续在不改源码的前提下改配置：构造新的场景和角色，让项目从“能跑起来”进入“能适配自己的应用场景”。
 
 ## 参考资料
 
@@ -650,4 +674,5 @@ http://127.0.0.1:5000/?name=book-smoke&step=3&speed=2&zoom=0.8
 - Run entry: `generative_agents/start.py`
 - Compression entry: `generative_agents/compress.py`
 - Replay entry: `generative_agents/replay.py`
-- Example replay: `generative_agents/results/compressed/example/`
+- Smoke checkpoint: `generative_agents/results/checkpoints/book-smoke/`
+- Smoke compressed result: `generative_agents/results/compressed/book-smoke/`

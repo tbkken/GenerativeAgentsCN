@@ -1,87 +1,124 @@
 # 第 7 章 论文架构四：反思 Reflection
 
-检索 Retrieval 解决“智能体此刻应该想起哪些过去经历”。反思 Reflection 解决“智能体如何从经历中形成高层判断”。人并不是每次都从原始经历重新推理一遍。人会总结、归纳，并形成对自己、他人、关系、环境和未来的稳定判断。
-
-克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 的关系不是一条静态标签。它可以从几条经历中长出来：两人在咖啡馆聊天，玛丽亚认真回应克劳斯的研究话题，两人都愿意探索新想法。反思 Reflection 把这些碎片压成一条更有行为价值的想法 thought：
+克劳斯 Klaus Mueller 与阿伊莎 Ayesha Khan 的论文交流已经在第 5 章进入记忆流 Memory Stream，也已经在第 6 章被检索 Retrieval 找回。第 7 章继续追踪同一条证据链：一段经历如何在触动程度 poignancy 过阈值后，被反思 Reflection 写成新的想法 thought。
 
 ```text
-克劳斯认为玛丽亚愿意讨论开放性问题，未来可以继续和她交流。
+克劳斯 阿伊莎建议把感官描写包装成'参与式观察'的田野笔记，让我找到了在社会学论文中兼顾文学感染力和学术严谨性的巧妙平衡点。
 ```
 
-这条想法 thought 不是临时摘要。它会写回记忆流 Memory Stream，之后像事件 event 一样被检索 Retrieval 找回，继续影响日程 Planning、对话 Dialogue 和社交反应 Reacting。
+这条想法 thought 来自 `book-custom-discussion` 实验的真实断点 checkpoint。它不是聊天原文，也不是简单摘要，而是克劳斯 Klaus Mueller 对论文写作方法形成的新判断。
 
 ![图 7-1：反思 Reflection：从事件证据到高层想法](../../assets/chapter_07/ch07_reflection_workbench.png)
 
-*图 7-1：反思 Reflection 的系统入口。左侧是原始经历，包括事件 event、聊天 chat 和已有想法 thought；中间围绕焦点问题 focus 检索证据 evidence，生成洞察 insight；右侧把洞察写成新的想法 thought，重新进入记忆流 Memory Stream，并影响后续日程 Planning 和对话 Dialogue。*
+*图 7-1：反思 Reflection 的系统入口。低层事件 event、聊天 chat 和已有想法 thought 进入反思链路后，最终写回关联记忆 Associate。*
 
-## 7.1 原始经历为什么不够
+## 7.1 一条真实反思：克劳斯 Klaus Mueller 想到了什么
 
-只保存观察 observation，会留下三个缺口。
+证据实验仍然是 `book-custom-discussion`。克劳斯 Klaus Mueller 在图书馆推进 `中产阶级化` 论文，阿伊莎 Ayesha Khan 给出参与式观察写作建议，反思 Reflection 围绕这条论文协作线生成了新的想法 thought。
 
-| 缺口 | 表现 | 对行为的影响 |
-| --- | --- | --- |
-| 记忆太碎 | 一天会产生大量吃饭、移动、看到别人、聊几句的低层事件 event。 | 每次决策都要临场推理，缺一两条关键记忆就会断。 |
-| 低层事件不等于长期认知 | “两个人聊天”只说明发生了什么，不说明这段关系意味着什么。 | 角色重复寒暄，缺少经历之后的变化。 |
-| 行为连续性需要抽象 | 共同兴趣、信任、目标和关系倾向不是单条观察能直接给出的。 | 后续计划和对话无法接上过去形成的判断。 |
-
-*表 7-1：原始经历的局限。记忆流 Memory Stream 保存过去，反思 Reflection 把过去解释成可复用的高层认知。*
-
-“克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 在咖啡馆聊天”是一条事件 event；“克劳斯认为玛丽亚愿意讨论开放性问题”是一个想法 thought；“克劳斯未来更愿意继续和玛丽亚交流”则是可能改变行为的社交倾向。反思 Reflection 的价值就在这三层之间：从事实到解释，再从解释回到未来行为。
-
-## 7.2 业务闭环：克劳斯 Klaus Mueller 如何把咖啡馆交流变成想法 thought
-
-克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 在咖啡馆的交流，进入反思 Reflection 后会被拆成一条可追溯链路。原始输入不是“关系很好”这种结论，而是几条低层经历：两人见面、聊天、交换兴趣、玛丽亚认真回应克劳斯的研究话题。
-
-| 阶段 | 输入 | 处理 | 输出 |
-| --- | --- | --- | --- |
-| 原始经历 | 事件 event、聊天 chat、已有想法 thought | 写入记忆流 Memory Stream，并计算触动程度 poignancy | 可检索的记忆节点 Concept |
-| 触发判断 | 累计触动程度 `poignancy`、阈值 `poignancy_max = 150` | `Agent.reflect()` 判断是否进入反思 | 达到阈值才继续 |
-| 候选输入 | 近期事件 event、已有想法 thought | 按访问时间 access 排序，并截取 `max_importance` 条 | 反思候选记忆列表 |
-| 焦点问题 | 候选记忆列表 | `reflect_focus.txt` 生成问题 | “克劳斯与玛丽亚是否有共同兴趣？” |
-| 证据检索 | 焦点问题 focus | `retrieve_focus(..., reduce_all=False)` 分问题检索 | 问题到证据 evidence 的映射 |
-| 洞察生成 | 每组证据 evidence | `reflect_insights.txt` 生成洞察 insight 和证据编号 | “克劳斯认为玛丽亚愿意讨论开放性问题” |
-| 写回记忆 | 洞察 insight、真实证据节点 `node_id` | `_add_concept("thought", ...)` 写回 | 新想法 thought 进入 `Associate.memory["thought"]` |
-| 后续使用 | 新想法 thought | 检索 Retrieval 在后续日程、对话、反应中找回 | 克劳斯更可能继续和玛丽亚交流 |
-
-*表 7-2：克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 案例中的反思 Reflection 闭环。*
-
-这条链路的最终结果可以写成一条业务事实：
+证据路径：
 
 ```text
-克劳斯 Klaus Mueller 不是被静态设定成“喜欢玛丽亚 Maria Lopez”，而是从咖啡馆交流、共同兴趣和认真回应这些证据中，形成“玛丽亚愿意讨论开放性问题，未来可以继续交流”的想法 thought。
+generative_agents\results\checkpoints\book-custom-discussion\simulate-20240213-1350.json
+generative_agents\results\checkpoints\book-custom-discussion\simulate-20240213-1400.json
+generative_agents\results\checkpoints\book-custom-discussion\storage\克劳斯\associate\docstore.json
 ```
 
-反思不是一次性总结，而是把经历转成可检索、可追溯、可影响行为的想法 thought。后续章节看到克劳斯主动接近玛丽亚、延续共同兴趣话题，检查入口就是这条写回记忆流 Memory Stream 的 thought。
+两个断点 checkpoint 的差异很直接：`13:50` 时触动程度 poignancy 还没过线，`14:00` 后想法 thought 从 1 条增加到 18 条，触动程度 poignancy 被重置为 0。
+
+| 时间 time | 触动程度 poignancy | 事件 event | 想法 thought | 聊天 chat | 待处理聊天 pending chats |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `20240213-13:50` | `147` | `83` | `1` | `7` | `26` |
+| `20240213-14:00` | `0` | `86` | `18` | `7` | `6` |
+
+*表 7-1：克劳斯 Klaus Mueller 反思前后的断点状态。*
+
+`node_110` 是最适合作为入口的结果节点：
+
+```json
+{
+  "id_": "node_110",
+  "text": "克劳斯 阿伊莎建议把感官描写包装成'参与式观察'的田野笔记，让我找到了在社会学论文中兼顾文学感染力和学术严谨性的巧妙平衡点。",
+  "metadata": {
+    "node_type": "thought",
+    "poignancy": 7,
+    "create": "20240213-14:00:00"
+  }
+}
+```
+
+这条 thought 有两个关键信号：
+- 第一，它的 `node_type` 是 `thought`，说明它已经不是原始事件 event 或聊天 chat
+- 第二，它把阿伊莎 Ayesha Khan 的建议转成克劳斯 Klaus Mueller 自己后续可检索、可引用的论文写作原则
+
+## 7.2 反思 Reflection 解决什么问题
+
+记忆流 Memory Stream 保存过去，但过去本身还不是判断。反思 Reflection 的作用，是把若干低层经历压缩成更稳定的解释。
+
+| 层次 | 保存的内容 | 能回答的问题 | 还缺什么 |
+| --- | --- | --- | --- |
+| 事件 event | 克劳斯 Klaus Mueller 在图书馆写论文、查资料、和别人交谈。 | 发生了什么。 | 不能直接形成长期判断。 |
+| 聊天 chat | 阿伊莎 Ayesha Khan 建议把感官描写转成参与式观察田野笔记。 | 谁说了什么。 | 不能直接说明这条建议对克劳斯的意义。 |
+| 想法 thought | 克劳斯 Klaus Mueller 认为参与式观察可以兼顾文学感染力和学术严谨性。 | 这件事意味着什么。 | 已经可以进入后续行为。 |
+
+*表 7-2：反思 Reflection 的位置。它不是替代事件 event 和聊天 chat，而是从它们中生成新的高层想法 thought。*
+
+没有反思 Reflection，系统每次行动都要重新翻低层记录；有了反思 Reflection，克劳斯 Klaus Mueller 可以直接检索到“参与式观察写法适合我的论文”这类稳定判断。智能体 agent 的连续性，正是从这类高层想法 thought 中长出来的。
+
+## 7.3 反思函数的两条分支——常规反思与对话反思
+
+源码入口是 `generative_agents/modules/agent.py` 中的 `Agent.reflect()`。删去日志与细节后，运行顺序可以压缩成四段：门禁、常规反思、对话反思、状态重置。
+
+```python
+def reflect(self):
+    # 触发门禁：触动程度不够，直接退出。
+    if self.status["poignancy"] < self.think_config["poignancy_max"]:
+        return
+
+    # 常规反思：事件 event / 想法 thought -> 焦点 focus -> 证据 evidence -> 洞察 insight -> 新 thought。
+    nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
+    focus = self.completion("reflect_focus", nodes, 3)
+    retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
+    for r_nodes in retrieved.values():
+        for thought, evidence in self.completion("reflect_insights", r_nodes, 5):
+            _add_thought(thought, evidence)
+
+    # 对话反思：聊天 chat -> 计划类 thought / 长期记忆 thought。
+    if self.chats:
+        plan = self.completion("reflect_chat_planing", self.chats)
+        _add_thought(f"对于 {self.name} 的计划：{plan}", evidence)
+
+        memory = self.completion("reflect_chat_memory", self.chats)
+        _add_thought(f"{self.name} {memory}", evidence)
+
+    # 状态重置：本轮触发条件清空。
+    self.status["poignancy"] = 0
+    self.chats = []
+```
 
 ```mermaid
-flowchart LR
-    Input["输入 input<br/>事件 event / 想法 thought / 聊天 chat"] --> Focus["焦点问题 focus<br/>reflect_focus"]
-    Focus --> Evidence["证据 evidence<br/>retrieve_focus"]
-    Evidence --> Insight["洞察 insight<br/>reflect_insights"]
-    Insight --> Thought["想法 thought<br/>写回记忆流"]
-    Thought --> Future["未来行为<br/>日程 / 对话 / 反应"]
+flowchart TD
+    Start["反思入口 Agent.reflect()"] --> Gate{"触动程度 poignancy 是否过阈值"}
+    Gate -- "否" --> Stop["返回 return"]
+    Gate -- "是" --> Regular["常规反思 regular reflection<br/>event / thought -> focus -> evidence -> insight"]
+    Gate -- "是" --> Chat["对话反思 chat reflection<br/>chat -> plan thought / memory thought"]
+    Regular --> Write["统一写回<br/>关联记忆 Associate<br/>memory['thought']"]
+    Chat --> Write
+    Write --> Reset["重置状态<br/>poignancy = 0<br/>chats = []"]
 ```
 
-*图 7-2：反思 Reflection 的数据流。系统不是直接压缩全部历史，而是围绕问题收集证据，并把洞察写回记忆流 Memory Stream。*
+*图 7-2：`Agent.reflect()` 的两条分支。常规反思处理事件 event 和已有想法 thought，对话反思处理待处理聊天 chats。*
 
-## 7.3 反思 Reflection 不是聊天总结
-
-普通总结通常是压缩，反思 Reflection 是解释。压缩关心的是更短地表达已有信息；解释关心的是从已有信息中得出新的高层判断。
-
-| 类型 | 示例 | 回答的问题 | 是否会改变未来行为 |
+| 分支 branch | 输入 input | 处理 process | 输出 output |
 | --- | --- | --- | --- |
-| 聊天总结 | 克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 在咖啡馆聊了学习、兴趣和近期计划。 | 发生了什么。 | 影响较弱，只是压缩事实。 |
-| 反思 Reflection | 克劳斯 Klaus Mueller 认为玛丽亚 Maria Lopez 愿意讨论开放性问题，未来可以继续交流。 | 这件事意味着什么。 | 影响较强，会改变后续社交选择。 |
+| 触发门禁 gate | `status.poignancy`、`think_config.poignancy_max` | 低于阈值直接返回。 | 是否进入反思 Reflection。 |
+| 常规反思 regular reflection | 近期事件 event、已有想法 thought | 生成焦点问题 focus，检索证据 evidence，生成洞察 insight。 | 一批新的想法 thought。 |
+| 对话反思 chat reflection | `self.chats` 中尚未消化的对话 | 生成计划反思和长期记忆。 | 两类对话相关 thought。 |
+| 状态重置 reset | 本轮反思结果 | 清空累计触动程度和待处理聊天。 | `poignancy = 0`，`chats = []`。 |
 
-*表 7-3：聊天总结和反思 Reflection 的差别。反思的核心不是省上下文，而是生成能被未来行为使用的解释。*
+## 7.4 触发条件：触动程度 poignancy 过阈值
 
-论文中的反思 Reflection 不是为了替代完整记忆流 Memory Stream。它的关键价值在于生成更抽象的想法 thought，并把这些想法 thought 重新放入记忆流 Memory Stream。之后，检索 Retrieval 可以同时找回低层事件和高层判断。
-
-## 7.4 何时触发反思 Reflection
-
-反思 Reflection 不是每发生一件事就执行一次。频繁反思成本高，也会让角色对小事过度解读。项目使用触动程度 `poignancy` 控制反思频率：事件写入记忆时会先经过重要性评分 prompt，普通日常事件得分低，强烈事件或关系变化得分高。
-
-`generative_agents/data/config.json` 中的反思阈值如下：
+反思 Reflection 不会每一步都执行。项目用触动程度 poignancy 控制触发频率，阈值来自 `generative_agents/data/config.json`：
 
 ```json
 "think": {
@@ -90,205 +127,63 @@ flowchart LR
 }
 ```
 
-`Agent.reflect()` 的触发条件很直接：
+对应的代码门禁如下：
 
 ```python
 if self.status["poignancy"] < self.think_config["poignancy_max"]:
     return
 ```
 
-累计触动程度低于阈值时，智能体直接跳过反思 Reflection。达到阈值后，系统才会进入候选输入筛选、焦点问题生成、证据检索和洞察生成。反思结束后，项目会把 `self.status["poignancy"]` 重置为 `0`，避免同一批经历反复触发。
+第 5 章已经展开 `poignancy_event.txt` 和 `poignancy_chat.txt`。在反思 Reflection 中，这些评分会累计到 `status.poignancy`；达到 `poignancy_max` 后，`Agent.reflect()` 才会继续执行。
 
-| 配置或字段 | 中文含义 | 行为影响 |
+| 时间 time | 状态 status | 解释 |
 | --- | --- | --- |
-| `poignancy` | 当前累计触动程度。 | 越高越接近反思触发点。 |
-| `poignancy_max` | 反思触发阈值，当前配置为 `150`。 | 阈值越低，反思越频繁；阈值越高，反思越稀疏。 |
-| `interval` | 思考间隔配置。 | 控制思考相关流程的节奏。 |
-| `poignancy_event.txt` / `poignancy_chat.txt` | 重要性评分 prompt。 | 决定单条事件或聊天对累计值的贡献。 |
+| `13:50` | `poignancy = 147` | 尚未达到 `150`，反思 Reflection 不启动。 |
+| `14:00` | 运行过程中达到阈值 | `Agent.reflect()` 执行，生成 17 条新增 thought。 |
+| `14:00` 之后 | `poignancy = 0` | 反思结束后重置累计值。 |
 
-*表 7-4：反思 Reflection 的触发入口。反思频率由重要性评分和阈值共同决定。*
+## 7.5 常规反思：event / thought 如何生成新 thought
 
-事件重要性评分提示词 `poignancy_event.txt` 的真实模板如下：
-
-```text
-${base_desc}
-
-在1到10的范围内评分，评分原则：
-1代表极其平常，例如刷牙、整理床铺等普通事件；
-10代表极其特殊或强烈，令人印象深刻，例如分手、大学录取等特殊事件。
-每个事件只能用1到10的整数表示。例如：
-事件：刷牙。评分：1
-事件：整理床铺。评分：1
-事件：分手。评分：10
-事件：大学录取。评分：10
-
-以下是 ${agent} 需要评分的一个完整事件：
-"""
-${event}
-"""
-评分：<分数>
-
-根据完整事件填写<分数>。
-格式要求：只在1到10范围内输出1个数字，不要输出数字以外的任何内容。
-```
-
-英文含义：
-
-```text
-Score the emotional intensity of one event from 1 to 10.
-Use 1 for ordinary events and 10 for highly memorable events.
-Return only one integer.
-```
-
-对话重要性评分提示词 `poignancy_chat.txt` 的真实模板如下：
-
-```text
-${base_desc}
-
-在1到10的范围内评分，评分原则：
-1代表极其平常，例如早上的日常问候；
-10代表极其特殊或强烈，令人印象深刻，例如关于分手、争吵的对话。
-每个对话只能用1到10的整数表示。例如：
-对话：早上的日常问候。评分：1
-对话：关于分手、争吵的对话。评分：10
-
-以下是 ${agent} 需要评分的一场完整对话：
-"""
-${event}
-"""
-评分：<分数>
-
-根据完整事件填写<分数>。
-格式要求：只在1到10范围内输出1个数字，不要输出数字以外的任何内容。
-```
-
-英文含义：
-
-```text
-Score the emotional intensity of one conversation from 1 to 10.
-Use 1 for routine greetings and 10 for intense or memorable conversations.
-Return only one integer.
-```
-
-包装函数把两类输出都限制成整数：
-
-```python
-class PoignancyEventResponse(BaseModel):
-    res: int = Field(description="事件的情感强度评分，整数，范围1到10")
-
-class PoignancyChatResponse(BaseModel):
-    res: int = Field(description="对话的情感强度评分，整数，范围1到10")
-```
-
-| 项目 | 事件评分 `poignancy_event` | 对话评分 `poignancy_chat` |
-| --- | --- | --- |
-| 输入变量 | 基础描述 base_desc、角色 agent、事件 event | 基础描述 base_desc、角色 agent、对话 event |
-| 输出结构 schema | `res: int`，范围 1 到 10 | `res: int`，范围 1 到 10 |
-| 回调 callback | 无额外回调，直接使用结构化整数 | 无额外回调，直接使用结构化整数 |
-| 兜底值 failsafe | 1 到 10 的随机整数 | 1 到 10 的随机整数 |
-| 累计位置 | 写入 `self.status["poignancy"]` | 写入 `self.status["poignancy"]` |
-
-克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 的案例中，代表性评分如下：
-
-| 输入 | 代表性输出 | 含义 |
-| --- | --- | --- |
-| `克劳斯今天在咖啡馆遇到玛丽亚` | `4` | 普通社交事件，但和关系发展有关。 |
-| `玛丽亚认真回应了克劳斯的研究话题` | `6` | 对克劳斯有明显意义，可能影响后续社交判断。 |
-| `克劳斯和玛丽亚围绕研究兴趣展开了一段深入对话` | `7` | 对话不只是寒暄，足以推动反思 Reflection。 |
-
-这些分数会累加到触动程度 poignancy。达到 `poignancy_max = 150` 后，系统才进入下一节的候选输入筛选。
-
-## 7.5 候选输入边界
-
-触发反思 Reflection 后，系统先准备候选输入。它不会读取全部记忆流 Memory Stream，而是取近期事件 event 和已有想法 thought。
+常规反思只处理两类候选记忆：事件 event 和已有想法 thought。聊天 chat 不进入这一支。
 
 ```python
 nodes = self.associate.retrieve_events() + self.associate.retrieve_thoughts()
-nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
-    : self.associate.max_importance
-]
+nodes = sorted(nodes, key=lambda n: n.access, reverse=True)
+nodes = nodes[: self.associate.max_importance]
 ```
 
-这段逻辑有三个约束：
-- 常规候选输入来自事件 event 和想法 thought；
-- 候选输入按访问时间 `access` 取近期内容；输入数量受 `max_importance` 控制。
-- 聊天 chat 不进入这一步的 `event + thought` 候选池，而是在后面的对话反思分支单独处理。
-
-| 输入类型 | 中文含义 | 在反思 Reflection 中的作用 | 边界 |
+| 阶段 stage | 输入 input | 处理 process | 输出 output |
 | --- | --- | --- | --- |
-| 事件 event | 观察、行动、对话摘要等低层经历。 | 提供事实证据。 | 单条事件太碎，不能直接代表长期认知。 |
-| 想法 thought | 过去反思生成的高层判断。 | 提供已有认知，让反思可以递归。 | 想法也可能过度概括，需要新证据校正。 |
-| 聊天 chat | 与某人的对话记忆。 | 对话后单独整理成计划影响和长期记忆。 | 不进入常规 `event + thought` 候选池。 |
-
-*表 7-5：反思 Reflection 的候选输入边界。它不是总览全部历史，也不是只看最后一件事。*
+| 候选记忆 candidate memories | 近期事件 event、已有想法 thought | 按访问时间 access 倒序排列，截取 `max_importance` 条。 | 本轮可反思的候选节点。 |
+| 焦点问题 focus | 候选节点的文本 text | 调用 `reflect_focus`。 | 若干反思问题。 |
+| 证据检索 evidence retrieval | 焦点问题 focus | 调用 `retrieve_focus(..., reduce_all=False)`。 | 每个问题对应一组证据 evidence。 |
+| 洞察生成 insight generation | 每组证据 evidence | 调用 `reflect_insights`。 | 洞察 insight 与证据编号。 |
+| 写回 write-back | 洞察 insight | 调用 `_add_concept("thought", ...)`。 | 新的想法 thought。 |
 
 ```mermaid
 flowchart TD
-    Trigger["触动程度 poignancy<br/>达到阈值"] --> Pool["候选输入池"]
-    Pool --> Events["事件 event<br/>retrieve_events()"]
-    Pool --> Thoughts["想法 thought<br/>retrieve_thoughts()"]
-    Events --> Sort["按访问时间 access 排序"]
-    Thoughts --> Sort
-    Sort --> Limit["取 max_importance 条"]
-    Limit --> Focus["焦点问题 focus<br/>reflect_focus"]
-
-    Chats["近期聊天 self.chats"] --> ChatReflect["对话反思<br/>reflect_chat_planing / reflect_chat_memory"]
-    ChatReflect --> Thought["写回想法 thought"]
-    Focus --> Evidence["围绕问题检索证据"]
+    Candidates["候选记忆 candidates<br/>事件 event + 想法 thought"] --> FocusPrompt["焦点提示词 reflect_focus<br/>生成反思焦点问题 focus"]
+    FocusPrompt --> FocusList["焦点问题 focus list"]
+    FocusList --> Retrieve["焦点检索 retrieve_focus<br/>reduce_all=false"]
+    Retrieve --> EvidenceGroups["证据分组 evidence groups<br/>每个问题对应一组 r_nodes"]
+    EvidenceGroups --> InsightPrompt["洞察提示词 reflect_insights"]
+    InsightPrompt --> InsightOutput["洞察输出 insight output<br/>洞察文本 + 局部证据编号"]
+    InsightOutput --> AddThought["写回 _add_thought"]
+    AddThought --> Associate["关联记忆 Associate<br/>memory['thought'] 新增节点"]
 ```
 
-*图 7-3：项目中 `Agent.reflect()` 的分支。常规反思先筛事件 event 和想法 thought；对话反思单独处理聊天 chat，并把结果写成想法 thought。*
+*图 7-3：常规反思 regular reflection 的数据流。`reflect_focus` 负责生成检索问题，`reflect_insights` 负责从证据 evidence 中生成洞察 insight，最终写回想法 thought。*
 
-## 7.6 从候选记忆到焦点问题 focus
+两份提示词 prompt 的原文并排阅读即可。`reflect_focus.txt` 决定“该问什么问题”，`reflect_insights.txt` 决定“从证据里形成什么洞察”。
 
-反思 Reflection 不直接总结候选记忆，而是先生成焦点问题 focus。
-
-```python
-focus = self.completion("reflect_focus", nodes, 3)
-```
-
-`reflect_focus.txt` 的任务是根据候选记忆提出几个值得深入思考的问题。给定下面这组记忆：
-
-```text
-0. 克劳斯今天在咖啡馆遇到玛丽亚。
-1. 玛丽亚说她喜欢探索新想法。
-2. 克劳斯提到自己正在研究低收入社区中产阶级化。
-3. 玛丽亚认真回应了克劳斯的研究话题。
-```
-
-代表性焦点问题 focus 如下：
-
-```text
-克劳斯与玛丽亚是否有共同兴趣？
-克劳斯今天的研究计划受到了哪些社交互动影响？
-克劳斯未来是否应该继续与玛丽亚交流？
-```
-
-`generative_agents/data/prompts/reflect_focus.txt` 的真实模板如下：
-
-```text
-根据给定的记忆节点，生成反思的焦点问题。
-
-"""
-记忆节点：
-${reference}
-
-生成${number}个反思焦点问题：
-"""
-
-确保返回的数据格式遵守schema：
-[
-  "焦点问题1",
-  "焦点问题2",
-  "焦点问题3",
-  ...
-]
-
-要求：
-- 问题要基于给定的记忆节点
-- 问题要简洁明了，便于引导反思
-- 确保遵守返回的格式schema
-
+<table>
+  <tr>
+    <th style="width:50%">reflect_focus.txt</th>
+    <th style="width:50%">reflect_insights.txt</th>
+  </tr>
+  <tr>
+    <td>
+<pre><code>根据给定的记忆节点，生成反思的焦点问题。
 示例：
 """
 记忆节点：
@@ -305,155 +200,31 @@ ${reference}
   "凯莉最近的社交活动如何？",
   "凯莉的日常习惯有什么变化？"
 ]
-```
 
-`reflect_focus.txt` 的关键结构如下：
-
-| 项目 | 内容 |
-| --- | --- |
-| 提示词 prompt 路径 | `generative_agents/data/prompts/reflect_focus.txt` |
-| 输入变量 | 候选记忆 `reference`、问题数量 `number`。 |
-| 中文任务 | 根据给定的记忆节点，生成反思的焦点问题。 |
-| 英文含义 | Generate reflection focus questions based on the given memory nodes. |
-| 输出结构 schema | `res: list[str]`，每项是一个焦点问题。 |
-| 兜底值 failsafe | “某某是谁？”、“某某住在哪里？”、“某某今天要做什么？” |
-
-*表 7-6：焦点问题 prompt 的项目读法。焦点问题决定后续检索证据的方向。*
-
-这段模板的关键不是把多条记忆压缩成摘要，而是把候选记忆转成可检索的问题。`${reference}` 承接前面筛出的高重要性记忆节点，`${number}` 在当前调用中是 `3`，输出结构 schema 则要求模型只返回问题字符串列表。
-
-源码构造 `${reference}` 时使用的是 0-based 局部编号：
-
-```python
-"reference": "\n".join(
-    ["{}. {}".format(idx, n.describe) for idx, n in enumerate(nodes)]
-)
-```
-
-所以正文中的代表性输入使用 `0. 1. 2. 3.`。这些数字不是全局记忆编号，也不是 `node_id`；它们只是当前这一次提示词 prompt 输入列表里的局部下标。后面的 `reflect_insights` 会把局部下标映射回真实证据节点 `node_id`。
-
-问题越具体，后面的洞察 insight 越容易落到行为上；过于泛的问题会生成“克劳斯是一个关心社会议题的人”这类宽泛判断，更具体的问题会把证据推向“克劳斯是否愿意继续与玛丽亚交流”。
-
-## 7.7 围绕焦点问题检索证据 evidence
-
-生成焦点问题 focus 后，系统用每个问题重新检索记忆流 Memory Stream。
-
-```python
-retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
-```
-
-`reduce_all=False` 很关键。它保留“一个问题对应一组证据”的结构，而不是把所有检索结果混成一堆。
-
-从 `generative_agents/modules/memory/associate.py` 看，`retrieve_focus()` 的返回值有两种形状。默认的 `reduce_all=True` 会把多个焦点问题的结果合并去重；反思 Reflection 这里显式传入 `reduce_all=False`，所以返回的是焦点问题到证据节点列表的映射。
-
-```python
-def retrieve_focus(self, focus, retrieve_max=30, reduce_all=True):
-    retrieved = {}
-    node_ids = self.memory["event"] + self.memory["thought"]
-    for text in focus:
-        nodes = self._index.retrieve(
-            text,
-            similarity_top_k=len(node_ids),
-            node_ids=node_ids,
-            retriever_creator=_create_retriever,
-        )
-        if reduce_all:
-            retrieved.update({n.id_: n for n in nodes})
-        else:
-            retrieved[text] = nodes
-    if reduce_all:
-        return [self.to_concept(v) for v in retrieved.values()]
-    return {
-        text: [self.to_concept(n) for n in nodes]
-        for text, nodes in retrieved.items()
-    }
-```
-
-这段返回值可以按下面的形状理解：
-
-```python
-{
-    "克劳斯与玛丽亚是否有共同兴趣？": [
-        Concept(node_id="event-001", node_type="event", describe="克劳斯今天在咖啡馆遇到玛丽亚"),
-        Concept(node_id="event-002", node_type="event", describe="玛丽亚说她喜欢探索新想法"),
-        Concept(node_id="event-003", node_type="event", describe="克劳斯提到自己正在研究低收入社区中产阶级化"),
-    ],
-    "克劳斯未来是否应该继续与玛丽亚交流？": [
-        Concept(node_id="event-002", node_type="event", describe="玛丽亚说她喜欢探索新想法"),
-        Concept(node_id="event-004", node_type="event", describe="玛丽亚认真回应了克劳斯的研究话题"),
-    ],
-}
-```
-
-这里的证据 evidence 不是普通字符串，而是 `Concept` 记忆节点。节点对象里至少有几类会影响反思质量的字段：
-
-| 字段 | 含义 | 对反思 Reflection 的作用 |
-| --- | --- | --- |
-| `node_id` | 真实记忆节点编号。 | 后面写回想法 thought 时保存证据来源。 |
-| `node_type` | 记忆类型，例如 `event` 或 `thought`。 | 说明证据来自低层事件还是已有高层想法。 |
-| `describe` | 可读的事件或想法描述。 | 会进入 `reflect_insights` 的提示词 prompt。 |
-| `poignancy` | 触动程度或重要性评分。 | 参与检索排序，重要记忆更容易成为证据。 |
-| `access` | 最近访问时间。 | 检索后会被刷新，影响后续近因性 recency。 |
-
-这个映射结构会直接进入下一步洞察生成。`Agent.reflect()` 不把所有证据摊平成一个列表，而是逐组处理：
-
-```python
-for r_nodes in retrieved.values():
-    thoughts = self.completion("reflect_insights", r_nodes, 5)
-```
-
-因此，7.8 中 `reflect_insights` 返回的 `"0,1,2"`，编号的是当前这一组 `r_nodes` 中的局部证据下标，不是全局记忆流 Memory Stream 的编号。回调 callback 会再把这些局部下标映射回真实 `node_id`，这样新写入的想法 thought 才能保留可追溯证据。
-
-| 做法 | 结果 | 风险或价值 |
-| --- | --- | --- |
-| 把所有记忆混在一起总结。 | 得到宽泛判断。 | 容易生成“这个人很友好”之类弱结论。 |
-| 按焦点问题分别检索证据。 | 得到问题-证据对应关系。 | 更容易生成可追溯、可用于行为的洞察 insight。 |
-
-*表 7-7：焦点问题和证据结构。反思 Reflection 仍然遵循“记忆流 Memory Stream -> 检索 Retrieval -> 推理 reasoning”的路径。*
-
-这一步让反思 Reflection 保持证据边界。焦点问题 focus 负责问“要解释什么”，证据 evidence 负责回答“凭什么解释”。
-
-## 7.8 生成洞察 insight
-
-检索到证据后，系统调用 `reflect_insights`。
-
-```python
-for r_nodes in retrieved.values():
-    thoughts = self.completion("reflect_insights", r_nodes, 5)
-    for thought, evidence in thoughts:
-        _add_thought(thought, evidence)
-```
-
-`reflect_insights.txt` 要求返回洞察内容和相关节点编号。代表性输出如下：
-
-```text
-("克劳斯认为玛丽亚愿意讨论开放性问题，未来可以继续交流", "0,1,2")
-```
-
-`generative_agents/data/prompts/reflect_insights.txt` 的真实模板如下：
-
-```text
-根据给定的记忆节点，生成反思洞察。
-
+参考示例，为以下记忆节点生成反思焦点问题：
 """
 记忆节点：
 ${reference}
 
-生成${number}个反思洞察：
+生成${number}个反思焦点问题：
 """
 
 确保返回的数据格式遵守schema：
 [
-  ("洞察内容", "相关节点编号"),
-  ("洞察内容", "相关节点编号"),
+  "焦点问题1",
+  "焦点问题2",
+  "焦点问题3",
   ...
 ]
 
 要求：
-- 洞察要基于给定的记忆节点
-- 洞察要深刻且有启发性
-- 节点编号用逗号分隔，如"1,2,3"
-- 确保返回的数据格式遵守schema
+-问题要基于给定的记忆节点
+-问题要简洁明了，便于引导反思
+-确保遵守返回的格式schema
+</code></pre>
+    </td>
+    <td>
+<pre><code>根据给定的记忆节点，生成反思洞察。
 
 示例：
 """
@@ -473,228 +244,272 @@ ${reference}
   ("凯莉的生活很有规律，注重工作与生活的平衡", "1,2"),
   ("凯莉是一个有条理的人，善于安排时间", "1,2,3")
 ]
-```
 
-项目会把模型返回的编号字符串转成真实的 `node_id`：
+参考示例，为以下记忆节点生成反思洞察：
+"""
+记忆节点：
+${reference}
 
-```python
-indices = [int(i.strip()) for i in node_ids_str.split(",")]
-node_ids = [nodes[i].node_id for i in indices if i < len(nodes)]
-insights.append([insight.strip(), node_ids])
-```
+生成${number}个反思洞察：
+"""
 
-| 项目 | 内容 |
-| --- | --- |
-| 提示词 prompt 路径 | `generative_agents/data/prompts/reflect_insights.txt` |
-| 输入变量 | 证据记忆 `reference`、洞察数量 `number`。 |
-| 中文任务 | 根据给定的记忆节点，生成反思洞察。 |
-| 英文含义 | Generate reflection insights based on the given memory nodes. |
-| 输出结构 schema | `res: list[tuple[str, str]]`，每项是“洞察内容 + 相关节点编号字符串”。 |
-| 兜底值 failsafe | “某某在考虑下一步该做什么”，证据为第一条候选记忆。 |
+确保返回的数据格式遵守schema：
+[
+  ("洞察内容", "相关节点编号"),
+  ("洞察内容", "相关节点编号"),
+  ...
+]
 
-*表 7-8：洞察 prompt 的项目读法。洞察 insight 必须绑定证据编号，否则很容易变成没有来源的记忆幻觉。*
+要求：
+- 洞察要基于给定的记忆节点
+- 洞察要深刻且有启发性
+- 节点编号用逗号分隔，如"1,2,3"
+- 确保返回的数据格式遵守schema</code></pre>
+    </td>
+  </tr>
+</table>
 
-`reflect_insights` 和 `reflect_focus` 的差别在输出约束上。焦点问题只需要返回字符串；洞察 insight 必须返回二元组 `(洞察内容, 相关节点编号)`。这里的编号不是全局 `node_id`，而是本次提示词 prompt 输入列表中的局部下标。项目构造输入时使用 `enumerate(nodes)`，因此真实输入下标从 `0` 开始；模板里的 `"1,2,3"` 是示例文本，不代表全局记忆编号。
+| 提示词 prompt | 输入 input | 输出 output | 落点 |
+| --- | --- | --- | --- |
+| `reflect_focus` | 候选记忆列表 `reference`、问题数量 `number` | `res: List[str]` | 输出给 `retrieve_focus()`，用于找回证据 evidence。 |
+| `reflect_insights` | 某个焦点问题检索出的证据 evidence、洞察数量 `number` | `res: List[Tuple[str, str]]` | 输出给 `_add_thought()`，写回关联记忆 Associate。 |
 
-回调 callback 会把 `"0,1,2"` 这类局部下标映射成真实记忆节点 `node_id`。以克劳斯 Klaus Mueller 的案例为例：
-
-| 局部下标 | 代表性记忆 describe | 映射后的证据节点 |
-| --- | --- | --- |
-| `0` | 克劳斯今天在咖啡馆遇到玛丽亚 | `event-001` |
-| `1` | 玛丽亚说她喜欢探索新想法 | `event-002` |
-| `2` | 克劳斯提到自己正在研究低收入社区中产阶级化 | `event-003` |
-
-写回的想法 thought 保存的是 `event-001`、`event-002`、`event-003` 这些真实证据节点，而不是字符串 `"0,1,2"` 本身。
-
-这个设计让每条新想法 thought 都能带着证据来源写回记忆流 Memory Stream，也留下了一个边界：prompt 里“深刻且有启发性”的要求可能鼓励模型做抽象归纳，相关节点编号只能约束来源，不能自动保证结论不过度推断。
-
-| 原始证据 | 过度推断 | 更合理的洞察 insight |
-| --- | --- | --- |
-| 玛丽亚 Maria Lopez 认真听克劳斯 Klaus Mueller 讲话。 | 玛丽亚已经爱上了克劳斯。 | 克劳斯认为玛丽亚愿意倾听自己的研究想法。 |
-| 阿伊莎 Ayesha Khan 答应了解派对。 | 阿伊莎一定会参加派对。 | 阿伊莎知道派对时间，并可能考虑参加。 |
-| 居民询问山姆 Sam Moore 的竞选。 | 居民已经支持山姆。 | 山姆意识到居民开始关注他的竞选。 |
-
-*表 7-9：洞察 insight 的证据边界。反思可以抽象，但不能把弱证据写成强结论。*
-
-## 7.9 写回想法 thought
-
-洞察 insight 会写回记忆流 Memory Stream，成为 `thought` 类型的记忆节点 Concept。
-
-```python
-event = self.make_event(self.name, thought, self.get_tile().get_address())
-return self._add_concept("thought", event, filling=evidence)
-```
-
-项目把想法 thought 包装成事件式结构 event-like structure。这样做有三个结果。
-
-| 结果 | 含义 | 后续影响 |
-| --- | --- | --- |
-| 存储统一 | 事件 event 和想法 thought 都能写入关联记忆 Associate。 | 记忆管理不用再维护两套完全不同的数据结构。 |
-| 检索统一 | 想法 thought 也能进入向量索引并被检索 Retrieval 找回。 | 日程、对话和反应可以直接读取高层判断。 |
-| 反思递归 | 想法 thought 进入记忆流 Memory Stream 后，可以参与下一轮反思 Reflection。 | 角色能从经历形成更高层的自我、关系和目标理解。 |
-
-*表 7-10：想法 thought 写回记忆流 Memory Stream 的作用。反思产物不是临时摘要，而是角色长期认知的一部分。*
-
-递归写回会形成反思树 reflection tree：
+`Scratch.prompt_reflect_focus()` 和 `Scratch.prompt_reflect_insights()` 构造 `reference` 时使用 `enumerate(nodes)`，真实输入里的编号从 `0` 开始：
 
 ```text
-事件 event
-  -> 想法 thought
-    -> 更高层想法 higher-level thought
-      -> 自我理解 / 关系理解 / 目标理解
+0. 克劳斯在图书馆整理中产阶级化论文材料。
+1. 克劳斯查找置换效应数据在《城市更新》文献中的出处。
+2. 阿伊莎建议克劳斯把感官描写包装成参与式观察。
 ```
 
-## 7.10 对话后的反思 Reflection
-
-`Agent.reflect()` 还会处理近期聊天 `self.chats`。这条分支和常规反思不同：它不先生成焦点问题，而是把聊天直接整理成两类想法。
+这些数字只是本轮提示词 prompt 的局部编号，不是全局记忆编号，也不是 `node_id`。`reflect_insights` 的回调 callback 会把 `"0,1,2"` 这类局部编号映射成当前证据列表中的真实 `node_id`。
 
 ```python
-thought = self.completion("reflect_chat_planing", self.chats)
-_add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
-thought = self.completion("reflect_chat_memory", self.chats)
-_add_thought(f"{self.name} {thought}", evidence)
+node_ids = [
+    nodes[i].node_id
+    for i in range(len(nodes))
+    if str(i) in node_ids
+]
 ```
+
+## 7.6 对话反思：chat 如何生成计划类 thought 和长期记忆 thought
+
+对话反思只在 `self.chats` 非空时执行。它不走 `reflect_focus`，而是直接把近期聊天 chat 交给两个提示词 prompt：
+
+```python
+if self.chats:
+    thought = self.completion("reflect_chat_planing", self.chats)
+    _add_thought(f"对于 {self.name} 的计划：{thought}", evidence)
+
+    thought = self.completion("reflect_chat_memory", self.chats)
+    _add_thought(f"{self.name} {thought}", evidence)
+```
+
+```mermaid
+flowchart TD
+    Chats["待处理聊天 chats<br/>self.chats"] --> Evidence["聊天证据 evidence<br/>retrieve_chats(name) 收集 node_id"]
+    Chats --> PlanPrompt["计划反思提示词 reflect_chat_planing<br/>生成计划类文本"]
+    Chats --> MemoryPrompt["长期记忆提示词 reflect_chat_memory<br/>生成长期记忆文本"]
+    Evidence --> AddPlan["写回 _add_thought<br/>对于 {name} 的计划：..."]
+    PlanPrompt --> AddPlan
+    Evidence --> AddMemory["写回 _add_thought<br/>{name} ..."]
+    MemoryPrompt --> AddMemory
+    AddPlan --> Associate["关联记忆 Associate<br/>memory['thought'] 新增节点"]
+    AddMemory --> Associate
+```
+
+*图 7-4：对话反思 chat reflection 的数据流。计划反思和长期记忆的文本不同，但最终都会通过 `_add_thought()` 写入 `memory["thought"]`。*
 
 源码文件名保留了 `reflect_chat_planing` 的拼写。正文读法是“对话后的计划反思”。
 
-| 分支 | 提示词 prompt | 输入 | 输出结构 schema | 写回形式 |
-| --- | --- | --- | --- | --- |
-| 计划影响 | `reflect_chat_planing.txt` | 对话记录 `conversation`、角色 `agent`。 | `res: str`。 | `对于 {name} 的计划：...` |
-| 长期记忆 | `reflect_chat_memory.txt` | 对话记录 `conversation`、角色 `agent`。 | `res: str`。 | `{name} ...` |
-
-*表 7-11：对话后的反思 Reflection。对话不只是文本交换，也可能改变计划、承诺和关系。*
-
-计划反思提示词 `reflect_chat_planing.txt` 的真实模板如下：
-
-```text
-对话记录：
+<table>
+  <tr>
+    <th style="width:50%">reflect_chat_planing.txt</th>
+    <th style="width:50%">reflect_chat_memory.txt</th>
+  </tr>
+  <tr>
+    <td>
+<pre><code>对话记录：
 """
 ${conversation}
 """
 
-根据以上对话记录，以 ${agent} 的视角，用一句话描述 ${agent} 是否需要记住自己的计划。
-```
-
-英文含义：
-
-```text
-Given the conversation, describe in one sentence whether ${agent} needs to remember anything about their own plan.
-```
-
-长期记忆提示词 `reflect_chat_memory.txt` 的真实模板如下：
-
-```text
-对话记录：
+根据以上对话记录，以 ${agent} 的视角，用一句话描述 ${agent} 是否需要记住自己的计划。</code></pre>
+    </td>
+    <td>
+<pre><code>对话记录：
 """
 ${conversation}
 """
 
 以 ${agent} 的视角，用一句话描述对话中最有趣的地方。
-```
+</code></pre>
+    </td>
+  </tr>
+</table>
 
-英文含义：
-
-```text
-Given the conversation, describe the most interesting thing from ${agent}'s perspective in one sentence.
-```
-
-两份提示词 prompt 的包装函数结构相同：
-
-| 项目 | 计划反思 `reflect_chat_planing` | 长期记忆 `reflect_chat_memory` |
+| 项目 | 计划反思 reflect_chat_planing | 长期记忆 reflect_chat_memory |
 | --- | --- | --- |
-| 输入变量 | 对话记录 conversation、角色 agent | 对话记录 conversation、角色 agent |
-| 输出结构 schema | `res: str`，一句话描述计划影响 | `res: str`，一句话描述值得记忆的内容 |
-| 回调 callback | `response.strip() or failsafe` | `response.strip() or failsafe` |
+| 输入变量 input variables | 对话记录 `conversation`、角色 `agent` | 对话记录 `conversation`、角色 `agent` |
+| 输出结构 schema | `res: str` | `res: str` |
+| 回调 callback | 去掉首尾空白；空结果使用兜底值 failsafe。 | 去掉首尾空白；空结果使用兜底值 failsafe。 |
 | 兜底值 failsafe | `{name} 进行了一次对话` | `{name} 进行了一次对话` |
 | 写回前缀 | `对于 {name} 的计划：...` | `{name} ...` |
 
-伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan 参加派对后，代表性对话输入如下：
+在 `book-custom-discussion` 里，这两个分支分别落成 `node_109` 和 `node_110`。
 
-```text
-伊莎贝拉: 阿伊莎，2月14日下午5点到7点，霍布斯咖啡馆会举办情人节派对。
-阿伊莎: 听起来很有意思，我会看看时间，也可以告诉附近的朋友。
-```
-
-计划反思 `reflect_chat_planing` 的代表性输出：
-
-```text
-伊莎贝拉需要记住阿伊莎已经知道派对时间，并可能帮助把消息告诉附近的朋友。
-```
-
-写回后的想法 thought：
-
-```text
-对于 伊莎贝拉 的计划：伊莎贝拉需要记住阿伊莎已经知道派对时间，并可能帮助把消息告诉附近的朋友。
-```
-
-长期记忆 `reflect_chat_memory` 的代表性输出：
-
-```text
-记得阿伊莎对咖啡馆情人节派对表现出兴趣，并愿意把消息告诉朋友。
-```
-
-写回后的想法 thought：
-
-```text
-伊莎贝拉 记得阿伊莎对咖啡馆情人节派对表现出兴趣，并愿意把消息告诉朋友。
-```
-
-这两条 thought 的用途不同：第一条更容易影响日程 Planning 和提醒任务，第二条更容易影响后续对话 Dialogue 和关系判断。
-
-## 7.11 克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 案例
-
-克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 的案例可以把整条链路串起来。
-
-| 阶段 | 内容 | 项目读法 |
+| 真实节点 node | 代表原文 | 作用 |
 | --- | --- | --- |
-| 原始事件 event | 克劳斯和玛丽亚在咖啡馆聊天，玛丽亚认真回应克劳斯的研究话题。 | 低层经历进入记忆流 Memory Stream。 |
-| 焦点问题 focus | 克劳斯与玛丽亚是否有共同兴趣？ | `reflect_focus` 生成反思方向。 |
-| 证据 evidence | 玛丽亚喜欢探索新想法，克劳斯研究社会议题，双方都愿意继续讨论。 | `retrieve_focus(..., reduce_all=False)` 找回相关记忆。 |
-| 洞察 insight | 克劳斯认为玛丽亚愿意讨论开放性问题，未来可以继续交流。 | `reflect_insights` 生成带证据编号的高层判断。 |
-| 想法 thought | 克劳斯发现玛丽亚虽然专业不同，但同样喜欢探索新想法。 | `_add_concept("thought", ...)` 写回记忆。 |
-| 后续行为 | 克劳斯更可能主动接近玛丽亚，或延续共同兴趣话题。 | 日程 Planning、对话 Dialogue、反应 Reacting 都可能检索到这条 thought。 |
+| `node_109` | `对于 克劳斯 的计划：克劳斯需要记住：明天下午5点参加伊莎贝拉的情人节派对...` | 把对话中的承诺、派对和论文安排写成克劳斯 Klaus Mueller 的后续计划。 |
+| `node_110` | `克劳斯 阿伊莎建议把感官描写包装成'参与式观察'的田野笔记...` | 把阿伊莎 Ayesha Khan 的参与式观察建议写成长期记忆。 |
 
-*表 7-12：克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 的反思链路。关系不是静态标签，而是由事件、问题、证据和洞察逐步生成。*
+同一段聊天会产生两类想法 thought：一类影响“接下来要做什么”，另一类影响“以后如何理解这件事”。这就是对话反思 chat reflection 和普通聊天摘要的差别。
 
-直接写“克劳斯喜欢玛丽亚”是设定；通过反思 Reflection 得到“克劳斯发现玛丽亚与自己有共同兴趣，因此更愿意继续交流”是经历推动的关系变化。后者才是生成式智能体 Generative Agents 想要模拟的行为可信性。
+## 7.7 统一写回：thought 最终进入哪里
 
-## 7.12 失败诊断与观察入口
+常规反思和对话反思最终都会调用 `_add_thought()`：
 
-反思 Reflection 有收益，也有成本。调试时不能只看“有没有生成 thought”，还要看触发是否合理、证据是否可靠、写回后是否真的影响行为。
+```python
+def _add_thought(thought, evidence=None):
+    event = self.make_event(self.name, thought, self.get_tile().get_address())
+    return self._add_concept("thought", event, filling=evidence)
+```
 
-| 失败表现 | 可能原因 | 检查位置 | 修正方向 |
+这行代码把洞察 insight 或对话结论包装成事件类 Event，再以 `node_type = "thought"` 写入关联记忆 Associate。
+
+```python
+metadata = {
+    "node_type": node_type,
+    "subject": event.subject,
+    "predicate": event.predicate,
+    "object": event.object,
+    "address": event.address,
+    "poignancy": poignancy,
+    "create": create,
+    "expire": expire,
+}
+```
+
+| 字段 field | 是否落盘 | 含义 |
+| --- | --- | --- |
+| `text` | 是 | 想法 thought 的自然语言内容。 |
+| `metadata.node_type` | 是 | 固定为 `thought`。 |
+| `metadata.subject` | 是 | 通常是角色姓名，例如 `克劳斯`。 |
+| `metadata.predicate` / `metadata.object` | 是 | 由 `make_event()` 构造，表达“角色此时形成了什么想法”。 |
+| `metadata.address` | 是 | 反思发生时角色所在位置。 |
+| `metadata.poignancy` | 是 | 新 thought 自己的重要性评分 importance。 |
+| `metadata.create` / `expire` / `access` | 是 | 创建、过期和访问时间。 |
+| `evidence` | 否 | 当前基线代码没有持久化证据字段。 |
+
+这里有一条重要工程边界：`reflect_insights` 的回调 callback 确实把局部编号映射成了真实 `node_id`，但现有记忆索引文件 `docstore.json` 里看不到证据 evidence 字段。想要在界面或评估脚本里复查“这条 thought 来自哪些证据”，需要扩展 `Associate.add_node()` 的持久化逻辑。
+
+## 7.8 可运行脚本：断点复查与实时反思
+
+脚手架位置：
+
+```text
+docs\book\scaffolds\part_01\ch07_reflection_demo.py
+```
+
+脚本提供两种模式。断点复查 checkpoint mode 读取已有实验结果，不调用大语言模型 LLM；实时反思 live mode 会复制 `13:50` 状态到临时目录，然后调用真实 `Agent.reflect()`，需要 `MINIMAX_API_KEY`。
+
+断点复查 checkpoint mode：
+
+```powershell
+python docs/book/scaffolds/part_01/ch07_reflection_demo.py --mode checkpoint
+```
+
+关键输出 stdout 摘录：
+
+```text
+实验 experiment: book-custom-discussion
+角色 agent: 克劳斯 Klaus Mueller
+触发阈值 threshold: poignancy_max=150
+反思前 before: 20240213-13:50
+  status.poignancy: 147
+  memory: event=83, thought=1, chat=7
+  pending_chats: 26
+反思后 after: 20240213-14:00
+  status.poignancy: 0
+  memory: event=86, thought=18, chat=7
+  pending_chats: 6
+新增想法 new_thoughts: 17
+```
+
+实时反思 live mode：
+
+```powershell
+python docs/book/scaffolds/part_01/ch07_reflection_demo.py --mode live --force-poignancy 153
+```
+
+关键输出 stdout 摘录：
+
+```text
+原始触动程度 original_poignancy: 147
+强制触动程度 forced_poignancy: 153
+反思前 thought_count_before: 1
+调用链 completion_calls:
+  reflect_focus: 1
+  reflect_insights: 3
+  poignancy_event: 18
+  reflect_chat_planing: 1
+  reflect_chat_memory: 1
+反思后 thought_count_after: 19
+新增想法 new_thoughts: 18
+```
+
+历史断点稳定，实时重跑会随模型输出变化。两者共同证明同一件事：反思 Reflection 不是文档里的抽象概念，而是项目中可复查、可触发、可落盘的工程链路。
+
+把两个脚本完整展开到 `--show-new 18` 后，输出的 thought 可以并排读。下面按主题相近程度把两侧结果放在同一行；某一侧为 `-`，表示另一种模式没有生成完全同类的 thought。
+
+| 主题 | 断点复查 checkpoint mode 输出 thought | 实时反思 live mode 输出 thought |
+| --- | --- | --- |
+| 论文写作流程 | `node_94`：克劳斯展现了系统完整的学术研究方法论，从文献收集与查阅（5,6,14,18）、大纲搭建（13,24）、分章节起草（3,7,10,12,17）到反复修改完善（2,19），体现了迭代深化的写作流程 | `node_194`：克劳斯展现出严谨系统的学术写作流程，从文献收集、大纲梳理、主题句起草到段落撰写和反复修改，体现了扎实的研究方法论 |
+| 研究方法 | `node_99`：克劳斯展现了一套完整的学术研究工作流：从文献收集、大纲规划到分步撰写与反复修改，体现了系统化、迭代式的研究方法论 | `node_200`：克劳斯的论文写作历程完整展现了学术研究的迭代本质：从文献筛选到论点构建，再到分段撰写与反复修改，体现严谨的学者态度 |
+| 中产阶级化研究 | `node_105`：克劳斯对中产阶级化议题有深入且系统的研究路径，从查阅文献到形成论点再到撰写具体段落，展现了严谨的学术写作工作流 | `node_204`：克劳斯深入研究低收入社区中产阶级化议题，从经济影响、流离失所到置换效应多维度展开，体现对社会公平议题的深切关注与学术责任感 |
+| 社会关怀 | - | `node_197`：克劳斯对中产阶级化议题的研究不仅关注经济影响，还深入探讨流离失所和居民生活，反映出对社会公平正义议题的人文关怀 |
+| 时间管理 | `node_95`：克劳斯制定了高度结构化的每日计划（20），将写作时间、就餐和休息合理分配，反映出强大的自律性和时间管理能力，这种节奏感有助于长期高强度的学术工作 | `node_206`：克劳斯制定了从晨起到就寝的详细时间规划，并严格执行前往图书馆写作的安排，展现出高度的时间管理能力与自律品质 |
+| 计划拆解 | `node_103`：克劳斯将宏观写作目标拆解为精确到小时的执行计划，这种微观时间管理能力是将研究想法转化为高质量学术产出的关键保障 | - |
+| 阿伊莎建议 | `node_96`：克劳斯 阿伊莎采用主动参与式的学习方式，通过课堂讨论、案例分析、阅读批注和互动交流（8,9,11,21,23）来掌握文学分析方法，体现了协作学习与理论实践相结合的特点 | `node_209`：克劳斯 阿伊莎通过小组讨论、课堂互动和图书馆学习等多种方式参与文学分析，展现出积极主动的学习态度和合作精神 |
+| 文学学习 | `node_101`：克劳斯 阿伊莎的文学学习路径体现'细读+讨论'的双轨模式：既有理论框架的输入，又有文本细节的精读，更通过课堂互动深化理解 | `node_202`：克劳斯 阿伊莎融合了被动学习（听讲）与主动建构（小组讨论、文本标记），通过理论与实践的双向互动实现深度理解 |
+| 协作学习 | `node_106`：克劳斯 阿伊莎的学习模式兼具课堂理论学习与小组讨论实践，体现了文学分析需要理论与协作并重的特点 | `node_195`：克劳斯 阿伊莎通过课堂学习、小组讨论、文本细读和笔记梳理多维度提升文学分析能力，学习方式多元且注重理论与实践结合 |
+| 沃尔夫冈学习 | `node_97`：克劳斯 沃尔夫冈运用深度学习策略学习有机化学，通过梳理反应类型、构建知识框架图、标注关键概念并逐步推导例题（15,16,22,25,26,27,28），展现出对学科本质的系统性把握 | `node_196`：克劳斯 沃尔夫冈注重化学知识的深度理解，通过标注重点、梳理反应类型与原理、构建知识框架等方式系统掌握有机化学 |
+| 知识框架 | `node_100`：克劳斯 沃尔夫冈运用多元化的深度学习策略，构建知识框架、批注关键概念、推导例题，将抽象的化学反应机制转化为结构化、可迁移的知识体系 | `node_203`：克劳斯 沃尔夫冈运用框架图、批注和分类梳理等元认知工具，体现出对系统性知识结构的主动追求 |
+| 学习策略 | `node_107`：克劳斯 沃尔夫冈专注有机化学中消除反应机制（E1/E2）的核心概念，反映出对反应中间体与过渡态等抽象理论的深入钻研 | `node_207`：克劳斯 三位同学均采用系统化学习方法，包括构建知识框架图、批注重点概念、梳理论文笔记和回顾文献资料，体现出高效的学习策略 |
+| 多元成长 | `node_98`：三位学生虽学习领域和方式各异，克劳斯专注于研究型深度写作，阿伊莎强调互动式课堂学习，沃尔夫冈注重概念框架构建，但都体现了明确的学术目标和高效的学习策略 | `node_198`：克劳斯、阿伊莎和沃尔夫冈均在奥克山学院开展学术活动，体现了该校浓厚的学术氛围和学生积极向上的学习态度 |
+| 学院氛围 | `node_102`：克劳斯 奥克山学院图书馆是三位学习者的共同学术空间，铺满桌面的笔记与草稿成为勤奋钻研的缩影，映射出浓厚的校园学习文化 | `node_205`：克劳斯 三位同学分别专注于社会研究、文学分析与化学反应机制等不同领域，反映出奥克山学院多元化的学术生态与跨学科学习氛围 |
+| 图书馆空间 | `node_104`：图书馆是多学科学习的交汇点，承载着从社会科学（克劳斯的中产阶级化研究）到人文学科（阿伊莎的文学分析）再到自然科学（沃尔夫冈的化学反应机制）的多元化知识探索 | `node_199`：克劳斯 图书馆作为跨学科学习枢纽，同时承载着文学分析、社会学论文与化学研究三种截然不同的知识建构过程，体现了学院教育中多领域思想并行的学术生态 |
+| 桌面状态 | `node_108`：克劳斯 图书馆桌子在不同时间段承载着不同学习者的任务，从化学到文学到社会学论文，桌面材料的不断更迭象征着知识生产的流动与积累 | `node_201`：克劳斯 图书馆桌面的状态演变，从空置到文献散落再到论据整理，隐喻着学术思维从混沌探索走向有序整合的认知过程 |
+| 计划反思 | `node_109`：对于 克劳斯 的计划：克劳斯需要记住：明天下午5点参加伊莎贝拉的情人节派对，以及先去图书馆翻找置换效应数据在《城市更新》文献中的出处，找到后再找阿伊莎一起梳理置换效应段的论证逻辑，同时继续按'核心论点分节+田野笔记与文献分析呼应'的结构推进论文写作。 | `node_210`：对于 克劳斯 的计划：克劳斯需要记住两件计划：一是明天下午5点参加伊莎贝拉的情人节派对，二是去图书馆翻阅城市更新的笔记找到置换效应数据的出处，以便之后和阿伊莎一起梳理那段论证逻辑。 |
+| 长期记忆 | `node_110`：克劳斯 阿伊莎建议把感官描写包装成'参与式观察'的田野笔记，让我找到了在社会学论文中兼顾文学感染力和学术严谨性的巧妙平衡点。 | `node_211`：克劳斯 卡在论文开头时，阿伊莎建议把感官细节当作'参与式观察'的田野笔记来呈现，让我既能用文学化描写增强感染力，又能保住社会学论文的学术性，一下子把写作僵局打破了。 |
+
+## 7.9 失败诊断与本章小结
+
+反思 Reflection 常见问题可以按输入、处理、输出定位。
+
+| 问题 | 典型表现 | 观察入口 | 处理方式 |
 | --- | --- | --- | --- |
-| 很少形成高层认知 | `poignancy` 长期低于 `poignancy_max`。 | 日志中的 `reflect(P.../...)`、`config.json`。 | 调低阈值，或检查重要性评分 prompt。 |
-| 对小事过度解读 | 阈值过低，或普通事件重要性评分过高。 | thought 数量、反思频率、普通事件的 `poignancy`。 | 提高阈值，收紧重要性评分口径。 |
-| 焦点问题太泛 | `reflect_focus` 只生成“今天重点是什么”这类问题。 | `reflect_focus` 输出。 | 让候选记忆更有代表性，或调整 prompt 示例。 |
-| 洞察没有证据 | `reflect_insights` 输出过度抽象，证据编号弱。 | 洞察对应的 `node_id` 和原始记忆。 | 强化证据约束，人工审计高风险 thought。 |
-| thought 没被使用 | 写回成功，但后续检索 Retrieval 没取到。 | `Associate.memory["thought"]`、`retrieve_focus()` 结果。 | 检查向量索引、查询 focus 和重要性权重。 |
-| 错误继续传播 | 错误 thought 写回后被计划或对话继续使用。 | 对话原文、断点 checkpoint、记忆节点 Concept。 | 增加冲突检测和事实回查。 |
+| 触发不了 | `status.poignancy` 长期低于 `poignancy_max`。 | checkpoint 的 `agents.<name>.status.poignancy`。 | 检查第 5 章的重要性评分 importance，或降低实验用阈值。 |
+| 候选记忆太弱 | `reflect_focus` 生成的问题很泛。 | `retrieve_events()` / `retrieve_thoughts()` 的候选节点。 | 确认近期 event / thought 是否包含足够信息。 |
+| 洞察 insight 太空 | 新 thought 只是“角色很努力”之类空话。 | `reflect_insights` 输出和写回的记忆索引文件 `docstore.json`。 | 调整提示词 prompt 示例，强化证据约束。 |
+| 对话反思缺失 | 没有生成 `对于 {name} 的计划：...` 这类节点。 | checkpoint 的 `agents.<name>.chats`。 | 检查对话是否进入 `self.chats`，以及反思前是否已被清空。 |
+| 证据无法回查 | thought 文本存在，但元数据 metadata 里没有证据 evidence。 | `storage\<角色>\associate\docstore.json`。 | 当前基线边界如此；需要扩展 `Associate.add_node()` 才能持久化 evidence。 |
+| 实时脚本失败 | live mode 报 MiniMax 或 embedding 错误。 | 脚本 stderr、环境变量 `MINIMAX_API_KEY`。 | 确认 API key、网络和模型配置。 |
 
-*表 7-13：反思 Reflection 的失败诊断。重点不是有没有 thought，而是 thought 是否有证据、是否被使用、是否真的改变行为。*
+最可靠的观察顺序是：先看断点 checkpoint 的数量变化，再看记忆索引文件 docstore 的新增 thought，最后用脚本 live mode 验证调用链。数量变化证明反思发生，新增节点证明结果落盘，调用链证明真实代码路径跑通。
 
-| 观察入口 | 看什么 | 证据强度 |
-| --- | --- | --- |
-| 日志 log | `Agent.reflect()` 是否打印角色名、累计 `poignancy`、阈值和候选概念数量。 | 中，说明触发发生过。 |
-| 记忆 memory | checkpoint 中 `Associate.memory["thought"]` 是否新增内容。 | 强，说明 thought 写入成功。 |
-| 证据 evidence | 洞察绑定的 `node_id` 是否能回到原始事件。 | 强，说明 insight 有来源。 |
-| 行为 behavior | 克劳斯是否更常接近玛丽亚，是否引用共同兴趣，是否改变对话和计划。 | 最强，说明反思真的进入行为链路。 |
+反思 Reflection 把经历解释成新的想法 thought。它的输入不是整个世界，而是近期事件 event、已有想法 thought 和待处理聊天 chat；它的处理不是简单摘要，而是先生成焦点问题 focus，再检索证据 evidence，再生成洞察 insight；它的输出不是临时文本，而是写回关联记忆 Associate 的 thought 节点。
 
-*表 7-14：如何观察反思 Reflection。最终标准不是写入成功，而是后续行为改变。*
-
-## 7.13 本章小结
-
-反思 Reflection 的核心不是“总结得更漂亮”，而是让角色从经历中形成有证据的高层判断。它先用重要性评分和 `poignancy_max` 控制触发，再从近期事件 event 和已有想法 thought 中提出焦点问题 focus，围绕问题检索证据 evidence，生成洞察 insight，最后把洞察写回记忆流 Memory Stream，成为新的想法 thought。
-
-判断一条反思是否可靠，要看四件事：它是否有明确输入，是否围绕具体问题检索证据，洞察是否绑定原始节点，写回后是否能被后续日程 Planning、对话 Dialogue 或反应 Reacting 使用。没有证据的 thought 只是更漂亮的幻觉；能回到证据并改变行为的 thought，才是生成式智能体 Generative Agents 中有价值的反思。
-
-下一章进入日程 Planning。到那里可以看到记忆流 Memory Stream、检索 Retrieval 和反思 Reflection 如何共同落到一天的生活安排里。
+`book-custom-discussion` 给出了一条完整证据链：`13:50` 时克劳斯 Klaus Mueller 的触动程度 poignancy 尚未过线；`14:00` 后 thought 从 1 条增长到 18 条；`node_109` 写下计划反思，`node_110` 写下长期记忆；脚本还能从断点重新触发 `Agent.reflect()`。到这里，记忆流 Memory Stream、检索 Retrieval 和反思 Reflection 已经连成一条闭环：经历被保存，相关经历被找回，新的判断再写回过去。
 
 ## 参考资料
 
-- Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein. *Generative Agents: Interactive Simulacra of Human Behavior*. arXiv: https://arxiv.org/abs/2304.03442
-- ar5iv full text: https://ar5iv.labs.arxiv.org/html/2304.03442
-- Generative Agents local source: `generative_agents/modules/agent.py`
-- Generative Agents local source: `generative_agents/modules/prompt/scratch.py`
-- Generative Agents local config: `generative_agents/data/config.json`
-- Generative Agents local prompts: `generative_agents/data/prompts/reflect_focus.txt`, `generative_agents/data/prompts/reflect_insights.txt`, `generative_agents/data/prompts/reflect_chat_planing.txt`, `generative_agents/data/prompts/reflect_chat_memory.txt`, `generative_agents/data/prompts/poignancy_event.txt`, `generative_agents/data/prompts/poignancy_chat.txt`
+- Park et al. (2023). *Generative Agents: Interactive Simulacra of Human Behavior*.
+- Local code: `generative_agents/modules/agent.py`
+- Local code: `generative_agents/modules/memory/associate.py`
+- Local prompts: `generative_agents/data/prompts/reflect_focus.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_insights.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_chat_planing.txt`
+- Local prompts: `generative_agents/data/prompts/reflect_chat_memory.txt`
+- Local scaffold: `docs/book/scaffolds/part_01/ch07_reflection_demo.py`
+- Local evidence: `generative_agents/results/checkpoints/book-custom-discussion/`

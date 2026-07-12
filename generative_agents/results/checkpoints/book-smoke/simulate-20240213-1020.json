@@ -1,6 +1,6 @@
 {
   "stride": 10,
-  "time": "20240213-10:00",
+  "time": "20240213-10:20",
   "maze": {
     "path": "assets\\village\\maze.json"
   },
@@ -41,7 +41,7 @@
     "玛丽亚": {
       "config_path": "assets\\village\\agents\\玛丽亚\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 4
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -273,7 +273,12 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_4",
+            "node_3",
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
@@ -286,41 +291,41 @@
         "event": {
           "subject": "玛丽亚",
           "predicate": "此时",
-          "object": "闹钟响起，慢慢醒来",
-          "describe": "闹钟响起，慢慢醒来",
+          "object": "洗澡",
+          "describe": "洗澡",
           "address": [
             "the Ville",
             "奥克山学院宿舍",
             "女卫生间",
-            "厕所"
+            "花洒"
           ],
-          "emoji": "闹钟响起，慢慢醒来"
+          "emoji": "洗澡"
         },
         "obj_event": {
-          "subject": "厕所",
+          "subject": "花洒",
           "predicate": "此时",
-          "object": "闲置待使用",
-          "describe": "闲置待使用",
+          "object": "正在喷洒水",
+          "describe": "正在喷洒水",
           "address": [
             "the Ville",
             "奥克山学院宿舍",
             "女卫生间",
-            "厕所"
+            "花洒"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
-        "duration": 5
+        "start": "20240213-10:20:00",
+        "duration": 15
       },
       "coord": [
-        130,
-        53
+        131,
+        57
       ]
     },
     "伊莎贝拉": {
       "config_path": "assets\\village\\agents\\伊莎贝拉\\agent.json",
       "status": {
-        "poignancy": 0
+        "poignancy": 7
       },
       "schedule": {
         "create": "20240213-10:00:00",
@@ -541,7 +546,10 @@
       },
       "associate": {
         "memory": {
-          "event": [],
+          "event": [
+            "node_2",
+            "node_1"
+          ],
           "thought": [
             "node_0"
           ],
@@ -554,37 +562,37 @@
         "event": {
           "subject": "伊莎贝拉",
           "predicate": "此时",
-          "object": "整理情人节派对的宣传要点和话术",
-          "describe": "整理情人节派对的宣传要点和话术",
+          "object": "与常客聊天，介绍明天情人节的派对时间和地点",
+          "describe": "与常客聊天，介绍明天情人节的派对时间和地点",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
-          "emoji": "整理情人节派对的宣传要点和话术"
+          "emoji": "与常客聊天，介绍明天情人节的派对时间和地点"
         },
         "obj_event": {
-          "subject": "书桌",
+          "subject": "咖啡馆顾客座位",
           "predicate": "此时",
-          "object": "摆满情人节宣传材料",
-          "describe": "摆满情人节宣传材料",
+          "object": "有人坐着聊天",
+          "describe": "有人坐着聊天",
           "address": [
             "the Ville",
-            "伊莎贝拉的公寓",
-            "主人房",
-            "书桌"
+            "霍布斯咖啡馆",
+            "咖啡馆",
+            "咖啡馆顾客座位"
           ],
           "emoji": ""
         },
-        "start": "20240213-10:00:00",
-        "duration": 10
+        "start": "20240213-10:10:00",
+        "duration": 15
       },
       "coord": [
-        73,
-        16
+        74,
+        23
       ]
     }
   },
-  "step": 1
+  "step": 3
 }

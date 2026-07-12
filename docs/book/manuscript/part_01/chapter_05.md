@@ -1,264 +1,430 @@
 # 第 5 章 论文架构二：记忆流 Memory Stream
 
-人物定义 Persona 解决“这个角色是谁”，记忆流 Memory Stream 解决“这个角色经历过什么”。没有记忆流 Memory Stream，智能体每天都会像重新出生。它可以在当前对话里看起来很聪明，却无法真正延续生活：
+人物定义 Persona 给角色身份，记忆流 Memory Stream 给角色过去。没有记忆流 Memory Stream，智能体每天都会像重新出生：
 
-- 刚答应参加派对，下一轮就忘记。
-- 看到浴室有人使用，却不知道自己应该等待。
-- 刚和朋友聊完论文，下次见面又像第一次认识。
+- 刚答应参加派对，下一轮就忘记；
+- 刚和朋友聊完论文，下次见面又像第一次认识；
 - 经历了很多事件，却无法从这些事件中形成稳定判断。
 
-生成式智能体 Generative Agents 的关键不只是让大语言模型 LLM 会聊天，而是让角色在一个世界中持续生活。记忆流 Memory Stream 就是这段生活的经验底账。
+生成式智能体 Generative Agents 的关键不只是让大语言模型 LLM 会聊天，而是让角色在同一个世界中持续生活。记忆流 Memory Stream 承接的就是这段生活的经验底账：发生过什么、对谁重要、以后还能不能被找回来。
 
 ![图 5-1：记忆流 Memory Stream：从经验卡片到可检索记忆](../../assets/chapter_05/ch05_memory_stream_workbench.png)
 
-*图 5-1：记忆流 Memory Stream 的系统入口。观察 Observation、行动 Action、对话 Dialogue 和反思 Reflection 从小镇现场进入记忆节点 Concept，再写入关联记忆 Associate、向量索引 LlamaIndex 和检索 Retrieval，最后回到日程 Planning、对话 Dialogue、反应 Reacting 和新的反思 Reflection。*
+*图 5-1：记忆流 Memory Stream 的系统入口。观察 Observation、行动 Action、对话 Dialogue 和反思 Reflection*
 
-## 5.1 聊天历史不够
+## 5.1 从一段真实经历开始：克劳斯 Klaus Mueller 的论文对话
 
-很多大语言模型 LLM 角色应用会从两件事开始：写一段人设，再把最近聊天记录塞进上下文。这两件事都有用，但都不够。人设能说明角色是谁。例如：
+先看一段小镇时间线。克劳斯 Klaus Mueller 正在写一篇关于`低收入社区中产阶级化影响`的研究论文，他在图书馆遇到阿伊莎 Ayesha Khan，并向她请教论文开头怎么写。
+
+证据路径：`generative_agents\results\compressed\book-custom-discussion\simulation.md`
 
 ```text
-姓名: 伊莎贝拉
-年龄：34
-先天特质：友好、外向、好客
-后天特质：伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。
-生活习惯：伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。
-日常计划：伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。
+# 20240213-10:20
 
-今天是 2024年02月13日（星期二）。伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。
+## 活动记录：
+
+### 克劳斯
+位置：the Ville，奥克山学院，图书馆，图书馆桌子
+活动：克劳斯向阿伊莎请教中产阶级化论文的写作开头，阿伊莎建议用调研中的真实场景或街巷改造前后对比来切入。
+
+### 阿伊莎
+位置：the Ville，奥克山学院，图书馆，书架
+活动：老师讲解文学分析方法的理论框架
+
+## 对话记录：
+
+### 克劳斯 -> 阿伊莎 @ the Ville，奥克山学院，图书馆，图书馆桌子
+
+`克劳斯`
+> 阿伊莎老师，您刚才讲的写作技巧正好是我现在需要的——我正在搭建中产阶级化论文的框架，您觉得开头应该怎么切入比较吸引人？
+
+`阿伊莎`
+> 老师刚提到，好的开头可以用一个具体场景或细节切入，引发读者的代入感。你可以从你调研中遇到的一个真实案例开始——比如某条街巷在改造前后的对比画面，这样比直接下定义更容易抓住读者。
 ```
 
-这能让模型在当前回答中带有角色风格，却不能保存刚刚发生过什么。伊莎贝拉 Isabella Rodriguez 知道自己是咖啡馆老板，但不知道今天上午已经邀请过谁。聊天历史能延续最近几轮对话，却覆盖不了小镇生活。
+这段压缩结果 compressed result 只是阅读入口。它告诉人类“克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 聊过什么”，但系统真正依赖的是后面的状态文件：这段经历会被写成聊天 chat 节点，挂到克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 各自的关联记忆 Associate 中，再带着时间、地点、重要性 importance 和节点编号进入后续检索 Retrieval。
 
-智能体的经历不只发生在聊天里，还发生在地图上、计划里、观察里和反思里。一个居民可能没有说话，但他看见了别人正在布置派对；一个居民可能没有参与谈话，但他注意到很多人都在讨论地方选举。这些都不是聊天历史，却会影响后续行为。生成式智能体 Generative Agents 需要保存的是经验流，而不是对话流。
+### 证据实验：book-custom-discussion
 
-## 5.2 记忆流 Memory Stream 保存什么
+实验从 `20240213-08:00` 开始，推进到 `20240213-19:50`，参与角色包括克劳斯 Klaus Mueller、玛丽亚 Maria Lopez、阿伊莎 Ayesha Khan、沃尔夫冈 Wolfgang Schulz 和伊莎贝拉 Isabella Rodriguez。它同时留下压缩时间线、断点 checkpoint 和本地记忆索引 local memory index，适合观察一段经历如何从小镇现场进入记忆流 Memory Stream。
 
-记忆流 Memory Stream 是智能体自己的长期经验记录。它持续保存角色观察到、做过、聊过、想到的内容，并让这些内容在未来能被检索和复用。论文中的记忆流 Memory Stream 至少覆盖四类经验。
-
-| 经验类型 | 小镇 Smallville 案例 | 未来行为价值 |
+| 证据类型 | 证据路径 | 用途 |
 | --- | --- | --- |
-| 观察 Observation | 玛丽亚 Maria Lopez 看见伊莎贝拉 Isabella Rodriguez 正在布置霍布斯咖啡馆。 | 角色没有说话，也可能获得会影响未来的信息。 |
-| 行动 Action | 伊莎贝拉 Isabella Rodriguez 正在准备情人节派对的饮品。 | 角色自己的行动会影响后续计划，也会成为别人观察到的事件。 |
-| 对话 Dialogue | 伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan 参加 2 月 14 日下午 5 点的派对。 | 对话是关系变化和信息传播的主要载体。 |
-| 反思 Reflection | 克劳斯 Klaus Mueller 认为玛丽亚 Maria Lopez 喜欢探索新想法，未来可以继续交流。 | 反思把零散经验提升成更稳定的判断。 |
+| 压缩结果 compressed result | `generative_agents\results\compressed\book-custom-discussion\simulation.md` | 先读剧情，确认小镇里发生过哪些活动和对话。 |
+| 断点 checkpoint | `generative_agents\results\checkpoints\book-custom-discussion\simulate-20240213-1950.json` | 查看每个角色当前持有哪些 `event`、`chat`、`thought` 节点编号。 |
+| 本地记忆索引 local memory index | `generative_agents\results\checkpoints\book-custom-discussion\storage\<角色>\associate\docstore.json` | 查看具体记忆节点 Concept 的文本 text 和元数据 metadata。 |
 
-*表 5-1：记忆流 Memory Stream 保存的经验类型。它不是单纯聊天记录，而是角色生活中可被未来行为使用的经验集合。*
-
-伊莎贝拉 Isabella Rodriguez 的派对能够传播，是因为邀请、承诺、看到布置、后续转述都能成为记忆。山姆 Sam Moore 的竞选能够扩散，是因为关于竞选的谈话不是当场消失，而会留在居民自己的经验里。克劳斯 Klaus Mueller 和玛丽亚 Maria Lopez 的关系能够变化，是因为一次次相遇和对话会被反思 Reflection 压缩成更高层的判断。
-
-```mermaid
-flowchart TD
-    Observation["观察 Observation<br/>看到附近事件"] --> Stream["记忆流 Memory Stream<br/>角色经验流"]
-    Action["行动 Action<br/>自己的行动"] --> Stream
-    Dialogue["对话 Dialogue<br/>对话摘要"] --> Stream
-    Reflection["反思 Reflection<br/>高层想法"] --> Stream
-
-    Stream --> Retrieval["检索 Retrieval<br/>找回相关经验"]
-    Retrieval --> Planning["日程 Planning<br/>调整计划"]
-    Retrieval --> Reaction["反应 Reacting<br/>解释现场事件"]
-    Retrieval --> Dialogue2["对话 Dialogue<br/>生成后续对话"]
-    Retrieval --> Reflection2["反思 Reflection<br/>继续归纳"]
-```
-
-*图 5-2：经验进入记忆流 Memory Stream 后，会继续参与检索、日程、反应、对话和反思。主图展示了这条链路的视觉现场；这张图把链路压缩成论文架构关系。*
-
-## 5.3 记忆不是聊天历史，也不是系统日志
-
-记忆流 Memory Stream 很容易被误解成聊天历史，或者系统日志。聊天历史只记录对话。系统日志主要服务开发者排查问题。记忆流 Memory Stream 记录的是角色自己的经验，服务的是未来行为。
-
-| 判定问题 | 聊天历史 | 系统日志 | 记忆流 Memory Stream |
-| --- | --- | --- | --- |
-| 这条记录属于谁？ | 属于一次会话。 | 属于系统运行过程。 | 属于某个具体角色。 |
-| 记录什么？ | 最近几轮对话。 | 函数调用、文件写入、异常、接口响应。 | 观察 Observation、行动 Action、对话 Dialogue、反思 Reflection。 |
-| 谁会使用它？ | 当前模型上下文或用户。 | 开发者。 | 智能体自己的检索、日程、对话和反思。 |
-| 会不会影响未来行为？ | 受上下文窗口限制。 | 通常不直接影响角色行为。 | 会重新进入未来行为生成。 |
-| 是否有角色视角？ | 弱，通常只保留发言顺序。 | 弱，偏工程事实。 | 强，同一事件会进入特定角色的经验。 |
-
-*表 5-2：聊天历史、系统日志和记忆流 Memory Stream 的判定表。记忆流 Memory Stream 的重点不是“记录更多文本”，而是让过去能重新参与未来决策。*
-
-看到“某个 JSON 文件写入成功”对开发者有用，对伊莎贝拉 Isabella Rodriguez 没有意义；看到“阿伊莎 Ayesha Khan 答应参加派对”对伊莎贝拉 Isabella Rodriguez 有意义，应该进入她自己的经验流。这个判定比“有没有保存聊天记录”更重要。
-
-## 5.4 项目中一条记忆如何轻量落地
-
-在项目里，一条记忆不是一段裸文本。它先来自世界事件，再被转换成可检索的记忆节点。第 18 章会展开完整源码；本章先保留概念层链路：
-
-```text
-世界事件 Event -> 记忆节点 Concept -> 关联记忆 Associate -> 向量索引 LlamaIndex -> 检索 Retrieval
-```
-
-| 概念层 | 项目锚点 | 在记忆流 Memory Stream 中的作用 |
-| --- | --- | --- |
-| 世界事件 Event | `subject`、`predicate`、`object`、`describe`、`address`。 | 描述“世界发生了什么”。 |
-| 记忆节点 Concept | `node_type`、`text`、时间、重要性字段 `poignancy`。 | 描述“这件事如何成为角色自己的记忆”。 |
-| 关联记忆 Associate | 按 `event`、`chat`、`thought` 保存节点编号。 | 管理一个智能体自己的记忆集合。 |
-| 向量索引 LlamaIndex | 文本节点、元数据 metadata、向量嵌入 embedding。 | 让记忆能按语义相似度被找回。 |
-| 检索 Retrieval | 新近性 recency、相关性 relevance、重要性 importance。 | 把候选记忆重新排序，供未来行为使用。 |
-
-*表 5-3：一条记忆的轻量项目落点。第 5 章只建立工程入口；完整字段、存储文件和检索实现会在第 18 章展开。*
-
-伊莎贝拉 Isabella Rodriguez 正在霍布斯咖啡馆准备派对饮品时，这件事进入记忆流 Memory Stream 后，可以先这样读：
-
-```text
-记忆文本：伊莎贝拉正在霍布斯咖啡馆准备情人节派对的饮品。
-记忆类型：事件 event
-发生地点：Smallville:霍布斯咖啡馆:柜台
-创建时间：20240213-09:30
-重要性：6
-未来用途：被检索到后，支持派对计划、邀请对话和他人观察。
-```
-
-自然语言文本让大语言模型 LLM 能直接读懂这条记忆；时间、地点、类型和重要性让系统能检索、排序、清理和分类。记忆流 Memory Stream 的工程价值就在这里：它同时服务模型理解和系统管理。
+第 5 章只看记忆写入链路：
 
 ```mermaid
 flowchart LR
-    Event["世界事件 Event<br/>发生了什么"] --> Concept["记忆节点 Concept<br/>文本 / 类型 / 时间 / 重要性"]
-    Concept --> Associate["关联记忆 Associate<br/>属于哪个智能体"]
-    Associate --> Index["向量索引 LlamaIndex<br/>可检索节点"]
-    Index --> Retrieval["检索 Retrieval<br/>未来找回相关经验"]
-    Retrieval --> Behavior["未来行为<br/>日程 / 对话 / 反应 / 反思"]
+    Scene["小镇现场<br/>观察 Observation / 行动 Action / 对话 Dialogue"] --> Event["世界事件 Event<br/>发生了什么"]
+    Event --> Concept["记忆节点 Concept<br/>文本 text + 元数据 metadata"]
+    Concept --> Associate["关联记忆 Associate<br/>角色自己的节点清单"]
+    Associate --> Docstore["本地记忆索引 docstore<br/>保存完整节点内容"]
+    Concept --> Importance["重要性 importance<br/>写入 poignancy"]
 ```
 
-*图 5-3：项目中一条记忆进入记忆流 Memory Stream 的轻量路径。世界事件只有写成记忆节点 Concept 并进入索引后，才会成为未来行为可使用的经验。*
+*图 5-2：第 5 章关注的记忆写入链路。它只覆盖“经历如何变成角色自己的记忆”，不覆盖检索 Retrieval、向量索引 LlamaIndex 和未来行为生成。*
 
-## 5.5 自然语言作为统一记忆表示
+## 5.2 聊天历史不够：过去必须成为状态
 
-生成式智能体 Generative Agents 的一个关键选择是：记忆用自然语言表达。结构化数据当然清晰。例如：
+很多大语言模型 LLM 角色应用会从两件事开始：写一段人设，再把最近聊天记录塞进上下文 context。这两件事都有用，但都不够。
+
+克劳斯 Klaus Mueller 刚向阿伊莎 Ayesha Khan 请教论文开头，不等于下一轮还能记住这个写作建议；玛丽亚 Maria Lopez 刚答应帮伊莎贝拉 Isabella Rodriguez 准备派对饮品和水果，也不等于这个承诺会自然进入后续日程。即时聊天只证明“话说过”，不证明“系统已经把这件事变成可回查状态”。
+
+小镇中的经历也不只发生在聊天里。阿伊莎 Ayesha Khan 没有开口时，系统仍然记录她在图书馆挑选莎士比亚戏剧篇目；伊莎贝拉 Isabella Rodriguez 只是打开咖啡馆大门并开灯，这个动作也会成为小镇状态的一部分。这些都不是聊天历史，却会影响后续行为。
+
+| 判定问题 | 聊天历史 | 记忆流 Memory Stream |
+| --- | --- | --- |
+| 保存范围 | 最近几轮对话。 | 观察 Observation、行动 Action、对话 Dialogue、想法 thought。 |
+| 归属对象 | 一次会话或上下文 context。 | 某个具体智能体 agent。 |
+| 保存位置 | 通常只在当前提示词 prompt 或会话缓存里。 | 进入关联记忆 Associate 和向量索引 LlamaIndex。 |
+| 影响行为 | 受上下文窗口限制。 | 能被检索 Retrieval 找回，再进入日程、对话、反应和反思。 |
+| 证据形态 | 对话文本。 | 记忆节点 Concept、元数据 metadata、断点 checkpoint、索引文件。 |
+
+*表 5-1：聊天历史与记忆流 Memory Stream 的判定表。关键分界不是“有没有保存文本”，而是过去是否成为可检索、可排序、可回写的状态。*
+
+## 5.3 记忆流 Memory Stream 保存什么
+
+论文中，记忆流 Memory Stream 覆盖角色观察到、做过、聊过、想到的内容，如下表所示：
+
+| 论文层经验 | 项目落地类型 | `book-custom-discussion` 案例 | 后续用途 |
+| --- | --- | --- | --- |
+| 观察 Observation | 事件 event | 阿伊莎 Ayesha Khan 在图书馆书架前选读莎士比亚戏剧篇目。 | 角色没有说话，也能获得会影响未来的信息。 |
+| 行动 Action | 事件 event | 伊莎贝拉 Isabella Rodriguez 打开霍布斯咖啡馆大门并开灯。 | 自己的行动会影响后续计划，也会成为别人观察到的事件。 |
+| 对话 Dialogue | 聊天 chat | 克劳斯 Klaus Mueller 向阿伊莎 Ayesha Khan 请教中产阶级化论文的写作开头。 | 对话是关系变化和信息传播的主要载体。 |
+| 反思 Reflection | 想法 thought | 玛丽亚 Maria Lopez 记住明天下午参加情人节派对，并准备饮品和水果。 | 反思把零散经验提升成更稳定的判断。 |
+
+*表 5-2：记忆流 Memory Stream 保存的经验类型。观察和行动最终以事件 event 进入系统，对话以聊天 chat 进入系统，反思结果以想法 thought 重新写回记忆流。*
+
+## 5.4 一条记忆节点 Concept 长什么样
+
+项目里，一条记忆不是一段裸文本。小镇现场先被表示成世界事件 Event，记录“谁、在哪里、处于什么状态”；随后转换成记忆节点 Concept，补上 `node_type`、`poignancy`、`create` 等元数据 metadata；最后落到某个角色自己的关联记忆 Associate 文件里。
+
+世界事件 Event 的源码入口位于：
+
+```text
+generative_agents/modules/memory/event.py
+```
+
+它的字段很少，但这些字段决定了一条经验能不能被系统重新读出来：
+
+| Event 属性 | 默认值 | 例值 | 读法 |
+| --- | --- | --- | --- |
+| `subject` | 无默认值，必须传入。 | `阿伊莎` | 事件主体 subject，表示这条事件记录的是谁或什么对象。 |
+| `predicate` | `此时` | `此时` | 谓词 predicate，表示主体和宾语之间的关系；默认读作“此刻处于某种状态”。 |
+| `object` | `空闲` | `选读今日要阅读的莎士比亚戏剧篇目` | 宾语 object，保存具体状态、动作内容、对话对象或计划时间。 |
+| `_describe` | 空字符串。 | `克劳斯向阿伊莎请教...` | 自然语言描述 describe；非空时 `get_describe()` 优先使用它，空值时由 `subject + predicate/object` 拼出文本。 |
+| `address` | 空列表 `[]`。 | `["the Ville", "奥克山学院", "图书馆", "图书馆桌子"]` | 空间地址 address，把事件绑定到世界、建筑、房间和设施。 |
+| `emoji` | 空字符串。 | `💬` | 表情或前端展示标记 emoji，聊天事件会使用它，但本地记忆索引 local memory index 不依赖它。 |
+
+克劳斯 Klaus Mueller 与阿伊莎 Ayesha Khan 的论文交流落盘后，会变成克劳斯 Klaus Mueller 记忆文件 `generative_agents\results\checkpoints\book-custom-discussion\storage\克劳斯\associate\docstore.json` 中的一条聊天 chat 节点。
 
 ```json
 {
-  "subject": "伊莎贝拉",
-  "action": "邀请",
-  "object": "阿伊莎",
-  "event": "情人节派对",
-  "time": "2024-02-13 09:30"
+  "id_": "node_25",
+  "text": "克劳斯向阿伊莎请教中产阶级化论文的写作开头，阿伊莎建议用调研中的真实场景或街巷改造前后对比来切入。",
+  "metadata": {
+    "node_type": "chat",
+    "subject": "克劳斯",
+    "predicate": "对话",
+    "object": "阿伊莎",
+    "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+    "poignancy": 3,
+    "create": "20240213-10:30:00"
+  }
 }
 ```
 
-但复杂生活很难只靠固定字段表达。比如“阿伊莎 Ayesha Khan 答应参加派对，但她想知道是否可以带一本莎士比亚戏剧选段来分享”，如果强行拆字段，信息会变得生硬。自然语言能保留情境：
+这条 JSON 可以按字段读：
 
-```text
-阿伊莎答应参加伊莎贝拉在霍布斯咖啡馆举办的情人节派对，并提到自己可能会带一段莎士比亚戏剧选段与大家分享。
+| 字段 | 读法 |
+| --- | --- |
+| `id_` | 记忆节点 Concept 的本地编号，关联记忆 Associate 的清单里只保存这个编号。 |
+| `text` | 可检索的自然语言记忆文本，不是整段逐字对话，而是压缩后的经验摘要。 |
+| `metadata.node_type` | 记忆分类标签，这里是聊天 chat。 |
+| `metadata.subject` / `metadata.object` | 对话关系，这条记忆从克劳斯 Klaus Mueller 的视角记录“克劳斯对话阿伊莎”。 |
+| `metadata.address` | 这段经历发生的位置：the Ville、奥克山学院、图书馆、图书馆桌子。 |
+| `metadata.poignancy` | 重要性 importance 评分，后续检索 Retrieval 和反思 Reflection 会使用它。 |
+| `metadata.create` | 记忆创建时间，支持时间衰减和最近访问判断。 |
+
+完整的 `metadata.node_type` 枚举值在这一场实验中都能看到：
+
+| `metadata.node_type` | 中文类型 | 读法 |
+| --- | --- | --- |
+| `event` | 事件 event | 普通世界现场，可以是角色自己的行动，也可以是角色观察到的外部对象或其他角色状态。 |
+| `chat` | 聊天 chat | 一次对话的压缩记录，`subject` 是当前记忆所属角色，`object` 是对话对象。 |
+| `thought` | 想法 thought | 计划、反思或摘要类记忆，把低层经历提升成后续可检索的判断或安排。 |
+
+每个角色在一天开始的时候，都会思考今天一整天的计划是什么，系统会通过 想法 thought 节点记录下角色的计划，例如 阿伊莎 Ayesha Khan 的一个 想法 thought 节点，如下所示：
+
+```json
+{
+  "id_": "node 0",
+  "text": "这是 阿伊莎 在 2024年02月13日（星期二）08:00 的计划：早上6点起床并完成早餐的例行工作；早上7点吃早餐；上午10点到奥克山学院图书馆上课；中午12点在图书馆短暂休息并吃午饭；下午2点继续在图书馆学习；下午5点吃晚饭；晚上7点为毕业论文做莎士比亚戏剧语言运用的研究；晚上9点放松一下；晚上10点睡觉",
+  "metadata": {
+    "node_type": "thought",
+    "subject": "阿伊莎",
+    "predicate": "计划",
+    "object": "2024年02月13日（星期二）08:00",
+    "address": "the Ville:奥克山学院宿舍:阿伊莎的房间:床",
+    "poignancy": 2,
+    "create": "20240213-08:00:00"
+  }
+}
 ```
 
-这样的记忆可以直接进入提示词 prompt，让大语言模型 LLM 根据上下文理解它的含义。自然语言表示也带来代价。
+有了规划之后，角色就会按照计划去执行，当然不是完全 100% 按照计划去执行，角色会根据实际的情况，去执行事件。例如 阿伊莎 Ayesha Khan 在 8 点的时候，并没有一个具体的规划，但是她已经在图书馆的书架上开始选读今日要阅读的莎士比亚戏剧篇目。
 
-| 优点 | 代价 | 后续章节如何处理 |
-| --- | --- | --- |
-| 容易表达复杂情境。 | 内容可能模糊。 | 第 32 章讨论长期记忆治理 memory governance。 |
-| 大语言模型 LLM 可以直接读取。 | 摘要可能引入幻觉。 | 第 30 章讨论风险、伦理与证据回查。 |
-| 可统一观察 observation、聊天 chat、想法 thought。 | 不如结构化字段容易精确查询。 | 第 18 章讲元数据 metadata 和向量索引 LlamaIndex。 |
-| 方便放入提示词 prompt 推理。 | 多轮总结后可能失真。 | 第 32 章讨论记忆压缩、冲突和可追溯性。 |
+```json
+{
+    "id_": "node_2",
+    "text": "阿伊莎 选读今日要阅读的莎士比亚戏剧篇目",
+    "metadata": {
+        "node_type": "event",
+        "subject": "阿伊莎",
+        "predicate": "此时",
+        "object": "选读今日要阅读的莎士比亚戏剧篇目",
+        "address": "the ville:奥克山学院:图书馆:书架",
+        "poignancy": 2,
+        "create": "20240213-08:10:00"
+    }        
+}  
+```
 
-*表 5-4：自然语言记忆的优点和代价。生成式智能体 Generative Agents 选择自然语言，是为了让大语言模型 LLM 能直接使用经验；它不是长期记忆治理的终点。*
+### 什么是谓词 `predicate` 
 
-## 5.6 时间、重要性和访问记录
+谓词 predicate 也是一种枚举值，它的类型如下表所示：
 
-一条记忆只保存文本还不够。系统还需要知道它什么时候发生、是否过期、最近有没有被想起、重要不重要。项目中最核心的几个字段是：
-
-| 字段 | 中文含义 | 行为影响 |
-| --- | --- | --- |
-| `create` | 创建时间。 | 说明记忆什么时候发生。 |
-| `expire` | 过期时间。 | 让过期记忆可以被清理。 |
-| `access` | 最近访问时间。 | 影响新近性 recency，刚被想起的记忆更容易再次被使用。 |
-| `poignancy` | 重要性字段。 | 对应论文中的重要性 importance，影响检索排序，也会累积触发反思 Reflection。 |
-
-时间让“最近发生的事”更容易影响当前行为。昨天被邀请参加派对，比一个月前听过的闲聊更可能改变今天的计划。重要性解决另一个问题：近不等于重要。看到一张椅子空着很近，但不一定重要；听说朋友准备竞选市长可能不是刚刚发生，却会长期影响对话和关系判断。
-
-项目里用重要性字段 `poignancy` 承接论文中的重要性评分 importance score。它有两份评分提示词 prompt。
-
-| 提示词 prompt | 评分对象 | 输入变量 | 输出结构 |
+| 谓词 predicate | 宾语 object 的取值方式 | 典型事件 event | 读法 |
 | --- | --- | --- | --- |
-| `poignancy_event.txt` | 普通事件。 | 基础人物描述 `base_desc`、角色 `agent`、事件 `event`。 | `res: int`，范围 1 到 10。 |
-| `poignancy_chat.txt` | 对话事件。 | 基础人物描述 `base_desc`、角色 `agent`、完整对话 `event`。 | `res: int`，范围 1 到 10。 |
+| `此时` | 默认是 `空闲`；普通行动时是动作描述；对象状态时来自 `describe_object` 提示词 prompt。 | `钢琴 此时 空闲`、`阿伊莎 此时 阅读研究资料` | 最常见的状态关系，表示“某主体此刻处于某种状态”。 |
+| `正在` | 固定为 `睡觉`。 | `克劳斯 正在 睡觉` | 用于角色睡眠状态，`is_awake()` 会用它判断角色是否醒着。 |
+| `被占用` | 角色姓名。 | `床 被占用 克劳斯` | 用于对象占用状态，表示某个设施 object 被某个角色使用。 |
+| `计划` | 计划生成时间。 | `克劳斯 计划 2024年02月13日（星期二）09:30` | 用于把日程计划作为想法 thought 写入记忆。 |
+| `waiting to start` | 等待的目标事件描述。 | `阿伊莎 waiting to start 克劳斯正在读书` | 用于空间冲突下的等待 waiting 行为。 |
+| `对话` | 对话对象姓名。 | `伊莎贝拉 对话 阿伊莎` | 用于记录一次聊天，并避免对话嵌套触发。 |
+| `待开始` | 当前代码只做识别，不在主链路中主动创建。 | `predicate == "待开始"` | 用于跳过还没有开始的行动，属于兼容或防御性判断。 |
+| `is` | 兼容旧英文格式；常见 object 是 `idle` 或 `sleeping`。 | `bed is idle` | 旧版英文事件格式的保留入口，当前中文主链路使用 `此时/空闲` 和 `正在/睡觉`。 |
 
-*表 5-5：重要性评分提示词 prompt。不同类型的经验使用不同评分模板，但输出都进入重要性字段 `Concept.poignancy`。*
+`object` 字段更像“谓词 predicate 的参数”。`predicate == "此时"` 时，`object` 可以是 `空闲`，也可以是“阅读研究资料”“正在加热以烹饪早餐”这类自然语言状态；`predicate == "对话"` 时，`object` 是另一个角色名；`predicate == "被占用"` 时，`object` 是占用设施的人。阅读事件 event 时，先看 `predicate` 判断关系类型，再看 `object` 判断这条关系的具体内容。
 
-这两份提示词 prompt 的评分口径很直接：`1` 表示极其平常，`10` 表示极其特殊或强烈。填入真实事件后，关键部分可以这样读：
+### 什么是观察 Observation
 
-```text
-以下是 伊莎贝拉 需要评分的一个完整事件：
-"""
-山姆告诉伊莎贝拉，他准备参加下个月的地方市长选举。
-"""
-评分：7
+观察 Observation 也是 事件 event 的一种，它是 Agent 通过感知能力，了解世界，从外部接收信息的能力。要理解观察的事件，需要同时看两个归属：记忆属于谁，事件记录谁。
+
+记忆属于谁，由文件路径决定，例如 阿伊莎 Ayesha Khan 的记忆，保存在：`generative_agents\results\checkpoints\book-custom-discussion\storage\阿伊莎\associate\docstore.json`
+
+事件记录谁，由 `metadata.subject` 决定，下面是一个 event 事件：
+
+```json
+{
+    "id_": "node_1",
+    "text": "书架 正在被挑选阅读书目",
+    "metadata": {
+        "node_type": "event",
+        "subject": "书架",
+        "predicate": "此时",
+        "object": "正在被挑选阅读书目",
+        "address": "the ville:奥克山学院:图书馆:书架",
+        "poignancy": 2,
+        "create": "20240213-08:10:00"
+    }        
+}  
 ```
 
-这个 `7` 会写入记忆节点 Concept 的重要性字段 `poignancy`。它不是装饰性分数，而是后续检索 Retrieval 和反思 Reflection 的输入。第 18 章会展示完整提示词 prompt、结构化输出库 Pydantic 约束和源码调用链。
+这条记忆保存在阿伊莎 Ayesha Khan 的 `docstore.json` 里，所以它属于阿伊莎 Ayesha Khan；但 `metadata.subject` 是 `书架`，说明事件主体不是阿伊莎 Ayesha Khan，而是她视野中的外部对象。它的 `node_type` 仍然是 `event`，因为项目没有单独的 `observation` 类型。这个组合可以读成：阿伊莎 Ayesha Khan 通过感知 Perception 观察到“书架正在被挑选阅读书目”，这条观察 Observation 以事件 event 的形式写入了她自己的记忆流 Memory Stream。
 
-## 5.7 记忆流 Memory Stream 如何支持未来行为
+相反，如果同一份文件里的 `metadata.subject` 也是 `阿伊莎`，它更像阿伊莎 Ayesha Khan 自己的行动或状态记录。判断一条记忆是不是观察 Observation，不只看 `node_type`，还要看“文件所属角色”和 `metadata.subject` 是否一致。
 
-记忆流 Memory Stream 本身只是存储。它要发挥作用，必须被检索 Retrieval 系统带回到提示词 prompt 里。假设山姆 Sam Moore 正在和约翰 John Lin 聊天，系统不应该把山姆 Sam Moore 的所有记忆都塞进上下文，而应该找出当前相关的几条经验：
+## 5.5 关联记忆 Associate：记忆属于谁
 
-- 山姆 Sam Moore 正在竞选地方市长。
-- 约翰 John Lin 最近在询问谁会参加选举。
-- 山姆 Sam Moore 和其他居民讨论过社区安全。
-- 约翰 John Lin 是药店店主，关心居民服务。
+世界事件 Event 进入记忆节点 Concept 之后，还需要归属到具体角色。关联记忆 Associate 负责管理一个角色自己的记忆集合。它不是全局共享记忆库，而是每个智能体 agent 进入运行目录后拥有一份自己的索引和清单。
 
-这些记忆进入提示词 prompt 后，对话才会像两个小镇居民之间的真实交流，而不是通用聊天。记忆流 Memory Stream 至少影响四类行为。
+源码入口位于：
 
-| 行为 | 记忆流 Memory Stream 提供什么 | 如果没有记忆会怎样 |
+```text
+generative_agents/modules/memory/associate.py
+```
+
+初始化时，记忆清单按三类组织：
+
+```json
+{
+  "event": [],
+  "thought": [],
+  "chat": []
+}
+```
+
+真实运行后，断点 checkpoint 会保存这份清单。`book-custom-discussion` 推进到 `20240213-19:50` 后，克劳斯 Klaus Mueller 的 `associate.memory` 已经积累出三类节点：
+
+证据路径：`generative_agents\results\checkpoints\book-custom-discussion\simulate-20240213-1950.json`
+
+```json
+{
+  "agents": {
+    "克劳斯": {
+      "associate": {
+        "memory": {
+          "event": ["node_193", "node_192", "node_191", "node_190"],
+          "thought": ["node_110", "node_109", "node_108", "node_107"],
+          "chat": ["node_188", "node_167", "node_163", "node_156"]
+        }
+      }
+    }
+  }
+}
+```
+
+这段 JSON 只摘出每一类最新的几个编号。完整运行中，克劳斯 Klaus Mueller 在该时刻有 153 条事件 event、18 条想法 thought 和 18 条聊天 chat。`associate.memory` 保存“克劳斯 Klaus Mueller 当前拥有哪些节点编号”，真正的节点文本 text、元数据 metadata 和向量检索信息保存在本地记忆索引 local memory index：
+
+```text
+generative_agents\results\checkpoints\book-custom-discussion\storage\克劳斯\associate\docstore.json
+```
+
+同一场实验里，每个角色都有自己的 `associate\docstore.json`：
+
+| 角色 | 事件 event 节点 | 聊天 chat 节点 | 想法 thought 节点 | 本地记忆索引 local memory index |
+| --- | ---: | ---: | ---: | --- |
+| 克劳斯 Klaus Mueller | 158 | 18 | 18 | `generative_agents\results\checkpoints\book-custom-discussion\storage\克劳斯\associate\docstore.json` |
+| 玛丽亚 Maria Lopez | 105 | 5 | 18 | `generative_agents\results\checkpoints\book-custom-discussion\storage\玛丽亚\associate\docstore.json` |
+| 阿伊莎 Ayesha Khan | 146 | 13 | 35 | `generative_agents\results\checkpoints\book-custom-discussion\storage\阿伊莎\associate\docstore.json` |
+| 沃尔夫冈 Wolfgang Schulz | 126 | 4 | 18 | `generative_agents\results\checkpoints\book-custom-discussion\storage\沃尔夫冈\associate\docstore.json` |
+| 伊莎贝拉 Isabella Rodriguez | 130 | 9 | 18 | `generative_agents\results\checkpoints\book-custom-discussion\storage\伊莎贝拉\associate\docstore.json` |
+
+表中的数量来自各角色 `docstore.json` 的节点类型统计。上面的 `associate.memory` 来自断点 checkpoint 当前清单；两者共同说明一件事：记忆先归属到角色，再按事件 event、聊天 chat、想法 thought 三类组织。
+
+同一段对话会分别写入参与者自己的记忆文件。克劳斯 Klaus Mueller 的 `node_25` 记录“克劳斯对话阿伊莎”，阿伊莎 Ayesha Khan 的 `node_25` 记录“阿伊莎对话克劳斯”。这不是重复存储的错误，而是角色视角不同：后续检索 Retrieval 发生在某个角色自己的记忆流 Memory Stream 中，而不是在全局文本日志里全文搜索。
+
+## 5.6 重要性 importance：记忆如何被评分
+
+记忆只保存文本还不够。系统还需要知道它重要不重要、最近有没有被想起、是否已经过期。当前项目用 `poignancy` 承接论文中的重要性 importance。
+
+添加记忆时，源码入口是智能体 Agent 的 `_add_concept()`：
+
+```text
+generative_agents/modules/agent.py
+```
+
+关键分支如下：
+
+```python
+if event.fit(None, "is", "idle"):
+    poignancy = 1
+elif event.fit(None, "此时", "空闲"):
+    poignancy = 1
+elif e_type == "chat":
+    poignancy = self.completion("poignancy_chat", event)
+else:
+    poignancy = self.completion("poignancy_event", event)
+```
+
+| 分支 | 评分来源 | 含义 |
 | --- | --- | --- |
-| 日程 Planning | 昨天发生的事、未完成的邀请、近期目标。 | 日程每天随机生成，角色无法延续承诺。 |
-| 对话 Dialogue | 共同经历、关系背景、刚传播过的信息。 | 角色反复寒暄，像第一次见面。 |
-| 反应 Reacting | 现场事件和过去经验之间的联系。 | 角色看见事情也不知道是否该回应。 |
-| 反思 Reflection | 多条相关记忆。 | 角色无法从经历中形成稳定判断。 |
+| 空闲事件 `idle` / `空闲` | 固定为 `1`。 | 普通对象空闲状态不需要调用大语言模型 LLM 评分。 |
+| 聊天 chat | `poignancy_chat.txt`。 | 对整段对话的重要性做评分。 |
+| 事件 event / 想法 thought | `poignancy_event.txt`。 | 对普通事件或想法的重要性做评分。 |
 
-*表 5-6：记忆流 Memory Stream 对未来行为的影响。过去不是被保存起来就结束，而是会重新进入日程、对话、反应和反思。*
+*表 5-3：重要性 importance 的评分分支。普通空闲状态直接给低分，真正有语义价值的事件和对话交给提示词 prompt 评分。*
 
-## 5.8 反思 Reflection 会写回记忆流 Memory Stream
+评分结果会写入 `Concept.poignancy`。它不是装饰性分数，而是后续检索 Retrieval 和反思 Reflection 的输入。一个最近发生但无关紧要的事件，不应该总是压过较早发生但更重要的承诺；重要性 importance 解决的正是这种排序问题。
 
-记忆流 Memory Stream 保存原始经验，但原始经验通常是碎片。例如：
+这个分支把聊天 chat 和普通事件 event 分开处理，对应到项目里就是两份重要性评分提示词 prompt：
 
-- 克劳斯 Klaus Mueller 在咖啡馆遇到玛丽亚 Maria Lopez。
-- 玛丽亚 Maria Lopez 提到自己在做游戏直播平台 Twitch。
-- 克劳斯 Klaus Mueller 提到自己研究社会议题。
-- 两人都对探索新想法感兴趣。
+| 提示词 prompt | 评分对象 | 输入变量 | 输出结构 schema | 回调 callback | 兜底值 failsafe |
+| --- | --- | --- | --- | --- | --- |
+| `poignancy_event.txt` | 普通事件 event 或想法 thought。 | `base_desc`、`agent`、`event`。 | `res: int`，范围 1 到 10。 | 无。 | 随机整数 1 到 10。 |
+| `poignancy_chat.txt` | 对话 chat。 | `base_desc`、`agent`、`event`。 | `res: int`，范围 1 到 10。 | 无。 | 随机整数 1 到 10。 |
 
-这些都是独立记忆。如果没有反思 Reflection，系统只能在后续检索时碰巧找到它们。反思 Reflection 会把碎片提升成高层认知：
+*表 5-4：重要性评分提示词 prompt 的输入与输出。两份模板的评分对象不同，但都输出一个整数评分，并写入重要性字段 `poignancy`。*
+
+两份模板原文如下：
+
+<table>
+  <tr>
+    <th><code>poignancy_event.txt</code></th>
+    <th><code>poignancy_chat.txt</code></th>
+  </tr>
+  <tr>
+    <td><pre><code>${base_desc}
+
+在1到10的范围内评分，评分原则：
+1代表极其平常，例如刷牙、整理床铺等普通事件；
+10代表极其特殊或强烈，令人印象深刻，例如分手、大学录取等特殊事件。
+每个事件只能用1到10的整数表示。例如：
+事件：刷牙。评分：1
+事件：整理床铺。评分：1
+事件：分手。评分：10
+事件：大学录取。评分：10
+
+以下是 ${agent} 需要评分的一个完整事件：
+"""
+${event}
+"""
+评分：&lt;分数&gt;
+
+根据完整事件填写&lt;分数&gt;。
+格式要求：只在1到10范围内输出1个数字，不要输出数字以外的任何内容。</code></pre></td>
+    <td><pre><code>${base_desc}
+
+在1到10的范围内评分，评分原则：
+1代表极其平常，例如早上的日常问候；
+10代表极其特殊或强烈，令人印象深刻，例如关于分手、争吵的对话。
+每个对话只能用1到10的整数表示。例如：
+对话：早上的日常问候。评分：1
+对话：关于分手、争吵的对话。评分：10
+
+以下是 ${agent} 需要评分的一场完整对话：
+"""
+${event}
+"""
+评分：&lt;分数&gt;
+
+根据完整事件填写&lt;分数&gt;。
+格式要求：只在1到10范围内输出1个数字，不要输出数字以外的任何内容。</code></pre></td>
+  </tr>
+</table>
+
+*表 5-5：两份重要性评分提示词 prompt 的完整模板。事件评分强调“某件事是否重要”，聊天评分强调“整场对话是否重要”。*
+
+把 `book-custom-discussion` 中克劳斯 Klaus Mueller 和阿伊莎 Ayesha Khan 的论文写作对话填入聊天评分模板后，关键部分可以这样读：
+
+证据路径：`generative_agents\results\checkpoints\book-custom-discussion\storage\克劳斯\associate\docstore.json`
+
+节点编号：`node_25`
 
 ```text
-克劳斯发现玛丽亚虽然专业不同，但同样喜欢探索新想法，未来可以继续和她交流。
+以下是 克劳斯 需要评分的一场完整对话：
+"""
+克劳斯向阿伊莎请教中产阶级化论文的写作开头，阿伊莎建议用调研中的真实场景或街巷改造前后对比来切入。
+"""
+评分：3
 ```
 
-这个洞察 insight 会再次进入记忆流 Memory Stream，成为想法 thought。下次克劳斯 Klaus Mueller 遇到玛丽亚 Maria Lopez 时，系统更容易检索到这个高层关系认知，而不必每次重新从多条事件中推理。
+这个 `3` 会进入记忆节点 Concept 的元数据 metadata：
 
-```mermaid
-flowchart LR
-    Raw["原始记忆<br/>事件 event / 聊天 chat"] --> Retrieve["检索 Retrieval<br/>找回相关记忆"]
-    Retrieve --> Reflect["反思 Reflection<br/>归纳高层想法"]
-    Reflect --> Thought["想法 thought<br/>新的记忆节点"]
-    Thought --> Stream["记忆流 Memory Stream"]
-    Stream --> Retrieve
+```json
+{
+  "id_": "node_25",
+  "text": "克劳斯向阿伊莎请教中产阶级化论文的写作开头，阿伊莎建议用调研中的真实场景或街巷改造前后对比来切入。",
+  "metadata": {
+    "node_type": "chat",
+    "address": "the Ville:奥克山学院:图书馆:图书馆桌子",
+    "poignancy": 3,
+    "create": "20240213-10:30:00"
+  }
+}
 ```
 
-*图 5-4：反思 Reflection 会把高层想法写回记忆流 Memory Stream。记忆流不只保存低层事件，也会逐渐保存角色对自己和他人的理解。*
+这段证据来自克劳斯 Klaus Mueller 的本地记忆索引 local memory index。它的 `node_type` 是聊天 chat，说明对话已经离开即时上下文 context，成为可检索的经验；`poignancy: 3` 表示它比普通空闲状态重要，但还不是极端强烈的人生事件。重要性 importance 不是全局标签，而是角色视角下的经验强度；同一段对话在阿伊莎 Ayesha Khan 的记忆文件中也会重新打分。
 
-第 7 章会专门讲反思 Reflection 如何触发、如何提出问题、如何生成洞察 insight。本章只需要把边界看清：反思结果不是临时总结，它会作为想法 thought 重新写回记忆流 Memory Stream。
+## 5.7 本章小结
 
-## 5.9 记忆流 Memory Stream 的局限
+记忆流 Memory Stream 把小镇经历变成可回查的状态。人物定义 Persona 让角色有身份，记忆流 Memory Stream 让角色拥有过去；两者合在一起，角色才不只是“会说某种话”，而是能在小镇中延续经历、关系和计划。
 
-记忆流 Memory Stream 很重要，但它不是万能方案。它解决了“角色要有过去”，还没有完全解决“过去必须可靠、可控、可扩展”。
-
-| 局限 | 表现 | 项目中会看到什么 | 后续升级方向 |
-| --- | --- | --- | --- |
-| 记忆膨胀 | 角色运行越久，事件和对话越多，检索噪声增加。 | 记忆节点数量增长，检索结果出现很多日常琐事。 | 分层记忆、摘要压缩、生命周期管理。 |
-| 记忆重复 | 每天吃饭、上班、回家会产生大量相似记忆。 | 多条记忆文本高度相似，重要事件被普通日常稀释。 | 去重、聚合、习惯建模。 |
-| 记忆错误 | 大语言模型 LLM 可能把没有发生过的内容写进摘要。 | `simulation.md` 摘要与原始对话或行动不一致。 | 证据绑定、冲突检测、可追溯记忆。 |
-| 记忆冲突 | 派对时间可能被不同对话说成 5 点或 7 点。 | 同一事实在不同记忆里出现多个版本。 | 事实校验、版本管理、置信度。 |
-| 关系表达不足 | “汤姆 Tom Moreno 不喜欢山姆 Sam Moore”只靠文本记录，不够稳定。 | 关系变化散落在多条对话和想法 thought 中。 | 关系图记忆、信任度和亲密度建模。 |
-
-*表 5-7：记忆流 Memory Stream 的局限。局限不是概念缺陷，而是后续工程升级的入口。*
-
-这些局限不会削弱记忆流 Memory Stream 的价值。相反，它们给出了后续三年智能体记忆系统继续演进的方向。第 30 章会讨论风险和证据回查，第 32 章会进入长期记忆治理 memory governance。
-
-## 5.10 本章小结
-
-记忆流 Memory Stream 是人物定义 Persona 之后的第二层架构。人物定义 Persona 给角色身份，记忆流 Memory Stream 给角色过去。两者合在一起，角色才不只是“会说某种话”，而是能在小镇中延续经历、关系和计划。
-
-本章建立了三个判断。第一，聊天历史不等于记忆流 Memory Stream；角色生活发生在观察、行动、对话、地图和反思里。第二，记忆流 Memory Stream 保存的不只是文本，而是带有类型、时间、重要性和角色归属的经验。第三，记忆只有被检索 Retrieval 带回未来行为，才真正变成智能体持续生活的材料。
-
-下一章进入检索 Retrieval。拥有记忆只是第一步；真正做决定时，智能体不能读取全部记忆，而必须从记忆流 Memory Stream 中找出当前最相关的内容。
+第 5 章沿着克劳斯 Klaus Mueller 的论文对话走完了一条主线：小镇现场先出现在压缩结果 compressed result 中，再落成记忆节点 Concept，进入角色自己的关联记忆 Associate，最后带上重要性 importance 分数。到这里，系统已经有了过去；下一章进入检索 Retrieval，解决“记忆越来越多时，当前场景应该取回哪几条”的问题。
 
 ## 参考资料
 
@@ -268,5 +434,11 @@ flowchart LR
 - Local source: `generative_agents/modules/memory/associate.py`
 - Local source: `generative_agents/modules/storage/index.py`
 - Local source: `generative_agents/modules/agent.py`
+- Local source: `generative_agents/modules/prompt/scratch.py`
 - Local prompt: `generative_agents/data/prompts/poignancy_event.txt`
 - Local prompt: `generative_agents/data/prompts/poignancy_chat.txt`
+- Local compressed result: `generative_agents/results/compressed/book-custom-discussion/simulation.md`
+- Local checkpoint: `generative_agents/results/checkpoints/book-custom-discussion/simulate-20240213-1950.json`
+- Local storage: `generative_agents/results/checkpoints/book-custom-discussion/storage/阿伊莎/associate/docstore.json`
+- Local storage: `generative_agents/results/checkpoints/book-custom-discussion/storage/玛丽亚/associate/docstore.json`
+- Local storage: `generative_agents/results/checkpoints/book-custom-discussion/storage/克劳斯/associate/docstore.json`

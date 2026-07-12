@@ -87,110 +87,92 @@ flowchart LR
    - 2.8 人工社会问题的工程落点
    - 2.9 本章小结
 
-3. [第 3 章：Smallville：论文中的实验小镇](part_01/chapter_03.md)
+3. [第 3 章：Smallville：论文中的实验装置](part_01/chapter_03.md)
    - 3.1 小镇作为实验环境
-   - 3.2 Smallville 的基本构成
-   - 3.3 25 个智能体的实验价值
-   - 3.4 约翰 John Lin 的一天：个体生活连续性
-   - 3.5 伊莎贝拉 Isabella Rodriguez 的情人节派对：协同行动如何出现
-   - 3.6 山姆 Sam Moore 竞选镇长：信息扩散与态度分化
-   - 3.7 关系形成：熟人不是静态标签
-   - 3.8 Smallville 的三类涌现行为
-   - 3.9 Smallville 对后续章节的意义
-   - 3.10 本章小结
+   - 3.2 地图 map：行为必须发生在具体位置
+   - 3.3 大区域 sector：小镇的生活场景
+   - 3.4 场所 arena：建筑内部的空间
+   - 3.5 设施 object / facility：行动如何落到具体对象
+   - 3.6 时间 time：小镇如何形成生活顺序
+   - 3.7 事件 event：环境如何被观察和记录
+   - 3.8 小结：Smallville 提供世界，不提前讲角色
 
 4. [第 4 章 论文架构一：人物定义 Persona](part_01/chapter_04.md)
    - 4.1 人物定义 Persona 的位置
    - 4.2 人物定义不是一句角色卡
    - 4.3 系统中如何定义一个角色
-   - 4.4 Smallville 的 25 个角色
-   - 4.5 初始设定与后续经历
-   - 4.6 人物定义如何影响架构模块
+   - 4.4 base_desc.txt：基础人物描述模板
+   - 4.5 agent.json：角色配置的真实格式
+   - 4.6 Smallville 的 25 个角色
    - 4.7 好的人物定义要能产生行为
    - 4.8 本章小结
 
 5. [第 5 章 论文架构二：记忆流 Memory Stream](part_01/chapter_05.md)
-   - 5.1 聊天历史不够
-   - 5.2 记忆流 Memory Stream 保存什么
-   - 5.3 记忆不是聊天历史，也不是系统日志
-   - 5.4 项目中一条记忆如何轻量落地
-   - 5.5 自然语言作为统一记忆表示
-   - 5.6 时间、重要性和访问记录
-   - 5.7 记忆流 Memory Stream 如何支持未来行为
-   - 5.8 反思 Reflection 会写回记忆流 Memory Stream
-   - 5.9 记忆流 Memory Stream 的局限
-   - 5.10 本章小结
+   - 5.1 从一段真实经历开始：克劳斯 Klaus Mueller 的论文对话
+   - 5.2 聊天历史不够：过去必须成为状态
+   - 5.3 记忆流 Memory Stream 保存什么
+   - 5.4 一条记忆节点 Concept 长什么样
+   - 5.5 关联记忆 Associate：记忆属于谁
+   - 5.6 重要性 importance：记忆如何被评分
+   - 5.7 本章小结
 
 6. [第 6 章 论文架构三：检索 Retrieval](part_01/chapter_06.md)
-   - 6.1 不能读取全部记忆
-   - 6.2 检索 Retrieval 的输入-处理-输出
-   - 6.3 三因素模型：近期性 recency、重要性 importance、相关性 relevance 缺一不可
-   - 6.4 项目中如何完成一次检索
-   - 6.5 检索接口和输出形态
-   - 6.6 检索结果如何进入提示词 prompt
-   - 6.7 综合检索分数 final score
-   - 6.8 焦点问题 focus：检索必须带着问题发生
-   - 6.9 两个小镇案例
-   - 6.10 检索失败的后果
-   - 6.11 检索权重是一种行为设计
-   - 6.12 本章小结
+   - 6.1 从克劳斯 Klaus Mueller 再次想起论文对话开始
+   - 6.2 为什么不能读取全部记忆
+   - 6.3 检索 Retrieval 的输入、处理、输出
+   - 6.4 候选记忆从哪里来
+   - 6.5 三因素重排：近期性 recency、相关性 relevance、重要性 importance
+   - 6.6 检索结果的后续应用
+   - 6.7 检索失败与参数设计
+   - 6.8 可运行脚本：观察一次检索 Retrieval
+   - 6.9 本章小结
 
 7. [第 7 章 论文架构四：反思 Reflection](part_01/chapter_07.md)
-   - 7.1 原始经历为什么不够
-   - 7.2 业务闭环：克劳斯 Klaus Mueller 如何把咖啡馆交流变成想法 thought
-   - 7.3 反思 Reflection 不是聊天总结
-   - 7.4 何时触发反思 Reflection
-   - 7.5 候选输入边界
-   - 7.6 从候选记忆到焦点问题 focus
-   - 7.7 围绕焦点问题检索证据 evidence
-   - 7.8 生成洞察 insight
-   - 7.9 写回想法 thought
-   - 7.10 对话后的反思 Reflection
-   - 7.11 克劳斯 Klaus Mueller 与玛丽亚 Maria Lopez 案例
-   - 7.12 失败诊断与观察入口
-   - 7.13 本章小结
+   - 7.1 一条真实反思：克劳斯 Klaus Mueller 想到了什么
+   - 7.2 反思 Reflection 解决什么问题
+   - 7.3 反思函数 Agent.reflect() 的两条分支
+   - 7.4 触发条件：触动程度 poignancy 过阈值
+   - 7.5 常规反思：event / thought 如何生成新 thought
+   - 7.6 对话反思：chat 如何生成计划类 thought 和长期记忆 thought
+   - 7.7 统一写回：thought 最终进入哪里
+   - 7.8 可运行脚本：断点复查与实时反思
+   - 7.9 失败诊断与本章小结
 
 8. [第 8 章 论文架构五：规划 Planning](part_01/chapter_08.md)
-   - 8.1 规划 Planning 解决什么
-   - 8.2 业务闭环：伊莎贝拉 Isabella Rodriguez 如何把派对目标变成行动
-   - 8.3 从“会聊天”到“会生活”
-   - 8.4 新一天状态 currently 如何接上记忆
-   - 8.5 起床时间 wake_up：作息从提示词进入日程
-   - 8.6 一天大纲 schedule_init：先定生活主线
-   - 8.7 小时日程 schedule_daily：把一天变成时间骨架
-   - 8.8 日程 Schedule 的保存结构
-   - 8.9 计划也要写入记忆流 Memory Stream
-   - 8.10 递归拆解 schedule_decompose：把粗计划变成子任务
-   - 8.11 当前计划 current_plan() 如何被取出
-   - 8.12 空间落地 spatial grounding：计划进入地图
-   - 8.13 行动 Action 的时间边界
-   - 8.14 提示词 prompt 链路总表
-   - 8.15 规划 Planning 的常见失败
-   - 8.16 本章小结
+   - 8.1 从克劳斯 Klaus Mueller 的当前行动开始
+   - 8.2 规划 Planning 解决什么问题
+   - 8.3 Agent.make_schedule() 的输入、处理、输出
+   - 8.4 日程 Schedule 保存什么数据
+   - 8.5 起床与一天大纲：wake_up / schedule_init
+   - 8.6 小时日程 schedule_daily：24 小时骨架
+   - 8.7 递归拆解：schedule_decompose 与 current_plan()
+   - 8.8 空间落地：plan / de_plan 如何变成 Action
+   - 8.9 可运行脚本：观察规划如何使用反思 thought
+   - 8.10 失败诊断与本章小结
 
 9. [第 9 章 论文架构六：反应 Reacting](part_01/chapter_09.md)
-   - 9.1 反应 Reacting 解决什么
-   - 9.2 闭环案例：克劳斯 Klaus Mueller 为什么等待
-   - 9.3 运行入口：make_plan() 先处理现场
-   - 9.4 感知 Perception 输出什么
-   - 9.5 _reaction() 的三层判断
-   - 9.6 等待 Waiting：空间冲突如何落地
-   - 9.7 聊天触发 chat trigger：只判断是否开口
-   - 9.8 行动 Action 与日程 Schedule 如何写回
-   - 9.9 常见失败与检查位置
-   - 9.10 本章小结
+   - 9.1 从克劳斯 Klaus Mueller 主动开口开始
+   - 9.2 反应 Reacting 解决什么问题
+   - 9.3 make_plan()：反应优先于继续行动
+   - 9.4 反应 Reacting 的输入、处理、输出
+   - 9.5 _reaction() 的三层门禁：焦点 focus、跳过 skip、分支 branch
+   - 9.6 聊天触发 chat trigger：只决定是否开口
+   - 9.7 等待 Waiting：空间冲突下的另一个分支
+   - 9.8 写回边界：反应如何变成 Action
+   - 9.9 可运行脚本：观察一次反应 Reacting
+   - 9.10 失败诊断与本章小结
 
 10. [第 10 章 论文架构七：对话 Dialogue](part_01/chapter_10.md)
-   - 10.1 对话 Dialogue 解决什么
-   - 10.2 闭环案例：伊莎贝拉 Isabella Rodriguez 邀请阿伊莎 Ayesha Khan
-   - 10.3 第 9 章交接：从开口裁决进入对话
-   - 10.4 关系摘要 summarize_relation：两个人的视角不同
-   - 10.5 生成一句话 generate_chat：逐句推进
-   - 10.6 复读检查与结束判断
-   - 10.7 对话写回：文本变成状态
-   - 10.8 对话如何影响后续规划 Planning
-   - 10.9 常见失败与检查位置
-   - 10.10 本章小结
+   - 10.1 从克劳斯 Klaus Mueller 与阿伊莎 Ayesha Khan 的真实对话开始
+   - 10.2 对话 Dialogue 解决什么问题
+   - 10.3 `_chat_with()`：从开口裁决进入对话循环
+   - 10.4 关系摘要 summarize_relation：先确定两个人怎么看彼此
+   - 10.5 逐句生成 generate_chat：一句一句推进
+   - 10.6 复读检查与结束判断：让对话停在合适位置
+   - 10.7 对话摘要 summarize_chats：文本压成可保存事实
+   - 10.8 写回边界：对话日志 conversation、行动 Action、聊天记忆 chat memory、反思输入 reflection input
+   - 10.9 可运行脚本：观察一次对话 Dialogue
+   - 10.10 失败诊断与本章小结
 
 11. [第 11 章 论文的评价方法 Evaluation](part_01/chapter_11.md)
    - 11.1 评价 Evaluation 解决什么
@@ -212,15 +194,15 @@ flowchart LR
 ### 第二部分：项目上手与功能体验
 
 12. [第 12 章 把 Generative Agents 跑起来](part_02/chapter_12.md)
-   - 12.1 先看一个现成回放
-   - 12.2 确认环境和模型配置
-   - 12.3 运行一个最小仿真
-   - 12.4 压缩结果
-   - 12.5 回放仿真
-   - 12.6 阅读行为
-   - 12.7 断点恢复
-   - 12.8 第一次运行的排错表
-   - 12.9 小结
+   - 12.1 综合冒烟测试 Smoke Test 要验证什么
+   - 12.2 运行前检查：目录、模型配置和环境变量
+   - 12.3 启动 book-smoke：角色列表、命令和标准输出 stdout
+   - 12.4 断点 checkpoint：从行动到首次对话
+   - 12.5 对话 conversation 与记忆 storage：Part 01 能力是否闭环
+   - 12.6 压缩结果 compressed result：movement.json 与 simulation.md
+   - 12.7 浏览器回放 replay：确认咖啡馆对话真的出现
+   - 12.8 断点恢复 resume：继续跑到对话和长时间状态
+   - 12.9 排错表与本章小结
 
 13. [第 13 章 改配置，自定义智能体实验](part_02/chapter_13.md)
    - 13.1 配置迁移
