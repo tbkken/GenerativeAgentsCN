@@ -166,3 +166,10 @@ cython_debug/
 
 .claude/
 checkpoints/
+
+# Experiment web service local state and credentials
+var/
+
+# Generated browser QA and filesystem capability fixtures
+tests/.browser-*/
+tests/.symlink-capability-probe-*/

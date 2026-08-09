@@ -46,8 +46,9 @@ cd GenerativeAgentsCN
 ### 1.2 配置大语言模型（LLM）
 
 修改配置文件 `generative_agents/data/config.json`:
-1. 默认使用[Ollama](https://ollama.com/)加载本地量化模型，并提供OpenAI兼容API。需要先拉取量化模型（参考[ollama.md](docs/ollama.md)），并确保`base_url`和`model`与Ollama中的配置一致。
-2. 如果希望调用其他OpenAI兼容API，需要将`provider`改为`openai`，并根据API文档修改`model`、`api_key`和`base_url`。
+1. 默认通过 vLLM 的 OpenAI 兼容接口调用本地聊天模型，配置及接口说明见 [vllm.md](docs/vllm.md)。`model` 设为 `auto` 时会从 `/v1/models` 自动选择服务返回的第一个模型。
+2. 记忆检索使用的 embedding 模型独立配置，默认通过本地 OpenAI 兼容接口调用，配置说明见 [embedding.md](docs/embedding.md)。
+3. 如果希望调用其他 OpenAI 兼容 API，需要将 `provider` 改为 `openai`，并根据 API 文档修改 `model`、`api_key` 和 `base_url`。
 
 ### 1.3 安装python依赖
 
