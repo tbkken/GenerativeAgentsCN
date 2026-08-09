@@ -1092,7 +1092,7 @@
   }
 
   function renderAgents(items) {
-    state.agentResults = [...items].sort((a, b) => b.updated_step - a.updated_step || String(a.display_name).localeCompare(String(b.display_name), 'zh-CN'));
+    state.agentResults = [...items].sort((a, b) => String(a.display_name || a.agent_key).localeCompare(String(b.display_name || b.agent_key), 'zh-CN'));
     $('agentResultCount').textContent = state.agentResults.length;
     const options = '<option value="all">全部 Agent</option>' + items.map(item => `<option value="${escapeHtml(item.agent_key)}">${escapeHtml(item.display_name || item.agent_key)}</option>`).join('');
     $('conversationAgentFilter').innerHTML = options;
@@ -1100,16 +1100,18 @@
     if (!items.length) {
       state.selectedAgentKey = null;
       $('resultAgentButtons').innerHTML = '<div class="empty-state"><strong>暂无 Agent 结果</strong><span>首个步骤提交后会在这里生成 Agent 内容。</span></div>';
+      $('resultAgentDetail').innerHTML = '<div class="empty-state"><strong>暂无 Agent 内容</strong></div>';
+      $('resultAgentDetail').dataset.agentKey = '';
       return;
     }
     if (!state.agentResults.some(item => item.agent_key === state.selectedAgentKey)) {
       state.selectedAgentKey = state.agentResults[0].agent_key;
     }
-    renderAgentCards();
+    renderAgentTabs();
     showAgentDetail(state.selectedAgentKey).catch(reportError);
   }
 
-  function renderAgentCards() {
+  function renderAgentTabs() {
     const query = $('resultAgentSearch').value.trim().toLowerCase();
     const status = state.agentStatusFilter;
     const visible = state.agentResults.filter(item => {
@@ -1119,48 +1121,56 @@
     });
     if (!visible.length) {
       $('resultAgentButtons').innerHTML = '<div class="empty-state"><strong>没有符合条件的 Agent</strong><span>尝试清除搜索词或切换状态筛选。</span></div>';
+      $('resultAgentDetail').innerHTML = '<div class="empty-state"><strong>没有可显示的 Agent 内容</strong><span>调整上方筛选后继续查看。</span></div>';
+      $('resultAgentDetail').dataset.agentKey = '';
       return;
     }
     if (!visible.some(item => item.agent_key === state.selectedAgentKey)) state.selectedAgentKey = visible[0].agent_key;
     $('resultAgentButtons').innerHTML = visible.map(item => {
-      const open = item.agent_key === state.selectedAgentKey;
+      const active = item.agent_key === state.selectedAgentKey;
       const name = item.display_name || item.agent_key;
-      const profile = item.definition?.innate || item.definition?.learned || '角色定义已锁定';
       const statusText = { CHAT: '对话中', MOVING: '移动中', REST: '休息中', OTHER: '活动中' }[item.latest_activity_kind] || item.latest_activity_kind;
-      return `<article class="agent-result-card${open ? ' open' : ''}" data-agent-key="${escapeHtml(item.agent_key)}" data-agent-status="${escapeHtml(item.latest_activity_kind)}">
-        <button type="button" class="agent-result-header" aria-expanded="${String(open)}">
-          <span class="agent-result-identity"><span class="agent-result-avatar-fallback">${escapeHtml(name.slice(0, 1))}</span><img class="agent-result-portrait" src="${escapeHtml(item.portrait_url || '')}" alt=""/><span><strong>${escapeHtml(name)}</strong><span>${escapeHtml(profile)} · ${escapeHtml(item.address || '位置未记录')}</span></span></span>
-          <span class="agent-result-fact"><small>当前状态</small><strong>${escapeHtml(item.currently || item.latest_action || '尚无状态')}</strong></span>
-          <span class="agent-result-fact"><small>最近活动 · ${escapeHtml(item.latest_virtual_time ? formatTime(item.latest_virtual_time) : `Step ${item.updated_step}`)}</small><strong>${escapeHtml(item.latest_action || '尚无行动')}</strong></span>
-          <span class="agent-result-badges"><span class="agent-result-badge">${escapeHtml(statusText)}</span><span class="agent-result-badge">计划 ${item.plan_count || 0}</span><span class="agent-result-badge">事件 ${item.event_count || 0}</span><span class="agent-result-chevron">⌄</span></span>
-        </button>
-        <div class="agent-result-body">${open ? '<div class="agent-result-loading">正在读取 Agent 结构化内容…</div>' : ''}</div>
-      </article>`;
+      return `<button type="button" role="tab" class="agent-result-tab${active ? ' active' : ''}" data-agent-key="${escapeHtml(item.agent_key)}" data-agent-status="${escapeHtml(item.latest_activity_kind)}" aria-selected="${String(active)}" aria-controls="resultAgentDetail" tabindex="${active ? '0' : '-1'}">
+        <span class="agent-tab-avatar-fallback" aria-hidden="true">${escapeHtml(name.slice(0, 1))}</span><img class="agent-tab-portrait" src="${escapeHtml(item.portrait_url || '')}" alt=""/><span class="agent-tab-copy"><strong><i class="agent-tab-status" aria-hidden="true"></i>${escapeHtml(name)}</strong><small>${escapeHtml(statusText)} · 计划 ${item.plan_count || 0} · 事件 ${item.event_count || 0}</small></span>
+      </button>`;
     }).join('');
-    document.querySelectorAll('.agent-result-portrait').forEach(image => image.addEventListener('error', () => {
+    document.querySelectorAll('.agent-tab-portrait').forEach(image => image.addEventListener('error', () => {
       image.hidden = true;
       image.previousElementSibling.style.display = 'grid';
     }, { once: true }));
+  }
+
+  function ensureAgentTabVisible(tab) {
+    const strip = $('resultAgentButtons');
+    if (!tab || !strip) return;
+    const left = tab.offsetLeft;
+    const right = left + tab.offsetWidth;
+    if (left < strip.scrollLeft) strip.scrollTo({ left: Math.max(0, left - 8), behavior: 'smooth' });
+    else if (right > strip.scrollLeft + strip.clientWidth) strip.scrollTo({ left: right - strip.clientWidth + 8, behavior: 'smooth' });
   }
 
   async function showAgentDetail(agentKey) {
     state.selectedAgentKey = agentKey;
     const runId = state.selectedRunId;
     const generation = ++state.agentDetailGeneration;
-    document.querySelectorAll('.agent-result-card').forEach(card => {
-      const open = card.dataset.agentKey === agentKey;
-      card.classList.toggle('open', open);
-      card.querySelector('.agent-result-header')?.setAttribute('aria-expanded', String(open));
-      if (open) card.querySelector('.agent-result-body').innerHTML = '<div class="agent-result-loading">正在读取 Agent 结构化内容…</div>';
+    let activeTab = null;
+    document.querySelectorAll('.agent-result-tab').forEach(tab => {
+      const active = tab.dataset.agentKey === agentKey;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+      if (active) activeTab = tab;
     });
+    ensureAgentTabVisible(activeTab);
+    const panel = $('resultAgentDetail');
+    panel.dataset.agentKey = agentKey;
+    panel.innerHTML = '<div class="agent-result-loading">正在读取 Agent 结构化内容…</div>';
     const detail = await api(`/runs/${runId}/results/agents/${encodeURIComponent(agentKey)}`);
     if (generation !== state.agentDetailGeneration
       || detail.run_id !== state.selectedRunId
       || runId !== state.selectedRunId
       || agentKey !== state.selectedAgentKey) return;
-    const card = [...document.querySelectorAll('.agent-result-card')].find(item => item.dataset.agentKey === agentKey);
-    const body = card?.querySelector('.agent-result-body');
-    if (body) body.innerHTML = renderAgentDetail(detail);
+    if (panel.dataset.agentKey === agentKey) panel.innerHTML = `<div class="agent-result-body">${renderAgentDetail(detail)}</div>`;
   }
 
   function renderAgentDetail(detail) {
@@ -2490,21 +2500,35 @@
     event.stopImmediatePropagation(); closeModal('agentEditorModal');
   }, true));
   $('resultAgentButtons').addEventListener('click', event => {
-    const contentFilter = event.target.closest('[data-agent-content]');
-    if (contentFilter) {
-      const card = contentFilter.closest('.agent-result-card');
-      card.querySelectorAll('[data-agent-content]').forEach(item => item.classList.toggle('active', item === contentFilter));
-      card.querySelectorAll('[data-agent-content-section]').forEach(section => {
-        section.hidden = contentFilter.dataset.agentContent !== 'all'
-          && section.dataset.agentContentSection !== contentFilter.dataset.agentContent;
-      });
-      return;
-    }
-    const header = event.target.closest('.agent-result-header');
-    if (!header) return;
+    const tab = event.target.closest('.agent-result-tab');
+    if (!tab) return;
     event.stopImmediatePropagation();
-    showAgentDetail(header.closest('.agent-result-card').dataset.agentKey).catch(reportError);
+    showAgentDetail(tab.dataset.agentKey).catch(reportError);
   }, true);
+  $('resultAgentButtons').addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = [...document.querySelectorAll('.agent-result-tab')];
+    if (!tabs.length) return;
+    const currentIndex = Math.max(0, tabs.findIndex(tab => tab.dataset.agentKey === state.selectedAgentKey));
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : event.key === 'ArrowLeft' ? Math.max(0, currentIndex - 1) : Math.min(tabs.length - 1, currentIndex + 1);
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    showAgentDetail(tabs[nextIndex].dataset.agentKey).catch(reportError);
+  });
+  $('resultAgentDetail').addEventListener('click', event => {
+    const contentFilter = event.target.closest('[data-agent-content]');
+    if (!contentFilter) return;
+    $('resultAgentDetail').querySelectorAll('[data-agent-content]').forEach(item => item.classList.toggle('active', item === contentFilter));
+    $('resultAgentDetail').querySelectorAll('[data-agent-content-section]').forEach(section => {
+      section.hidden = contentFilter.dataset.agentContent !== 'all'
+        && section.dataset.agentContentSection !== contentFilter.dataset.agentContent;
+    });
+  }, true);
+  [$('agentTabPrev'), $('agentTabNext')].forEach(button => button.addEventListener('click', () => {
+    const direction = button === $('agentTabPrev') ? -1 : 1;
+    $('resultAgentButtons').scrollBy({ left: direction * Math.max(260, $('resultAgentButtons').clientWidth * .72), behavior: 'smooth' });
+  }));
   $('conversationIndex').addEventListener('click', event => {
     const button = event.target.closest('.conversation-button');
     if (!button) return;
@@ -2557,16 +2581,18 @@
     if (marker) state.replayPlayer?.seek(Number(marker.dataset.replayStep)).catch(reportError);
   });
   $('resultAgentSearch').addEventListener('input', event => {
-    renderAgentCards();
-    if (document.querySelector('.agent-result-card.open') && state.selectedAgentKey) {
+    renderAgentTabs();
+    if (document.querySelector('.agent-result-tab.active') && state.selectedAgentKey
+      && $('resultAgentDetail').dataset.agentKey !== state.selectedAgentKey) {
       showAgentDetail(state.selectedAgentKey).catch(reportError);
     }
   });
   document.querySelectorAll('[data-agent-status]').forEach(button => button.addEventListener('click', () => {
     state.agentStatusFilter = button.dataset.agentStatus;
     document.querySelectorAll('[data-agent-status]').forEach(item => item.classList.toggle('active', item === button));
-    renderAgentCards();
-    if (document.querySelector('.agent-result-card.open') && state.selectedAgentKey) {
+    renderAgentTabs();
+    if (document.querySelector('.agent-result-tab.active') && state.selectedAgentKey
+      && $('resultAgentDetail').dataset.agentKey !== state.selectedAgentKey) {
       showAgentDetail(state.selectedAgentKey).catch(reportError);
     }
   }));

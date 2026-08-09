@@ -54,7 +54,7 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     )
 
 
-def test_agent_result_page_is_agent_owned_and_expands_structured_outputs():
+def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab():
     root = Path(__file__).parents[2]
     shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(
         encoding="utf-8"
@@ -69,7 +69,16 @@ def test_agent_result_page_is_agent_owned_and_expands_structured_outputs():
     assert 'data-result-tab="operations">运行诊断</button>' in shell
     assert 'data-result-tab="artifacts">结果与导出</button>' in shell
     assert 'class="agent-result-list" id="resultAgentButtons"' in shell
-    assert 'data-tooltip="每个 Agent 是一个独立结果单元' in shell
+    assert 'id="resultAgentButtons" role="tablist"' in shell
+    assert 'id="resultAgentDetail" role="tabpanel"' in shell
+    assert 'id="agentTabPrev"' in shell and 'id="agentTabNext"' in shell
+    assert 'data-tooltip="每个 Agent 是一个独立结果单元；切换上方 Tab' in shell
+    assert '.agent-result-card' not in shell
+    assert "function renderAgentTabs()" in script
+    assert 'role="tab" class="agent-result-tab' in script
+    assert "['ArrowLeft', 'ArrowRight', 'Home', 'End']" in script
+    assert "String(a.display_name || a.agent_key).localeCompare" in script
+    assert "b.updated_step - a.updated_step" not in script
     assert "function renderAgentPlanSection" in script
     assert "function renderAgentEventSection" in script
     assert "function renderAgentActionSection" in script
