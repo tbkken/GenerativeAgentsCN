@@ -10,7 +10,7 @@ from uuid import uuid4
 import pytest
 
 from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunPaths
+from generative_agents.runtime.context import RunPaths, WorkflowPromptRepository
 from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from generative_agents.runtime.frame_store import FrameConflictError, FrameStore
 from generative_agents.runtime.results import (
@@ -19,7 +19,11 @@ from generative_agents.runtime.results import (
     AgentStepResult,
     StepResultBuilder,
 )
-from generative_agents.config import canonical_json_bytes, definition_hash
+from generative_agents.config import (
+    canonical_json_bytes,
+    definition_hash,
+    make_default_workflows,
+)
 from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
 from generative_agents.runtime.manifest import (
     ManifestConflictError,
@@ -411,6 +415,63 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
             expected_definition_hash=definition_hash(changed_definition),
             assets=[],
         )
+
+
+def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path):
+    import copy
+    import hashlib
+
+    run_id = uuid4()
+    experiment_id = uuid4()
+    revision_id = uuid4()
+    definition = make_blank_definition(key="workflow-manifest", name="Workflow Manifest")
+    workflows = make_default_workflows()
+    document = build_manifest_document(
+        run_id=run_id,
+        experiment_id=experiment_id,
+        revision_id=revision_id,
+        definition=definition,
+        expected_definition_hash=definition_hash(definition),
+        code_build_id="workflow-build",
+        assets=[],
+        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        dependency_versions={},
+        workflows=workflows,
+    )
+    store = RunManifestStore(RunPaths.under(tmp_path, run_id))
+    verified = store.materialize(document)
+    assert set(verified.workflows) == set(workflows)
+    repository = WorkflowPromptRepository(
+        {
+            **{key: value.content for key, value in definition.prompts.items()},
+            "unused_optional_prompt": "not placed and never executed",
+        },
+        verified.workflows,
+    )
+    assert repository.node_for_prompt("decide_chat") == (
+        "social",
+        "prompt_decide_chat",
+    )
+    with pytest.raises(KeyError, match="not placed"):
+        repository.get("unused_optional_prompt")
+
+    tampered = copy.deepcopy(document)
+    tampered["workflows"]["social"]["title"] = "tampered"
+    unsigned = dict(tampered)
+    unsigned.pop("manifest_hash")
+    tampered["manifest_hash"] = hashlib.sha256(
+        canonical_json_bytes(unsigned)
+    ).hexdigest()
+    tampered_run_id = uuid4()
+    tampered_store = RunManifestStore(RunPaths.under(tmp_path, tampered_run_id))
+    tampered["run_id"] = str(tampered_run_id)
+    unsigned = dict(tampered)
+    unsigned.pop("manifest_hash")
+    tampered["manifest_hash"] = hashlib.sha256(
+        canonical_json_bytes(unsigned)
+    ).hexdigest()
+    with pytest.raises(ValueError, match="workflow_bundle_hash mismatch"):
+        tampered_store.materialize(tampered)
 
 
 def test_model_trace_is_attempt_scoped_contiguous_and_redacted(tmp_path):
