@@ -51,6 +51,8 @@ def test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay():
     assert "data-palette-form" in source
     assert "mergePatch(base.definition, target.definition)" in source
     assert "/draft/map-overlay" in source
+    assert "this.publicEditor.resize();" in source
+    assert "this.publicEditor.fit();" in source
     assert "window.prompt" not in source
     subprocess.run(
         ["node", "--check", str(STATIC / "map-workspace.js")],
