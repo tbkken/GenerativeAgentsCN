@@ -109,6 +109,26 @@
     state.toastTimer = setTimeout(() => $('toast').classList.remove('show'), 2600);
   }
 
+  function workspaceUrl(pageName = state.workspacePage) {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    if (pageName !== 'experiments' && state.selectedExperimentId) {
+      url.searchParams.set('experiment_id', state.selectedExperimentId);
+      url.searchParams.set('view', pageName);
+      if (pageName === 'results' && state.selectedRunId) {
+        url.searchParams.set('run_id', state.selectedRunId);
+      }
+    }
+    return `${url.pathname}${url.search}`;
+  }
+
+  function syncWorkspaceUrl() {
+    const nextUrl = workspaceUrl();
+    const currentUrl = `${window.location.pathname}${window.location.search}`;
+    if (nextUrl !== currentUrl) history.replaceState(null, '', nextUrl);
+  }
+
   function goToPage(pageName) {
     const target = $(`page-${pageName}`);
     if (!target) throw new Error(`未知页面：${pageName}`);
@@ -140,6 +160,7 @@
       state.operationsRunId = null;
     }
     if (isGlobal) scheduleGlobalReconcile({ full: true });
+    syncWorkspaceUrl();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -448,7 +469,7 @@
     });
   }
 
-  async function openExperiment(id, targetPage = 'overview') {
+  async function openExperiment(id, targetPage = 'overview', preferredRunId = null) {
     const generation = ++state.experimentOpenGeneration;
     const [experiment, draft] = await Promise.all([
       api(`/experiments/${id}`),
@@ -472,7 +493,7 @@
     state.definition = draft?.definition || published?.definition || null;
     state.revision = draft || published;
     state.latestRunId = experiment.latest_run?.id || null;
-    state.selectedRunId = targetPage === 'results' ? state.latestRunId : null;
+    state.selectedRunId = targetPage === 'results' ? preferredRunId || state.latestRunId : null;
     $('navRunCount').textContent = experiment.run_count || 0;
     state.currentExperimentName = experiment.name;
     state.currentExperimentStatus = statusLabels[experiment.status] || experiment.status;
@@ -484,7 +505,7 @@
     applyStatusPill(state.currentExperimentStatus);
     setWorkspaceMode(state.currentExperimentStatus);
     goToPage(targetPage);
-    if (targetPage === 'results') await loadRunHistory(id, state.latestRunId);
+    if (targetPage === 'results') await loadRunHistory(id, state.selectedRunId);
     fillLatestRunSummary(experiment).catch(reportError);
   }
 
@@ -968,7 +989,7 @@
         if (error.name !== 'AbortError') console.warn('回放边界刷新失败', error);
       });
     }
-    history.replaceState(null, '', `?experiment_id=${state.selectedExperimentId}&run_id=${runId}&view=results`);
+    syncWorkspaceUrl();
   }
 
   function applyRunActivity(activity) {
@@ -2805,11 +2826,11 @@
     await loadExperiments();
     const experimentId = params.get('experiment_id');
     if (experimentId) {
-      await openExperiment(experimentId, params.get('view') === 'results' ? 'results' : 'overview');
-      const requestedRunId = params.get('run_id');
-      if (requestedRunId && params.get('view') === 'results' && requestedRunId !== state.selectedRunId) {
-        await loadResults(requestedRunId);
-      }
+      const requestedView = params.get('view');
+      const targetPage = requestedView && requestedView !== 'experiments' && $(`page-${requestedView}`)
+        ? requestedView
+        : 'overview';
+      await openExperiment(experimentId, targetPage, params.get('run_id'));
     }
     state.bootstrapped = true;
     await startGlobalActivityStream();

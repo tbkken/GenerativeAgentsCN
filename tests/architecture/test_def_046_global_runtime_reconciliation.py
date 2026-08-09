@@ -75,6 +75,7 @@ const cut = (start, end) => {
   return source.slice(left, right);
 };
 const production = [
+  cut('function workspaceUrl(', 'function goToPage('),
   cut('function cardTemplate(item)', 'async function loadExperiments()'),
   cut('async function loadExperiments()', 'function renderPages(totalPages)'),
   cut('function renderPages(totalPages)', 'function updateTabCounts(counts)'),
@@ -131,9 +132,12 @@ global.document = {
     : null,
   addEventListener: (name, handler) => { documentHandlers[name] = handler; },
 };
-global.window = { addEventListener: (name, handler) => { windowHandlers[name] = handler; } };
+global.window = {
+  addEventListener: (name, handler) => { windowHandlers[name] = handler; },
+  location: { href: 'http://localhost/', pathname: '/', search: '' },
+};
 global.history = { replaceState: () => {} };
-global.location = { search: '' };
+global.location = window.location;
 
 let timerSequence = 0;
 let timers = [];
