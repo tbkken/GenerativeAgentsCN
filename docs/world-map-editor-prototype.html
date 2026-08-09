@@ -1,0 +1,1744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>World Map Editor</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="World Map Editor" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;World Map Editor&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: var(--border-radius-lg, 12.5px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;af-map-editor&quot;&gt;
+  &lt;style&gt;
+    #af-map-editor {
+      --af-bg: light-dark(#f4f7f5, #111816);
+      --af-shell: light-dark(#ffffff, #17201d);
+      --af-surface: light-dark(#ffffff, #1a2421);
+      --af-surface-soft: light-dark(#f6f9f7, #202b27);
+      --af-surface-muted: light-dark(#edf3f0, #27332f);
+      --af-text: light-dark(#17231f, #edf5f1);
+      --af-muted: light-dark(#64756f, #9fb0aa);
+      --af-line: light-dark(#dbe5e0, #34423d);
+      --af-line-strong: light-dark(#c8d7d0, #46564f);
+      --af-teal: light-dark(#147d70, #5fd0bb);
+      --af-teal-ink: light-dark(#ffffff, #0d201c);
+      --af-teal-soft: light-dark(#e1f4ef, #1f4038);
+      --af-blue-soft: light-dark(#e8f0ff, #24334b);
+      --af-blue: light-dark(#4a73c4, #8ab0ff);
+      --af-amber-soft: light-dark(#fff3dc, #493a20);
+      --af-amber: light-dark(#a86a11, #f1bb65);
+      --af-red-soft: light-dark(#fdeae7, #482724);
+      --af-red: light-dark(#b64f43, #ff9388);
+      --af-map-frame: light-dark(#2b3c35, #0c1210);
+      width: 100%;
+      color: var(--af-text);
+      font: 400 var(--font-size-base) ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, sans-serif;
+      background: var(--af-bg);
+      border: 1px solid var(--af-line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    #af-map-editor * { box-sizing: border-box; }
+    #af-map-editor button, #af-map-editor input, #af-map-editor select { font: inherit; }
+    #af-map-editor button { color: inherit; }
+    #af-map-editor .af-app { display: grid; grid-template-columns: 82px minmax(0, 1fr); min-height: 820px; background: var(--af-shell); }
+    #af-map-editor .af-side { background: light-dark(#17372f, #10231e); color: #d9ebe5; padding: 18px 10px; display: flex; flex-direction: column; gap: 20px; }
+    #af-map-editor .af-logo { display: grid; place-items: center; width: 38px; height: 38px; margin: 0 auto; border-radius: 10px; background: #65c9b4; color: #11372f; font-weight: 500; }
+    #af-map-editor .af-nav { display: grid; gap: 7px; }
+    #af-map-editor .af-nav button { border: 0; background: transparent; color: #9fc0b6; display: grid; justify-items: center; gap: 5px; padding: 10px 4px; border-radius: 9px; cursor: pointer; }
+    #af-map-editor .af-nav button span { font-size: .72em; }
+    #af-map-editor .af-nav button.is-current { background: #285046; color: #ffffff; }
+    #af-map-editor .af-main { min-width: 0; display: flex; flex-direction: column; }
+    #af-map-editor .af-topbar { min-height: 64px; border-bottom: 1px solid var(--af-line); padding: 0 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: var(--af-surface); }
+    #af-map-editor .af-title { display: flex; align-items: center; min-width: 0; gap: 10px; }
+    #af-map-editor .af-title strong { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #af-map-editor .af-draft { color: var(--af-teal); background: var(--af-teal-soft); border-radius: 999px; padding: 4px 8px; font-size: .78em; white-space: nowrap; }
+    #af-map-editor .af-top-actions { display: flex; align-items: center; gap: 8px; }
+    #af-map-editor .af-context-select { min-height: 34px; max-width: 226px; border: 1px solid var(--af-line-strong); border-radius: 8px; background: var(--af-surface-soft); color: var(--af-text); padding: 6px 28px 6px 9px; }
+    #af-map-editor .af-save-state { color: var(--af-muted); font-size: .82em; white-space: nowrap; }
+    #af-map-editor .af-button { min-height: 34px; border: 1px solid var(--af-line-strong); background: var(--af-surface); border-radius: 8px; padding: 6px 11px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+    #af-map-editor .af-button:hover { background: var(--af-surface-soft); }
+    #af-map-editor .af-button-primary { border-color: light-dark(#1d584e, #75cab9); background: light-dark(#1f584e, #6ac4b2); color: light-dark(#ffffff, #10231f); }
+    #af-map-editor .af-button-primary:hover { background: light-dark(#184b42, #7dd2c1); }
+    #af-map-editor .af-icon-button { width: 34px; padding: 0; }
+    #af-map-editor .af-content { padding: 20px 22px 26px; min-width: 0; }
+    #af-map-editor .af-pagehead { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+    #af-map-editor .af-heading { display: flex; align-items: center; gap: 8px; }
+    #af-map-editor h1 { margin: 0; font-size: 1.45em; font-weight: 500; }
+    #af-map-editor h2, #af-map-editor h3 { margin: 0; font-weight: 500; }
+    #af-map-editor .af-help { width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1px solid var(--af-line-strong); color: var(--af-muted); background: transparent; cursor: help; }
+    #af-map-editor .af-revision { color: var(--af-muted); font-size: .84em; text-align: right; }
+    #af-map-editor .af-revision code { display: block; color: var(--af-text); margin-top: 3px; }
+    #af-map-editor .af-scopebar { min-height: 42px; margin-bottom: 10px; border-top: 1px solid var(--af-line); border-bottom: 1px solid var(--af-line); display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--af-muted); }
+    #af-map-editor .af-scope-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    #af-map-editor .af-scope-main strong { color: var(--af-text); font-weight: 500; }
+    #af-map-editor .af-link-button { border: 0; background: transparent; padding: 5px 0; color: var(--af-teal); cursor: pointer; white-space: nowrap; }
+    #af-map-editor .af-experiment-only { display: none !important; }
+    #af-map-editor.is-experiment-context .af-tab.af-experiment-only { display: block !important; }
+    #af-map-editor.is-experiment-context .af-scope-main.af-experiment-only,
+    #af-map-editor.is-experiment-context .af-layer.af-experiment-only { display: flex !important; }
+    #af-map-editor.is-experiment-context .af-issue.af-experiment-only,
+    #af-map-editor.is-experiment-context .af-resource-row.af-experiment-only { display: grid !important; }
+    #af-map-editor.is-experiment-context .af-panel.af-experiment-only:not([hidden]) { display: block !important; }
+    #af-map-editor.is-experiment-context .af-public-only { display: none !important; }
+    #af-map-editor .af-layer[hidden] { display: none; }
+    #af-map-editor .af-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--af-line); margin-bottom: 14px; overflow-x: auto; }
+    #af-map-editor .af-tab { border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 10px 1px 11px; color: var(--af-muted); white-space: nowrap; cursor: pointer; }
+    #af-map-editor .af-tab.is-active { color: var(--af-text); border-bottom-color: var(--af-teal); font-weight: 500; }
+    #af-map-editor .af-panel[hidden] { display: none; }
+    #af-map-editor .af-editor { border: 1px solid var(--af-line); background: var(--af-surface); border-radius: 10px; overflow: hidden; }
+    #af-map-editor .af-editorbar { min-height: 50px; border-bottom: 1px solid var(--af-line); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; background: var(--af-surface-soft); }
+    #af-map-editor .af-toolset { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    #af-map-editor .af-tool { min-height: 32px; border: 1px solid transparent; background: transparent; border-radius: 7px; padding: 5px 8px; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+    #af-map-editor .af-tool:hover { background: var(--af-surface-muted); }
+    #af-map-editor .af-tool.is-selected { background: var(--af-teal-soft); color: var(--af-teal); border-color: light-dark(#a9d6cc, #3b6c61); }
+    #af-map-editor .af-divider { width: 1px; height: 24px; background: var(--af-line); margin: 0 3px; }
+    #af-map-editor .af-zoom { min-width: 48px; color: var(--af-muted); text-align: center; font-size: .82em; }
+    #af-map-editor .af-workspace { display: grid; grid-template-columns: 158px minmax(260px, 1fr) 176px; min-height: 556px; }
+    #af-map-editor .af-palette, #af-map-editor .af-inspector { background: var(--af-surface); padding: 12px; min-width: 0; }
+    #af-map-editor .af-palette { border-right: 1px solid var(--af-line); }
+    #af-map-editor .af-inspector { border-left: 1px solid var(--af-line); }
+    #af-map-editor .af-panel-title { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 10px; }
+    #af-map-editor .af-panel-title h3 { font-size: .92em; }
+    #af-map-editor .af-mini-label { color: var(--af-muted); font-size: .75em; }
+    #af-map-editor .af-tile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    #af-map-editor .af-tile-add { grid-column: 1 / -1; min-height: 34px; border: 1px dashed var(--af-line-strong); border-radius: 7px; background: transparent; color: var(--af-teal); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    #af-map-editor .af-tile { aspect-ratio: 1; border: 1px solid var(--af-line); border-radius: 7px; background: var(--af-surface-soft); padding: 4px; cursor: pointer; display: grid; place-items: center; position: relative; }
+    #af-map-editor .af-tile.is-selected { border-color: var(--af-teal); box-shadow: inset 0 0 0 1px var(--af-teal); }
+    #af-map-editor .af-tile::after { content: attr(data-label); position: absolute; left: 3px; right: 3px; bottom: 2px; color: var(--af-text); font-size: .62em; text-align: center; text-shadow: 0 1px 2px light-dark(#ffffff, #000000); }
+    #af-map-editor .af-swatch { width: 30px; height: 30px; border-radius: 5px; border: 1px solid light-dark(#9bac9f, #5c6c65); }
+    #af-map-editor .af-swatch.grass { background: repeating-linear-gradient(135deg,#86b978 0 5px,#7eaf70 5px 10px); }
+    #af-map-editor .af-swatch.path { background: repeating-linear-gradient(90deg,#d5bf91 0 7px,#c9b283 7px 8px); }
+    #af-map-editor .af-swatch.water { background: repeating-linear-gradient(0deg,#67aeca 0 5px,#75bad3 5px 8px); }
+    #af-map-editor .af-swatch.floor { background: repeating-linear-gradient(90deg,#d7a96f 0 7px,#c8965c 7px 8px); }
+    #af-map-editor .af-swatch.wall { background: repeating-linear-gradient(0deg,#8c7564 0 6px,#6e5d50 6px 7px); }
+    #af-map-editor .af-swatch.tree { background: radial-gradient(circle at 50% 38%,#43825b 0 42%,transparent 43%),linear-gradient(90deg,transparent 43%,#79533a 44% 56%,transparent 57%); }
+    #af-map-editor .af-subhead { margin: 17px 0 8px; padding-top: 12px; border-top: 1px solid var(--af-line); color: var(--af-muted); font-size: .78em; text-transform: uppercase; letter-spacing: .04em; }
+    #af-map-editor .af-semantic-list, #af-map-editor .af-agent-list, #af-map-editor .af-layer-list { display: grid; gap: 4px; }
+    #af-map-editor .af-semantic, #af-map-editor .af-agent, #af-map-editor .af-layer { width: 100%; border: 1px solid transparent; background: transparent; border-radius: 7px; padding: 7px; text-align: left; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    #af-map-editor .af-semantic:hover, #af-map-editor .af-agent:hover, #af-map-editor .af-layer:hover { background: var(--af-surface-soft); }
+    #af-map-editor .af-semantic.is-selected, #af-map-editor .af-agent.is-selected, #af-map-editor .af-layer.is-selected { background: var(--af-teal-soft); border-color: light-dark(#b9ddd5, #315c53); }
+    #af-map-editor .af-dot { width: 10px; height: 10px; border-radius: 3px; background: var(--af-blue); flex: none; }
+    #af-map-editor .af-dot.arena { border-radius: 50%; background: var(--af-amber); }
+    #af-map-editor .af-dot.object { transform: rotate(45deg); border-radius: 2px; background: var(--af-red); }
+    #af-map-editor .af-dot.collision { background: repeating-linear-gradient(135deg,var(--af-red) 0 2px,transparent 2px 4px); border: 1px solid var(--af-red); }
+    #af-map-editor .af-agent-avatar { width: 25px; height: 25px; border-radius: 50%; display: grid; place-items: center; background: var(--af-blue-soft); color: var(--af-blue); font-size: .74em; font-weight: 500; flex: none; }
+    #af-map-editor .af-canvas-wrap { min-width: 0; position: relative; background: var(--af-map-frame); display: grid; place-items: center; overflow: hidden; touch-action: none; }
+    #af-map-editor .af-canvas-wrap::before { content: &#x27;&#x27;; position: absolute; inset: 0; opacity: .32; background-image: linear-gradient(45deg, rgba(255,255,255,.04) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,.04) 25%, transparent 25%); background-size: 16px 16px; pointer-events: none; }
+    #af-map-editor #af-map-canvas, #af-map-editor .af-mirror-canvas { display: block; width: 150%; max-width: none; height: auto; max-height: none; aspect-ratio: 48 / 32; cursor: crosshair; image-rendering: pixelated; background: #6f9e65; transform-origin: center center; will-change: transform; }
+    #af-map-editor .af-canvas-wrap.is-panning canvas, #af-map-editor canvas.is-pan-tool { cursor: grab !important; }
+    #af-map-editor .af-canvas-wrap.is-dragging canvas { cursor: grabbing !important; }
+    #af-map-editor .af-pan-hint { position: absolute; right: 10px; top: 10px; color: #f5fbf8; background: rgba(12,27,23,.72); border-radius: 6px; padding: 5px 7px; font-size: .7em; pointer-events: none; }
+    #af-map-editor .af-semantic-draft { position: absolute; border: 2px solid #7aa4ff; background: rgba(83,112,200,.18); pointer-events: none; z-index: 2; }
+    #af-map-editor .af-field { display: grid; gap: 5px; margin: 10px 0; }
+    #af-map-editor .af-field span { color: var(--af-muted); font-size: .78em; }
+    #af-map-editor .af-field input, #af-map-editor .af-field select { width: 100%; min-height: 35px; border: 1px solid var(--af-line-strong); border-radius: 7px; background: var(--af-surface-soft); color: var(--af-text); padding: 6px 8px; }
+    #af-map-editor .af-file-drop { border: 1px dashed var(--af-line-strong); border-radius: 8px; padding: 12px; color: var(--af-muted); text-align: center; }
+    #af-map-editor .af-canvas-hud { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; pointer-events: none; }
+    #af-map-editor .af-hud-label { color: #f5fbf8; background: rgba(12,27,23,.78); border-radius: 6px; padding: 5px 7px; font-size: .72em; backdrop-filter: blur(3px); }
+    #af-map-editor .af-map-mode { position: absolute; top: 10px; left: 10px; color: #f5fbf8; background: rgba(12,27,23,.78); border-radius: 6px; padding: 5px 7px; font-size: .72em; }
+    #af-map-editor .af-layer { justify-content: space-between; }
+    #af-map-editor .af-layer-main { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    #af-map-editor .af-eye { width: 16px; color: var(--af-muted); }
+    #af-map-editor .af-layer span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #af-map-editor .af-property { padding: 9px 0; border-bottom: 1px solid var(--af-line); }
+    #af-map-editor .af-property:last-child { border-bottom: 0; }
+    #af-map-editor .af-property span { display: block; color: var(--af-muted); font-size: .74em; margin-bottom: 4px; }
+    #af-map-editor .af-property strong, #af-map-editor .af-property code { font-weight: 500; word-break: break-word; }
+    #af-map-editor .af-legend { display: flex; gap: 12px; flex-wrap: wrap; padding: 8px 11px; border-top: 1px solid var(--af-line); background: var(--af-surface-soft); color: var(--af-muted); font-size: .76em; }
+    #af-map-editor .af-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    #af-map-editor .af-validation-layout, #af-map-editor .af-resource-layout { display: grid; grid-template-columns: 220px minmax(0,1fr); border: 1px solid var(--af-line); border-radius: 10px; overflow: hidden; background: var(--af-surface); min-height: 520px; }
+    #af-map-editor .af-validation-side, #af-map-editor .af-resource-side { border-right: 1px solid var(--af-line); padding: 16px; background: var(--af-surface-soft); }
+    #af-map-editor .af-count { font-size: 2em; font-weight: 500; margin: 7px 0 2px; }
+    #af-map-editor .af-count-note { color: var(--af-muted); font-size: .8em; }
+    #af-map-editor .af-issue-list { display: grid; gap: 8px; padding: 14px; }
+    #af-map-editor .af-issue { border: 1px solid var(--af-line); background: var(--af-surface); border-radius: 8px; padding: 10px; display: grid; grid-template-columns: 24px minmax(0,1fr) auto; align-items: center; gap: 9px; text-align: left; cursor: pointer; }
+    #af-map-editor .af-issue:hover { border-color: var(--af-line-strong); background: var(--af-surface-soft); }
+    #af-map-editor .af-issue-mark { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--af-red-soft); color: var(--af-red); }
+    #af-map-editor .af-issue.warn .af-issue-mark { background: var(--af-amber-soft); color: var(--af-amber); }
+    #af-map-editor .af-issue strong { display: block; font-weight: 500; }
+    #af-map-editor .af-issue small { color: var(--af-muted); }
+    #af-map-editor .af-location { color: var(--af-teal); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .76em; }
+    #af-map-editor .af-resource-main { padding: 14px; }
+    #af-map-editor .af-resource-row { display: grid; grid-template-columns: minmax(150px,1.2fr) minmax(110px,.8fr) 100px 72px; gap: 10px; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--af-line); }
+    #af-map-editor .af-resource-row.is-head { color: var(--af-muted); font-size: .78em; }
+    #af-map-editor .af-resource-name strong { display: block; font-weight: 500; }
+    #af-map-editor .af-resource-name span { color: var(--af-muted); font-size: .76em; }
+    #af-map-editor .af-status { display: inline-flex; align-items: center; justify-content: center; width: max-content; border-radius: 999px; padding: 4px 7px; color: var(--af-teal); background: var(--af-teal-soft); font-size: .75em; }
+    #af-map-editor .af-modal-backdrop { position: absolute; inset: 0; background: rgba(8,18,15,.56); display: grid; place-items: center; padding: 20px; z-index: 10; }
+    #af-map-editor .af-modal-backdrop[hidden] { display: none; }
+    #af-map-editor .af-modal { width: min(440px, 100%); background: var(--af-surface); border: 1px solid var(--af-line-strong); border-radius: 12px; box-shadow: 0 22px 70px rgba(0,0,0,.25); padding: 18px; }
+    #af-map-editor .af-modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; }
+    #af-map-editor .af-import-option { border: 1px solid var(--af-line); background: var(--af-surface); border-radius: 9px; padding: 11px; display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; cursor: pointer; margin-bottom: 8px; }
+    #af-map-editor .af-import-option.is-selected { border-color: var(--af-teal); background: var(--af-teal-soft); }
+    #af-map-editor .af-import-option strong { display: block; font-weight: 500; }
+    #af-map-editor .af-import-option span { display: block; color: var(--af-muted); font-size: .78em; }
+    #af-map-editor .af-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    #af-map-editor .af-toast { position: absolute; right: 18px; bottom: 18px; z-index: 12; color: var(--af-teal-ink); background: var(--af-teal); border-radius: 8px; padding: 9px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+    #af-map-editor .af-toast[hidden] { display: none; }
+    @media (max-width: 760px) {
+      #af-map-editor .af-app { grid-template-columns: 60px minmax(0,1fr); }
+      #af-map-editor .af-side { padding-inline: 7px; }
+      #af-map-editor .af-logo { width: 34px; height: 34px; }
+      #af-map-editor .af-nav button span { display: none; }
+      #af-map-editor .af-content { padding: 16px 14px 22px; }
+      #af-map-editor .af-workspace { grid-template-columns: 124px minmax(230px,1fr); }
+      #af-map-editor .af-inspector { grid-column: 1/-1; border-left: 0; border-top: 1px solid var(--af-line); display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+      #af-map-editor .af-inspector .af-panel-title { grid-column: 1/-1; margin: 0; }
+      #af-map-editor .af-property { border: 0; padding: 4px; }
+      #af-map-editor .af-validation-layout, #af-map-editor .af-resource-layout { grid-template-columns: 170px minmax(0,1fr); }
+    }
+    @media (max-width: 520px) {
+      #af-map-editor { border-radius: 0; }
+      #af-map-editor .af-app { display: block; }
+      #af-map-editor .af-side { display: none; }
+      #af-map-editor .af-topbar { padding: 10px 12px; align-items: flex-start; }
+      #af-map-editor .af-save-state, #af-map-editor #af-import-button span { display: none; }
+      #af-map-editor .af-pagehead { display: block; }
+      #af-map-editor .af-revision { text-align: left; margin-top: 7px; }
+      #af-map-editor .af-workspace { display: flex; flex-direction: column; }
+      #af-map-editor .af-palette { border-right: 0; border-bottom: 1px solid var(--af-line); }
+      #af-map-editor .af-tile-grid { grid-template-columns: repeat(6,1fr); }
+      #af-map-editor .af-semantic-list, #af-map-editor .af-agent-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      #af-map-editor .af-canvas-wrap { min-height: 290px; }
+      #af-map-editor .af-inspector { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      #af-map-editor .af-validation-layout, #af-map-editor .af-resource-layout { display: block; }
+      #af-map-editor .af-validation-side, #af-map-editor .af-resource-side { border-right: 0; border-bottom: 1px solid var(--af-line); }
+      #af-map-editor .af-resource-row { grid-template-columns: minmax(130px,1fr) 75px; }
+      #af-map-editor .af-resource-row &gt; :nth-child(2), #af-map-editor .af-resource-row &gt; :nth-child(3) { display: none; }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;af-app&quot;&gt;
+    &lt;aside class=&quot;af-side&quot; aria-label=&quot;主导航&quot;&gt;
+      &lt;div class=&quot;af-logo&quot; aria-label=&quot;Agent Foundry&quot;&gt;AF&lt;/div&gt;
+      &lt;nav class=&quot;af-nav&quot;&gt;
+        &lt;button type=&quot;button&quot;&gt;&lt;i data-lucide=&quot;flask-conical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;实验&lt;/span&gt;&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;is-current&quot;&gt;&lt;i data-lucide=&quot;map&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;地图&lt;/span&gt;&lt;/button&gt;
+      &lt;/nav&gt;
+    &lt;/aside&gt;
+
+    &lt;main class=&quot;af-main&quot;&gt;
+      &lt;header class=&quot;af-topbar&quot;&gt;
+        &lt;div class=&quot;af-title&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;af-link-button&quot;&gt;地图&lt;/button&gt;&lt;span&gt;/&lt;/span&gt;&lt;strong id=&quot;af-map-title&quot;&gt;松果镇基础地图&lt;/strong&gt;&lt;span class=&quot;af-draft&quot; id=&quot;af-scope-badge&quot;&gt;公共地图&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;af-top-actions&quot;&gt;
+          &lt;select class=&quot;af-context-select&quot; id=&quot;af-edit-context&quot; aria-label=&quot;编辑范围&quot;&gt;&lt;option value=&quot;public&quot;&gt;公共地图&lt;/option&gt;&lt;option value=&quot;experiment&quot;&gt;城市社会互动实验 · 地图微调&lt;/option&gt;&lt;/select&gt;
+          &lt;span class=&quot;af-save-state&quot; id=&quot;af-save-state&quot;&gt;所有更改已保存&lt;/span&gt;
+          &lt;button type=&quot;button&quot; class=&quot;af-button&quot; id=&quot;af-import-button&quot;&gt;&lt;i data-lucide=&quot;upload&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;导入 Tiled&lt;/span&gt;&lt;/button&gt;
+          &lt;button type=&quot;button&quot; class=&quot;af-button af-button-primary&quot; id=&quot;af-publish-button&quot;&gt;发布地图版本&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;div class=&quot;af-content&quot;&gt;
+        &lt;div class=&quot;af-pagehead&quot;&gt;
+          &lt;div class=&quot;af-heading&quot;&gt;&lt;h1 id=&quot;af-page-title&quot;&gt;松果镇基础地图&lt;/h1&gt;&lt;button class=&quot;af-help&quot; type=&quot;button&quot; data-tooltip=&quot;公共地图可以被多个实验引用；实验微调只保存覆盖层，不会修改公共地图。&quot;&gt;?&lt;/button&gt;&lt;/div&gt;
+          &lt;div class=&quot;af-revision&quot;&gt;&lt;span id=&quot;af-revision-label&quot;&gt;公共地图草稿&lt;/span&gt;&lt;code id=&quot;af-revision-code&quot;&gt;map-draft · 7f2a91c&lt;/code&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;af-scopebar&quot;&gt;
+          &lt;div class=&quot;af-scope-main public-only&quot;&gt;&lt;i data-lucide=&quot;share-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;&lt;strong&gt;公共地图资产&lt;/strong&gt; · 已被 3 个实验引用&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;af-scope-main af-experiment-only&quot;&gt;&lt;i data-lucide=&quot;git-branch&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;&lt;strong&gt;实验微调层&lt;/strong&gt; · 基于公共地图 v3 · 改动仅属于「城市社会互动实验」&lt;/span&gt;&lt;/div&gt;
+          &lt;button type=&quot;button&quot; class=&quot;af-link-button public-only&quot; id=&quot;af-show-usages&quot;&gt;查看引用实验&lt;/button&gt;
+          &lt;button type=&quot;button&quot; class=&quot;af-link-button af-experiment-only&quot; id=&quot;af-reset-overlay&quot;&gt;重置本实验微调&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;nav class=&quot;af-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;地图编辑视图&quot;&gt;
+          &lt;button class=&quot;af-tab is-active&quot; role=&quot;tab&quot; aria-selected=&quot;true&quot; data-af-tab=&quot;paint&quot;&gt;地图绘制&lt;/button&gt;
+          &lt;button class=&quot;af-tab&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; data-af-tab=&quot;semantic&quot;&gt;空间语义&lt;/button&gt;
+          &lt;button class=&quot;af-tab af-experiment-only&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; data-af-tab=&quot;spawn&quot;&gt;Agent 出生点&lt;/button&gt;
+          &lt;button class=&quot;af-tab&quot; id=&quot;af-validation-tab&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; data-af-tab=&quot;validation&quot;&gt;校验发布 &lt;span id=&quot;af-validation-tab-count&quot; aria-label=&quot;1 个阻塞项&quot;&gt;· 1&lt;/span&gt;&lt;/button&gt;
+          &lt;button class=&quot;af-tab&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; data-af-tab=&quot;assets&quot;&gt;资源与版本&lt;/button&gt;
+        &lt;/nav&gt;
+
+        &lt;section class=&quot;af-panel&quot; data-af-panel=&quot;paint&quot;&gt;
+          &lt;div class=&quot;af-editor&quot;&gt;
+            &lt;div class=&quot;af-editorbar&quot;&gt;
+              &lt;div class=&quot;af-toolset&quot; aria-label=&quot;地图工具&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool is-selected&quot; data-af-tool=&quot;paint&quot;&gt;&lt;i data-lucide=&quot;paintbrush&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;画笔&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; data-af-tool=&quot;erase&quot;&gt;&lt;i data-lucide=&quot;eraser&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;橡皮&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; data-af-tool=&quot;fill&quot;&gt;&lt;i data-lucide=&quot;paint-bucket&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;填充&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; data-af-tool=&quot;select&quot;&gt;&lt;i data-lucide=&quot;mouse-pointer-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;选择&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; data-af-tool=&quot;pan&quot; title=&quot;也可以按住空格或鼠标中键&quot;&gt;&lt;i data-lucide=&quot;hand&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;拖动画布&lt;/button&gt;
+                &lt;span class=&quot;af-divider&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-undo&quot;&gt;&lt;i data-lucide=&quot;undo-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;撤销&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-redo&quot;&gt;&lt;i data-lucide=&quot;redo-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;重做&lt;/button&gt;
+              &lt;/div&gt;
+              &lt;div class=&quot;af-toolset&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-zoom-out&quot; aria-label=&quot;缩小&quot;&gt;&lt;i data-lucide=&quot;minus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;span class=&quot;af-zoom&quot; id=&quot;af-zoom-label&quot;&gt;100%&lt;/span&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-zoom-in&quot; aria-label=&quot;放大&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-fit&quot;&gt;&lt;i data-lucide=&quot;maximize&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;适配&lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;af-workspace&quot;&gt;
+              &lt;aside class=&quot;af-palette&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;图块&lt;/h3&gt;&lt;span class=&quot;af-mini-label&quot;&gt;基础地形&lt;/span&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-tile-grid&quot; id=&quot;af-tile-grid&quot;&gt;
+                  &lt;button class=&quot;af-tile is-selected&quot; type=&quot;button&quot; data-af-tile=&quot;grass&quot; data-label=&quot;草地&quot;&gt;&lt;span class=&quot;af-swatch grass&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;path&quot; data-label=&quot;道路&quot;&gt;&lt;span class=&quot;af-swatch path&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;water&quot; data-label=&quot;水面&quot;&gt;&lt;span class=&quot;af-swatch water&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;floor&quot; data-label=&quot;地板&quot;&gt;&lt;span class=&quot;af-swatch floor&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;wall&quot; data-label=&quot;墙体&quot;&gt;&lt;span class=&quot;af-swatch wall&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;tree&quot; data-label=&quot;树木&quot;&gt;&lt;span class=&quot;af-swatch tree&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile-add&quot; id=&quot;af-add-tile&quot; type=&quot;button&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;新建自定义图块&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;af-subhead&quot;&gt;最近使用&lt;/div&gt;
+                &lt;div class=&quot;af-tile-grid&quot;&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;path&quot; data-label=&quot;路口&quot;&gt;&lt;span class=&quot;af-swatch path&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;floor&quot; data-label=&quot;木地板&quot;&gt;&lt;span class=&quot;af-swatch floor&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-tile&quot; type=&quot;button&quot; data-af-tile=&quot;tree&quot; data-label=&quot;树&quot;&gt;&lt;span class=&quot;af-swatch tree&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+                &lt;/div&gt;
+              &lt;/aside&gt;
+              &lt;div class=&quot;af-canvas-wrap&quot;&gt;
+                &lt;canvas id=&quot;af-map-canvas&quot; width=&quot;1536&quot; height=&quot;1024&quot; role=&quot;img&quot; aria-label=&quot;可拖动编辑的 48 × 32 小镇地图&quot;&gt;&lt;/canvas&gt;
+                &lt;span class=&quot;af-map-mode&quot; id=&quot;af-map-mode&quot;&gt;地表层 · 画笔 · 草地&lt;/span&gt;
+                &lt;span class=&quot;af-pan-hint&quot;&gt;滚轮缩放 · 空格/中键拖动&lt;/span&gt;
+                &lt;div class=&quot;af-canvas-hud&quot;&gt;&lt;span class=&quot;af-hud-label&quot; id=&quot;af-cursor-label&quot;&gt;坐标 12, 9&lt;/span&gt;&lt;span class=&quot;af-hud-label&quot;&gt;48 × 32 · 32 px&lt;/span&gt;&lt;/div&gt;
+              &lt;/div&gt;
+              &lt;aside class=&quot;af-inspector&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;图层&lt;/h3&gt;&lt;button class=&quot;af-help&quot; type=&quot;button&quot; data-tooltip=&quot;发布时可见图层与语义图层会分别编译为回放资源和 Maze。&quot;&gt;?&lt;/button&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-layer-list&quot;&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-layer is-selected af-experiment-only&quot; id=&quot;af-overlay-layer&quot;&gt;&lt;span class=&quot;af-layer-main&quot;&gt;&lt;i data-lucide=&quot;layers-3&quot; class=&quot;af-eye&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;实验微调层&lt;/span&gt;&lt;/span&gt;&lt;i data-lucide=&quot;lock-open&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-layer&quot;&gt;&lt;span class=&quot;af-layer-main&quot;&gt;&lt;i data-lucide=&quot;eye&quot; class=&quot;af-eye&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;前景装饰&lt;/span&gt;&lt;/span&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-layer&quot;&gt;&lt;span class=&quot;af-layer-main&quot;&gt;&lt;i data-lucide=&quot;eye&quot; class=&quot;af-eye&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;建筑与家具&lt;/span&gt;&lt;/span&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-layer is-selected&quot;&gt;&lt;span class=&quot;af-layer-main&quot;&gt;&lt;i data-lucide=&quot;eye&quot; class=&quot;af-eye&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;地表&lt;/span&gt;&lt;/span&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-layer&quot;&gt;&lt;span class=&quot;af-layer-main&quot;&gt;&lt;i data-lucide=&quot;eye&quot; class=&quot;af-eye&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;背景&lt;/span&gt;&lt;/span&gt;&lt;i data-lucide=&quot;grip-vertical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;af-subhead&quot;&gt;当前格子&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;坐标&lt;/span&gt;&lt;code id=&quot;af-cell-coord&quot;&gt;12, 9&lt;/code&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;图块&lt;/span&gt;&lt;strong id=&quot;af-cell-tile&quot;&gt;道路 · #0412&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;语义地址&lt;/span&gt;&lt;strong id=&quot;af-cell-address&quot;&gt;中心广场 / 主路&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;通行状态&lt;/span&gt;&lt;strong id=&quot;af-cell-passable&quot;&gt;可通行&lt;/strong&gt;&lt;/div&gt;
+              &lt;/aside&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;af-legend&quot;&gt;&lt;span&gt;点击或拖动地图绘制&lt;/span&gt;&lt;span&gt;Shift + 拖动框选&lt;/span&gt;&lt;span&gt;Ctrl/Cmd + Z 撤销&lt;/span&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section class=&quot;af-panel&quot; data-af-panel=&quot;semantic&quot; hidden&gt;
+          &lt;div class=&quot;af-editor&quot;&gt;
+            &lt;div class=&quot;af-editorbar&quot;&gt;
+              &lt;div class=&quot;af-toolset&quot;&gt;&lt;button class=&quot;af-tool is-selected&quot; type=&quot;button&quot;&gt;&lt;i data-lucide=&quot;square-dashed-mouse-pointer&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;绘制区域&lt;/button&gt;&lt;button class=&quot;af-tool&quot; type=&quot;button&quot;&gt;&lt;i data-lucide=&quot;move&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;调整边界&lt;/button&gt;&lt;button class=&quot;af-tool&quot; type=&quot;button&quot;&gt;&lt;i data-lucide=&quot;pipette&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;拾取语义&lt;/button&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-toolset&quot;&gt;&lt;span class=&quot;af-mini-label&quot;&gt;语义覆盖已开启&lt;/span&gt;&lt;button class=&quot;af-tool&quot; type=&quot;button&quot; id=&quot;af-semantic-fit&quot;&gt;&lt;i data-lucide=&quot;maximize&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;适配&lt;/button&gt;&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;af-workspace&quot;&gt;
+              &lt;aside class=&quot;af-palette&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;语义类型&lt;/h3&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-semantic-list&quot;&gt;
+                  &lt;button class=&quot;af-semantic is-selected&quot; type=&quot;button&quot; data-af-semantic=&quot;sector&quot;&gt;&lt;span class=&quot;af-dot&quot;&gt;&lt;/span&gt;&lt;span&gt;区域 Sector&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-semantic&quot; type=&quot;button&quot; data-af-semantic=&quot;arena&quot;&gt;&lt;span class=&quot;af-dot arena&quot;&gt;&lt;/span&gt;&lt;span&gt;场所 Arena&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-semantic&quot; type=&quot;button&quot; data-af-semantic=&quot;object&quot;&gt;&lt;span class=&quot;af-dot object&quot;&gt;&lt;/span&gt;&lt;span&gt;物体 Object&lt;/span&gt;&lt;/button&gt;
+                  &lt;button class=&quot;af-semantic&quot; type=&quot;button&quot; data-af-semantic=&quot;collision&quot;&gt;&lt;span class=&quot;af-dot collision&quot;&gt;&lt;/span&gt;&lt;span&gt;碰撞 Collision&lt;/span&gt;&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;af-subhead&quot;&gt;已定义&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Sector&lt;/span&gt;&lt;strong&gt;4 个区域&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Arena&lt;/span&gt;&lt;strong&gt;11 个场所&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Object&lt;/span&gt;&lt;strong&gt;38 个物体&lt;/strong&gt;&lt;/div&gt;
+              &lt;/aside&gt;
+              &lt;div class=&quot;af-canvas-wrap&quot; id=&quot;af-semantic-wrap&quot;&gt;&lt;canvas class=&quot;af-mirror-canvas&quot; id=&quot;af-semantic-canvas&quot; width=&quot;1536&quot; height=&quot;1024&quot; role=&quot;img&quot; aria-label=&quot;空间语义覆盖地图&quot;&gt;&lt;/canvas&gt;&lt;span class=&quot;af-map-mode&quot; id=&quot;af-semantic-mode&quot;&gt;区域 Sector · 拖动框选范围&lt;/span&gt;&lt;span class=&quot;af-pan-hint&quot;&gt;拖动画出范围 · 空格拖动画布&lt;/span&gt;&lt;div class=&quot;af-canvas-hud&quot;&gt;&lt;span class=&quot;af-hud-label&quot;&gt;蓝色：区域&lt;/span&gt;&lt;span class=&quot;af-hud-label&quot;&gt;橙色：场所&lt;/span&gt;&lt;span class=&quot;af-hud-label&quot;&gt;红色：碰撞&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+              &lt;aside class=&quot;af-inspector&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;语义属性&lt;/h3&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;稳定键&lt;/span&gt;&lt;code id=&quot;af-semantic-key&quot;&gt;central-plaza&lt;/code&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;显示名称&lt;/span&gt;&lt;strong id=&quot;af-semantic-name&quot;&gt;中心广场&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;父级区域&lt;/span&gt;&lt;strong id=&quot;af-semantic-parent&quot;&gt;公共活动区&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;覆盖格数&lt;/span&gt;&lt;strong id=&quot;af-semantic-size&quot;&gt;36 tiles&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;场所&lt;/span&gt;&lt;strong&gt;咖啡馆、喷泉、主路&lt;/strong&gt;&lt;/div&gt;
+                &lt;button type=&quot;button&quot; class=&quot;af-button&quot; style=&quot;margin-top:12px;width:100%&quot;&gt;编辑属性&lt;/button&gt;
+              &lt;/aside&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;af-legend&quot;&gt;&lt;span&gt;&lt;i class=&quot;af-dot&quot;&gt;&lt;/i&gt; Sector&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;af-dot arena&quot;&gt;&lt;/i&gt; Arena&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;af-dot object&quot;&gt;&lt;/i&gt; Object&lt;/span&gt;&lt;span&gt;&lt;i class=&quot;af-dot collision&quot;&gt;&lt;/i&gt; Collision&lt;/span&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section class=&quot;af-panel af-experiment-only&quot; data-af-panel=&quot;spawn&quot; hidden&gt;
+          &lt;div class=&quot;af-editor&quot;&gt;
+            &lt;div class=&quot;af-editorbar&quot;&gt;&lt;div class=&quot;af-toolset&quot;&gt;&lt;span&gt;选择 Agent 后点击地图设置出生点&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;af-toolset&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;af-tool&quot; id=&quot;af-auto-place&quot;&gt;&lt;i data-lucide=&quot;sparkles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;自动分配空闲位置&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;div class=&quot;af-workspace&quot;&gt;
+              &lt;aside class=&quot;af-palette&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;Agent&lt;/h3&gt;&lt;span class=&quot;af-mini-label&quot;&gt;3 / 25&lt;/span&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-agent-list&quot;&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-agent is-selected&quot; data-af-agent=&quot;0&quot;&gt;&lt;span class=&quot;af-agent-avatar&quot;&gt;乔&lt;/span&gt;&lt;span&gt;乔治&lt;/span&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-agent&quot; data-af-agent=&quot;1&quot;&gt;&lt;span class=&quot;af-agent-avatar&quot;&gt;亚&lt;/span&gt;&lt;span&gt;亚当&lt;/span&gt;&lt;/button&gt;
+                  &lt;button type=&quot;button&quot; class=&quot;af-agent&quot; data-af-agent=&quot;2&quot;&gt;&lt;span class=&quot;af-agent-avatar&quot;&gt;玛&lt;/span&gt;&lt;span&gt;玛丽亚&lt;/span&gt;&lt;/button&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;af-subhead&quot;&gt;显示&lt;/div&gt;
+                &lt;label class=&quot;af-semantic&quot;&gt;&lt;input type=&quot;checkbox&quot; checked id=&quot;af-show-all-agents&quot;&gt; &lt;span&gt;显示全部出生点&lt;/span&gt;&lt;/label&gt;
+                &lt;label class=&quot;af-semantic&quot;&gt;&lt;input type=&quot;checkbox&quot; checked id=&quot;af-show-collision&quot;&gt; &lt;span&gt;显示碰撞层&lt;/span&gt;&lt;/label&gt;
+              &lt;/aside&gt;
+              &lt;div class=&quot;af-canvas-wrap&quot;&gt;&lt;canvas class=&quot;af-mirror-canvas&quot; width=&quot;1536&quot; height=&quot;1024&quot; role=&quot;img&quot; aria-label=&quot;Agent 出生点编辑地图&quot;&gt;&lt;/canvas&gt;&lt;span class=&quot;af-map-mode&quot;&gt;正在放置：乔治&lt;/span&gt;&lt;span class=&quot;af-pan-hint&quot;&gt;滚轮缩放 · 空格/中键拖动&lt;/span&gt;&lt;div class=&quot;af-canvas-hud&quot;&gt;&lt;span class=&quot;af-hud-label&quot; id=&quot;af-spawn-hud&quot;&gt;乔治 · 6, 5 · 咖啡馆&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+              &lt;aside class=&quot;af-inspector&quot;&gt;
+                &lt;div class=&quot;af-panel-title&quot;&gt;&lt;h3&gt;出生点&lt;/h3&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Agent&lt;/span&gt;&lt;strong id=&quot;af-spawn-name&quot;&gt;乔治&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;坐标&lt;/span&gt;&lt;code id=&quot;af-spawn-coord&quot;&gt;6, 5&lt;/code&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;地址&lt;/span&gt;&lt;strong id=&quot;af-spawn-address&quot;&gt;商业区 / 咖啡馆&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;通行状态&lt;/span&gt;&lt;strong id=&quot;af-spawn-state&quot; style=&quot;color:var(--af-teal)&quot;&gt;有效 · 可通行&lt;/strong&gt;&lt;/div&gt;
+                &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;可达场所&lt;/span&gt;&lt;strong&gt;11 / 11&lt;/strong&gt;&lt;/div&gt;
+              &lt;/aside&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;af-legend&quot;&gt;&lt;span&gt;● 乔治&lt;/span&gt;&lt;span&gt;● 亚当&lt;/span&gt;&lt;span&gt;● 玛丽亚&lt;/span&gt;&lt;span&gt;出生点必须位于可通行格&lt;/span&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section class=&quot;af-panel&quot; data-af-panel=&quot;validation&quot; hidden&gt;
+          &lt;div class=&quot;af-validation-layout&quot;&gt;
+            &lt;aside class=&quot;af-validation-side&quot;&gt;
+              &lt;h2&gt;发布校验&lt;/h2&gt;&lt;div class=&quot;af-count&quot; id=&quot;af-blocker-count&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;af-count-note&quot;&gt;个阻塞项 · 1 个警告&lt;/div&gt;
+              &lt;div class=&quot;af-subhead&quot;&gt;检查范围&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;地图结构&lt;/span&gt;&lt;strong&gt;28 × 18 · 32 px&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;空间语义&lt;/span&gt;&lt;strong&gt;53 个定义&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Agent 出生点&lt;/span&gt;&lt;strong&gt;24 / 25 有效&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;资源完整性&lt;/span&gt;&lt;strong&gt;19 / 19 已锁定&lt;/strong&gt;&lt;/div&gt;
+              &lt;button type=&quot;button&quot; class=&quot;af-button&quot; id=&quot;af-revalidate&quot; style=&quot;width:100%;margin-top:14px&quot;&gt;&lt;i data-lucide=&quot;refresh-cw&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;重新校验&lt;/button&gt;
+            &lt;/aside&gt;
+            &lt;div class=&quot;af-issue-list&quot;&gt;
+              &lt;button type=&quot;button&quot; class=&quot;af-issue af-experiment-only&quot; data-af-issue=&quot;spawn&quot;&gt;&lt;span class=&quot;af-issue-mark&quot;&gt;!&lt;/span&gt;&lt;span&gt;&lt;strong&gt;Agent「琳娜」出生点位于碰撞格&lt;/strong&gt;&lt;small&gt;移动出生点后可恢复；当前坐标无法参与仿真。&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;af-location&quot;&gt;104, 33 →&lt;/span&gt;&lt;/button&gt;
+              &lt;button type=&quot;button&quot; class=&quot;af-issue&quot; data-af-issue=&quot;semantic&quot;&gt;&lt;span class=&quot;af-issue-mark&quot;&gt;!&lt;/span&gt;&lt;span&gt;&lt;strong&gt;物体「北门公告栏」缺少父级 Arena&lt;/strong&gt;&lt;small&gt;Agent 无法形成完整 world / sector / arena / object 地址。&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;af-location&quot;&gt;22, 4 →&lt;/span&gt;&lt;/button&gt;
+              &lt;button type=&quot;button&quot; class=&quot;af-issue warn&quot; data-af-issue=&quot;semantic&quot;&gt;&lt;span class=&quot;af-issue-mark&quot;&gt;△&lt;/span&gt;&lt;span&gt;&lt;strong&gt;东侧公园只有一条可达路径&lt;/strong&gt;&lt;small&gt;不是发布阻塞项，但路径中断会使整个区域不可达。&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;af-location&quot;&gt;23, 14 →&lt;/span&gt;&lt;/button&gt;
+              &lt;div class=&quot;af-issue&quot; aria-label=&quot;通过项&quot;&gt;&lt;span class=&quot;af-issue-mark&quot; style=&quot;background:var(--af-teal-soft);color:var(--af-teal)&quot;&gt;✓&lt;/span&gt;&lt;span&gt;&lt;strong&gt;视觉资源与地图尺寸一致&lt;/strong&gt;&lt;small&gt;18 个 Tileset 已解析，资源哈希完整。&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;通过&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-issue&quot; aria-label=&quot;通过项&quot;&gt;&lt;span class=&quot;af-issue-mark&quot; style=&quot;background:var(--af-teal-soft);color:var(--af-teal)&quot;&gt;✓&lt;/span&gt;&lt;span&gt;&lt;strong&gt;可通行区域连通性&lt;/strong&gt;&lt;small&gt;主要活动区域位于同一可达分量。&lt;/small&gt;&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;通过&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section class=&quot;af-panel&quot; data-af-panel=&quot;assets&quot; hidden&gt;
+          &lt;div class=&quot;af-resource-layout&quot;&gt;
+            &lt;aside class=&quot;af-resource-side&quot;&gt;
+              &lt;h2&gt;地图资源&lt;/h2&gt;&lt;div class=&quot;af-count&quot;&gt;19&lt;/div&gt;&lt;div class=&quot;af-count-note&quot;&gt;个内容寻址资源&lt;/div&gt;
+              &lt;div class=&quot;af-subhead&quot;&gt;编译产物&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;编译器&lt;/span&gt;&lt;code&gt;world-compiler/v1&lt;/code&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;源地图&lt;/span&gt;&lt;strong&gt;town-source.tmj&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;Maze&lt;/span&gt;&lt;strong&gt;504 tiles · 112 KB&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-property&quot;&gt;&lt;span&gt;空间树&lt;/span&gt;&lt;strong&gt;4 / 11 / 38&lt;/strong&gt;&lt;/div&gt;
+              &lt;button type=&quot;button&quot; class=&quot;af-button&quot; style=&quot;width:100%;margin-top:14px&quot;&gt;&lt;i data-lucide=&quot;download&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;导出地图包&lt;/button&gt;
+            &lt;/aside&gt;
+            &lt;div class=&quot;af-resource-main&quot;&gt;
+              &lt;div class=&quot;af-resource-row is-head&quot;&gt;&lt;span&gt;资源&lt;/span&gt;&lt;span&gt;内容哈希&lt;/span&gt;&lt;span&gt;大小&lt;/span&gt;&lt;span&gt;状态&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row af-experiment-only&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;experiment-overlay.json&lt;/strong&gt;&lt;span&gt;实验独立微调层 · 引用公共地图 v3&lt;/span&gt;&lt;/span&gt;&lt;code&gt;e90c1a4…&lt;/code&gt;&lt;span&gt;8 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;实验草稿&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;town-source.tmj&lt;/strong&gt;&lt;span&gt;权威地图源文件&lt;/span&gt;&lt;/span&gt;&lt;code&gt;7f2a91c…&lt;/code&gt;&lt;span&gt;148 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;草稿&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;village-ground.png&lt;/strong&gt;&lt;span&gt;Tileset · 32 × 32&lt;/span&gt;&lt;/span&gt;&lt;code&gt;b44c8e1…&lt;/code&gt;&lt;span&gt;612 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;已锁定&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;interiors.png&lt;/strong&gt;&lt;span&gt;Tileset · 32 × 32&lt;/span&gt;&lt;/span&gt;&lt;code&gt;3a1d70f…&lt;/code&gt;&lt;span&gt;1.8 MB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;已锁定&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;maze.json&lt;/strong&gt;&lt;span&gt;仿真派生物&lt;/span&gt;&lt;/span&gt;&lt;code&gt;9d81a42…&lt;/code&gt;&lt;span&gt;112 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;已生成&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;spatial-tree.json&lt;/strong&gt;&lt;span&gt;Agent 空间认知派生物&lt;/span&gt;&lt;/span&gt;&lt;code&gt;c522b4e…&lt;/code&gt;&lt;span&gt;14 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;已生成&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;af-resource-row&quot;&gt;&lt;span class=&quot;af-resource-name&quot;&gt;&lt;strong&gt;render-manifest.json&lt;/strong&gt;&lt;span&gt;回放资源清单&lt;/span&gt;&lt;/span&gt;&lt;code&gt;1f990da…&lt;/code&gt;&lt;span&gt;6 KB&lt;/span&gt;&lt;span class=&quot;af-status&quot;&gt;已生成&lt;/span&gt;&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;af-modal-backdrop&quot; id=&quot;af-import-modal&quot; hidden&gt;
+    &lt;div class=&quot;af-modal&quot; role=&quot;dialog&quot; aria-modal=&quot;true&quot; aria-labelledby=&quot;af-import-title&quot;&gt;
+      &lt;div class=&quot;af-modal-head&quot;&gt;&lt;h2 id=&quot;af-import-title&quot;&gt;导入地图&lt;/h2&gt;&lt;button type=&quot;button&quot; class=&quot;af-button af-icon-button&quot; id=&quot;af-import-close&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;button type=&quot;button&quot; class=&quot;af-import-option is-selected&quot; data-af-import=&quot;package&quot;&gt;&lt;i data-lucide=&quot;package-open&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;&lt;strong&gt;Tiled 地图包&lt;/strong&gt;&lt;span&gt;ZIP 内包含 TMJ/JSON、TSJ/TSX 与 Tileset 图片&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;af-import-option&quot; data-af-import=&quot;json&quot;&gt;&lt;i data-lucide=&quot;file-json&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;&lt;strong&gt;单个 Tiled JSON&lt;/strong&gt;&lt;span&gt;随后补充上传缺失的外部 Tileset 和图片&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;af-import-option&quot; data-af-import=&quot;builtin&quot;&gt;&lt;i data-lucide=&quot;copy&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;&lt;strong&gt;复制公共地图模板&lt;/strong&gt;&lt;span&gt;作为新的公共地图草稿继续编辑&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;af-modal-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;af-button&quot; id=&quot;af-import-cancel&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;af-button af-button-primary&quot; id=&quot;af-import-next&quot;&gt;选择文件&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;af-modal-backdrop&quot; id=&quot;af-tile-modal&quot; hidden&gt;
+    &lt;div class=&quot;af-modal&quot; role=&quot;dialog&quot; aria-modal=&quot;true&quot; aria-labelledby=&quot;af-tile-title&quot;&gt;
+      &lt;div class=&quot;af-modal-head&quot;&gt;&lt;div&gt;&lt;h2 id=&quot;af-tile-title&quot;&gt;新建自定义图块&lt;/h2&gt;&lt;p class=&quot;af-mini-label&quot; id=&quot;af-tile-scope-note&quot;&gt;该图块将加入公共地图草稿&lt;/p&gt;&lt;/div&gt;&lt;button type=&quot;button&quot; class=&quot;af-button af-icon-button&quot; id=&quot;af-tile-close&quot; aria-label=&quot;关闭&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+      &lt;label class=&quot;af-field&quot;&gt;&lt;span&gt;图块名称&lt;/span&gt;&lt;input id=&quot;af-tile-name-input&quot; value=&quot;红色地毯&quot; maxlength=&quot;20&quot;&gt;&lt;/label&gt;
+      &lt;label class=&quot;af-field&quot;&gt;&lt;span&gt;图块图片&lt;/span&gt;&lt;span class=&quot;af-file-drop&quot;&gt;&lt;input type=&quot;file&quot; id=&quot;af-tile-file&quot; accept=&quot;image/png,image/jpeg,image/webp&quot;&gt; PNG / JPG / WebP，建议 32 × 32&lt;/span&gt;&lt;/label&gt;
+      &lt;label class=&quot;af-field&quot;&gt;&lt;span&gt;无图片时的预览色&lt;/span&gt;&lt;input type=&quot;color&quot; id=&quot;af-tile-color&quot; value=&quot;#b84f55&quot;&gt;&lt;/label&gt;
+      &lt;label class=&quot;af-field&quot;&gt;&lt;span&gt;通行属性&lt;/span&gt;&lt;select id=&quot;af-tile-passable&quot;&gt;&lt;option value=&quot;yes&quot;&gt;可通行&lt;/option&gt;&lt;option value=&quot;no&quot;&gt;不可通行（写入碰撞层）&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+      &lt;div class=&quot;af-modal-actions&quot;&gt;&lt;button type=&quot;button&quot; class=&quot;af-button&quot; id=&quot;af-tile-cancel&quot;&gt;取消&lt;/button&gt;&lt;button type=&quot;button&quot; class=&quot;af-button af-button-primary&quot; id=&quot;af-tile-create&quot;&gt;创建并选中&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;af-toast&quot; id=&quot;af-toast&quot; role=&quot;status&quot; hidden&gt;地图草稿已自动保存&lt;/div&gt;
+
+  &lt;script&gt;
+    (() =&gt; {
+      const root = document.getElementById(&#x27;af-map-editor&#x27;);
+      const primaryCanvas = root.querySelector(&#x27;#af-map-canvas&#x27;);
+      const mirrorCanvases = [...root.querySelectorAll(&#x27;.af-mirror-canvas&#x27;)];
+      const width = 48, height = 32;
+      const tileNames = { grass:&#x27;草地&#x27;, path:&#x27;道路&#x27;, water:&#x27;水面&#x27;, floor:&#x27;木地板&#x27;, wall:&#x27;墙体&#x27;, tree:&#x27;树木&#x27; };
+      const tileIds = { grass:&#x27;#0101&#x27;, path:&#x27;#0412&#x27;, water:&#x27;#0230&#x27;, floor:&#x27;#0831&#x27;, wall:&#x27;#0902&#x27;, tree:&#x27;#0618&#x27; };
+      const customTileDefs = {};
+      let tiles = Array.from({length: height}, () =&gt; Array(width).fill(&#x27;grass&#x27;));
+      let currentTile = &#x27;grass&#x27;, currentTool = &#x27;paint&#x27;, activeTab = &#x27;paint&#x27;, editContext = &#x27;public&#x27;, selected = {x:12,y:9};
+      let painting = false, zoom = 100, undoStack = [], redoStack = [], saveTimer = null;
+      let selectedAgent = 0;
+      let panX = 0, panY = 0, panning = false, spaceHeld = false, panStart = null;
+      let currentSemantic = &#x27;sector&#x27;, semanticDrawing = false, semanticStart = null, semanticPreview = null, semanticCounter = 5;
+      const publicSemanticRegions = [
+        {id:&#x27;business&#x27;,type:&#x27;sector&#x27;,x:2,y:1,w:11,h:8,label:&#x27;商业区&#x27;},
+        {id:&#x27;culture&#x27;,type:&#x27;sector&#x27;,x:15,y:1,w:12,h:8,label:&#x27;公共文化区&#x27;},
+        {id:&#x27;residential&#x27;,type:&#x27;sector&#x27;,x:2,y:11,w:11,h:6,label:&#x27;居住区&#x27;},
+        {id:&#x27;east-park&#x27;,type:&#x27;sector&#x27;,x:15,y:11,w:12,h:6,label:&#x27;东侧公园&#x27;},
+        {id:&#x27;market&#x27;,type:&#x27;sector&#x27;,x:29,y:1,w:16,h:11,label:&#x27;北部集市&#x27;},
+        {id:&#x27;lake-side&#x27;,type:&#x27;sector&#x27;,x:28,y:14,w:18,h:15,label:&#x27;湖畔社区&#x27;},
+        {id:&#x27;cafe&#x27;,type:&#x27;arena&#x27;,x:4,y:3,w:5,h:4,label:&#x27;咖啡馆&#x27;},
+        {id:&#x27;library&#x27;,type:&#x27;arena&#x27;,x:19,y:3,w:6,h:4,label:&#x27;图书馆&#x27;}
+      ];
+      const experimentSemanticRegions = publicSemanticRegions.map(region=&gt;({...region}));
+      let semanticRegions = publicSemanticRegions;
+      const agents = [
+        {name:&#x27;乔治&#x27;, x:6, y:5, color:&#x27;#355fbb&#x27;},
+        {name:&#x27;亚当&#x27;, x:20, y:5, color:&#x27;#b86838&#x27;},
+        {name:&#x27;玛丽亚&#x27;, x:19, y:14, color:&#x27;#8a55a8&#x27;}
+      ];
+
+      function seedMap() {
+        for (let y=0;y&lt;height;y++) { tiles[y][0]=&#x27;water&#x27;; tiles[y][1]=&#x27;water&#x27;; }
+        for (let y=0;y&lt;height;y++) for (let x=12;x&lt;=14;x++) tiles[y][x]=&#x27;path&#x27;;
+        for (let y=8;y&lt;=10;y++) for (let x=2;x&lt;width;x++) tiles[y][x]=&#x27;path&#x27;;
+        for (let y=0;y&lt;height;y++) for (let x=27;x&lt;=28;x++) tiles[y][x]=&#x27;path&#x27;;
+        for (let y=22;y&lt;=23;y++) for (let x=2;x&lt;width;x++) tiles[y][x]=&#x27;path&#x27;;
+        building(3,3,9,7); building(18,2,25,7); building(3,12,10,16); building(32,3,40,9); building(33,15,43,21); building(5,25,13,30);
+        for (let y=12;y&lt;=16;y++) for (let x=18;x&lt;=25;x++) if ((x+y)%3===0) tiles[y][x]=&#x27;tree&#x27;;
+        for (let y=24;y&lt;height;y++) for (let x=31;x&lt;width;x++) if ((x+y)%4===0) tiles[y][x]=&#x27;tree&#x27;;
+        for (let y=0;y&lt;height;y++) if (y%3===1) tiles[y][2]=&#x27;tree&#x27;;
+      }
+      function building(x1,y1,x2,y2) {
+        for (let y=y1;y&lt;=y2;y++) for (let x=x1;x&lt;=x2;x++) tiles[y][x]=(x===x1||x===x2||y===y1||y===y2)?&#x27;wall&#x27;:&#x27;floor&#x27;;
+        tiles[y2][Math.floor((x1+x2)/2)]=&#x27;path&#x27;;
+      }
+      seedMap();
+      const publicTiles = tiles;
+      const experimentTiles = tiles.map(row=&gt;row.slice());
+
+      function colors() {
+        return { grass:&#x27;#78a96b&#x27;, grass2:&#x27;#6e9d62&#x27;, path:&#x27;#c9b07b&#x27;, path2:&#x27;#bba16d&#x27;, water:&#x27;#5ca6c2&#x27;, water2:&#x27;#70b6cf&#x27;, floor:&#x27;#c58f58&#x27;, floor2:&#x27;#d3a06b&#x27;, wall:&#x27;#725f51&#x27;, wall2:&#x27;#8a7462&#x27;, tree:&#x27;#3f7a50&#x27;, grid:&#x27;rgba(28,52,43,.20)&#x27; };
+      }
+      function paintTile(ctx, type, x, y, cw, ch) {
+        const c=colors(); const px=x*cw, py=y*ch;
+        const custom=customTileDefs[type];
+        if(custom){ctx.fillStyle=custom.color;ctx.fillRect(px,py,cw,ch);if(custom.image&amp;&amp;custom.image.complete)ctx.drawImage(custom.image,px,py,cw,ch);return;}
+        if(type===&#x27;grass&#x27;){ctx.fillStyle=(x+y)%2?c.grass:c.grass2;ctx.fillRect(px,py,cw,ch);ctx.fillStyle=&#x27;rgba(255,255,255,.06)&#x27;;ctx.fillRect(px+cw*.18,py+ch*.2,2,2);}
+        if(type===&#x27;path&#x27;){ctx.fillStyle=(x+y)%2?c.path:c.path2;ctx.fillRect(px,py,cw,ch);ctx.fillStyle=&#x27;rgba(92,70,40,.16)&#x27;;ctx.fillRect(px+cw*.25,py+ch*.3,2,2);ctx.fillRect(px+cw*.7,py+ch*.7,2,2);}
+        if(type===&#x27;water&#x27;){ctx.fillStyle=(x+y)%2?c.water:c.water2;ctx.fillRect(px,py,cw,ch);ctx.strokeStyle=&#x27;rgba(255,255,255,.25)&#x27;;ctx.beginPath();ctx.moveTo(px+cw*.15,py+ch*.55);ctx.lineTo(px+cw*.75,py+ch*.55);ctx.stroke();}
+        if(type===&#x27;floor&#x27;){ctx.fillStyle=(x%2)?c.floor:c.floor2;ctx.fillRect(px,py,cw,ch);ctx.strokeStyle=&#x27;rgba(90,55,30,.22)&#x27;;ctx.beginPath();ctx.moveTo(px+cw*.5,py);ctx.lineTo(px+cw*.5,py+ch);ctx.stroke();}
+        if(type===&#x27;wall&#x27;){ctx.fillStyle=c.wall;ctx.fillRect(px,py,cw,ch);ctx.fillStyle=c.wall2;ctx.fillRect(px+1,py+1,cw-2,ch*.35);}
+        if(type===&#x27;tree&#x27;){ctx.fillStyle=c.grass;ctx.fillRect(px,py,cw,ch);ctx.fillStyle=&#x27;#765038&#x27;;ctx.fillRect(px+cw*.44,py+ch*.48,cw*.14,ch*.42);ctx.fillStyle=c.tree;ctx.beginPath();ctx.arc(px+cw*.5,py+ch*.38,Math.min(cw,ch)*.34,0,Math.PI*2);ctx.fill();}
+      }
+      function drawBase(canvas, mode) {
+        const ctx=canvas.getContext(&#x27;2d&#x27;); const cw=canvas.width/width, ch=canvas.height/height;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        for(let y=0;y&lt;height;y++) for(let x=0;x&lt;width;x++) paintTile(ctx,tiles[y][x],x,y,cw,ch);
+        ctx.strokeStyle=colors().grid;ctx.lineWidth=1;
+        for(let x=0;x&lt;=width;x++){ctx.beginPath();ctx.moveTo(x*cw,0);ctx.lineTo(x*cw,canvas.height);ctx.stroke();}
+        for(let y=0;y&lt;=height;y++){ctx.beginPath();ctx.moveTo(0,y*ch);ctx.lineTo(canvas.width,y*ch);ctx.stroke();}
+        ctx.font=`500 ${Math.max(13,cw*.34)}px system-ui`;ctx.textAlign=&#x27;center&#x27;;ctx.textBaseline=&#x27;middle&#x27;;
+        [[&#x27;咖啡馆&#x27;,6,5],[&#x27;图书馆&#x27;,21.5,4.5],[&#x27;居民公寓&#x27;,6.5,14],[&#x27;东侧公园&#x27;,21.5,14]].forEach(([label,x,y])=&gt;{ctx.fillStyle=&#x27;rgba(12,28,23,.68)&#x27;;ctx.fillRect((x-1.5)*cw,(y-.45)*ch,3*cw,.9*ch);ctx.fillStyle=&#x27;#f7fbf9&#x27;;ctx.fillText(label,x*cw,y*ch);});
+        if(mode===&#x27;semantic&#x27;) drawSemantics(ctx,cw,ch);
+        if(mode===&#x27;spawn&#x27;) drawAgents(ctx,cw,ch);
+        if(mode===&#x27;paint&#x27;){ctx.strokeStyle=&#x27;#f7fbf9&#x27;;ctx.lineWidth=3;ctx.strokeRect(selected.x*cw+2,selected.y*ch+2,cw-4,ch-4);ctx.strokeStyle=&#x27;rgba(19,83,72,.9)&#x27;;ctx.lineWidth=1;ctx.strokeRect(selected.x*cw+4,selected.y*ch+4,cw-8,ch-8);}
+      }
+      function drawSemantics(ctx,cw,ch){
+        const styles={sector:[&#x27;rgba(42,139,119,.20)&#x27;,&#x27;#278f7b&#x27;],arena:[&#x27;rgba(226,144,77,.18)&#x27;,&#x27;#e9904d&#x27;],object:[&#x27;rgba(190,70,60,.22)&#x27;,&#x27;#bd514d&#x27;],collision:[&#x27;rgba(190,70,60,.28)&#x27;,&#x27;#bd514d&#x27;]};
+        semanticRegions.forEach(r=&gt;{const s=styles[r.type]||styles.sector;ctx.fillStyle=s[0];ctx.strokeStyle=s[1];ctx.lineWidth=3;if(r.type===&#x27;arena&#x27;)ctx.setLineDash([7,5]);ctx.fillRect(r.x*cw,r.y*ch,r.w*cw,r.h*ch);ctx.strokeRect(r.x*cw+2,r.y*ch+2,r.w*cw-4,r.h*ch-4);ctx.setLineDash([]);ctx.fillStyle=&#x27;#f9fffc&#x27;;ctx.fillText(r.label,(r.x+r.w/2)*cw,(r.y+.65)*ch);});
+        if(semanticPreview){const r=semanticPreview,s=styles[currentSemantic]||styles.sector;ctx.fillStyle=s[0];ctx.strokeStyle=s[1];ctx.lineWidth=3;ctx.setLineDash([6,4]);ctx.fillRect(r.x*cw,r.y*ch,r.w*cw,r.h*ch);ctx.strokeRect(r.x*cw+2,r.y*ch+2,r.w*cw-4,r.h*ch-4);ctx.setLineDash([]);}
+        ctx.fillStyle=&#x27;rgba(190,70,60,.25)&#x27;;for(let y=0;y&lt;height;y++){ctx.fillRect(0,y*ch,2*cw,ch);}
+      }
+      function drawAgents(ctx,cw,ch){
+        agents.forEach((a,i)=&gt;{if(!root.querySelector(&#x27;#af-show-all-agents&#x27;).checked&amp;&amp;i!==selectedAgent)return;ctx.beginPath();ctx.arc((a.x+.5)*cw,(a.y+.5)*ch,Math.min(cw,ch)*.34,0,Math.PI*2);ctx.fillStyle=a.color;ctx.fill();ctx.lineWidth=i===selectedAgent?4:2;ctx.strokeStyle=i===selectedAgent?&#x27;#ffffff&#x27;:&#x27;rgba(255,255,255,.75)&#x27;;ctx.stroke();ctx.fillStyle=&#x27;#fff&#x27;;ctx.font=`500 ${Math.max(11,cw*.28)}px system-ui`;ctx.fillText(a.name[0],(a.x+.5)*cw,(a.y+.5)*ch);});
+      }
+      function redraw(){ drawBase(primaryCanvas,&#x27;paint&#x27;); if(mirrorCanvases[0])drawBase(mirrorCanvases[0],&#x27;semantic&#x27;); if(mirrorCanvases[1])drawBase(mirrorCanvases[1],&#x27;spawn&#x27;); applyViewport(); }
+      function cellFromEvent(canvas,event){const r=canvas.getBoundingClientRect();return{x:Math.max(0,Math.min(width-1,Math.floor((event.clientX-r.left)/r.width*width))),y:Math.max(0,Math.min(height-1,Math.floor((event.clientY-r.top)/r.height*height)))};}
+      function applyViewport(){root.querySelectorAll(&#x27;canvas&#x27;).forEach(c=&gt;{c.style.transform=`translate(${panX}px, ${panY}px) scale(${zoom/100})`;c.classList.toggle(&#x27;is-pan-tool&#x27;,currentTool===&#x27;pan&#x27;);});root.querySelector(&#x27;#af-zoom-label&#x27;).textContent=`${zoom}%`;}
+      function wantsPan(event){return (activeTab===&#x27;paint&#x27;&amp;&amp;currentTool===&#x27;pan&#x27;)||spaceHeld||event.button===1;}
+      function beginPan(canvas,event){event.preventDefault();panning=true;panStart={clientX:event.clientX,clientY:event.clientY,x:panX,y:panY};canvas.setPointerCapture(event.pointerId);canvas.closest(&#x27;.af-canvas-wrap&#x27;).classList.add(&#x27;is-panning&#x27;,&#x27;is-dragging&#x27;);}
+      function movePan(event){if(!panning||!panStart)return;panX=panStart.x+event.clientX-panStart.clientX;panY=panStart.y+event.clientY-panStart.clientY;applyViewport();}
+      function endPan(canvas){panning=false;panStart=null;const wrap=canvas.closest(&#x27;.af-canvas-wrap&#x27;);wrap.classList.remove(&#x27;is-dragging&#x27;);if(!spaceHeld&amp;&amp;currentTool!==&#x27;pan&#x27;)wrap.classList.remove(&#x27;is-panning&#x27;);}
+      function changeZoom(delta){zoom=Math.max(50,Math.min(250,zoom+delta));applyViewport();showToast(`画布缩放 ${zoom}%`);}
+      function semanticRect(a,b){return{x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x)+1,h:Math.abs(a.y-b.y)+1};}
+      function selectSemantic(region){if(!region)return;root.querySelector(&#x27;#af-semantic-key&#x27;).textContent=region.id;root.querySelector(&#x27;#af-semantic-name&#x27;).textContent=region.label;root.querySelector(&#x27;#af-semantic-parent&#x27;).textContent=region.type===&#x27;sector&#x27;?&#x27;世界根节点&#x27;:&#x27;自动匹配所在 Sector&#x27;;root.querySelector(&#x27;#af-semantic-size&#x27;).textContent=`${region.w*region.h} tiles`;}
+      function createSemantic(rect){const labels={sector:&#x27;新区域&#x27;,arena:&#x27;新场所&#x27;,object:&#x27;新物体&#x27;,collision:&#x27;碰撞区&#x27;};const region={id:`${currentSemantic}-${semanticCounter++}`,type:currentSemantic,...rect,label:`${labels[currentSemantic]} ${semanticCounter-1}`};semanticRegions.push(region);selectSemantic(region);markDirty();showToast(`${region.label}已创建，可在右侧编辑属性`);}
+      function snapshot(){return tiles.map(row=&gt;row.slice());}
+      function markDirty(){root.querySelector(&#x27;#af-save-state&#x27;).textContent=&#x27;正在自动保存…&#x27;;clearTimeout(saveTimer);saveTimer=setTimeout(()=&gt;{root.querySelector(&#x27;#af-save-state&#x27;).textContent=&#x27;所有更改已保存&#x27;;showToast(editContext===&#x27;public&#x27;?&#x27;公共地图草稿已自动保存&#x27;:&#x27;实验微调层已自动保存&#x27;);},650);}
+      function commitBeforeChange(){undoStack.push(snapshot());if(undoStack.length&gt;30)undoStack.shift();redoStack=[];}
+      function applyAt(cell, continuous=false){selected=cell;if(currentTool===&#x27;select&#x27;){updateInspector();redraw();return;}if(!continuous)commitBeforeChange();const replacement=currentTool===&#x27;erase&#x27;?&#x27;grass&#x27;:currentTile;if(currentTool===&#x27;fill&#x27;)flood(cell.x,cell.y,tiles[cell.y][cell.x],replacement);else tiles[cell.y][cell.x]=replacement;updateInspector();markDirty();redraw();}
+      function flood(x,y,target,replacement){if(target===replacement)return;const q=[[x,y]];while(q.length){const [cx,cy]=q.pop();if(cx&lt;0||cy&lt;0||cx&gt;=width||cy&gt;=height||tiles[cy][cx]!==target)continue;tiles[cy][cx]=replacement;q.push([cx-1,cy],[cx+1,cy],[cx,cy-1],[cx,cy+1]);}}
+      function isPassable(type){return customTileDefs[type]?customTileDefs[type].passable:![&#x27;wall&#x27;,&#x27;water&#x27;,&#x27;tree&#x27;].includes(type);}
+      function updateInspector(){const type=tiles[selected.y][selected.x];root.querySelector(&#x27;#af-cell-coord&#x27;).textContent=`${selected.x}, ${selected.y}`;root.querySelector(&#x27;#af-cell-tile&#x27;).textContent=`${tileNames[type]} · ${tileIds[type]}`;root.querySelector(&#x27;#af-cell-address&#x27;).textContent=addressAt(selected.x,selected.y);root.querySelector(&#x27;#af-cell-passable&#x27;).textContent=isPassable(type)?&#x27;可通行&#x27;:&#x27;不可通行&#x27;;root.querySelector(&#x27;#af-cursor-label&#x27;).textContent=`坐标 ${selected.x}, ${selected.y}`;}
+      function addressAt(x,y){if(x&gt;=3&amp;&amp;x&lt;=9&amp;&amp;y&gt;=3&amp;&amp;y&lt;=7)return&#x27;商业区 / 咖啡馆&#x27;;if(x&gt;=18&amp;&amp;x&lt;=25&amp;&amp;y&gt;=2&amp;&amp;y&lt;=7)return&#x27;公共文化区 / 图书馆&#x27;;if(x&gt;=3&amp;&amp;x&lt;=10&amp;&amp;y&gt;=12&amp;&amp;y&lt;=16)return&#x27;居住区 / 公寓&#x27;;if(x&gt;=18&amp;&amp;x&lt;=25&amp;&amp;y&gt;=12)return&#x27;公共活动区 / 东侧公园&#x27;;return x&gt;=12&amp;&amp;x&lt;=14?&#x27;中心广场 / 主路&#x27;:&#x27;公共空间&#x27;;}
+      function setTab(name){activeTab=name;root.querySelectorAll(&#x27;.af-tab&#x27;).forEach(b=&gt;{const on=b.dataset.afTab===name;b.classList.toggle(&#x27;is-active&#x27;,on);b.setAttribute(&#x27;aria-selected&#x27;,String(on));});root.querySelectorAll(&#x27;.af-panel&#x27;).forEach(p=&gt;p.hidden=p.dataset.afPanel!==name);requestAnimationFrame(redraw);}
+      function setEditContext(context){editContext=context;const experiment=context===&#x27;experiment&#x27;;tiles=experiment?experimentTiles:publicTiles;semanticRegions=experiment?experimentSemanticRegions:publicSemanticRegions;undoStack=[];redoStack=[];currentTile=&#x27;grass&#x27;;root.classList.toggle(&#x27;is-experiment-context&#x27;,experiment);root.querySelectorAll(&#x27;[data-tile-scope]&#x27;).forEach(button=&gt;button.hidden=button.dataset.tileScope!==context);root.querySelectorAll(&#x27;[data-af-tile]&#x27;).forEach(button=&gt;button.classList.toggle(&#x27;is-selected&#x27;,button.dataset.afTile===&#x27;grass&#x27;&amp;&amp;!button.hidden));root.querySelector(&#x27;#af-scope-badge&#x27;).textContent=experiment?&#x27;实验微调&#x27;:&#x27;公共地图&#x27;;root.querySelector(&#x27;#af-page-title&#x27;).textContent=experiment?&#x27;地图微调 · 松果镇基础地图&#x27;:&#x27;松果镇基础地图&#x27;;root.querySelector(&#x27;#af-revision-label&#x27;).textContent=experiment?&#x27;实验覆盖层草稿&#x27;:&#x27;公共地图草稿&#x27;;root.querySelector(&#x27;#af-revision-code&#x27;).textContent=experiment?&#x27;overlay-draft · e90c1a4&#x27;:&#x27;map-draft · 7f2a91c&#x27;;root.querySelector(&#x27;#af-import-button span&#x27;).textContent=experiment?&#x27;追加图块&#x27;:&#x27;导入 Tiled&#x27;;root.querySelector(&#x27;#af-publish-button&#x27;).textContent=experiment?&#x27;保存实验微调&#x27;:&#x27;发布地图版本&#x27;;root.querySelector(&#x27;#af-validation-tab-count&#x27;).textContent=experiment?&#x27;· 2&#x27;:&#x27;· 1&#x27;;root.querySelector(&#x27;#af-validation-tab-count&#x27;).setAttribute(&#x27;aria-label&#x27;,experiment?&#x27;2 个阻塞项&#x27;:&#x27;1 个阻塞项&#x27;);root.querySelector(&#x27;#af-blocker-count&#x27;).textContent=experiment?&#x27;2&#x27;:&#x27;1&#x27;;root.querySelector(&#x27;#af-tile-scope-note&#x27;).textContent=experiment?&#x27;该图块只加入当前实验的微调层&#x27;:&#x27;该图块将加入公共地图草稿&#x27;;if(!experiment&amp;&amp;activeTab===&#x27;spawn&#x27;)setTab(&#x27;paint&#x27;);showToast(experiment?&#x27;已进入实验微调：公共地图 v3 保持只读&#x27;:&#x27;已返回公共地图编辑&#x27;);updateMode();updateInspector();redraw();}
+      function showToast(message){const t=root.querySelector(&#x27;#af-toast&#x27;);t.textContent=message;t.hidden=false;clearTimeout(t._timer);t._timer=setTimeout(()=&gt;t.hidden=true,1700);}
+      function updateMode(){root.querySelector(&#x27;#af-map-mode&#x27;).textContent=`地表层 · ${{paint:&#x27;画笔&#x27;,erase:&#x27;橡皮&#x27;,fill:&#x27;填充&#x27;,select:&#x27;选择&#x27;,pan:&#x27;拖动画布&#x27;}[currentTool]} · ${tileNames[currentTile]}`;}
+      function placeAgent(canvas,event){const cell=cellFromEvent(canvas,event);selected=cell;const a=agents[selectedAgent];a.x=cell.x;a.y=cell.y;root.querySelector(&#x27;#af-spawn-name&#x27;).textContent=a.name;root.querySelector(&#x27;#af-spawn-coord&#x27;).textContent=`${a.x}, ${a.y}`;root.querySelector(&#x27;#af-spawn-address&#x27;).textContent=addressAt(a.x,a.y);const invalid=!isPassable(tiles[a.y][a.x]);const state=root.querySelector(&#x27;#af-spawn-state&#x27;);state.textContent=invalid?&#x27;无效 · 碰撞格&#x27;:&#x27;有效 · 可通行&#x27;;state.style.color=invalid?&#x27;var(--af-red)&#x27;:&#x27;var(--af-teal)&#x27;;root.querySelector(&#x27;#af-spawn-hud&#x27;).textContent=`${a.name} · ${a.x}, ${a.y} · ${addressAt(a.x,a.y).split(&#x27; / &#x27;).pop()}`;markDirty();redraw();}
+
+      primaryCanvas.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{if(wantsPan(e)){beginPan(primaryCanvas,e);return;}painting=true;primaryCanvas.setPointerCapture(e.pointerId);applyAt(cellFromEvent(primaryCanvas,e));});
+      primaryCanvas.addEventListener(&#x27;pointermove&#x27;,e=&gt;{if(panning){movePan(e);return;}const c=cellFromEvent(primaryCanvas,e);root.querySelector(&#x27;#af-cursor-label&#x27;).textContent=`坐标 ${c.x}, ${c.y}`;if(painting&amp;&amp;[&#x27;paint&#x27;,&#x27;erase&#x27;].includes(currentTool))applyAt(c,true);});
+      primaryCanvas.addEventListener(&#x27;pointerup&#x27;,()=&gt;{painting=false;endPan(primaryCanvas);});
+      primaryCanvas.addEventListener(&#x27;pointercancel&#x27;,()=&gt;{painting=false;endPan(primaryCanvas);});
+      const semanticCanvas=root.querySelector(&#x27;#af-semantic-canvas&#x27;);
+      semanticCanvas.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{if(wantsPan(e)){beginPan(semanticCanvas,e);return;}semanticDrawing=true;semanticStart=cellFromEvent(semanticCanvas,e);semanticPreview={...semanticStart,w:1,h:1};semanticCanvas.setPointerCapture(e.pointerId);redraw();});
+      semanticCanvas.addEventListener(&#x27;pointermove&#x27;,e=&gt;{if(panning){movePan(e);return;}if(!semanticDrawing)return;semanticPreview=semanticRect(semanticStart,cellFromEvent(semanticCanvas,e));redraw();});
+      semanticCanvas.addEventListener(&#x27;pointerup&#x27;,()=&gt;{if(panning){endPan(semanticCanvas);return;}if(!semanticDrawing)return;semanticDrawing=false;const rect=semanticPreview;semanticPreview=null;if(rect)createSemantic(rect);redraw();});
+      semanticCanvas.addEventListener(&#x27;pointercancel&#x27;,()=&gt;{semanticDrawing=false;semanticPreview=null;endPan(semanticCanvas);redraw();});
+      const spawnCanvas=mirrorCanvases[1];
+      spawnCanvas.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{if(wantsPan(e)){beginPan(spawnCanvas,e);return;}placeAgent(spawnCanvas,e);});
+      spawnCanvas.addEventListener(&#x27;pointermove&#x27;,e=&gt;{if(panning)movePan(e);});
+      spawnCanvas.addEventListener(&#x27;pointerup&#x27;,()=&gt;endPan(spawnCanvas));
+      root.querySelectorAll(&#x27;canvas&#x27;).forEach(canvas=&gt;canvas.addEventListener(&#x27;wheel&#x27;,e=&gt;{e.preventDefault();changeZoom(e.deltaY&lt;0?10:-10);},{passive:false}));
+      root.querySelectorAll(&#x27;[data-af-tab]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;setTab(b.dataset.afTab)));
+      root.querySelectorAll(&#x27;[data-af-tool]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;{currentTool=b.dataset.afTool;root.querySelectorAll(&#x27;[data-af-tool]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x===b));updateMode();applyViewport();}));
+      function selectTileButton(button){currentTile=button.dataset.afTile;root.querySelectorAll(&#x27;[data-af-tile]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x===button));currentTool=&#x27;paint&#x27;;root.querySelectorAll(&#x27;[data-af-tool]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x.dataset.afTool===&#x27;paint&#x27;));updateMode();applyViewport();}
+      root.querySelectorAll(&#x27;[data-af-tile]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;selectTileButton(b)));
+      root.querySelectorAll(&#x27;[data-af-semantic]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;{currentSemantic=b.dataset.afSemantic;root.querySelectorAll(&#x27;[data-af-semantic]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x===b));const labels={sector:&#x27;区域 Sector&#x27;,arena:&#x27;场所 Arena&#x27;,object:&#x27;物体 Object&#x27;,collision:&#x27;碰撞 Collision&#x27;};root.querySelector(&#x27;#af-semantic-mode&#x27;).textContent=`${labels[currentSemantic]} · 拖动框选范围`;showToast(`${b.textContent.trim()}工具已启用：在地图上拖动绘制`);}));
+      root.querySelectorAll(&#x27;[data-af-agent]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;{selectedAgent=Number(b.dataset.afAgent);root.querySelectorAll(&#x27;[data-af-agent]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x===b));const a=agents[selectedAgent];root.querySelector(&#x27;#af-spawn-name&#x27;).textContent=a.name;root.querySelector(&#x27;#af-spawn-coord&#x27;).textContent=`${a.x}, ${a.y}`;redraw();}));
+      root.querySelector(&#x27;#af-show-all-agents&#x27;).addEventListener(&#x27;change&#x27;,redraw);
+      root.querySelector(&#x27;#af-show-collision&#x27;).addEventListener(&#x27;change&#x27;,redraw);
+      root.querySelector(&#x27;#af-undo&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{if(!undoStack.length)return;redoStack.push(snapshot());tiles=undoStack.pop();markDirty();redraw();updateInspector();});
+      root.querySelector(&#x27;#af-redo&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{if(!redoStack.length)return;undoStack.push(snapshot());tiles=redoStack.pop();markDirty();redraw();updateInspector();});
+      root.querySelector(&#x27;#af-zoom-in&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;changeZoom(25));
+      root.querySelector(&#x27;#af-zoom-out&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;changeZoom(-25));
+      root.querySelector(&#x27;#af-fit&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{zoom=67;panX=0;panY=0;applyViewport();showToast(&#x27;已显示完整 48 × 32 地图&#x27;);});
+      root.querySelector(&#x27;#af-semantic-fit&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{zoom=67;panX=0;panY=0;applyViewport();showToast(&#x27;已显示完整语义地图&#x27;);});
+      root.querySelector(&#x27;#af-edit-context&#x27;).addEventListener(&#x27;change&#x27;,e=&gt;setEditContext(e.target.value));
+      root.querySelector(&#x27;#af-show-usages&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;showToast(&#x27;引用实验：城市社会互动、节日传播、公共空间行为&#x27;));
+      root.querySelector(&#x27;#af-reset-overlay&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;showToast(&#x27;实验微调已恢复到公共地图 v3（原型未持久化）&#x27;));
+      root.querySelector(&#x27;#af-auto-place&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{commitBeforeChange();agents.forEach((a,i)=&gt;{a.x=5+i*7;a.y=9;});markDirty();redraw();showToast(&#x27;25 个 Agent 已分配到可通行位置&#x27;);});
+      root.querySelector(&#x27;#af-revalidate&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;showToast(`校验完成：${editContext===&#x27;public&#x27;?1:2} 个阻塞项，1 个警告`));
+      root.querySelectorAll(&#x27;[data-af-issue]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;{setTab(b.dataset.afIssue===&#x27;spawn&#x27;?&#x27;spawn&#x27;:&#x27;semantic&#x27;);showToast(&#x27;已定位到问题位置&#x27;);}));
+      const modal=root.querySelector(&#x27;#af-import-modal&#x27;);
+      root.querySelector(&#x27;#af-import-button&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;modal.hidden=false);
+      root.querySelector(&#x27;#af-import-close&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;modal.hidden=true);
+      root.querySelector(&#x27;#af-import-cancel&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;modal.hidden=true);
+      root.querySelectorAll(&#x27;[data-af-import]&#x27;).forEach(b=&gt;b.addEventListener(&#x27;click&#x27;,()=&gt;root.querySelectorAll(&#x27;[data-af-import]&#x27;).forEach(x=&gt;x.classList.toggle(&#x27;is-selected&#x27;,x===b))));
+      root.querySelector(&#x27;#af-import-next&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{modal.hidden=true;showToast(&#x27;已进入地图文件选择&#x27;);});
+      root.querySelector(&#x27;#af-publish-button&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{setTab(&#x27;validation&#x27;);showToast(editContext===&#x27;public&#x27;?&#x27;发布前仍有 1 个地图阻塞项&#x27;:&#x27;保存前仍有 2 个实验阻塞项&#x27;);});
+      const tileModal=root.querySelector(&#x27;#af-tile-modal&#x27;);
+      const closeTileModal=()=&gt;tileModal.hidden=true;
+      root.querySelector(&#x27;#af-add-tile&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{tileModal.hidden=false;root.querySelector(&#x27;#af-tile-name-input&#x27;).focus();});
+      root.querySelector(&#x27;#af-tile-close&#x27;).addEventListener(&#x27;click&#x27;,closeTileModal);
+      root.querySelector(&#x27;#af-tile-cancel&#x27;).addEventListener(&#x27;click&#x27;,closeTileModal);
+      root.querySelector(&#x27;#af-tile-create&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const name=root.querySelector(&#x27;#af-tile-name-input&#x27;).value.trim()||&#x27;自定义图块&#x27;;const key=`custom-${Date.now()}`;const color=root.querySelector(&#x27;#af-tile-color&#x27;).value;const passable=root.querySelector(&#x27;#af-tile-passable&#x27;).value===&#x27;yes&#x27;;const file=root.querySelector(&#x27;#af-tile-file&#x27;).files[0];const def={name,color,passable,image:null};customTileDefs[key]=def;tileNames[key]=name;tileIds[key]=`#C${Object.keys(customTileDefs).length.toString().padStart(3,&#x27;0&#x27;)}`;const button=document.createElement(&#x27;button&#x27;);button.className=&#x27;af-tile&#x27;;button.type=&#x27;button&#x27;;button.dataset.afTile=key;button.dataset.tileScope=editContext;button.dataset.label=name;const swatch=document.createElement(&#x27;span&#x27;);swatch.className=&#x27;af-swatch&#x27;;swatch.style.background=color;button.appendChild(swatch);button.addEventListener(&#x27;click&#x27;,()=&gt;selectTileButton(button));root.querySelector(&#x27;#af-tile-grid&#x27;).insertBefore(button,root.querySelector(&#x27;#af-add-tile&#x27;));if(file){const reader=new FileReader();reader.onload=()=&gt;{const image=new Image();image.onload=()=&gt;{def.image=image;swatch.style.backgroundImage=`url(${reader.result})`;swatch.style.backgroundSize=&#x27;cover&#x27;;redraw();};image.src=reader.result;};reader.readAsDataURL(file);}selectTileButton(button);closeTileModal();markDirty();showToast(`已创建图块「${name}」并加入${editContext===&#x27;public&#x27;?&#x27;公共地图&#x27;:&#x27;实验微调层&#x27;}`);});
+      root.addEventListener(&#x27;keydown&#x27;,e=&gt;{if(e.code===&#x27;Space&#x27;&amp;&amp;![&#x27;INPUT&#x27;,&#x27;SELECT&#x27;,&#x27;TEXTAREA&#x27;].includes(document.activeElement?.tagName)){spaceHeld=true;e.preventDefault();root.querySelectorAll(&#x27;.af-canvas-wrap&#x27;).forEach(w=&gt;w.classList.add(&#x27;is-panning&#x27;));}if((e.ctrlKey||e.metaKey)&amp;&amp;e.key.toLowerCase()===&#x27;z&#x27;){e.preventDefault();root.querySelector(e.shiftKey?&#x27;#af-redo&#x27;:&#x27;#af-undo&#x27;).click();}});
+      root.addEventListener(&#x27;keyup&#x27;,e=&gt;{if(e.code===&#x27;Space&#x27;){spaceHeld=false;root.querySelectorAll(&#x27;.af-canvas-wrap&#x27;).forEach(w=&gt;w.classList.remove(&#x27;is-panning&#x27;));}});
+      new ResizeObserver(redraw).observe(root);
+      updateInspector();updateMode();redraw();
+      if(window.lucide)window.lucide.createIcons({attrs:{width:16,height:16}});
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

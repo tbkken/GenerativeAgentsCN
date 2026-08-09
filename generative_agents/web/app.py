@@ -18,10 +18,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import Field, ValidationError
 
 from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import StrictModel
+from generative_agents.config.schema import StrictModel, WorldConfig, WorldOverlayConfig
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import Run, RunEvent, RunQueue
 from generative_agents.services import ExperimentService, ServiceError
+from generative_agents.services.maps import WorldMapService
 from generative_agents.services.catalog import AssetService, SecretService
 from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
@@ -111,6 +112,32 @@ class ModelProbeRequest(StrictModel):
     lock_version: int = Field(ge=1)
 
 
+class CreateMapRequest(StrictModel):
+    name: str = Field(min_length=1, max_length=120)
+    description: str = Field(default="", max_length=10_000)
+    source_revision_id: str | None = None
+
+
+class MapDraftUpdateRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+    world: dict[str, Any]
+
+
+class PublishMapRequest(StrictModel):
+    draft_revision_id: str
+    lock_version: int = Field(ge=1)
+
+
+class ExperimentMapSelectionRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+    map_revision_id: str
+
+
+class ExperimentMapOverlayRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+    overlay: dict[str, Any] = Field(default_factory=dict)
+
+
 def _error_response(
     *, status_code: int, code: str, message: str, details: Any, request_id: str
 ) -> JSONResponse:
@@ -144,6 +171,7 @@ def create_app(
         )
     database = create_database(database_url)
     service = ExperimentService(database)
+    map_service = WorldMapService(database)
     result_service = ResultQueryService(database)
     asset_service = AssetService(database, var_dir=var_dir)
     secret_service = SecretService(database, var_dir=var_dir)
@@ -173,8 +201,10 @@ def create_app(
     async def lifespan(app: FastAPI):
         if migrate:
             upgrade_database(database_url)
+        map_service.ensure_builtin_map()
         app.state.database = database
         app.state.experiment_service = service
+        app.state.world_map_service = map_service
         app.state.run_service = run_service
         app.state.result_service = result_service
         app.state.asset_service = asset_service
@@ -270,6 +300,58 @@ def create_app(
             connection.exec_driver_sql("SELECT 1").scalar_one()
         return {"status": "ok"}
 
+    @app.post("/api/v1/maps", status_code=201)
+    def create_map(body: CreateMapRequest):
+        return map_service.create_map(
+            name=body.name,
+            description=body.description,
+            source_revision_id=body.source_revision_id,
+        )
+
+    @app.get("/api/v1/maps")
+    def list_maps(
+        q: str | None = None,
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
+    ):
+        return map_service.list_maps(query=q, page=page, page_size=page_size)
+
+    @app.get("/api/v1/maps/{map_id}")
+    def get_map(map_id: str):
+        return map_service.get_map(map_id)
+
+    @app.get("/api/v1/maps/{map_id}/draft")
+    def get_map_draft(map_id: str):
+        return map_service.get_draft(map_id)
+
+    @app.put("/api/v1/maps/{map_id}/draft")
+    def update_map_draft(map_id: str, body: MapDraftUpdateRequest):
+        return map_service.update_draft(
+            map_id,
+            expected_lock_version=body.lock_version,
+            world=WorldConfig.model_validate(body.world),
+        )
+
+    @app.post("/api/v1/maps/{map_id}/draft/publish")
+    def publish_map_draft(map_id: str, body: PublishMapRequest):
+        return map_service.publish_draft(
+            map_id,
+            draft_revision_id=body.draft_revision_id,
+            expected_lock_version=body.lock_version,
+        )
+
+    @app.get("/api/v1/maps/{map_id}/revisions")
+    def list_map_revisions(map_id: str):
+        return {"items": map_service.list_revisions(map_id)}
+
+    @app.get("/api/v1/maps/{map_id}/revisions/{revision_id}")
+    def get_map_revision(map_id: str, revision_id: str):
+        return map_service.get_revision(map_id, revision_id)
+
+    @app.post("/api/v1/maps/{map_id}/revisions/{revision_id}/fork", status_code=201)
+    def fork_map_revision(map_id: str, revision_id: str):
+        return map_service.fork_revision(map_id, revision_id)
+
     @app.post("/api/v1/experiments", status_code=201)
     def create_experiment(body: CreateExperimentRequest):
         return service.create_experiment(
@@ -342,6 +424,24 @@ def create_app(
             section="world",
             expected_lock_version=body.lock_version,
             data=body.data,
+        )
+
+    @app.put("/api/v1/experiments/{experiment_id}/draft/map")
+    def select_experiment_map(experiment_id: str, body: ExperimentMapSelectionRequest):
+        return map_service.select_for_experiment(
+            experiment_id,
+            expected_lock_version=body.lock_version,
+            map_revision_id=body.map_revision_id,
+        )
+
+    @app.put("/api/v1/experiments/{experiment_id}/draft/map-overlay")
+    def update_experiment_map_overlay(
+        experiment_id: str, body: ExperimentMapOverlayRequest
+    ):
+        return map_service.update_experiment_overlay(
+            experiment_id,
+            expected_lock_version=body.lock_version,
+            overlay=WorldOverlayConfig.model_validate(body.overlay),
         )
 
     @app.put("/api/v1/experiments/{experiment_id}/draft/agents/{agent_key}")

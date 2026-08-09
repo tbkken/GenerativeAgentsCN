@@ -1083,6 +1083,7 @@
       .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
     }
   </style>
+  <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260809a" />
 </head>
 <body class="hub-mode">
   <div class="app-shell">
@@ -1098,6 +1099,7 @@
       <div class="nav-label">实验</div>
       <nav class="nav">
         <button class="nav-item active" data-page="experiments"><span class="nav-icon">▦</span><span class="nav-text">实验列表</span></button>
+        <button class="nav-item" data-page="maps"><span class="nav-icon">▧</span><span class="nav-text">地图</span></button>
       </nav>
 
       <div class="nav-label experiment-scope">当前实验</div>
@@ -1155,6 +1157,78 @@
               <button class="page-button" id="experimentPrev" aria-label="上一页">‹</button>
               <div class="pagination-pages" id="experimentPages"></div>
               <button class="page-button" id="experimentNext" aria-label="下一页">›</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-maps">
+          <div class="map-catalog-shell" id="mapCatalogShell">
+            <div class="map-catalog-heading">
+              <div><h1>地图</h1><p>创建可复用的公共世界；发布后的版本不会被后续编辑改变。</p></div>
+              <button class="btn btn-primary" id="createMapBtn">＋ 新建地图</button>
+            </div>
+            <div class="map-catalog-toolbar">
+              <div class="search"><input class="control" id="mapSearch" placeholder="搜索地图名称或稳定键…" /></div>
+              <span class="revision-meta" id="mapCatalogCount">正在加载</span>
+            </div>
+            <div class="map-catalog-grid" id="mapCatalogGrid"><div class="empty-state"><strong>正在加载地图…</strong></div></div>
+          </div>
+
+          <div class="map-editor-shell" id="mapEditorShell" hidden>
+            <div class="map-editor-heading">
+              <div>
+                <button class="btn btn-sm" id="backToMapsBtn">← 返回地图</button>
+                <h1 id="mapEditorTitle">地图编辑器</h1>
+                <p id="mapEditorMeta">正在载入地图草稿…</p>
+              </div>
+              <div class="map-editor-actions">
+                <span class="map-state draft" id="mapEditorState">草稿</span>
+                <button class="btn" id="saveMapBtn">保存草稿</button>
+                <button class="btn btn-primary" id="publishMapBtn">发布版本</button>
+              </div>
+            </div>
+            <nav class="map-editor-tabs" role="tablist" aria-label="地图编辑内容">
+              <button class="map-editor-tab active" data-map-tab="edit" role="tab" aria-selected="true">地图画布</button>
+              <button class="map-editor-tab" data-map-tab="semantics" role="tab" aria-selected="false">空间语义</button>
+              <button class="map-editor-tab" data-map-tab="audit" role="tab" aria-selected="false">校验与版本</button>
+            </nav>
+            <div class="map-editor-layout" id="publicMapEditor">
+              <aside class="map-tool-panel map-editor-panel active" data-map-panel="edit semantics">
+                <h3>编辑工具</h3>
+                <div class="map-tool-grid" data-map-tools></div>
+                <h3 style="margin-top:20px">画块</h3>
+                <div class="map-palette" data-map-palette></div>
+                <button class="btn btn-sm" data-add-palette style="margin-top:10px;width:100%">＋ 自定义画块</button>
+              </aside>
+              <div class="map-editor-center map-editor-panel active" data-map-panel="edit semantics">
+                <div class="map-canvas-toolbar">
+                  <button class="btn btn-sm" data-map-undo disabled>撤销</button>
+                  <button class="btn btn-sm" data-map-redo disabled>重做</button>
+                  <span class="spacer"></span>
+                  <button class="btn btn-sm" data-map-zoom-out>−</button>
+                  <span class="map-zoom-label" data-map-zoom>100%</span>
+                  <button class="btn btn-sm" data-map-zoom-in>＋</button>
+                  <button class="btn btn-sm" data-map-fit>适配</button>
+                </div>
+                <div class="map-canvas-host" data-map-canvas-host>
+                  <canvas class="map-editor-canvas" data-map-canvas></canvas>
+                  <span class="map-canvas-hint">滚轮缩放 · 空格/中键拖动 · 点击格子查看语义</span>
+                </div>
+              </div>
+              <aside class="map-inspector map-editor-panel active" data-map-panel="edit semantics">
+                <h3>Tile 属性</h3>
+                <div class="map-coordinate" data-map-coordinate>尚未选择格子</div>
+                <div class="field"><label>区域 Sector</label><input class="control" data-map-address="0" placeholder="例如：商业区" /></div>
+                <div class="field"><label>场所 Arena</label><input class="control" data-map-address="1" placeholder="例如：咖啡馆" /></div>
+                <div class="field"><label>对象 Object</label><input class="control" data-map-address="2" placeholder="例如：吧台" /></div>
+                <label class="map-check-row"><input type="checkbox" data-map-collision /> 不可通行（碰撞）</label>
+                <button class="btn btn-primary btn-sm" data-apply-semantics style="width:100%">应用到当前格</button>
+                <button class="btn btn-sm" data-clear-semantics style="width:100%;margin-top:8px">清除语义</button>
+              </aside>
+              <section class="map-editor-panel map-audit-panel" data-map-panel="audit">
+                <div class="map-audit-grid" data-map-audit-cards></div>
+                <div class="map-revision-list" data-map-revisions></div>
+              </section>
             </div>
           </div>
         </section>
@@ -1524,6 +1598,11 @@ ${name} 当前的情况：${currently}</textarea>
             <div><div class="heading-line"><h1>世界与地图</h1><button type="button" class="help-tip" aria-label="世界版本说明" data-tooltip="地图结构和视觉资源一起锁定，保证模拟与回放使用相同世界版本。">?</button></div></div>
             <span class="revision-meta"><span>世界快照</span><code id="worldRevisionCode">未发布</code></span>
           </div>
+          <div class="experiment-map-source">
+            <div class="experiment-map-source-copy"><strong>公共地图来源</strong><span id="experimentMapSourceMeta">当前实验仍使用自身世界定义</span></div>
+            <select class="control" id="experimentMapSelect" aria-label="选择公共地图版本"><option value="">载入公共地图…</option></select>
+            <div><button class="btn btn-sm" id="applyExperimentMapBtn">使用此地图</button> <button class="btn btn-sm" id="tuneExperimentMapBtn">实验内微调</button></div>
+          </div>
           <div class="content-workspace" data-content-tabs="world">
             <nav class="content-tabs" role="tablist" aria-label="世界与地图内容">
               <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="map">地图预览</button>
@@ -1729,9 +1808,59 @@ ${name} 当前的情况：${currently}</textarea>
     </div>
   </div>
 
+  <div class="modal-backdrop" id="createMapModal" role="dialog" aria-modal="true" aria-labelledby="createMapTitle">
+    <div class="modal">
+      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>可以从空白网格开始，也可以复制一个已发布版本。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
+      <div class="modal-body map-inline-form">
+        <div class="field"><label for="newMapName">地图名称</label><input class="control" id="newMapName" placeholder="例如：海滨小镇" /></div>
+        <div class="field"><label for="newMapSource">起始版本</label><select class="control" id="newMapSource"><option value="">空白地图</option></select></div>
+        <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" placeholder="这张地图适合哪些实验…"></textarea></div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="experimentMapOverlayModal" role="dialog" aria-modal="true" aria-labelledby="experimentMapOverlayTitle">
+    <div class="modal wide map-overlay-dialog">
+      <div class="modal-head"><div><h2 id="experimentMapOverlayTitle">实验地图微调</h2><p>更改只写入当前实验 Draft，不会改变公共地图或其他实验。</p></div><button class="close" id="closeExperimentMapOverlay" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="map-editor-layout" id="experimentMapEditor">
+          <aside class="map-tool-panel">
+            <h3>编辑工具</h3>
+            <div class="map-tool-grid" data-map-tools></div>
+            <h3 style="margin-top:20px">画块</h3>
+            <div class="map-palette" data-map-palette></div>
+            <button class="btn btn-sm" data-add-palette style="margin-top:10px;width:100%">＋ 自定义画块</button>
+          </aside>
+          <div class="map-editor-center">
+            <div class="map-canvas-toolbar">
+              <button class="btn btn-sm" data-map-undo disabled>撤销</button>
+              <button class="btn btn-sm" data-map-redo disabled>重做</button>
+              <span class="spacer"></span>
+              <button class="btn btn-sm" data-map-zoom-out>−</button><span class="map-zoom-label" data-map-zoom>100%</span><button class="btn btn-sm" data-map-zoom-in>＋</button><button class="btn btn-sm" data-map-fit>适配</button>
+            </div>
+            <div class="map-canvas-host" data-map-canvas-host><canvas class="map-editor-canvas" data-map-canvas></canvas><span class="map-canvas-hint">当前只影响本实验 · 滚轮缩放 · 空格/中键拖动</span></div>
+          </div>
+          <aside class="map-inspector">
+            <h3>Tile 属性</h3>
+            <div class="map-coordinate" data-map-coordinate>尚未选择格子</div>
+            <div class="field"><label>区域 Sector</label><input class="control" data-map-address="0" /></div>
+            <div class="field"><label>场所 Arena</label><input class="control" data-map-address="1" /></div>
+            <div class="field"><label>对象 Object</label><input class="control" data-map-address="2" /></div>
+            <label class="map-check-row"><input type="checkbox" data-map-collision /> 不可通行（碰撞）</label>
+            <button class="btn btn-primary btn-sm" data-apply-semantics style="width:100%">应用到当前格</button>
+            <button class="btn btn-sm" data-clear-semantics style="width:100%;margin-top:8px">清除语义</button>
+          </aside>
+        </div>
+      </div>
+      <div class="modal-foot"><span class="revision-meta" id="experimentMapOverlayMeta">等待地图数据</span><button class="btn" id="cancelExperimentMapOverlay">取消</button><button class="btn btn-primary" id="saveExperimentMapOverlay">保存实验微调</button></div>
+    </div>
+  </div>
+
   <script src="/static/console/vendor/phaser.min.js"></script>
   <script src="/static/console/replay-player.js"></script>
   <script src="/static/console/modal-focus.js"></script>
+  <script src="/static/console/map-workspace.js?v=20260809a"></script>
   <script src="/static/console/console-api.js"></script>
 </body>
 </html>

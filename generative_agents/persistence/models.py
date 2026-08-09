@@ -58,6 +58,78 @@ class BuiltinCatalogSnapshot(Base):
     __table_args__ = (Index("ix_builtin_catalog_created_at", "created_at", "id"),)
 
 
+class WorldMap(Base):
+    """Reusable public map container; editable drafts and published revisions are separate."""
+
+    __tablename__ = "world_maps"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    map_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_world_maps_status"),
+        CheckConstraint("row_version >= 1", name="ck_world_maps_row_version"),
+        Index("ix_world_maps_updated_at", "updated_at", "id"),
+    )
+
+
+class WorldMapRevision(Base):
+    """Immutable when published; experiments reference this identity, never the mutable map."""
+
+    __tablename__ = "world_map_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    map_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("world_maps.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("world_map_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    world_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    world_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("map_id", "revision_no", name="uq_world_map_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_world_map_revision_number"),
+        CheckConstraint(
+            "state IN ('DRAFT','PUBLISHED')", name="ck_world_map_revision_state"
+        ),
+        CheckConstraint("schema_version >= 1", name="ck_world_map_revision_schema"),
+        CheckConstraint("lock_version >= 1", name="ck_world_map_revision_lock"),
+        Index(
+            "uq_world_map_one_draft",
+            "map_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_world_map_revisions_map", "map_id", "revision_no"),
+    )
+
+
 class Experiment(Base):
     __tablename__ = "experiments"
 

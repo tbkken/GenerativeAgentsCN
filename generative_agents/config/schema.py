@@ -296,11 +296,53 @@ class AssetReference(StrictModel):
         return normalized
 
 
+class WorldOverlayConfig(StrictModel):
+    """Experiment-owned changes layered over one immutable public map revision."""
+
+    definition_patch: dict[str, Any] = Field(default_factory=dict)
+    asset_additions: list[AssetReference] = Field(default_factory=list)
+    removed_asset_paths: list[str] = Field(default_factory=list)
+
+    @field_validator("removed_asset_paths")
+    @classmethod
+    def safe_removed_paths(cls, values: list[str]) -> list[str]:
+        normalized: list[str] = []
+        for value in values:
+            path = value.replace("\\", "/")
+            if not path or path.startswith("/") or ".." in path.split("/"):
+                raise ValueError("removed asset paths must be safe relative paths")
+            normalized.append(path)
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("removed asset paths must be unique")
+        return normalized
+
+
 class WorldConfig(StrictModel):
     world_key: Key
     world_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
     definition: dict[str, Any] = Field(default_factory=dict)
     assets: list[AssetReference] = Field(default_factory=list)
+    map_id: str | None = None
+    map_revision_id: str | None = None
+    map_revision_hash: Annotated[
+        str, StringConstraints(pattern=r"^[0-9a-f]{64}$")
+    ] | None = None
+    overlay: WorldOverlayConfig = Field(default_factory=WorldOverlayConfig)
+
+    @model_validator(mode="after")
+    def validate_map_reference(self) -> "WorldConfig":
+        reference = (self.map_id, self.map_revision_id, self.map_revision_hash)
+        if any(reference) and not all(reference):
+            raise ValueError(
+                "map_id, map_revision_id and map_revision_hash must be set together"
+            )
+        if not self.map_revision_id and (
+            self.overlay.definition_patch
+            or self.overlay.asset_additions
+            or self.overlay.removed_asset_paths
+        ):
+            raise ValueError("world overlay requires a public map revision")
+        return self
 
 
 class AgentScratch(StrictModel):

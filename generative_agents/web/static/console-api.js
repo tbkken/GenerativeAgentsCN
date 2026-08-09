@@ -7,6 +7,7 @@
     status: '',
     query: '',
     selectedExperimentId: null,
+    selectedMapId: null,
     experiment: null,
     draft: null,
     definition: null,
@@ -127,7 +128,10 @@
     const url = new URL(window.location.href);
     url.search = '';
     url.hash = '';
-    if (pageName !== 'experiments' && state.selectedExperimentId) {
+    if (pageName === 'maps') {
+      url.searchParams.set('view', 'maps');
+      if (state.selectedMapId) url.searchParams.set('map_id', state.selectedMapId);
+    } else if (pageName !== 'experiments' && state.selectedExperimentId) {
       url.searchParams.set('experiment_id', state.selectedExperimentId);
       url.searchParams.set('view', pageName);
       if (pageName === 'results' && state.selectedRunId) {
@@ -159,7 +163,7 @@
   function goToPage(pageName) {
     const target = $(`page-${pageName}`);
     if (!target) throw new Error(`未知页面：${pageName}`);
-    const isGlobal = pageName === 'experiments';
+    const isGlobal = pageName === 'experiments' || pageName === 'maps';
     state.workspacePage = pageName;
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
       item.classList.toggle('active', item.dataset.page === pageName);
@@ -168,10 +172,10 @@
       page.classList.toggle('active', page === target);
     });
     document.body.classList.toggle('hub-mode', isGlobal);
-    $('topbarTitle').textContent = isGlobal ? '实验中心' : state.currentExperimentName || '当前实验';
+    $('topbarTitle').textContent = pageName === 'maps' ? '地图中心' : isGlobal ? '实验中心' : state.currentExperimentName || '当前实验';
     $('statusPill').hidden = isGlobal;
     $('backToHub').classList.toggle('visible', !isGlobal);
-    $('hubActions').hidden = !isGlobal;
+    $('hubActions').hidden = pageName !== 'experiments';
     $('experimentActions').hidden = isGlobal;
     if (pageName !== 'results' && state.eventSource) {
       state.eventSource.close();
@@ -187,7 +191,8 @@
       state.operationsAbortController = null;
       state.operationsRunId = null;
     }
-    if (isGlobal) scheduleGlobalReconcile({ full: true });
+    if (pageName === 'experiments') scheduleGlobalReconcile({ full: true });
+    if (pageName === 'maps') window.MapWorkspace?.activate().catch(reportError);
     syncWorkspaceUrl();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -707,6 +712,11 @@
     $('worldName').value = world.world_name || '';
     $('worldKey').value = world.world_key || '';
     $('worldDefinition').value = JSON.stringify(definition, null, 2);
+    const managedByPublicMap = Boolean(world.map_revision_id);
+    $('worldName').readOnly = managedByPublicMap;
+    $('worldKey').readOnly = managedByPublicMap;
+    $('worldDefinition').readOnly = managedByPublicMap;
+    $('worldDefinition').title = managedByPublicMap ? '请通过“实验内微调”修改地图；公共版本来源不可直接改写。' : '';
     $('worldPreviewTitle').textContent = world.world_name || '世界待配置';
     $('worldPreviewMeta').textContent = size.length >= 2 ? `${size[0]} × ${size[1]} 网格 · ${definition.tile_size || '—'}px tile · ${keys.length} 级语义地址` : `${tiles.length} 个 Tile`;
     $('worldAddressKeys').textContent = keys.length ? keys.join(' / ') : '尚未配置';
@@ -717,6 +727,12 @@
     $('worldRevisionCode').textContent = state.revision?.definition_hash ? state.revision.definition_hash.slice(0, 12) : '未发布';
     $('worldAssetInput').disabled = !state.draft;
     $('worldAssetList').innerHTML = world.assets?.length ? world.assets.map(asset => `<div class="asset-row"><span class="asset-icon">▧</span><div class="asset-copy"><strong>${escapeHtml(asset.logical_path)}</strong><span>${escapeHtml(asset.asset_hash.slice(0, 20))}… · ${(asset.size / 1024).toFixed(1)} KB · ${escapeHtml(asset.media_type)}</span></div><span class="asset-state">${state.draft ? '待发布' : '已锁定'}</span></div>`).join('') : '<div class="empty-state"><strong>暂无外部资源</strong></div>';
+    window.MapWorkspace?.setExperimentContext({
+      experimentId: state.selectedExperimentId,
+      world,
+      lockVersion: state.draft?.lock_version || 0,
+      editable: Boolean(state.draft) && !state.workspaceReadonly,
+    }).catch(reportError);
   }
 
   function fillDefinitionOverview(definition, revision) {
@@ -2378,7 +2394,7 @@
   }
 
   function openWorkspacePage(pageName) {
-    if (pageName === 'experiments') {
+    if (pageName === 'experiments' || pageName === 'maps') {
       requestGlobalNavigation(pageName);
       return;
     }
@@ -2395,6 +2411,28 @@
   document.querySelectorAll('.nav-item[data-page]').forEach(item => item.addEventListener('click', () => {
     openWorkspacePage(item.dataset.page);
   }));
+  window.addEventListener('map-workspace:toast', event => {
+    showToast(event.detail?.message || '', event.detail?.title || '操作成功');
+  });
+  window.addEventListener('map-workspace:modal', event => {
+    const { action, id, focusId } = event.detail || {};
+    if (action === 'open') openModal(id, focusId || null);
+    else if (action === 'close') closeModal(id);
+  });
+  window.addEventListener('map-workspace:selection', event => {
+    state.selectedMapId = event.detail?.mapId || null;
+    if (state.workspacePage === 'maps') syncWorkspaceUrl();
+  });
+  window.addEventListener('map-workspace:experiment-draft', event => {
+    const { experimentId, draft } = event.detail || {};
+    if (!draft || experimentId !== state.selectedExperimentId) return;
+    state.draft = draft;
+    state.revision = draft;
+    state.definition = draft.definition;
+    fillDraft(draft.definition);
+    fillDefinitionOverview(draft.definition, draft);
+    clearDirty();
+  });
   $('backToHub').addEventListener('click', () => requestGlobalNavigation('experiments'));
   document.querySelectorAll('[data-goto]').forEach(button => button.addEventListener('click', () => {
     openWorkspacePage(button.dataset.goto);
@@ -3090,7 +3128,11 @@
     setResultTab(state.resultTab, { sync: false });
     setOperationTab(state.operationTab, { sync: false });
     await loadExperiments();
-    if (experimentId) {
+    if (!experimentId && requestedView === 'maps') {
+      state.selectedMapId = params.get('map_id');
+      goToPage('maps');
+      syncWorkspaceUrl();
+    } else if (experimentId) {
       await openExperiment(experimentId, targetPage, params.get('run_id'));
       if (targetPage === 'results') {
         setResultTab(requestedResultTab, { sync: false });

@@ -26,6 +26,8 @@ from generative_agents.persistence.models import (
     ExperimentRevision,
     Run,
     Secret,
+    WorldMap,
+    WorldMapRevision,
 )
 
 from .errors import ServiceError, not_found
@@ -64,24 +66,53 @@ class ExperimentService:
         self, session: Session, *, key: str, name: str, goal: str
     ) -> tuple[ExperimentDefinition, dict[str, Any]]:
         if self._builtin_factory is not None:
-            return self._builtin_factory(key, name, goal), {"source_type": "BUILTIN_DEFAULT"}
-        snapshot = session.scalar(
-            select(BuiltinCatalogSnapshot)
-            .order_by(BuiltinCatalogSnapshot.created_at.desc(), BuiltinCatalogSnapshot.id.desc())
-            .limit(1)
+            definition = self._builtin_factory(key, name, goal)
+            provenance = {"source_type": "BUILTIN_DEFAULT"}
+        else:
+            snapshot = session.scalar(
+                select(BuiltinCatalogSnapshot)
+                .order_by(
+                    BuiltinCatalogSnapshot.created_at.desc(),
+                    BuiltinCatalogSnapshot.id.desc(),
+                )
+                .limit(1)
+            )
+            if snapshot is None:
+                definition = _default_definition_factory(key, name, goal)
+                provenance = {
+                    "source_type": "BUILTIN_DEFAULT",
+                    "catalog_mode": "PACKAGE_FALLBACK",
+                }
+            else:
+                definition = ExperimentDefinition.model_validate(snapshot.definition_json)
+                provenance = {
+                    "source_type": "BUILTIN_DEFAULT",
+                    "catalog_snapshot_id": snapshot.id,
+                    "catalog_definition_hash": snapshot.definition_hash,
+                    "catalog_source_fingerprint": snapshot.source_fingerprint,
+                }
+        public_map = session.scalar(
+            select(WorldMap).where(WorldMap.map_key == definition.world.world_key)
         )
-        if snapshot is None:
-            return _default_definition_factory(key, name, goal), {
-                "source_type": "BUILTIN_DEFAULT",
-                "catalog_mode": "PACKAGE_FALLBACK",
+        map_revision = (
+            session.get(WorldMapRevision, public_map.current_published_revision_id)
+            if public_map and public_map.current_published_revision_id
+            else None
+        )
+        if map_revision is not None and map_revision.state == "PUBLISHED":
+            from .maps import WorldMapService
+
+            payload = definition.model_dump(mode="json", exclude_none=False)
+            payload["world"] = WorldMapService.materialize_world(
+                map_revision, definition.world.overlay
+            ).model_dump(mode="json", exclude_none=False)
+            definition = ExperimentDefinition.model_validate(payload)
+            provenance = {
+                **provenance,
+                "world_map_id": public_map.id,
+                "world_map_revision_id": map_revision.id,
             }
-        definition = ExperimentDefinition.model_validate(snapshot.definition_json)
-        return definition, {
-            "source_type": "BUILTIN_DEFAULT",
-            "catalog_snapshot_id": snapshot.id,
-            "catalog_definition_hash": snapshot.definition_hash,
-            "catalog_source_fingerprint": snapshot.source_fingerprint,
-        }
+        return definition, provenance
 
     @staticmethod
     def _definition_for_new_owner(
@@ -723,6 +754,16 @@ class ExperimentService:
         with self.database.session_factory.begin() as session:
             _experiment, revision = self._require_draft(session, experiment_id)
             definition = ExperimentDefinition.model_validate(revision.definition_json)
+            if definition.world.map_revision_id:
+                from .maps import WorldMapService
+
+                payload = definition.model_dump(mode="json", exclude_none=False)
+                payload["world"] = WorldMapService(
+                    self.database
+                ).materialize_for_publish_in_session(
+                    session, definition.world
+                ).model_dump(mode="json", exclude_none=False)
+                definition = ExperimentDefinition.model_validate(payload)
             refs = set(session.scalars(select(Secret.id)).all())
             report = validate_for_publish(definition, existing_secret_refs=refs)
             revision.validation_json = report.model_dump(mode="json")
@@ -778,6 +819,17 @@ class ExperimentService:
             if model["model"].casefold() != "auto":
                 model["resolved_model"] = model["model"]
         definition = ExperimentDefinition.model_validate(payload)
+        if definition.world.map_revision_id:
+            from .maps import WorldMapService
+
+            materialized_world = WorldMapService(
+                self.database
+            ).materialize_for_publish_in_session(session, definition.world)
+            normalized_payload = definition.model_dump(mode="json", exclude_none=False)
+            normalized_payload["world"] = materialized_world.model_dump(
+                mode="json", exclude_none=False
+            )
+            definition = ExperimentDefinition.model_validate(normalized_payload)
         refs = set(session.scalars(select(Secret.id)).all())
         report = validate_for_publish(definition, existing_secret_refs=refs)
         if not report.valid:
