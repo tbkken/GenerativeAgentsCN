@@ -1,0 +1,2403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Prompt Orchestration Workbench</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Prompt Orchestration Workbench" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Prompt Orchestration Workbench&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: var(--border-radius-lg, 12.5px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;gaFlowComposer&quot;&gt;
+  &lt;style&gt;
+    #gaFlowComposer {
+      color-scheme: light dark;
+      --gfc-bg: light-dark(#f3f7f5, #0f1715);
+      --gfc-panel: light-dark(#ffffff, #18221f);
+      --gfc-soft: light-dark(#f7faf9, #131e1b);
+      --gfc-side: light-dark(#153d38, #0b2925);
+      --gfc-side-active: light-dark(#24564f, #17463f);
+      --gfc-side-text: #dcebe7;
+      --gfc-text: light-dark(#172824, #e7f0ed);
+      --gfc-muted: light-dark(#687a74, #99aaa5);
+      --gfc-faint: light-dark(#8fa09a, #7d8e89);
+      --gfc-line: light-dark(#dbe5e1, #30403b);
+      --gfc-line-strong: light-dark(#b9cbc4, #4b5d57);
+      --gfc-teal: light-dark(#168a7d, #58c9b9);
+      --gfc-teal-deep: light-dark(#0d6c61, #8ee2d6);
+      --gfc-teal-soft: light-dark(#e5f5f1, #173b35);
+      --gfc-blue: light-dark(#4778d5, #7ca8fa);
+      --gfc-blue-soft: light-dark(#eef3ff, #1d304a);
+      --gfc-amber: light-dark(#ad6b18, #e6aa5b);
+      --gfc-amber-soft: light-dark(#fff4df, #3d2e1b);
+      --gfc-purple: light-dark(#735ab2, #ad95e9);
+      --gfc-purple-soft: light-dark(#f2edff, #2f2747);
+      --gfc-red: light-dark(#b64f48, #ed8b82);
+      --gfc-red-soft: light-dark(#fff0ee, #412421);
+      --gfc-shadow: light-dark(0 16px 44px rgba(26, 60, 53, .13), 0 16px 44px rgba(0, 0, 0, .3));
+      width: 100%;
+      color: var(--gfc-text);
+      font-family: Inter, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, system-ui, sans-serif;
+    }
+    #gaFlowComposer * { box-sizing: border-box; }
+    #gaFlowComposer button,
+    #gaFlowComposer input,
+    #gaFlowComposer select,
+    #gaFlowComposer textarea { font: inherit; }
+    #gaFlowComposer button { color: inherit; }
+    #gaFlowComposer .gfc-window {
+      display: grid;
+      grid-template-columns: 184px minmax(0, 1fr);
+      min-height: 1080px;
+      overflow: hidden;
+      border: 1px solid var(--gfc-line);
+      border-radius: 18px;
+      background: var(--gfc-panel);
+      box-shadow: var(--gfc-shadow);
+    }
+    #gaFlowComposer .gfc-app-side {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 18px 12px;
+      background: var(--gfc-side);
+      color: var(--gfc-side-text);
+    }
+    #gaFlowComposer .gfc-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px 18px;
+      font-weight: 500;
+      letter-spacing: -.02em;
+    }
+    #gaFlowComposer .gfc-brand-mark {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--gfc-teal);
+      color: #fff;
+    }
+    #gaFlowComposer .gfc-app-label {
+      margin: 17px 10px 5px;
+      color: color-mix(in srgb, var(--gfc-side-text) 55%, transparent);
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+    #gaFlowComposer .gfc-app-nav {
+      display: flex;
+      width: 100%;
+      min-height: 38px;
+      align-items: center;
+      gap: 9px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: color-mix(in srgb, var(--gfc-side-text) 76%, transparent);
+      cursor: pointer;
+      text-align: left;
+    }
+    #gaFlowComposer .gfc-app-nav.active { background: var(--gfc-side-active); color: var(--gfc-side-text); }
+    #gaFlowComposer .gfc-app-foot {
+      margin-top: auto;
+      padding: 12px 10px 2px;
+      border-top: 1px solid color-mix(in srgb, var(--gfc-side-text) 16%, transparent);
+      color: color-mix(in srgb, var(--gfc-side-text) 58%, transparent);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+    #gaFlowComposer .gfc-main { min-width: 0; background: var(--gfc-bg); }
+    #gaFlowComposer .gfc-topbar {
+      display: flex;
+      min-height: 58px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--gfc-line);
+      background: var(--gfc-panel);
+    }
+    #gaFlowComposer .gfc-crumbs {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--gfc-muted);
+      font-size: 11px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #gaFlowComposer .gfc-crumbs strong { color: var(--gfc-text); font-weight: 500; }
+    #gaFlowComposer .gfc-actions { display: flex; align-items: center; gap: 8px; }
+    #gaFlowComposer .gfc-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--gfc-amber-soft);
+      color: var(--gfc-amber);
+      font-size: 10px;
+    }
+    #gaFlowComposer .gfc-state-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    #gaFlowComposer .gfc-button {
+      display: inline-flex;
+      min-height: 32px;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 11px;
+      border: 1px solid var(--gfc-line-strong);
+      border-radius: 8px;
+      background: var(--gfc-panel);
+      cursor: pointer;
+      font-size: 11px;
+    }
+    #gaFlowComposer .gfc-button.primary { border-color: var(--gfc-teal); background: var(--gfc-teal); color: #fff; }
+    #gaFlowComposer .gfc-button.ghost { border-color: transparent; background: transparent; color: var(--gfc-muted); }
+    #gaFlowComposer .gfc-page { padding: 0 20px 24px; }
+    #gaFlowComposer .gfc-flow-tabs {
+      display: flex;
+      align-items: stretch;
+      gap: 28px;
+      min-height: 53px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--gfc-line);
+      scrollbar-width: none;
+    }
+    #gaFlowComposer .gfc-flow-tabs::-webkit-scrollbar { display: none; }
+    #gaFlowComposer .gfc-flow-tab {
+      position: relative;
+      flex: 0 0 auto;
+      min-width: max-content;
+      padding: 2px 1px 0;
+      border: 0;
+      background: transparent;
+      color: var(--gfc-muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    #gaFlowComposer .gfc-flow-tab::after {
+      content: &#x27;&#x27;;
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      background: transparent;
+    }
+    #gaFlowComposer .gfc-flow-tab:hover { color: var(--gfc-text); }
+    #gaFlowComposer .gfc-flow-tab[aria-selected=&quot;true&quot;] { color: var(--gfc-teal-dark); }
+    #gaFlowComposer .gfc-flow-tab[aria-selected=&quot;true&quot;]::after { background: var(--gfc-teal); }
+    #gaFlowComposer .gfc-flow-tab:focus-visible { outline: 2px solid var(--gfc-teal-soft); outline-offset: -3px; }
+    #gaFlowComposer .gfc-editor {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr) 292px;
+      min-height: 880px;
+      overflow: hidden;
+      border: 1px solid var(--gfc-line);
+      border-radius: 12px;
+      background: var(--gfc-panel);
+    }
+    #gaFlowComposer .gfc-palette {
+      border-right: 1px solid var(--gfc-line);
+      background: var(--gfc-panel);
+    }
+    #gaFlowComposer .gfc-palette-head {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 13px;
+      border-bottom: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-palette-head strong { font-size: 11px; font-weight: 500; }
+    #gaFlowComposer .gfc-palette-groups { padding: 8px 8px 14px; }
+    #gaFlowComposer .gfc-palette-group { margin-top: 8px; }
+    #gaFlowComposer .gfc-palette-group h2 {
+      margin: 0 6px 4px;
+      color: var(--gfc-faint);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    #gaFlowComposer .gfc-palette-item {
+      display: flex;
+      width: 100%;
+      min-height: 34px;
+      align-items: center;
+      gap: 8px;
+      margin: 2px 0;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      font-size: 10px;
+    }
+    #gaFlowComposer .gfc-palette-item:hover { border-color: var(--gfc-line); background: var(--gfc-soft); }
+    #gaFlowComposer .gfc-type-icon {
+      display: grid;
+      width: 23px;
+      height: 23px;
+      flex: 0 0 23px;
+      place-items: center;
+      border-radius: 6px;
+      background: var(--gfc-blue-soft);
+      color: var(--gfc-blue);
+    }
+    #gaFlowComposer .gfc-palette-item[data-add=&quot;llm&quot;] .gfc-type-icon { background: var(--gfc-teal-soft); color: var(--gfc-teal-deep); }
+    #gaFlowComposer .gfc-palette-item[data-add=&quot;ifelse&quot;] .gfc-type-icon,
+    #gaFlowComposer .gfc-palette-item[data-add=&quot;switch&quot;] .gfc-type-icon,
+    #gaFlowComposer .gfc-palette-item[data-add=&quot;loop&quot;] .gfc-type-icon { background: var(--gfc-amber-soft); color: var(--gfc-amber); }
+    #gaFlowComposer .gfc-palette-item[data-add=&quot;subflow&quot;] .gfc-type-icon { background: var(--gfc-purple-soft); color: var(--gfc-purple); }
+    #gaFlowComposer .gfc-center { position: relative; min-width: 0; background: var(--gfc-soft); }
+    #gaFlowComposer .gfc-canvas-bar {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border-bottom: 1px solid var(--gfc-line);
+      background: var(--gfc-panel);
+    }
+    #gaFlowComposer .gfc-canvas-title { display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 11px; }
+    #gaFlowComposer .gfc-canvas-title strong { font-weight: 500; }
+    #gaFlowComposer .gfc-version {
+      padding: 3px 6px;
+      border-radius: 5px;
+      background: var(--gfc-soft);
+      color: var(--gfc-muted);
+      font: 9px ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+    #gaFlowComposer .gfc-canvas-tools { display: flex; gap: 4px; }
+    #gaFlowComposer .gfc-icon-button {
+      display: grid;
+      width: 29px;
+      height: 29px;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--gfc-muted);
+      cursor: pointer;
+    }
+    #gaFlowComposer .gfc-icon-button:hover { border-color: var(--gfc-line); background: var(--gfc-soft); }
+    #gaFlowComposer .gfc-version-popover {
+      position: absolute;
+      z-index: 20;
+      top: 42px;
+      right: 10px;
+      width: min(336px, calc(100% - 20px));
+      overflow: hidden;
+      border: 1px solid var(--gfc-line-strong);
+      border-radius: 10px;
+      background: var(--gfc-panel);
+      box-shadow: 0 18px 48px rgba(32, 56, 51, .16);
+    }
+    #gaFlowComposer .gfc-version-popover[hidden] { display: none; }
+    #gaFlowComposer .gfc-version-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-version-head strong { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 600; }
+    #gaFlowComposer .gfc-version-head span { color: var(--gfc-muted); font-size: 10px; }
+    #gaFlowComposer .gfc-version-list { padding: 5px 14px 10px; }
+    #gaFlowComposer .gfc-version-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 60px;
+      border-bottom: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-version-item:last-child { border-bottom: 0; }
+    #gaFlowComposer .gfc-version-name { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+    #gaFlowComposer .gfc-version-name .gfc-default-badge {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: var(--gfc-blue-soft);
+      color: var(--gfc-blue);
+      font-size: 8px;
+      font-weight: 600;
+    }
+    #gaFlowComposer .gfc-version-meta { margin-top: 4px; color: var(--gfc-faint); font-size: 9px; }
+    #gaFlowComposer .gfc-restore-button {
+      min-height: 28px;
+      padding: 0 9px;
+      border: 1px solid var(--gfc-line-strong);
+      border-radius: 7px;
+      background: var(--gfc-panel);
+      color: var(--gfc-teal-dark);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    #gaFlowComposer .gfc-restore-button:hover { border-color: var(--gfc-teal); background: var(--gfc-teal-soft); }
+    #gaFlowComposer .gfc-version-note {
+      display: flex;
+      gap: 7px;
+      margin: 0 14px 14px;
+      padding: 9px 10px;
+      border-radius: 7px;
+      background: var(--gfc-teal-soft);
+      color: var(--gfc-teal-dark);
+      font-size: 9px;
+      line-height: 1.55;
+    }
+    #gaFlowComposer .gfc-board {
+      position: relative;
+      min-height: 1705px;
+      overflow: hidden;
+      background-color: var(--gfc-soft);
+      background-image: radial-gradient(circle, color-mix(in srgb, var(--gfc-faint) 24%, transparent) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    #gaFlowComposer .gfc-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    #gaFlowComposer .gfc-wire { fill: none; stroke: var(--gfc-line-strong); stroke-width: 1.35; }
+    #gaFlowComposer .gfc-wire.true { stroke: var(--gfc-teal); }
+    #gaFlowComposer .gfc-wire.false { stroke: var(--gfc-amber); }
+    #gaFlowComposer .gfc-wire-label {
+      fill: var(--gfc-muted);
+      font-family: Inter, &quot;PingFang SC&quot;, sans-serif;
+      font-size: 9px;
+      paint-order: stroke;
+      stroke: var(--gfc-soft);
+      stroke-width: 4px;
+    }
+    #gaFlowComposer .gfc-node-layer { position: absolute; inset: 0; }
+    #gaFlowComposer .gfc-node {
+      position: absolute;
+      width: 28%;
+      max-width: 196px;
+      min-width: 148px;
+      padding: 0;
+      border: 1px solid var(--gfc-line-strong);
+      border-left-width: 3px;
+      border-radius: 9px;
+      background: var(--gfc-panel);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--gfc-text) 7%, transparent);
+      cursor: grab;
+      text-align: left;
+      touch-action: none;
+      user-select: none;
+    }
+    #gaFlowComposer .gfc-node:hover { border-color: var(--gfc-teal); }
+    #gaFlowComposer .gfc-node.selected { border-color: var(--gfc-teal); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gfc-teal) 20%, transparent); }
+    #gaFlowComposer .gfc-node.dragging { z-index: 4; cursor: grabbing; box-shadow: 0 12px 28px color-mix(in srgb, var(--gfc-text) 18%, transparent); }
+    #gaFlowComposer .gfc-node.unconnected { border-style: dashed; }
+    #gaFlowComposer .gfc-node[data-type=&quot;script&quot;] { border-left-color: var(--gfc-blue); }
+    #gaFlowComposer .gfc-node[data-type=&quot;llm&quot;] { border-left-color: var(--gfc-teal); }
+    #gaFlowComposer .gfc-node[data-type=&quot;ifelse&quot;],
+    #gaFlowComposer .gfc-node[data-type=&quot;switch&quot;],
+    #gaFlowComposer .gfc-node[data-type=&quot;loop&quot;] { border-left-color: var(--gfc-amber); }
+    #gaFlowComposer .gfc-node[data-type=&quot;subflow&quot;],
+    #gaFlowComposer .gfc-node[data-type=&quot;readstate&quot;],
+    #gaFlowComposer .gfc-node[data-type=&quot;writestate&quot;] { border-left-color: var(--gfc-purple); }
+    #gaFlowComposer .gfc-node-head {
+      display: flex;
+      min-height: 32px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 0 9px;
+      border-bottom: 1px solid var(--gfc-line);
+      background: var(--gfc-soft);
+      border-radius: 8px 8px 0 0;
+    }
+    #gaFlowComposer .gfc-node-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--gfc-blue);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    #gaFlowComposer .gfc-node[data-type=&quot;llm&quot;] .gfc-node-type { color: var(--gfc-teal-deep); }
+    #gaFlowComposer .gfc-node[data-type=&quot;ifelse&quot;] .gfc-node-type,
+    #gaFlowComposer .gfc-node[data-type=&quot;switch&quot;] .gfc-node-type,
+    #gaFlowComposer .gfc-node[data-type=&quot;loop&quot;] .gfc-node-type { color: var(--gfc-amber); }
+    #gaFlowComposer .gfc-node[data-type=&quot;subflow&quot;] .gfc-node-type { color: var(--gfc-purple); }
+    #gaFlowComposer .gfc-node[data-type=&quot;readstate&quot;] .gfc-node-type,
+    #gaFlowComposer .gfc-node[data-type=&quot;writestate&quot;] .gfc-node-type { color: var(--gfc-purple); }
+    #gaFlowComposer .gfc-node[data-type=&quot;start&quot;] .gfc-node-type,
+    #gaFlowComposer .gfc-node[data-type=&quot;end&quot;] .gfc-node-type { color: var(--gfc-faint); }
+    #gaFlowComposer .gfc-node-menu { color: var(--gfc-faint); }
+    #gaFlowComposer .gfc-node-name { display: block; padding: 9px 10px 8px; }
+    #gaFlowComposer .gfc-node-name strong { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; line-height: 1.3; }
+    #gaFlowComposer .gfc-node-name span { display: block; color: var(--gfc-muted); font: 9px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-node-ports { display: block; border-top: 1px solid var(--gfc-line); }
+    #gaFlowComposer .gfc-port-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      min-height: 30px;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      color: var(--gfc-muted);
+    }
+    #gaFlowComposer .gfc-port-row + .gfc-port-row { border-top: 1px solid color-mix(in srgb, var(--gfc-line) 72%, transparent); }
+    #gaFlowComposer .gfc-port-label { color: var(--gfc-faint); font-size: 8px; }
+    #gaFlowComposer .gfc-port-row code { min-width: 0; overflow: hidden; padding: 0; border-radius: 0; background: transparent; color: var(--gfc-text); font: 9px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+    #gaFlowComposer .gfc-port-type { color: var(--gfc-muted); font: 8px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-port-row.output { background: color-mix(in srgb, var(--gfc-teal-soft) 48%, transparent); }
+    #gaFlowComposer .gfc-port-dot {
+      position: absolute;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--gfc-teal);
+      border-radius: 50%;
+      background: var(--gfc-panel);
+      transform: translateY(-50%);
+    }
+    #gaFlowComposer .gfc-port-dot.input { left: -14px; }
+    #gaFlowComposer .gfc-port-dot.output { right: -14px; background: var(--gfc-teal); }
+    #gaFlowComposer .gfc-branch-ports {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-branch-ports span { padding: 6px 8px; text-align: center; font-size: 9px; }
+    #gaFlowComposer .gfc-more-ports { display: block; padding: 4px 10px 6px; color: var(--gfc-faint); font-size: 8px; }
+    #gaFlowComposer .gfc-branch-ports span:first-child { color: var(--gfc-teal-deep); border-right: 1px solid var(--gfc-line); }
+    #gaFlowComposer .gfc-branch-ports span:last-child { color: var(--gfc-amber); }
+    #gaFlowComposer .gfc-node-add {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      border: 1px solid var(--gfc-line-strong);
+      border-radius: 8px;
+      background: var(--gfc-panel);
+      box-shadow: 0 5px 15px color-mix(in srgb, var(--gfc-text) 10%, transparent);
+      cursor: pointer;
+      font-size: 10px;
+    }
+    #gaFlowComposer .gfc-inspector {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      border-left: 1px solid var(--gfc-line);
+      background: var(--gfc-panel);
+    }
+    #gaFlowComposer .gfc-inspector-head { padding: 13px 14px 11px; border-bottom: 1px solid var(--gfc-line); }
+    #gaFlowComposer .gfc-inspector-type { color: var(--gfc-teal-deep); font: 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-inspector-title { margin: 5px 0 3px; font-size: 15px; font-weight: 500; }
+    #gaFlowComposer .gfc-inspector-id { color: var(--gfc-muted); font: 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-inspector-tabs { display: flex; padding: 0 7px; border-bottom: 1px solid var(--gfc-line); }
+    #gaFlowComposer .gfc-inspector-tab {
+      flex: 1 1 auto;
+      min-height: 37px;
+      padding: 0 3px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--gfc-muted);
+      cursor: pointer;
+      font-size: 9px;
+    }
+    #gaFlowComposer .gfc-inspector-tab[aria-selected=&quot;true&quot;] { border-bottom-color: var(--gfc-teal); color: var(--gfc-teal-deep); }
+    #gaFlowComposer .gfc-inspector-body { padding: 13px 14px 18px; }
+    #gaFlowComposer .gfc-field { margin-bottom: 13px; }
+    #gaFlowComposer .gfc-field label,
+    #gaFlowComposer .gfc-section-title { display: block; margin-bottom: 5px; color: var(--gfc-muted); font-size: 9px; }
+    #gaFlowComposer .gfc-input,
+    #gaFlowComposer .gfc-select,
+    #gaFlowComposer .gfc-textarea {
+      width: 100%;
+      border: 1px solid var(--gfc-line);
+      border-radius: 7px;
+      background: var(--gfc-soft);
+      color: var(--gfc-text);
+    }
+    #gaFlowComposer .gfc-input,
+    #gaFlowComposer .gfc-select { min-height: 32px; padding: 0 9px; font-size: 10px; }
+    #gaFlowComposer .gfc-textarea { min-height: 250px; padding: 9px; resize: vertical; font: 9px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-schema-list { margin-bottom: 14px; }
+    #gaFlowComposer .gfc-schema-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 72px 20px;
+      gap: 5px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-schema-row code { min-width: 0; overflow: hidden; padding: 0; border-radius: 0; background: transparent; color: var(--gfc-text); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    #gaFlowComposer .gfc-schema-row span { color: var(--gfc-muted); font: 8px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    #gaFlowComposer .gfc-schema-row button { border: 0; background: transparent; color: var(--gfc-faint); cursor: pointer; }
+    #gaFlowComposer .gfc-mini-action {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      gap: 5px;
+      padding: 0 8px;
+      border: 1px solid var(--gfc-line);
+      border-radius: 6px;
+      background: var(--gfc-panel);
+      cursor: pointer;
+      font-size: 9px;
+    }
+    #gaFlowComposer .gfc-contract-note {
+      display: flex;
+      gap: 7px;
+      margin-top: 13px;
+      padding: 9px;
+      border-radius: 7px;
+      background: var(--gfc-teal-soft);
+      color: var(--gfc-teal-deep);
+      font-size: 9px;
+      line-height: 1.45;
+    }
+    #gaFlowComposer .gfc-inspector-foot {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding: 11px 14px;
+      border-top: 1px solid var(--gfc-line);
+    }
+    #gaFlowComposer .gfc-inspector-foot .gfc-button { flex: 1; }
+    #gaFlowComposer .gfc-toast {
+      position: absolute;
+      right: 18px;
+      top: 68px;
+      z-index: 5;
+      display: none;
+      max-width: 280px;
+      padding: 9px 11px;
+      border: 1px solid var(--gfc-line-strong);
+      border-radius: 8px;
+      background: var(--gfc-panel);
+      box-shadow: var(--gfc-shadow);
+      font-size: 10px;
+    }
+    #gaFlowComposer .gfc-toast.show { display: block; }
+    @media (max-width: 1100px) {
+      #gaFlowComposer .gfc-editor { grid-template-columns: minmax(0, 1fr); }
+      #gaFlowComposer .gfc-palette { border-right: 0; border-bottom: 1px solid var(--gfc-line); }
+      #gaFlowComposer .gfc-palette-groups { display: flex; flex-wrap: wrap; gap: 5px 10px; }
+      #gaFlowComposer .gfc-palette-group { min-width: 145px; flex: 1 1 145px; }
+      #gaFlowComposer .gfc-palette-item { display: inline-flex; width: auto; margin-right: 2px; padding-right: 10px; }
+      #gaFlowComposer .gfc-inspector { border-top: 1px solid var(--gfc-line); border-left: 0; }
+      #gaFlowComposer .gfc-inspector-body { min-height: 330px; }
+      #gaFlowComposer .gfc-inspector-foot { margin-top: 0; }
+    }
+    @media (max-width: 900px) {
+      #gaFlowComposer .gfc-window { grid-template-columns: 58px minmax(0, 1fr); }
+      #gaFlowComposer .gfc-brand { padding-inline: 3px; }
+      #gaFlowComposer .gfc-brand span,
+      #gaFlowComposer .gfc-app-nav span,
+      #gaFlowComposer .gfc-app-label,
+      #gaFlowComposer .gfc-app-foot { display: none; }
+      #gaFlowComposer .gfc-app-nav { justify-content: center; padding: 0; }
+      #gaFlowComposer .gfc-page { padding-inline: 12px; }
+    }
+    @media (max-width: 540px) {
+      #gaFlowComposer .gfc-window { display: block; border-radius: 12px; }
+      #gaFlowComposer .gfc-app-side { display: none; }
+      #gaFlowComposer .gfc-topbar { padding: 8px 10px; }
+      #gaFlowComposer .gfc-actions .gfc-state,
+      #gaFlowComposer .gfc-actions .gfc-button:not(.primary) { display: none; }
+      #gaFlowComposer .gfc-flow-tabs { gap: 22px; min-height: 48px; }
+      #gaFlowComposer .gfc-palette-groups { display: block; }
+      #gaFlowComposer .gfc-board { min-height: auto; padding: 12px; background-image: none; }
+      #gaFlowComposer .gfc-wires { display: none; }
+      #gaFlowComposer .gfc-node-layer { position: static; display: grid; gap: 9px; }
+      #gaFlowComposer .gfc-node { position: static; width: 100%; max-width: none; min-width: 0; }
+      #gaFlowComposer .gfc-node-add { position: static; width: 100%; margin-top: 10px; justify-content: center; }
+      #gaFlowComposer .gfc-canvas-title .gfc-version { display: none; }
+      #gaFlowComposer .gfc-schema-row { grid-template-columns: minmax(0, 1fr) 60px 20px; }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;gfc-window&quot;&gt;
+    &lt;aside class=&quot;gfc-app-side&quot; aria-label=&quot;主导航&quot;&gt;
+      &lt;div class=&quot;gfc-brand&quot;&gt;&lt;span class=&quot;gfc-brand-mark&quot;&gt;&lt;i data-lucide=&quot;orbit&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;&lt;span&gt;实验控制台&lt;/span&gt;&lt;/div&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;flask-conical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;实验&lt;/span&gt;&lt;/button&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;map&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;地图&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;gfc-app-label&quot;&gt;当前实验&lt;/div&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;layout-dashboard&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;概览&lt;/span&gt;&lt;/button&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;bot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Agent&lt;/span&gt;&lt;/button&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;cpu&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;模型与运行&lt;/span&gt;&lt;/button&gt;
+      &lt;button class=&quot;gfc-app-nav active&quot;&gt;&lt;i data-lucide=&quot;workflow&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Prompt 编排&lt;/span&gt;&lt;/button&gt;
+      &lt;button class=&quot;gfc-app-nav&quot;&gt;&lt;i data-lucide=&quot;line-chart&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;实验结果&lt;/span&gt;&lt;/button&gt;
+      &lt;div class=&quot;gfc-app-foot&quot;&gt;Draft Revision 12&lt;br&gt;流程定义随实验独立保存&lt;/div&gt;
+    &lt;/aside&gt;
+
+    &lt;main class=&quot;gfc-main&quot;&gt;
+      &lt;header class=&quot;gfc-topbar&quot;&gt;
+        &lt;div class=&quot;gfc-crumbs&quot;&gt;实验 / 中山大学校园日常 / &lt;strong&gt;Prompt 编排&lt;/strong&gt;&lt;/div&gt;
+        &lt;div class=&quot;gfc-actions&quot;&gt;
+          &lt;span class=&quot;gfc-state&quot;&gt;&lt;span class=&quot;gfc-state-dot&quot;&gt;&lt;/span&gt;&lt;span id=&quot;gfcSaveState&quot;&gt;有未保存修改&lt;/span&gt;&lt;/span&gt;
+          &lt;button class=&quot;gfc-button&quot; id=&quot;gfcValidate&quot;&gt;&lt;i data-lucide=&quot;shield-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;验证流程&lt;/button&gt;
+          &lt;button class=&quot;gfc-button primary&quot; id=&quot;gfcSave&quot;&gt;&lt;i data-lucide=&quot;save&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;保存草稿&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/header&gt;
+
+      &lt;section class=&quot;gfc-page&quot;&gt;
+        &lt;nav class=&quot;gfc-flow-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;可编辑流程&quot;&gt;
+          &lt;button class=&quot;gfc-flow-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; data-flow=&quot;schedule&quot; aria-selected=&quot;true&quot;&gt;日程与状态&lt;/button&gt;
+          &lt;button class=&quot;gfc-flow-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; data-flow=&quot;memory&quot; aria-selected=&quot;false&quot;&gt;感知与记忆&lt;/button&gt;
+          &lt;button class=&quot;gfc-flow-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; data-flow=&quot;action&quot; aria-selected=&quot;false&quot;&gt;行动与空间&lt;/button&gt;
+          &lt;button class=&quot;gfc-flow-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; data-flow=&quot;social&quot; aria-selected=&quot;false&quot;&gt;社交与对话&lt;/button&gt;
+          &lt;button class=&quot;gfc-flow-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; data-flow=&quot;reflection&quot; aria-selected=&quot;false&quot;&gt;反思与认知&lt;/button&gt;
+        &lt;/nav&gt;
+
+        &lt;div class=&quot;gfc-editor&quot;&gt;
+          &lt;aside class=&quot;gfc-palette&quot; aria-label=&quot;节点库&quot;&gt;
+            &lt;div class=&quot;gfc-palette-head&quot;&gt;&lt;strong&gt;节点库&lt;/strong&gt;&lt;span class=&quot;gfc-version&quot;&gt;11 types&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-palette-groups&quot;&gt;
+              &lt;section class=&quot;gfc-palette-group&quot;&gt;
+                &lt;h2&gt;计算&lt;/h2&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;script&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;code-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Script&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;llm&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;sparkles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;LLM&lt;/button&gt;
+              &lt;/section&gt;
+              &lt;section class=&quot;gfc-palette-group&quot;&gt;
+                &lt;h2&gt;控制&lt;/h2&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;ifelse&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;git-branch&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;If / Else&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;switch&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;split&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Switch&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;loop&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;repeat-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Loop&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;parallel&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;columns-3&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Parallel / Join&lt;/button&gt;
+              &lt;/section&gt;
+              &lt;section class=&quot;gfc-palette-group&quot;&gt;
+                &lt;h2&gt;状态&lt;/h2&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;readstate&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;database&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Read State&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;writestate&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;database-zap&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Write State&lt;/button&gt;
+              &lt;/section&gt;
+              &lt;section class=&quot;gfc-palette-group&quot;&gt;
+                &lt;h2&gt;复用与边界&lt;/h2&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;subflow&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;boxes&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Subflow&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;start&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;circle-play&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;Start&lt;/button&gt;
+                &lt;button class=&quot;gfc-palette-item&quot; data-add=&quot;end&quot;&gt;&lt;span class=&quot;gfc-type-icon&quot;&gt;&lt;i data-lucide=&quot;circle-stop&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/span&gt;End&lt;/button&gt;
+              &lt;/section&gt;
+            &lt;/div&gt;
+          &lt;/aside&gt;
+
+          &lt;section class=&quot;gfc-center&quot; aria-label=&quot;流程画布&quot;&gt;
+            &lt;div class=&quot;gfc-canvas-bar&quot;&gt;
+              &lt;div class=&quot;gfc-canvas-title&quot;&gt;&lt;strong id=&quot;gfcCanvasTitle&quot;&gt;日程与状态&lt;/strong&gt;&lt;span class=&quot;gfc-version&quot; id=&quot;gfcCanvasVersion&quot;&gt;flow.schedule@draft-12&lt;/span&gt;&lt;/div&gt;
+              &lt;div class=&quot;gfc-canvas-tools&quot;&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; id=&quot;gfcVersionHistory&quot; aria-label=&quot;版本记录&quot; data-tooltip=&quot;查看并恢复版本&quot; aria-expanded=&quot;false&quot;&gt;&lt;i data-lucide=&quot;history&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; aria-label=&quot;撤销&quot; data-tooltip=&quot;撤销&quot;&gt;&lt;i data-lucide=&quot;undo-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; aria-label=&quot;重做&quot; data-tooltip=&quot;重做&quot;&gt;&lt;i data-lucide=&quot;redo-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; aria-label=&quot;自动布局&quot; data-tooltip=&quot;自动整理节点&quot;&gt;&lt;i data-lucide=&quot;wand-sparkles&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; aria-label=&quot;适应画布&quot; data-tooltip=&quot;适应画布&quot;&gt;&lt;i data-lucide=&quot;maximize&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;section class=&quot;gfc-version-popover&quot; id=&quot;gfcVersionPopover&quot; aria-label=&quot;流程版本记录&quot; hidden&gt;
+              &lt;div class=&quot;gfc-version-head&quot;&gt;
+                &lt;div&gt;&lt;strong id=&quot;gfcVersionTitle&quot;&gt;日程与状态 · 版本记录&lt;/strong&gt;&lt;span&gt;每个流程独立保存版本&lt;/span&gt;&lt;/div&gt;
+                &lt;button class=&quot;gfc-icon-button&quot; id=&quot;gfcVersionClose&quot; aria-label=&quot;关闭版本记录&quot;&gt;&lt;i data-lucide=&quot;x&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;/button&gt;
+              &lt;/div&gt;
+              &lt;div class=&quot;gfc-version-list&quot; id=&quot;gfcVersionList&quot;&gt;&lt;/div&gt;
+              &lt;div class=&quot;gfc-version-note&quot;&gt;&lt;i data-lucide=&quot;shield-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;恢复操作只更新当前草稿，不会覆盖任何历史版本。&lt;/span&gt;&lt;/div&gt;
+            &lt;/section&gt;
+            &lt;div class=&quot;gfc-board&quot; id=&quot;gfcBoard&quot;&gt;
+              &lt;svg class=&quot;gfc-wires&quot; id=&quot;gfcWires&quot; aria-hidden=&quot;true&quot;&gt;&lt;/svg&gt;
+              &lt;div class=&quot;gfc-node-layer&quot; id=&quot;gfcNodeLayer&quot;&gt;&lt;/div&gt;
+              &lt;button class=&quot;gfc-node-add&quot; id=&quot;gfcAddNode&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加节点&lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/section&gt;
+
+          &lt;aside class=&quot;gfc-inspector&quot; aria-label=&quot;节点配置&quot;&gt;
+            &lt;div class=&quot;gfc-inspector-head&quot;&gt;
+              &lt;div class=&quot;gfc-inspector-type&quot; id=&quot;gfcInspectorType&quot;&gt;LLM NODE&lt;/div&gt;
+              &lt;div class=&quot;gfc-inspector-title&quot; id=&quot;gfcInspectorTitle&quot;&gt;拆解当前活动&lt;/div&gt;
+              &lt;div class=&quot;gfc-inspector-id&quot; id=&quot;gfcInspectorId&quot;&gt;schedule_decompose&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;gfc-inspector-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;节点配置页签&quot;&gt;
+              &lt;button class=&quot;gfc-inspector-tab&quot; data-panel=&quot;config&quot; aria-selected=&quot;false&quot;&gt;配置&lt;/button&gt;
+              &lt;button class=&quot;gfc-inspector-tab&quot; data-panel=&quot;contract&quot; aria-selected=&quot;true&quot;&gt;输入输出&lt;/button&gt;
+              &lt;button class=&quot;gfc-inspector-tab&quot; data-panel=&quot;body&quot; aria-selected=&quot;false&quot; id=&quot;gfcBodyTab&quot;&gt;Prompt&lt;/button&gt;
+              &lt;button class=&quot;gfc-inspector-tab&quot; data-panel=&quot;failure&quot; aria-selected=&quot;false&quot;&gt;异常&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;gfc-inspector-body&quot; id=&quot;gfcInspectorBody&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-inspector-foot&quot;&gt;
+              &lt;button class=&quot;gfc-button&quot;&gt;复制节点&lt;/button&gt;
+              &lt;button class=&quot;gfc-button primary&quot; id=&quot;gfcApplyNode&quot;&gt;应用修改&lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/aside&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+    &lt;/main&gt;
+    &lt;div class=&quot;gfc-toast&quot; id=&quot;gfcToast&quot;&gt;流程有效&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    (() =&gt; {
+      const root = document.getElementById(&#x27;gaFlowComposer&#x27;);
+      const typeMeta = {
+        start: { label: &#x27;Start&#x27;, icon: &#x27;circle-play&#x27;, bodyLabel: &#x27;触发&#x27;, defaultName: &#x27;flow_start&#x27;, title: &#x27;流程开始&#x27; },
+        end: { label: &#x27;End&#x27;, icon: &#x27;circle-stop&#x27;, bodyLabel: &#x27;输出&#x27;, defaultName: &#x27;flow_end&#x27;, title: &#x27;流程结束&#x27; },
+        script: { label: &#x27;Script&#x27;, icon: &#x27;code-2&#x27;, bodyLabel: &#x27;Script&#x27;, defaultName: &#x27;custom_function&#x27;, title: &#x27;自定义处理&#x27; },
+        llm: { label: &#x27;LLM&#x27;, icon: &#x27;sparkles&#x27;, bodyLabel: &#x27;Prompt&#x27;, defaultName: &#x27;llm_task&#x27;, title: &#x27;LLM 任务&#x27; },
+        ifelse: { label: &#x27;If / Else&#x27;, icon: &#x27;git-branch&#x27;, bodyLabel: &#x27;条件&#x27;, defaultName: &#x27;condition&#x27;, title: &#x27;条件判断&#x27; },
+        switch: { label: &#x27;Switch&#x27;, icon: &#x27;split&#x27;, bodyLabel: &#x27;规则&#x27;, defaultName: &#x27;switch_case&#x27;, title: &#x27;多分支判断&#x27; },
+        loop: { label: &#x27;Loop&#x27;, icon: &#x27;repeat-2&#x27;, bodyLabel: &#x27;循环&#x27;, defaultName: &#x27;for_each&#x27;, title: &#x27;循环处理&#x27; },
+        parallel: { label: &#x27;Parallel / Join&#x27;, icon: &#x27;columns-3&#x27;, bodyLabel: &#x27;分支&#x27;, defaultName: &#x27;parallel_tasks&#x27;, title: &#x27;并行执行&#x27; },
+        readstate: { label: &#x27;Read State&#x27;, icon: &#x27;database&#x27;, bodyLabel: &#x27;状态路径&#x27;, defaultName: &#x27;read_state&#x27;, title: &#x27;读取状态&#x27; },
+        writestate: { label: &#x27;Write State&#x27;, icon: &#x27;database-zap&#x27;, bodyLabel: &#x27;状态写入&#x27;, defaultName: &#x27;write_state&#x27;, title: &#x27;写入状态&#x27; },
+        subflow: { label: &#x27;Subflow&#x27;, icon: &#x27;boxes&#x27;, bodyLabel: &#x27;子流程&#x27;, defaultName: &#x27;subflow&#x27;, title: &#x27;复用子流程&#x27; }
+      };
+
+      const nodes = [
+        { id: &#x27;start&#x27;, type: &#x27;start&#x27;, title: &#x27;Agent Step&#x27;, x: 36, y: 24, inputs: [], outputs: [[&#x27;step_context&#x27;,&#x27;StepContext&#x27;]] },
+        { id: &#x27;prepare_context&#x27;, type: &#x27;script&#x27;, title: &#x27;准备日程上下文&#x27;, x: 36, y: 150, inputs: [[&#x27;step_context&#x27;,&#x27;StepContext&#x27;]], outputs: [[&#x27;day_context&#x27;,&#x27;DayContext&#x27;]], code: &#x27;def run(inputs, context):\n    agent = context.agent\n    return {\n        &quot;day_context&quot;: build_day_context(\n            agent=agent,\n            clock=context.clock,\n            memories=context.memories,\n        )\n    }&#x27; },
+        { id: &#x27;is_new_day&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;是否需要新日程&#x27;, x: 36, y: 300, inputs: [[&#x27;day_context&#x27;,&#x27;DayContext&#x27;]], outputs: [[&#x27;is_new_day&#x27;,&#x27;boolean&#x27;]], condition: &#x27;day_context.schedule_date != day_context.current_date&#x27; },
+        { id: &#x27;restore_currently&#x27;, type: &#x27;subflow&#x27;, title: &#x27;恢复自我状态&#x27;, x: 5, y: 470, inputs: [[&#x27;day_context&#x27;,&#x27;DayContext&#x27;]], outputs: [[&#x27;currently&#x27;,&#x27;string&#x27;]], subflow: &#x27;flow.restore_currently&#x27;, summary: &#x27;3 LLM · 1 Script&#x27; },
+        { id: &#x27;load_existing&#x27;, type: &#x27;script&#x27;, title: &#x27;读取现有日程&#x27;, x: 67, y: 470, inputs: [[&#x27;day_context&#x27;,&#x27;DayContext&#x27;]], outputs: [[&#x27;existing_schedule&#x27;,&#x27;Schedule&#x27;]], code: &#x27;def run(inputs, context):\n    return {\n        &quot;existing_schedule&quot;: context.agent.schedule\n    }&#x27; },
+        { id: &#x27;build_schedule&#x27;, type: &#x27;subflow&#x27;, title: &#x27;生成全天日程&#x27;, x: 5, y: 625, inputs: [[&#x27;currently&#x27;,&#x27;string&#x27;],[&#x27;day_context&#x27;,&#x27;DayContext&#x27;]], outputs: [[&#x27;daily_schedule&#x27;,&#x27;Plan[]&#x27;]], subflow: &#x27;flow.build_daily_schedule&#x27;, summary: &#x27;3 LLM · 2 Script&#x27; },
+        { id: &#x27;normalize&#x27;, type: &#x27;script&#x27;, title: &#x27;统一日程结构&#x27;, x: 36, y: 800, inputs: [[&#x27;daily_schedule&#x27;,&#x27;Plan[]?&#x27;],[&#x27;existing_schedule&#x27;,&#x27;Schedule?&#x27;]], outputs: [[&#x27;schedule&#x27;,&#x27;Schedule&#x27;]], code: &#x27;def run(inputs, context):\n    source = (\n        inputs.get(&quot;daily_schedule&quot;)\n        or inputs[&quot;existing_schedule&quot;]\n    )\n    return {\n        &quot;schedule&quot;: normalize_daily_plan(source)\n    }&#x27; },
+        { id: &#x27;needs_decompose&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;需要拆解当前活动&#x27;, x: 36, y: 990, inputs: [[&#x27;schedule&#x27;,&#x27;Schedule&#x27;]], outputs: [[&#x27;needs_decompose&#x27;,&#x27;boolean&#x27;]], condition: &#x27;schedule.current.duration_minutes &gt;= 60&#x27; },
+        { id: &#x27;schedule_decompose&#x27;, type: &#x27;llm&#x27;, title: &#x27;拆解当前活动&#x27;, x: 5, y: 1180, inputs: [[&#x27;base_desc&#x27;,&#x27;string&#x27;],[&#x27;schedule&#x27;,&#x27;Schedule&#x27;],[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]], outputs: [[&#x27;active_plan&#x27;,&#x27;PlanItem[]&#x27;]], prompt: &#x27;${base_desc}\n\n当前日程：${schedule}\n需要拆解的活动：${current_plan}\n\n请把活动拆解成连续、可执行的子活动，并返回每项活动名称和持续分钟数。&#x27;, model: &#x27;实验默认 Chat 模型&#x27; },
+        { id: &#x27;save_schedule&#x27;, type: &#x27;writestate&#x27;, title: &#x27;保存 Agent 日程&#x27;, x: 36, y: 1365, inputs: [[&#x27;schedule&#x27;,&#x27;Schedule&#x27;],[&#x27;active_plan&#x27;,&#x27;PlanItem[]?&#x27;]], outputs: [[&#x27;saved_schedule&#x27;,&#x27;Schedule&#x27;]], statePath: &#x27;agent.schedule&#x27; },
+        { id: &#x27;end&#x27;, type: &#x27;end&#x27;, title: &#x27;返回当前计划&#x27;, x: 36, y: 1545, inputs: [[&#x27;saved_schedule&#x27;,&#x27;Schedule&#x27;]], outputs: [[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]] }
+      ];
+
+      const edges = [
+        [&#x27;start&#x27;,&#x27;prepare_context&#x27;],
+        [&#x27;prepare_context&#x27;,&#x27;is_new_day&#x27;],
+        [&#x27;is_new_day&#x27;,&#x27;restore_currently&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+        [&#x27;is_new_day&#x27;,&#x27;load_existing&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+        [&#x27;restore_currently&#x27;,&#x27;build_schedule&#x27;],
+        [&#x27;build_schedule&#x27;,&#x27;normalize&#x27;],
+        [&#x27;load_existing&#x27;,&#x27;normalize&#x27;],
+        [&#x27;normalize&#x27;,&#x27;needs_decompose&#x27;],
+        [&#x27;needs_decompose&#x27;,&#x27;schedule_decompose&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+        [&#x27;schedule_decompose&#x27;,&#x27;save_schedule&#x27;],
+        [&#x27;needs_decompose&#x27;,&#x27;save_schedule&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+        [&#x27;save_schedule&#x27;,&#x27;end&#x27;]
+      ];
+
+      const cloneData = value =&gt; JSON.parse(JSON.stringify(value));
+      const flowStore = {
+        schedule: {
+          title: &#x27;日程与状态&#x27;,
+          version: &#x27;flow.schedule@draft-12&#x27;,
+          height: 1705,
+          nodes: cloneData(nodes),
+          edges: cloneData(edges)
+        },
+        memory: {
+          title: &#x27;感知与记忆&#x27;,
+          version: &#x27;flow.memory@draft-12&#x27;,
+          height: 1260,
+          nodes: [
+            { id: &#x27;memory_start&#x27;, type: &#x27;start&#x27;, title: &#x27;开始本轮感知&#x27;, x: 36, y: 24, inputs: [], outputs: [[&#x27;step_context&#x27;,&#x27;StepContext&#x27;]] },
+            { id: &#x27;collect_events&#x27;, type: &#x27;script&#x27;, title: &#x27;收集可见事件&#x27;, x: 36, y: 150, inputs: [[&#x27;step_context&#x27;,&#x27;StepContext&#x27;]], outputs: [[&#x27;observations&#x27;,&#x27;Observation[]&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;observations\&quot;: context.visible_events}&#x27; },
+            { id: &#x27;has_observation&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;存在新的观察&#x27;, x: 36, y: 310, inputs: [[&#x27;observations&#x27;,&#x27;Observation[]&#x27;]], outputs: [[&#x27;has_observation&#x27;,&#x27;boolean&#x27;]], condition: &#x27;len(inputs[\&quot;observations\&quot;]) &gt; 0&#x27; },
+            { id: &#x27;score_importance&#x27;, type: &#x27;llm&#x27;, title: &#x27;评估事件重要性&#x27;, x: 5, y: 490, inputs: [[&#x27;observations&#x27;,&#x27;Observation[]&#x27;]], outputs: [[&#x27;scored_memories&#x27;,&#x27;Memory[]&#x27;]], prompt: &#x27;根据 Agent 当前状态，评估每条观察的重要性，并生成可检索的记忆。&#x27;, model: &#x27;实验默认 Chat 模型&#x27; },
+            { id: &#x27;empty_memory_batch&#x27;, type: &#x27;script&#x27;, title: &#x27;生成空记忆批次&#x27;, x: 67, y: 490, inputs: [[&#x27;observations&#x27;,&#x27;Observation[]&#x27;]], outputs: [[&#x27;scored_memories&#x27;,&#x27;Memory[]&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;scored_memories\&quot;: []}&#x27; },
+            { id: &#x27;save_memories&#x27;, type: &#x27;writestate&#x27;, title: &#x27;保存观察记忆&#x27;, x: 36, y: 690, inputs: [[&#x27;scored_memories&#x27;,&#x27;Memory[]&#x27;]], outputs: [[&#x27;memory_batch&#x27;,&#x27;MemoryBatch&#x27;]], statePath: &#x27;agent.memory.associate&#x27; },
+            { id: &#x27;should_reflect&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;达到反思阈值&#x27;, x: 36, y: 880, inputs: [[&#x27;memory_batch&#x27;,&#x27;MemoryBatch&#x27;]], outputs: [[&#x27;should_reflect&#x27;,&#x27;boolean&#x27;]], condition: &#x27;memory_batch.importance_sum &gt;= context.reflect_threshold&#x27; },
+            { id: &#x27;memory_end&#x27;, type: &#x27;end&#x27;, title: &#x27;返回记忆更新&#x27;, x: 36, y: 1080, inputs: [[&#x27;memory_batch&#x27;,&#x27;MemoryBatch&#x27;]], outputs: [[&#x27;memory_delta&#x27;,&#x27;MemoryDelta&#x27;]] }
+          ],
+          edges: [
+            [&#x27;memory_start&#x27;,&#x27;collect_events&#x27;],
+            [&#x27;collect_events&#x27;,&#x27;has_observation&#x27;],
+            [&#x27;has_observation&#x27;,&#x27;score_importance&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+            [&#x27;has_observation&#x27;,&#x27;empty_memory_batch&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+            [&#x27;score_importance&#x27;,&#x27;save_memories&#x27;],
+            [&#x27;empty_memory_batch&#x27;,&#x27;save_memories&#x27;],
+            [&#x27;save_memories&#x27;,&#x27;should_reflect&#x27;],
+            [&#x27;should_reflect&#x27;,&#x27;memory_end&#x27;]
+          ]
+        },
+        action: {
+          title: &#x27;行动与空间&#x27;,
+          version: &#x27;flow.action@draft-12&#x27;,
+          height: 1260,
+          nodes: [
+            { id: &#x27;action_start&#x27;, type: &#x27;start&#x27;, title: &#x27;开始行动决策&#x27;, x: 36, y: 24, inputs: [], outputs: [[&#x27;agent_context&#x27;,&#x27;AgentContext&#x27;]] },
+            { id: &#x27;read_current_plan&#x27;, type: &#x27;readstate&#x27;, title: &#x27;读取当前计划&#x27;, x: 36, y: 150, inputs: [[&#x27;agent_context&#x27;,&#x27;AgentContext&#x27;]], outputs: [[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]], statePath: &#x27;agent.schedule.current&#x27; },
+            { id: &#x27;has_address&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;目标地点已明确&#x27;, x: 36, y: 320, inputs: [[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]], outputs: [[&#x27;has_address&#x27;,&#x27;boolean&#x27;]], condition: &#x27;current_plan.address is not None&#x27; },
+            { id: &#x27;use_known_address&#x27;, type: &#x27;script&#x27;, title: &#x27;使用计划地点&#x27;, x: 5, y: 500, inputs: [[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]], outputs: [[&#x27;destination&#x27;,&#x27;Address&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;destination\&quot;: inputs[\&quot;current_plan\&quot;].address}&#x27; },
+            { id: &#x27;resolve_location&#x27;, type: &#x27;llm&#x27;, title: &#x27;推断行动地点&#x27;, x: 67, y: 500, inputs: [[&#x27;current_plan&#x27;,&#x27;PlanItem&#x27;]], outputs: [[&#x27;destination&#x27;,&#x27;Address&#x27;]], prompt: &#x27;结合计划、人物身份和当前地图，选择最合理的目标地点。&#x27;, model: &#x27;实验默认 Chat 模型&#x27; },
+            { id: &#x27;plan_path&#x27;, type: &#x27;script&#x27;, title: &#x27;规划可达路径&#x27;, x: 36, y: 700, inputs: [[&#x27;destination&#x27;,&#x27;Address&#x27;]], outputs: [[&#x27;action&#x27;,&#x27;AgentAction&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;action\&quot;: context.map.plan_action(inputs[\&quot;destination\&quot;])}&#x27; },
+            { id: &#x27;save_action&#x27;, type: &#x27;writestate&#x27;, title: &#x27;保存本轮行动&#x27;, x: 36, y: 890, inputs: [[&#x27;action&#x27;,&#x27;AgentAction&#x27;]], outputs: [[&#x27;saved_action&#x27;,&#x27;AgentAction&#x27;]], statePath: &#x27;agent.action&#x27; },
+            { id: &#x27;action_end&#x27;, type: &#x27;end&#x27;, title: &#x27;返回行动指令&#x27;, x: 36, y: 1080, inputs: [[&#x27;saved_action&#x27;,&#x27;AgentAction&#x27;]], outputs: [[&#x27;action_result&#x27;,&#x27;ActionResult&#x27;]] }
+          ],
+          edges: [
+            [&#x27;action_start&#x27;,&#x27;read_current_plan&#x27;],
+            [&#x27;read_current_plan&#x27;,&#x27;has_address&#x27;],
+            [&#x27;has_address&#x27;,&#x27;use_known_address&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+            [&#x27;has_address&#x27;,&#x27;resolve_location&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+            [&#x27;use_known_address&#x27;,&#x27;plan_path&#x27;],
+            [&#x27;resolve_location&#x27;,&#x27;plan_path&#x27;],
+            [&#x27;plan_path&#x27;,&#x27;save_action&#x27;],
+            [&#x27;save_action&#x27;,&#x27;action_end&#x27;]
+          ]
+        },
+        social: {
+          title: &#x27;社交与对话&#x27;,
+          version: &#x27;flow.social@draft-12&#x27;,
+          height: 1450,
+          nodes: [
+            { id: &#x27;social_start&#x27;, type: &#x27;start&#x27;, title: &#x27;开始社交判断&#x27;, x: 36, y: 24, inputs: [], outputs: [[&#x27;social_context&#x27;,&#x27;SocialContext&#x27;]] },
+            { id: &#x27;select_target&#x27;, type: &#x27;script&#x27;, title: &#x27;选择互动对象&#x27;, x: 36, y: 150, inputs: [[&#x27;social_context&#x27;,&#x27;SocialContext&#x27;]], outputs: [[&#x27;candidate&#x27;,&#x27;AgentRef?&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;candidate\&quot;: select_nearby_agent(context)}&#x27; },
+            { id: &#x27;can_interact&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;满足互动条件&#x27;, x: 36, y: 320, inputs: [[&#x27;candidate&#x27;,&#x27;AgentRef?&#x27;]], outputs: [[&#x27;can_interact&#x27;,&#x27;boolean&#x27;]], condition: &#x27;candidate is not None and context.distance(candidate) &lt;= 4&#x27; },
+            { id: &#x27;decide_chat&#x27;, type: &#x27;llm&#x27;, title: &#x27;判断是否发起对话&#x27;, x: 5, y: 500, inputs: [[&#x27;candidate&#x27;,&#x27;AgentRef&#x27;],[&#x27;social_context&#x27;,&#x27;SocialContext&#x27;]], outputs: [[&#x27;chat_intent&#x27;,&#x27;ChatIntent&#x27;]], prompt: &#x27;结合两位 Agent 的关系、当前计划和近期记忆，判断是否应该发起对话。&#x27;, model: &#x27;实验默认 Chat 模型&#x27; },
+            { id: &#x27;skip_chat&#x27;, type: &#x27;script&#x27;, title: &#x27;保持当前行动&#x27;, x: 67, y: 500, inputs: [[&#x27;social_context&#x27;,&#x27;SocialContext&#x27;]], outputs: [[&#x27;chat_intent&#x27;,&#x27;ChatIntent&#x27;]], code: &#x27;def run(inputs, context):\n    return {\&quot;chat_intent\&quot;: {\&quot;should_chat\&quot;: False}}&#x27; },
+            { id: &#x27;should_chat&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;决定进行对话&#x27;, x: 36, y: 700, inputs: [[&#x27;chat_intent&#x27;,&#x27;ChatIntent&#x27;]], outputs: [[&#x27;should_chat&#x27;,&#x27;boolean&#x27;]], condition: &#x27;chat_intent.should_chat is True&#x27; },
+            { id: &#x27;conversation&#x27;, type: &#x27;subflow&#x27;, title: &#x27;生成多轮对话&#x27;, x: 5, y: 890, inputs: [[&#x27;chat_intent&#x27;,&#x27;ChatIntent&#x27;],[&#x27;candidate&#x27;,&#x27;AgentRef&#x27;]], outputs: [[&#x27;conversation&#x27;,&#x27;Conversation&#x27;]], subflow: &#x27;flow.conversation_loop&#x27;, summary: &#x27;2 LLM · 3 Script&#x27; },
+            { id: &#x27;save_conversation&#x27;, type: &#x27;writestate&#x27;, title: &#x27;保存对话与关系变化&#x27;, x: 36, y: 1080, inputs: [[&#x27;conversation&#x27;,&#x27;Conversation?&#x27;]], outputs: [[&#x27;social_delta&#x27;,&#x27;SocialDelta&#x27;]], statePath: &#x27;agent.conversations&#x27; },
+            { id: &#x27;social_end&#x27;, type: &#x27;end&#x27;, title: &#x27;返回社交结果&#x27;, x: 36, y: 1270, inputs: [[&#x27;social_delta&#x27;,&#x27;SocialDelta&#x27;]], outputs: [[&#x27;interaction_result&#x27;,&#x27;InteractionResult&#x27;]] }
+          ],
+          edges: [
+            [&#x27;social_start&#x27;,&#x27;select_target&#x27;],
+            [&#x27;select_target&#x27;,&#x27;can_interact&#x27;],
+            [&#x27;can_interact&#x27;,&#x27;decide_chat&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+            [&#x27;can_interact&#x27;,&#x27;skip_chat&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+            [&#x27;decide_chat&#x27;,&#x27;should_chat&#x27;],
+            [&#x27;skip_chat&#x27;,&#x27;should_chat&#x27;],
+            [&#x27;should_chat&#x27;,&#x27;conversation&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+            [&#x27;conversation&#x27;,&#x27;save_conversation&#x27;],
+            [&#x27;should_chat&#x27;,&#x27;save_conversation&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+            [&#x27;save_conversation&#x27;,&#x27;social_end&#x27;]
+          ]
+        },
+        reflection: {
+          title: &#x27;反思与认知&#x27;,
+          version: &#x27;flow.reflection@draft-12&#x27;,
+          height: 1260,
+          nodes: [
+            { id: &#x27;reflection_start&#x27;, type: &#x27;start&#x27;, title: &#x27;开始反思判断&#x27;, x: 36, y: 24, inputs: [], outputs: [[&#x27;agent_context&#x27;,&#x27;AgentContext&#x27;]] },
+            { id: &#x27;read_recent_memory&#x27;, type: &#x27;readstate&#x27;, title: &#x27;读取近期记忆&#x27;, x: 36, y: 150, inputs: [[&#x27;agent_context&#x27;,&#x27;AgentContext&#x27;]], outputs: [[&#x27;recent_memories&#x27;,&#x27;Memory[]&#x27;]], statePath: &#x27;agent.memory.recent&#x27; },
+            { id: &#x27;needs_reflection&#x27;, type: &#x27;ifelse&#x27;, title: &#x27;达到认知阈值&#x27;, x: 36, y: 320, inputs: [[&#x27;recent_memories&#x27;,&#x27;Memory[]&#x27;]], outputs: [[&#x27;needs_reflection&#x27;,&#x27;boolean&#x27;]], condition: &#x27;sum(item.importance for item in recent_memories) &gt;= context.reflect_threshold&#x27; },
+            { id: &#x27;find_focus&#x27;, type: &#x27;llm&#x27;, title: &#x27;提炼反思焦点&#x27;, x: 5, y: 500, inputs: [[&#x27;recent_memories&#x27;,&#x27;Memory[]&#x27;]], outputs: [[&#x27;focus_questions&#x27;,&#x27;Question[]&#x27;]], prompt: &#x27;从近期高重要度记忆中提炼最值得反思的三个问题。&#x27;, model: &#x27;实验默认 Chat 模型&#x27; },
+            { id: &#x27;generate_insights&#x27;, type: &#x27;loop&#x27;, title: &#x27;逐项生成洞察&#x27;, x: 5, y: 690, inputs: [[&#x27;focus_questions&#x27;,&#x27;Question[]&#x27;]], outputs: [[&#x27;insights&#x27;,&#x27;Insight[]&#x27;]], condition: &#x27;for question in focus_questions&#x27; },
+            { id: &#x27;save_insights&#x27;, type: &#x27;writestate&#x27;, title: &#x27;写入认知记忆&#x27;, x: 36, y: 880, inputs: [[&#x27;insights&#x27;,&#x27;Insight[]?&#x27;]], outputs: [[&#x27;reflection_delta&#x27;,&#x27;MemoryDelta&#x27;]], statePath: &#x27;agent.memory.reflections&#x27; },
+            { id: &#x27;reflection_end&#x27;, type: &#x27;end&#x27;, title: &#x27;返回反思结果&#x27;, x: 36, y: 1080, inputs: [[&#x27;reflection_delta&#x27;,&#x27;MemoryDelta&#x27;]], outputs: [[&#x27;reflection_result&#x27;,&#x27;ReflectionResult&#x27;]] }
+          ],
+          edges: [
+            [&#x27;reflection_start&#x27;,&#x27;read_recent_memory&#x27;],
+            [&#x27;read_recent_memory&#x27;,&#x27;needs_reflection&#x27;],
+            [&#x27;needs_reflection&#x27;,&#x27;find_focus&#x27;,&#x27;TRUE&#x27;,&#x27;true&#x27;],
+            [&#x27;find_focus&#x27;,&#x27;generate_insights&#x27;],
+            [&#x27;generate_insights&#x27;,&#x27;save_insights&#x27;],
+            [&#x27;needs_reflection&#x27;,&#x27;save_insights&#x27;,&#x27;FALSE&#x27;,&#x27;false&#x27;],
+            [&#x27;save_insights&#x27;,&#x27;reflection_end&#x27;]
+          ]
+        }
+      };
+
+      let currentFlowKey = &#x27;schedule&#x27;;
+      let selectedId = &#x27;schedule_decompose&#x27;;
+      let panel = &#x27;contract&#x27;;
+      let addedCount = 0;
+      let nativeDrag = null;
+
+      Object.values(flowStore).forEach(flow =&gt; {
+        const baselineNodes = cloneData(flow.nodes);
+        const baselineEdges = cloneData(flow.edges);
+        flow.versions = [
+          { id: &#x27;draft&#x27;, name: &#x27;当前草稿&#x27;, meta: &#x27;刚刚编辑 · 尚未保存&#x27;, current: true },
+          { id: &#x27;v3&#x27;, name: &#x27;版本 3&#x27;, meta: &#x27;昨天 18:42 · 优化节点契约&#x27;, nodes: cloneData(baselineNodes), edges: cloneData(baselineEdges) },
+          { id: &#x27;v2&#x27;, name: &#x27;版本 2&#x27;, meta: &#x27;8 月 8 日 14:20 · 调整条件分支&#x27;, nodes: cloneData(baselineNodes), edges: cloneData(baselineEdges) },
+          { id: &#x27;v1&#x27;, name: &#x27;版本 1&#x27;, meta: &#x27;系统内置 · 初始流程定义&#x27;, isDefault: true, nodes: cloneData(baselineNodes), edges: cloneData(baselineEdges) }
+        ];
+      });
+
+      function esc(value) {
+        return String(value ?? &#x27;&#x27;).replace(/[&amp;&lt;&gt;&quot;]/g, char =&gt; ({&#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;}[char]));
+      }
+
+      function setVersionPopover(open) {
+        const popover = root.querySelector(&#x27;#gfcVersionPopover&#x27;);
+        popover.hidden = !open;
+        root.querySelector(&#x27;#gfcVersionHistory&#x27;).setAttribute(&#x27;aria-expanded&#x27;, String(open));
+        if (open) renderVersionHistory();
+      }
+
+      function renderVersionHistory() {
+        const flow = flowStore[currentFlowKey];
+        root.querySelector(&#x27;#gfcVersionTitle&#x27;).textContent = flow.title + &#x27; · 版本记录&#x27;;
+        root.querySelector(&#x27;#gfcVersionList&#x27;).innerHTML = flow.versions.map(version =&gt; {
+          const badge = version.isDefault ? &#x27;&lt;span class=&quot;gfc-default-badge&quot;&gt;默认流程&lt;/span&gt;&#x27; : &#x27;&#x27;;
+          const action = version.current
+            ? &#x27;&lt;span class=&quot;gfc-version&quot;&gt;当前&lt;/span&gt;&#x27;
+            : &#x27;&lt;button class=&quot;gfc-restore-button&quot; type=&quot;button&quot; data-restore-version=&quot;&#x27; + esc(version.id) + &#x27;&quot;&gt;恢复到草稿&lt;/button&gt;&#x27;;
+          return &#x27;&lt;div class=&quot;gfc-version-item&quot;&gt;&lt;div&gt;&lt;div class=&quot;gfc-version-name&quot;&gt;&#x27; + esc(version.name) + badge +
+            &#x27;&lt;/div&gt;&lt;div class=&quot;gfc-version-meta&quot;&gt;&#x27; + esc(version.meta) + &#x27;&lt;/div&gt;&lt;/div&gt;&#x27; + action + &#x27;&lt;/div&gt;&#x27;;
+        }).join(&#x27;&#x27;);
+        root.querySelectorAll(&#x27;[data-restore-version]&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; restoreVersion(button.dataset.restoreVersion)));
+        if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+      }
+
+      function restoreVersion(versionId) {
+        const flow = flowStore[currentFlowKey];
+        const version = flow.versions.find(item =&gt; item.id === versionId);
+        if (!version || !version.nodes) return;
+        nodes.splice(0, nodes.length, ...cloneData(version.nodes));
+        edges.splice(0, edges.length, ...cloneData(version.edges));
+        flow.nodes = cloneData(nodes);
+        flow.edges = cloneData(edges);
+        selectedId = (nodes.find(node =&gt; node.type === &#x27;llm&#x27;) || nodes[0]).id;
+        root.querySelector(&#x27;#gfcBoard&#x27;).style.minHeight = flow.height + &#x27;px&#x27;;
+        root.querySelector(&#x27;#gfcSaveState&#x27;).textContent = &#x27;有未保存修改&#x27;;
+        renderNodes();
+        renderInspector();
+        setVersionPopover(false);
+        showToast(&#x27;已将&#x27; + version.name + (version.isDefault ? &#x27;（默认流程）&#x27; : &#x27;&#x27;) + &#x27;恢复到当前草稿&#x27;);
+      }
+
+      function switchFlow(nextKey) {
+        if (!flowStore[nextKey] || nextKey === currentFlowKey) return;
+        const current = flowStore[currentFlowKey];
+        current.nodes = cloneData(nodes);
+        current.edges = cloneData(edges);
+        currentFlowKey = nextKey;
+        const next = flowStore[nextKey];
+        nodes.splice(0, nodes.length, ...cloneData(next.nodes));
+        edges.splice(0, edges.length, ...cloneData(next.edges));
+        selectedId = (nodes.find(node =&gt; node.type === &#x27;llm&#x27;) || nodes[0]).id;
+        panel = &#x27;contract&#x27;;
+        root.querySelector(&#x27;#gfcCanvasTitle&#x27;).textContent = next.title;
+        root.querySelector(&#x27;#gfcCanvasVersion&#x27;).textContent = next.version;
+        root.querySelector(&#x27;#gfcBoard&#x27;).style.minHeight = next.height + &#x27;px&#x27;;
+        root.querySelectorAll(&#x27;.gfc-flow-tab&#x27;).forEach(tab =&gt; tab.setAttribute(&#x27;aria-selected&#x27;, String(tab.dataset.flow === nextKey)));
+        root.querySelectorAll(&#x27;.gfc-inspector-tab&#x27;).forEach(tab =&gt; tab.setAttribute(&#x27;aria-selected&#x27;, String(tab.dataset.panel === panel)));
+        setVersionPopover(false);
+        renderNodes();
+        renderInspector();
+      }
+
+      function nodeMarkup(node) {
+        const meta = typeMeta[node.type];
+        const inputs = node.inputs.slice(0, 1).map(item =&gt; `&lt;span class=&quot;gfc-port-row input&quot;&gt;&lt;span class=&quot;gfc-port-dot input&quot;&gt;&lt;/span&gt;&lt;span class=&quot;gfc-port-label&quot;&gt;输入&lt;/span&gt;&lt;code&gt;${esc(item[0])}&lt;/code&gt;&lt;span class=&quot;gfc-port-type&quot;&gt;${esc(item[1])}&lt;/span&gt;&lt;/span&gt;`).join(&#x27;&#x27;);
+        const outputs = node.outputs.slice(0, 1).map(item =&gt; `&lt;span class=&quot;gfc-port-row output&quot;&gt;&lt;span class=&quot;gfc-port-label&quot;&gt;输出&lt;/span&gt;&lt;code&gt;${esc(item[0])}&lt;/code&gt;&lt;span class=&quot;gfc-port-type&quot;&gt;${esc(item[1])}&lt;/span&gt;&lt;span class=&quot;gfc-port-dot output&quot;&gt;&lt;/span&gt;&lt;/span&gt;`).join(&#x27;&#x27;);
+        const moreInputs = node.inputs.length &gt; 1 ? `${node.inputs.length - 1} 个其他输入` : &#x27;&#x27;;
+        const moreOutputs = node.outputs.length &gt; 1 ? `${node.outputs.length - 1} 个其他输出` : &#x27;&#x27;;
+        const morePorts = moreInputs || moreOutputs ? `&lt;span class=&quot;gfc-more-ports&quot;&gt;${[moreInputs, moreOutputs].filter(Boolean).join(&#x27; · &#x27;)}&lt;/span&gt;` : &#x27;&#x27;;
+        const branch = node.type === &#x27;ifelse&#x27; ? &#x27;&lt;span class=&quot;gfc-branch-ports&quot;&gt;&lt;span&gt;是 · TRUE&lt;/span&gt;&lt;span&gt;否 · FALSE&lt;/span&gt;&lt;/span&gt;&#x27; : &#x27;&#x27;;
+        const rolePrefix = node.type === &#x27;script&#x27; ? &#x27;function&#x27; : node.type === &#x27;llm&#x27; ? &#x27;prompt&#x27; : node.type === &#x27;ifelse&#x27; ? &#x27;condition&#x27; : node.type === &#x27;subflow&#x27; ? &#x27;subflow&#x27; : &#x27;node&#x27;;
+        const summary = node.summary ? `&lt;span&gt;${esc(node.summary)}&lt;/span&gt;` : `&lt;span&gt;${rolePrefix} · ${esc(node.id)}&lt;/span&gt;`;
+        return `&lt;button class=&quot;gfc-node${node.id === selectedId ? &#x27; selected&#x27; : &#x27;&#x27;}${node.unconnected ? &#x27; unconnected&#x27; : &#x27;&#x27;}&quot; data-node-id=&quot;${esc(node.id)}&quot; data-type=&quot;${esc(node.type)}&quot; draggable=&quot;true&quot; style=&quot;left:${node.x}%;top:${node.y}px&quot;&gt;
+          &lt;span class=&quot;gfc-node-head&quot;&gt;&lt;span class=&quot;gfc-node-type&quot;&gt;&lt;i data-lucide=&quot;${meta.icon}&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;${meta.label}&lt;/span&gt;&lt;span class=&quot;gfc-node-menu&quot;&gt;•••&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;gfc-node-name&quot;&gt;&lt;strong&gt;${esc(node.title)}&lt;/strong&gt;${summary}&lt;/span&gt;
+          &lt;span class=&quot;gfc-node-ports&quot;&gt;${inputs}${outputs}${morePorts}&lt;/span&gt;${branch}
+        &lt;/button&gt;`;
+      }
+
+      function renderNodes() {
+        root.querySelector(&#x27;#gfcNodeLayer&#x27;).innerHTML = nodes.map(nodeMarkup).join(&#x27;&#x27;);
+        root.querySelectorAll(&#x27;.gfc-node&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          if (button.dataset.dragged === &#x27;1&#x27;) return;
+          selectedId = button.dataset.nodeId;
+          renderNodes();
+          renderInspector();
+        }));
+        root.querySelectorAll(&#x27;.gfc-node&#x27;).forEach(button =&gt; {
+          const node = nodes.find(item =&gt; item.id === button.dataset.nodeId);
+          if (node) enableNodeDrag(button, node);
+        });
+        if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+        requestAnimationFrame(drawEdges);
+      }
+
+      function enableNodeDrag(button, node) {
+        let drag = null;
+        button.addEventListener(&#x27;pointerdown&#x27;, event =&gt; {
+          if ((event.button !== 0 &amp;&amp; event.button !== -1) || window.matchMedia(&#x27;(max-width: 540px)&#x27;).matches) return;
+          const board = root.querySelector(&#x27;#gfcBoard&#x27;);
+          const boardRect = board.getBoundingClientRect();
+          const nodeRect = button.getBoundingClientRect();
+          drag = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            left: nodeRect.left - boardRect.left,
+            top: nodeRect.top - boardRect.top,
+            board,
+            boardRect,
+            moved: false
+          };
+          selectedId = node.id;
+          root.querySelectorAll(&#x27;.gfc-node&#x27;).forEach(item =&gt; item.classList.toggle(&#x27;selected&#x27;, item === button));
+          renderInspector();
+          button.classList.add(&#x27;dragging&#x27;);
+          button.setPointerCapture(event.pointerId);
+        });
+        button.addEventListener(&#x27;pointermove&#x27;, event =&gt; {
+          if (!drag || event.pointerId !== drag.pointerId) return;
+          const dx = event.clientX - drag.startX;
+          const dy = event.clientY - drag.startY;
+          if (Math.abs(dx) + Math.abs(dy) &gt; 3) drag.moved = true;
+          const maxLeft = Math.max(0, drag.boardRect.width - button.offsetWidth);
+          const left = Math.max(0, Math.min(maxLeft, drag.left + dx));
+          const top = Math.max(0, drag.top + dy);
+          node.x = drag.boardRect.width ? (left / drag.boardRect.width) * 100 : 0;
+          node.y = top;
+          button.style.left = `${node.x}%`;
+          button.style.top = `${node.y}px`;
+          const requiredHeight = top + button.offsetHeight + 90;
+          if (requiredHeight &gt; drag.board.clientHeight) drag.board.style.minHeight = `${requiredHeight}px`;
+          drawEdges();
+        });
+        const finishDrag = event =&gt; {
+          if (!drag || event.pointerId !== drag.pointerId) return;
+          button.dataset.dragged = drag.moved ? &#x27;1&#x27; : &#x27;0&#x27;;
+          button.classList.remove(&#x27;dragging&#x27;);
+          if (button.hasPointerCapture(event.pointerId)) button.releasePointerCapture(event.pointerId);
+          if (drag.moved) root.querySelector(&#x27;#gfcSaveState&#x27;).textContent = &#x27;有未保存修改&#x27;;
+          drag = null;
+          window.setTimeout(() =&gt; { button.dataset.dragged = &#x27;0&#x27;; }, 0);
+        };
+        button.addEventListener(&#x27;pointerup&#x27;, finishDrag);
+        button.addEventListener(&#x27;pointercancel&#x27;, finishDrag);
+        button.addEventListener(&#x27;dragstart&#x27;, event =&gt; {
+          if (window.matchMedia(&#x27;(max-width: 540px)&#x27;).matches) {
+            event.preventDefault();
+            return;
+          }
+          const board = root.querySelector(&#x27;#gfcBoard&#x27;);
+          const boardRect = board.getBoundingClientRect();
+          const nodeRect = button.getBoundingClientRect();
+          nativeDrag = {
+            node,
+            button,
+            offsetX: event.clientX - nodeRect.left,
+            offsetY: event.clientY - nodeRect.top,
+            board,
+            boardRect
+          };
+          selectedId = node.id;
+          button.classList.add(&#x27;dragging&#x27;);
+          if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = &#x27;move&#x27;;
+            event.dataTransfer.setData(&#x27;text/plain&#x27;, node.id);
+          }
+        });
+        button.addEventListener(&#x27;dragend&#x27;, () =&gt; {
+          button.classList.remove(&#x27;dragging&#x27;);
+          nativeDrag = null;
+        });
+      }
+
+      function drawEdges() {
+        const board = root.querySelector(&#x27;#gfcBoard&#x27;);
+        const svg = root.querySelector(&#x27;#gfcWires&#x27;);
+        const boardRect = board.getBoundingClientRect();
+        if (!boardRect.width) return;
+        svg.setAttribute(&#x27;viewBox&#x27;, `0 0 ${boardRect.width} ${boardRect.height}`);
+        const markup = [`&lt;defs&gt;&lt;marker id=&quot;gfcArrow&quot; markerWidth=&quot;7&quot; markerHeight=&quot;7&quot; refX=&quot;6&quot; refY=&quot;3.5&quot; orient=&quot;auto&quot;&gt;&lt;path d=&quot;M0,0 L7,3.5 L0,7 Z&quot; fill=&quot;var(--gfc-line-strong)&quot;&gt;&lt;/path&gt;&lt;/marker&gt;&lt;/defs&gt;`];
+        edges.forEach(([sourceId,targetId,label,kind]) =&gt; {
+          const source = root.querySelector(`[data-node-id=&quot;${sourceId}&quot;]`);
+          const target = root.querySelector(`[data-node-id=&quot;${targetId}&quot;]`);
+          if (!source || !target) return;
+          const s = source.getBoundingClientRect();
+          const t = target.getBoundingClientRect();
+          const sx = s.left - boardRect.left + s.width / 2;
+          const sy = s.bottom - boardRect.top;
+          const tx = t.left - boardRect.left + t.width / 2;
+          const ty = t.top - boardRect.top;
+          const midY = sy + Math.max(22, (ty - sy) / 2);
+          const radius = 9;
+          const direction = tx &gt;= sx ? 1 : -1;
+          const d = Math.abs(tx - sx) &lt; 2
+            ? `M ${sx} ${sy} L ${tx} ${ty}`
+            : `M ${sx} ${sy} L ${sx} ${midY - radius} Q ${sx} ${midY} ${sx + direction * radius} ${midY} L ${tx - direction * radius} ${midY} Q ${tx} ${midY} ${tx} ${midY + radius} L ${tx} ${ty}`;
+          markup.push(`&lt;path class=&quot;gfc-wire ${kind || &#x27;&#x27;}&quot; d=&quot;${d}&quot; marker-end=&quot;url(#gfcArrow)&quot;&gt;&lt;/path&gt;`);
+          if (label) markup.push(`&lt;text class=&quot;gfc-wire-label&quot; x=&quot;${sx + (direction * 12)}&quot; y=&quot;${sy + 17}&quot; text-anchor=&quot;${direction &gt; 0 ? &#x27;start&#x27; : &#x27;end&#x27;}&quot;&gt;${label}&lt;/text&gt;`);
+        });
+        svg.innerHTML = markup.join(&#x27;&#x27;);
+      }
+
+      function selectedNode() { return nodes.find(node =&gt; node.id === selectedId) || nodes[0]; }
+
+      function schemaRows(items, direction) {
+        return items.map(item =&gt; `&lt;div class=&quot;gfc-schema-row&quot;&gt;&lt;code&gt;${esc(item[0])}&lt;/code&gt;&lt;span&gt;${esc(item[1])}&lt;/span&gt;&lt;button aria-label=&quot;删除变量&quot;&gt;×&lt;/button&gt;&lt;/div&gt;`).join(&#x27;&#x27;) || `&lt;div class=&quot;gfc-schema-row&quot;&gt;&lt;code&gt;无${direction}&lt;/code&gt;&lt;span&gt;—&lt;/span&gt;&lt;button aria-label=&quot;删除变量&quot; disabled&gt;×&lt;/button&gt;&lt;/div&gt;`;
+      }
+
+      function renderInspector() {
+        const node = selectedNode();
+        const meta = typeMeta[node.type];
+        root.querySelector(&#x27;#gfcInspectorType&#x27;).textContent = `${meta.label.toUpperCase()} NODE`;
+        root.querySelector(&#x27;#gfcInspectorTitle&#x27;).textContent = node.title;
+        root.querySelector(&#x27;#gfcInspectorId&#x27;).textContent = node.id;
+        root.querySelector(&#x27;#gfcBodyTab&#x27;).textContent = meta.bodyLabel;
+        let body = &#x27;&#x27;;
+        if (panel === &#x27;config&#x27;) {
+          body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeName&quot;&gt;节点名称&lt;/label&gt;&lt;input class=&quot;gfc-input&quot; id=&quot;gfcNodeName&quot; value=&quot;${esc(node.title)}&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeId&quot;&gt;节点 ID&lt;/label&gt;&lt;input class=&quot;gfc-input&quot; id=&quot;gfcNodeId&quot; value=&quot;${esc(node.id)}&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeType&quot;&gt;节点类型&lt;/label&gt;&lt;input class=&quot;gfc-input&quot; id=&quot;gfcNodeType&quot; value=&quot;${esc(meta.label)}&quot; disabled&gt;&lt;/div&gt;`;
+          if (node.type === &#x27;llm&#x27;) body += `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeModel&quot;&gt;模型&lt;/label&gt;&lt;select class=&quot;gfc-select&quot; id=&quot;gfcNodeModel&quot;&gt;&lt;option&gt;${esc(node.model || &#x27;实验默认 Chat 模型&#x27;)}&lt;/option&gt;&lt;option&gt;单独指定模型&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;`;
+          if (node.type === &#x27;subflow&#x27;) body += `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcSubflow&quot;&gt;引用流程&lt;/label&gt;&lt;input class=&quot;gfc-input&quot; id=&quot;gfcSubflow&quot; value=&quot;${esc(node.subflow || &#x27;&#x27;)}&quot;&gt;&lt;/div&gt;&lt;button class=&quot;gfc-mini-action&quot;&gt;&lt;i data-lucide=&quot;external-link&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;打开子流程&lt;/button&gt;`;
+        } else if (panel === &#x27;contract&#x27;) {
+          body = `&lt;div class=&quot;gfc-section-title&quot;&gt;输入变量&lt;/div&gt;&lt;div class=&quot;gfc-schema-list&quot;&gt;${schemaRows(node.inputs,&#x27;输入&#x27;)}&lt;/div&gt;&lt;button class=&quot;gfc-mini-action&quot; data-add-variable=&quot;input&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加输入&lt;/button&gt;
+            &lt;div class=&quot;gfc-section-title&quot; style=&quot;margin-top:16px&quot;&gt;输出变量&lt;/div&gt;&lt;div class=&quot;gfc-schema-list&quot;&gt;${schemaRows(node.outputs,&#x27;输出&#x27;)}&lt;/div&gt;&lt;button class=&quot;gfc-mini-action&quot; data-add-variable=&quot;output&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;添加输出&lt;/button&gt;
+            &lt;div class=&quot;gfc-contract-note&quot;&gt;&lt;i data-lucide=&quot;braces&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;连线按变量类型校验。下游节点只能选择当前节点已声明的输出。&lt;/span&gt;&lt;/div&gt;`;
+        } else if (panel === &#x27;body&#x27;) {
+          if (node.type === &#x27;script&#x27;) {
+            body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeBody&quot;&gt;Python Function&lt;/label&gt;&lt;textarea class=&quot;gfc-textarea&quot; id=&quot;gfcNodeBody&quot;&gt;${esc(node.code || &#x27;def run(inputs, context):\n    return {&quot;result&quot;: inputs}&#x27;)}&lt;/textarea&gt;&lt;/div&gt;&lt;div class=&quot;gfc-contract-note&quot;&gt;&lt;i data-lucide=&quot;shield-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;函数返回值必须符合输出变量契约。&lt;/span&gt;&lt;/div&gt;`;
+          } else if (node.type === &#x27;llm&#x27;) {
+            body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeBody&quot;&gt;Prompt&lt;/label&gt;&lt;textarea class=&quot;gfc-textarea&quot; id=&quot;gfcNodeBody&quot;&gt;${esc(node.prompt || &#x27;${context}\n\n请完成任务，并严格按照输出结构返回。&#x27;)}&lt;/textarea&gt;&lt;/div&gt;&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcResponseMode&quot;&gt;响应格式&lt;/label&gt;&lt;select class=&quot;gfc-select&quot; id=&quot;gfcResponseMode&quot;&gt;&lt;option&gt;Structured JSON&lt;/option&gt;&lt;option&gt;Text&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;`;
+          } else if (node.type === &#x27;ifelse&#x27;) {
+            body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeBody&quot;&gt;布尔表达式&lt;/label&gt;&lt;textarea class=&quot;gfc-textarea&quot; id=&quot;gfcNodeBody&quot;&gt;${esc(node.condition || &#x27;inputs[&quot;value&quot;] != null&#x27;)}&lt;/textarea&gt;&lt;/div&gt;&lt;div class=&quot;gfc-contract-note&quot;&gt;&lt;i data-lucide=&quot;git-branch&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;表达式只能产生 True 或 False，并从对应出口继续。&lt;/span&gt;&lt;/div&gt;`;
+          } else if (node.type === &#x27;readstate&#x27; || node.type === &#x27;writestate&#x27;) {
+            body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeBody&quot;&gt;状态路径&lt;/label&gt;&lt;input class=&quot;gfc-input&quot; id=&quot;gfcNodeBody&quot; value=&quot;${esc(node.statePath || &#x27;agent.state&#x27;)}&quot;&gt;&lt;/div&gt;&lt;div class=&quot;gfc-field&quot;&gt;&lt;label&gt;写入策略&lt;/label&gt;&lt;select class=&quot;gfc-select&quot;&gt;&lt;option&gt;覆盖字段&lt;/option&gt;&lt;option&gt;合并对象&lt;/option&gt;&lt;option&gt;追加集合&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;`;
+          } else if (node.type === &#x27;subflow&#x27;) {
+            body = `&lt;div class=&quot;gfc-contract-note&quot;&gt;&lt;i data-lucide=&quot;boxes&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;该节点引用 ${esc(node.subflow || &#x27;尚未选择的子流程&#x27;)}，子流程的 Start/End 契约将映射为本节点输入输出。&lt;/span&gt;&lt;/div&gt;`;
+          } else {
+            body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcNodeBody&quot;&gt;节点定义&lt;/label&gt;&lt;textarea class=&quot;gfc-textarea&quot; id=&quot;gfcNodeBody&quot;&gt;${esc(node.condition || &#x27;使用固定输入输出契约执行该控制节点。&#x27;)}&lt;/textarea&gt;&lt;/div&gt;`;
+          }
+        } else {
+          body = `&lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcTimeout&quot;&gt;超时&lt;/label&gt;&lt;select class=&quot;gfc-select&quot; id=&quot;gfcTimeout&quot;&gt;&lt;option&gt;30 秒&lt;/option&gt;&lt;option&gt;60 秒&lt;/option&gt;&lt;option&gt;120 秒&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcRetry&quot;&gt;失败策略&lt;/label&gt;&lt;select class=&quot;gfc-select&quot; id=&quot;gfcRetry&quot;&gt;&lt;option&gt;停止当前流程&lt;/option&gt;&lt;option&gt;重试 1 次&lt;/option&gt;&lt;option&gt;使用回退输出&lt;/option&gt;&lt;option&gt;进入错误分支&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+            &lt;div class=&quot;gfc-field&quot;&gt;&lt;label for=&quot;gfcFallback&quot;&gt;回退输出&lt;/label&gt;&lt;textarea class=&quot;gfc-textarea&quot; id=&quot;gfcFallback&quot; style=&quot;min-height:120px&quot;&gt;{}&lt;/textarea&gt;&lt;/div&gt;`;
+        }
+        root.querySelector(&#x27;#gfcInspectorBody&#x27;).innerHTML = body;
+        root.querySelectorAll(&#x27;[data-add-variable]&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          const target = button.dataset.addVariable === &#x27;input&#x27; ? node.inputs : node.outputs;
+          target.push([button.dataset.addVariable === &#x27;input&#x27; ? &#x27;new_input&#x27; : &#x27;new_output&#x27;,&#x27;string&#x27;]);
+          renderNodes();
+          renderInspector();
+        }));
+        if (window.lucide) window.lucide.createIcons({ attrs: { width: 16, height: 16 } });
+      }
+
+      function addNode(type) {
+        const meta = typeMeta[type];
+        addedCount += 1;
+        const id = `${meta.defaultName}_${addedCount}`;
+        const columns = [3,36,69];
+        const flow = flowStore[currentFlowKey];
+        const baseY = Math.max(180, flow.height - 65);
+        nodes.push({
+          id,
+          type,
+          title: meta.title,
+          x: columns[(addedCount - 1) % 3],
+          y: baseY + Math.floor((addedCount - 1) / 3) * 170,
+          inputs: type === &#x27;start&#x27; ? [] : [[&#x27;input&#x27;,&#x27;any&#x27;]],
+          outputs: type === &#x27;end&#x27; ? [] : [[type === &#x27;ifelse&#x27; ? &#x27;matched&#x27; : &#x27;result&#x27;, type === &#x27;ifelse&#x27; ? &#x27;boolean&#x27; : &#x27;any&#x27;]],
+          unconnected: true,
+          code: type === &#x27;script&#x27; ? &#x27;def run(inputs, context):\n    return {&quot;result&quot;: inputs}&#x27; : undefined,
+          prompt: type === &#x27;llm&#x27; ? &#x27;${context}\n\n请完成任务，并严格按照输出结构返回。&#x27; : undefined,
+          condition: type === &#x27;ifelse&#x27; ? &#x27;inputs[&quot;value&quot;] != null&#x27; : undefined
+        });
+        selectedId = id;
+        panel = &#x27;contract&#x27;;
+        const board = root.querySelector(&#x27;#gfcBoard&#x27;);
+        board.style.minHeight = `${1810 + Math.floor((addedCount - 1) / 3) * 170}px`;
+        renderNodes();
+        renderInspector();
+        showToast(`${meta.label} 节点已添加，等待连接`);
+      }
+
+      function showToast(message) {
+        const toast = root.querySelector(&#x27;#gfcToast&#x27;);
+        toast.textContent = message;
+        toast.classList.add(&#x27;show&#x27;);
+        window.setTimeout(() =&gt; toast.classList.remove(&#x27;show&#x27;), 1800);
+      }
+
+      root.querySelectorAll(&#x27;.gfc-flow-tab&#x27;).forEach((tab, index, tabs) =&gt; {
+        tab.addEventListener(&#x27;click&#x27;, () =&gt; switchFlow(tab.dataset.flow));
+        tab.addEventListener(&#x27;keydown&#x27;, event =&gt; {
+          if (event.key !== &#x27;ArrowLeft&#x27; &amp;&amp; event.key !== &#x27;ArrowRight&#x27;) return;
+          event.preventDefault();
+          const direction = event.key === &#x27;ArrowRight&#x27; ? 1 : -1;
+          const next = tabs[(index + direction + tabs.length) % tabs.length];
+          next.focus();
+          switchFlow(next.dataset.flow);
+        });
+      });
+      root.querySelector(&#x27;#gfcVersionHistory&#x27;).addEventListener(&#x27;click&#x27;, event =&gt; {
+        event.stopPropagation();
+        setVersionPopover(root.querySelector(&#x27;#gfcVersionPopover&#x27;).hidden);
+      });
+      root.querySelector(&#x27;#gfcVersionClose&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; setVersionPopover(false));
+      root.querySelector(&#x27;#gfcVersionPopover&#x27;).addEventListener(&#x27;click&#x27;, event =&gt; event.stopPropagation());
+      root.addEventListener(&#x27;click&#x27;, () =&gt; {
+        if (!root.querySelector(&#x27;#gfcVersionPopover&#x27;).hidden) setVersionPopover(false);
+      });
+      root.addEventListener(&#x27;keydown&#x27;, event =&gt; {
+        if (event.key === &#x27;Escape&#x27;) setVersionPopover(false);
+      });
+      root.querySelectorAll(&#x27;.gfc-palette-item&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; addNode(button.dataset.add)));
+      root.querySelector(&#x27;#gfcAddNode&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; addNode(&#x27;script&#x27;));
+      root.querySelectorAll(&#x27;.gfc-inspector-tab&#x27;).forEach(tab =&gt; tab.addEventListener(&#x27;click&#x27;, () =&gt; {
+        panel = tab.dataset.panel;
+        root.querySelectorAll(&#x27;.gfc-inspector-tab&#x27;).forEach(item =&gt; item.setAttribute(&#x27;aria-selected&#x27;, String(item === tab)));
+        renderInspector();
+      }));
+      root.querySelector(&#x27;#gfcValidate&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showToast(&#x27;流程结构和变量类型校验通过&#x27;));
+      root.querySelector(&#x27;#gfcSave&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        root.querySelector(&#x27;#gfcSaveState&#x27;).textContent = &#x27;草稿已保存&#x27;;
+        showToast(&#x27;流程草稿已保存到当前实验&#x27;);
+      });
+      root.querySelector(&#x27;#gfcApplyNode&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showToast(&#x27;节点配置已应用&#x27;));
+      const canvasBoard = root.querySelector(&#x27;#gfcBoard&#x27;);
+      canvasBoard.addEventListener(&#x27;dragover&#x27;, event =&gt; {
+        if (!nativeDrag) return;
+        event.preventDefault();
+        if (event.dataTransfer) event.dataTransfer.dropEffect = &#x27;move&#x27;;
+      });
+      canvasBoard.addEventListener(&#x27;drop&#x27;, event =&gt; {
+        if (!nativeDrag) return;
+        event.preventDefault();
+        const boardRect = canvasBoard.getBoundingClientRect();
+        const maxLeft = Math.max(0, boardRect.width - nativeDrag.button.offsetWidth);
+        const left = Math.max(0, Math.min(maxLeft, event.clientX - boardRect.left - nativeDrag.offsetX));
+        const top = Math.max(0, event.clientY - boardRect.top - nativeDrag.offsetY);
+        nativeDrag.node.x = boardRect.width ? (left / boardRect.width) * 100 : 0;
+        nativeDrag.node.y = top;
+        const requiredHeight = top + nativeDrag.button.offsetHeight + 90;
+        if (requiredHeight &gt; canvasBoard.clientHeight) canvasBoard.style.minHeight = `${requiredHeight}px`;
+        selectedId = nativeDrag.node.id;
+        root.querySelector(&#x27;#gfcSaveState&#x27;).textContent = &#x27;有未保存修改&#x27;;
+        nativeDrag = null;
+        renderNodes();
+        renderInspector();
+      });
+      window.addEventListener(&#x27;resize&#x27;, drawEdges);
+
+      renderNodes();
+      renderInspector();
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

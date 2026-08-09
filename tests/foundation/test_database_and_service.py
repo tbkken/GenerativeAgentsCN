@@ -52,12 +52,14 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
                 "builtin_catalog_snapshots",
                 "world_maps",
                 "world_map_revisions",
+                "experiment_workflows",
+                "experiment_workflow_versions",
             } <= tables
         assert connection.exec_driver_sql("PRAGMA foreign_keys").scalar() == 1
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-            ).scalar() == "0007_public_world_maps"
+            ).scalar() == "0008_prompt_workflows"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):

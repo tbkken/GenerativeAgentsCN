@@ -15,9 +15,11 @@ from uuid import UUID, uuid4
 
 from generative_agents.config import (
     ExperimentDefinition,
+    WorkflowDefinition,
     canonical_json_bytes,
     definition_hash,
     get_algorithm_profile,
+    workflow_bundle_hash,
 )
 
 from .context import RunPaths
@@ -39,6 +41,13 @@ class VerifiedRunManifest:
     @property
     def definition(self) -> ExperimentDefinition:
         return ExperimentDefinition.model_validate(self.document["definition"])
+
+    @property
+    def workflows(self) -> Mapping[str, WorkflowDefinition]:
+        return {
+            key: WorkflowDefinition.model_validate(value)
+            for key, value in (self.document.get("workflows") or {}).items()
+        }
 
 
 def collect_dependency_versions(
@@ -70,6 +79,7 @@ def build_manifest_document(
     assets: Iterable[Mapping[str, Any]],
     materialized_at: datetime,
     dependency_versions: Mapping[str, str | None] | None = None,
+    workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     actual_definition_hash = definition_hash(definition)
     if actual_definition_hash != expected_definition_hash:
@@ -103,6 +113,19 @@ def build_manifest_document(
         "assets": asset_list,
         "materialized_at": materialized_at.isoformat(),
     }
+    if workflows:
+        workflow_documents = {
+            key: (
+                value.model_dump(mode="json", exclude_none=False)
+                if isinstance(value, WorkflowDefinition)
+                else WorkflowDefinition.model_validate(value).model_dump(
+                    mode="json", exclude_none=False
+                )
+            )
+            for key, value in sorted(workflows.items())
+        }
+        envelope["workflows"] = workflow_documents
+        envelope["workflow_bundle_hash"] = workflow_bundle_hash(workflow_documents)
     envelope["manifest_hash"] = hashlib.sha256(canonical_json_bytes(envelope)).hexdigest()
     return envelope
 
@@ -141,6 +164,7 @@ class RunManifestStore:
         definition: ExperimentDefinition,
         expected_definition_hash: str,
         assets: Iterable[Mapping[str, Any]],
+        workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
     ) -> VerifiedRunManifest:
         """Verify an existing Run manifest against its published Revision.
 
@@ -163,6 +187,18 @@ class RunManifestStore:
             ),
         )
         document = verified.document
+        expected_workflows = None
+        if workflows:
+            expected_workflows = {
+                key: (
+                    value.model_dump(mode="json", exclude_none=False)
+                    if isinstance(value, WorkflowDefinition)
+                    else WorkflowDefinition.model_validate(value).model_dump(
+                        mode="json", exclude_none=False
+                    )
+                )
+                for key, value in sorted(workflows.items())
+            }
         matches = (
             document.get("experiment_id") == str(experiment_id)
             and document.get("revision_id") == str(revision_id)
@@ -171,6 +207,13 @@ class RunManifestStore:
             == definition.model_dump(mode="json", exclude_none=False)
             and document.get("algorithm_version") == definition.engine.algorithm_version
             and document.get("assets") == expected_assets
+            and document.get("workflows") == expected_workflows
+            and document.get("workflow_bundle_hash")
+            == (
+                workflow_bundle_hash(expected_workflows)
+                if expected_workflows is not None
+                else None
+            )
         )
         if not matches:
             raise ManifestConflictError(
@@ -213,6 +256,19 @@ class RunManifestStore:
         if algorithm_version != definition.engine.algorithm_version:
             raise ValueError("manifest algorithm_version mismatch")
         get_algorithm_profile(algorithm_version)
+        workflow_documents = document.get("workflows")
+        workflow_digest = document.get("workflow_bundle_hash")
+        if (workflow_documents is None) != (workflow_digest is None):
+            raise ValueError("manifest workflow bundle is incomplete")
+        if workflow_documents is not None:
+            normalized_workflows = {
+                key: WorkflowDefinition.model_validate(value).model_dump(
+                    mode="json", exclude_none=False
+                )
+                for key, value in sorted(workflow_documents.items())
+            }
+            if workflow_bundle_hash(normalized_workflows) != workflow_digest:
+                raise ValueError("manifest workflow_bundle_hash mismatch")
         return actual_manifest_hash
 
     @staticmethod

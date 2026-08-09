@@ -24,6 +24,7 @@ from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from .commit import FileStepCommitter
 from .context import (
     MappingPromptRepository,
+    WorkflowPromptRepository,
     RunControl,
     RunPaths,
     SimulationClock,
@@ -188,8 +189,13 @@ def main(argv=None) -> int:
         chat_config = definition.models.chat.model_dump(mode="json", exclude_none=False)
         chat_config["api_key"] = _secret_value(definition, "chat", cipher, database)
         embedding_key = _secret_value(definition, "embedding", cipher, database)
-        prompts = MappingPromptRepository(
-            {key: prompt.content for key, prompt in definition.prompts.items()}
+        prompt_contents = {
+            key: prompt.content for key, prompt in definition.prompts.items()
+        }
+        prompts = (
+            WorkflowPromptRepository(prompt_contents, manifest.workflows)
+            if manifest.workflows
+            else MappingPromptRepository(prompt_contents)
         )
         checkpoint_state, checkpoint_conversation, attempt_storage = _prepare_attempt_state(
             database,

@@ -3836,6 +3836,7 @@ def test_def_069_cross_web_restart_resume_reuses_the_original_run_manifest(
         assets=before["assets"],
         materialized_at=second_time,
         dependency_versions=before["dependency_versions"],
+        workflows=before.get("workflows"),
     )
     assert {
         key for key in before if before[key] != rebuilt[key]
@@ -3891,6 +3892,7 @@ def test_def_069_cross_web_restart_resume_reuses_the_original_run_manifest(
         assets=before["assets"],
         materialized_at=first_time,
         dependency_versions=before["dependency_versions"],
+        workflows=before.get("workflows"),
     )
     with pytest.raises(ManifestConflictError):
         manifest_store.materialize(incompatible)

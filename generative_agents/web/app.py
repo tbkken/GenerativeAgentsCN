@@ -17,11 +17,11 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Streamin
 from fastapi.staticfiles import StaticFiles
 from pydantic import Field, ValidationError
 
-from generative_agents.config import ExperimentDefinition
+from generative_agents.config import ExperimentDefinition, WorkflowDefinition
 from generative_agents.config.schema import StrictModel, WorldConfig, WorldOverlayConfig
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import Run, RunEvent, RunQueue
-from generative_agents.services import ExperimentService, ServiceError
+from generative_agents.services import ExperimentService, ServiceError, WorkflowService
 from generative_agents.services.maps import WorldMapService
 from generative_agents.services.catalog import AssetService, SecretService
 from generative_agents.services.results import ResultQueryService
@@ -112,6 +112,17 @@ class ModelProbeRequest(StrictModel):
     lock_version: int = Field(ge=1)
 
 
+class WorkflowSaveRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+    workflow: WorkflowDefinition
+    prompts: dict[str, str] = Field(default_factory=dict)
+    label: str | None = Field(default=None, max_length=120)
+
+
+class WorkflowRestoreRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+
+
 class CreateMapRequest(StrictModel):
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
@@ -172,6 +183,7 @@ def create_app(
         )
     database = create_database(database_url)
     service = ExperimentService(database)
+    workflow_service = WorkflowService(database)
     map_service = WorldMapService(database)
     result_service = ResultQueryService(database)
     asset_service = AssetService(database, var_dir=var_dir)
@@ -489,6 +501,49 @@ def create_app(
         return service.restore_draft_prompt(
             experiment_id,
             prompt_key,
+            expected_lock_version=body.lock_version,
+        )
+
+    @app.get("/api/v1/experiments/{experiment_id}/draft/workflows")
+    def list_workflows(experiment_id: str):
+        return workflow_service.list_workflows(experiment_id)
+
+    @app.get("/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}")
+    def get_workflow(experiment_id: str, workflow_key: str):
+        return workflow_service.get_workflow(experiment_id, workflow_key)
+
+    @app.put("/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}")
+    def save_workflow(
+        experiment_id: str, workflow_key: str, body: WorkflowSaveRequest
+    ):
+        return workflow_service.save_workflow(
+            experiment_id,
+            workflow_key,
+            expected_lock_version=body.lock_version,
+            workflow=body.workflow,
+            prompt_contents=body.prompts,
+            label=body.label,
+        )
+
+    @app.post(
+        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/validate"
+    )
+    def validate_workflow(experiment_id: str, workflow_key: str):
+        return workflow_service.validate_workflow(experiment_id, workflow_key)
+
+    @app.post(
+        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/versions/{version_id}/restore"
+    )
+    def restore_workflow_version(
+        experiment_id: str,
+        workflow_key: str,
+        version_id: str,
+        body: WorkflowRestoreRequest,
+    ):
+        return workflow_service.restore_version(
+            experiment_id,
+            workflow_key,
+            version_id,
             expected_lock_version=body.lock_version,
         )
 

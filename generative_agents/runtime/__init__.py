@@ -8,6 +8,7 @@ from .context import (
     RunPaths,
     SimulationClock,
     SimulationContext,
+    WorkflowPromptRepository,
 )
 from .frame_store import FrameConflictError, FrameStore
 from .manifest import RunManifestStore, VerifiedRunManifest, build_manifest_document
@@ -67,6 +68,7 @@ __all__ = [
     "StepResultBuilder",
     "SqliteResultProjector",
     "VerifiedRunManifest",
+    "WorkflowPromptRepository",
     "build_manifest_document",
     "get_algorithm_profile",
 ]

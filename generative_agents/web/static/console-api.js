@@ -31,7 +31,8 @@
     globalRefreshTimer: null,
     pendingActivityExperimentIds: new Set(),
     forceGlobalRefresh: false,
-    currentPromptKey: 'base_desc',
+    formDirty: false,
+    workflowDirty: false,
     resultGeneration: 0,
     resultRequestGeneration: 0,
     resultRefreshTimer: null,
@@ -193,20 +194,27 @@
     }
     if (pageName === 'experiments') scheduleGlobalReconcile({ full: true });
     if (pageName === 'maps') window.MapWorkspace?.activate().catch(reportError);
+    if (pageName === 'prompts') window.WorkflowEditor?.activate().catch(reportError);
     syncWorkspaceUrl();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function renderDirtyState() {
+    state.dirty = Boolean(state.formDirty || state.workflowDirty);
+    $('unsaved').hidden = !state.dirty;
+    if (state.dirty) $('unsaved').querySelector('span').textContent = '有未保存更改';
+  }
+
   function markDirty() {
     if (state.workspaceReadonly || !state.draft) return;
-    state.dirty = true;
-    $('unsaved').hidden = false;
-    $('unsaved').querySelector('span').textContent = '有未保存更改';
+    state.formDirty = true;
+    renderDirtyState();
   }
 
   function clearDirty() {
-    state.dirty = false;
-    $('unsaved').hidden = true;
+    state.formDirty = false;
+    state.workflowDirty = false;
+    renderDirtyState();
   }
 
   function requestGlobalNavigation(pageName) {
@@ -698,7 +706,11 @@
     fillBehaviorFields(definition.behavior, definition.results);
     fillWorldFields(definition.world);
     renderAgentDraft(definition.agents);
-    renderPromptDraft(definition.prompts);
+    window.WorkflowEditor?.setContext({
+      experimentId: state.selectedExperimentId,
+      draft: state.draft,
+      readonly: state.workspaceReadonly || !state.draft,
+    }).catch(reportError);
     $('statAgentCount').textContent = definition.agents.filter(item => item.enabled).length;
     $('navAgentCount').textContent = definition.agents.filter(item => item.enabled).length;
   }
@@ -883,22 +895,6 @@
     const enabled = agents.filter(agent => agent.enabled).length;
     $('selectedAgentCount').textContent = `${enabled} / ${agents.length}`;
     $('agentRows').nextElementSibling.innerHTML = `<span>显示全部 ${agents.length} 个实验角色</span><span>每个定义只属于当前实验 Draft</span>`;
-  }
-
-  function renderPromptDraft(prompts) {
-    const keys = Object.keys(prompts).sort();
-    if (!prompts[state.currentPromptKey]) state.currentPromptKey = keys[0] || '';
-    $('promptList').innerHTML = `<div class="prompt-list-head"><strong>实验 Prompt</strong><span id="promptListMeta">${keys.length} 个定义</span></div><div class="prompt-group">当前实验独立副本</div>` + keys.map(key => `<button class="prompt-item${key === state.currentPromptKey ? ' active' : ''}" data-prompt="${escapeHtml(key)}"><span>${escapeHtml(key)}.txt</span><i></i></button>`).join('');
-    showPrompt(state.currentPromptKey);
-  }
-
-  function showPrompt(key) {
-    if (!key || !state.definition?.prompts[key]) return;
-    state.currentPromptKey = key;
-    document.querySelectorAll('.prompt-item').forEach(item => item.classList.toggle('active', item.dataset.prompt === key));
-    $('promptTitle').textContent = `${key}.txt`;
-    $('promptMeta').textContent = '当前实验独立副本';
-    $('promptEditor').value = state.definition.prompts[key].content;
   }
 
   async function refreshRunHistoryList(experimentId, preferredRunId = state.selectedRunId) {
@@ -2024,8 +2020,9 @@
 
   async function saveDraft({ silent = false } = {}) {
     if (!state.draft) return;
-    if (state.currentPromptKey) {
-      state.draft.definition.prompts[state.currentPromptKey].content = $('promptEditor').value;
+    if (window.WorkflowEditor?.isDirty()) {
+      state.draft = await window.WorkflowEditor.save({ silent: true });
+      state.definition = state.draft.definition;
     }
     const requestedName = $('expName').value.trim();
     if (requestedName !== state.experiment.name) {
@@ -2121,9 +2118,6 @@
       const agent = definition.agents.find(item => item.agent_key === row.dataset.agentKey);
       if (agent) agent.enabled = row.querySelector('.agent-check').checked;
     });
-    if (state.currentPromptKey && definition.prompts[state.currentPromptKey]) {
-      definition.prompts[state.currentPromptKey] = { content: $('promptEditor').value, sha256: null };
-    }
     const saved = await api(`/experiments/${state.selectedExperimentId}/draft`, {
       method: 'PUT', body: JSON.stringify({ lock_version: state.draft.lock_version, data: definition }),
     });
@@ -2433,6 +2427,24 @@
     fillDefinitionOverview(draft.definition, draft);
     clearDirty();
   });
+  window.addEventListener('workflow-editor:dirty', event => {
+    state.workflowDirty = Boolean(event.detail?.dirty);
+    renderDirtyState();
+  });
+  window.addEventListener('workflow-editor:draft', event => {
+    const draft = event.detail?.draft;
+    if (!draft || draft.experiment_id !== state.selectedExperimentId) return;
+    state.draft = draft;
+    state.revision = draft;
+    state.definition = draft.definition;
+    fillDefinitionOverview(draft.definition, draft);
+  });
+  window.addEventListener('workflow-editor:toast', event => {
+    showToast(event.detail?.message || '', event.detail?.title || '操作成功');
+  });
+  window.addEventListener('workflow-editor:error', event => {
+    reportError(event.detail?.error || new Error('流程编排操作失败'));
+  });
   $('backToHub').addEventListener('click', () => requestGlobalNavigation('experiments'));
   document.querySelectorAll('[data-goto]').forEach(button => button.addEventListener('click', () => {
     openWorkspacePage(button.dataset.goto);
@@ -2522,9 +2534,17 @@
     }).catch(reportError);
   });
   $('discardAndLeave').addEventListener('click', () => {
-    clearDirty();
-    closeModal('leaveModal');
-    goToPage(state.pendingGlobalPage);
+    const destination = state.pendingGlobalPage;
+    window.WorkflowEditor?.discard();
+    api(`/experiments/${state.selectedExperimentId}/draft`).then(draft => {
+      state.draft = draft;
+      state.revision = draft;
+      state.definition = draft.definition;
+      fillDraft(draft.definition);
+      clearDirty();
+      closeModal('leaveModal');
+      goToPage(destination);
+    }).catch(reportError);
   });
   $('closeRunHistory').addEventListener('click', () => closeModal('runHistoryModal'));
   $('runHistorySearch').addEventListener('input', event => {
@@ -2822,42 +2842,6 @@
     $('navAgentCount').textContent = shouldEnable ? rows.length : 0;
     event.currentTarget.textContent = shouldEnable ? '取消全选' : '全部启用';
     markDirty();
-  }, true);
-  $('promptList').addEventListener('click', event => {
-    const item = event.target.closest('.prompt-item');
-    if (!item || !state.definition) return;
-    event.stopImmediatePropagation();
-    if (state.currentPromptKey && state.draft) {
-      state.draft.definition.prompts[state.currentPromptKey].content = $('promptEditor').value;
-    }
-    showPrompt(item.dataset.prompt);
-  }, true);
-  $('promptEditor').addEventListener('input', () => {
-    if (state.currentPromptKey && state.draft) {
-      state.draft.definition.prompts[state.currentPromptKey].content = $('promptEditor').value;
-    }
-  });
-  $('restorePromptBtn').addEventListener('click', event => {
-    event.stopImmediatePropagation();
-    if (!state.draft || !state.currentPromptKey) return;
-    api(`/experiments/${state.selectedExperimentId}/draft/prompts/${state.currentPromptKey}/restore-base`, {
-      method: 'POST',
-      body: JSON.stringify({ lock_version: state.draft.lock_version, data: {} }),
-    }).then(saved => {
-      state.draft = saved;
-      fillDraft(saved.definition);
-      clearDirty();
-      scheduleGlobalReconcile({ full: true });
-      showToast('已恢复为基线 Revision 中的正文。', 'Prompt 已恢复');
-    }).catch(reportError);
-  }, true);
-  $('validatePromptBtn').addEventListener('click', event => {
-    event.stopImmediatePropagation();
-    saveDraft({ silent: true }).then(() => api(`/experiments/${state.selectedExperimentId}/draft/validate`, { method: 'POST' })).then(report => {
-      const issue = report.errors.find(item => item.path === `prompts.${state.currentPromptKey}`);
-      if (issue) throw new Error(issue.message);
-      showToast('正文哈希、模板语法和必需定义均已检查。', 'Prompt 有效');
-    }).catch(reportError);
   }, true);
   document.querySelectorAll('.test-connection').forEach(button => button.addEventListener('click', event => {
     event.stopImmediatePropagation();

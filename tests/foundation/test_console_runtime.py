@@ -54,6 +54,62 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     )
 
 
+def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_restore(
+    database_url,
+):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        shell = client.get("/").text
+        editor_response = client.get("/static/console/workflow-editor.js")
+        style_response = client.get("/static/console/workflow-editor.css")
+        console_response = client.get("/static/console/console-api.js")
+
+    assert editor_response.status_code == 200
+    assert style_response.status_code == 200
+    assert console_response.status_code == 200
+    editor = editor_response.text
+    console = console_response.text
+    shell_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', shell))
+    lookups = set(re.findall(r"\$\('([A-Za-z0-9_-]+)'\)", editor))
+    dynamic_ids = {
+        "workflowNodeBody",
+        "workflowNodeOperation",
+        "workflowNodeSubflow",
+        "workflowNodeTitle",
+    }
+    assert lookups - dynamic_ids <= shell_ids, sorted(lookups - dynamic_ids - shell_ids)
+    assert all(f'id="{item}"' in editor for item in dynamic_ids)
+    assert 'id="workflowTabs" role="tablist"' in shell
+    assert 'data-workflow-add="script"' in shell
+    assert 'data-workflow-add="llm"' in shell
+    assert 'id="workflowVersionPopover"' in shell
+    assert 'id="promptList"' not in shell
+    assert 'id="promptEditor"' not in shell
+    assert "新建流程" not in shell
+    assert "Prompt 套件说明" not in shell
+    assert "function enableDrag" in editor
+    assert "async function restoreVersion" in editor
+    assert "async function save" in editor
+    assert "一键恢复" in editor
+    assert "restored.restored_as_version_no" in editor
+    assert "flow.dirty = false" in editor
+    assert "默认流程" in editor
+    assert "function renderDirtyState()" in console
+    assert "state.dirty = Boolean(state.formDirty || state.workflowDirty)" in console
+    assert "state.formDirty = true" in console
+    assert "function discard()" in editor
+    assert "window.WorkflowEditor?.discard()" in console
+
+    node = shutil.which("node")
+    assert node, "Node.js is required for production JavaScript syntax checks"
+    subprocess.run(
+        [node, "--check", str(Path(__file__).parents[2] / "generative_agents" / "web" / "static" / "workflow-editor.js")],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
 def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab():
     root = Path(__file__).parents[2]
     shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(

@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from generative_agents.config import (
     ExperimentDefinition,
+    ValidationIssue,
     definition_hash,
     make_builtin_definition,
     validate_for_publish,
@@ -201,6 +202,16 @@ class ExperimentService:
             )
             session.add(revision)
             session.flush()
+            from .workflows import WorkflowService
+
+            WorkflowService.seed_revision_in_session(
+                session,
+                experiment_id=experiment.id,
+                revision=revision,
+                definition=definition,
+                source_revision_id=base_revision_id,
+                create_default_versions=True,
+            )
             experiment.current_draft_revision_id = revision.id
             return self._experiment_detail(session, experiment)
 
@@ -279,6 +290,16 @@ class ExperimentService:
             )
             session.add(revision)
             session.flush()
+            from .workflows import WorkflowService
+
+            WorkflowService.seed_revision_in_session(
+                session,
+                experiment_id=experiment.id,
+                revision=revision,
+                definition=definition,
+                source_revision_id=source_revision.id,
+                create_default_versions=True,
+            )
             experiment.current_draft_revision_id = revision.id
             return self._experiment_detail(session, experiment)
 
@@ -766,6 +787,21 @@ class ExperimentService:
                 definition = ExperimentDefinition.model_validate(payload)
             refs = set(session.scalars(select(Secret.id)).all())
             report = validate_for_publish(definition, existing_secret_refs=refs)
+            from .workflows import WorkflowService, workflow_validation_issues
+
+            WorkflowService.ensure_revision_in_session(
+                session,
+                experiment_id=revision.experiment_id,
+                revision=revision,
+                definition=definition,
+            )
+            workflows = WorkflowService.load_revision_bundle_in_session(
+                session, revision.id
+            )
+            report.errors.extend(
+                ValidationIssue.model_validate(issue)
+                for issue in workflow_validation_issues(workflows, definition)
+            )
             revision.validation_json = report.model_dump(mode="json")
             revision.validated_hash = report.definition_hash
             revision.updated_at = _utc_now()
@@ -832,6 +868,19 @@ class ExperimentService:
             definition = ExperimentDefinition.model_validate(normalized_payload)
         refs = set(session.scalars(select(Secret.id)).all())
         report = validate_for_publish(definition, existing_secret_refs=refs)
+        from .workflows import WorkflowService, workflow_validation_issues
+
+        WorkflowService.ensure_revision_in_session(
+            session,
+            experiment_id=experiment_id,
+            revision=revision,
+            definition=definition,
+        )
+        workflows = WorkflowService.load_revision_bundle_in_session(session, revision.id)
+        report.errors.extend(
+            ValidationIssue.model_validate(issue)
+            for issue in workflow_validation_issues(workflows, definition)
+        )
         if not report.valid:
             raise ServiceError(
                 "CONFIG_VALIDATION_FAILED",
@@ -917,6 +966,16 @@ class ExperimentService:
             )
             session.add(draft)
             session.flush()
+            from .workflows import WorkflowService
+
+            WorkflowService.seed_revision_in_session(
+                session,
+                experiment_id=experiment_id,
+                revision=draft,
+                definition=ExperimentDefinition.model_validate(draft.definition_json),
+                source_revision_id=source.id,
+                create_default_versions=False,
+            )
             experiment.current_draft_revision_id = draft.id
             experiment.status = "DRAFT"
             experiment.updated_at = now

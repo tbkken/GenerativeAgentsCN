@@ -1083,6 +1083,7 @@
       .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
     }
   </style>
+  <link rel="stylesheet" href="/static/console/workflow-editor.css?v=20260810a" />
   <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260809a" />
 </head>
 <body class="hub-mode">
@@ -1108,7 +1109,7 @@
         <button class="nav-item" data-page="results"><span class="nav-icon">◈</span><span class="nav-text">实验结果</span><span class="nav-count" id="navRunCount"></span></button>
         <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">Agent 配置</span><span class="nav-count" id="navAgentCount"></span></button>
         <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型服务</span><span class="nav-count"></span></button>
-        <button class="nav-item" data-page="prompts"><span class="nav-icon">¶</span><span class="nav-text">Prompt 套件</span><span class="nav-count"></span></button>
+        <button class="nav-item" data-page="prompts"><span class="nav-icon">¶</span><span class="nav-text">Prompt 编排</span><span class="nav-count"></span></button>
         <button class="nav-item" data-page="world"><span class="nav-icon">⌗</span><span class="nav-text">世界与地图</span></button>
         <button class="nav-item" data-page="advanced"><span class="nav-icon">⌘</span><span class="nav-text">行为参数</span></button>
       </nav>
@@ -1571,25 +1572,31 @@
         </section>
 
         <section class="page" id="page-prompts">
-          <div class="page-heading">
-            <div><div class="heading-line"><h1>Prompt 套件</h1><button type="button" class="help-tip" aria-label="Prompt 套件说明" data-tooltip="编辑当前实验的 Prompt 副本；发布前会校验变量、返回结构和失败回退。">?</button></div></div>
-            <div class="revision-meta"><span>套件</span><code>zh-ville-prompts@2.4</code></div>
-          </div>
-          <div class="card prompt-layout">
-            <aside class="prompt-list" id="promptList"><div class="empty-state"><strong>等待实验数据</strong></div></aside>
-            <div class="prompt-editor">
-              <div class="editor-head"><div><strong id="promptTitle">base_desc.txt</strong><span id="promptMeta">当前实验独立副本</span></div><div class="editor-actions"><button class="btn btn-sm" id="restorePromptBtn">恢复发布版</button><button class="btn btn-sm" id="validatePromptBtn">验证 Prompt</button></div></div>
-              <div class="variable-bar" id="variableBar"><span>可用变量</span><code class="variable">${name}</code><code class="variable">${age}</code><code class="variable">${innate}</code><code class="variable">${learned}</code><code class="variable">${lifestyle}</code><code class="variable">${daily_plan}</code><code class="variable">${date}</code><code class="variable">${currently}</code></div>
-              <textarea class="code-editor dirty-track" id="promptEditor" spellcheck="false">姓名：${name}（年龄：${age}）
-天生性格：${innate}
-生活经历：${learned}
-生活习惯：${lifestyle}
-固定日程：${daily_plan}
-
-今天是 ${date}。
-${name} 当前的情况：${currently}</textarea>
-              <div class="editor-foot"><span>UTF-8 · String.Template · 8 个变量</span><span>自动保存至当前实验草稿</span></div>
-            </div>
+          <div class="workflow-tabs" id="workflowTabs" role="tablist" aria-label="可编辑流程"></div>
+          <div class="workflow-shell" id="workflowShell" aria-busy="true">
+            <aside class="workflow-palette" aria-label="节点库">
+              <div class="workflow-side-head"><strong>节点库</strong><span>11 types</span></div>
+              <div class="workflow-palette-body">
+                <section><h2>计算</h2><button type="button" data-workflow-add="script"><i>&lt;/&gt;</i>Script</button><button type="button" data-workflow-add="llm"><i>✣</i>LLM</button></section>
+                <section><h2>控制</h2><button type="button" data-workflow-add="if_else"><i>⑂</i>If / Else</button><button type="button" data-workflow-add="switch"><i>⑃</i>Switch</button><button type="button" data-workflow-add="loop"><i>↻</i>Loop</button><button type="button" data-workflow-add="parallel"><i>Ⅲ</i>Parallel / Join</button></section>
+                <section><h2>状态</h2><button type="button" data-workflow-add="read_state"><i>▱</i>Read State</button><button type="button" data-workflow-add="write_state"><i>▰</i>Write State</button></section>
+                <section><h2>复用与边界</h2><button type="button" data-workflow-add="subflow"><i>⌘</i>Subflow</button><button type="button" data-workflow-add="start"><i>▷</i>Start</button><button type="button" data-workflow-add="end"><i>▣</i>End</button></section>
+              </div>
+            </aside>
+            <section class="workflow-canvas-column" aria-label="流程画布">
+              <div class="workflow-canvas-bar">
+                <div><strong id="workflowCanvasTitle">等待流程数据</strong><code id="workflowCanvasVersion">—</code></div>
+                <div class="workflow-canvas-actions"><button type="button" class="workflow-icon-btn" id="workflowVersionBtn" aria-label="版本记录" data-tooltip="查看并恢复历史版本">↶</button><button type="button" class="workflow-icon-btn" id="workflowAutoLayoutBtn" aria-label="自动布局" data-tooltip="按执行顺序整理节点">✣</button><button type="button" class="workflow-icon-btn" id="workflowValidateBtn" aria-label="验证流程" data-tooltip="验证结构、数据契约和 Prompt 放置">✓</button></div>
+              </div>
+              <div class="workflow-version-popover" id="workflowVersionPopover" hidden><div class="workflow-version-head"><div><strong id="workflowVersionTitle">版本记录</strong><span>每个流程独立保存版本</span></div><button type="button" id="workflowVersionClose" aria-label="关闭">×</button></div><div id="workflowVersionList"></div><p>恢复会立即形成一个新版本，原历史版本保持不变。</p></div>
+              <div class="workflow-board" id="workflowBoard"><svg id="workflowWires" aria-hidden="true"></svg><div id="workflowNodeLayer"></div><div class="workflow-board-empty" id="workflowBoardEmpty"><strong>正在载入流程</strong><span>画布会显示当前实验 Revision 中的节点。</span></div></div>
+            </section>
+            <aside class="workflow-inspector" aria-label="节点配置">
+              <div class="workflow-inspector-head"><small id="workflowInspectorKind">NODE</small><strong id="workflowInspectorTitle">选择一个节点</strong><code id="workflowInspectorId">—</code></div>
+              <div class="workflow-inspector-tabs" role="tablist" aria-label="节点配置页签"><button type="button" data-workflow-panel="config" aria-selected="false">配置</button><button type="button" data-workflow-panel="contract" aria-selected="true">输入输出</button><button type="button" data-workflow-panel="body" aria-selected="false" id="workflowBodyTab">节点</button><button type="button" data-workflow-panel="failure" aria-selected="false">异常</button></div>
+              <div class="workflow-inspector-body" id="workflowInspectorBody"><div class="empty-state"><strong>尚未选择节点</strong></div></div>
+              <div class="workflow-inspector-foot"><button type="button" class="btn btn-sm" id="workflowDeleteNode">删除节点</button><button type="button" class="btn btn-primary btn-sm" id="workflowApplyNode">应用修改</button></div>
+            </aside>
           </div>
         </section>
 
@@ -1861,6 +1868,7 @@ ${name} 当前的情况：${currently}</textarea>
   <script src="/static/console/replay-player.js"></script>
   <script src="/static/console/modal-focus.js"></script>
   <script src="/static/console/map-workspace.js?v=20260809c"></script>
+  <script src="/static/console/workflow-editor.js?v=20260810a"></script>
   <script src="/static/console/console-api.js"></script>
 </body>
 </html>

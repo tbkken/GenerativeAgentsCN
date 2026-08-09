@@ -228,6 +228,81 @@ class ExperimentRevision(Base):
     )
 
 
+class ExperimentWorkflow(Base):
+    """Workflow graph owned by exactly one experiment Revision."""
+
+    __tablename__ = "experiment_workflows"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    experiment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiments.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiment_revisions.id", ondelete="CASCADE"), nullable=False
+    )
+    workflow_key: Mapped[str] = mapped_column(String(80), nullable=False)
+    definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    workflow_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        UniqueConstraint("revision_id", "workflow_key", name="uq_revision_workflow_key"),
+        Index("ix_workflows_experiment_revision", "experiment_id", "revision_id"),
+    )
+
+
+class ExperimentWorkflowVersion(Base):
+    """Immutable experiment-level restore point for one workflow canvas."""
+
+    __tablename__ = "experiment_workflow_versions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    experiment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiments.id", ondelete="RESTRICT"), nullable=False
+    )
+    workflow_key: Mapped[str] = mapped_column(String(80), nullable=False)
+    version_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    label: Mapped[str] = mapped_column(String(120), nullable=False)
+    definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    prompt_contents_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    workflow_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    is_default: Mapped[bool] = mapped_column(nullable=False, default=False)
+    source_revision_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiment_revisions.id", ondelete="RESTRICT"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "experiment_id",
+            "workflow_key",
+            "version_no",
+            name="uq_experiment_workflow_version",
+        ),
+        CheckConstraint("version_no >= 1", name="ck_workflow_version_number"),
+        Index(
+            "uq_experiment_workflow_default",
+            "experiment_id",
+            "workflow_key",
+            unique=True,
+            sqlite_where=text("is_default = 1"),
+        ),
+        Index(
+            "ix_workflow_versions_experiment",
+            "experiment_id",
+            "workflow_key",
+            "version_no",
+        ),
+    )
+
+
 class Run(Base):
     __tablename__ = "runs"
 

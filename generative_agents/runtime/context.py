@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import Any, Mapping, Protocol
 from uuid import UUID
 
+from generative_agents.config import WorkflowDefinition
+from generative_agents.config.schema import REQUIRED_PROMPT_KEYS
+
 from .algorithm import AlgorithmProfile
 
 
@@ -210,6 +213,47 @@ class MappingPromptRepository:
             return self.prompts[key]
         except KeyError as exc:
             raise KeyError(f"prompt is not present in run manifest: {key}") from exc
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowPromptRepository:
+    """Prompt lookup constrained by the immutable workflow bundle in a Run manifest."""
+
+    prompts: Mapping[str, str]
+    workflows: Mapping[str, WorkflowDefinition]
+    _prompt_nodes: Mapping[str, tuple[str, str]] = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        placements: dict[str, tuple[str, str]] = {}
+        for workflow_key, workflow in self.workflows.items():
+            for node in workflow.nodes:
+                if node.kind != "llm" or node.prompt_key is None:
+                    continue
+                if node.prompt_key in placements:
+                    raise ValueError(
+                        f"prompt is placed in multiple workflow nodes: {node.prompt_key}"
+                    )
+                placements[node.prompt_key] = (workflow_key, node.node_id)
+        missing = REQUIRED_PROMPT_KEYS - set(placements)
+        if missing:
+            raise ValueError(
+                "run manifest workflows do not place prompts: " + ", ".join(sorted(missing))
+            )
+        object.__setattr__(self, "_prompt_nodes", placements)
+
+    def get(self, key: str) -> str:
+        if key not in self._prompt_nodes:
+            raise KeyError(f"prompt is not placed in a run workflow: {key}")
+        try:
+            return self.prompts[key]
+        except KeyError as exc:
+            raise KeyError(f"prompt is not present in run manifest: {key}") from exc
+
+    def node_for_prompt(self, key: str) -> tuple[str, str]:
+        try:
+            return self._prompt_nodes[key]
+        except KeyError as exc:
+            raise KeyError(f"prompt is not placed in a run workflow: {key}") from exc
 
 
 @dataclass(slots=True)

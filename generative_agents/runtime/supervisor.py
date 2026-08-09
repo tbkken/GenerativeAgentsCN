@@ -16,9 +16,15 @@ from uuid import UUID
 import psutil
 from filelock import FileLock
 
-from generative_agents.config import ExperimentDefinition
+from generative_agents.config import ExperimentDefinition, WorkflowDefinition
 from generative_agents.persistence.database import Database
-from generative_agents.persistence.models import Asset, ExperimentRevision, Run, RunEvent
+from generative_agents.persistence.models import (
+    Asset,
+    ExperimentRevision,
+    ExperimentWorkflow,
+    Run,
+    RunEvent,
+)
 
 from .context import RunPaths
 from .manifest import RunManifestStore, build_manifest_document
@@ -130,6 +136,13 @@ class LocalProcessSupervisor:
             if revision is None or revision.state != "PUBLISHED":
                 raise RuntimeError("claimed Run does not reference a published Revision")
             definition = ExperimentDefinition.model_validate(revision.definition_json)
+            workflows = {
+                row.workflow_key: WorkflowDefinition.model_validate(row.definition_json)
+                for row in session.query(ExperimentWorkflow)
+                .filter(ExperimentWorkflow.revision_id == revision.id)
+                .order_by(ExperimentWorkflow.workflow_key)
+                .all()
+            }
             assets: list[dict] = []
             for reference in definition.world.assets:
                 digest = reference.asset_hash.removeprefix("sha256:")
@@ -159,6 +172,7 @@ class LocalProcessSupervisor:
                     definition=definition,
                     expected_definition_hash=revision.definition_hash,
                     assets=assets,
+                    workflows=workflows or None,
                 )
                 return
             document = build_manifest_document(
@@ -170,6 +184,7 @@ class LocalProcessSupervisor:
                 code_build_id=self._code_build_id,
                 assets=assets,
                 materialized_at=datetime.now(timezone.utc),
+                workflows=workflows or None,
             )
             store.materialize(document)
 
