@@ -244,7 +244,8 @@ const state = {
   currentRun: null, latestRunId: null, selectedRunId: null, runHistory: [], runCursor: null,
   runHistoryGeneration: 0, experimentListGeneration: 0, selectedExperimentGeneration: 0,
   latestSummaryGeneration: 0, activityGeneration: 0, resultGeneration: 1,
-  globalRefreshTimer: null, resultRefreshTimer: null, pendingActivityExperimentIds: new Set(),
+  globalRefreshTimer: null, resultRefreshTimer: null, resultDurationTimer: null,
+  pendingActivityExperimentIds: new Set(),
   forceGlobalRefresh: false, activitySource: null, eventSource: null,
   currentExperimentName: '全局同步实验', currentExperimentStatus: '草稿',
   workspacePage: 'results', dirty: false, bootstrapped: true,
@@ -259,6 +260,10 @@ const statusClasses = { DRAFT: 'draft', QUEUED: 'queued', RUNNING: 'running', CO
 const escapeHtml = value => String(value ?? '');
 const formatTime = value => value || '—';
 const formatDuration = () => '1m';
+const startResultDurationTimer = run => {
+  $('resultDurationLabel').textContent = run.finished_at ? '实际耗时' : '执行时间';
+  $('resultDurationMetric').textContent = formatDuration(run.started_at, run.finished_at);
+};
 const applyStatusPill = status => { $('statusPill').textContent = status; };
 const setWorkspaceMode = status => { $('workspaceMode').textContent = status; };
 const fillDefinitionOverview = () => {};
