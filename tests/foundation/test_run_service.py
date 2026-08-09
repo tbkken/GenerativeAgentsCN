@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import datetime, timezone
 import os
 from pathlib import Path
 
@@ -58,6 +59,24 @@ def test_published_revision_creates_uuid_scoped_fifo_run(
     with pytest.raises(ServiceError) as exc:
         runs.create_from_published(experiment["id"], revision["id"])
     assert exc.value.code == "EXPERIMENT_RUN_ACTIVE"
+
+
+def test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    runs = RunService(database, var_dir=tmp_path / "var")
+    created = runs.create_from_published(experiment["id"], revision["id"])
+    with database.session_factory.begin() as session:
+        row = session.get(Run, created["run_id"])
+        row.started_at = datetime(2026, 8, 9, 5, 20, 11, tzinfo=timezone.utc)
+        row.finished_at = datetime(2026, 8, 9, 6, 9, 27, tzinfo=timezone.utc)
+
+    serialized = runs.get_run(created["run_id"])
+
+    assert serialized["created_at"].endswith("+00:00")
+    assert serialized["started_at"] == "2026-08-09T05:20:11+00:00"
+    assert serialized["finished_at"] == "2026-08-09T06:09:27+00:00"
 
 
 def test_paused_run_cancels_without_new_attempt_or_slot(

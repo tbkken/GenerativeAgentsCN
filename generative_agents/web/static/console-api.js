@@ -34,6 +34,7 @@
     resultGeneration: 0,
     resultRequestGeneration: 0,
     resultRefreshTimer: null,
+    resultDurationTimer: null,
     operationFactsGeneration: 0,
     operationsRunId: null,
     operationsAbortController: null,
@@ -180,6 +181,7 @@
       state.resultRefreshTimer = null;
     }
     if (pageName !== 'results') {
+      clearResultDurationTimer();
       closeLogStream();
       state.operationsAbortController?.abort();
       state.operationsAbortController = null;
@@ -435,10 +437,19 @@
     }).format(new Date(value));
   }
 
+  function parseApiInstant(value) {
+    if (!value) return Number.NaN;
+    const text = String(value);
+    // SQLite drops timezone metadata even though persisted system timestamps
+    // are UTC. Treat only timezone-less Run instants as UTC at this boundary.
+    const zoned = /(?:Z|[+-]\d{2}:\d{2})$/i.test(text);
+    return new Date(zoned ? text : `${text}Z`).getTime();
+  }
+
   function formatDuration(startedAt, finishedAt) {
     if (!startedAt) return '—';
-    const start = new Date(startedAt).getTime();
-    const end = finishedAt ? new Date(finishedAt).getTime() : Date.now();
+    const start = parseApiInstant(startedAt);
+    const end = finishedAt ? parseApiInstant(finishedAt) : Date.now();
     if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return '—';
     const seconds = Math.floor((end - start) / 1000);
     if (seconds < 60) return `${seconds}s`;
@@ -446,6 +457,32 @@
     if (minutes < 60) return `${minutes}m ${seconds % 60}s`;
     const hours = Math.floor(minutes / 60);
     return `${hours}h ${minutes % 60}m`;
+  }
+
+  function clearResultDurationTimer() {
+    if (state.resultDurationTimer) clearInterval(state.resultDurationTimer);
+    state.resultDurationTimer = null;
+  }
+
+  function renderRunDuration(run) {
+    const terminal = ['COMPLETED', 'FAILED', 'CANCELLED', 'INTERRUPTED'].includes(run?.status);
+    $('resultDurationLabel').textContent = terminal ? '实际耗时' : '执行时间';
+    $('resultDurationMetric').textContent = formatDuration(run?.started_at, run?.finished_at);
+  }
+
+  function startResultDurationTimer(run) {
+    clearResultDurationTimer();
+    renderRunDuration(run);
+    if (!run?.started_at || run.finished_at
+      || ['COMPLETED', 'FAILED', 'CANCELLED', 'INTERRUPTED'].includes(run.status)) return;
+    const runId = run.run_id;
+    state.resultDurationTimer = setInterval(() => {
+      if (state.workspacePage !== 'results' || state.selectedRunId !== runId) {
+        clearResultDurationTimer();
+        return;
+      }
+      renderRunDuration(state.currentRun);
+    }, 1000);
   }
 
   function cardTemplate(item) {
@@ -974,6 +1011,7 @@
     state.operationsAbortController?.abort();
     state.operationsAbortController = null;
     state.operationsRunId = null;
+    clearResultDurationTimer();
     if (state.resultRefreshTimer) clearTimeout(state.resultRefreshTimer);
     await refreshResultData(runId, generation);
     if (generation !== state.resultGeneration) return;
@@ -1038,7 +1076,7 @@
     $('resultConversationMetric').textContent = summary.counts.conversations;
     $('resultMemoryMetric').textContent = summary.counts.memories;
     $('resultLlmMetric').textContent = summary.counts.model_calls;
-    $('resultDurationMetric').textContent = formatDuration(run.started_at, run.finished_at);
+    startResultDurationTimer(run);
     renderSummary(summary, agents.items);
     renderTimeline(timeline);
     renderAgents(agents.items);

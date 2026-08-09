@@ -53,6 +53,16 @@ def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _iso_utc(value: datetime) -> str:
+    """Serialize persisted instants without losing SQLite's implicit UTC zone."""
+
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    else:
+        value = value.astimezone(timezone.utc)
+    return value.isoformat()
+
+
 def _encode_cursor(created_at: datetime, run_id: str) -> str:
     payload = json.dumps(
         {"created_at": created_at.isoformat(), "id": run_id},
@@ -506,9 +516,9 @@ class RunService:
             "recoverable_step": run.recoverable_step,
             "available_step": result_summary.available_step if result_summary else 0,
             "virtual_time": run.virtual_time.isoformat() if run.virtual_time else None,
-            "created_at": run.created_at.isoformat(),
-            "started_at": run.started_at.isoformat() if run.started_at else None,
-            "finished_at": run.finished_at.isoformat() if run.finished_at else None,
+            "created_at": _iso_utc(run.created_at),
+            "started_at": _iso_utc(run.started_at) if run.started_at else None,
+            "finished_at": _iso_utc(run.finished_at) if run.finished_at else None,
             "recoverable": run.status in {"PAUSED", "FAILED", "INTERRUPTED"}
             and run.recoverable_step > 0,
         }

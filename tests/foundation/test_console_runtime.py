@@ -240,6 +240,34 @@ def test_content_workspaces_use_tabs_while_metric_strips_remain_visible():
     )
 
 
+def test_running_duration_uses_utc_instants_and_a_live_execution_label():
+    root = Path(__file__).parents[2]
+    shell = (
+        root / "generative_agents" / "web" / "static" / "experiment-console.html"
+    ).read_text(encoding="utf-8")
+    script_path = root / "generative_agents" / "web" / "static" / "console-api.js"
+    script = script_path.read_text(encoding="utf-8")
+
+    assert 'id="resultDurationLabel">执行时间' in shell
+    assert "terminal ? '实际耗时' : '执行时间'" in script
+    assert "function startResultDurationTimer(run)" in script
+    assert "`${text}Z`" in script
+
+    node = shutil.which("node")
+    assert node, "Node.js is required for the duration timezone contract"
+    program = r"""
+const fs = require('fs');
+const source = fs.readFileSync(process.argv[1], 'utf8');
+const start = source.indexOf('function parseApiInstant');
+const end = source.indexOf('function clearResultDurationTimer');
+eval(source.slice(start, end));
+Date.now = () => Date.parse('2026-08-09T06:09:27Z');
+if (formatDuration('2026-08-09T05:20:11', null) !== '49m 16s') process.exit(1);
+if (formatDuration('2026-08-09T05:20:11+00:00', '2026-08-09T06:09:27+00:00') !== '49m 16s') process.exit(2);
+"""
+    subprocess.run([node, "-e", program, str(script_path)], check=True)
+
+
 def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
     source = (
         Path(__file__).parents[2]

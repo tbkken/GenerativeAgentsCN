@@ -37,6 +37,7 @@ const state = {
 const statusLabels = {RUNNING:'运行中',COMPLETED:'已完成',FAILED:'失败'};
 const formatTime = value => value || '—';
 const formatDuration = () => '1m';
+const startResultDurationTimer = run => { $('duration').textContent = run.status; };
 const renderSummary = () => {};
 const renderTimeline = () => {};
 const renderAgents = () => {};
