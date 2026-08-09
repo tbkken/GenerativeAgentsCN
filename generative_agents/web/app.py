@@ -144,7 +144,6 @@ def create_app(
         )
     database = create_database(database_url)
     service = ExperimentService(database)
-    run_service = RunService(database, var_dir=var_dir)
     result_service = ResultQueryService(database)
     asset_service = AssetService(database, var_dir=var_dir)
     secret_service = SecretService(database, var_dir=var_dir)
@@ -154,6 +153,11 @@ def create_app(
     checkpoint_service = CheckpointService(database, var_dir=var_dir)
     model_probe_service = ModelProbeService(
         database, experiments=service, secrets=secret_service
+    )
+    run_service = RunService(
+        database,
+        var_dir=var_dir,
+        model_probes=model_probe_service,
     )
     supervisor = LocalProcessSupervisor(
         database,

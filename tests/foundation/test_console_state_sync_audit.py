@@ -44,6 +44,7 @@ const renderConversations = () => {};
 const renderMemories = () => {};
 const renderRunActions = run => { $('actions').textContent = run.status; };
 const renderOperations = operations => { $('artifacts').textContent = operations.marker; };
+const syncWorkspaceUrl = () => {};
 const refreshOperationFacts = async () => {};
 const loadOperationsWorkspace = async () => {};
 const ensureReplayPlayer = async () => {};

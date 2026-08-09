@@ -722,6 +722,10 @@
     $('chatSecret').value = '';
     $('chatSecret').placeholder = chat.secret_ref ? '已配置 · 输入新值可替换' : '未设置';
     $('resolvedChatModel').textContent = chat.resolved_model || '尚未解析';
+    const contextWindow = Number(chat.context_window || 0);
+    $('chatServiceCapability').textContent = contextWindow
+      ? `服务上下文窗口 ${contextWindow.toLocaleString('zh-CN')} tokens · Revision 已锁定`
+      : '服务上下文：发布启动时自动检测';
     const embedding = models.embedding;
     $('embeddingProvider').value = embedding.provider;
     $('embeddingModel').value = embedding.model;
@@ -1947,6 +1951,7 @@
       provider: chatProvider,
       model: $('chatModel').value.trim(),
       resolved_model: chatIdentityUnchanged ? oldChat.resolved_model : null,
+      context_window: chatIdentityUnchanged ? oldChat.context_window : null,
       base_url: chatBaseUrl,
       secret_ref: chatSecretRef,
       timeout_seconds: Number($('chatTimeout').value),
@@ -2026,6 +2031,12 @@
     });
     state.draft = await api(`/experiments/${state.selectedExperimentId}/draft`);
     fillDraft(state.draft.definition);
+    if (purpose === 'chat') {
+      const contextWindow = Number(result.service?.context_window || 0);
+      $('chatServiceCapability').textContent = contextWindow
+        ? `服务上下文窗口 ${contextWindow.toLocaleString('zh-CN')} tokens · 刚刚检测`
+        : '模型可用 · 服务未返回上下文窗口';
+    }
     scheduleGlobalReconcile({ full: true });
     showToast(`${result.resolved_model} · ${result.latency_ms} ms`, purpose === 'chat' ? '聊天模型可用' : 'Embedding 可用');
   }
@@ -2175,8 +2186,6 @@
   async function publishAndRun() {
     if (!state.draft) throw new Error('当前实验没有可发布草稿');
     await saveDraft({ silent: true });
-    const validation = await api(`/experiments/${state.selectedExperimentId}/draft/validate`, { method: 'POST' });
-    if (!validation.valid) throw new Error(`仍有 ${validation.errors.length} 个阻塞配置项`);
     const run = await api(`/experiments/${state.selectedExperimentId}/actions/publish-and-run`, {
       method: 'POST',
       body: JSON.stringify({
@@ -2835,7 +2844,13 @@
   $('confirmPublish').addEventListener('click', event => {
     if (!state.draft) return;
     event.stopImmediatePropagation();
-    publishAndRun().catch(reportError);
+    const button = event.currentTarget;
+    button.disabled = true;
+    button.textContent = '正在自动解析模型并启动…';
+    publishAndRun().catch(reportError).finally(() => {
+      button.disabled = false;
+      button.textContent = '确认发布并启动';
+    });
   }, true);
   $('confirmResumeRun').addEventListener('click', event => {
     event.stopImmediatePropagation();

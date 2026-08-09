@@ -90,6 +90,7 @@ class ResultsConfig(StrictModel):
 class ChatTransport(StrictModel):
     model: ModelName
     resolved_model: ModelName | None = None
+    context_window: int | None = Field(default=None, ge=1, le=10_000_000)
     timeout_seconds: int = Field(default=300, ge=1, le=1800)
     max_tokens: int = Field(default=2048, ge=1, le=131_072)
     temperature: float = Field(default=0.5, ge=0, le=2)

@@ -6,7 +6,7 @@ import base64
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from uuid import UUID, uuid4
 
 from filelock import FileLock
@@ -29,6 +29,9 @@ from generative_agents.runtime.context import RunPaths
 from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 
 from .errors import ServiceError, not_found
+
+if TYPE_CHECKING:
+    from .model_probes import ModelProbeService
 
 
 OPEN_RUN_STATUSES = frozenset(
@@ -78,10 +81,12 @@ class RunService:
         *,
         var_dir: str | Path,
         now: Callable[[], datetime] = _utc_now,
+        model_probes: ModelProbeService | None = None,
     ):
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._now = now
+        self._model_probes = model_probes
 
     def publish_and_run(
         self,
@@ -93,6 +98,14 @@ class RunService:
         """Publish the draft and enqueue its first Run in one transaction."""
 
         from .experiments import ExperimentService
+
+        if self._model_probes is not None:
+            prepared = self._model_probes.resolve_for_publish(
+                experiment_id,
+                expected_lock_version=expected_lock_version,
+            )
+            draft_revision_id = prepared["draft_revision_id"]
+            expected_lock_version = prepared["lock_version"]
 
         now = self._now()
         run_id = str(uuid4())

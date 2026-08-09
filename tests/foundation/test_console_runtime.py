@@ -297,10 +297,32 @@ def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
     ]
     assert "syncSelectedExperiment({ refreshDefinition: true" in publish
     assert "state.selectedRunId = run.run_id" in publish
+    assert "/draft/validate" not in publish
+    assert "/actions/publish-and-run" in publish
     assert "operations.artifact_jobs" in source
     assert "artifact_queued" in source
     assert "artifact_running" in source
     assert "result_rewound" in source
+
+
+def test_chat_output_limit_is_not_presented_as_the_model_context_window():
+    root = Path(__file__).parents[2]
+    shell = (
+        root
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "experiment-console.html"
+    ).read_text(encoding="utf-8")
+    script = (
+        root / "generative_agents" / "web" / "static" / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    assert "单次最大输出" in shell
+    assert "不是模型的上下文窗口" in shell
+    assert 'id="chatServiceCapability"' in shell
+    assert "result.service?.context_window" in script
+    assert "chat.context_window" in script
 
 
 def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():

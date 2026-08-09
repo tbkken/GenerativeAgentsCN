@@ -1461,14 +1461,14 @@
                 <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="auto" /></div>
                 <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:5001" /></div>
                 <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="300" /><span>秒</span></div></div>
-                <div class="field"><label for="chatMaxTokens">最大输出</label><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
+                <div class="field"><div class="field-label"><label for="chatMaxTokens">单次最大输出</label><button type="button" class="help-tip" aria-label="单次最大输出说明" data-tooltip="限制模型每次回复最多生成多少 tokens，不是模型的上下文窗口。服务上下文能力会在下方自动检测。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
                 <div class="field"><label for="chatTemperature">Temperature</label><input class="control dirty-track" id="chatTemperature" type="number" min="0" max="2" step="0.1" value="0.5" /></div>
                 <div class="field"><label for="chatRetries">失败重试</label><div class="input-unit"><input class="control dirty-track" id="chatRetries" type="number" min="1" max="20" value="10" /><span>次</span></div></div>
                 <div class="field"><label for="chatBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="chatBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
                 <div class="field"><label>思考模式</label><button class="switch" id="chatThinking" aria-label="切换聊天模型思考模式"></button></div>
                 <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
-              <div class="provider-foot"><span>GET /v1/models · 最近检测于 21:42</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
+              <div class="provider-foot"><span id="chatServiceCapability">服务上下文：发布启动时自动检测</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
             </article>
             <article class="card card-pad">
               <div class="provider-head"><div class="provider-logo blue">EMB</div><div class="section-title"><strong>记忆 Embedding 模型</strong><button type="button" class="help-tip" aria-label="Embedding 模型用途" data-tooltip="用于记忆索引、相似度检索和关联排序。">?</button></div><span class="connection-status">在线</span></div>
