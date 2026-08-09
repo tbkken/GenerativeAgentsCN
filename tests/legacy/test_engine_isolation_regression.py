@@ -74,6 +74,7 @@ class _FakeAgent:
 class _FakeGame:
     def __init__(self):
         self.agents = {"agent-a": _FakeAgent()}
+        self.agent_keys_by_name = {"Agent A": "agent-a"}
 
     def reset_game(self):
         pass

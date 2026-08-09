@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from string import Template
 from typing import Literal
 from urllib.parse import urlsplit
@@ -52,6 +53,19 @@ def validate_for_publish(
 
     if not any(agent.enabled for agent in definition.agents):
         errors.append(_issue("NO_ENABLED_AGENT", "agents", "至少需要一个启用的 Agent", "ERROR"))
+    enabled_agent_names = [agent.name for agent in definition.agents if agent.enabled]
+    duplicate_agent_names = sorted(
+        name for name, count in Counter(enabled_agent_names).items() if count > 1
+    )
+    if duplicate_agent_names:
+        errors.append(
+            _issue(
+                "DUPLICATE_ENABLED_AGENT_NAME",
+                "agents",
+                "启用的 Agent 名称必须唯一: " + ", ".join(duplicate_agent_names),
+                "ERROR",
+            )
+        )
 
     missing_prompts = sorted(REQUIRED_PROMPT_KEYS - definition.prompts.keys())
     if missing_prompts:

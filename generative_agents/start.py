@@ -91,7 +91,7 @@ class SimulationRunner:
             )
             collector = StepResultCollector(
                 builder,
-                name_to_key={agent.name: key for key, agent in self.game.agents.items()},
+                name_to_key=self.game.agent_keys_by_name,
             )
             for agent_key, status in self.agent_status.items():
                 agent = self.game.get_agent(agent_key)

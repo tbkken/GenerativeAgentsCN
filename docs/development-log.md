@@ -376,3 +376,14 @@ clock 的 tzinfo 还原，再统一转换成 UTC instant 比较。Action、Sched
 新步骤会保存最多 20 条当步感知、日程摘要、行动、实际路径和分类记忆计数，不复制完整向量索引。旧 Run 通过
 空 JSON 默认值保持可读，页面只展示它确实拥有的历史事实。真实 100 步 Run 已验证 25 个 Agent、六类分区、
 Agent 切换、事件单类筛选和搜索；Fresh Browser 控制台为 0，仓库全量为 235 passed / 7 native-symlink skipped。
+
+### Agent 社交身份：稳定 Key 与显示名双索引
+
+Web 运行时把 `Game.agents` 改为按稳定 `agent_key` 存储后，旧认知领域仍用 `Event.subject` 的显示名查找人物；
+`_reaction` 因此在模型调用前返回，连带使聊天、等待、人物寻路和占位格过滤失效。Run 级持久化、checkpoint 与
+结果投影继续以 `agent_key` 为权威；Game 额外建立只读 `agents_by_name` 和 `agent_keys_by_name`，只把前者传入旧
+认知领域，并让结果收集复用后者。发布校验阻止启用 Agent 重名，运行时仍有相同防线；Draft 可以保留未发布的
+重名编辑状态。旧 checkpoint 的中文 `Event.subject` 无需迁移即可恢复解析，对话结果参与者仍投影为稳定 Key。
+
+回归覆盖显示名反应解析、占位目标排除、Game 入口索引所有权、对话消息与稳定参与者 Key、发布重名校验和旧引擎
+隔离。当前仓库全量为 250 passed / 7 native-symlink skipped。

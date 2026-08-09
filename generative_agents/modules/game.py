@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import copy
 from pathlib import Path
+from types import MappingProxyType
+from typing import Mapping
 
 from generative_agents.modules import utils
 from generative_agents.modules.agent import Agent
@@ -42,6 +44,8 @@ class Game:
         )
         self.conversation = conversation
         self.agents: dict[str, Agent] = {}
+        agents_by_name: dict[str, Agent] = {}
+        agent_keys_by_name: dict[str, str] = {}
         agent_base = copy.deepcopy(config.get("agent_base", {}))
         storage_root = Path(
             config.get("storage_root", context.paths.root / "storage")
@@ -59,11 +63,21 @@ class Game:
             )
             agent_config["agent_key"] = agent_key
             agent_config["storage_root"] = str(storage_root / agent_key)
+            agent_name = str(agent_config.get("name") or "").strip()
+            if not agent_name:
+                raise ValueError(f"runtime agent name is required: {agent_key}")
+            if agent_name in agent_keys_by_name:
+                raise ValueError(
+                    "enabled agent names must be unique: "
+                    f"{agent_name!r} is used by {agent_keys_by_name[agent_name]!r} "
+                    f"and {agent_key!r}"
+                )
+            agent_config["name"] = agent_name
             embedding_config = agent_config.get("associate", {}).get("embedding")
             if isinstance(embedding_config, dict):
                 embedding_config["_control"] = context.control
                 embedding_config["_logger"] = context.logger
-            self.agents[agent_key] = Agent(
+            agent = Agent(
                 agent_config,
                 self.maze,
                 self.conversation,
@@ -75,13 +89,25 @@ class Game:
                 model_trace=context.metadata.get("model_trace"),
                 algorithm=context.algorithm,
             )
+            self.agents[agent_key] = agent
+            agents_by_name[agent_name] = agent
+            agent_keys_by_name[agent_name] = agent_key
+
+        # The runtime/persistence identity is the immutable agent_key, while the
+        # legacy cognition domain expresses people in Event.subject by display
+        # name.  Keep those namespaces explicit instead of mixing aliases into
+        # one dict (which would duplicate agents during iteration and snapshot).
+        self.agents_by_name: Mapping[str, Agent] = MappingProxyType(agents_by_name)
+        self.agent_keys_by_name: Mapping[str, str] = MappingProxyType(
+            agent_keys_by_name
+        )
 
     def get_agent(self, agent_key: str) -> Agent:
         return self.agents[agent_key]
 
     def agent_think(self, agent_key: str, status: dict) -> dict:
         agent = self.get_agent(agent_key)
-        plan = agent.think(status, self.agents)
+        plan = agent.think(status, self.agents_by_name)
         info = {
             "currently": agent.scratch.currently,
             "associate": agent.associate.abstract(),

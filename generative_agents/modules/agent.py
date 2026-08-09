@@ -196,7 +196,7 @@ class Agent:
         self.logger.debug(utils.block_msg(title, msg))
         return output
 
-    def think(self, status, agents):
+    def think(self, status, agents_by_name):
         events = self.move(status["coord"], status.get("path"))
         plan, _ = self.make_schedule()
 
@@ -221,7 +221,7 @@ class Agent:
             )
         if self.is_awake():
             self.percept()
-            self.make_plan(agents)
+            self.make_plan(agents_by_name)
             self.reflect()
         else:
             if self.action.finished():
@@ -231,12 +231,12 @@ class Agent:
         if self.action:
             emojis[self.name] = {"emoji": self.get_event().emoji, "coord": self.coord}
         for eve, coord in events.items():
-            if eve.subject in agents:
+            if eve.subject in agents_by_name:
                 continue
             emojis[":".join(eve.address)] = {"emoji": eve.emoji, "coord": coord}
         self.plan = {
             "name": self.name,
-            "path": self.find_path(agents),
+            "path": self.find_path(agents_by_name),
             "emojis": emojis,
         }
         return self.plan
@@ -424,8 +424,8 @@ class Agent:
             "{} percept {}/{} concepts".format(self.name, valid_num, len(self.concepts))
         )
 
-    def make_plan(self, agents):
-        if self._reaction(agents):
+    def make_plan(self, agents_by_name):
+        if self._reaction(agents_by_name):
             return
         if self.path:
             return
@@ -500,7 +500,7 @@ class Agent:
         self.status["poignancy"] = 0
         self.chats = []
 
-    def find_path(self, agents):
+    def find_path(self, agents_by_name):
         address = self.get_event().address
         if self.path:
             return self.path
@@ -509,7 +509,7 @@ class Agent:
         if address[0] == "<waiting>":
             return []
         if address[0] == "<persona>":
-            target_tiles = self.maze.get_around(agents[address[1]].coord)
+            target_tiles = self.maze.get_around(agents_by_name[address[1]].coord)
         else:
             target_tiles = self.maze.get_address_tiles(address)
         if tuple(self.coord) in target_tiles:
@@ -520,7 +520,7 @@ class Agent:
             if list(t_coord) == list(self.coord):
                 return True
             events = self.maze.tile_at(t_coord).get_events()
-            if any(e.subject in agents for e in events):
+            if any(e.subject in agents_by_name for e in events):
                 return True
             return False
 
@@ -574,17 +574,18 @@ class Agent:
             clock=self._clock,
         )
 
-    def _reaction(self, agents=None, ignore_words=None):
+    def _reaction(self, agents_by_name=None, ignore_words=None):
         focus = None
+        agents_by_name = agents_by_name or {}
         ignore_words = ignore_words or ["空闲"]
 
         def _focus(concept):
-            return concept.event.subject in agents
+            return concept.event.subject in agents_by_name
 
         def _ignore(concept):
             return any(i in concept.describe for i in ignore_words)
 
-        if agents:
+        if agents_by_name:
             priority = [i for i in self.concepts if _focus(i)]
             if priority:
                 focus = self._rng.choice(priority)
@@ -592,9 +593,10 @@ class Agent:
             priority = [i for i in self.concepts if not _ignore(i)]
             if priority:
                 focus = self._rng.choice(priority)
-        if not focus or focus.event.subject not in agents:
+        if not focus or focus.event.subject not in agents_by_name:
             return
-        other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
+        other = agents_by_name[focus.event.subject]
+        focus = self.associate.get_relation(focus)
 
         if self._chat_with(other, focus):
             return True
