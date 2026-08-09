@@ -1227,6 +1227,7 @@
             <div class="result-heading-actions">
               <button class="btn" id="runPauseResumeBtn" hidden>暂停运行</button>
               <button class="btn" id="runCancelBtn" hidden>取消运行</button>
+              <button class="btn btn-primary" id="runContinueBtn" hidden>继续执行</button>
               <button class="btn" id="runAgainBtn" hidden>再次运行</button>
               <button class="btn" id="exportResultsBtn">导出结果</button>
               <button class="btn btn-primary" id="openReplayBtn">▶ 打开回放</button>
@@ -1614,6 +1615,21 @@ ${name} 当前的情况：${currently}</textarea>
         </div>
       </div>
       <div class="modal-foot"><button class="btn" id="cancelModal">取消</button><button class="btn btn-primary" id="confirmPublish">确认发布并启动</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="resumeRunModal" role="dialog" aria-modal="true" aria-labelledby="resumeRunTitle">
+    <div class="modal">
+      <div class="modal-head"><div><h2 id="resumeRunTitle">继续执行当前 Run？</h2><p>使用已验证的恢复点创建新 Attempt，原失败记录和结果会完整保留。</p></div><button class="close" id="closeResumeRun" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="manifest-preview">
+          <div class="manifest-row"><span>当前 Run</span><strong id="resumeRunIdentity">待确认</strong></div>
+          <div class="manifest-row"><span>有效恢复点</span><strong id="resumeRunStep">Step —</strong></div>
+          <div class="manifest-row"><span>继续位置</span><strong id="resumeRunNextStep">Step —</strong></div>
+          <div class="manifest-row"><span>配置版本</span><strong>保持原 Revision 不变</strong></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="cancelResumeRun">取消</button><button class="btn btn-primary" id="confirmResumeRun">继续执行</button></div>
     </div>
   </div>
 

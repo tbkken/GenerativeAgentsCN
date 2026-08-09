@@ -80,6 +80,8 @@
     selectedTemplate: '标准小镇模板',
     activeModalId: null,
     modalReturnFocus: null,
+    pendingResumeRunId: null,
+    pendingResumeStep: 0,
     workspacePage: 'experiments',
     remoteConflictKey: null,
     bootstrapped: false,
@@ -343,6 +345,18 @@
     $('modalWorld').textContent = state.definition.world.world_name || '世界待配置';
     $('modalHash').textContent = '将在发布事务中生成并锁定';
     openModal('publishModal', 'confirmPublish');
+  }
+
+  function openResumeRunModal() {
+    const run = state.currentRun;
+    if (!isRunRecoverable(run)) throw new Error('当前运行没有可用的恢复点');
+    const step = Number(run.recoverable_step);
+    state.pendingResumeRunId = run.run_id;
+    state.pendingResumeStep = step;
+    $('resumeRunIdentity').textContent = run.run_id.slice(0, 12);
+    $('resumeRunStep').textContent = `Step ${step}`;
+    $('resumeRunNextStep').textContent = `Step ${step + 1}`;
+    openModal('resumeRunModal', 'confirmResumeRun');
   }
 
   async function api(path, options = {}) {
@@ -1056,14 +1070,25 @@
     };
   }
 
+  function isRunRecoverable(run) {
+    return Boolean(run?.recoverable)
+      && Number(run.recoverable_step) > 0
+      && ['PAUSED', 'FAILED', 'INTERRUPTED'].includes(run.status);
+  }
+
   function renderRunActions(run) {
     const pauseResume = $('runPauseResumeBtn');
     const cancel = $('runCancelBtn');
+    const continueRun = $('runContinueBtn');
     const again = $('runAgainBtn');
-    pauseResume.hidden = !['RUNNING', 'PAUSED'].includes(run.status);
-    pauseResume.textContent = run.status === 'PAUSED' ? '继续运行' : '暂停运行';
+    const canContinue = isRunRecoverable(run);
+    pauseResume.hidden = run.status !== 'RUNNING';
+    pauseResume.textContent = '暂停运行';
     cancel.hidden = !['QUEUED', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED'].includes(run.status);
+    continueRun.hidden = !canContinue;
+    continueRun.textContent = canContinue ? `继续执行 · Step ${run.recoverable_step}` : '继续执行';
     again.hidden = !['COMPLETED', 'CANCELLED', 'FAILED', 'INTERRUPTED'].includes(run.status);
+    $('openReplayBtn').classList.toggle('btn-primary', !canContinue);
   }
 
   function renderAgents(items) {
@@ -2197,6 +2222,7 @@
       && experimentId === state.selectedExperimentId
       && generation === state.resultGeneration) {
       state.currentRun = run;
+      renderRunActions(run);
       await Promise.all([
         syncSelectedExperiment({ refreshOverview: true }),
         refreshRunHistoryList(state.selectedExperimentId, state.selectedRunId),
@@ -2305,6 +2331,7 @@
   });
   $('closeModal').addEventListener('click', () => closeModal('publishModal'));
   $('cancelModal').addEventListener('click', () => closeModal('publishModal'));
+  [$('closeResumeRun'), $('cancelResumeRun')].forEach(button => button.addEventListener('click', () => closeModal('resumeRunModal')));
   [$('closeLeaveModal'), $('cancelLeave')].forEach(button => button.addEventListener('click', () => closeModal('leaveModal')));
   $('saveAndLeave').addEventListener('click', () => {
     saveDraft().then(() => {
@@ -2748,6 +2775,10 @@
     event.stopImmediatePropagation();
     controlRun('cancel').catch(reportError);
   }, true);
+  $('runContinueBtn').addEventListener('click', event => {
+    event.stopImmediatePropagation();
+    try { openResumeRunModal(); } catch (error) { reportError(error); }
+  }, true);
   $('runAgainBtn').addEventListener('click', event => {
     event.stopImmediatePropagation();
     runPublishedRevision().catch(reportError);
@@ -2779,6 +2810,25 @@
     if (!state.draft) return;
     event.stopImmediatePropagation();
     publishAndRun().catch(reportError);
+  }, true);
+  $('confirmResumeRun').addEventListener('click', event => {
+    event.stopImmediatePropagation();
+    const button = event.currentTarget;
+    if (!state.pendingResumeRunId || state.pendingResumeRunId !== state.selectedRunId) {
+      closeModal('resumeRunModal');
+      reportError(new Error('当前选择的 Run 已变更，请重新确认'));
+      return;
+    }
+    button.disabled = true;
+    button.textContent = '正在恢复…';
+    controlRun('resume').then(() => {
+      closeModal('resumeRunModal');
+      state.pendingResumeRunId = null;
+      state.pendingResumeStep = 0;
+    }).catch(reportError).finally(() => {
+      button.disabled = false;
+      button.textContent = '继续执行';
+    });
   }, true);
   [$('exportBundleBtn'), $('exportResultsBtn')].forEach(button => button?.addEventListener('click', event => {
     event.stopImmediatePropagation();

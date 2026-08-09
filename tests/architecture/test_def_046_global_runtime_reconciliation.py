@@ -76,6 +76,7 @@ const cut = (start, end) => {
 };
 const production = [
   cut('function workspaceUrl(', 'function goToPage('),
+  cut('function isRunRecoverable(', 'function renderRunActions('),
   cut('function cardTemplate(item)', 'async function loadExperiments()'),
   cut('async function loadExperiments()', 'function renderPages(totalPages)'),
   cut('function renderPages(totalPages)', 'function updateTabCounts(counts)'),

@@ -205,6 +205,73 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
 
 
+def test_recoverable_run_action_is_visible_before_rerun_and_uses_resume():
+    node = shutil.which("node")
+    assert node, "Node.js is required for the executable Run action contract"
+    root = Path(__file__).parents[2]
+    shell_path = root / "generative_agents" / "web" / "static" / "experiment-console.html"
+    script_path = root / "generative_agents" / "web" / "static" / "console-api.js"
+    shell = shell_path.read_text(encoding="utf-8")
+    source = script_path.read_text(encoding="utf-8")
+
+    assert shell.index('id="runContinueBtn"') < shell.index('id="runAgainBtn"')
+    assert 'id="resumeRunModal"' in shell
+    assert 'id="resumeRunStep"' in shell
+    assert 'id="resumeRunNextStep"' in shell
+    assert "function openResumeRunModal()" in source
+    assert "['PAUSED', 'FAILED', 'INTERRUPTED'].includes(run.status)" in source
+    assert "controlRun('resume')" in source
+    assert "state.pendingResumeRunId !== state.selectedRunId" in source
+
+    program = r"""
+const fs = require('fs');
+const source = fs.readFileSync(process.argv[1], 'utf8');
+const start = source.indexOf('function isRunRecoverable(');
+const end = source.indexOf('function renderAgents(', start);
+const values = new Set(['btn-primary']);
+const elements = new Map();
+const element = id => {
+  if (!elements.has(id)) elements.set(id, {
+    id, hidden: true, textContent: '',
+    classList: { toggle(name, force) { if (force) values.add(name); else values.delete(name); } },
+  });
+  return elements.get(id);
+};
+const $ = element;
+eval(source.slice(start, end));
+const snapshot = run => {
+  renderRunActions(run);
+  return {
+    pauseHidden: element('runPauseResumeBtn').hidden,
+    cancelHidden: element('runCancelBtn').hidden,
+    continueHidden: element('runContinueBtn').hidden,
+    continueText: element('runContinueBtn').textContent,
+    againHidden: element('runAgainBtn').hidden,
+    replayPrimary: values.has('btn-primary'),
+  };
+};
+const failed = snapshot({status:'FAILED', recoverable:true, recoverable_step:30});
+const unavailable = snapshot({status:'FAILED', recoverable:false, recoverable_step:0});
+const paused = snapshot({status:'PAUSED', recoverable:true, recoverable_step:7});
+const running = snapshot({status:'RUNNING', recoverable:false, recoverable_step:7});
+if (JSON.stringify(failed) !== JSON.stringify({
+  pauseHidden:true, cancelHidden:true, continueHidden:false,
+  continueText:'继续执行 · Step 30', againHidden:false, replayPrimary:false,
+})) process.exit(1);
+if (!unavailable.continueHidden || unavailable.againHidden || !unavailable.replayPrimary) process.exit(2);
+if (paused.continueHidden || paused.continueText !== '继续执行 · Step 7' || paused.cancelHidden) process.exit(3);
+if (running.pauseHidden || running.cancelHidden || !running.continueHidden || !running.againHidden) process.exit(4);
+"""
+    subprocess.run(
+        [node, "-e", program, str(script_path)],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+
+
 def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
     source = (
         Path(__file__).parents[2]
