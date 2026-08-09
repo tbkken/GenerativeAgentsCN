@@ -180,6 +180,31 @@ def test_selected_result_run_is_not_confused_with_the_experiment_latest_run():
     assert "refreshRunHistoryList(state.selectedExperimentId, state.selectedRunId)" in source
 
 
+def test_console_url_tracks_the_selected_experiment_workspace_and_run():
+    source = (
+        Path(__file__).parents[2]
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    route = source[source.index("function workspaceUrl") : source.index("function markDirty")]
+    bootstrap = source[source.index("async function bootstrapConsole") :]
+
+    assert "url.searchParams.set('experiment_id', state.selectedExperimentId)" in route
+    assert "url.searchParams.set('view', pageName)" in route
+    assert "pageName === 'results' && state.selectedRunId" in route
+    assert "url.searchParams.set('run_id', state.selectedRunId)" in route
+    assert "if (pageName !== 'experiments'" in route
+    assert "history.replaceState(null, '', nextUrl)" in route
+    assert "syncWorkspaceUrl();" in route
+    assert "openExperiment(id, targetPage = 'overview', preferredRunId = null)" in source
+    assert "preferredRunId || state.latestRunId" in source
+    assert "requestedView !== 'experiments' && $(`page-${requestedView}`)" in bootstrap
+    assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
+
+
 def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
     source = (
         Path(__file__).parents[2]
