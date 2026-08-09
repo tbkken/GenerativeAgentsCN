@@ -48,14 +48,16 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
             "run_agent_steps",
             "run_conversations",
             "run_messages",
-            "run_memory_events",
-            "builtin_catalog_snapshots",
-        } <= tables
+                "run_memory_events",
+                "builtin_catalog_snapshots",
+                "world_maps",
+                "world_map_revisions",
+            } <= tables
         assert connection.exec_driver_sql("PRAGMA foreign_keys").scalar() == 1
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-        ).scalar() == "0006_agent_decision_context"
+            ).scalar() == "0007_public_world_maps"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):
