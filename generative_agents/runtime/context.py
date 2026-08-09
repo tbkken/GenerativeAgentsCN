@@ -164,6 +164,12 @@ class RunPaths:
         return self.root / "worker.lock"
 
     @property
+    def checkpoint_lock(self) -> Path:
+        """Cross-process lock protecting published checkpoint bundles."""
+
+        return self.root / "checkpoint.lock"
+
+    @property
     def artifact_lock(self) -> Path:
         return self.root / "artifact.lock"
 

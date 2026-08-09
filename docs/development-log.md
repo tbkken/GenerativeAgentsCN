@@ -387,3 +387,21 @@ Web 运行时把 `Game.agents` 改为按稳定 `agent_key` 存储后，旧认知
 
 回归覆盖显示名反应解析、占位目标排除、Game 入口索引所有权、对话消息与稳定参与者 Key、发布重名校验和旧引擎
 隔离。当前仓库全量为 250 passed / 7 native-symlink skipped。
+
+### Windows Checkpoint 淘汰竞争修复
+
+真实 Run `37d7c491-d42e-4b12-a621-af6c6ed0ad39` 在提交 Step 21 前失败：Web 结果页周期性读取
+Checkpoint 列表时会完整打开并校验 bundle 成员，worker 同时对旧目录直接执行 `shutil.rmtree`；Windows 不允许
+删除仍被其他进程读取的 `index_store.json`，并且逐文件删除会留下半损坏的公开 Checkpoint，异常又位于 Step
+提交关键路径，最终将整个 Attempt 标为失败。
+
+修复后，每个 Run 使用独立 `checkpoint.lock` 串行化发布、校验、预览、恢复复制和 Checkpoint ZIP 导出。保留策略
+不再直接递归删除 `step-*`：先在同一目录原子重命名为私有 `.prune-*` tombstone，再有限重试删除；发生 Windows
+共享冲突或外部索引器占用时延迟到后续 Step 清理。重命名失败会保留完整公开 bundle，重命名成功后的部分删除只会
+发生在私有 tombstone；所有 retention `OSError` 都只记录维护告警，不再把已经持久化的新 Step 变成
+`WORKER_ERROR`。恢复时的 bundle/state/conversation/storage 复制也保持在同一把锁内，避免 validate 后再读取的
+TOCTOU 窗口。
+
+回归覆盖确定性 `WinError 32`、真实主机打开 `resident-013/associate/index_store.json`、跨线程读写互斥、损坏
+LATEST 回退、恢复、结构化详情/预览和精确 Checkpoint 导出。最终仓库全量为 253 passed / 7 native-symlink
+skipped。

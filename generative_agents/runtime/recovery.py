@@ -164,19 +164,21 @@ class RunProjectionRewinder:
 
     @staticmethod
     def _select_checkpoint(paths, boundary: int, destination: Path) -> None:
+        reader = CheckpointBundleWriter(
+            paths, lambda _: CheckpointSnapshot(state={}, conversation={})
+        )
         if boundary > 0:
-            CheckpointBundleWriter(
-                paths, lambda _: CheckpointSnapshot(state={}, conversation={})
-            ).select_for_recovery(boundary, orphan_root=destination)
+            reader.select_for_recovery(boundary, orphan_root=destination)
             return
-        checkpoint_root = paths.checkpoints.resolve()
-        for checkpoint in sorted(paths.checkpoints.glob("step-*")):
-            resolved = checkpoint.resolve()
-            if resolved.parent != checkpoint_root or checkpoint.is_symlink():
-                raise RuntimeError("unsafe checkpoint path")
-            destination.mkdir(parents=True, exist_ok=True)
-            os.replace(resolved, destination / checkpoint.name)
-        (paths.checkpoints / "LATEST").unlink(missing_ok=True)
+        with reader.access():
+            checkpoint_root = paths.checkpoints.resolve()
+            for checkpoint in sorted(paths.checkpoints.glob("step-*")):
+                resolved = checkpoint.resolve()
+                if resolved.parent != checkpoint_root or checkpoint.is_symlink():
+                    raise RuntimeError("unsafe checkpoint path")
+                destination.mkdir(parents=True, exist_ok=True)
+                os.replace(resolved, destination / checkpoint.name)
+            (paths.checkpoints / "LATEST").unlink(missing_ok=True)
 
     @staticmethod
     def _sha256(path: Path) -> str:

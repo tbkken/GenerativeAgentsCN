@@ -37,25 +37,28 @@ class CheckpointService:
 
     def list_checkpoints(self, run_id: str) -> dict[str, Any]:
         run, paths, database_markers = self._context(run_id)
-        physical: dict[int, Path] = {}
-        if paths.checkpoints.exists():
-            for candidate in paths.checkpoints.iterdir():
-                match = _CHECKPOINT_NAME.fullmatch(candidate.name)
-                if match and (candidate.is_dir() or candidate.is_symlink()):
-                    physical[int(match.group(1))] = candidate
-        steps = set(database_markers) | set(physical)
-        if run.recoverable_step > 0:
-            steps.add(run.recoverable_step)
-        items = [
-            self._item(
-                run,
-                paths,
-                step_no,
-                database_marker=database_markers.get(step_no),
-                physical_path=physical.get(step_no),
-            )
-            for step_no in sorted(steps, reverse=True)
-        ]
+        reader = self._reader(paths)
+        with reader.access():
+            physical: dict[int, Path] = {}
+            if paths.checkpoints.exists():
+                for candidate in paths.checkpoints.iterdir():
+                    match = _CHECKPOINT_NAME.fullmatch(candidate.name)
+                    if match and (candidate.is_dir() or candidate.is_symlink()):
+                        physical[int(match.group(1))] = candidate
+            steps = set(database_markers) | set(physical)
+            if run.recoverable_step > 0:
+                steps.add(run.recoverable_step)
+            items = [
+                self._item(
+                    run,
+                    paths,
+                    step_no,
+                    database_marker=database_markers.get(step_no),
+                    physical_path=physical.get(step_no),
+                    reader=reader,
+                )
+                for step_no in sorted(steps, reverse=True)
+            ]
         can_resume = any(item["resumable"] for item in items)
         return {
             "run_id": run.id,
@@ -67,15 +70,35 @@ class CheckpointService:
 
     def detail(self, run_id: str, step_no: int) -> dict[str, Any]:
         run, paths, database_markers = self._context(run_id)
+        reader = self._reader(paths)
+        with reader.access():
+            return self._detail_locked(
+                run,
+                paths,
+                database_markers,
+                step_no,
+                reader=reader,
+            )
+
+    def _detail_locked(
+        self,
+        run: Run,
+        paths: RunPaths,
+        database_markers: dict[int, RunStep],
+        step_no: int,
+        *,
+        reader: CheckpointBundleWriter,
+    ) -> dict[str, Any]:
         item = self._item(
             run,
             paths,
             step_no,
             database_marker=database_markers.get(step_no),
             physical_path=paths.checkpoints / f"step-{step_no:06d}",
+            reader=reader,
         )
         if item["status"] == "NOT_FOUND":
-            raise not_found("checkpoint", f"{run_id}:{step_no}")
+            raise not_found("checkpoint", f"{run.id}:{step_no}")
         if item["status"] == "PRUNED":
             raise ServiceError(
                 "CHECKPOINT_PRUNED",
@@ -148,21 +171,23 @@ class CheckpointService:
                 status_code=422,
                 details={"allowed": sorted(_PREVIEW_FILES)},
             )
-        # Detail performs a fresh full bundle validation before any member is
-        # opened, preventing previews of undeclared or modified JSON files.
-        self.detail(run_id, step_no)
-        _run, paths, _markers = self._context(run_id)
-        target = paths.checkpoints / f"step-{step_no:06d}" / _PREVIEW_FILES[section]
-        window = read_utf8_window(
-            target,
-            cursor=cursor,
-            limit_bytes=limit_bytes,
-            expected_file_id=file_id,
-            missing_code="CHECKPOINT_MEMBER_MISSING",
-            truncated_code="CHECKPOINT_MEMBER_TRUNCATED",
-            rotated_code="CHECKPOINT_MEMBER_CHANGED",
-            encoding_code="CHECKPOINT_MEMBER_ENCODING_INVALID",
-        )
+        run, paths, markers = self._context(run_id)
+        reader = self._reader(paths)
+        with reader.access():
+            # Validate and consume under the same lock.  Otherwise retention
+            # could remove a verified member between these two operations.
+            self._detail_locked(run, paths, markers, step_no, reader=reader)
+            target = paths.checkpoints / f"step-{step_no:06d}" / _PREVIEW_FILES[section]
+            window = read_utf8_window(
+                target,
+                cursor=cursor,
+                limit_bytes=limit_bytes,
+                expected_file_id=file_id,
+                missing_code="CHECKPOINT_MEMBER_MISSING",
+                truncated_code="CHECKPOINT_MEMBER_TRUNCATED",
+                rotated_code="CHECKPOINT_MEMBER_CHANGED",
+                encoding_code="CHECKPOINT_MEMBER_ENCODING_INVALID",
+            )
         return {
             "run_id": run_id,
             "step_no": step_no,
@@ -214,6 +239,7 @@ class CheckpointService:
         *,
         database_marker: RunStep | None,
         physical_path: Path | None,
+        reader: CheckpointBundleWriter,
     ) -> dict[str, Any]:
         base = {
             "step_no": step_no,
@@ -260,9 +286,6 @@ class CheckpointService:
                 base["status"] = "NOT_FOUND"
             return base
         base["retained"] = True
-        reader = CheckpointBundleWriter(
-            paths, lambda _: CheckpointSnapshot(state={}, conversation={})
-        )
         try:
             stored = reader.validate(physical_path)
             bundle = self._read_json(physical_path / "bundle.json")
@@ -298,6 +321,12 @@ class CheckpointService:
             }
         )
         return base
+
+    @staticmethod
+    def _reader(paths: RunPaths) -> CheckpointBundleWriter:
+        return CheckpointBundleWriter(
+            paths, lambda _: CheckpointSnapshot(state={}, conversation={})
+        )
 
     @staticmethod
     def _read_json(path: Path) -> Any:

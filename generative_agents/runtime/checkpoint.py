@@ -5,13 +5,18 @@ from __future__ import annotations
 import hashlib
 import gzip
 import json
+import logging
 import os
 import re
 import shutil
+import time
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping
 from uuid import uuid4
+
+from filelock import FileLock
 
 from .context import RunPaths
 from .frame_store import StoredFrame
@@ -20,6 +25,8 @@ from .results import StepResult
 
 StorageExporter = Callable[[Path], None]
 _SAFE_AGENT_KEY = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,79}$")
+_PRUNE_TOMBSTONE = re.compile(r"^\.prune-step-[0-9]{6}-[0-9a-f-]+\.tmp$")
+_LOGGER = logging.getLogger(__name__)
 
 
 def _canonical_json(value: Any) -> bytes:
@@ -76,79 +83,99 @@ class CheckpointBundleWriter:
         self._snapshot_provider = snapshot_provider
         self._retention = retention
         self._paths.ensure()
+        # Correctness is preferable to timing out a durable Step while a large
+        # checkpoint preview/export is still consuming the previous bundle.
+        self._checkpoint_lock = FileLock(str(self._paths.checkpoint_lock), timeout=-1)
+
+    @contextmanager
+    def access(self):
+        """Serialize readers, publishers and retention across processes.
+
+        Callers that need to validate and then consume several checkpoint files
+        must keep this context open for the complete operation.  The lock is
+        re-entrant for this writer, so calling ``validate`` inside it is safe.
+        """
+
+        with self._checkpoint_lock:
+            yield
 
     def write(self, result: StepResult, frame: StoredFrame) -> Path:
-        if result.run_id != self._paths.run_id:
-            raise ValueError("result run_id does not own this checkpoint writer")
-        snapshot = self._snapshot_provider(result)
-        target = self._paths.checkpoints / f"step-{result.step_no:06d}"
-        if target.exists():
-            existing = self.validate(target)
-            self._advance_latest(target.name, existing.bundle_sha256)
-            self._prune_old()
-            return target
+        with self.access():
+            if result.run_id != self._paths.run_id:
+                raise ValueError("result run_id does not own this checkpoint writer")
+            snapshot = self._snapshot_provider(result)
+            target = self._paths.checkpoints / f"step-{result.step_no:06d}"
+            if target.exists():
+                existing = self.validate(target)
+                self._advance_latest(target.name, existing.bundle_sha256)
+                self._prune_old()
+                return target
 
-        temporary = self._paths.checkpoints / (
-            f".step-{result.step_no:06d}-{uuid4()}.tmp"
-        )
-        temporary.mkdir(parents=False, exist_ok=False)
-        try:
-            self._write_bytes(temporary / "state.json", _canonical_json(snapshot.state))
-            self._write_bytes(
-                temporary / "conversation.json",
-                _canonical_json(snapshot.conversation),
+            temporary = self._paths.checkpoints / (
+                f".step-{result.step_no:06d}-{uuid4()}.tmp"
             )
-            shutil.copyfile(frame.path, temporary / "frame.json.gz")
-            self._fsync_file(temporary / "frame.json.gz")
-
-            storage_root = temporary / "storage"
-            for agent_key, exporter in sorted(snapshot.storage_exporters.items()):
-                if not _SAFE_AGENT_KEY.fullmatch(agent_key):
-                    raise ValueError(f"unsafe agent_key for storage path: {agent_key!r}")
-                destination = storage_root / agent_key / "associate"
-                destination.mkdir(parents=True, exist_ok=False)
-                exporter(destination)
-
-            files = []
-            for file_path in sorted(temporary.rglob("*")):
-                if file_path.is_symlink():
-                    raise ValueError(f"checkpoint exporter created a symlink: {file_path}")
-                if not file_path.is_file():
-                    continue
-                self._fsync_file(file_path)
-                files.append(
-                    {
-                        "path": file_path.relative_to(temporary).as_posix(),
-                        "size": file_path.stat().st_size,
-                        "sha256": _sha256(file_path),
-                    }
+            temporary.mkdir(parents=False, exist_ok=False)
+            try:
+                self._write_bytes(temporary / "state.json", _canonical_json(snapshot.state))
+                self._write_bytes(
+                    temporary / "conversation.json",
+                    _canonical_json(snapshot.conversation),
                 )
-            bundle = {
-                "bundle_schema_version": self.BUNDLE_SCHEMA_VERSION,
-                "run_id": str(result.run_id),
-                "attempt_id": str(result.attempt_id),
-                "step_no": result.step_no,
-                "virtual_time": result.virtual_time.isoformat(),
-                "frame_sha256": frame.sha256,
-                "files": files,
-            }
-            bundle_path = temporary / "bundle.json"
-            self._write_bytes(bundle_path, _canonical_json(bundle))
-            bundle_sha256 = _sha256(bundle_path)
-            self._fsync_directory_tree(temporary)
-            os.rename(temporary, target)
-            self._fsync_directory(target.parent)
-            validated = self.validate(target)
-            if validated.bundle_sha256 != bundle_sha256:
-                raise CheckpointConflictError("checkpoint changed during materialization")
-            self._advance_latest(target.name, bundle_sha256)
-            self._prune_old()
-            return target
-        finally:
-            if temporary.exists():
-                shutil.rmtree(temporary)
+                shutil.copyfile(frame.path, temporary / "frame.json.gz")
+                self._fsync_file(temporary / "frame.json.gz")
+
+                storage_root = temporary / "storage"
+                for agent_key, exporter in sorted(snapshot.storage_exporters.items()):
+                    if not _SAFE_AGENT_KEY.fullmatch(agent_key):
+                        raise ValueError(f"unsafe agent_key for storage path: {agent_key!r}")
+                    destination = storage_root / agent_key / "associate"
+                    destination.mkdir(parents=True, exist_ok=False)
+                    exporter(destination)
+
+                files = []
+                for file_path in sorted(temporary.rglob("*")):
+                    if file_path.is_symlink():
+                        raise ValueError(f"checkpoint exporter created a symlink: {file_path}")
+                    if not file_path.is_file():
+                        continue
+                    self._fsync_file(file_path)
+                    files.append(
+                        {
+                            "path": file_path.relative_to(temporary).as_posix(),
+                            "size": file_path.stat().st_size,
+                            "sha256": _sha256(file_path),
+                        }
+                    )
+                bundle = {
+                    "bundle_schema_version": self.BUNDLE_SCHEMA_VERSION,
+                    "run_id": str(result.run_id),
+                    "attempt_id": str(result.attempt_id),
+                    "step_no": result.step_no,
+                    "virtual_time": result.virtual_time.isoformat(),
+                    "frame_sha256": frame.sha256,
+                    "files": files,
+                }
+                bundle_path = temporary / "bundle.json"
+                self._write_bytes(bundle_path, _canonical_json(bundle))
+                bundle_sha256 = _sha256(bundle_path)
+                self._fsync_directory_tree(temporary)
+                os.rename(temporary, target)
+                self._fsync_directory(target.parent)
+                validated = self.validate(target)
+                if validated.bundle_sha256 != bundle_sha256:
+                    raise CheckpointConflictError("checkpoint changed during materialization")
+                self._advance_latest(target.name, bundle_sha256)
+                self._prune_old()
+                return target
+            finally:
+                if temporary.exists():
+                    shutil.rmtree(temporary)
 
     def validate(self, path: Path) -> StoredCheckpoint:
+        with self.access():
+            return self._validate_locked(path)
+
+    def _validate_locked(self, path: Path) -> StoredCheckpoint:
         resolved = path.resolve()
         checkpoint_root = self._paths.checkpoints.resolve()
         if resolved.parent != checkpoint_root:
@@ -227,6 +254,15 @@ class CheckpointBundleWriter:
     ) -> StoredCheckpoint:
         """Select the DB-authorized boundary and quarantine newer bundles."""
 
+        with self.access():
+            return self._select_for_recovery_locked(step_no, orphan_root=orphan_root)
+
+    def _select_for_recovery_locked(
+        self,
+        step_no: int,
+        *,
+        orphan_root: Path,
+    ) -> StoredCheckpoint:
         if step_no < 1:
             raise ValueError("recovery checkpoint step must be positive")
         checkpoint_root = self._paths.checkpoints.resolve()
@@ -253,6 +289,10 @@ class CheckpointBundleWriter:
         return selected
 
     def read_latest(self) -> StoredCheckpoint | None:
+        with self.access():
+            return self._read_latest_locked()
+
+    def _read_latest_locked(self) -> StoredCheckpoint | None:
         latest = self._paths.checkpoints / "LATEST"
         if latest.exists():
             try:
@@ -291,6 +331,22 @@ class CheckpointBundleWriter:
         return None
 
     def _prune_old(self) -> None:
+        try:
+            self._prune_old_locked()
+        except OSError as exc:
+            # Retention is maintenance after the new bundle and LATEST are
+            # durable.  An indexer/antivirus/ACL problem must not turn a valid
+            # simulation Step into WORKER_ERROR; a later write retries it.
+            self._defer_prune(self._paths.checkpoints, exc)
+
+    def _prune_old_locked(self) -> None:
+        # A previous process may have published the tombstone and then exited
+        # while an antivirus/indexer still held one of its files.  Retry those
+        # private directories first; they are never visible as checkpoints.
+        for tombstone in list(self._paths.checkpoints.iterdir()):
+            if tombstone.is_dir() and _PRUNE_TOMBSTONE.fullmatch(tombstone.name):
+                self._delete_tombstone(tombstone)
+
         candidates = sorted(
             (
                 path.resolve()
@@ -304,7 +360,37 @@ class CheckpointBundleWriter:
         for candidate in candidates[self._retention :]:
             if candidate.parent != root or candidate.is_symlink():
                 continue
-            shutil.rmtree(candidate)
+            tombstone = root / f".prune-{candidate.name}-{uuid4()}.tmp"
+            try:
+                # Never recursively delete a published bundle.  Renaming first
+                # means a sharing violation leaves the complete bundle intact,
+                # rather than the half-deleted state from the original incident.
+                os.replace(candidate, tombstone)
+            except OSError as exc:
+                self._defer_prune(candidate, exc)
+                continue
+            self._delete_tombstone(tombstone)
+
+    def _delete_tombstone(self, tombstone: Path) -> None:
+        for delay in (0.0, 0.05, 0.15, 0.30):
+            if delay:
+                time.sleep(delay)
+            try:
+                shutil.rmtree(tombstone)
+                return
+            except FileNotFoundError:
+                return
+            except OSError as exc:
+                last_error = exc
+        self._defer_prune(tombstone, last_error)
+
+    def _defer_prune(self, path: Path, exc: OSError) -> None:
+        _LOGGER.warning(
+            "checkpoint retention deferred for run=%s path=%s error=%s",
+            self._paths.run_id,
+            path.name,
+            type(exc).__name__,
+        )
 
     def _advance_latest(self, checkpoint: str, bundle_sha256: str) -> None:
         latest = self._paths.checkpoints / "LATEST"

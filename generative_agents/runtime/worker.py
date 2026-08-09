@@ -316,25 +316,26 @@ def _prepare_attempt_state(
         lambda _: CheckpointSnapshot(state={}, conversation={}),
     )
     expected_step = start_step - 1
-    checkpoint = reader.select_for_recovery(
-        expected_step,
-        orphan_root=paths.orphaned / f"attempt-{attempt_id}" / "checkpoints",
-    )
-    bundle = json.loads((checkpoint.path / "bundle.json").read_text(encoding="utf-8"))
-    storage_root.mkdir(parents=True, exist_ok=False)
-    state = json.loads((checkpoint.path / "state.json").read_text(encoding="utf-8"))
-    conversation = json.loads(
-        (checkpoint.path / "conversation.json").read_text(encoding="utf-8")
-    )
-    virtual_time = datetime.fromisoformat(state.get("virtual_time", ""))
-    if virtual_time.tzinfo is None:
-        raise RuntimeError("checkpoint virtual_time is not timezone-aware")
-    source_storage = checkpoint.path / "storage"
-    if source_storage.exists():
-        for agent_dir in source_storage.iterdir():
-            if not agent_dir.is_dir() or agent_dir.is_symlink():
-                raise RuntimeError("checkpoint storage contains an unsafe member")
-            shutil.copytree(agent_dir, storage_root / agent_dir.name)
+    with reader.access():
+        checkpoint = reader.select_for_recovery(
+            expected_step,
+            orphan_root=paths.orphaned / f"attempt-{attempt_id}" / "checkpoints",
+        )
+        bundle = json.loads((checkpoint.path / "bundle.json").read_text(encoding="utf-8"))
+        storage_root.mkdir(parents=True, exist_ok=False)
+        state = json.loads((checkpoint.path / "state.json").read_text(encoding="utf-8"))
+        conversation = json.loads(
+            (checkpoint.path / "conversation.json").read_text(encoding="utf-8")
+        )
+        virtual_time = datetime.fromisoformat(state.get("virtual_time", ""))
+        if virtual_time.tzinfo is None:
+            raise RuntimeError("checkpoint virtual_time is not timezone-aware")
+        source_storage = checkpoint.path / "storage"
+        if source_storage.exists():
+            for agent_dir in source_storage.iterdir():
+                if not agent_dir.is_dir() or agent_dir.is_symlink():
+                    raise RuntimeError("checkpoint storage contains an unsafe member")
+                shutil.copytree(agent_dir, storage_root / agent_dir.name)
     return state, conversation, storage_root
 
 

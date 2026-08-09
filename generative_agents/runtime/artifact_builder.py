@@ -459,8 +459,9 @@ class ArtifactBuilder:
         step_no = parameters.get("checkpoint_step")
         if not isinstance(step_no, int) or isinstance(step_no, bool) or step_no < 1:
             raise RuntimeError("checkpoint_step must select a positive checkpoint step")
-        checkpoint = reader.validate(paths.checkpoints / f"step-{step_no:06d}")
-        self._atomic_zip_tree(target, checkpoint.path, prefix=checkpoint.path.name)
+        with reader.access():
+            checkpoint = reader.validate(paths.checkpoints / f"step-{step_no:06d}")
+            self._atomic_zip_tree(target, checkpoint.path, prefix=checkpoint.path.name)
 
     def _result_bundle(
         self,

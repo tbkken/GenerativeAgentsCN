@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import os
+import threading
+import time
 from datetime import datetime, timezone
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -175,6 +179,157 @@ def test_checkpoint_recovers_by_scanning_and_retains_only_configured_bundles(tmp
 
     assert recovered is not None
     assert recovered.path.name == "step-000003"
+
+
+def test_checkpoint_prune_defers_sharing_violation_without_partial_deletion(
+    tmp_path, monkeypatch
+):
+    run_id = uuid4()
+    attempt_id = uuid4()
+    paths = RunPaths.under(tmp_path, run_id)
+    store = FrameStore(paths)
+
+    def snapshot(result):
+        def export(target):
+            (target / "index_store.json").write_text(
+                f'{{"step":{result.step_no}}}', encoding="utf-8"
+            )
+
+        return CheckpointSnapshot(
+            state={"step": result.step_no},
+            conversation={},
+            storage_exporters={"resident-001": export},
+        )
+
+    writer = CheckpointBundleWriter(paths, snapshot, retention=2)
+    for step_no in (1, 2):
+        result = _builder(run_id, attempt_id, step_no=step_no).freeze()
+        writer.write(result, store.write(result))
+
+    original_replace = os.replace
+    block_oldest = True
+
+    def replace_with_sharing_violation(source, destination):
+        if block_oldest and Path(source).name == "step-000001":
+            error = PermissionError("checkpoint member is in use")
+            error.winerror = 32
+            raise error
+        return original_replace(source, destination)
+
+    monkeypatch.setattr(os, "replace", replace_with_sharing_violation)
+    result3 = _builder(run_id, attempt_id, step_no=3).freeze()
+    assert writer.write(result3, store.write(result3)).name == "step-000003"
+
+    # A failed retirement rename leaves the public checkpoint whole and valid;
+    # in particular it never reproduces the old half-deleted storage tree.
+    oldest = paths.checkpoints / "step-000001"
+    assert oldest.is_dir()
+    assert (oldest / "storage/resident-001/associate/index_store.json").is_file()
+    assert writer.validate(oldest).path == oldest.resolve()
+
+    block_oldest = False
+    result4 = _builder(run_id, attempt_id, step_no=4).freeze()
+    writer.write(result4, store.write(result4))
+    assert not oldest.exists()
+    assert not list(paths.checkpoints.glob(".prune-*.tmp"))
+
+
+def test_checkpoint_access_lock_serializes_reader_and_retention(tmp_path):
+    run_id = uuid4()
+    attempt_id = uuid4()
+    paths = RunPaths.under(tmp_path, run_id)
+    store = FrameStore(paths)
+    writer = CheckpointBundleWriter(
+        paths,
+        lambda result: CheckpointSnapshot(
+            state={"step": result.step_no}, conversation={}
+        ),
+        retention=2,
+    )
+    reader = CheckpointBundleWriter(
+        paths, lambda _: CheckpointSnapshot(state={}, conversation={}), retention=2
+    )
+    for step_no in (1, 2):
+        result = _builder(run_id, attempt_id, step_no=step_no).freeze()
+        writer.write(result, store.write(result))
+
+    reader_ready = threading.Event()
+    release_reader = threading.Event()
+    write_finished = threading.Event()
+
+    def hold_validated_bundle():
+        with reader.access():
+            reader.validate(paths.checkpoints / "step-000001")
+            reader_ready.set()
+            assert release_reader.wait(timeout=5)
+
+    def publish_next_step():
+        result = _builder(run_id, attempt_id, step_no=3).freeze()
+        writer.write(result, store.write(result))
+        write_finished.set()
+
+    reader_thread = threading.Thread(target=hold_validated_bundle)
+    writer_thread = threading.Thread(target=publish_next_step)
+    reader_thread.start()
+    assert reader_ready.wait(timeout=5)
+    writer_thread.start()
+    time.sleep(0.15)
+
+    assert not write_finished.is_set()
+    assert (paths.checkpoints / "step-000001").is_dir()
+
+    release_reader.set()
+    reader_thread.join(timeout=5)
+    writer_thread.join(timeout=5)
+    assert not reader_thread.is_alive()
+    assert not writer_thread.is_alive()
+    assert write_finished.is_set()
+    assert not (paths.checkpoints / "step-000001").exists()
+
+
+def test_checkpoint_retention_survives_a_live_member_file_handle(tmp_path):
+    """Exercise the real host filesystem, including Windows sharing rules."""
+
+    run_id = uuid4()
+    attempt_id = uuid4()
+    paths = RunPaths.under(tmp_path, run_id)
+    store = FrameStore(paths)
+
+    def snapshot(result):
+        def export(target):
+            (target / "index_store.json").write_text("{}", encoding="utf-8")
+
+        return CheckpointSnapshot(
+            state={"step": result.step_no},
+            conversation={},
+            storage_exporters={"resident-013": export},
+        )
+
+    writer = CheckpointBundleWriter(paths, snapshot, retention=2)
+    for step_no in (1, 2):
+        result = _builder(run_id, attempt_id, step_no=step_no).freeze()
+        writer.write(result, store.write(result))
+
+    live_member = (
+        paths.checkpoints
+        / "step-000001/storage/resident-013/associate/index_store.json"
+    )
+    with live_member.open("rb") as handle:
+        assert handle.read(1) == b"{"
+        result3 = _builder(run_id, attempt_id, step_no=3).freeze()
+        assert writer.write(result3, store.write(result3)).name == "step-000003"
+
+        # Platforms differ on whether a directory containing an open member can
+        # be renamed/unlinked.  Both safe outcomes exclude a partially deleted
+        # public checkpoint: it is either still fully valid or already private.
+        oldest = paths.checkpoints / "step-000001"
+        if oldest.exists():
+            assert writer.validate(oldest).path == oldest.resolve()
+
+    result4 = _builder(run_id, attempt_id, step_no=4).freeze()
+    writer.write(result4, store.write(result4))
+    assert not (paths.checkpoints / "step-000001").exists()
+    assert not list(paths.checkpoints.glob(".prune-*.tmp"))
 
 
 def test_run_manifest_is_verified_and_immutable(tmp_path):
