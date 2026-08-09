@@ -8,6 +8,34 @@ from generative_agents.persistence.models import ExperimentRevision, Run, RunEve
 from generative_agents.web import create_app
 
 
+class _ModelResponse:
+    def __init__(self, body):
+        self._body = body
+        self.status_code = 200
+        self.ok = True
+
+    def json(self):
+        return self._body
+
+
+class _AutoModelSession:
+    def __init__(self):
+        self.calls = []
+
+    def get(self, url, **kwargs):
+        self.calls.append(("GET", url))
+        model_id = "test-chat" if ":5001/" in url else "test-embedding"
+        return _ModelResponse(
+            {"data": [{"id": model_id, "max_model_len": 40_000}]}
+        )
+
+    def post(self, url, **kwargs):
+        self.calls.append(("POST", url))
+        if url.endswith("/embeddings"):
+            return _ModelResponse({"data": [{"embedding": [0.1, 0.2]}]})
+        return _ModelResponse({"choices": [{"message": {"content": "OK"}}]})
+
+
 def test_experiment_api_create_list_validate_and_conflict(database_url):
     app = create_app(database_url=database_url)
     with TestClient(app) as client:
@@ -49,6 +77,41 @@ def test_experiment_api_create_list_validate_and_conflict(database_url):
         ).json()
         assert report["valid"] is False
         assert report["errors"]
+
+
+def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        session = _AutoModelSession()
+        app.state.model_probe_service._session = session
+        created = client.post(
+            "/api/v1/experiments",
+            json={"name": "Auto model run", "source": {"type": "BUILTIN_DEFAULT"}},
+        ).json()
+        draft = client.get(f"/api/v1/experiments/{created['id']}/draft").json()
+
+        response = client.post(
+            f"/api/v1/experiments/{created['id']}/actions/publish-and-run",
+            json={
+                "draft_revision_id": draft["id"],
+                "lock_version": draft["lock_version"],
+            },
+        )
+
+        assert response.status_code == 202, response.text
+        run = response.json()
+        revision = client.get(
+            f"/api/v1/experiments/{created['id']}/revisions/{run['revision_id']}"
+        ).json()
+        assert revision["definition"]["models"]["chat"]["resolved_model"] == "test-chat"
+        assert revision["definition"]["models"]["chat"]["context_window"] == 40_000
+        assert revision["definition"]["models"]["embedding"]["resolved_model"] == "test-embedding"
+        assert [method for method, _url in session.calls] == [
+            "GET",
+            "POST",
+            "GET",
+            "POST",
+        ]
 
 
 def test_api_errors_have_uniform_envelope_and_request_id(database_url):
