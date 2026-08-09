@@ -1,17 +1,33 @@
 """generative_agents.model.llm_model"""
 
+import json
 import time
 import re
 import requests
-from magentic import prompt
+from datetime import datetime, timezone
+from uuid import uuid4
+
+from generative_agents.runtime.model_trace import (
+    ModelTraceEvent,
+    ModelTraceEventType,
+    ModelTraceStatus,
+)
+from generative_agents.modules.utils.retry import interruptible_wait
 
 
 class LLMModel:
-    def __init__(self, config):
-        self._api_key = config["api_key"]
-        self._base_url = config["base_url"]
+    def __init__(self, config, *, recorder=None, control=None, logger=None, sleep=None):
+        self._api_key = config.get("api_key", "")
+        self._base_url = config.get("base_url", "")
         self._model = config["model"]
         self._summary = {"total": [0, 0, 0]}
+        self._retry_attempts = config.get("retry_attempts", 10)
+        self._retry_backoff = config.get("retry_backoff_seconds", 5)
+        self._recorder = recorder
+        self._control = control
+        self._logger = logger
+        self._sleep = sleep or time.sleep
+        self._last_usage = {}
 
         self._handle = self.setup(config)
         self._enabled = True
@@ -24,16 +40,26 @@ class LLMModel:
     def completion(
         self,
         prompt,
-        retry=10,
+        retry=None,
         callback=None,
         failsafe=None,
         return_type=None,
         caller="llm_normal",
         **kwargs
     ):
+        retry = retry or self._retry_attempts
         response = None
+        call_id = uuid4()
+        agent_key = kwargs.pop("agent_key", None)
+        prompt_key = kwargs.pop("prompt_key", None)
+        step_no = kwargs.pop("step_no", None)
+        logical_started = datetime.now(timezone.utc)
+        last_error = None
         self._summary.setdefault(caller, [0, 0, 0])
-        for _ in range(retry):
+        for attempt_no in range(1, retry + 1):
+            started_at = datetime.now(timezone.utc)
+            self._last_usage = {}
+            attempt_error = None
             try:
                 output = self._completion(prompt, return_type, **kwargs)
                 self._summary["total"][0] += 1
@@ -43,16 +69,91 @@ class LLMModel:
                 else:
                     response = output
             except Exception as e:
-                print(f"LLMModel.completion() caused an error: {e}")
-                time.sleep(5)
+                last_error = e
+                attempt_error = e
                 response = None
-                continue
+            ended_at = datetime.now(timezone.utc)
+            self._record(
+                ModelTraceEvent(
+                    event_type=ModelTraceEventType.PHYSICAL_ATTEMPT,
+                    run_id=self._recorder.run_id if self._recorder else uuid4(),
+                    attempt_id=self._recorder.attempt_id if self._recorder else uuid4(),
+                    call_id=call_id,
+                    step_no=step_no,
+                    agent_key=agent_key,
+                    purpose=caller,
+                    prompt_key=prompt_key,
+                    provider=self.provider,
+                    resolved_model=self._model,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    latency_ms=max(0, int((ended_at - started_at).total_seconds() * 1000)),
+                    attempt_no=attempt_no,
+                    status=(
+                        ModelTraceStatus.SUCCEEDED
+                        if response is not None
+                        else ModelTraceStatus.FAILED
+                    ),
+                    prompt_tokens=self._last_usage.get("prompt_tokens"),
+                    completion_tokens=self._last_usage.get("completion_tokens"),
+                    total_tokens=self._last_usage.get("total_tokens"),
+                    error_code=type(attempt_error).__name__ if attempt_error else None,
+                    error_summary=str(attempt_error) if attempt_error else None,
+                )
+            )
             if response is not None:
                 break
+            if attempt_no < retry and self._retry_backoff:
+                if not interruptible_wait(
+                    self._retry_backoff,
+                    control=self._control,
+                    sleep=self._sleep,
+                ):
+                    break
         pos = 2 if response is None else 1
         self._summary["total"][pos] += 1
         self._summary[caller][pos] += 1
-        return response or failsafe
+        result = response if response is not None else failsafe
+        logical_ended = datetime.now(timezone.utc)
+        logical_error = last_error if response is None else None
+        self._record(
+            ModelTraceEvent(
+                event_type=ModelTraceEventType.LOGICAL_END,
+                run_id=self._recorder.run_id if self._recorder else uuid4(),
+                attempt_id=self._recorder.attempt_id if self._recorder else uuid4(),
+                call_id=call_id,
+                step_no=step_no,
+                agent_key=agent_key,
+                purpose=caller,
+                prompt_key=prompt_key,
+                provider=self.provider,
+                resolved_model=self._model,
+                started_at=logical_started,
+                ended_at=logical_ended,
+                latency_ms=max(
+                    0, int((logical_ended - logical_started).total_seconds() * 1000)
+                ),
+                attempt_no=None,
+                status=(
+                    ModelTraceStatus.SUCCEEDED
+                    if response is not None
+                    else ModelTraceStatus.FALLBACK
+                    if failsafe is not None
+                    else ModelTraceStatus.FAILED
+                ),
+                error_code=type(logical_error).__name__ if logical_error else None,
+                error_summary=str(logical_error) if logical_error else None,
+            )
+        )
+        return result
+
+    @property
+    def provider(self):
+        return self.__class__.__name__.removesuffix("LLMModel").casefold()
+
+    def _record(self, event):
+        if self._recorder is not None:
+            self._recorder.append(event)
 
     def _completion(self, prompt, return_type, **kwargs):
         raise NotImplementedError(
@@ -79,6 +180,8 @@ class OpenAILLMModel(LLMModel):
         return OpenaiChatModel(self._model, api_key=self._api_key, base_url=self._base_url)
 
     def _completion(self, _prompt, return_type, temperature=0.5):
+        from magentic import prompt
+
         @prompt(
             "{_prompt}",
             model=self._handle
@@ -112,11 +215,11 @@ class OllamaLLMModel(LLMModel):
             stream=False,
             timeout=300
         )
-        return response.json()
+        result = response.json()
+        self._last_usage = result.get("usage") or {}
+        return result
 
     def _completion(self, prompt, return_type, temperature=0.5):
-        import json
-        
         # Generate JSON schema from the Pydantic model for structured output
         response_format = None
         if return_type is not None:
@@ -161,20 +264,154 @@ class OllamaLLMModel(LLMModel):
                     # If all parsing fails, return the raw text
                     return ret
                 except Exception as e:
-                    print(f"OllamaLLMModel: Failed to validate response: {e}")
+                    if self._logger is not None:
+                        self._logger.warning(
+                            "Ollama response validation failed: %s", e
+                        )
                     return ret
             return ret
         return ""
 
 
-def create_llm_model(llm_config):
+class VLLMLLMModel(LLMModel):
+    """Call a local vLLM server through its OpenAI-compatible HTTP API."""
+
+    def setup(self, config):
+        self._timeout = config.get("timeout", 300)
+        self._max_tokens = config.get("max_tokens", 2048)
+        self._enable_thinking = config.get("enable_thinking", False)
+        self._base_url = self._base_url.rstrip("/")
+
+        session = requests.Session()
+        session.headers.update({"Content-Type": "application/json"})
+        if self._api_key:
+            session.headers.update({"Authorization": f"Bearer {self._api_key}"})
+
+        if not self._model or self._model == "auto":
+            response = session.get(self._api_url("models"), timeout=self._timeout)
+            self._raise_for_status(response)
+            models = [
+                item.get("id")
+                for item in response.json().get("data", [])
+                if item.get("id")
+            ]
+            if not models:
+                raise RuntimeError("GET /v1/models returned no model IDs")
+            self._model = models[0]
+
+        return session
+
+    def _api_url(self, path):
+        prefix = self._base_url if self._base_url.endswith("/v1") else f"{self._base_url}/v1"
+        return f"{prefix}/{path.lstrip('/')}"
+
+    @staticmethod
+    def _raise_for_status(response):
+        if response.ok:
+            return
+        raise RuntimeError(
+            f"HTTP {response.status_code} from {response.url}: {response.text}"
+        )
+
+    @staticmethod
+    def _parse_structured_output(content, return_type):
+        candidates = [content]
+        json_match = re.search(r"\{.*\}", content, flags=re.DOTALL)
+        if json_match and json_match.group() != content:
+            candidates.append(json_match.group())
+
+        last_error = None
+        for candidate in candidates:
+            try:
+                return return_type.model_validate_json(candidate).res
+            except Exception as exc:  # Try a JSON object embedded in prose next.
+                last_error = exc
+        raise ValueError(
+            f"vLLM returned invalid {return_type.__name__} JSON: {last_error}; "
+            f"content={content!r}"
+        )
+
+    def _completion(self, prompt, return_type, temperature=0.5, max_tokens=None):
+        params = {
+            "model": self._model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": max_tokens or self._max_tokens,
+            "stream": False,
+            "chat_template_kwargs": {"enable_thinking": self._enable_thinking},
+        }
+        if return_type is not None:
+            params["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": return_type.__name__,
+                    "strict": True,
+                    "schema": return_type.model_json_schema(),
+                },
+            }
+
+        response = self._handle.post(
+            self._api_url("chat/completions"),
+            json=params,
+            timeout=self._timeout,
+        )
+        self._raise_for_status(response)
+        result = response.json()
+        self._last_usage = result.get("usage") or {}
+        choices = result.get("choices") or []
+        if not choices:
+            raise RuntimeError(f"vLLM response has no choices: {result}")
+
+        message = choices[0].get("message") or {}
+        content = message.get("content") or ""
+        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
+        if not content:
+            reasoning = message.get("reasoning") or message.get("reasoning_content")
+            raise RuntimeError(
+                "vLLM response has no visible content"
+                + (f"; reasoning={reasoning!r}" if reasoning else "")
+            )
+
+        if return_type is not None:
+            return self._parse_structured_output(content, return_type)
+        return content
+
+
+def create_llm_model(
+    llm_config,
+    *,
+    recorder=None,
+    control=None,
+    logger=None,
+    sleep=None,
+):
     """Create llm model"""
 
-    if llm_config["provider"] == "ollama":
-        return OllamaLLMModel(llm_config)
+    if llm_config["provider"] == "vllm":
+        return VLLMLLMModel(
+            llm_config,
+            recorder=recorder,
+            control=control,
+            logger=logger,
+            sleep=sleep,
+        )
+    elif llm_config["provider"] == "ollama":
+        return OllamaLLMModel(
+            llm_config,
+            recorder=recorder,
+            control=control,
+            logger=logger,
+            sleep=sleep,
+        )
 
     elif llm_config["provider"] == "openai":
-        return OpenAILLMModel(llm_config)
+        return OpenAILLMModel(
+            llm_config,
+            recorder=recorder,
+            control=control,
+            logger=logger,
+            sleep=sleep,
+        )
     else:
         raise NotImplementedError(
             "llm provider {} is not supported".format(llm_config["provider"])

@@ -1,0 +1,399 @@
+from __future__ import annotations
+
+import copy
+import json
+import logging
+import random
+from datetime import datetime, timedelta, timezone
+from types import SimpleNamespace
+from uuid import uuid4
+
+from generative_agents.compress import build_replay
+from generative_agents.config import definition_hash
+from generative_agents.config.schema import make_blank_definition
+from generative_agents.modules.config_adapter import ConfigAdapter
+from generative_agents.modules.game import Game
+from generative_agents.modules.maze import Maze
+from generative_agents.modules.memory.action import Action
+from generative_agents.modules.memory.event import Event
+from generative_agents.modules.model.llm_model import LLMModel
+from generative_agents.runtime import (
+    ActionSnapshot,
+    ActivityKind,
+    AgentStepResult,
+    FrameStore,
+    ModelTraceWriter,
+    MemoryDeltaKind,
+    RunControl,
+    RunPaths,
+    SimulationClock,
+    StepResult,
+    StepResultBuilder,
+    RunManifestStore,
+    build_manifest_document,
+)
+from generative_agents.runtime.result_collector import StepResultCollector
+from generative_agents.runtime.replay_v2 import validate_replay_v2
+from generative_agents.start import SimulationRunner, apply_checkpoint_state
+
+
+class _Logger:
+    def info(self, *_args, **_kwargs):
+        pass
+
+    debug = info
+    warning = info
+
+
+class _Event:
+    predicate = "moving"
+    emoji = "🚶"
+
+    def get_describe(self):
+        return "walks to the cafe"
+
+
+class _Tile:
+    def get_address(self):
+        return ["world", "cafe"]
+
+
+class _FakeAgent:
+    def __init__(self):
+        self.name = "Agent A"
+        self.coord = (1, 1)
+        self.path = []
+
+    def get_event(self, as_act=True):
+        return _Event() if as_act else None
+
+    def get_tile(self):
+        return _Tile()
+
+
+class _FakeGame:
+    def __init__(self):
+        self.agents = {"agent-a": _FakeAgent()}
+
+    def reset_game(self):
+        pass
+
+    def get_agent(self, key):
+        return self.agents[key]
+
+    def agent_think(self, key, _status):
+        agent = self.agents[key]
+        agent.coord = (2, 1)
+        return {
+            "plan": {"path": [(1, 1), (2, 1)]},
+            "info": {"currently": "walking"},
+            "events": (),
+        }
+
+
+class _Committer:
+    def __init__(self):
+        self.items = []
+
+    def commit(self, result, *, force_checkpoint):
+        self.items.append((result, force_checkpoint))
+
+
+def test_simulation_runner_commits_complete_observed_step_result(tmp_path):
+    run_id, attempt_id = uuid4(), uuid4()
+    context = SimpleNamespace(
+        run_id=run_id,
+        attempt_id=attempt_id,
+        clock=SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc)),
+        control=RunControl(),
+    )
+    committer = _Committer()
+    runner = SimulationRunner(context, _FakeGame(), committer)
+    assert runner.run(1, stride_minutes=10) == 1
+    result, forced = committer.items[0]
+    assert forced is True
+    assert result.run_id == run_id and result.attempt_id == attempt_id
+    assert result.agents[0].path == ((1, 1), (2, 1))
+    assert result.agents[0].path_source == "OBSERVED"
+    assert result.agents[0].currently == "walking"
+    assert result.domain_events[0].event_type == "MOVED"
+
+
+def test_clock_and_rng_are_run_local_when_interleaved():
+    a_clock = SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc))
+    b_clock = SimulationClock(datetime(2030, 1, 1, tzinfo=timezone.utc))
+    a_rng, b_rng = random.Random(1), random.Random(2)
+    a_clock.forward(10)
+    b_clock.forward(20)
+    assert a_clock.get_date("%Y") == "2026"
+    assert b_clock.get_date("%Y") == "2030"
+    assert [a_rng.random(), b_rng.random()] == [
+        random.Random(1).random(),
+        random.Random(2).random(),
+    ]
+
+
+def test_game_checkpoint_round_trip_restores_run_local_rng_state():
+    game = Game.__new__(Game)
+    game.context = SimpleNamespace(random=random.Random(42))
+    game.agents = {}
+    game.context.clock = SimulationClock(
+        datetime(2026, 1, 1, tzinfo=timezone.utc)
+    )
+    snapshot = json.loads(json.dumps(game.snapshot_state()))
+    expected = game.context.random.random()
+    game.context.random.random()
+    game.restore_runtime_state(snapshot)
+    assert game.context.random.random() == expected
+
+
+def test_checkpoint_state_overlay_is_isolated_and_requires_same_agents():
+    config = {
+        "agents": {
+            "agent-a": {
+                "coord": [1, 1],
+                "associate": {"embedding": {"model": "embed"}, "memory": {}},
+            }
+        }
+    }
+    original = copy.deepcopy(config)
+    restored = apply_checkpoint_state(
+        config,
+        {
+            "agents": {
+                "agent-a": {
+                    "coord": [2, 3],
+                    "associate": {"memory": {"event": ["node-1"]}},
+                }
+            }
+        },
+    )
+    assert config == original
+    assert restored["agents"]["agent-a"]["coord"] == [2, 3]
+    assert restored["agents"]["agent-a"]["associate"] == {
+        "embedding": {"model": "embed"},
+        "memory": {"event": ["node-1"]},
+    }
+    try:
+        apply_checkpoint_state(config, {"agents": {"agent-b": {}}})
+    except ValueError as exc:
+        assert "agent keys" in str(exc)
+    else:
+        raise AssertionError("mismatched checkpoint agents must be rejected")
+
+
+def test_memory_eviction_is_preserved_as_a_result_delta():
+    run_id, attempt_id = uuid4(), uuid4()
+    collector = StepResultCollector(
+        StepResultBuilder(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            step_no=1,
+            virtual_time=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        ),
+        name_to_key={},
+    )
+    collector._capture_event(
+        {
+            "kind": "memory",
+            "memory_kind": "EVICTED",
+            "agent_key": "agent-a",
+            "memory_id": "node-1",
+            "memory_type": "EVENT",
+        }
+    )
+    result = collector.freeze()
+    assert result.memory_deltas[0].kind is MemoryDeltaKind.EVICTED
+
+
+def test_maze_action_and_config_adapter_do_not_mutate_revision_inputs():
+    publishable_definition = make_blank_definition(
+        key="adapter-test", name="Adapter test"
+    )
+    world = {
+        "world": "test",
+        "size": [3, 3],
+        "tile_size": 16,
+        "tile_address_keys": ["world", "sector", "arena", "game_object"],
+        "tiles": [{"coord": [1, 1], "address": ["s", "a"], "collision": False}],
+    }
+    original_world = copy.deepcopy(world)
+    Maze(world, _Logger(), random.Random(1))
+    assert world == original_world
+
+    raw_action = {
+        "event": Event("a", "is", "idle", address=["world"]).to_dict(),
+        "obj_event": None,
+        "start": "20260101-00:00:00",
+        "duration": 1,
+    }
+    original_action = copy.deepcopy(raw_action)
+    Action.from_dict(
+        raw_action,
+        clock=SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc)),
+    )
+    assert raw_action == original_action
+
+    before = publishable_definition.model_dump(mode="json", exclude_none=False)
+    ConfigAdapter().game_config(publishable_definition)
+    assert publishable_definition.model_dump(mode="json", exclude_none=False) == before
+
+
+class _RetryingLLM(LLMModel):
+    def setup(self, _config):
+        self.calls = 0
+        return None
+
+    def _completion(self, _prompt, _return_type, **_kwargs):
+        self.calls += 1
+        if self.calls == 1:
+            raise RuntimeError("temporary failure")
+        self._last_usage = {
+            "prompt_tokens": 3,
+            "completion_tokens": 2,
+            "total_tokens": 5,
+        }
+        return "ok"
+
+
+def test_llm_trace_records_each_physical_attempt_and_one_logical_end(tmp_path):
+    run_id, attempt_id = uuid4(), uuid4()
+    writer = ModelTraceWriter(
+        RunPaths.under(tmp_path, run_id),
+        run_id=run_id,
+        attempt_id=attempt_id,
+        attempt_no=1,
+        capture_payloads=False,
+    )
+    model = _RetryingLLM(
+        {
+            "api_key": "secret-not-recorded",
+            "base_url": "http://127.0.0.1",
+            "model": "fake",
+            "retry_attempts": 2,
+            "retry_backoff_seconds": 0,
+        },
+        recorder=writer,
+    )
+    assert model.completion("prompt", caller="schedule", agent_key="agent-a") == "ok"
+    records = [json.loads(line) for line in writer.path.read_text().splitlines()]
+    assert [record["event_type"] for record in records] == [
+        "PHYSICAL_ATTEMPT",
+        "PHYSICAL_ATTEMPT",
+        "LOGICAL_END",
+    ]
+    assert [record["status"] for record in records] == [
+        "FAILED",
+        "SUCCEEDED",
+        "SUCCEEDED",
+    ]
+    assert records[1]["total_tokens"] == 5
+    assert "secret-not-recorded" not in writer.path.read_text()
+
+
+def test_vector_indexes_receive_embedding_instances_without_global_settings(monkeypatch):
+    from generative_agents.modules.storage import index as index_module
+
+    created = []
+
+    class FakeEmbedding:
+        def __init__(self, model_name):
+            self.model_name = model_name
+
+    class FakeIndex:
+        def __init__(self, nodes, **kwargs):
+            created.append((nodes, kwargs))
+            self.docstore = SimpleNamespace(docs={})
+
+    monkeypatch.setattr(index_module, "HuggingFaceEmbedding", FakeEmbedding)
+    monkeypatch.setattr(index_module.index_core, "VectorStoreIndex", FakeIndex)
+    clock = SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc))
+    first = index_module.LlamaIndex(
+        {"provider": "hugging_face", "model": "embed-a"}, clock=clock
+    )
+    second = index_module.LlamaIndex(
+        {"provider": "hugging_face", "model": "embed-b"}, clock=clock
+    )
+    assert first._embed_model.model_name == "embed-a"
+    assert second._embed_model.model_name == "embed-b"
+    assert created[0][1]["embed_model"] is first._embed_model
+    assert created[1][1]["embed_model"] is second._embed_model
+    assert created[0][1]["transformations"] is first._transformations
+
+
+def test_legacy_naive_checkpoint_index_dates_are_interpreted_as_simulation_utc():
+    from generative_agents.modules.storage import index as index_module
+
+    removed = []
+    legacy_nodes = {
+        "expired": SimpleNamespace(
+            metadata={"create": "20251231-23:00:00", "expire": "20260101-00:30:00"}
+        ),
+        "retained": SimpleNamespace(
+            metadata={"create": "20260101-00:45:00", "expire": "20260102-00:00:00"}
+        ),
+    }
+    index = object.__new__(index_module.LlamaIndex)
+    index._clock = SimulationClock(datetime(2026, 1, 1, 1, 0, tzinfo=timezone.utc))
+    index._index = SimpleNamespace(docstore=SimpleNamespace(docs=legacy_nodes))
+    index.remove_nodes = lambda node_ids, delete_from_docstore=True: removed.extend(node_ids)
+
+    assert index.cleanup() == ["expired"]
+    assert removed == ["expired"]
+    assert index_module.utils.to_date("20260101-00:45:00").utcoffset() == timedelta(0)
+
+
+def test_replay_artifact_uses_observed_frame_path(tmp_path):
+    run_id, attempt_id, experiment_id, revision_id = (
+        uuid4(),
+        uuid4(),
+        uuid4(),
+        uuid4(),
+    )
+    paths = RunPaths.under(tmp_path, run_id)
+    definition = make_blank_definition(key="replay-test", name="Replay")
+    document = build_manifest_document(
+        run_id=run_id,
+        experiment_id=experiment_id,
+        revision_id=revision_id,
+        definition=definition,
+        expected_definition_hash=definition_hash(definition),
+        code_build_id="test",
+        assets=[],
+        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        dependency_versions={},
+    )
+    manifest = RunManifestStore(paths).materialize(document)
+    FrameStore(paths).write(
+        StepResult(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            step_no=1,
+            virtual_time=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            agents=(
+                AgentStepResult(
+                    agent_key="agent-a",
+                    from_coord=(1, 1),
+                    to_coord=(2, 1),
+                    path=((1, 1), (2, 1)),
+                    action=ActionSnapshot("walk"),
+                    activity_kind=ActivityKind.MOVING,
+                    location=("world", "cafe"),
+                    path_source="OBSERVED",
+                ),
+            ),
+            conversations=(),
+            memory_deltas=(),
+            schedule_revisions=(),
+            domain_events=(),
+            committed_model_usage=(),
+        )
+    )
+    artifact = build_replay(paths, manifest)
+    replay = json.loads(artifact.path.read_text(encoding="utf-8"))
+    assert validate_replay_v2(replay) == replay
+    assert replay["schema_version"] == 2
+    assert replay["source_kind"] == "RUN_FRAMES"
+    agent = replay["steps"][0]["agents"][0]
+    assert agent["path_source"] == "OBSERVED"
+    assert {tuple(sample) for sample in agent["path"]} == {(1, 1), (2, 1)}

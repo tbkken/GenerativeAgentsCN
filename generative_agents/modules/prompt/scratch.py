@@ -1,29 +1,27 @@
-import random
 import datetime
 import re
 from string import Template
 from pydantic import BaseModel, Field
 from collections import namedtuple
 from typing import List, Tuple
-from modules import utils
-from modules.memory import Event
+from generative_agents.modules import utils
+from generative_agents.modules.memory import Event
 
 
 Result = namedtuple("Result", ["prompt", "callback", "failsafe", "return_type"])
 
 class Scratch:
-    def __init__(self, name, currently, config):
+    def __init__(self, name, currently, config, *, clock, random_source, prompts):
         self.name = name
         self.currently = currently
         self.config = config
-        self.template_path = "data/prompts"
+        self._clock = clock
+        self._rng = random_source
+        self._prompts = prompts
 
     def build_prompt(self, template, data):
-        with open(f"{self.template_path}/{template}.txt", "r", encoding="utf-8") as file:
-            file_content = file.read()
-
-        template = Template(file_content)
-        filled_content = template.substitute(data)
+        prompt_template = Template(self._prompts.get(template))
+        filled_content = prompt_template.substitute(data)
 
         return filled_content
 
@@ -37,7 +35,7 @@ class Scratch:
                 "learned": self.config["learned"],
                 "lifestyle": self.config["lifestyle"],
                 "daily_plan": self.config["daily_plan"],
-                "date": utils.get_timer().daily_format_cn(),
+                "date": self._clock.daily_format_cn(),
                 "currently": self.currently,
             }
         )
@@ -55,7 +53,7 @@ class Scratch:
         class PoignancyEventResponse(BaseModel):
             res: int = Field(description="事件的情感强度评分，整数，范围1到10")
 
-        return Result(prompt, None, random.choice(list(range(10))) + 1, PoignancyEventResponse)
+        return Result(prompt, None, self._rng.choice(list(range(10))) + 1, PoignancyEventResponse)
 
     def prompt_poignancy_chat(self, event):
         prompt = self.build_prompt(
@@ -70,7 +68,7 @@ class Scratch:
         class PoignancyChatResponse(BaseModel):
             res: int = Field(description="对话的情感强度评分，整数，范围1到10")
 
-        return Result(prompt, None, random.choice(list(range(10))) + 1, PoignancyChatResponse)
+        return Result(prompt, None, self._rng.choice(list(range(10))) + 1, PoignancyChatResponse)
 
     def prompt_wake_up(self):
         prompt = self.build_prompt(
@@ -295,7 +293,7 @@ class Scratch:
             arenas.update(
                 {a: sec for a in spatial.get_leaves(address + [sec]) if a not in arenas}
             )
-        failsafe = random.choice(sectors)
+        failsafe = self._rng.choice(sectors)
 
         class determine_sectorResponse(BaseModel):
             res: str = Field(description="从给定列表中选出的目标区域名称，必须与列表中的某项完全一致")
@@ -327,7 +325,7 @@ class Scratch:
         )
 
         arenas = spatial.get_leaves(address)
-        failsafe = random.choice(arenas)
+        failsafe = self._rng.choice(arenas)
 
         class determine_arenaResponse(BaseModel):
             res: str = Field(description="从给定列表中选出的目标场所名称，必须与列表中的某项完全一致")
@@ -348,7 +346,7 @@ class Scratch:
             }
         )
 
-        failsafe = random.choice(objects)
+        failsafe = self._rng.choice(objects)
 
         class determine_objectResponse(BaseModel):
             res: str = Field(description="从给定列表中选出的最相关对象名称，必须与列表中的某项完全一致")
@@ -419,7 +417,7 @@ class Scratch:
             [c.describe for c in focus["events"]]
         )
         context += "\n" + "。".join([c.describe for c in focus["thoughts"]]) 
-        date_str = utils.get_timer().get_date("%Y-%m-%d %H:%M:%S")
+        date_str = self._clock.get_date("%Y-%m-%d %H:%M:%S")
         chat_history = ""
         if chats:
             chat_history = f" {agent.name} 和 {other.name} 上次在 {chats[0].create} 聊过关于 {chats[0].describe} 的话题"
@@ -524,7 +522,7 @@ class Scratch:
             "decide_wait_example",
             {
                 "context": context,
-                "date": utils.get_timer().get_date("%Y-%m-%d %H:%M"),
+                "date": self._clock.get_date("%Y-%m-%d %H:%M"),
                 "agent": agent.name,
                 "another": other.name,
                 "status": _status_des(agent),
@@ -583,7 +581,7 @@ class Scratch:
         chat_nodes = agent.associate.retrieve_chats(other.name)
         pass_context = ""
         for n in chat_nodes:
-            delta = utils.get_timer().get_delta(n.create)
+            delta = self._clock.get_delta(n.create)
             if delta > 480:
                 continue
             pass_context += f"{delta} 分钟前，{agent.name} 和 {other.name} 进行过对话。{n.describe}\n"
@@ -609,7 +607,7 @@ class Scratch:
                 "base_desc": self._base_desc(),
                 "memory": memory,
                 "address": f"{address[-2]}，{address[-1]}",
-                "current_time": utils.get_timer().get_date("%H:%M"),
+                "current_time": self._clock.get_date("%H:%M"),
                 "previous_context": prev_context,
                 "current_context": curr_context,
                 "another": other.name,
@@ -780,7 +778,7 @@ class Scratch:
             {
                 "description": "\n".join(statements),
                 "agent": self.name,
-                "date": utils.get_timer().get_date("%Y-%m-%d"),
+                "date": self._clock.get_date("%Y-%m-%d"),
             }
         )
 
@@ -791,7 +789,7 @@ class Scratch:
             assert len(response) >= 1, "retrieve_plan: empty list"
             return response
 
-        failsafe = [r.describe for r in random.choices(nodes, k=5)]
+        failsafe = [r.describe for r in self._rng.choices(nodes, k=5)]
         return Result(prompt, _callback, failsafe, retrieve_planResponse)
 
     def prompt_retrieve_thought(self, nodes):
@@ -818,7 +816,7 @@ class Scratch:
 
     def prompt_retrieve_currently(self, plan_note, thought_note):
         time_stamp = (
-            utils.get_timer().get_date() - datetime.timedelta(days=1)
+            self._clock.get_date() - datetime.timedelta(days=1)
         ).strftime("%Y-%m-%d")
 
         prompt = self.build_prompt(
@@ -829,7 +827,7 @@ class Scratch:
                 "currently": self.currently,
                 "plan": ". ".join(plan_note),
                 "thought": thought_note,
-                "current_time": utils.get_timer().get_date("%Y-%m-%d"),
+                "current_time": self._clock.get_date("%Y-%m-%d"),
             }
         )
 

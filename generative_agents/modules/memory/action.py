@@ -2,7 +2,7 @@
 
 import datetime
 
-from modules import utils
+from generative_agents.modules import utils
 from .event import Event
 
 
@@ -13,10 +13,14 @@ class Action:
         obj_event=None,
         start=None,
         duration=0,
+        clock=None,
     ):
         self.event = event
         self.obj_event = obj_event
-        self.start = start or utils.get_timer().get_date()
+        if clock is None and start is None:
+            raise ValueError("Action requires an injected clock when start is omitted")
+        self._clock = clock
+        self.start = start or clock.get_date()
         self.duration = duration
         self.end = self.start + datetime.timedelta(minutes=self.duration)
 
@@ -39,7 +43,9 @@ class Action:
             return True
         if not self.event.address:
             return True
-        return utils.get_timer().get_date() > self.end
+        if self._clock is None:
+            raise RuntimeError("Action has no clock for completion checks")
+        return self._clock.get_date() > self.end
 
     def to_dict(self):
         return {
@@ -50,9 +56,13 @@ class Action:
         }
 
     @classmethod
-    def from_dict(cls, config):
-        config["event"] = Event.from_dict(config["event"])
-        if config.get("obj_event"):
-            config["obj_event"] = Event.from_dict(config["obj_event"])
-        config["start"] = utils.to_date(config["start"])
-        return cls(**config)
+    def from_dict(cls, config, *, clock):
+        values = dict(config)
+        values["event"] = Event.from_dict(values["event"])
+        if values.get("obj_event"):
+            values["obj_event"] = Event.from_dict(values["obj_event"])
+        values["start"] = utils.to_date(
+            values["start"], naive_timezone=clock.get_date().tzinfo
+        )
+        values["clock"] = clock
+        return cls(**values)

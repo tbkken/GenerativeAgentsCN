@@ -11,10 +11,13 @@
         },
         "think": {
             "llm": {
-                "provider": "ollama",
-                "model": "qwen3:4b-instruct-2507-q4_K_M",
-                "base_url": "http://127.0.0.1:11434/v1",
-                "api_key": ""
+                "provider": "vllm",
+                "model": "auto",
+                "base_url": "http://127.0.0.1:5001",
+                "api_key": "",
+                "timeout": 300,
+                "max_tokens": 2048,
+                "enable_thinking": false
             },
             "interval": 1000,
             "poignancy_max": 150
@@ -22,10 +25,12 @@
         "chat_iter": 4,
         "associate": {
             "embedding": {
-                "provider": "ollama",
-                "model": "qwen3-embedding:0.6b-q8_0",
-                "base_url": "http://127.0.0.1:11434",
-                "api_key": ""
+                "provider": "openai_compatible",
+                "model": "auto",
+                "base_url": "http://127.0.0.1:5002",
+                "api_key": "unused",
+                "timeout": 120,
+                "max_retries": 3
             },
             "retention": 8
         }

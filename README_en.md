@@ -14,8 +14,9 @@ cd GenerativeAgentsCN
 ### 1.2 configure the large language model
 
 Modify the configuration file `generative_agents/data/config.json`:
-1. By default, [Ollama](https://ollama.com/) is used to load local quantization models and OpenAI compatible APIs are provided. We need to first pull the quantization model and ensure that `base_url` and `model` are consistent with the actual configuration of Ollama.
-2. If you want to call other OpenAI compatible APIs, you need to change `provider` to `openai`, and modify `model`, `api_key` and `base_url` to the correct values.
+1. By default, the local chat model is called through vLLM's OpenAI-compatible API. See [vllm.md](docs/vllm.md) for configuration and endpoint details. When `model` is `auto`, the first model returned by `/v1/models` is selected automatically.
+2. The embedding model used for memory retrieval is configured separately and calls a local OpenAI-compatible endpoint by default. See [embedding.md](docs/embedding.md) for configuration details.
+3. To call another OpenAI-compatible API, set `provider` to `openai` and update `model`, `api_key`, and `base_url` according to its API documentation.
 
 ### 1.3 install python dependencies
 

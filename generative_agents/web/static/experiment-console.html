@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generative Agents 实验配置与运行控制台" />
+  <title>Agent Foundry · 实验配置中心</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17232a;
+      --muted: #6a7a82;
+      --muted-2: #91a0a7;
+      --paper: #ffffff;
+      --canvas: #f4f7f6;
+      --canvas-2: #eef3f1;
+      --line: #dfe7e4;
+      --line-strong: #cbd8d3;
+      --nav: #12201f;
+      --nav-2: #192a28;
+      --teal: #127c68;
+      --teal-2: #0f6e5d;
+      --teal-soft: #e3f3ef;
+      --lime: #9ccf4a;
+      --blue: #3f6fd9;
+      --blue-soft: #edf2ff;
+      --amber: #ad6b16;
+      --amber-soft: #fff4de;
+      --red: #c04646;
+      --red-soft: #fff0ef;
+      --shadow-sm: 0 1px 2px rgba(16, 36, 31, .05), 0 6px 18px rgba(16, 36, 31, .035);
+      --shadow-lg: 0 24px 60px rgba(18, 32, 31, .18);
+      --radius: 14px;
+      --radius-sm: 9px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { min-width: 320px; background: var(--canvas); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 72% -10%, rgba(156, 207, 74, .075), transparent 31rem),
+        var(--canvas);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+
+    .app-shell { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 20;
+      display: flex;
+      width: 256px;
+      flex-direction: column;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 34% -4%, rgba(87, 171, 143, .18), transparent 16rem),
+        var(--nav);
+      color: #d5e2de;
+      border-right: 1px solid rgba(255,255,255,.055);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      height: 72px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .brand-mark {
+      position: relative;
+      width: 31px;
+      height: 31px;
+      border: 1px solid rgba(200, 242, 224, .42);
+      border-radius: 9px;
+      background: linear-gradient(145deg, rgba(67, 157, 128, .8), rgba(21, 83, 70, .75));
+      box-shadow: inset 0 0 0 4px rgba(13, 35, 31, .22);
+    }
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: #bded70;
+      box-shadow: 0 0 16px rgba(189, 237, 112, .45);
+    }
+    .brand-mark::before { width: 8px; height: 8px; left: 6px; top: 7px; }
+    .brand-mark::after { width: 6px; height: 6px; right: 6px; bottom: 7px; }
+    .brand-name { font-weight: 720; letter-spacing: -.01em; color: #f5faf8; }
+    .brand-meta { font-size: 10px; letter-spacing: .13em; text-transform: uppercase; color: #7f9a92; margin-top: -2px; }
+
+    .nav-label { padding: 15px 22px 7px; color: #69847c; font-size: 10px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+    .nav { padding: 0 10px; }
+    .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 42px;
+      margin: 2px 0;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #91aaa2;
+      text-align: left;
+      cursor: pointer;
+      transition: .16s ease;
+    }
+    .nav-item:hover { color: #e9f3f0; background: rgba(255,255,255,.045); }
+    .nav-item.active { color: #f4faf8; background: rgba(66, 135, 113, .23); box-shadow: inset 2px 0 #aee35e; }
+    .nav-icon {
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-items: center;
+      color: currentColor;
+      font-size: 15px;
+      opacity: .9;
+    }
+    .nav-text { flex: 1; font-weight: 560; }
+    .nav-count { padding: 1px 7px; border-radius: 99px; background: rgba(255,255,255,.07); color: #96aaa4; font-size: 10px; }
+    .nav-item.active .nav-count { background: rgba(189,237,112,.12); color: #ccef91; }
+
+    .main { width: calc(100% - 256px); min-height: 100vh; margin-left: 256px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      display: flex;
+      height: 72px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 32px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(249,251,250,.9);
+      backdrop-filter: blur(16px);
+    }
+    .experiment-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .experiment-title strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 680; }
+    .draft-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border: 1px solid #f0d3a2; border-radius: 99px; color: #986117; background: #fff7e9; font-size: 11px; }
+    .draft-pill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #d68a25; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .unsaved { display: flex; align-items: center; gap: 6px; margin-right: 6px; color: var(--muted); font-size: 11px; }
+    .unsaved-dot { width: 6px; height: 6px; border-radius: 50%; background: #d88b2c; }
+
+    .btn {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--paper);
+      color: #314139;
+      font-size: 12px;
+      font-weight: 610;
+      cursor: pointer;
+      box-shadow: 0 1px 1px rgba(18,32,31,.03);
+      transition: .16s ease;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: #afc2bb; box-shadow: 0 4px 12px rgba(18,32,31,.07); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { border-color: var(--teal); background: var(--teal); color: white; box-shadow: 0 6px 16px rgba(18,124,104,.18); }
+    .btn-primary:hover { background: var(--teal-2); border-color: var(--teal-2); }
+    .btn-dark { border-color: #203a35; background: #203a35; color: #fff; }
+    .btn-quiet { background: transparent; border-color: transparent; box-shadow: none; color: var(--muted); }
+    .btn-sm { min-height: 31px; padding: 0 10px; font-size: 11px; }
+    .btn-block { width: 100%; min-height: 42px; }
+
+    .content { max-width: 1500px; margin: 0 auto; padding: 30px 32px 52px; }
+    .page { display: none; animation: pageIn .24s ease both; }
+    .page.active { display: block; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+    .heading-line, .section-title { display: flex; align-items: center; gap: 7px; }
+    .heading-line h1, .heading-line h2, .section-title h2, .section-title h3 { margin-bottom: 0; }
+    .help-tip {
+      position: relative;
+      display: inline-grid;
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid #cbd8d3;
+      border-radius: 50%;
+      background: #fff;
+      color: #71837c;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: help;
+    }
+    .help-tip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      z-index: 90;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      width: max-content;
+      max-width: 260px;
+      padding: 8px 10px;
+      border: 1px solid #2a423a;
+      border-radius: 7px;
+      background: #172b27;
+      color: #f4faf7;
+      box-shadow: 0 10px 28px rgba(16,36,31,.18);
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%,4px);
+      transition: opacity .14s ease, transform .14s ease;
+    }
+    .help-tip:hover::after, .help-tip:focus-visible::after { opacity: 1; transform: translate(-50%,0); }
+    .help-tip.edge::after { right: 0; left: auto; transform: translateY(4px); }
+    .help-tip.edge:hover::after, .help-tip.edge:focus-visible::after { transform: translateY(0); }
+    .help-tip.below::after { top: calc(100% + 8px); bottom: auto; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 5px; font-size: 25px; line-height: 1.25; letter-spacing: -.035em; font-weight: 720; }
+    h2 { margin-bottom: 4px; font-size: 15px; letter-spacing: -.012em; font-weight: 690; }
+    h3 { margin-bottom: 4px; font-size: 13px; font-weight: 670; }
+    .page-heading p, .section-head p { margin-bottom: 0; color: var(--muted); font-size: 12px; }
+    .revision-meta { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.66); color: var(--muted); font-size: 11px; }
+    .revision-meta code { color: #344c44; font-family: var(--mono); font-size: 10px; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat {
+      position: relative;
+      overflow: hidden;
+      min-height: 98px;
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat::after { content: ""; position: absolute; width: 76px; height: 76px; right: -28px; top: -32px; border-radius: 50%; background: var(--teal-soft); opacity: .7; }
+    .stat:nth-child(2)::after { background: var(--blue-soft); }
+    .stat:nth-child(3)::after { background: #f0f5e7; }
+    .stat:nth-child(4)::after { background: var(--amber-soft); }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .stat-value { margin-top: 7px; font-size: 21px; font-weight: 720; letter-spacing: -.03em; }
+    .stat-value small { margin-left: 3px; color: var(--muted-2); font-size: 11px; font-weight: 520; letter-spacing: 0; }
+    .stat-foot { margin-top: 3px; color: var(--teal); font-size: 10px; }
+
+    .overview-grid { display: grid; grid-template-columns: minmax(0,1.65fr) minmax(280px,.72fr); gap: 16px; align-items: start; }
+    .stack { display: grid; gap: 16px; }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow-sm); }
+    .card-pad { padding: 20px; }
+    .section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+    .section-head.compact { margin-bottom: 12px; }
+    .section-side { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .divider { height: 1px; margin: 18px 0; background: var(--line); }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; }
+    .field label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; color: #44554e; font-size: 11px; font-weight: 620; }
+    .field-label { display: flex; align-items: center; gap: 5px; margin-bottom: 6px; }
+    .field-label label { margin: 0; }
+    .field-help { color: var(--muted-2); font-size: 9px; font-weight: 500; }
+    .control {
+      width: 100%;
+      height: 38px;
+      padding: 0 11px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      outline: none;
+      background: #fbfcfc;
+      color: var(--ink);
+      font-size: 12px;
+      transition: .16s ease;
+    }
+    .control:hover { border-color: #aec0b9; }
+    .control:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(18,124,104,.09); background: #fff; }
+    select.control { appearance: none; background-image: linear-gradient(45deg,transparent 50%,#81918a 50%),linear-gradient(135deg,#81918a 50%,transparent 50%); background-position: calc(100% - 15px) 16px,calc(100% - 11px) 16px; background-size: 4px 4px; background-repeat: no-repeat; }
+    textarea.control { height: auto; min-height: 90px; padding-top: 10px; resize: vertical; }
+    .input-unit { position: relative; }
+    .input-unit .control { padding-right: 52px; }
+    .input-unit span { position: absolute; right: 11px; top: 10px; color: var(--muted-2); font-size: 10px; }
+    .locked-input { display: flex; height: 38px; align-items: center; gap: 8px; padding: 0 11px; border: 1px dashed var(--line-strong); border-radius: 8px; background: var(--canvas); color: #476056; font-family: var(--mono); font-size: 10px; }
+    .lock { color: var(--teal); font-family: var(--font); }
+
+    .isolation-flow { display: grid; grid-template-columns: 1fr 26px 1fr 26px 1fr; align-items: stretch; gap: 5px; }
+    .flow-node { min-height: 92px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fafcfb; }
+    .flow-node.active { border-color: #badbd1; background: #f0f8f5; }
+    .flow-icon { display: grid; width: 25px; height: 25px; margin-bottom: 9px; place-items: center; border-radius: 7px; background: var(--canvas-2); color: var(--teal); font-size: 12px; }
+    .flow-node strong { display: block; font-size: 11px; }
+    .flow-node span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .flow-arrow { display: grid; place-items: center; color: #9cb0a8; font-size: 16px; }
+
+    .agent-strip { display: flex; align-items: center; gap: 9px; }
+    .avatar {
+      position: relative;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      overflow: hidden;
+      border: 2px solid #fff;
+      border-radius: 11px;
+      background: #edf4f1;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+    .avatar-more { display: grid; place-items: center; color: var(--teal); font-size: 10px; font-weight: 700; background: var(--teal-soft); }
+    .agent-strip-meta { margin-left: 5px; }
+    .agent-strip-meta strong { display: block; font-size: 11px; }
+    .agent-strip-meta span { color: var(--muted); font-size: 10px; }
+
+    .checklist { display: grid; gap: 1px; }
+    .check-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #edf1ef; }
+    .check-row:last-child { border-bottom: 0; }
+    .check-mark { display: grid; flex: 0 0 auto; width: 18px; height: 18px; place-items: center; border-radius: 50%; background: var(--teal-soft); color: var(--teal); font-size: 10px; font-weight: 800; }
+    .check-mark.warn { background: var(--amber-soft); color: var(--amber); }
+    .check-copy { flex: 1; min-width: 0; }
+    .check-copy strong { display: block; font-size: 11px; font-weight: 620; }
+    .check-copy span { display: block; overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    .check-state { color: var(--teal); font-size: 9px; }
+    .check-state.warn { color: var(--amber); }
+    .snapshot-box { margin: 14px 0; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #f8faf9; }
+    .snapshot-id { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 9px; }
+    .snapshot-id code { color: #314b42; font-family: var(--mono); }
+    .snapshot-files { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-top: 10px; }
+    .snapshot-files span { padding: 5px 3px; border-radius: 5px; background: #fff; color: var(--muted); text-align: center; font-size: 8px; box-shadow: inset 0 0 0 1px #e6ece9; }
+    .launch-note { margin: 10px 0 0; color: var(--muted); font-size: 9px; line-height: 1.5; text-align: center; }
+
+    .chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 99px; background: #fff; color: var(--muted); font-size: 9px; }
+    .chip.teal { border-color: #c8e3dc; background: var(--teal-soft); color: var(--teal-2); }
+    .chip.blue { border-color: #d5dff8; background: var(--blue-soft); color: var(--blue); }
+    .chip.amber { border-color: #f2deb8; background: var(--amber-soft); color: var(--amber); }
+    .chip::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .75; }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .search { position: relative; width: min(330px,100%); }
+    .search .control { padding-left: 34px; }
+    .search::before { content: "⌕"; position: absolute; z-index: 1; left: 12px; top: 7px; color: var(--muted-2); font-size: 17px; }
+    .toolbar-actions { display: flex; gap: 8px; }
+
+    .agent-table { overflow: hidden; }
+    .table-head, .agent-row { display: grid; grid-template-columns: 38px minmax(180px,1.1fr) minmax(180px,1fr) minmax(150px,.8fr) 110px 74px; align-items: center; gap: 12px; }
+    .table-head { padding: 10px 16px; border-bottom: 1px solid var(--line); background: #f8faf9; color: var(--muted); font-size: 9px; font-weight: 680; letter-spacing: .05em; text-transform: uppercase; }
+    .agent-row { min-height: 68px; padding: 10px 16px; border-bottom: 1px solid #edf1ef; transition: .14s ease; }
+    .agent-row:last-child { border-bottom: 0; }
+    .agent-row:hover { background: #fafcfb; }
+    .checkbox { appearance: none; width: 16px; height: 16px; margin: 0; border: 1px solid #b7c7c1; border-radius: 5px; background: #fff; cursor: pointer; }
+    .checkbox:checked { border-color: var(--teal); background: var(--teal); box-shadow: inset 0 0 0 3px #fff; }
+    .agent-person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .agent-person .avatar { width: 36px; height: 36px; border-radius: 9px; }
+    .agent-person strong { display: block; font-size: 11px; }
+    .agent-person span { display: block; color: var(--muted); font-size: 9px; }
+    .truncate { overflow: hidden; color: #495a53; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .location { color: var(--muted); font-size: 10px; }
+    .row-actions { color: var(--muted); font-size: 17px; text-align: center; cursor: pointer; }
+    .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-top: 1px solid var(--line); background: #fbfcfc; color: var(--muted); font-size: 10px; }
+
+    .two-col { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .provider-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .provider-logo { display: grid; width: 39px; height: 39px; place-items: center; border-radius: 10px; background: #173e37; color: #c7ee89; font-family: var(--mono); font-size: 11px; font-weight: 800; }
+    .provider-logo.blue { background: #233c74; color: #cfdbff; }
+    .provider-head div:nth-child(2) { flex: 1; }
+    .provider-head strong { display: block; font-size: 13px; }
+    .provider-head span { color: var(--muted); font-size: 10px; }
+    .connection-status { display: inline-flex; align-items: center; gap: 5px; color: var(--teal); font-size: 9px; }
+    .connection-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px rgba(18,124,104,.1); }
+    .provider-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 17px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .provider-foot span { color: var(--muted); font-size: 9px; }
+    .model-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-top: 16px; }
+    .summary-cell { padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: #fafcfb; }
+    .summary-cell span { display: block; color: var(--muted); font-size: 9px; }
+    .summary-cell strong { display: block; margin-top: 4px; font-size: 11px; font-family: var(--mono); }
+
+    .prompt-layout { display: grid; grid-template-columns: 248px minmax(0,1fr); overflow: hidden; min-height: 640px; }
+    .prompt-list { border-right: 1px solid var(--line); background: #fafcfb; }
+    .prompt-list-head { padding: 16px; border-bottom: 1px solid var(--line); }
+    .prompt-list-head strong { display: block; font-size: 11px; }
+    .prompt-list-head span { color: var(--muted); font-size: 9px; }
+    .prompt-group { padding: 13px 10px 5px; color: var(--muted-2); font-size: 8px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+    .prompt-item { display: flex; width: calc(100% - 12px); min-height: 38px; align-items: center; justify-content: space-between; margin: 2px 6px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: #50615a; text-align: left; font-family: var(--mono); font-size: 9px; cursor: pointer; }
+    .prompt-item:hover { background: #f1f5f3; }
+    .prompt-item.active { background: var(--teal-soft); color: var(--teal-2); font-weight: 700; }
+    .prompt-item i { width: 5px; height: 5px; border-radius: 50%; background: #91c677; opacity: 0; }
+    .prompt-item.changed i { opacity: 1; }
+    .prompt-editor { display: flex; min-width: 0; flex-direction: column; }
+    .editor-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+    .editor-head strong { display: block; font-family: var(--mono); font-size: 11px; }
+    .editor-head span { color: var(--muted); font-size: 9px; }
+    .editor-actions { display: flex; gap: 6px; }
+    .variable-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 43px; padding: 8px 18px; border-bottom: 1px solid var(--line); background: #fbfcfc; }
+    .variable-bar > span:first-child { margin-right: 3px; color: var(--muted); font-size: 9px; }
+    .variable { padding: 2px 6px; border: 1px solid #d4e2dd; border-radius: 5px; background: #fff; color: var(--teal-2); font-family: var(--mono); font-size: 8px; }
+    .code-editor { flex: 1; width: 100%; min-height: 410px; padding: 22px; border: 0; outline: none; resize: none; background: #172321; color: #d9e8e2; font-family: var(--mono); font-size: 11px; line-height: 1.75; tab-size: 2; }
+    .editor-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 18px; color: var(--muted); font-size: 9px; }
+
+    .world-layout { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(300px,.7fr); gap: 16px; align-items: start; }
+    .map-preview { position: relative; overflow: hidden; aspect-ratio: 16/8.3; border-radius: 11px; background: #bfdba4; }
+    .map-preview img { width: 100%; height: 100%; object-fit: cover; object-position: center 48%; filter: saturate(.74) contrast(.96); transform: scale(1.02); }
+    .map-preview::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg,rgba(17,32,28,.05),rgba(17,32,28,.2)); box-shadow: inset 0 0 0 1px rgba(17,32,28,.15); }
+    .map-badge { position: absolute; z-index: 2; left: 14px; top: 14px; display: flex; align-items: center; gap: 7px; padding: 7px 9px; border-radius: 7px; background: rgba(18,32,31,.82); color: white; font-size: 9px; backdrop-filter: blur(8px); }
+    .map-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #aee163; }
+    .map-tools { position: absolute; z-index: 2; right: 13px; top: 13px; display: flex; gap: 5px; }
+    .map-tool { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid rgba(255,255,255,.18); border-radius: 7px; background: rgba(18,32,31,.75); color: white; font-size: 11px; cursor: pointer; backdrop-filter: blur(8px); }
+    .map-legend { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 13px; color: var(--muted); font-size: 9px; }
+    .legend-dot { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 2px; background: #74a98b; }
+    .legend-dot.collision { background: #d2925a; }
+    .legend-dot.agent { border-radius: 50%; background: #5472ca; }
+    .asset-list { display: grid; gap: 8px; }
+    .asset-row { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 9px; background: #fbfcfc; }
+    .asset-icon { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 8px; background: var(--canvas-2); color: var(--teal); font-size: 12px; }
+    .asset-copy { flex: 1; min-width: 0; }
+    .asset-copy strong { display: block; font-size: 10px; }
+    .asset-copy span { display: block; overflow: hidden; color: var(--muted); font-family: var(--mono); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+    .asset-state { color: var(--teal); font-size: 9px; }
+
+    .advanced-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .setting-row { display: grid; grid-template-columns: minmax(180px,1fr) minmax(180px,.9fr); align-items: center; gap: 18px; padding: 14px 0; border-bottom: 1px solid #edf1ef; }
+    .setting-row:last-child { border-bottom: 0; }
+    .setting-copy { display: flex; align-items: center; gap: 6px; }
+    .setting-copy strong { display: block; font-size: 11px; }
+    .setting-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; }
+    .inline-risk { display: inline-flex; align-items: center; gap: 6px; color: #9a6d2d; font-size: 9px; font-weight: 650; }
+    .range-wrap { display: grid; grid-template-columns: 1fr 44px; align-items: center; gap: 10px; }
+    input[type="range"] { width: 100%; height: 4px; appearance: none; border-radius: 99px; background: #dce7e2; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { width: 14px; height: 14px; appearance: none; border: 3px solid white; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 1px var(--teal),0 2px 5px rgba(18,32,31,.18); cursor: pointer; }
+    .range-value { padding: 4px; border: 1px solid var(--line); border-radius: 6px; background: #fafcfb; color: #365047; text-align: center; font-family: var(--mono); font-size: 9px; }
+    .switch { position: relative; width: 34px; height: 19px; border: 0; border-radius: 99px; background: #cbd6d2; cursor: pointer; transition: .16s ease; }
+    .switch::after { content: ""; position: absolute; width: 15px; height: 15px; left: 2px; top: 2px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: .16s ease; }
+    .switch.on { background: var(--teal); }
+    .switch.on::after { transform: translateX(15px); }
+    .warning-card { display: flex; gap: 11px; margin-top: 16px; padding: 13px; border: 1px solid #f1ddba; border-radius: 10px; background: #fff9ee; color: #74501c; }
+    .warning-card b { font-size: 15px; }
+    .warning-card strong { display: block; font-size: 10px; }
+    .warning-card span { display: block; margin-top: 2px; color: #9a7339; font-size: 9px; }
+
+    /* Experiment results */
+    .result-heading-actions { display: flex; align-items: center; gap: 8px; }
+    .result-heading-actions [hidden] { display: none; }
+    .result-runbar { display: grid; grid-template-columns: minmax(250px,1.2fr) repeat(3,minmax(120px,.55fr)) auto; align-items: center; gap: 0; margin-bottom: 14px; overflow: hidden; }
+    .result-run-picker { padding: 13px 15px; border-right: 1px solid var(--line); }
+    .result-run-picker label, .result-run-fact span { display: block; margin-bottom: 4px; color: var(--muted-2); font-size: 8px; }
+    .result-run-picker select { width: 100%; min-height: 31px; padding: 0 29px 0 9px; border: 1px solid var(--line); border-radius: 7px; background-color: #fbfcfc; color: #31483f; font-family: var(--mono); font-size: 9px; }
+    .result-run-picker-control { display: flex; align-items: center; gap: 6px; }
+    .result-run-picker-control select { min-width: 0; }
+    .result-run-picker-control .btn { flex: 0 0 auto; min-height: 31px; white-space: nowrap; }
+    .result-run-fact { min-width: 0; padding: 13px 15px; border-right: 1px solid var(--line); }
+    .result-run-fact strong { display: block; overflow: hidden; color: #344940; font-size: 9px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .result-sync { display: flex; align-items: center; gap: 7px; padding: 13px 15px; color: var(--teal-2); font-size: 9px; font-weight: 650; white-space: nowrap; }
+    .result-sync::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #7fbd62; box-shadow: 0 0 0 3px rgba(127,189,98,.13); }
+    .result-sync.partial { color: var(--blue); }
+    .result-sync.partial::before { background: var(--blue); box-shadow: 0 0 0 3px rgba(63,111,217,.12); }
+
+    .result-tabs { display: flex; align-items: center; gap: 2px; margin-bottom: 14px; padding: 4px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #edf2f0; }
+    .result-tab { min-height: 32px; padding: 0 13px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 9px; font-weight: 590; white-space: nowrap; cursor: pointer; }
+    .result-tab:hover { color: var(--ink); }
+    .result-tab.active { background: #fff; color: var(--teal-2); box-shadow: 0 1px 4px rgba(18,32,31,.09); font-weight: 700; }
+    .result-panel { display: none; animation: pageIn .18s ease both; }
+    .result-panel.active { display: block; }
+    .result-empty { padding: 74px 24px; border: 1px dashed var(--line-strong); border-radius: 13px; background: rgba(255,255,255,.62); text-align: center; }
+    .result-empty-symbol { display: grid; width: 44px; height: 44px; margin: 0 auto 12px; place-items: center; border-radius: 12px; background: var(--teal-soft); color: var(--teal); font-size: 17px; }
+    .result-empty strong { display: block; font-size: 13px; }
+    .result-empty span { display: block; margin: 4px 0 15px; color: var(--muted); font-size: 9px; }
+
+    .result-metrics { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); margin-bottom: 14px; overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: #fff; box-shadow: var(--shadow-sm); }
+    .result-metric { padding: 14px 16px; border-right: 1px solid var(--line); }
+    .result-metric:last-child { border-right: 0; }
+    .result-metric span { display: block; color: var(--muted); font-size: 8px; }
+    .result-metric strong { display: block; margin-top: 4px; color: #2f453c; font-size: 16px; letter-spacing: -.025em; }
+    .result-metric small { margin-left: 3px; color: var(--muted); font-size: 8px; font-weight: 500; }
+    .result-grid { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(300px,.75fr); gap: 14px; align-items: start; }
+    .result-grid.equal { grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: 14px; }
+    .result-card { overflow: hidden; }
+    .result-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .result-card-head strong { display: block; font-size: 11px; }
+    .result-card-head span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .result-card-body { padding: 15px 16px; }
+    .result-chart-legend { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 8px; }
+    .result-chart-legend i { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 2px; background: var(--teal); }
+    .result-chart-legend i.chat { background: #607fd5; }
+    .result-chart-legend i.memory { background: #b6cf60; }
+    .activity-chart { display: block; width: 100%; min-height: 222px; }
+    .activity-chart text { fill: #7a8d85; font-family: var(--font); font-size: 8px; }
+    .activity-chart .grid { stroke: #e6ece9; stroke-width: 1; }
+    .activity-chart .area { fill: rgba(18,124,104,.10); }
+    .activity-chart .line { fill: none; stroke: var(--teal); stroke-width: 2; }
+    .activity-chart .chat-line { fill: none; stroke: #607fd5; stroke-width: 1.5; }
+    .activity-chart .memory-line { fill: none; stroke: #a2bd4d; stroke-width: 1.5; }
+    .activity-chart .cursor { stroke: #314b42; stroke-width: 1; stroke-dasharray: 3 3; }
+    .activity-chart .point { fill: #fff; stroke: var(--teal); stroke-width: 2; }
+
+    .result-event-list { display: grid; }
+    .result-event { display: grid; grid-template-columns: 48px 9px 1fr; gap: 9px; min-height: 54px; }
+    .result-event time { padding-top: 2px; color: var(--muted); font-family: var(--mono); font-size: 8px; }
+    .event-track { position: relative; display: flex; justify-content: center; }
+    .event-track::after { content: ""; position: absolute; top: 10px; bottom: -1px; width: 1px; background: var(--line); }
+    .result-event:last-child .event-track::after { display: none; }
+    .event-track i { position: relative; z-index: 1; width: 7px; height: 7px; margin-top: 4px; border: 2px solid #fff; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 1px #8cc6b7; }
+    .event-copy strong { display: block; font-size: 9px; }
+    .event-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; line-height: 1.45; }
+
+    .relation-map { position: relative; min-height: 250px; overflow: hidden; border-radius: 9px; background: radial-gradient(circle at center,#f7fbf9,#f0f5f2); }
+    .relation-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .relation-map line { stroke: #c5d7d0; stroke-width: 1; }
+    .relation-map line.strong { stroke: #63aa98; stroke-width: 2.2; }
+    .relation-node { position: absolute; z-index: 2; display: flex; width: 42px; flex-direction: column; align-items: center; gap: 3px; border: 0; background: transparent; color: #42574f; font-size: 7px; cursor: pointer; }
+    .relation-node img { width: 28px; height: 28px; border: 2px solid #fff; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px #afc7be,0 3px 8px rgba(18,32,31,.11); }
+    .relation-node.focus img { box-shadow: 0 0 0 2px var(--teal),0 4px 11px rgba(18,124,104,.2); }
+    .rank-list { display: grid; gap: 2px; }
+    .rank-row { display: grid; grid-template-columns: 22px minmax(110px,1fr) minmax(100px,1fr) 45px; align-items: center; gap: 9px; min-height: 39px; border-bottom: 1px solid #edf1ef; }
+    .rank-row:last-child { border-bottom: 0; }
+    .rank-index { color: var(--muted-2); font-family: var(--mono); font-size: 8px; }
+    .rank-person { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .rank-person img { width: 24px; height: 24px; border-radius: 7px; object-fit: cover; }
+    .rank-person strong { overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    .rank-bar { height: 5px; overflow: hidden; border-radius: 99px; background: #e7edeb; }
+    .rank-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,var(--teal),#9ccf61); }
+    .rank-value { color: #40564d; font-family: var(--mono); font-size: 8px; text-align: right; }
+
+    .timeline-toolbar { display: grid; grid-template-columns: auto minmax(220px,1fr) auto; align-items: center; gap: 13px; margin-bottom: 14px; padding: 11px 13px; }
+    .timeline-controls { display: flex; align-items: center; gap: 5px; }
+    .timeline-button { display: grid; width: 30px; height: 30px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: #40554d; font-size: 10px; cursor: pointer; }
+    .timeline-button.primary { border-color: var(--teal); background: var(--teal); color: #fff; }
+    .timeline-range { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; }
+    .timeline-range span { color: var(--muted); font-family: var(--mono); font-size: 8px; }
+    .timeline-current { min-width: 145px; text-align: right; }
+    .timeline-current strong { display: block; font-family: var(--mono); font-size: 10px; }
+    .timeline-current span { color: var(--muted); font-size: 8px; }
+    .timeline-layout { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(290px,.65fr); gap: 14px; }
+    .result-map { position: relative; min-height: 520px; overflow: hidden; background: #b8d19d; }
+    .result-map > canvas { display: block; width: 100%; height: 100%; min-height: 520px; object-fit: cover; filter: saturate(.78) contrast(.96); transform: scale(1.01); }
+    .result-map::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(18,32,31,.18); background: linear-gradient(180deg,rgba(17,32,28,.03),rgba(17,32,28,.12)); }
+    .replay-options { display: flex; grid-column: 1/-1; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding-top: 9px; border-top: 1px solid var(--line); }
+    .replay-options label { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 8px; }
+    .replay-options select { min-height: 28px; padding: 4px 24px 4px 7px; }
+    .replay-markers { position: relative; grid-column: 1/-1; height: 16px; border-radius: 5px; background: #edf3f0; }
+    .replay-marker { position: absolute; top: 3px; width: 6px; height: 10px; border: 0; border-radius: 2px; background: var(--teal); transform: translateX(-50%); cursor: pointer; }
+    .replay-marker.checkpoint { background: #d28b2a; }
+    .replay-marker.conversation { background: #4c72c8; }
+    .map-time-label { position: absolute; z-index: 4; left: 13px; top: 13px; padding: 7px 9px; border-radius: 7px; background: rgba(18,32,31,.83); color: #fff; font-family: var(--mono); font-size: 9px; backdrop-filter: blur(7px); }
+    .timeline-stream { max-height: 520px; overflow-y: auto; }
+    .timeline-stream-head { position: sticky; z-index: 2; top: 0; padding: 13px 14px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.95); backdrop-filter: blur(8px); }
+    .timeline-stream-head strong { display: block; font-size: 10px; }
+    .timeline-stream-head span { color: var(--muted); font-size: 8px; }
+    .replay-inspector { padding: 12px 14px; border-bottom: 1px solid var(--line); background: #fbfcfc; }
+    .replay-inspector h3 { margin: 0 0 9px; font-size: 11px; }
+    .replay-inspector dl { display: grid; grid-template-columns: 66px minmax(0,1fr); gap: 6px 8px; margin: 0; font-size: 8px; }
+    .replay-inspector dt { color: var(--muted); }
+    .replay-inspector dd { margin: 0; overflow-wrap: anywhere; }
+    .stream-item { display: grid; grid-template-columns: 34px 1fr; gap: 9px; padding: 12px 14px; border-bottom: 1px solid #edf1ef; }
+    .stream-item.active { background: #f2f8f5; box-shadow: inset 2px 0 var(--teal); }
+    .stream-time { color: var(--muted); font-family: var(--mono); font-size: 8px; }
+    .stream-copy strong { display: block; font-size: 9px; }
+    .stream-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; line-height: 1.45; }
+
+    .result-agent-layout, .conversation-layout { display: grid; grid-template-columns: 270px minmax(0,1fr); min-height: 580px; overflow: hidden; }
+    .result-agent-list, .conversation-index { border-right: 1px solid var(--line); background: #fbfcfc; }
+    .result-list-search { padding: 12px; border-bottom: 1px solid var(--line); }
+    .result-list-search input { min-height: 31px; }
+    .result-agent-button, .conversation-button { display: flex; width: 100%; align-items: center; gap: 9px; padding: 10px 12px; border: 0; border-bottom: 1px solid #edf1ef; background: transparent; text-align: left; cursor: pointer; }
+    .result-agent-button:hover, .conversation-button:hover { background: #f4f8f6; }
+    .result-agent-button.active, .conversation-button.active { background: var(--teal-soft); box-shadow: inset 2px 0 var(--teal); }
+    .result-agent-button img { width: 31px; height: 31px; border-radius: 8px; object-fit: cover; }
+    .result-agent-button div, .conversation-button div { flex: 1; min-width: 0; }
+    .result-agent-button strong, .conversation-button strong { display: block; overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+    .result-agent-button span, .conversation-button span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .result-agent-button em { color: var(--teal); font-family: var(--mono); font-size: 8px; font-style: normal; }
+    .agent-result-detail { padding: 17px 18px; }
+    .agent-result-identity { display: flex; align-items: center; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+    .agent-result-identity img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
+    .agent-result-identity div { flex: 1; min-width: 0; }
+    .agent-result-identity h2 { font-size: 15px; }
+    .agent-result-identity p { margin: 3px 0 0; color: var(--muted); font-size: 9px; }
+    .agent-final-state { margin: 14px 0; padding: 11px 12px; border-left: 2px solid var(--teal); background: #f5f9f7; }
+    .agent-final-state span { display: block; color: var(--muted); font-size: 8px; }
+    .agent-final-state strong { display: block; margin-top: 3px; font-size: 10px; font-weight: 620; }
+    .agent-result-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .mini-result { padding: 12px; border: 1px solid var(--line); border-radius: 9px; }
+    .mini-result > span { display: block; margin-bottom: 9px; color: var(--muted); font-size: 8px; }
+    .distribution-row { display: grid; grid-template-columns: 56px 1fr 34px; align-items: center; gap: 7px; margin: 7px 0; font-size: 8px; }
+    .distribution-row i { display: block; height: 5px; border-radius: 99px; background: #dfe8e4; }
+    .distribution-row i b { display: block; height: 100%; border-radius: 99px; background: var(--teal); }
+    .schedule-result { display: grid; gap: 7px; }
+    .schedule-result div { display: grid; grid-template-columns: 72px 1fr; gap: 8px; color: #41564e; font-size: 8px; }
+    .schedule-result time { color: var(--muted); font-family: var(--mono); }
+
+    .conversation-filter, .memory-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding: 11px 12px; }
+    .conversation-filter .control, .memory-toolbar .control { min-height: 31px; font-size: 9px; }
+    .conversation-filter input { flex: 1; min-width: 220px; }
+    .conversation-button { align-items: flex-start; }
+    .conversation-button time { flex: 0 0 auto; color: var(--muted-2); font-family: var(--mono); font-size: 7px; }
+    .conversation-detail { padding: 17px 19px; }
+    .conversation-meta { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .conversation-meta h2 { font-size: 14px; }
+    .conversation-meta p { margin: 3px 0 0; color: var(--muted); font-size: 8px; }
+    .message-list { display: grid; gap: 11px; max-width: 760px; margin-top: 17px; }
+    .message { display: grid; grid-template-columns: 31px 1fr; gap: 9px; align-items: start; }
+    .message img { width: 31px; height: 31px; border-radius: 8px; object-fit: cover; }
+    .message strong { display: block; margin-bottom: 3px; font-size: 8px; }
+    .message p { display: inline-block; margin: 0; padding: 8px 10px; border-radius: 2px 9px 9px 9px; background: #f0f5f3; color: #354a42; font-size: 9px; line-height: 1.55; }
+    .message.reply { margin-left: 40px; }
+    .message.reply p { background: var(--teal-soft); }
+
+    .memory-table-wrap { overflow-x: auto; }
+    .memory-table { width: 100%; border-collapse: collapse; }
+    .memory-table th { padding: 9px 10px; border-bottom: 1px solid var(--line); background: #f8faf9; color: var(--muted); font-size: 8px; font-weight: 650; text-align: left; }
+    .memory-table td { padding: 11px 10px; border-bottom: 1px solid #edf1ef; color: #3d514a; font-size: 8px; vertical-align: top; }
+    .memory-table tr:last-child td { border-bottom: 0; }
+    .memory-table code { color: var(--muted); font-family: var(--mono); font-size: 7px; }
+    .memory-desc { min-width: 260px; max-width: 520px; line-height: 1.5; }
+    .memory-type { display: inline-flex; padding: 2px 6px; border-radius: 99px; background: var(--teal-soft); color: var(--teal-2); font-size: 7px; }
+    .memory-type.thought { background: var(--blue-soft); color: var(--blue); }
+    .memory-type.chat { background: var(--amber-soft); color: var(--amber); }
+    .poignancy { display: flex; align-items: center; gap: 5px; }
+    .poignancy i { display: block; width: 34px; height: 4px; overflow: hidden; border-radius: 99px; background: #e4eae8; }
+    .poignancy i b { display: block; height: 100%; background: #ca8d43; }
+
+    .operations-grid { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(300px,.9fr); gap: 14px; align-items: start; }
+    .usage-table, .attempt-list, .artifact-result-list { display: grid; }
+    .usage-row { display: grid; grid-template-columns: minmax(120px,1fr) 74px 74px 65px; gap: 10px; align-items: center; min-height: 40px; border-bottom: 1px solid #edf1ef; font-size: 8px; }
+    .usage-row.head { min-height: 30px; color: var(--muted); font-weight: 650; }
+    .usage-row:last-child { border-bottom: 0; }
+    .usage-row code { font-family: var(--mono); font-size: 8px; }
+    .attempt-item { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; gap: 10px; padding: 11px 0; border-bottom: 1px solid #edf1ef; }
+    .attempt-item:last-child { border-bottom: 0; }
+    .attempt-num { display: grid; width: 25px; height: 25px; place-items: center; border-radius: 7px; background: var(--canvas-2); color: var(--muted); font-family: var(--mono); font-size: 8px; }
+    .attempt-item strong { display: block; font-size: 9px; }
+    .attempt-item span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .artifact-result { display: grid; grid-template-columns: 31px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #edf1ef; }
+    .artifact-result:last-child { border-bottom: 0; }
+    .artifact-result-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 8px; background: var(--canvas-2); color: var(--teal); font-size: 10px; }
+    .artifact-result strong { display: block; font-size: 9px; }
+    .artifact-result span { display: block; margin-top: 2px; color: var(--muted); font-family: var(--mono); font-size: 7px; }
+    .artifact-action { padding: 4px 7px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: #40564e; font-size: 8px; cursor: pointer; }
+    .operations-shell { display: grid; gap: 12px; }
+    .operations-subtabs { display: flex; gap: 4px; padding: 4px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #f5f8f7; }
+    .operations-subtab { flex: 0 0 auto; padding: 7px 11px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 8px; font-weight: 650; cursor: pointer; }
+    .operations-subtab.active { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(35,55,48,.1); }
+    .operation-panel { display: none; }
+    .operation-panel.active { display: block; }
+    .observability-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+    .observability-toolbar select, .observability-toolbar input { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--ink); font-size: 8px; }
+    .observability-toolbar input { min-width: 190px; flex: 1 1 190px; }
+    .observability-toolbar label { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 8px; }
+    .log-layout { display: grid; grid-template-columns: minmax(0,1fr) 250px; min-height: 410px; }
+    .log-viewport { min-height: 390px; max-height: 58vh; margin: 0; padding: 14px; overflow: auto; border-right: 1px solid var(--line); background: #17211e; color: #d8e5df; font: 8px/1.65 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .attempt-side { padding: 10px 12px; overflow: auto; background: #fbfcfc; }
+    .trace-table, .checkpoint-table, .event-table { display: grid; }
+    .trace-row, .checkpoint-row, .event-row { display: grid; grid-template-columns: 95px minmax(100px,1fr) 90px 80px 80px; gap: 8px; align-items: center; min-height: 40px; padding: 7px 12px; border-bottom: 1px solid #edf1ef; font-size: 8px; }
+    .checkpoint-row { grid-template-columns: 58px 92px 90px minmax(120px,1fr) 92px minmax(120px,1fr); cursor: pointer; }
+    .event-row { grid-template-columns: 125px 115px minmax(160px,1fr); }
+    .trace-row.head, .checkpoint-row.head, .event-row.head { min-height: 31px; color: var(--muted); background: #f8faf9; font-weight: 650; }
+    .checkpoint-detail { padding: 14px; border-top: 1px solid var(--line); background: #fbfcfc; }
+    .checkpoint-detail-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+    .checkpoint-detail-grid > div { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .checkpoint-detail pre { max-height: 240px; overflow: auto; padding: 10px; border-radius: 7px; background: #17211e; color: #d8e5df; font: 8px/1.55 var(--mono); }
+    @media (max-width: 920px) { .log-layout { grid-template-columns: 1fr; } .log-viewport { border-right: 0; border-bottom: 1px solid var(--line); } .checkpoint-detail-grid { grid-template-columns: 1fr; } }
+
+    /* Experiment hub */
+    .hub-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+      padding: 22px 24px;
+      overflow: hidden;
+      border: 1px solid #d5e3de;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 88% 10%, rgba(169, 221, 88, .21), transparent 18rem),
+        linear-gradient(115deg, #eef7f3 0%, #f8fbfa 62%, #f5f9ed 100%);
+      box-shadow: var(--shadow-sm);
+    }
+    .hub-hero-copy { max-width: 650px; }
+    .hub-hero h2 { margin-bottom: 7px; font-size: 19px; letter-spacing: -.03em; }
+    .hub-hero p { max-width: 590px; margin-bottom: 0; color: #60746b; font-size: 11px; }
+    .hub-hero-metric { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; }
+    .hub-hero-metric > div { min-width: 92px; padding: 12px 14px; border: 1px solid rgba(151,181,170,.34); border-radius: 10px; background: rgba(255,255,255,.62); backdrop-filter: blur(7px); }
+    .hub-hero-metric span { display: block; color: var(--muted); font-size: 8px; text-transform: uppercase; letter-spacing: .08em; }
+    .hub-hero-metric strong { display: block; margin-top: 4px; font-size: 15px; letter-spacing: -.02em; }
+
+    .filter-tabs { display: flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; background: #edf2f0; }
+    .filter-tab { min-height: 29px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .filter-tab.active { background: #fff; color: #2e443c; font-weight: 650; box-shadow: 0 1px 4px rgba(18,32,31,.09); }
+
+    .experiment-list { display: grid; gap: 11px; }
+    .experiment-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(230px,1.1fr) minmax(390px,1.65fr) minmax(180px,.7fr) 34px;
+      align-items: stretch;
+      min-height: 148px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+      transition: .18s ease;
+    }
+    .experiment-card:hover { border-color: #b9cec6; box-shadow: 0 10px 28px rgba(17,38,32,.075); transform: translateY(-1px); }
+    .experiment-card[data-hidden="true"] { display: none; }
+    .experiment-main { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; padding: 18px 20px; border-right: 1px solid var(--line); cursor: pointer; }
+    .experiment-name-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .experiment-name { min-width: 0; }
+    .experiment-link { display: block; max-width: 100%; padding: 0; overflow: hidden; border: 0; background: transparent; color: var(--ink); font-size: 14px; font-weight: 700; letter-spacing: -.015em; text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .experiment-link:hover { color: var(--teal); }
+    .experiment-name code { display: block; margin-top: 3px; color: var(--muted-2); font-family: var(--mono); font-size: 8px; }
+    .exp-status { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 99px; background: var(--teal-soft); color: var(--teal-2); font-size: 8px; font-weight: 690; }
+    .exp-status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .exp-status.running::before { box-shadow: 0 0 0 3px rgba(18,124,104,.12); }
+    .exp-status.queued { background: var(--amber-soft); color: var(--amber); }
+    .exp-status.draft { background: var(--amber-soft); color: var(--amber); }
+    .exp-status.paused { background: var(--blue-soft); color: var(--blue); }
+    .exp-status.completed { background: #edf2f0; color: #64766f; }
+    .exp-description { display: -webkit-box; margin: 10px 0 12px; overflow: hidden; color: var(--muted); font-size: 9px; line-height: 1.55; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .exp-tag { padding: 3px 7px; border: 1px solid #e1e8e5; border-radius: 5px; background: #fafcfb; color: #687a73; font-size: 8px; }
+
+    .experiment-params { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; padding: 14px 8px; }
+    .param-cell { min-width: 0; padding: 7px 12px; border-right: 1px solid #edf1ef; }
+    .param-cell:nth-child(3n) { border-right: 0; }
+    .param-cell:nth-child(-n+3) { border-bottom: 1px solid #edf1ef; }
+    .param-cell span { display: block; color: var(--muted-2); font-size: 8px; }
+    .param-cell strong { display: block; margin-top: 3px; overflow: hidden; color: #354a42; font-size: 9px; font-weight: 630; text-overflow: ellipsis; white-space: nowrap; }
+    .param-cell code { font-family: var(--mono); font-size: 8px; }
+
+    .experiment-run { display: flex; flex-direction: column; justify-content: space-between; padding: 18px 17px; border-left: 1px solid var(--line); background: #fbfcfc; }
+    .run-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .run-head span { color: var(--muted); font-size: 8px; }
+    .run-head code { color: #576a62; font-family: var(--mono); font-size: 8px; }
+    .run-value { margin: 9px 0 7px; }
+    .run-value strong { display: block; font-size: 12px; }
+    .run-value span { display: block; margin-top: 2px; color: var(--muted); font-size: 8px; }
+    .run-progress { height: 4px; overflow: hidden; border-radius: 99px; background: #e7edeb; }
+    .run-progress i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,var(--teal),#98cc59); }
+    .run-progress.paused i { background: var(--blue); }
+    .run-progress.completed i { background: #80938b; }
+    .run-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 8px; }
+    .run-cta { padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; color: #355148; font-size: 8px; font-weight: 650; cursor: pointer; }
+    .run-cta:hover { border-color: var(--teal); color: var(--teal); }
+    .experiment-menu { display: grid; place-items: center; border-left: 1px solid var(--line); color: var(--muted); font-size: 17px; cursor: pointer; }
+    .experiment-menu:hover { background: #f5f8f7; color: var(--ink); }
+
+    .list-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 15px; padding: 2px 4px; color: var(--muted); font-size: 9px; }
+    .pagination, .pagination-pages { display: flex; align-items: center; gap: 5px; }
+    .page-button { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--muted); font-size: 9px; cursor: pointer; }
+    .page-button:hover:not(:disabled) { border-color: #b5c9c1; color: var(--ink); }
+    .page-button.active { border-color: var(--teal); background: var(--teal); color: #fff; }
+    .page-button:disabled { cursor: not-allowed; opacity: .42; }
+    .empty-state { padding: 54px 24px; border: 1px dashed var(--line-strong); border-radius: 13px; background: rgba(255,255,255,.56); text-align: center; }
+    .empty-state-icon { display: grid; width: 40px; height: 40px; margin: 0 auto 11px; place-items: center; border-radius: 11px; background: var(--teal-soft); color: var(--teal); font-size: 16px; }
+    .empty-state strong { display: block; font-size: 12px; }
+    .empty-state span { display: block; margin: 4px 0 13px; color: var(--muted); font-size: 9px; }
+
+    .context-menu { position: fixed; z-index: 45; width: 168px; padding: 5px; border: 1px solid var(--line); border-radius: 9px; background: #fff; box-shadow: 0 15px 40px rgba(16,36,31,.16); }
+    .context-menu button { display: flex; width: 100%; min-height: 32px; align-items: center; gap: 8px; padding: 0 9px; border: 0; border-radius: 6px; background: transparent; color: #465951; font-size: 9px; text-align: left; cursor: pointer; }
+    .context-menu button:hover { background: #f2f6f4; }
+    .context-menu button.danger { color: var(--red); }
+    .context-menu hr { height: 1px; margin: 4px 3px; border: 0; background: var(--line); }
+
+    .back-to-hub { display: none; width: 28px; height: 28px; place-items: center; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--muted); cursor: pointer; }
+    .back-to-hub.visible { display: grid; }
+    .hub-actions, .experiment-actions { display: flex; align-items: center; gap: 8px; }
+    .experiment-scope { transition: opacity .16s ease; }
+    body.hub-mode .experiment-scope { opacity: .48; pointer-events: none; }
+    body.hub-mode .nav-label.experiment-scope { display: none; }
+    body.hub-mode .nav.experiment-scope { display: none; }
+
+    .workspace-notice { display: flex; align-items: center; gap: 8px; margin: -5px 0 16px; padding: 8px 10px; border: 1px solid #d5dff8; border-radius: 8px; background: var(--blue-soft); color: #3e5688; }
+    .readonly-tag { padding: 2px 6px; border-radius: 99px; background: #dce5ff; font-size: 8px; font-weight: 700; }
+    .workspace-notice strong { font-size: 9px; }
+    .workspace-notice .help-tip { margin-left: auto; border-color: #bdcae9; background: transparent; color: #536ca4; }
+    body.readonly-mode .dirty-track:disabled,
+    body.readonly-mode .control:disabled { color: #65766f; background: #f5f7f6; border-color: #e3e9e6; cursor: not-allowed; opacity: .78; }
+    body.readonly-mode .switch:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* Creation wizard */
+    .modal.wide { width: min(690px,100%); }
+    .wizard-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; margin: 0 21px 18px; }
+    .wizard-step { position: relative; display: flex; align-items: center; gap: 8px; color: var(--muted-2); font-size: 9px; }
+    .wizard-step::after { content: ""; position: absolute; z-index: 0; left: 29px; right: 5px; top: 10px; height: 1px; background: var(--line); }
+    .wizard-step:last-child::after { display: none; }
+    .wizard-step i { position: relative; z-index: 1; display: grid; width: 21px; height: 21px; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; background: #fff; font-style: normal; font-size: 8px; }
+    .wizard-step.active { color: var(--teal); font-weight: 680; }
+    .wizard-step.active i, .wizard-step.done i { border-color: var(--teal); background: var(--teal); color: #fff; }
+    .wizard-step.done::after { background: #96cfc1; }
+    .wizard-panel { display: none; min-height: 260px; }
+    .wizard-panel.active { display: block; animation: pageIn .18s ease both; }
+    .wizard-panel h3 { margin-bottom: 4px; font-size: 13px; }
+    .wizard-panel > p { margin-bottom: 16px; color: var(--muted); font-size: 9px; }
+    .template-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+    .template-option { position: relative; min-height: 126px; padding: 13px; border: 1px solid var(--line); border-radius: 10px; background: #fbfcfc; cursor: pointer; transition: .15s ease; }
+    .template-option:hover { border-color: #b6ccc3; }
+    .template-option.selected { border-color: var(--teal); background: #f2f9f6; box-shadow: 0 0 0 2px rgba(18,124,104,.07); }
+    .template-option strong { display: block; margin-top: 10px; font-size: 10px; }
+    .template-option span { display: block; margin-top: 4px; color: var(--muted); font-size: 8px; line-height: 1.5; }
+    .template-symbol { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 8px; background: var(--teal-soft); color: var(--teal); font-size: 12px; }
+    .create-summary { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; }
+    .create-summary-row { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 9px; }
+    .create-summary-row:last-child { border-bottom: 0; }
+    .create-summary-row span { color: var(--muted); }
+    .create-summary-row strong { font-weight: 630; }
+
+    .leave-actions { display: grid; grid-template-columns: repeat(2,1fr); gap: 9px; margin-top: 13px; }
+    .leave-choice { padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: #fbfcfc; text-align: left; cursor: pointer; }
+    .leave-choice:hover { border-color: #b6cac2; background: #fff; }
+    .leave-choice strong { display: block; font-size: 10px; }
+    .leave-choice span { display: block; margin-top: 3px; color: var(--muted); font-size: 8px; }
+
+    .toast {
+      position: fixed;
+      z-index: 60;
+      right: 24px;
+      bottom: 24px;
+      display: flex;
+      max-width: 360px;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 15px;
+      border: 1px solid #294a42;
+      border-radius: 10px;
+      background: #172b27;
+      color: #f2faf7;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .24s ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast-icon { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 50%; background: rgba(174,225,99,.14); color: #bde876; font-weight: 800; }
+    .toast strong { display: block; font-size: 11px; }
+    .toast span { display: block; color: #94ada5; font-size: 9px; }
+
+    .modal-backdrop { position: fixed; z-index: 50; inset: 0; display: none; place-items: center; padding: 20px; background: rgba(9,20,18,.48); backdrop-filter: blur(6px); }
+    .modal-backdrop.open { display: grid; }
+    .modal { display: flex; width: min(500px,100%); max-height: calc(100vh - 40px); flex-direction: column; overflow: hidden; border: 1px solid rgba(255,255,255,.45); border-radius: 16px; background: #fff; box-shadow: var(--shadow-lg); animation: modalIn .22s ease both; }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 20px 21px 15px; }
+    .modal-head h2 { font-size: 17px; }
+    .modal-head p { margin: 3px 0 0; color: var(--muted); font-size: 10px; }
+    .close { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 7px; background: var(--canvas); color: var(--muted); cursor: pointer; }
+    .modal-body { min-height: 0; overflow-y: auto; padding: 0 21px 20px; }
+    .manifest-preview { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; }
+    .manifest-row { display: flex; justify-content: space-between; gap: 18px; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 10px; }
+    .manifest-row:last-child { border-bottom: 0; }
+    .manifest-row span { color: var(--muted); }
+    .manifest-row strong { font-weight: 620; text-align: right; }
+    .modal-note { margin-top: 12px; padding: 11px; border-radius: 8px; background: var(--teal-soft); color: #39665a; font-size: 9px; line-height: 1.55; }
+    .modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 13px 21px; border-top: 1px solid var(--line); background: #fafcfb; }
+    .run-history-search { width: 100%; margin-bottom: 10px; }
+    .run-history-list { display: grid; max-height: 360px; gap: 6px; overflow-y: auto; }
+    .run-history-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; width: 100%; padding: 10px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfc; color: #3b5148; text-align: left; cursor: pointer; }
+    .run-history-item:hover, .run-history-item.selected { border-color: #94c8bb; background: #f1f8f5; }
+    .run-history-item strong { font-family: var(--mono); font-size: 10px; }
+    .run-history-item small { color: var(--muted); font-size: 8px; }
+    .run-history-item span { grid-row: 1/3; grid-column: 2; align-self: center; }
+
+    @media (max-width: 1120px) {
+      .sidebar { width: 220px; }
+      .main { width: calc(100% - 220px); margin-left: 220px; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .overview-grid, .world-layout { grid-template-columns: 1fr; }
+      .table-head, .agent-row { grid-template-columns: 34px minmax(180px,1fr) minmax(170px,1fr) 105px 60px; }
+      .table-head > :nth-child(4), .agent-row > :nth-child(4) { display: none; }
+      .experiment-card { grid-template-columns: minmax(220px,1fr) minmax(350px,1.5fr) 34px; }
+      .experiment-run { display: none; }
+      .result-runbar { grid-template-columns: minmax(260px,1.2fr) repeat(2,minmax(150px,.65fr)); }
+      .result-run-picker { grid-row: 1/3; }
+      .result-run-fact:nth-of-type(3) { border-top: 1px solid var(--line); }
+      .result-sync { border-top: 1px solid var(--line); }
+      .result-grid, .timeline-layout, .operations-grid { grid-template-columns: 1fr; }
+      .timeline-stream { max-height: 330px; }
+      .result-metrics { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .result-metric:nth-child(3) { border-right: 0; }
+      .result-metric:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 820px) {
+      .sidebar { position: static; width: 74px; min-height: 100vh; }
+      .brand { padding: 0 20px; }
+      .brand-copy, .nav-label, .nav-text, .nav-count { display: none; }
+      .nav { padding: 10px; }
+      .nav-item { justify-content: center; padding: 0; }
+      .main { width: calc(100% - 74px); margin-left: 0; }
+      .topbar { padding: 0 18px; }
+      .content { padding: 24px 18px 44px; }
+      .two-col, .advanced-grid { grid-template-columns: 1fr; }
+      .prompt-layout { grid-template-columns: 190px minmax(0,1fr); }
+      .unsaved, .top-actions .btn:first-of-type { display: none; }
+      .hub-hero-metric { display: none; }
+      .experiment-card { grid-template-columns: 1fr 34px; }
+      .experiment-params { border-top: 1px solid var(--line); grid-column: 1/2; }
+      .experiment-main { border-right: 0; }
+      .experiment-menu { grid-column: 2; grid-row: 1/3; }
+      .result-runbar { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .result-run-picker { grid-column: 1/-1; grid-row: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .result-run-fact:nth-of-type(3), .result-sync { border-top: 0; }
+      .result-agent-layout, .conversation-layout { grid-template-columns: 220px minmax(0,1fr); }
+      .timeline-toolbar { grid-template-columns: auto 1fr; }
+      .timeline-current { grid-column: 1/-1; text-align: left; }
+      .result-map, .result-map > canvas { min-height: 430px; }
+    }
+    @media (max-width: 620px) {
+      .sidebar { display: none; }
+      .main { width: 100%; }
+      .stats, .form-grid { grid-template-columns: 1fr; }
+      .page-heading { align-items: flex-start; flex-direction: column; }
+      .revision-meta { display: none; }
+      .isolation-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); min-height: 20px; }
+      .prompt-layout { grid-template-columns: 1fr; }
+      .prompt-list { max-height: 220px; overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .table-head, .agent-row { grid-template-columns: 28px minmax(160px,1fr) 76px 34px; }
+      .table-head > :nth-child(3), .agent-row > :nth-child(3), .table-head > :nth-child(4), .agent-row > :nth-child(4) { display: none; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .toolbar-actions { justify-content: flex-end; }
+      .setting-row { grid-template-columns: 1fr; gap: 9px; }
+      .hub-hero { align-items: flex-start; padding: 18px; }
+      .experiment-card { grid-template-columns: minmax(0,1fr) 34px; }
+      .experiment-params { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .param-cell, .param-cell:nth-child(3n) { border-right: 1px solid #edf1ef; border-bottom: 1px solid #edf1ef; }
+      .param-cell:nth-child(2n) { border-right: 0; }
+      .param-cell:nth-last-child(-n+2) { border-bottom: 0; }
+      .filter-tabs { overflow-x: auto; }
+      .filter-tab { white-space: nowrap; }
+      .hub-actions .btn:first-child { display: none; }
+      .template-options { grid-template-columns: 1fr; }
+      .result-heading-actions { width: 100%; }
+      .result-heading-actions .btn { flex: 1; }
+      .result-runbar { grid-template-columns: 1fr; }
+      .result-run-picker, .result-run-fact, .result-sync { border-right: 0; border-bottom: 1px solid var(--line); }
+      .result-sync { border-bottom: 0; }
+      .result-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .result-metric, .result-metric:nth-child(3) { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .result-metric:nth-child(2n) { border-right: 0; }
+      .result-metric:last-child { grid-column: 1/-1; border-right: 0; border-bottom: 0; }
+      .result-grid.equal { grid-template-columns: 1fr; }
+      .result-card-head { align-items: flex-start; flex-direction: column; }
+      .result-chart-legend { flex-wrap: wrap; }
+      .timeline-toolbar { grid-template-columns: 1fr; }
+      .timeline-range, .timeline-current { grid-column: auto; }
+      .timeline-current { min-width: 0; }
+      .result-map, .result-map > canvas { min-height: 350px; }
+      .result-agent-layout, .conversation-layout { grid-template-columns: 1fr; }
+      .result-agent-list, .conversation-index { max-height: 250px; overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .agent-result-grid { grid-template-columns: 1fr; }
+      .mini-result[style] { grid-column: auto !important; }
+      .conversation-meta { flex-direction: column; }
+      .message.reply { margin-left: 18px; }
+      .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
+    }
+  </style>
+</head>
+<body class="hub-mode">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-copy">
+          <div class="brand-name">Agent Foundry</div>
+          <div class="brand-meta">Research Console</div>
+        </div>
+      </div>
+
+      <div class="nav-label">实验</div>
+      <nav class="nav">
+        <button class="nav-item active" data-page="experiments"><span class="nav-icon">▦</span><span class="nav-text">实验列表</span></button>
+      </nav>
+
+      <div class="nav-label experiment-scope">当前实验</div>
+      <nav class="nav experiment-scope">
+        <button class="nav-item" data-page="overview"><span class="nav-icon">◫</span><span class="nav-text">实验概览</span></button>
+        <button class="nav-item" data-page="results"><span class="nav-icon">◈</span><span class="nav-text">实验结果</span><span class="nav-count" id="navRunCount"></span></button>
+        <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">Agent 配置</span><span class="nav-count" id="navAgentCount"></span></button>
+        <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型服务</span><span class="nav-count"></span></button>
+        <button class="nav-item" data-page="prompts"><span class="nav-icon">¶</span><span class="nav-text">Prompt 套件</span><span class="nav-count"></span></button>
+        <button class="nav-item" data-page="world"><span class="nav-icon">⌗</span><span class="nav-text">世界与地图</span></button>
+        <button class="nav-item" data-page="advanced"><span class="nav-icon">⌘</span><span class="nav-text">行为参数</span></button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="experiment-title">
+          <button class="back-to-hub" id="backToHub" aria-label="返回实验列表">‹</button>
+          <strong id="topbarTitle">实验中心</strong>
+          <span class="draft-pill" id="statusPill" hidden>草稿</span>
+        </div>
+        <div class="top-actions">
+          <div class="hub-actions" id="hubActions">
+            <button class="btn btn-primary" id="createExperimentBtn">＋ 新建实验</button>
+          </div>
+          <div class="experiment-actions" id="experimentActions" hidden>
+            <span class="unsaved" id="unsaved" hidden><i class="unsaved-dot"></i><span>有未保存更改</span></span>
+            <button class="btn" id="cloneBtn">复制实验</button>
+            <button class="btn btn-primary" id="saveBtn">保存草稿</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page active" id="page-experiments">
+          <div class="toolbar">
+            <div class="filter-tabs" role="tablist" aria-label="实验状态筛选">
+              <button class="filter-tab active" data-filter="all">全部</button>
+              <button class="filter-tab" data-filter="running">运行中</button>
+              <button class="filter-tab" data-filter="queued">排队中</button>
+              <button class="filter-tab" data-filter="draft">草稿</button>
+              <button class="filter-tab" data-filter="paused">已暂停</button>
+              <button class="filter-tab" data-filter="completed">已完成</button>
+              <button class="filter-tab" data-filter="abnormal">异常</button>
+            </div>
+            <div class="search"><input class="control" id="experimentSearch" placeholder="搜索实验名称、模型或标签…" /></div>
+          </div>
+
+          <div class="experiment-list" id="experimentList"><div class="empty-state"><strong>正在加载实验…</strong></div></div>
+
+          <div class="empty-state" id="experimentEmpty" hidden><span class="empty-state-icon">⌕</span><strong>没有符合条件的实验</strong><span>尝试清除搜索词或切换状态筛选。</span><button class="btn btn-sm" id="clearExperimentFilters">清除筛选</button></div>
+          <div class="list-footer" id="experimentListFooter" hidden>
+            <span id="experimentRange">显示 1–4，共 13 个实验</span>
+            <div class="pagination" id="experimentPagination" aria-label="实验列表分页">
+              <button class="page-button" id="experimentPrev" aria-label="上一页">‹</button>
+              <div class="pagination-pages" id="experimentPages"></div>
+              <button class="page-button" id="experimentNext" aria-label="下一页">›</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-overview">
+          <div class="page-heading">
+            <div>
+              <div class="heading-line"><h1>实验概览</h1><button type="button" class="help-tip" aria-label="实验版本说明" data-tooltip="发布时会生成只读 Revision；后续修改从新修订开始，不改变已有运行。">?</button></div>
+            </div>
+            <div class="revision-meta"><span id="overviewRevisionState">草稿修订</span><code id="overviewRevisionCode">draft</code><span>·</span><span id="overviewRevisionTime">尚未保存</span></div>
+          </div>
+
+          <div class="workspace-notice" id="workspaceNotice" hidden><span class="readonly-tag">只读</span><strong>当前版本已发布</strong><button type="button" class="help-tip edge" id="workspaceNoticeHelp" aria-label="已发布版本为只读；如需调整，请创建新的修订草稿。" data-tooltip="已发布版本为只读；如需调整，请创建新的修订草稿。">?</button></div>
+
+          <div class="stats">
+            <div class="stat"><div class="stat-label">参与 Agent</div><div class="stat-value"><span id="statAgentCount">25</span><small>个角色</small></div><div class="stat-foot">全部定义已完整</div></div>
+            <div class="stat"><div class="stat-label">Prompt 套件</div><div class="stat-value"><span id="overviewPromptCount">0</span><small id="overviewPromptMeta">个定义</small></div><div class="stat-foot">随 Revision 独立保存</div></div>
+            <div class="stat"><div class="stat-label">模拟世界</div><div class="stat-value"><span id="overviewTileCount">0</span><small>tiles</small></div><div class="stat-foot" id="overviewWorldMeta">世界待配置</div></div>
+            <div class="stat"><div class="stat-label">最近运行</div><div class="stat-value"><span id="overviewLatestStep">—</span><small>步</small></div><div class="stat-foot" id="overviewLatestMeta">尚未运行</div></div>
+          </div>
+
+          <div class="overview-grid">
+            <div class="stack">
+              <article class="card card-pad">
+                <div class="section-head">
+                  <div class="section-title"><h2>实验定义</h2><button type="button" class="help-tip" aria-label="实验定义说明" data-tooltip="这些参数决定虚拟时间推进、状态记录与随机行为复现。">?</button></div>
+                  <span class="chip teal">配置有效</span>
+                </div>
+                <div class="form-grid">
+                  <div class="field"><div class="field-label"><label for="expName">实验名称</label><button type="button" class="help-tip" aria-label="实验名称说明" data-tooltip="用于列表展示和检索，可随草稿修改。">?</button></div><input class="control dirty-track" id="expName" value="" /></div>
+                  <div class="field"><div class="field-label"><label for="expKey">实验标识</label><button type="button" class="help-tip" aria-label="实验标识说明" data-tooltip="实验的稳定唯一键，创建后不可修改。">?</button></div><div class="locked-input" id="expKey"><span class="lock">▣</span>exp_valentine_2024_02</div></div>
+                  <div class="field"><label for="startTime">虚拟世界起始时间</label><input class="control dirty-track" id="startTime" type="datetime-local" value="2024-02-13T09:30" /></div>
+                  <div class="field"><label for="timezone">时区</label><select class="control dirty-track" id="timezone"><option value="Asia/Shanghai">Asia/Shanghai (UTC+08:00)</option><option value="UTC">UTC</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></div>
+                  <div class="field"><label for="stride">单步时间跨度</label><div class="input-unit"><input class="control dirty-track" id="stride" type="number" min="1" value="10" /><span>分钟</span></div></div>
+                  <div class="field"><label for="maxSteps">模拟总步数</label><div class="input-unit"><input class="control dirty-track" id="maxSteps" type="number" min="1" max="1000000" value="144" /><span>步</span></div></div>
+                  <div class="field"><label for="recordInterval">状态记录间隔</label><div class="input-unit"><input class="control dirty-track" id="recordInterval" type="number" min="1" value="30" /><span>分钟</span></div></div>
+                  <div class="field"><div class="field-label"><label for="seed">随机种子</label><button type="button" class="help-tip" aria-label="随机种子说明" data-tooltip="固定路径选择、候选位置和失败回退的随机序列。">?</button></div><input class="control dirty-track" id="seed" type="number" value="240213" /></div>
+                  <div class="field"><label for="logLevel">日志级别</label><select class="control dirty-track" id="logLevel"><option value="INFO">INFO · 推荐</option><option value="DEBUG">DEBUG · 详细</option><option value="WARNING">WARNING · 精简</option><option value="ERROR">ERROR · 仅错误</option></select></div>
+                </div>
+              </article>
+
+              <article class="card card-pad">
+                <div class="section-head compact">
+                  <div class="section-title"><h2>版本信息</h2><button type="button" class="help-tip" aria-label="版本隔离说明" data-tooltip="发布时解析所有引用并锁定内容哈希；每次运行只读取自己的 Revision。">?</button></div>
+                  <span class="chip blue" id="overviewRevisionChip">Draft Revision</span>
+                </div>
+                <div class="model-summary">
+                  <div class="summary-cell"><span>基于版本</span><strong id="overviewBaseRevision">新实验</strong></div>
+                  <div class="summary-cell"><span>配置哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
+                  <div class="summary-cell"><span>引擎算法</span><strong id="overviewAlgorithm">ga-cn-v1</strong></div>
+                </div>
+              </article>
+
+              <article class="card card-pad">
+                <div class="section-head compact">
+                  <div><div class="section-title"><h2>Agent 编组</h2><button type="button" class="help-tip" aria-label="Agent 编组说明" data-tooltip="本实验保存完整、独立的角色定义；这里的修改不会影响其他实验。">?</button></div><span class="section-side" id="overviewAgentDefinitionCount">0 份独立角色定义</span></div>
+                  <button class="btn btn-sm" data-goto="agents">管理 Agent</button>
+                </div>
+                <div class="agent-strip" id="overviewAgentStrip"><div class="empty-state"><strong>等待实验数据</strong></div></div>
+              </article>
+            </div>
+
+            <aside class="stack">
+              <article class="card card-pad">
+                <div class="section-head compact">
+                  <div class="section-title"><h2>发布前检查</h2><button type="button" class="help-tip" aria-label="发布前检查说明" data-tooltip="存在阻塞项时不能发布；警告项可由研究员确认后继续。">?</button></div>
+                  <span class="chip teal" id="overviewValidationCount">待检查</span>
+                </div>
+                <div class="checklist">
+                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>实验 Schema</strong><span>全部字段类型和范围有效</span></div><span class="check-state">通过</span></div>
+                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>聊天模型</strong><span id="overviewChatCheck">尚未配置</span></div><span class="check-state">定义</span></div>
+                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Embedding 服务</strong><span id="overviewEmbeddingCheck">尚未配置</span></div><span class="check-state">定义</span></div>
+                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Agent 定义</strong><span id="overviewAgentCheck">0 个角色</span></div><span class="check-state">定义</span></div>
+                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Prompt 变量</strong><span id="overviewPromptCheck">0 个 Prompt</span></div><span class="check-state">定义</span></div>
+                  <div class="check-row"><span class="check-mark warn">!</span><div class="check-copy"><strong>世界快照</strong><span id="overviewWorldCheck">尚未配置</span></div><span class="check-state warn">快照</span></div>
+                </div>
+                <div class="snapshot-box">
+                  <div class="snapshot-id"><span>配置快照</span><code id="overviewSnapshotHash">草稿尚未发布</code></div>
+                  <div class="snapshot-files"><span>definition.json</span><span id="overviewSnapshotAgents">agents ×0</span><span id="overviewSnapshotPrompts">prompts ×0</span><span>world</span><span>assets.lock</span><span>schema v1</span></div>
+                </div>
+                <button class="btn btn-primary btn-block" id="publishBtn">发布版本并启动实验</button>
+              </article>
+
+              <article class="card card-pad" id="runSummaryCard">
+                <div class="section-head compact"><div><h2 id="runSummaryTitle">最近一次运行</h2><span class="section-side" id="runSummaryMeta">2026-08-04 · revision 003</span></div><span class="chip teal" id="runSummaryStatus">已完成</span></div>
+                <div class="model-summary">
+                  <div class="summary-cell"><span id="runMetricLabel1">模拟步数</span><strong id="runMetricValue1">144</strong></div>
+                  <div class="summary-cell"><span id="runMetricLabel2">LLM 调用</span><strong id="runMetricValue2">8,621</strong></div>
+                  <div class="summary-cell"><span id="runMetricLabel3">运行时间</span><strong id="runMetricValue3">19h 42m</strong></div>
+                </div>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="page" id="page-results">
+          <div class="page-heading">
+            <div>
+              <div class="heading-line"><h1>实验结果</h1><button type="button" class="help-tip" aria-label="结果口径说明" data-tooltip="页面优先展示运行过程中持久化的结构化数据；回放与报告属于可重新生成的派生产物。">?</button></div>
+            </div>
+            <div class="result-heading-actions">
+              <button class="btn" id="runPauseResumeBtn" hidden>暂停运行</button>
+              <button class="btn" id="runCancelBtn" hidden>取消运行</button>
+              <button class="btn" id="runAgainBtn" hidden>再次运行</button>
+              <button class="btn" id="exportResultsBtn">导出结果</button>
+              <button class="btn btn-primary" id="openReplayBtn">▶ 打开回放</button>
+            </div>
+          </div>
+
+          <div class="result-empty" id="resultEmpty" hidden>
+            <span class="result-empty-symbol">◈</span>
+            <strong id="resultEmptyTitle">还没有实验结果</strong>
+            <span id="resultEmptyText">发布修订并启动第一次运行后，结果会持续写入这里。</span>
+            <button class="btn btn-primary" id="resultEmptyPublish">发布并启动实验</button>
+          </div>
+
+          <div id="resultWorkspace">
+            <div class="card result-runbar">
+              <div class="result-run-picker">
+                <label for="resultRunSelect">运行</label>
+                <div class="result-run-picker-control">
+                  <select id="resultRunSelect"><option value="">正在加载运行记录…</option></select>
+                  <button class="btn btn-sm" id="openRunHistory">查看全部运行</button>
+                </div>
+              </div>
+              <div class="result-run-fact"><span>状态</span><strong><span class="chip teal" id="resultStatusChip">等待数据</span></strong></div>
+              <div class="result-run-fact"><span>配置版本</span><strong id="resultRevision">—</strong></div>
+              <div class="result-run-fact"><span>虚拟时间</span><strong id="resultWindow">—</strong></div>
+              <div class="result-sync" id="resultSync">正在读取</div>
+            </div>
+
+            <div class="result-tabs" role="tablist" aria-label="实验结果视图">
+              <button class="result-tab active" role="tab" aria-selected="true" data-result-tab="summary">总览</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="timeline">时间探索</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="agents">Agent</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="conversations">对话</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="memories">记忆</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="operations">运行与制品</button>
+            </div>
+
+            <div class="result-panel active" data-result-panel="summary">
+              <div class="result-metrics">
+                <div class="result-metric"><span>模拟进度</span><strong id="resultStepMetric">—</strong></div>
+                <div class="result-metric"><span>对话</span><strong id="resultConversationMetric">—</strong></div>
+                <div class="result-metric"><span>新增记忆</span><strong id="resultMemoryMetric">—</strong></div>
+                <div class="result-metric"><span>模型调用</span><strong id="resultLlmMetric">—</strong></div>
+                <div class="result-metric"><span>实际耗时</span><strong id="resultDurationMetric">—</strong></div>
+              </div>
+
+              <div class="result-grid">
+                <article class="card result-card">
+                  <div class="result-card-head"><div><strong>活动变化</strong><span id="activityChartMeta">正在读取</span></div><div class="result-chart-legend"><span><i></i>行动</span><span><i class="chat"></i>对话</span><span><i class="memory"></i>记忆</span></div></div>
+                  <div class="result-card-body">
+                    <svg class="activity-chart" id="activityChart" viewBox="0 0 720 230" role="img" aria-label="行动、对话和记忆数量变化折线图"><text x="285" y="118">正在读取</text></svg>
+                  </div>
+                </article>
+
+                <article class="card result-card">
+                  <div class="result-card-head"><div><strong>关键事件</strong><span>按虚拟时间排序</span></div><button class="btn btn-sm" data-open-result-tab="timeline">查看全部</button></div>
+                  <div class="result-card-body result-event-list" id="summaryKeyEvents"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </article>
+              </div>
+
+              <div class="result-grid equal">
+                <article class="card result-card">
+                  <div class="result-card-head"><div><strong>对话网络</strong><span>连线粗细表示实际对话场次</span></div><span class="chip teal" id="summaryNetworkMeta">最大连通分量 0</span></div>
+                  <div class="result-card-body">
+                    <div class="relation-map" id="summaryNetwork"><div class="empty-state"><strong>正在读取</strong></div></div>
+                  </div>
+                </article>
+                <article class="card result-card">
+                  <div class="result-card-head"><div><strong>活跃 Agent</strong><span>按实际对话场次排序</span></div><button class="btn btn-sm" data-open-result-tab="agents">查看全部</button></div>
+                  <div class="result-card-body rank-list" id="summaryActiveAgents"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="timeline">
+              <div class="card timeline-toolbar">
+                <div class="timeline-controls"><button class="timeline-button" id="timelinePrev" aria-label="上一步">‹</button><button class="timeline-button primary" id="timelinePlay" aria-label="播放">▶</button><button class="timeline-button" id="timelineNext" aria-label="下一步">›</button></div>
+                <div class="timeline-range"><span>06:00</span><input id="timelineRange" type="range" min="0" max="0" value="0"/><span>次日 06:00</span></div>
+                <div class="timeline-current"><strong id="timelineTime">—</strong><span id="timelineStep">Step —</span></div>
+                <div class="replay-options">
+                  <label>速度 <select class="control" id="replaySpeed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+                  <label>镜头 <select class="control" id="replayCameraMode"><option value="free">自由镜头</option><option value="follow">跟随 Agent</option></select></label>
+                  <label>Agent <select class="control" id="replayAgentSelect"><option value="">未选择</option></select></label>
+                  <label><input type="checkbox" id="replayLayerAgentNames" checked/> 名称</label>
+                  <label><input type="checkbox" id="replayLayerActionBubbles" checked/> 动作</label>
+                  <label><input type="checkbox" id="replayLayerTrails" checked/> 路径</label>
+                  <label><input type="checkbox" id="replayLayerConversations" checked/> 对话</label>
+                  <label><input type="checkbox" id="replayLayerKeyEvents" checked/> 事件</label>
+                  <span class="chip" id="replayStatus">等待加载</span>
+                </div>
+                <div class="replay-markers" id="replayTimelineMarkers" aria-label="检查点、对话、事件与 Attempt 边界"></div>
+              </div>
+              <div class="timeline-layout">
+                <div class="card result-map" id="resultMap"><canvas id="resultMapCanvas" width="1000" height="620" role="img" aria-label="实验地图回放"></canvas><span class="map-time-label" id="mapTimeLabel">—</span></div>
+                <aside class="card timeline-stream">
+                  <div class="replay-inspector" id="replayInspector">
+                    <h3>Agent 检查器</h3>
+                    <dl>
+                      <dt>位置</dt><dd id="replayInspectorLocation">未选择 Agent</dd>
+                      <dt>动作</dt><dd id="replayInspectorAction">—</dd>
+                      <dt>当前状态</dt><dd id="replayInspectorCurrently">—</dd>
+                      <dt>对话</dt><dd id="replayInspectorConversation">—</dd>
+                      <dt>记忆变化</dt><dd id="replayInspectorMemories">—</dd>
+                      <dt>日程</dt><dd id="replayInspectorSchedule">—</dd>
+                    </dl>
+                  </div>
+                  <div class="timeline-stream-head"><strong>当前窗口事件</strong><span id="timelineStreamMeta">—</span></div>
+                  <div id="timelineStreamItems"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="agents">
+              <div class="card result-agent-layout">
+                <aside class="result-agent-list">
+                  <div class="result-list-search"><input class="control" id="resultAgentSearch" placeholder="搜索 Agent…"/></div>
+                  <div id="resultAgentButtons"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </aside>
+                <div class="agent-result-detail">
+                  <div class="agent-result-identity"><span id="agentResultPortrait" class="avatar" aria-hidden="true"></span><div><h2 id="agentResultName">未选择 Agent</h2><p id="agentResultRole">—</p></div><button class="btn btn-sm" id="locateAgentBtn">在时间线上定位</button></div>
+                  <div class="agent-final-state"><span>最终状态 · 次日 06:00</span><strong id="agentResultState">—</strong></div>
+                  <div class="agent-result-grid">
+                    <div class="mini-result"><span>时间分布</span><div id="agentDistribution"><div class="empty-state"><strong>正在读取</strong></div></div></div>
+                    <div class="mini-result"><span>结果计数</span><div class="model-summary"><div class="summary-cell"><span>行动</span><strong id="agentActionCount">0</strong></div><div class="summary-cell"><span>新记忆</span><strong id="agentMemoryCount">0</strong></div><div class="summary-cell"><span>对话消息</span><strong id="agentChatCount">0</strong></div></div></div>
+                    <div class="mini-result" style="grid-column:1/-1"><span>关键日程回放</span><div class="schedule-result" id="agentSchedule"><div class="empty-state"><strong>正在读取</strong></div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="conversations">
+              <div class="card conversation-filter"><input class="control" id="conversationSearch" placeholder="搜索对话内容或参与者…"/><select class="control" id="conversationAgentFilter"><option value="all">全部 Agent</option></select><button class="btn btn-sm" id="exportConversationsFilter">导出筛选结果</button></div>
+              <div class="card conversation-layout">
+                <aside class="conversation-index" id="conversationIndex"><div class="empty-state"><strong>正在读取</strong></div></aside>
+                <div class="conversation-detail">
+                  <div class="conversation-meta"><div><h2 id="conversationTitle">未选择对话</h2><p id="conversationMeta">—</p></div><button class="btn btn-sm" id="conversationLocate">在时间线上定位</button></div>
+                  <div class="message-list" id="conversationMessages"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="memories">
+              <div class="card memory-toolbar"><input class="control" id="memorySearch" placeholder="搜索记忆内容…" style="flex:1;min-width:230px"/><select class="control" id="memoryAgentFilter"><option value="all">全部 Agent</option></select><select class="control" id="memoryTypeFilter"><option value="all">全部类型</option><option value="event">事件</option><option value="thought">反思</option><option value="chat">对话</option></select></div>
+              <div class="card result-card">
+                <div class="result-card-head"><div><strong>记忆记录</strong><span id="memoryResultCount">等待数据</span></div><button class="btn btn-sm" data-artifact="memories.ndjson">导出筛选结果</button></div>
+                <div class="memory-table-wrap">
+                  <table class="memory-table"><thead><tr><th>类型</th><th>Agent</th><th>记忆内容</th><th>重要度</th><th>创建 / 最近访问</th><th>节点</th></tr></thead><tbody id="memoryRows"></tbody></table>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="operations">
+              <div class="operations-shell">
+                <nav class="operations-subtabs" id="operationsSubtabs" role="tablist" aria-label="运行可观测性">
+                  <button class="operations-subtab active" role="tab" aria-selected="true" data-operation-tab="logs">运行日志</button>
+                  <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="traces">模型调用</button>
+                  <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="events">系统事件</button>
+                  <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="checkpoints">检查点</button>
+                  <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="artifacts">结果产物</button>
+                </nav>
+                <article class="card result-card operation-panel active" data-operation-panel="logs">
+                  <div class="observability-toolbar">
+                    <select id="attemptLogSelect" aria-label="选择 Attempt"></select>
+                    <input id="logSearch" type="search" placeholder="搜索日志内容" />
+                    <select id="logLevelFilter" aria-label="日志级别"><option value="">全部级别</option><option>ERROR</option><option>WARNING</option><option>INFO</option><option>DEBUG</option></select>
+                    <label><input id="logAutoFollow" type="checkbox" checked /> 自动跟随</label>
+                    <button class="btn btn-sm" id="logPauseScroll">暂停流</button>
+                    <a class="btn btn-sm" id="logDownload" href="#">下载</a>
+                  </div>
+                  <div class="log-layout"><pre class="log-viewport" id="logViewport" tabindex="0">等待选择执行尝试…</pre><div class="attempt-side"><div class="attempt-list" id="attemptRows"><div class="empty-state"><strong>正在读取</strong></div></div></div></div>
+                </article>
+                <article class="card result-card operation-panel" data-operation-panel="traces">
+                  <div class="observability-toolbar"><select id="traceAttemptSelect" aria-label="模型调用 Attempt"></select><input id="tracePurposeFilter" type="search" placeholder="按 purpose 筛选" /><button class="btn btn-sm" id="refreshTraces">刷新</button></div>
+                  <div class="usage-table" id="modelUsageRows"></div>
+                  <div class="trace-table" id="modelTraceRows"><div class="empty-state"><strong>等待模型调用明细</strong></div></div>
+                  <div class="result-card-body"><button class="btn btn-sm" id="loadMoreTraces" hidden>加载更多调用</button><aside class="checkpoint-detail" id="modelTraceDetail" hidden></aside><button class="btn btn-sm" id="tracePayloadMore" hidden>继续加载 Payload</button></div>
+                </article>
+                <article class="card result-card operation-panel" data-operation-panel="events">
+                  <div class="observability-toolbar"><input id="eventSearch" type="search" placeholder="搜索事件类型或内容" /></div>
+                  <div class="event-table" id="systemEventRows"><div class="empty-state"><strong>正在读取系统事件</strong></div></div>
+                  <div class="result-card-body"><button class="btn btn-sm" id="loadMoreEvents" hidden>加载更多事件</button></div>
+                </article>
+                <article class="card result-card operation-panel" data-operation-panel="checkpoints">
+                  <div class="checkpoint-table" id="checkpointRows"><div class="empty-state"><strong>正在校验检查点</strong></div></div>
+                  <aside class="checkpoint-detail" id="checkpointDetail" hidden><strong>检查点详情</strong><div class="checkpoint-detail-grid" id="checkpointDetailGrid"></div><pre id="checkpointPreview" hidden></pre><button class="btn btn-sm" id="checkpointPreviewMore" hidden>继续加载预览</button></aside>
+                </article>
+                <article class="card result-card operation-panel" data-operation-panel="artifacts">
+                  <div class="result-card-head"><div><strong>结果产物</strong><span id="artifactMeta">等待产物数据</span></div><button class="btn btn-sm" id="exportBundleBtn">下载全部</button></div>
+                  <div class="result-card-body artifact-result-list" id="artifactRows"><div class="empty-state"><strong>正在读取</strong></div></div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-agents">
+          <div class="page-heading">
+            <div><div class="heading-line"><h1>Agent 配置</h1><button type="button" class="help-tip" aria-label="Agent 配置说明" data-tooltip="选择本实验参与的角色，并维护该实验独立的人设、目标和初始位置。">?</button></div></div>
+            <span class="revision-meta"><span>已选择</span><code id="selectedAgentCount">25 / 25</code></span>
+          </div>
+          <div class="toolbar">
+            <div class="search"><input class="control" id="agentSearch" placeholder="搜索姓名、身份或居住地…" /></div>
+            <div class="toolbar-actions"><button class="btn" id="addAgentBtn">新增 Agent</button><button class="btn" id="selectAllBtn">取消全选</button></div>
+          </div>
+          <div class="card agent-table">
+            <div class="table-head"><span>启用</span><span>Agent</span><span>当前目标</span><span>初始位置</span><span>定义状态</span><span></span></div>
+            <div id="agentRows"><div class="empty-state"><strong>等待实验数据</strong></div></div>
+            <div class="table-footer"><span>展示 8 个代表角色，其余 17 个角色已折叠</span><span>当前实验共保存 25 个独立角色定义</span></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-models">
+          <div class="page-heading">
+            <div><div class="heading-line"><h1>模型服务</h1><button type="button" class="help-tip" aria-label="模型服务说明" data-tooltip="这里保存当前实验的模型连接；发布后解析为明确模型 ID 并锁定。">?</button></div></div>
+            <span class="revision-meta"><span class="connection-status">2 个服务在线</span></span>
+          </div>
+          <div class="two-col">
+            <article class="card card-pad">
+              <div class="provider-head"><div class="provider-logo">LLM</div><div class="section-title"><strong>聊天与推理模型</strong><button type="button" class="help-tip" aria-label="聊天模型用途" data-tooltip="用于规划、对话、反思和动作决策。">?</button></div><span class="connection-status">在线</span></div>
+              <div class="form-grid">
+                <div class="field"><label for="chatProvider">Provider</label><select class="control dirty-track" id="chatProvider"><option value="vllm">vLLM</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option></select></div>
+                <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="auto" /></div>
+                <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:5001" /></div>
+                <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="300" /><span>秒</span></div></div>
+                <div class="field"><label for="chatMaxTokens">最大输出</label><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
+                <div class="field"><label for="chatTemperature">Temperature</label><input class="control dirty-track" id="chatTemperature" type="number" min="0" max="2" step="0.1" value="0.5" /></div>
+                <div class="field"><label for="chatRetries">失败重试</label><div class="input-unit"><input class="control dirty-track" id="chatRetries" type="number" min="1" max="20" value="10" /><span>次</span></div></div>
+                <div class="field"><label for="chatBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="chatBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
+                <div class="field"><label>思考模式</label><button class="switch" id="chatThinking" aria-label="切换聊天模型思考模式"></button></div>
+                <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
+              </div>
+              <div class="provider-foot"><span>GET /v1/models · 最近检测于 21:42</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
+            </article>
+            <article class="card card-pad">
+              <div class="provider-head"><div class="provider-logo blue">EMB</div><div class="section-title"><strong>记忆 Embedding 模型</strong><button type="button" class="help-tip" aria-label="Embedding 模型用途" data-tooltip="用于记忆索引、相似度检索和关联排序。">?</button></div><span class="connection-status">在线</span></div>
+              <div class="form-grid">
+                <div class="field"><label for="embeddingProvider">Provider</label><select class="control dirty-track" id="embeddingProvider"><option value="openai_compatible">OpenAI Compatible</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option><option value="hugging_face">Hugging Face</option></select></div>
+                <div class="field"><label for="embeddingModel">模型 ID</label><input class="control dirty-track" id="embeddingModel" value="qwen3-embedding-0.6b" /></div>
+                <div class="field" style="grid-column:1/-1"><label for="embeddingBaseUrl">Base URL</label><input class="control dirty-track" id="embeddingBaseUrl" value="http://127.0.0.1:5002" /></div>
+                <div class="field"><label for="embeddingTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="embeddingTimeout" value="120" /><span>秒</span></div></div>
+                <div class="field"><label for="embeddingTransportRetries">传输重试</label><div class="input-unit"><input class="control dirty-track" id="embeddingTransportRetries" type="number" min="1" max="20" value="3" /><span>次</span></div></div>
+                <div class="field"><label for="embeddingIndexRetries">索引操作重试</label><div class="input-unit"><input class="control dirty-track" id="embeddingIndexRetries" type="number" min="1" max="20" value="10" /><span>次</span></div></div>
+                <div class="field"><label for="embeddingBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="embeddingBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
+                <div class="field" style="grid-column:1/-1"><label for="embeddingSecret">API Key</label><input class="control dirty-track" id="embeddingSecret" type="password" value="" placeholder="未设置" /></div>
+              </div>
+              <div class="provider-foot"><span>向量维度 1,024 · 最近检测于 21:42</span><button class="btn btn-sm test-connection" data-kind="Embedding 模型">测试连接</button></div>
+            </article>
+          </div>
+          <article class="card card-pad" style="margin-top:16px">
+            <div class="section-head compact"><div class="section-title"><h2>实验级解析结果</h2><button type="button" class="help-tip" aria-label="模型解析结果说明" data-tooltip="auto 会在发布时解析为明确模型 ID；运行期间不会跟随服务列表变化。">?</button></div><span class="chip blue">Revision Pinning</span></div>
+            <div class="model-summary">
+              <div class="summary-cell"><span>Chat Model</span><strong id="resolvedChatModel">尚未解析</strong></div>
+              <div class="summary-cell"><span>Embedding Model</span><strong id="resolvedEmbeddingModel">尚未解析</strong></div>
+              <div class="summary-cell"><span>连接配置哈希</span><strong>mdl_9f2a03c8</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="page" id="page-prompts">
+          <div class="page-heading">
+            <div><div class="heading-line"><h1>Prompt 套件</h1><button type="button" class="help-tip" aria-label="Prompt 套件说明" data-tooltip="编辑当前实验的 Prompt 副本；发布前会校验变量、返回结构和失败回退。">?</button></div></div>
+            <div class="revision-meta"><span>套件</span><code>zh-ville-prompts@2.4</code></div>
+          </div>
+          <div class="card prompt-layout">
+            <aside class="prompt-list" id="promptList"><div class="empty-state"><strong>等待实验数据</strong></div></aside>
+            <div class="prompt-editor">
+              <div class="editor-head"><div><strong id="promptTitle">base_desc.txt</strong><span id="promptMeta">当前实验独立副本</span></div><div class="editor-actions"><button class="btn btn-sm" id="restorePromptBtn">恢复发布版</button><button class="btn btn-sm" id="validatePromptBtn">验证 Prompt</button></div></div>
+              <div class="variable-bar" id="variableBar"><span>可用变量</span><code class="variable">${name}</code><code class="variable">${age}</code><code class="variable">${innate}</code><code class="variable">${learned}</code><code class="variable">${lifestyle}</code><code class="variable">${daily_plan}</code><code class="variable">${date}</code><code class="variable">${currently}</code></div>
+              <textarea class="code-editor dirty-track" id="promptEditor" spellcheck="false">姓名：${name}（年龄：${age}）
+天生性格：${innate}
+生活经历：${learned}
+生活习惯：${lifestyle}
+固定日程：${daily_plan}
+
+今天是 ${date}。
+${name} 当前的情况：${currently}</textarea>
+              <div class="editor-foot"><span>UTF-8 · String.Template · 8 个变量</span><span>自动保存至当前实验草稿</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-world">
+          <div class="page-heading">
+            <div><div class="heading-line"><h1>世界与地图</h1><button type="button" class="help-tip" aria-label="世界版本说明" data-tooltip="地图结构和视觉资源一起锁定，保证模拟与回放使用相同世界版本。">?</button></div></div>
+            <span class="revision-meta"><span>世界快照</span><code id="worldRevisionCode">未发布</code></span>
+          </div>
+          <div class="world-layout">
+            <article class="card card-pad">
+              <div class="section-head"><div><h2 id="worldPreviewTitle">世界待配置</h2><span class="section-side" id="worldPreviewMeta">等待世界定义</span></div></div>
+              <div class="map-preview">
+                <img src="/static/console/snapshot.png" alt="实验地图预览" />
+                <span class="map-badge" id="worldMapBadge">当前 Revision 世界快照</span>
+                <div class="map-tools"><button class="map-tool" data-toast="地图已适配视口" aria-label="适配地图">⌗</button></div>
+              </div>
+              <div class="map-legend"><span><i class="legend-dot"></i><b id="worldWalkableTiles">0</b> 可访问 Tile</span><span><i class="legend-dot collision"></i><b id="worldCollisionTiles">0</b> 碰撞 Tile</span><span><i class="legend-dot agent"></i><b id="worldAgentPositions">0</b> Agent 初始位置</span></div>
+            </article>
+            <aside class="stack">
+              <article class="card card-pad">
+                <div class="section-head compact"><div class="section-title"><h2>地图定义</h2><button type="button" class="help-tip" aria-label="地图校验说明" data-tooltip="发布前校验地图尺寸、地址层级与所有资源引用。">?</button></div><span class="chip teal">有效</span></div>
+                <div class="form-grid" style="grid-template-columns:1fr">
+                  <div class="field"><label for="worldName">世界名称</label><input class="control dirty-track" id="worldName" value="the Ville" /></div>
+                  <div class="field"><label for="worldKey">世界稳定键</label><input class="control dirty-track" id="worldKey" /></div>
+                  <div class="field"><label>地址层级</label><div class="locked-input" id="worldAddressKeys">尚未配置</div></div>
+                  <div class="field"><label>地图尺寸</label><div class="locked-input" id="worldDimensions">尚未配置</div></div>
+                  <div class="field"><label for="worldDefinition">完整世界定义 JSON</label><textarea class="control dirty-track" id="worldDefinition" style="min-height:220px;font-family:var(--mono)"></textarea></div>
+                </div>
+              </article>
+              <article class="card card-pad">
+                <div class="section-head compact"><div class="section-title"><h2>资源版本锁</h2><button type="button" class="help-tip edge" aria-label="资源版本锁说明" data-tooltip="发布时按内容哈希锁定文件；同名文件变化不会影响已有 Revision。">?</button></div><label class="btn btn-sm" for="worldAssetInput">上传资源</label><input id="worldAssetInput" type="file" hidden multiple /></div>
+                <div class="asset-list" id="worldAssetList"><div class="empty-state"><strong>等待实验数据</strong></div></div>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="page" id="page-advanced">
+          <div class="page-heading">
+            <div><div class="heading-line"><h1>行为参数</h1><button type="button" class="help-tip" aria-label="行为参数说明" data-tooltip="这些参数随实验 Revision 保存，用于对比不同阈值下的行为结果。">?</button></div></div>
+            <span class="revision-meta"><span>参数方案</span><code>balanced-social@1.0</code></span>
+          </div>
+          <div class="advanced-grid">
+            <article class="card card-pad">
+              <div class="section-head compact"><div class="section-title"><h2>感知与反思</h2><button type="button" class="help-tip" aria-label="感知与反思参数说明" data-tooltip="影响 Agent 观察环境、积累情感和生成反思。">?</button></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>视野半径</strong><button type="button" class="help-tip" aria-label="视野半径说明" data-tooltip="以 Agent 当前 Tile 为中心的 box 半径。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="visionOutput" /><output class="range-value" id="visionOutput">8</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>注意力带宽</strong><button type="button" class="help-tip" aria-label="注意力带宽说明" data-tooltip="每步最多处理的事件数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="bandwidthOutput" /><output class="range-value" id="bandwidthOutput">8</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>反思阈值</strong><button type="button" class="help-tip" aria-label="反思阈值说明" data-tooltip="情感强度累计到该值后触发反思。">?</button></div><div class="range-wrap"><input type="range" min="20" max="300" step="10" value="150" data-range-output="reflectOutput" /><output class="range-value" id="reflectOutput">150</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>反思焦点数量</strong><button type="button" class="help-tip" aria-label="反思焦点数量说明" data-tooltip="每次反思生成的问题数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="3" data-range-output="focusOutput" /><output class="range-value" id="focusOutput">3</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>每个焦点洞察</strong><button type="button" class="help-tip" aria-label="每个焦点洞察说明" data-tooltip="每个反思焦点最多生成的洞察数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="5" data-range-output="insightOutput" /><output class="range-value" id="insightOutput">5</output></div></div>
+            </article>
+            <article class="card card-pad">
+              <div class="section-head compact"><div class="section-title"><h2>记忆检索</h2><button type="button" class="help-tip" aria-label="记忆检索参数说明" data-tooltip="控制记忆候选数量和排序权重。">?</button></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>近期记忆保留</strong><button type="button" class="help-tip" aria-label="近期记忆保留说明" data-tooltip="每种记忆默认返回的最近条数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="30" value="8" data-range-output="retentionOutput" /><output class="range-value" id="retentionOutput">8</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>每类记忆上限</strong><button type="button" class="help-tip" aria-label="每类记忆上限说明" data-tooltip="事件、反思和对话记忆分别允许保留的最大条数；-1 表示不限。">?</button></div><div class="input-unit"><input class="control dirty-track" id="maxMemories" type="number" min="-1" value="-1" /><span>条</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>反思记忆候选</strong><button type="button" class="help-tip" aria-label="反思记忆候选说明" data-tooltip="触发反思后最多选取的近期记忆数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="reflectionMemoryLimit" type="number" min="1" max="100" value="10" /><span>条</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>新近性衰减</strong><button type="button" class="help-tip" aria-label="新近性衰减说明" data-tooltip="每经过一个记忆顺序位置时保留的新近性系数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="recencyDecay" type="number" min="0.001" max="1" step="0.001" value="0.995" /></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>新近性权重</strong><button type="button" class="help-tip" aria-label="新近性权重说明" data-tooltip="时间接近程度对最终排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="0.5" data-range-output="recencyOutput" /><output class="range-value" id="recencyOutput">0.5</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>相关性权重</strong><button type="button" class="help-tip" aria-label="相关性权重说明" data-tooltip="向量语义相似度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="3" data-range-output="relevanceOutput" /><output class="range-value" id="relevanceOutput">3.0</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>重要性权重</strong><button type="button" class="help-tip" aria-label="重要性权重说明" data-tooltip="事件情感强度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="2" data-range-output="importanceOutput" /><output class="range-value" id="importanceOutput">2.0</output></div></div>
+            </article>
+            <article class="card card-pad">
+              <div class="section-head compact"><div class="section-title"><h2>社交行为</h2><button type="button" class="help-tip" aria-label="社交行为参数说明" data-tooltip="控制对话频率、轮数和夜间互动。">?</button></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>最大对话轮数</strong><button type="button" class="help-tip" aria-label="最大对话轮数说明" data-tooltip="每次社交互动允许的最大往返轮数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="12" value="4" data-range-output="chatOutput" /><output class="range-value" id="chatOutput">4</output></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>再次对话冷却</strong><button type="button" class="help-tip" aria-label="再次对话冷却说明" data-tooltip="同一组 Agent 再次发起对话前的间隔。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatCooldown" value="60" /><span>分钟</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>夜间停止社交</strong><button type="button" class="help-tip" aria-label="夜间停止社交说明" data-tooltip="到达指定虚拟时间后不再发起新互动。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatStopHour" value="23:00" /><span>时刻</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>重复内容检测</strong><button type="button" class="help-tip" aria-label="重复内容检测说明" data-tooltip="从第二轮开始检测对话复读。">?</button></div><button class="switch on" id="repeatDetection" aria-label="切换重复内容检测"></button></div>
+            </article>
+            <article class="card card-pad">
+              <div class="section-head compact"><div class="section-title"><h2>执行与复现</h2><button type="button" class="help-tip" aria-label="执行与复现参数说明" data-tooltip="控制随机序列、检查点和记忆有效期。">?</button></div><span class="inline-risk">高影响 <button type="button" class="help-tip edge" aria-label="高影响参数说明" data-tooltip="调整这些参数可能显著改变实验结果，建议从现有 Revision 创建新修订。">?</button></span></div>
+              <div class="setting-row"><div class="setting-copy"><strong>日程生成重试</strong><button type="button" class="help-tip" aria-label="日程生成重试说明" data-tooltip="日程未满足时间或多样性约束时的最大重试次数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleRetries" type="number" min="1" max="100" value="5" /><span>次</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>日程活动多样性</strong><button type="button" class="help-tip" aria-label="日程活动多样性说明" data-tooltip="日程生成结果至少包含的不同活动数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleDiversity" type="number" min="1" max="100" value="5" /><span>类</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>检查点频率</strong><button type="button" class="help-tip" aria-label="检查点频率说明" data-tooltip="每完成指定步数持久化一次运行状态。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointInterval" value="1" /><span>步</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>检查点保留</strong><button type="button" class="help-tip" aria-label="检查点保留说明" data-tooltip="成功生成新检查点后保留的最近完整恢复点数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointRetention" type="number" min="2" max="20" value="2" /><span>份</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>记忆默认有效期</strong><button type="button" class="help-tip" aria-label="记忆默认有效期说明" data-tooltip="事件与反思记忆的默认过期天数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="memoryExpireDays" value="30" /><span>天</span></div></div>
+            </article>
+            <article class="card card-pad">
+              <div class="section-head compact"><div class="section-title"><h2>结果记录</h2><button type="button" class="help-tip" aria-label="结果记录参数说明" data-tooltip="控制结果查询粒度、兼容回放和模型调用留痕。">?</button></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>Agent 状态投影</strong><button type="button" class="help-tip" aria-label="Agent 状态投影说明" data-tooltip="每隔多少步写入可查询的 Agent 状态；原始逐步结果仍完整保存。">?</button></div><div class="input-unit"><input class="control dirty-track" id="projectionInterval" type="number" min="1" max="100" value="1" /><span>步</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>兼容回放插值</strong><button type="button" class="help-tip" aria-label="兼容回放插值说明" data-tooltip="旧 movement.json 中每个模拟步骤生成的动画采样数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="replayFrames" type="number" min="1" max="120" value="60" /><span>帧</span></div></div>
+              <div class="setting-row"><div class="setting-copy"><strong>记录模型输入输出</strong><button type="button" class="help-tip" aria-label="记录模型输入输出说明" data-tooltip="关闭时只记录调用统计；开启后额外保存脱敏 payload。">?</button></div><button class="switch" id="capturePayloads" aria-label="切换模型输入输出记录"></button></div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><div><strong id="toastTitle">操作成功</strong><span id="toastText">更改已保存</span></div></div>
+
+  <div class="context-menu" id="experimentContextMenu" hidden>
+    <button data-context-action="open">↗ 打开实验</button>
+    <button data-context-action="duplicate">◇ 复制实验</button>
+  </div>
+
+  <div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-head"><div class="heading-line"><h2 id="modalTitle">发布版本并启动实验</h2><button type="button" class="help-tip below" aria-label="发布说明" data-tooltip="确认后生成只读 Revision，并在当前机器启动实验。">?</button></div><button class="close" id="closeModal" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="manifest-preview">
+          <div class="manifest-row"><span>新版本</span><strong id="modalRevision">待确认</strong></div>
+          <div class="manifest-row"><span>Agent</span><strong><span id="modalAgentCount">0</span> 个已启用角色</strong></div>
+          <div class="manifest-row"><span>模型</span><strong id="modalModels">待确认</strong></div>
+          <div class="manifest-row"><span>世界</span><strong id="modalWorld">待确认</strong></div>
+          <div class="manifest-row"><span>快照哈希</span><strong id="modalHash" style="font-family:var(--mono)">发布时生成</strong></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="cancelModal">取消</button><button class="btn btn-primary" id="confirmPublish">确认发布并启动</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="modal wide">
+      <div class="modal-head"><div class="heading-line"><h2 id="createModalTitle">新建实验</h2><button type="button" class="help-tip below" aria-label="新建实验说明" data-tooltip="新实验先创建为草稿，不会立即启动。">?</button></div><button class="close" id="closeCreateModal" aria-label="关闭">×</button></div>
+      <div class="wizard-steps">
+        <div class="wizard-step active" data-wizard-step="1"><i>1</i><span>定义实验</span></div>
+        <div class="wizard-step" data-wizard-step="2"><i>2</i><span>选择起点</span></div>
+        <div class="wizard-step" data-wizard-step="3"><i>3</i><span>确认创建</span></div>
+      </div>
+      <div class="modal-body">
+        <div class="wizard-panel active" data-wizard-panel="1">
+          <div class="section-title"><h3>这个实验要验证什么？</h3><button type="button" class="help-tip" aria-label="实验目标说明" data-tooltip="名称用于检索，目标记录待观察行为、变量和对照关系。">?</button></div>
+          <div class="form-grid">
+            <div class="field" style="grid-column:1/-1"><label for="newExperimentName">实验名称</label><input class="control" id="newExperimentName" placeholder="例如：公共事件信息传播对照" /></div>
+            <div class="field" style="grid-column:1/-1"><label for="newExperimentGoal">实验目标</label><textarea class="control" id="newExperimentGoal" placeholder="描述要观察的行为、变量和预期对照…"></textarea></div>
+            <div class="field"><label for="newExperimentOwner">负责人</label><input class="control" id="newExperimentOwner" value="当前研究员" /></div>
+            <div class="field"><label for="newExperimentTag">实验标签</label><input class="control" id="newExperimentTag" placeholder="社会传播、记忆、对照组…" /></div>
+          </div>
+        </div>
+        <div class="wizard-panel" data-wizard-panel="2">
+          <div class="section-title"><h3>选择实验的配置起点</h3><button type="button" class="help-tip" aria-label="配置起点说明" data-tooltip="所选配置会复制到新实验，不会继续与来源联动。">?</button></div>
+          <div class="template-options">
+            <button class="template-option selected" data-template="标准小镇模板"><span class="template-symbol">▦</span><strong>标准小镇模板</strong><span>25 个居民、the Ville 世界、中文 Prompt 套件和推荐行为参数。</span></button>
+            <button class="template-option" data-template="从空白开始"><span class="template-symbol">＋</span><strong>从空白开始</strong><span>仅创建实验基本信息，Agent、模型和世界全部手动配置。</span></button>
+            <button class="template-option" data-template="复制已有实验"><span class="template-symbol">◇</span><strong>复制已有实验</strong><span>选择一个实验的最新 Revision 作为新实验的完整起点。</span></button>
+          </div>
+          <div class="field" id="copyRevisionField" hidden style="margin-top:14px">
+            <label for="copyRevisionSelect">来源实验与已发布版本</label>
+            <select class="control" id="copyRevisionSelect"><option value="">请选择已发布实验</option></select>
+          </div>
+        </div>
+        <div class="wizard-panel" data-wizard-panel="3">
+          <div class="section-title"><h3>确认实验草稿</h3><button type="button" class="help-tip" aria-label="实验草稿说明" data-tooltip="创建后直接进入实验概览；完成校验并发布后才能启动。">?</button></div>
+          <div class="create-summary">
+            <div class="create-summary-row"><span>实验名称</span><strong id="createSummaryName">未填写</strong></div>
+            <div class="create-summary-row"><span>配置起点</span><strong id="createSummaryTemplate">标准小镇模板</strong></div>
+            <div class="create-summary-row"><span>隔离策略</span><strong>复制所有定义为独立 Draft Revision</strong></div>
+            <div class="create-summary-row"><span>初始状态</span><strong>草稿 · 未发布</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="wizardBack" hidden>上一步</button><button class="btn btn-primary" id="wizardNext">下一步</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="leaveModal" role="dialog" aria-modal="true" aria-labelledby="leaveModalTitle">
+    <div class="modal">
+      <div class="modal-head"><div><h2 id="leaveModalTitle">离开当前实验？</h2><p>当前草稿还有未保存的更改，请选择处理方式。</p></div><button class="close" id="closeLeaveModal" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="leave-actions">
+          <button class="leave-choice" id="saveAndLeave"><strong>保存草稿并离开</strong><span>保存当前修改，然后返回实验列表。</span></button>
+          <button class="leave-choice" id="discardAndLeave"><strong>放弃修改</strong><span>恢复到上次保存状态并返回，不可撤销。</span></button>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="cancelLeave">继续编辑</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="runHistoryModal" role="dialog" aria-modal="true" aria-labelledby="runHistoryTitle">
+    <div class="modal wide">
+      <div class="modal-head"><div><h2 id="runHistoryTitle">选择历史运行</h2><p>按 Run ID、状态或 Revision 搜索；选择会固定到结果页 URL。</p></div><button class="close" id="closeRunHistory" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <input class="control run-history-search" id="runHistorySearch" placeholder="搜索运行、状态或配置版本…" />
+        <div class="run-history-list" id="runHistoryList"><div class="empty-state"><strong>正在加载运行记录…</strong></div></div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="loadMoreRuns">加载更多</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="agentEditorModal" role="dialog" aria-modal="true" aria-labelledby="agentEditorTitle">
+    <div class="modal wide">
+      <div class="modal-head"><div><h2 id="agentEditorTitle">编辑 Agent</h2><p>保存到当前实验 Draft；稳定键用于历史结果关联，显示名称可以修改。</p></div><button class="close" id="closeAgentEditor" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label for="agentEditKey">稳定键</label><input class="control" id="agentEditKey" placeholder="resident-026" /></div>
+          <div class="field"><label for="agentEditName">显示名称</label><input class="control" id="agentEditName" /></div>
+          <div class="field"><label for="agentEditAge">年龄</label><input class="control" id="agentEditAge" type="number" min="0" max="150" /></div>
+          <div class="field"><label for="agentEditPortrait">画像资源引用</label><input class="control" id="agentEditPortrait" placeholder="可留空" /></div>
+          <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
+          <div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div>
+          <div class="field" style="grid-column:1/-1"><label for="agentEditCurrently">当前目标</label><textarea class="control" id="agentEditCurrently"></textarea></div>
+          <div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div>
+          <div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div>
+          <div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div>
+          <div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div>
+          <div class="field" style="grid-column:1/-1"><label for="agentEditSpatial">空间定义 JSON</label><textarea class="control" id="agentEditSpatial" style="min-height:150px;font-family:var(--mono)"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn" id="deleteAgentBtn">删除 Agent</button><button class="btn" id="cancelAgentEditor">取消</button><button class="btn btn-primary" id="saveAgentEditor">保存 Agent</button></div>
+    </div>
+  </div>
+
+  <script src="/static/console/vendor/phaser.min.js"></script>
+  <script src="/static/console/replay-player.js"></script>
+  <script src="/static/console/modal-focus.js"></script>
+  <script src="/static/console/console-api.js"></script>
+</body>
+</html>

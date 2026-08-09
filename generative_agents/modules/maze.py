@@ -1,10 +1,9 @@
 """generative_agents.maze"""
 
-import random
 from itertools import product
 
-from modules import utils
-from modules.memory.event import Event
+from generative_agents.modules import utils
+from generative_agents.modules.memory.event import Event
 
 
 class Tile:
@@ -107,7 +106,7 @@ class Tile:
 
 
 class Maze:
-    def __init__(self, config, logger):
+    def __init__(self, config, logger, random_source):
         # define tiles
         self.maze_height, self.maze_width = config["size"]
         self.tile_size = config["tile_size"]
@@ -119,9 +118,14 @@ class Maze:
             ]
             for y in range(self.maze_height)
         ]
-        for tile in config["tiles"]:
-            x, y = tile.pop("coord")
-            self.tiles[y][x] = Tile((x, y), config["world"], address_keys, **tile)
+        for tile_definition in config["tiles"]:
+            x, y = tile_definition["coord"]
+            tile_attributes = {
+                key: value for key, value in tile_definition.items() if key != "coord"
+            }
+            self.tiles[y][x] = Tile(
+                (x, y), config["world"], address_keys, **tile_attributes
+            )
 
         # define address
         self.address_tiles = dict()
@@ -131,6 +135,7 @@ class Maze:
                     self.address_tiles.setdefault(add, set()).add((j, i))
 
         self.logger = logger
+        self._rng = random_source
 
     def find_path(self, src_coord, dst_coord):
         map = [[0 for _ in range(self.maze_width)] for _ in range(self.maze_height)]
@@ -207,4 +212,4 @@ class Maze:
         addr = ":".join(address)
         if addr in self.address_tiles:
             return self.address_tiles[addr]
-        return random.choice(self.address_tiles.values())
+        return self._rng.choice(tuple(self.address_tiles.values()))

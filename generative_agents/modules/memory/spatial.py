@@ -1,14 +1,15 @@
 """generative_agents.memory.spatial"""
 
-import random
-
-from modules import utils
+from generative_agents.modules import utils
 
 
 class Spatial:
-    def __init__(self, tree, address=None):
+    def __init__(self, tree, address=None, random_source=None):
+        if random_source is None:
+            raise ValueError("Spatial requires an injected random source")
+        self._rng = random_source
         self.tree = tree
-        self.address = address or {}
+        self.address = dict(address or {})
         if "sleeping" not in self.address and "睡觉" not in self.address and "living_area" in self.address:
             # self.address["sleeping"] = self.address["living_area"] + ["bed"]
             self.address["睡觉"] = self.address["living_area"] + ["床"]
@@ -53,7 +54,7 @@ class Spatial:
         address, tree = [], self.tree
         while isinstance(tree, dict):
             roots = [r for r in tree if len(tree[r]) > 0]
-            address.append(random.choice(roots))
+            address.append(self._rng.choice(roots))
             tree = tree[address[-1]]
-        address.append(random.choice(tree))
+        address.append(self._rng.choice(tree))
         return address

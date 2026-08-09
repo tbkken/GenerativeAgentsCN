@@ -2,13 +2,41 @@
 
 import datetime
 
-from .namespace import GenerativeAgentsMap, GenerativeAgentsKey
+
+def as_utc(value, *, naive_timezone=datetime.timezone.utc):
+    """Normalize simulation timestamps without consulting the host timezone.
+
+    Legacy checkpoints stored wall-clock strings without an offset. Those
+    values were simulation wall time. Callers that own a SimulationClock pass
+    its timezone explicitly; the fallback is UTC, never host-local time.
+    """
+
+    if not isinstance(value, datetime.datetime):
+        raise TypeError("simulation time must be a datetime")
+    if value.tzinfo is None or value.utcoffset() is None:
+        if naive_timezone is None:
+            raise ValueError("naive simulation time requires an explicit timezone")
+        value = value.replace(tzinfo=naive_timezone)
+    return value.astimezone(datetime.timezone.utc)
 
 
-def to_date(date_str, date_format="%Y%m%d-%H:%M:%S"):
+def to_date(
+    date_str,
+    date_format="%Y%m%d-%H:%M:%S",
+    *,
+    naive_timezone=datetime.timezone.utc,
+):
+    if isinstance(date_str, datetime.datetime):
+        return as_utc(date_str, naive_timezone=naive_timezone)
     if date_format == "%H:%M" and date_str.startswith("24:"):
         date_str = date_str.replace("24:", "0:")
-    return datetime.datetime.strptime(date_str, date_format)
+    try:
+        parsed = datetime.datetime.strptime(date_str, date_format)
+    except ValueError:
+        if date_format != "%Y%m%d-%H:%M:%S":
+            raise
+        parsed = datetime.datetime.fromisoformat(date_str)
+    return as_utc(parsed, naive_timezone=naive_timezone)
 
 
 def daily_duration(date, mode="minute"):
@@ -28,7 +56,7 @@ class Timer:
             d_format = "%Y%m%d-%H:%M" if "-" in start else "%H:%M"
             self._offset = to_date(start, d_format)
         else:
-            self._offset = datetime.datetime.now()
+            self._offset = datetime.datetime.now(datetime.timezone.utc)
 
     def forward(self, offset):
         self._offset += datetime.timedelta(minutes=offset)
@@ -87,14 +115,3 @@ class Timer:
     @property
     def mode(self):
         return self._mode
-
-
-def set_timer(start=None):
-    GenerativeAgentsMap.set(GenerativeAgentsKey.TIMER, Timer(start=start))
-    return GenerativeAgentsMap.get(GenerativeAgentsKey.TIMER)
-
-
-def get_timer():
-    if not GenerativeAgentsMap.get(GenerativeAgentsKey.TIMER):
-        set_timer()
-    return GenerativeAgentsMap.get(GenerativeAgentsKey.TIMER)

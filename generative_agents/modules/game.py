@@ -1,93 +1,148 @@
-"""generative_agents.game"""
+"""Simulation game assembled entirely from one Run context and manifest snapshot."""
 
-import os
+from __future__ import annotations
+
 import copy
+from pathlib import Path
 
-from modules.utils import GenerativeAgentsMap, GenerativeAgentsKey
-from modules import utils
-from .maze import Maze
-from .agent import Agent
+from generative_agents.modules import utils
+from generative_agents.modules.agent import Agent
+from generative_agents.modules.maze import Maze
+from generative_agents.runtime.context import SimulationContext
+
+
+def _as_tuple_tree(value):
+    """Restore tuple-shaped state after a JSON checkpoint round-trip."""
+    if isinstance(value, list):
+        return tuple(_as_tuple_tree(item) for item in value)
+    return value
 
 
 class Game:
-    """The Game"""
+    """A run-local aggregate; no process registry or bootstrap file reads."""
 
-    def __init__(self, name, static_root, config, conversation, logger=None):
-        self.name = name
-        self.static_root = static_root
-        self.record_iterval = config.get("record_iterval", 30)
-        self.logger = logger or utils.IOLogger()
-        self.maze = Maze(self.load_static(config["maze"]["path"]), self.logger)
+    def __init__(
+        self,
+        config: dict,
+        conversation: dict,
+        *,
+        context: SimulationContext,
+    ):
+        self.context = context
+        self.name = str(context.run_id)
+        self.record_interval = config.get(
+            "record_interval_minutes", config.get("record_iterval", 30)
+        )
+        self.logger = context.logger
+        maze_definition = config.get("maze") or config.get("world")
+        if not isinstance(maze_definition, dict):
+            raise ValueError("run manifest must contain an inline maze/world definition")
+        self.maze = Maze(
+            copy.deepcopy(maze_definition), self.logger, context.random
+        )
         self.conversation = conversation
-        self.agents = {}
-        if "agent_base" in config:
-            agent_base = config["agent_base"]
-        else:
-            agent_base = {}
-        storage_root = os.path.join(f"results/checkpoints/{name}", "storage")
-        if not os.path.isdir(storage_root):
-            os.makedirs(storage_root)
-        for name, agent in config["agents"].items():
+        self.agents: dict[str, Agent] = {}
+        agent_base = copy.deepcopy(config.get("agent_base", {}))
+        storage_root = Path(
+            config.get("storage_root", context.paths.root / "storage")
+        )
+        agents = config.get("agents", {})
+        if not isinstance(agents, dict):
+            raise TypeError("runtime agent configuration must be keyed by agent_key")
+        for agent_key, definition in agents.items():
+            if "config_path" in definition:
+                raise ValueError(
+                    "runtime agent definitions must be materialized; config_path is legacy-only"
+                )
             agent_config = utils.update_dict(
-                copy.deepcopy(agent_base), self.load_static(agent["config_path"])
+                copy.deepcopy(agent_base), copy.deepcopy(definition)
             )
-            agent_config = utils.update_dict(agent_config, agent)
+            agent_config["agent_key"] = agent_key
+            agent_config["storage_root"] = str(storage_root / agent_key)
+            embedding_config = agent_config.get("associate", {}).get("embedding")
+            if isinstance(embedding_config, dict):
+                embedding_config["_control"] = context.control
+                embedding_config["_logger"] = context.logger
+            self.agents[agent_key] = Agent(
+                agent_config,
+                self.maze,
+                self.conversation,
+                self.logger,
+                clock=context.clock,
+                random_source=context.random,
+                prompts=context.prompts,
+                models=context.models,
+                model_trace=context.metadata.get("model_trace"),
+                algorithm=context.algorithm,
+            )
 
-            agent_config["storage_root"] = os.path.join(storage_root, name)
-            self.agents[name] = Agent(agent_config, self.maze, self.conversation, self.logger)
+    def get_agent(self, agent_key: str) -> Agent:
+        return self.agents[agent_key]
 
-    def get_agent(self, name):
-        return self.agents[name]
-
-    def agent_think(self, name, status):
-        agent = self.get_agent(name)
+    def agent_think(self, agent_key: str, status: dict) -> dict:
+        agent = self.get_agent(agent_key)
         plan = agent.think(status, self.agents)
         info = {
             "currently": agent.scratch.currently,
             "associate": agent.associate.abstract(),
-            "concepts": {c.node_id: c.abstract() for c in agent.concepts},
+            "concepts": {concept.node_id: concept.abstract() for concept in agent.concepts},
             "chats": [
-                {"name": "self" if n == agent.name else n, "chat": c}
-                for n, c in agent.chats
+                {"name": "self" if name == agent.name else name, "chat": chat}
+                for name, chat in agent.chats
             ],
             "action": agent.action.abstract(),
             "schedule": agent.schedule.abstract(),
             "address": agent.get_tile().get_address(as_list=False),
         }
-        if (
-            utils.get_timer().daily_duration() - agent.last_record
-        ) > self.record_iterval:
-            info["record"] = True
-            agent.last_record = utils.get_timer().daily_duration()
-        else:
-            info["record"] = False
+        elapsed = self.context.clock.daily_duration() - agent.last_record
+        info["record"] = elapsed > self.record_interval
+        if info["record"]:
+            agent.last_record = self.context.clock.daily_duration()
         if agent.llm_available():
             info["llm"] = agent._llm.get_summary()
         title = "{}.summary @ {}".format(
-            name, utils.get_timer().get_date("%Y%m%d-%H:%M:%S")
+            agent_key, self.context.clock.get_date("%Y%m%d-%H:%M:%S")
         )
         self.logger.info("\n{}\n{}\n".format(utils.split_line(title), agent))
-        return {"plan": plan, "info": info}
+        return {"plan": plan, "info": info, "events": agent.drain_result_events()}
 
-    def load_static(self, path):
-        return utils.load_dict(os.path.join(self.static_root, path))
-
-    def reset_game(self):
-        for a_name, agent in self.agents.items():
+    def reset_game(self) -> None:
+        for agent_key, agent in self.agents.items():
             agent.reset()
-            title = "{}.reset".format(a_name)
-            self.logger.info("\n{}\n{}\n".format(utils.split_line(title), agent))
+            self.logger.info(
+                "\n{}\n{}\n".format(utils.split_line(f"{agent_key}.reset"), agent)
+            )
+
+    def snapshot_state(self) -> dict:
+        return {
+            "agents": {
+                agent_key: {
+                    **agent.to_dict(),
+                    "coord": list(agent.coord),
+                    "path": [list(coord) for coord in agent.path or []],
+                }
+                for agent_key, agent in self.agents.items()
+            },
+            "virtual_time": self.context.clock.get_date().isoformat(),
+            # random.Random state contains only JSON-safe scalar/tuple values.
+            # Checkpoint serialization turns tuples into lists; restore_runtime_state
+            # converts the shape back before calling setstate().
+            "rng_state": self.context.random.getstate(),
+        }
+
+    def restore_runtime_state(self, snapshot: dict) -> None:
+        """Restore run-local deterministic state from a verified checkpoint."""
+        rng_state = snapshot.get("rng_state")
+        if rng_state is None:
+            raise ValueError("checkpoint is missing rng_state")
+        self.context.random.setstate(_as_tuple_tree(rng_state))
+
+    def storage_exporters(self):
+        return {
+            agent_key: agent.associate.export_storage
+            for agent_key, agent in self.agents.items()
+        }
 
 
-def create_game(name, static_root, config, conversation, logger=None):
-    """Create the game"""
-
-    utils.set_timer(**config.get("time", {}))
-    GenerativeAgentsMap.set(GenerativeAgentsKey.GAME, Game(name, static_root, config, conversation, logger=logger))
-    return GenerativeAgentsMap.get(GenerativeAgentsKey.GAME)
-
-
-def get_game():
-    """Get the gloabl game"""
-
-    return GenerativeAgentsMap.get(GenerativeAgentsKey.GAME)
+def create_game(config, conversation, *, context: SimulationContext) -> Game:
+    return Game(config, conversation, context=context)

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "generative-agents-cn"
+version = "0.1.0"
+description = "Experiment-isolated GenerativeAgentsCN Web service"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["generative_agents*"]
+namespaces = true
+
+# Runtime package roots: generative_agents/web/static and
+# generative_agents/frontend/static/assets/village.
+[tool.setuptools.package-data]
+generative_agents = [
+  "data/**/*",
+  "assets/**/*",
+  "web/static/**/*",
+  "frontend/static/assets/village/**/*",
+]

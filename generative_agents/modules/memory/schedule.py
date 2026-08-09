@@ -1,12 +1,17 @@
 """generative_agents.memory.schedule"""
 
-from modules import utils
+from generative_agents.modules import utils
 
 
 class Schedule:
-    def __init__(self, create=None, daily_schedule=None, diversity=5, max_try=5):
+    def __init__(self, create=None, daily_schedule=None, diversity=5, max_try=5, clock=None):
+        if clock is None:
+            raise ValueError("Schedule requires an injected clock")
+        self._clock = clock
         if create:
-            self.create = utils.to_date(create)
+            self.create = utils.to_date(
+                create, naive_timezone=clock.get_date().tzinfo
+            )
         else:
             self.create = None
         self.daily_schedule = daily_schedule or []
@@ -49,7 +54,7 @@ class Schedule:
         return self.daily_schedule[-1]
 
     def current_plan(self):
-        total_minute = utils.get_timer().daily_duration()
+        total_minute = self._clock.daily_duration()
         for plan in self.daily_schedule:
             if self.plan_stamps(plan)[1] <= total_minute:
                 continue
@@ -63,7 +68,7 @@ class Schedule:
 
     def plan_stamps(self, plan, time_format=None):
         def _to_date(minutes):
-            return utils.get_timer().daily_time(minutes).strftime(time_format)
+            return self._clock.daily_time(minutes).strftime(time_format)
 
         start, end = plan["start"], plan["start"] + plan["duration"]
         if time_format:
@@ -92,7 +97,7 @@ class Schedule:
     def scheduled(self):
         if not self.daily_schedule:
             return False
-        return utils.get_timer().daily_format() == self.create.strftime("%A %B %d")
+        return self._clock.daily_format() == self.create.strftime("%A %B %d")
 
     def to_dict(self):
         return {

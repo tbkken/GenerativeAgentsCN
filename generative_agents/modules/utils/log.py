@@ -4,14 +4,13 @@ import os
 import logging
 from typing import Union
 
-from .timer import get_timer
 from .arguments import dump_dict
 
 
 class IOLogger(object):
     """IO Logger for MSC"""
 
-    def __init__(self, level=logging.INFO, color=False):
+    def __init__(self, level=logging.INFO, color=False, clock=None):
         self._printers = {
             "red": (lambda m: print("\033[91m {}\033[00m".format(m))),
             "green": (lambda m: print("\033[92m {}\033[00m".format(m))),
@@ -23,6 +22,7 @@ class IOLogger(object):
         }
         self._level = level
         self._color = color
+        self._clock = clock
 
     def _get_printer(self, color):
         if not self._color:
@@ -32,8 +32,10 @@ class IOLogger(object):
         return self._printers.get(color, print)
 
     def _prefix(self):
+        if self._clock is None:
+            return "<system>"
         return "<{}({})>".format(
-            get_timer().get_date("%Y%m%d-%H:%M:%S"), get_timer().mode
+            self._clock.get_date("%Y%m%d-%H:%M:%S"), self._clock.mode
         )
 
     def info(self, msg):
@@ -45,15 +47,14 @@ class IOLogger(object):
             self._get_printer("green")("[DEBUG]{}: {}".format(self._prefix(), msg))
 
     def warning(self, msg):
-        if self._level >= logging.WARN:
+        if self._level <= logging.WARN:
             self._get_printer("yellow")("[WARNING]{}: {}".format(self._prefix(), msg))
 
     def error(self, msg):
         self._get_printer("red")("[ERROR]{}: {}".format(self._prefix(), msg))
-        raise Exception(msg)
 
 
-def create_io_logger(level: Union[str, int] = logging.INFO):
+def create_io_logger(level: Union[str, int] = logging.INFO, *, clock=None):
     if isinstance(level, str):
         if level.startswith("debug"):
             level = logging.DEBUG
@@ -67,11 +68,15 @@ def create_io_logger(level: Union[str, int] = logging.INFO):
             level = logging.CRITICAL
         else:
             raise Exception("Unexcept verbose {}, should be debug| info| warn")
-    return IOLogger(level)
+    return IOLogger(level, clock=clock)
 
 
 def create_file_logger(
-    path: str, level: Union[str, int] = logging.INFO
+    path: str,
+    level: Union[str, int] = logging.INFO,
+    *,
+    run_id: str = "legacy",
+    attempt_no: int = 1,
 ) -> logging.Logger:
     """Create file logger
 
@@ -102,19 +107,19 @@ def create_file_logger(
         else:
             raise Exception("Unexcept verbose {}, should be debug| info| warn")
 
-    log_name = os.path.basename(path)
+    log_name = f"ga.run.{run_id}.{attempt_no}"
     logger = logging.getLogger(log_name)
     logger.setLevel(level)
-    if any(
-        isinstance(h, logging.FileHandler) and h.baseFilename == path
-        for h in logger.handlers
-    ):
-        return logger
+    for handler in tuple(logger.handlers):
+        handler.close()
+        logger.removeHandler(handler)
+    logger.propagate = False
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     formatter = logging.Formatter(
         "%(asctime)s %(filename)s[ln:%(lineno)d]<%(levelname)s> %(message)s"
     )
     handlers = [
-        logging.FileHandler(path, mode="a", encoding=None, delay=False),
+        logging.FileHandler(path, mode="a", encoding="utf-8", delay=False),
         logging.StreamHandler(),
     ]
     for handler in handlers:

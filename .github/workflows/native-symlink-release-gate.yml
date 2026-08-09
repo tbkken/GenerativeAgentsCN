@@ -1,0 +1,46 @@
+name: Native symlink release gate
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-symlink:
+    name: native-symlink (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      GA_REQUIRE_NATIVE_SYMLINK_TESTS: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            generative_agents/requirements.txt
+            generative_agents/requirements-dev.txt
+      - name: Enable Developer Mode for native Windows symlinks
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name AllowDevelopmentWithoutDevLicense -Value 1 -PropertyType DWord -Force | Out-Null
+      - name: Install runtime and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r generative_agents/requirements.txt
+          python -m pip install -r generative_agents/requirements-dev.txt
+          python -m pip install tzdata==2025.2
+      - name: Require seven real native-symlink assertions with zero skips
+        run: python tools/run_symlink_release_gate.py

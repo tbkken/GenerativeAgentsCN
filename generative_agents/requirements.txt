@@ -1,0 +1,30 @@
+# Install all project dependencies with:
+# python -m pip install -r requirements.txt
+
+# Application runtime
+Flask==3.1.2
+python-dotenv==1.1.0
+pydantic==2.12.4
+requests==2.32.5
+
+# LLM clients
+magentic==0.41.0
+openai==2.15.0
+
+# Vector index and supported embedding providers
+llama-index-core==0.14.12
+llama-index-embeddings-huggingface==0.6.1
+llama-index-embeddings-ollama==0.8.6
+llama-index-embeddings-openai==0.5.1
+
+# Experiment web service and versioned persistence
+fastapi==0.141.1
+uvicorn==0.52.1
+SQLAlchemy==2.0.51
+alembic==1.19.0
+pydantic-settings==2.15.0
+Jinja2==3.1.6
+filelock==3.32.2
+cryptography==50.0.0
+psutil==7.2.2
+python-multipart==0.0.22

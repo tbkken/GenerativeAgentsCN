@@ -2,64 +2,146 @@
 
 import os
 import math
-import random
 import datetime
+import copy
+import hashlib
+import json
 
-from modules import memory, prompt, utils
-from modules.model.llm_model import create_llm_model
-from modules.memory.associate import Concept
+from generative_agents.modules import memory, prompt, utils
+from generative_agents.modules.model.llm_model import create_llm_model
+from generative_agents.modules.memory.associate import Concept
+
+
+def estimate_chat_duration(chats, chars_per_minute=240):
+    """ga-cn-v1: a non-empty chat occupies at least one virtual minute."""
+    if chars_per_minute <= 0:
+        raise ValueError("chars_per_minute must be positive")
+    return max(
+        1,
+        math.ceil(sum(len(message) for _, message in chats) / chars_per_minute),
+    )
 
 
 class Agent:
-    def __init__(self, config, maze, conversation, logger):
-        self.name = config["name"]
+    def __init__(
+        self,
+        config,
+        maze,
+        conversation,
+        logger,
+        *,
+        clock,
+        random_source,
+        prompts,
+        models=None,
+        model_trace=None,
+        algorithm=None,
+    ):
+        # Runtime-only collaborators such as RunControl contain thread locks and
+        # must retain identity. Copy the serializable definition first, then put
+        # those injected references back into the per-Agent embedding config.
+        embedding = config.get("associate", {}).get("embedding", {})
+        runtime_embedding = {
+            key: embedding[key]
+            for key in ("_control", "_logger", "_sleep")
+            if key in embedding
+        }
+        serializable_config = dict(config)
+        serializable_associate = dict(serializable_config.get("associate", {}))
+        serializable_embedding = {
+            key: value
+            for key, value in embedding.items()
+            if key not in runtime_embedding
+        }
+        serializable_associate["embedding"] = serializable_embedding
+        serializable_config["associate"] = serializable_associate
+        agent_config = copy.deepcopy(serializable_config)
+        agent_config.get("associate", {}).get("embedding", {}).update(
+            runtime_embedding
+        )
+        self.name = agent_config["name"]
+        self.agent_key = agent_config.get("agent_key", self.name)
         self.maze = maze
         self.conversation = conversation
         self._llm = None
         self.logger = logger
+        self._clock = clock
+        self._rng = random_source
+        self._prompts = prompts
+        self._models = models
+        self._model_trace = model_trace
+        self._algorithm = algorithm
+        self._result_events = []
 
         # agent config
-        self.percept_config = config["percept"]
-        self.think_config = config["think"]
-        self.chat_iter = config["chat_iter"]
+        self.percept_config = agent_config["percept"]
+        self.think_config = agent_config["think"]
+        chat_config = agent_config.get("chat", {})
+        self.chat_iter = chat_config.get(
+            "max_iterations", agent_config.get("chat_iter", 4)
+        )
+        self.chat_cooldown_minutes = chat_config.get("cooldown_minutes", 60)
+        self.chat_stop_after_hour = chat_config.get("stop_after_hour", 23)
+        self.repeat_detection_enabled = chat_config.get(
+            "repeat_detection_enabled", True
+        )
 
         # memory
-        self.spatial = memory.Spatial(**config["spatial"])
-        self.schedule = memory.Schedule(**config["schedule"])
-        self.associate = memory.Associate(
-            os.path.join(config["storage_root"], "associate"), **config["associate"]
+        self.spatial = memory.Spatial(
+            **agent_config["spatial"], random_source=random_source
         )
-        self.concepts, self.chats = [], config.get("chats", [])
+        self.schedule = memory.Schedule(**agent_config["schedule"], clock=clock)
+        self.associate = memory.Associate(
+            os.path.join(agent_config["storage_root"], "associate"),
+            **agent_config["associate"],
+            clock=clock,
+        )
+        self.concepts, self.chats = [], agent_config.get("chats", [])
 
         # prompt
-        self.scratch = prompt.Scratch(self.name, config["currently"], config["scratch"])
+        self.scratch = prompt.Scratch(
+            self.name,
+            agent_config["currently"],
+            agent_config["scratch"],
+            clock=clock,
+            random_source=random_source,
+            prompts=prompts,
+        )
 
         # status
         status = {"poignancy": 0}
-        self.status = utils.update_dict(status, config.get("status", {}))
-        self.plan = config.get("plan", {})
+        self.status = utils.update_dict(status, agent_config.get("status", {}))
+        self.plan = agent_config.get("plan", {})
 
         # record
-        self.last_record = utils.get_timer().daily_duration()
+        self.last_record = self._clock.daily_duration()
 
         # action and events
-        if "action" in config:
-            self.action = memory.Action.from_dict(config["action"])
-            tiles = self.maze.get_address_tiles(self.get_event().address)
-            config["coord"] = random.choice(list(tiles))
+        if "action" in agent_config:
+            self.action = memory.Action.from_dict(agent_config["action"], clock=clock)
+            # A verified checkpoint carries the exact observed coordinate.  The
+            # address may cover many tiles, so re-choosing one would silently
+            # fork the resumed trajectory before RNG state is restored.
+            if "coord" in agent_config:
+                initial_coord = tuple(agent_config["coord"])
+            else:
+                tiles = self.maze.get_address_tiles(self.get_event().address)
+                initial_coord = self._rng.choice(list(tiles))
         else:
-            tile = self.maze.tile_at(config["coord"])
+            initial_coord = tuple(agent_config["coord"])
+            tile = self.maze.tile_at(initial_coord)
             address = tile.get_address("game_object", as_list=True)
             self.action = memory.Action(
                 memory.Event(self.name, address=address),
                 memory.Event(address[-1], address=address),
+                clock=clock,
             )
 
         # update maze
         self.coord, self.path = None, None
-        self.move(config["coord"], config.get("path"))
+        self.move(initial_coord, agent_config.get("path"))
         if self.coord is None:
-            self.coord = config["coord"]
+            self.coord = initial_coord
 
     def abstract(self):
         des = {
@@ -87,7 +169,12 @@ class Agent:
 
     def reset(self):
         if not self._llm:
-            self._llm = create_llm_model(self.think_config["llm"])
+            if self._models is not None:
+                self._llm = self._models.get("chat")
+            else:
+                self._llm = create_llm_model(
+                    self.think_config["llm"], recorder=self._model_trace
+                )
 
     def completion(self, func_hint, *args, **kwargs):
         assert hasattr(
@@ -98,7 +185,12 @@ class Agent:
         title, msg = "{}.{}".format(self.name, func_hint), {}
         if self.llm_available():
             self.logger.info("{} -> {}".format(self.name, func_hint))
-            output = self._llm.completion(**res)
+            output = self._llm.completion(
+                **res,
+                caller=func_hint,
+                agent_key=self.agent_key,
+                prompt_key=func_hint,
+            )
             msg = {"<PROMPT>": "\n" + res["prompt"] + "\n"}
             msg.update({"response": output})
         self.logger.debug(utils.block_msg(title, msg))
@@ -112,7 +204,7 @@ class Agent:
             self.logger.info("{} is going to sleep...".format(self.name))
             address = self.spatial.find_address("睡觉", as_list=True)
             tiles = self.maze.get_address_tiles(address)
-            coord = random.choice(list(tiles))
+            coord = self._rng.choice(list(tiles))
             events = self.move(coord)
             self.action = memory.Action(
                 memory.Event(self.name, "正在", "睡觉", address=address, emoji="😴"),
@@ -124,7 +216,8 @@ class Agent:
                     emoji="🛌",
                 ),
                 duration=plan["duration"],
-                start=utils.get_timer().daily_time(plan["start"]),
+                start=self._clock.daily_time(plan["start"]),
+                clock=self._clock,
             )
         if self.is_awake():
             self.percept()
@@ -185,7 +278,7 @@ class Agent:
             if self.associate.index.nodes_num > 0:
                 self.associate.cleanup_index()
                 focus = [
-                    f"{self.name} 在 {utils.get_timer().daily_format_cn()} 的计划。",
+                    f"{self.name} 在 {self._clock.daily_format_cn()} 的计划。",
                     f"在 {self.name} 的生活中，重要的近期事件。",
                 ]
                 retrieved = self.associate.retrieve_focus(focus)
@@ -199,7 +292,7 @@ class Agent:
                         "retrieve_currently", plan, thought
                     )
             # make init schedule
-            self.schedule.create = utils.get_timer().get_date()
+            self.schedule.create = self._clock.get_date()
             wake_up = self.completion("wake_up")
             init_schedule = self.completion("schedule_init", wake_up)
             # make daily schedule
@@ -224,7 +317,7 @@ class Agent:
             for idx, start in enumerate(starts):
                 end = starts[idx + 1] if idx + 1 < len(starts) else 24 * 60
                 self.schedule.add_plan(schedule[start], end - start)
-            schedule_time = utils.get_timer().time_format_cn(self.schedule.create)
+            schedule_time = self._clock.time_format_cn(self.schedule.create)
             thought = "这是 {} 在 {} 的计划：{}".format(
                 self.name, schedule_time, "；".join(init_schedule)
             )
@@ -261,12 +354,32 @@ class Agent:
         return self.schedule.current_plan()
 
     def revise_schedule(self, event, start, duration):
-        self.action = memory.Action(event, start=start, duration=duration)
+        self.action = memory.Action(
+            event, start=start, duration=duration, clock=self._clock
+        )
         plan, _ = self.schedule.current_plan()
         if len(plan["decompose"]) > 0:
             plan["decompose"] = self.completion(
                 "schedule_revise", self.action, self.schedule
             )
+        schedule = copy.deepcopy(self.schedule.daily_schedule)
+        content_hash = hashlib.sha256(
+            json.dumps(
+                schedule,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+        self._result_events.append(
+            {
+                "kind": "schedule",
+                "agent_key": self.agent_key,
+                "reason": "ACTION_REVISED",
+                "content_hash": content_hash,
+                "schedule": tuple(schedule),
+            }
+        )
 
     def percept(self):
         scope = self.maze.get_scope(self.coord, self.percept_config)
@@ -294,7 +407,11 @@ class Agent:
             if event.get_describe() not in recent_nodes:
                 if event.object == "idle" or event.object == "空闲":
                     node = Concept.from_event(
-                        "idle_" + str(idx), "event", event, poignancy=1
+                        "idle_" + str(idx),
+                        "event",
+                        event,
+                        poignancy=1,
+                        clock=self._clock,
                     )
                 else:
                     valid_num += 1
@@ -411,7 +528,7 @@ class Agent:
         if not target_tiles:
             return []
         if len(target_tiles) >= 4:
-            target_tiles = random.sample(target_tiles, 4)
+            target_tiles = self._rng.sample(target_tiles, 4)
         pathes = {t: self.maze.find_path(self.coord, t) for t in target_tiles}
         target = min(pathes, key=lambda p: len(pathes[p]))
         return pathes[target][1:]
@@ -453,7 +570,8 @@ class Agent:
             event,
             obj_event,
             duration=de_plan["duration"],
-            start=utils.get_timer().daily_time(de_plan["start"]),
+            start=self._clock.daily_time(de_plan["start"]),
+            clock=self._clock,
         )
 
     def _reaction(self, agents=None, ignore_words=None):
@@ -469,11 +587,11 @@ class Agent:
         if agents:
             priority = [i for i in self.concepts if _focus(i)]
             if priority:
-                focus = random.choice(priority)
+                focus = self._rng.choice(priority)
         if not focus:
             priority = [i for i in self.concepts if not _ignore(i)]
             if priority:
-                focus = random.choice(priority)
+                focus = self._rng.choice(priority)
         if not focus or focus.event.subject not in agents:
             return
         other, focus = agents[focus.event.subject], self.associate.get_relation(focus)
@@ -492,7 +610,7 @@ class Agent:
                 return True
             return False
 
-        if utils.get_timer().daily_duration(mode="hour") >= 23:
+        if self._clock.daily_duration(mode="hour") >= self.chat_stop_after_hour:
             return True
         if _skip(self.get_event()) or _skip(other.get_event()):
             return True
@@ -511,20 +629,20 @@ class Agent:
 
         chats = self.associate.retrieve_chats(other.name)
         if chats:
-            delta = utils.get_timer().get_delta(chats[0].create)
+            delta = self._clock.get_delta(chats[0].create)
             self.logger.info(
                 "retrieved chat between {} and {}({} min):\n{}".format(
                     self.name, other.name, delta, chats[0]
                 )
             )
-            if delta < 60:
+            if delta < self.chat_cooldown_minutes:
                 return False
 
         if not self.completion("decide_chat", self, other, focus, chats):
             return False
 
         self.logger.info("{} decides chat with {}".format(self.name, other.name))
-        start, chats = utils.get_timer().get_date(), []
+        start, chats = self._clock.get_date(), []
         relations = [
             self.completion("summarize_relation", self, other.name),
             other.completion("summarize_relation", other, self.name),
@@ -536,27 +654,27 @@ class Agent:
             )
 
             if i > 0:
-                # 对于发起对话的Agent，从第2轮对话开始，检查是否出现“复读”现象
-                end = self.completion(
-                    "generate_chat_check_repeat", self, chats, text
-                )
-                if end:
-                    break
-
-                # 对于发起对话的Agent，从第2轮对话开始，检查话题是否结束
+                if self.repeat_detection_enabled:
+                    # 对于发起对话的Agent，从第2轮对话开始，检查是否出现“复读”现象
+                    end = self.completion(
+                        "generate_chat_check_repeat", self, chats, text
+                    )
+                    if end:
+                        break
                 chats.append((self.name, text))
+                # 话题结束检测独立于复读检测开关。
                 end = self.completion(
                     "decide_chat_terminate", self, other, chats
                 )
                 if end:
                     break
-            else :
+            else:
                 chats.append((self.name, text))
 
             text = other.completion(
                 "generate_chat", other, self, relations[1], chats
             )
-            if i > 0:
+            if i > 0 and self.repeat_detection_enabled:
                 # 对于响应对话的Agent，从第2轮开始，检查是否出现“复读”现象
                 end = self.completion(
                     "generate_chat_check_repeat", other, chats, text
@@ -573,7 +691,7 @@ class Agent:
             if end:
                 break
 
-        key = utils.get_timer().get_date("%Y%m%d-%H:%M")
+        key = self._clock.get_date("%Y%m%d-%H:%M")
         if key not in self.conversation.keys():
             self.conversation[key] = []
         self.conversation[key].append({f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats})
@@ -586,7 +704,22 @@ class Agent:
             )
         )
         chat_summary = self.completion("summarize_chats", chats)
-        duration = int(sum([len(c[1]) for c in chats]) / 240)
+        chars_per_minute = (
+            self._algorithm.chat_chars_per_minute if self._algorithm else 240
+        )
+        duration = estimate_chat_duration(chats, chars_per_minute)
+        self._result_events.append(
+            {
+                "kind": "conversation",
+                "participants": (self.agent_key, other.agent_key),
+                "location": tuple(self.get_event().address),
+                "messages": tuple(chats),
+                "summary": chat_summary,
+                "start": start,
+                "duration_minutes": duration,
+                "duration_source": "ESTIMATED",
+            }
+        )
         self.schedule_chat(
             chats, chat_summary, start, duration, other
         )
@@ -603,7 +736,7 @@ class Agent:
         if not self.completion("decide_wait", self, other, focus):
             return False
         self.logger.info("{} decides wait to {}".format(self.name, other.name))
-        start = utils.get_timer().get_date()
+        start = self._clock.get_date()
         # duration = other.action.end - start
         t = other.action.end - start
         duration = int(t.total_seconds() / 60)
@@ -646,7 +779,7 @@ class Agent:
         else:
             poignancy = self.completion("poignancy_event", event)
         self.logger.debug("{} add associate {}".format(self.name, event))
-        return self.associate.add_node(
+        concept = self.associate.add_node(
             e_type,
             event,
             poignancy,
@@ -654,6 +787,32 @@ class Agent:
             expire=expire,
             filling=filling,
         )
+        self._result_events.append(
+            {
+                "kind": "memory",
+                "memory_kind": "CREATED",
+                "agent_key": self.agent_key,
+                "memory_id": concept.node_id,
+                "memory_type": e_type.upper(),
+                "description": concept.describe,
+                "poignancy": concept.poignancy,
+            }
+        )
+        for memory_id in self.associate.last_evicted:
+            self._result_events.append(
+                {
+                    "kind": "memory",
+                    "memory_kind": "EVICTED",
+                    "agent_key": self.agent_key,
+                    "memory_id": memory_id,
+                    "memory_type": e_type.upper(),
+                }
+            )
+        return concept
+
+    def drain_result_events(self):
+        events, self._result_events = tuple(self._result_events), []
+        return events
 
     def get_tile(self):
         return self.maze.tile_at(self.coord)
