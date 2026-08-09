@@ -42,6 +42,7 @@ class AgentStepResult:
     currently: str | None = None
     schedule_item_id: str | None = None
     path_source: str = "OBSERVED"
+    decision_context: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,6 +185,7 @@ class StepResult:
                     currently=item.get("currently"),
                     schedule_item_id=item.get("schedule_item_id"),
                     path_source=item.get("path_source", "OBSERVED"),
+                    decision_context=item.get("decision_context") or {},
                 )
                 for item in value.get("agents", ())
             ),

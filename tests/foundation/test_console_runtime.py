@@ -54,6 +54,32 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     )
 
 
+def test_agent_result_page_is_agent_owned_and_expands_structured_outputs():
+    root = Path(__file__).parents[2]
+    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(
+        encoding="utf-8"
+    )
+    script = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(
+        encoding="utf-8"
+    )
+
+    assert 'data-result-tab="agents">Agent</button>' in shell
+    assert 'data-result-tab="conversations"' not in shell
+    assert 'data-result-tab="memories"' not in shell
+    assert 'data-result-tab="operations">运行诊断</button>' in shell
+    assert 'data-result-tab="artifacts">结果与导出</button>' in shell
+    assert 'class="agent-result-list" id="resultAgentButtons"' in shell
+    assert 'data-tooltip="每个 Agent 是一个独立结果单元' in shell
+    assert "function renderAgentPlanSection" in script
+    assert "function renderAgentEventSection" in script
+    assert "function renderAgentActionSection" in script
+    assert "function renderAgentConversationSection" in script
+    assert "function renderAgentMemorySection" in script
+    assert "function renderAgentStateSection" in script
+    assert "decision_context" in script
+    assert "Agent 轨迹" not in shell
+
+
 def test_dynamic_card_and_error_paths_are_owned_by_the_production_script():
     script = (
         Path(__file__).parents[2]

@@ -173,6 +173,7 @@ class SqliteResultProjector:
                             currently_text=agent.currently,
                             schedule_item_id=agent.schedule_item_id,
                             path_source=agent.path_source,
+                            decision_context_json=dict(agent.decision_context),
                         )
                     )
                 agent_summary = self._get_agent_summary(

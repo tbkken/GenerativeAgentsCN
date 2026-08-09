@@ -363,3 +363,16 @@ clock 的 tzinfo 还原，再统一转换成 UTC instant 比较。Action、Sched
 又抛 `FileNotFoundError`，遮蔽了主异常。`ModelTraceProjector` 现在先验证 Run/Attempt 归属：没有 cursor 且文件
 从未存在时幂等返回 0；worker finally 也只在 JSONL 已实际创建时调用投影。已经投影过的文件消失仍是完整性
 错误，不会静默归零，已有事件的 DEF-032 最终 flush 路径保持不变。
+
+### Agent 结果工作台：以 Agent 为主体的结构化结果
+
+实验结果不再把“Agent 轨迹”作为一条独立时间线，也不再要求用户从日志反推角色行为。顶层结果视图现在是
+“仿真总览 / 时间探索 / Agent / 运行诊断 / 结果与导出”；对话和记忆从顶层移入所属 Agent。Agent 列表按最近
+活动排列，每个 Agent 可独立展开，并以计划、事件、行动、对话、记忆、状态变化六个分区呈现事实；搜索、活动
+类型筛选和分区筛选均保留当前 Run/Agent 所有权，运行事件触发的全局刷新会重新读取并更新展开内容。
+
+`ResultQueryService.agent()` 现在按 Run 边界聚合 Published Revision 的角色定义、日程修订、逐步行动、领域事件
+归属、对话参与、记忆和采样状态变化。迁移 `0006_agent_decision_context` 为 `run_agent_steps` 增加结构化决策上下文；
+新步骤会保存最多 20 条当步感知、日程摘要、行动、实际路径和分类记忆计数，不复制完整向量索引。旧 Run 通过
+空 JSON 默认值保持可读，页面只展示它确实拥有的历史事实。真实 100 步 Run 已验证 25 个 Agent、六类分区、
+Agent 切换、事件单类筛选和搜索；Fresh Browser 控制台为 0，仓库全量为 235 passed / 7 native-symlink skipped。

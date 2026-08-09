@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 
 from generative_agents.config import ExperimentDefinition
 from generative_agents.persistence.models import (
+    RunAgentStep,
     RunAgentSummary,
     RunConversation,
     RunMemoryEvent,
@@ -102,6 +103,17 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
                 activity_kind=ActivityKind.CHAT,
                 location=("ville", "cafe"),
                 currently="testing",
+                decision_context=(
+                    {
+                        "perceptions": [{"node_id": "seen-1", "content": "B arrived"}],
+                        "schedule": {"08:00~08:10": "chat"},
+                        "action": {"event": "walk and chat"},
+                        "path": [[start, 0], [start + 1, 0]],
+                        "memory_counts": {"event": 1, "chat": 0, "thought": 0},
+                    }
+                    if key == "a-agent"
+                    else {}
+                ),
             )
         )
     builder.add_conversation(
@@ -198,6 +210,9 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
         edge = session.get(RunRelationshipEdge, (run["run_id"], "a-agent", "b-agent"))
         assert edge.conversation_count == 1
         assert session.get(RunAgentSummary, (run["run_id"], "a-agent")).message_count == 2
+        assert session.get(RunAgentStep, (run["run_id"], 1, "a-agent")).decision_context_json[
+            "perceptions"
+        ][0]["node_id"] == "seen-1"
 
     queries = ResultQueryService(database)
     summary_view = queries.summary(run["run_id"])
@@ -205,11 +220,30 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
     assert summary_view["counts"]["conversations"] == 1
     assert summary_view["conversation_network"]["edges"][0]["agent_a"] == "a-agent"
     assert queries.timeline(run["run_id"])["steps"][0]["step_no"] == 1
-    assert {item["agent_key"] for item in queries.agents(run["run_id"])["items"]} == {
+    agent_list = queries.agents(run["run_id"])["items"]
+    assert {item["agent_key"] for item in agent_list} == {
         "a-agent",
         "b-agent",
     }
-    assert queries.agent(run["run_id"], "a-agent")["latest_schedule"]["reason"] == "conversation"
+    listed_a = next(item for item in agent_list if item["agent_key"] == "a-agent")
+    assert listed_a["plan_count"] == 1 and listed_a["event_count"] == 1
+    assert listed_a["portrait_url"].endswith("a-agent/portrait.png")
+    agent_workspace = queries.agent(run["run_id"], "a-agent")
+    assert agent_workspace["latest_schedule"]["reason"] == "conversation"
+    assert agent_workspace["content_counts"] == {
+        "plans": 1,
+        "actions": 1,
+        "events": 1,
+        "conversations": 1,
+        "memories": 1,
+        "state_changes": 0,
+    }
+    assert agent_workspace["actions"][0]["decision_context"]["perceptions"][0][
+        "node_id"
+    ] == "seen-1"
+    assert agent_workspace["events"][0]["payload"]["title"] == "A 与 B 对话"
+    assert agent_workspace["conversations"][0]["summary"] == "greeting"
+    assert agent_workspace["memories"][0]["description"] == "talked to b"
     conversation_list = queries.conversations(run["run_id"], query="hello")
     assert conversation_list["items"][0]["conversation_id"] == str(conversation_id)
     assert len(queries.conversation(run["run_id"], str(conversation_id))["messages"]) == 2

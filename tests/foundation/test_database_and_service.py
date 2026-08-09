@@ -55,7 +55,7 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-        ).scalar() == "0005_artifact_source_identity"
+        ).scalar() == "0006_agent_decision_context"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):

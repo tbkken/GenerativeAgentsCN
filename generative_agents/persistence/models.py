@@ -546,6 +546,9 @@ class RunAgentStep(Base):
     currently_text: Mapped[str | None] = mapped_column(Text)
     schedule_item_id: Mapped[str | None] = mapped_column(String(120))
     path_source: Mapped[str] = mapped_column(String(16), nullable=False, default="OBSERVED")
+    decision_context_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
 
     __table_args__ = (
         ForeignKeyConstraint(

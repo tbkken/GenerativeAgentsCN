@@ -601,6 +601,81 @@
     .schedule-result div { display: grid; grid-template-columns: 72px 1fr; gap: 8px; color: #41564e; font-size: 8px; }
     .schedule-result time { color: var(--muted); font-family: var(--mono); }
 
+    .agent-result-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .agent-result-heading h2 { margin: 0; font-size: 16px; }
+    .agent-result-heading p { margin: 4px 0 0; color: var(--muted); font-size: 9px; }
+    .agent-result-count { padding: 3px 7px; border-radius: 99px; background: #eaf1ee; color: #60726c; font-family: var(--mono); font-size: 8px; }
+    .agent-live-state { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 8px; }
+    .agent-live-state i { width: 6px; height: 6px; border-radius: 50%; background: #4db38f; box-shadow: 0 0 0 4px rgba(77,179,143,.09); }
+    .agent-result-toolbar { display: flex; align-items: center; gap: 9px; padding: 9px 10px; margin-bottom: 10px; }
+    .agent-result-search { display: flex; align-items: center; width: min(300px,34%); min-width: 220px; height: 33px; gap: 7px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--muted); }
+    .agent-result-search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 9px; }
+    .agent-status-filters { display: flex; gap: 5px; }
+    .agent-status-filter { height: 29px; padding: 0 10px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--muted); font-size: 8px; cursor: pointer; }
+    .agent-status-filter:hover { border-color: #a9c9bf; }
+    .agent-status-filter.active { border-color: #a8d3c5; background: var(--teal-soft); color: var(--teal-2); font-weight: 700; }
+    .agent-result-sort { margin-left: auto; color: var(--muted); font-size: 8px; }
+    .agent-result-list { display: grid; gap: 9px; }
+    .agent-result-card { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #fff; box-shadow: 0 2px 9px rgba(28,62,53,.03); }
+    .agent-result-card.open { border-color: #9dcabe; box-shadow: 0 7px 24px rgba(28,71,59,.08); }
+    .agent-result-header { display: grid; grid-template-columns: minmax(220px,1.05fr) minmax(180px,.8fr) minmax(220px,1fr) auto; align-items: center; width: 100%; min-height: 66px; gap: 15px; padding: 9px 13px; border: 0; background: #fff; text-align: left; cursor: pointer; }
+    .agent-result-header:hover { background: #fbfdfc; }
+    .agent-result-identity { display: flex; align-items: center; min-width: 0; }
+    .agent-result-portrait { flex: 0 0 auto; width: 42px; height: 42px; margin-right: 10px; border: 1px solid #d6e2de; border-radius: 10px; background: #edf4f1; object-fit: contain; image-rendering: pixelated; }
+    .agent-result-identity .agent-result-avatar-fallback { display: none; flex: 0 0 auto; width: 42px; height: 42px; margin-right: 10px; border-radius: 10px; background: var(--teal-soft); color: var(--teal-2); place-items: center; font-weight: 700; }
+    .agent-result-identity strong { display: block; overflow: hidden; margin-bottom: 4px; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .agent-result-identity span { display: block; overflow: hidden; color: var(--muted); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+    .agent-result-fact small { display: block; margin-bottom: 4px; color: var(--muted-2); font-size: 7px; }
+    .agent-result-fact strong { display: block; overflow: hidden; color: #30463f; font-size: 9px; font-weight: 620; text-overflow: ellipsis; white-space: nowrap; }
+    .agent-result-badges { display: flex; align-items: center; justify-content: flex-end; gap: 5px; }
+    .agent-result-badge { padding: 4px 6px; border-radius: 6px; background: #f1f5f3; color: #687a74; font-size: 7px; white-space: nowrap; }
+    .agent-result-chevron { display: grid; width: 26px; height: 26px; margin-left: 3px; place-items: center; border: 1px solid var(--line); border-radius: 7px; color: #6a7d77; transition: transform .18s ease; }
+    .agent-result-card.open .agent-result-chevron { border-color: #b6d8ce; background: var(--teal-soft); color: var(--teal); transform: rotate(180deg); }
+    .agent-result-body { display: none; border-top: 1px solid #e5ece9; background: #f8faf9; }
+    .agent-result-card.open .agent-result-body { display: block; }
+    .agent-result-loading { padding: 34px; text-align: center; color: var(--muted); font-size: 9px; }
+    .agent-result-overview { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; padding: 12px 13px; }
+    .agent-overview-card { min-height: 65px; padding: 9px 10px; border: 1px solid #e0e8e5; border-radius: 8px; background: #fff; }
+    .agent-overview-card small { display: block; margin-bottom: 6px; color: var(--muted); font-size: 7px; }
+    .agent-overview-card strong { display: block; font-size: 9px; line-height: 1.5; }
+    .agent-overview-meter { height: 4px; margin-top: 8px; overflow: hidden; border-radius: 99px; background: #edf2f0; }
+    .agent-overview-meter i { display: block; height: 100%; border-radius: inherit; background: #5ab393; }
+    .agent-content-filters { display: flex; align-items: center; gap: 5px; padding: 0 13px 10px; border-bottom: 1px solid #e3ebe8; }
+    .agent-content-filters > span { margin-right: 4px; color: var(--muted); font-size: 8px; }
+    .agent-content-filter { height: 27px; padding: 0 9px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: #657772; font-size: 8px; cursor: pointer; }
+    .agent-content-filter.active { border-color: #173f37; background: #173f37; color: #fff; }
+    .agent-content-filter i { margin-left: 4px; font-style: normal; opacity: .65; }
+    .agent-content-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; padding: 11px 13px 14px; align-items: start; }
+    .agent-content-section { overflow: hidden; border: 1px solid #dee7e4; border-radius: 9px; background: #fff; }
+    .agent-content-section[hidden] { display: none; }
+    .agent-section-head { display: flex; min-height: 42px; align-items: center; padding: 8px 10px; border-bottom: 1px solid #edf1ef; }
+    .agent-section-icon { display: grid; width: 25px; height: 25px; margin-right: 8px; place-items: center; border-radius: 7px; background: #f0edf9; color: #7258af; font-size: 10px; }
+    .agent-content-section[data-agent-content-section="event"] .agent-section-icon { background: #fff5df; color: #b67618; }
+    .agent-content-section[data-agent-content-section="action"] .agent-section-icon { background: var(--teal-soft); color: var(--teal); }
+    .agent-content-section[data-agent-content-section="conversation"] .agent-section-icon { background: #edf3fc; color: #426fb1; }
+    .agent-content-section[data-agent-content-section="memory"] .agent-section-icon { background: #f2eff9; color: #685aa3; }
+    .agent-content-section[data-agent-content-section="state"] .agent-section-icon { background: #eff4f2; color: #4c6b61; }
+    .agent-section-head strong { display: block; font-size: 9px; }
+    .agent-section-head span { display: block; margin-top: 2px; color: var(--muted); font-size: 7px; }
+    .agent-section-count { margin-left: auto; padding: 3px 6px; border-radius: 99px; background: #f2f5f4; color: var(--muted); font-family: var(--mono); font-size: 7px; }
+    .agent-current-plan { margin: 8px 10px 2px; padding: 9px 10px; border: 1px solid #e4dcf3; border-radius: 8px; background: linear-gradient(135deg,#f5f1fb,#fbfafd); }
+    .agent-current-plan small { color: #8979ab; font-size: 7px; }
+    .agent-current-plan strong { display: block; margin: 4px 0; font-size: 9px; line-height: 1.5; }
+    .agent-current-plan p { margin: 0; color: #746b86; font-size: 8px; line-height: 1.5; }
+    .agent-record-list { padding: 2px 10px 7px; }
+    .agent-record { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; gap: 8px; padding: 8px 0; border-bottom: 1px solid #edf2f0; align-items: start; }
+    .agent-record:last-child { border-bottom: 0; }
+    .agent-record time { color: var(--muted-2); font-family: var(--mono); font-size: 7px; }
+    .agent-record-copy strong { display: block; font-size: 8px; line-height: 1.45; }
+    .agent-record-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 7px; line-height: 1.5; overflow-wrap: anywhere; }
+    .agent-record-tag { padding: 3px 5px; border-radius: 5px; background: #eef5f2; color: var(--teal-2); font-size: 7px; white-space: nowrap; }
+    .agent-record-tag.event { background: #fff5df; color: #a96b16; }
+    .agent-record-tag.memory { background: #f2eff9; color: #685aa3; }
+    .agent-section-empty { padding: 18px 10px; color: var(--muted); font-size: 8px; text-align: center; }
+    .agent-decision-context { margin-top: 5px; padding: 6px 7px; border-left: 2px solid #9bcbbd; background: #f5f9f7; color: #5f736c; font-size: 7px; line-height: 1.5; }
+    .agent-section-more { height: 27px; margin: 0 10px 6px; padding: 0; border: 0; background: transparent; color: var(--teal); font-size: 7px; cursor: pointer; }
+    .agent-section-more:hover { text-decoration: underline; }
+
     .conversation-filter, .memory-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; padding: 11px 12px; }
     .conversation-filter .control, .memory-toolbar .control { min-height: 31px; font-size: 9px; }
     .conversation-filter input { flex: 1; min-width: 220px; }
@@ -892,6 +967,9 @@
       .result-metrics { grid-template-columns: repeat(3,minmax(0,1fr)); }
       .result-metric:nth-child(3) { border-right: 0; }
       .result-metric:nth-child(-n+3) { border-bottom: 1px solid var(--line); }
+      .agent-result-header { grid-template-columns: minmax(220px,1fr) minmax(180px,.8fr) auto; }
+      .agent-result-header > .agent-result-fact:nth-of-type(2) { display: none; }
+      .agent-result-overview { grid-template-columns: repeat(2,minmax(0,1fr)); }
     }
     @media (max-width: 820px) {
       .sidebar { position: static; width: 74px; min-height: 100vh; }
@@ -913,7 +991,9 @@
       .result-runbar { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .result-run-picker { grid-column: 1/-1; grid-row: auto; border-right: 0; border-bottom: 1px solid var(--line); }
       .result-run-fact:nth-of-type(3), .result-sync { border-top: 0; }
-      .result-agent-layout, .conversation-layout { grid-template-columns: 220px minmax(0,1fr); }
+      .conversation-layout { grid-template-columns: 220px minmax(0,1fr); }
+      .agent-result-toolbar { align-items: stretch; flex-wrap: wrap; }
+      .agent-result-search { width: 100%; }
       .timeline-toolbar { grid-template-columns: auto 1fr; }
       .timeline-current { grid-column: 1/-1; text-align: left; }
       .result-map, .result-map > canvas { min-height: 430px; }
@@ -937,6 +1017,10 @@
       .experiment-card { grid-template-columns: minmax(0,1fr) 34px; }
       .experiment-params { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .param-cell, .param-cell:nth-child(3n) { border-right: 1px solid #edf1ef; border-bottom: 1px solid #edf1ef; }
+      .agent-content-grid, .agent-result-overview { grid-template-columns: 1fr; }
+      .agent-result-header { grid-template-columns: minmax(0,1fr) auto; }
+      .agent-result-header > .agent-result-fact { display: none; }
+      .agent-content-filters { overflow-x: auto; }
       .param-cell:nth-child(2n) { border-right: 0; }
       .param-cell:nth-last-child(-n+2) { border-bottom: 0; }
       .filter-tabs { overflow-x: auto; }
@@ -1172,12 +1256,11 @@
             </div>
 
             <div class="result-tabs" role="tablist" aria-label="实验结果视图">
-              <button class="result-tab active" role="tab" aria-selected="true" data-result-tab="summary">总览</button>
+              <button class="result-tab active" role="tab" aria-selected="true" data-result-tab="summary">仿真总览</button>
               <button class="result-tab" role="tab" aria-selected="false" data-result-tab="timeline">时间探索</button>
               <button class="result-tab" role="tab" aria-selected="false" data-result-tab="agents">Agent</button>
-              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="conversations">对话</button>
-              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="memories">记忆</button>
-              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="operations">运行与制品</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="operations">运行诊断</button>
+              <button class="result-tab" role="tab" aria-selected="false" data-result-tab="artifacts">结果与导出</button>
             </div>
 
             <div class="result-panel active" data-result-panel="summary">
@@ -1256,21 +1339,21 @@
             </div>
 
             <div class="result-panel" data-result-panel="agents">
-              <div class="card result-agent-layout">
-                <aside class="result-agent-list">
-                  <div class="result-list-search"><input class="control" id="resultAgentSearch" placeholder="搜索 Agent…"/></div>
-                  <div id="resultAgentButtons"><div class="empty-state"><strong>正在读取</strong></div></div>
-                </aside>
-                <div class="agent-result-detail">
-                  <div class="agent-result-identity"><span id="agentResultPortrait" class="avatar" aria-hidden="true"></span><div><h2 id="agentResultName">未选择 Agent</h2><p id="agentResultRole">—</p></div><button class="btn btn-sm" id="locateAgentBtn">在时间线上定位</button></div>
-                  <div class="agent-final-state"><span>最终状态 · 次日 06:00</span><strong id="agentResultState">—</strong></div>
-                  <div class="agent-result-grid">
-                    <div class="mini-result"><span>时间分布</span><div id="agentDistribution"><div class="empty-state"><strong>正在读取</strong></div></div></div>
-                    <div class="mini-result"><span>结果计数</span><div class="model-summary"><div class="summary-cell"><span>行动</span><strong id="agentActionCount">0</strong></div><div class="summary-cell"><span>新记忆</span><strong id="agentMemoryCount">0</strong></div><div class="summary-cell"><span>对话消息</span><strong id="agentChatCount">0</strong></div></div></div>
-                    <div class="mini-result" style="grid-column:1/-1"><span>关键日程回放</span><div class="schedule-result" id="agentSchedule"><div class="empty-state"><strong>正在读取</strong></div></div></div>
-                  </div>
-                </div>
+              <div class="agent-result-heading">
+                <div><div class="heading-line"><h2>Agent</h2><span class="agent-result-count" id="agentResultCount">0</span><button type="button" class="help-tip" aria-label="Agent 结果说明" data-tooltip="每个 Agent 是一个独立结果单元；展开后查看计划、事件、行动、对话、记忆和状态变化。">?</button></div><p>查看每个 Agent 在本次运行中产生的全部结构化内容</p></div>
+                <span class="agent-live-state"><i></i>内容随运行自动更新</span>
               </div>
+              <div class="card agent-result-toolbar">
+                <label class="agent-result-search"><span aria-hidden="true">⌕</span><input id="resultAgentSearch" placeholder="搜索 Agent、计划或事件…"/></label>
+                <div class="agent-status-filters" role="group" aria-label="Agent 状态筛选">
+                  <button type="button" class="agent-status-filter active" data-agent-status="all">全部</button>
+                  <button type="button" class="agent-status-filter" data-agent-status="CHAT">对话中</button>
+                  <button type="button" class="agent-status-filter" data-agent-status="MOVING">移动中</button>
+                  <button type="button" class="agent-status-filter" data-agent-status="REST">休息中</button>
+                </div>
+                <span class="agent-result-sort">按最近活动排序</span>
+              </div>
+              <div class="agent-result-list" id="resultAgentButtons"><div class="empty-state"><strong>正在读取 Agent 结果</strong></div></div>
             </div>
 
             <div class="result-panel" data-result-panel="conversations">
@@ -1301,7 +1384,6 @@
                   <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="traces">模型调用</button>
                   <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="events">系统事件</button>
                   <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="checkpoints">检查点</button>
-                  <button class="operations-subtab" role="tab" aria-selected="false" data-operation-tab="artifacts">结果产物</button>
                 </nav>
                 <article class="card result-card operation-panel active" data-operation-panel="logs">
                   <div class="observability-toolbar">
@@ -1329,11 +1411,14 @@
                   <div class="checkpoint-table" id="checkpointRows"><div class="empty-state"><strong>正在校验检查点</strong></div></div>
                   <aside class="checkpoint-detail" id="checkpointDetail" hidden><strong>检查点详情</strong><div class="checkpoint-detail-grid" id="checkpointDetailGrid"></div><pre id="checkpointPreview" hidden></pre><button class="btn btn-sm" id="checkpointPreviewMore" hidden>继续加载预览</button></aside>
                 </article>
-                <article class="card result-card operation-panel" data-operation-panel="artifacts">
-                  <div class="result-card-head"><div><strong>结果产物</strong><span id="artifactMeta">等待产物数据</span></div><button class="btn btn-sm" id="exportBundleBtn">下载全部</button></div>
-                  <div class="result-card-body artifact-result-list" id="artifactRows"><div class="empty-state"><strong>正在读取</strong></div></div>
-                </article>
               </div>
+            </div>
+
+            <div class="result-panel" data-result-panel="artifacts">
+              <article class="card result-card">
+                <div class="result-card-head"><div><strong>结果与导出</strong><span id="artifactMeta">等待产物数据</span></div><button class="btn btn-sm" id="exportBundleBtn">下载全部</button></div>
+                <div class="result-card-body artifact-result-list" id="artifactRows"><div class="empty-state"><strong>正在读取</strong></div></div>
+              </article>
             </div>
           </div>
         </section>

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import quote
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, or_, select
 
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
@@ -18,6 +19,7 @@ from generative_agents.persistence.models import (
     RunConversation,
     RunConversationParticipant,
     RunDomainEvent,
+    RunDomainEventAgent,
     RunMemoryEvent,
     RunMessage,
     RunModelUsage,
@@ -195,6 +197,7 @@ class ResultQueryService:
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             names = self._agent_names(session, run)
+            definitions = self._agent_definitions(session, run)
             rows = list(
                 session.scalars(
                     select(RunAgentSummary)
@@ -206,15 +209,76 @@ class ResultQueryService:
                     .limit(limit)
                 )
             )
+            latest_step_numbers = (
+                select(
+                    RunAgentStep.agent_key.label("agent_key"),
+                    func.max(RunAgentStep.step_no).label("step_no"),
+                )
+                .where(RunAgentStep.run_id == run_id)
+                .group_by(RunAgentStep.agent_key)
+                .subquery()
+            )
+            latest_steps = {
+                item.agent_key: item
+                for item in session.scalars(
+                    select(RunAgentStep)
+                    .join(
+                        latest_step_numbers,
+                        and_(
+                            RunAgentStep.agent_key == latest_step_numbers.c.agent_key,
+                            RunAgentStep.step_no == latest_step_numbers.c.step_no,
+                        ),
+                    )
+                    .where(RunAgentStep.run_id == run_id)
+                )
+            }
+            event_counts = dict(
+                session.execute(
+                    select(RunDomainEventAgent.agent_key, func.count())
+                    .where(RunDomainEventAgent.run_id == run_id)
+                    .group_by(RunDomainEventAgent.agent_key)
+                ).all()
+            )
+            plan_counts = dict(
+                session.execute(
+                    select(RunScheduleRevision.agent_key, func.count())
+                    .where(RunScheduleRevision.run_id == run_id)
+                    .group_by(RunScheduleRevision.agent_key)
+                ).all()
+            )
+            items = []
+            for row in rows:
+                item = self._agent(row, names)
+                latest = latest_steps.get(row.agent_key)
+                item.update(
+                    {
+                        **self._agent_metadata(
+                            definitions.get(row.agent_key), item["display_name"]
+                        ),
+                        "plan_count": int(plan_counts.get(row.agent_key, 0)),
+                        "event_count": int(event_counts.get(row.agent_key, 0)),
+                        "latest_activity_kind": (
+                            latest.activity_kind if latest is not None else "OTHER"
+                        ),
+                        "latest_action": (
+                            latest.action_text if latest is not None else row.currently_text
+                        ),
+                        "latest_virtual_time": (
+                            latest.virtual_time.isoformat() if latest is not None else None
+                        ),
+                    }
+                )
+                items.append(item)
             return {
                 "run_id": run_id,
-                "items": [self._agent(row, names) for row in rows],
+                "items": items,
             }
 
     def agent(self, run_id: str, agent_key: str, *, step_limit: int = 200) -> dict[str, Any]:
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             names = self._agent_names(session, run)
+            definitions = self._agent_definitions(session, run)
             summary = session.get(RunAgentSummary, (run_id, agent_key))
             if summary is None:
                 raise not_found("agent_result", agent_key)
@@ -236,11 +300,98 @@ class ResultQueryService:
                     RunScheduleRevision.agent_key == agent_key,
                 )
                 .order_by(RunScheduleRevision.revision_no.desc())
-                .limit(1)
+                    .limit(1)
+            )
+            schedule_revisions = list(
+                session.scalars(
+                    select(RunScheduleRevision)
+                    .where(
+                        RunScheduleRevision.run_id == run_id,
+                        RunScheduleRevision.agent_key == agent_key,
+                    )
+                    .order_by(RunScheduleRevision.revision_no.desc())
+                    .limit(20)
+                )
+            )
+            events = list(
+                session.scalars(
+                    select(RunDomainEvent)
+                    .join(
+                        RunDomainEventAgent,
+                        RunDomainEventAgent.event_id == RunDomainEvent.id,
+                    )
+                    .where(
+                        RunDomainEvent.run_id == run_id,
+                        RunDomainEventAgent.run_id == run_id,
+                        RunDomainEventAgent.agent_key == agent_key,
+                    )
+                    .order_by(RunDomainEvent.step_no.desc(), RunDomainEvent.id.desc())
+                    .limit(50)
+                )
+            )
+            conversations = list(
+                session.scalars(
+                    select(RunConversation)
+                    .join(
+                        RunConversationParticipant,
+                        RunConversationParticipant.conversation_id
+                        == RunConversation.id,
+                    )
+                    .where(
+                        RunConversation.run_id == run_id,
+                        RunConversationParticipant.run_id == run_id,
+                        RunConversationParticipant.agent_key == agent_key,
+                    )
+                    .order_by(RunConversation.started_at.desc())
+                    .limit(30)
+                ).unique()
+            )
+            memories = list(
+                session.scalars(
+                    select(RunMemoryEvent)
+                    .where(
+                        RunMemoryEvent.run_id == run_id,
+                        RunMemoryEvent.agent_key == agent_key,
+                    )
+                    .order_by(
+                        RunMemoryEvent.created_step.desc(),
+                        RunMemoryEvent.memory_node_id,
+                    )
+                    .limit(50)
+                )
+            )
+            state_changes = self._agent_state_changes(list(reversed(steps)))
+            plan_total = int(
+                session.scalar(
+                    select(func.count())
+                    .select_from(RunScheduleRevision)
+                    .where(
+                        RunScheduleRevision.run_id == run_id,
+                        RunScheduleRevision.agent_key == agent_key,
+                    )
+                )
+                or 0
+            )
+            event_total = int(
+                session.scalar(
+                    select(func.count())
+                    .select_from(RunDomainEventAgent)
+                    .where(
+                        RunDomainEventAgent.run_id == run_id,
+                        RunDomainEventAgent.agent_key == agent_key,
+                    )
+                )
+                or 0
+            )
+            agent_view = self._agent(summary, names)
+            agent_view.update(
+                self._agent_metadata(
+                    definitions.get(agent_key), agent_view["display_name"]
+                )
             )
             return {
                 "run_id": run_id,
-                "agent": self._agent(summary, names),
+                "agent": agent_view,
                 "steps": [
                     {
                         "step_no": row.step_no,
@@ -251,6 +402,7 @@ class ResultQueryService:
                         "emoji": row.action_emoji,
                         "activity_kind": row.activity_kind,
                         "sample_kind": row.path_source,
+                        "decision_context": row.decision_context_json or {},
                     }
                     for row in reversed(steps)
                 ],
@@ -264,6 +416,44 @@ class ResultQueryService:
                     if schedule
                     else None
                 ),
+                "plan_revisions": [
+                    {
+                        "revision_no": item.revision_no,
+                        "effective_step": item.effective_step,
+                        "effective_at": item.effective_at.isoformat(),
+                        "reason": item.reason,
+                        "items": item.items_json,
+                    }
+                    for item in schedule_revisions
+                ],
+                "actions": [
+                    {
+                        "step_no": row.step_no,
+                        "virtual_time": row.virtual_time.isoformat(),
+                        "coord": [row.x, row.y],
+                        "address": row.address,
+                        "action": row.action_text,
+                        "emoji": row.action_emoji,
+                        "activity_kind": row.activity_kind,
+                        "currently": row.currently_text,
+                        "decision_context": row.decision_context_json or {},
+                    }
+                    for row in steps
+                ],
+                "events": [self._event(item, names) for item in events],
+                "conversations": [
+                    self._conversation(item, names) for item in conversations
+                ],
+                "memories": [self._memory(item, names) for item in memories],
+                "state_changes": state_changes,
+                "content_counts": {
+                    "plans": plan_total,
+                    "actions": summary.action_count,
+                    "events": event_total,
+                    "conversations": summary.conversation_count,
+                    "memories": summary.memory_created_count,
+                    "state_changes": len(state_changes),
+                },
             }
 
     def conversations(
@@ -382,22 +572,7 @@ class ResultQueryService:
             has_more = len(rows) > limit
             return {
                 "run_id": run_id,
-                "items": [
-                    {
-                        "memory_id": row.memory_node_id,
-                        "agent_key": row.agent_key,
-                        "agent_name": names.get(row.agent_key, row.agent_key),
-                        "type": row.memory_type,
-                        "origin": row.origin,
-                        "state": row.state,
-                        "description": row.description,
-                        "poignancy": row.poignancy,
-                        "created_step": row.created_step,
-                        "last_accessed_step": row.last_accessed_step,
-                        "removed_step": row.removed_step,
-                    }
-                    for row in rows[:limit]
-                ],
+                "items": [self._memory(row, names) for row in rows[:limit]],
                 "next_offset": offset + limit if has_more else None,
             }
 
@@ -511,6 +686,40 @@ class ResultQueryService:
         }
 
     @staticmethod
+    def _agent_definitions(session, run: Run) -> dict[str, dict[str, Any]]:
+        revision = session.get(ExperimentRevision, run.revision_id)
+        if revision is None:
+            return {}
+        return {
+            item["agent_key"]: item
+            for item in (revision.definition_json.get("agents") or [])
+            if item.get("agent_key")
+        }
+
+    @staticmethod
+    def _agent_metadata(definition: dict[str, Any] | None, display_name: str) -> dict:
+        definition = definition or {}
+        scratch = definition.get("scratch") or {}
+        portrait_asset = definition.get("portrait_asset")
+        portrait_url = (
+            portrait_asset
+            if isinstance(portrait_asset, str) and portrait_asset.startswith("/")
+            else "/generative_agents/frontend/static/assets/village/agents/"
+            f"{quote(display_name, safe='')}/portrait.png"
+        )
+        return {
+            "portrait_url": portrait_url,
+            "definition": {
+                "age": scratch.get("age"),
+                "innate": scratch.get("innate") or "",
+                "learned": scratch.get("learned") or "",
+                "lifestyle": scratch.get("lifestyle") or "",
+                "daily_plan": scratch.get("daily_plan") or "",
+                "initial_currently": definition.get("currently") or "",
+            },
+        }
+
+    @staticmethod
     def _validate_limit(limit: int, *, maximum: int) -> None:
         if limit < 1 or limit > maximum:
             raise ServiceError(
@@ -550,6 +759,7 @@ class ResultQueryService:
             "importance_score": row.importance_score,
             "source_type": row.source_type,
             "source_id": row.source_id,
+            "payload": row.payload_json or {},
         }
 
     @staticmethod
@@ -596,6 +806,69 @@ class ResultQueryService:
             "summary": row.summary,
             "ended_reason": row.ended_reason,
         }
+
+    @staticmethod
+    def _memory(row: RunMemoryEvent, names: dict[str, str] | None = None) -> dict:
+        names = names or {}
+        return {
+            "memory_id": row.memory_node_id,
+            "agent_key": row.agent_key,
+            "agent_name": names.get(row.agent_key, row.agent_key),
+            "type": row.memory_type,
+            "origin": row.origin,
+            "state": row.state,
+            "description": row.description,
+            "poignancy": row.poignancy,
+            "created_step": row.created_step,
+            "created_at": row.created_at.isoformat() if row.created_at else None,
+            "last_accessed_step": row.last_accessed_step,
+            "removed_step": row.removed_step,
+        }
+
+    @staticmethod
+    def _agent_state_changes(rows: list[RunAgentStep]) -> list[dict[str, Any]]:
+        changes: list[dict[str, Any]] = []
+        previous: RunAgentStep | None = None
+        for row in rows:
+            if previous is not None:
+                facts = (
+                    (
+                        "LOCATION",
+                        "位置",
+                        previous.address,
+                        row.address,
+                        previous.address != row.address
+                        or (previous.x, previous.y) != (row.x, row.y),
+                    ),
+                    (
+                        "CURRENTLY",
+                        "当前状态",
+                        previous.currently_text,
+                        row.currently_text,
+                        previous.currently_text != row.currently_text,
+                    ),
+                    (
+                        "ACTION",
+                        "行动",
+                        previous.action_text,
+                        row.action_text,
+                        previous.action_text != row.action_text,
+                    ),
+                )
+                for kind, title, before, after, changed in facts:
+                    if changed:
+                        changes.append(
+                            {
+                                "kind": kind,
+                                "title": title,
+                                "before": before,
+                                "after": after,
+                                "step_no": row.step_no,
+                                "virtual_time": row.virtual_time.isoformat(),
+                            }
+                        )
+            previous = row
+        return list(reversed(changes[-30:]))
 
     @staticmethod
     def _empty_capabilities() -> dict:

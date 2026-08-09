@@ -65,6 +65,9 @@
     selectedReplayAgentKey: null,
     selectedReplayRevisionId: null,
     selectedAgentKey: null,
+    agentResults: [],
+    agentStatusFilter: 'all',
+    agentDetailGeneration: 0,
     selectedConversationId: null,
     editingAgentKey: null,
     currentExperimentName: '',
@@ -850,7 +853,9 @@
     state.operationFactsGeneration += 1;
     state.logGeneration += 1;
     state.checkpointGeneration += 1;
+    state.agentDetailGeneration += 1;
     state.currentRun = null;
+    state.agentResults = [];
     state.selectedRunId = null;
     if (state.resultRefreshTimer) clearTimeout(state.resultRefreshTimer);
     state.resultRefreshTimer = null;
@@ -1041,36 +1046,199 @@
   }
 
   function renderAgents(items) {
-    if (!items.length) {
-      $('resultAgentButtons').innerHTML = '<div class="empty-state"><strong>暂无 Agent 结果</strong></div>';
-      return;
-    }
-    $('resultAgentButtons').innerHTML = items.map((item, index) => `<button class="result-agent-button${index === 0 ? ' active' : ''}" data-agent-key="${escapeHtml(item.agent_key)}"><span>${escapeHtml((item.display_name || item.agent_key).slice(0, 1))}</span><strong>${escapeHtml(item.display_name || item.agent_key)}</strong><small>${item.action_count} 次行动 · ${item.conversation_count} 次对话</small></button>`).join('');
-    const selected = items.some(item => item.agent_key === state.selectedAgentKey) ? state.selectedAgentKey : items[0].agent_key;
-    showAgentDetail(selected).catch(reportError);
+    state.agentResults = [...items].sort((a, b) => b.updated_step - a.updated_step || String(a.display_name).localeCompare(String(b.display_name), 'zh-CN'));
+    $('agentResultCount').textContent = state.agentResults.length;
     const options = '<option value="all">全部 Agent</option>' + items.map(item => `<option value="${escapeHtml(item.agent_key)}">${escapeHtml(item.display_name || item.agent_key)}</option>`).join('');
     $('conversationAgentFilter').innerHTML = options;
     $('memoryAgentFilter').innerHTML = options;
+    if (!items.length) {
+      state.selectedAgentKey = null;
+      $('resultAgentButtons').innerHTML = '<div class="empty-state"><strong>暂无 Agent 结果</strong><span>首个步骤提交后会在这里生成 Agent 内容。</span></div>';
+      return;
+    }
+    if (!state.agentResults.some(item => item.agent_key === state.selectedAgentKey)) {
+      state.selectedAgentKey = state.agentResults[0].agent_key;
+    }
+    renderAgentCards();
+    showAgentDetail(state.selectedAgentKey).catch(reportError);
+  }
+
+  function renderAgentCards() {
+    const query = $('resultAgentSearch').value.trim().toLowerCase();
+    const status = state.agentStatusFilter;
+    const visible = state.agentResults.filter(item => {
+      const searchable = [item.display_name, item.agent_key, item.address, item.currently,
+        item.latest_action, item.definition?.daily_plan, item.definition?.learned].join(' ').toLowerCase();
+      return (status === 'all' || item.latest_activity_kind === status) && (!query || searchable.includes(query));
+    });
+    if (!visible.length) {
+      $('resultAgentButtons').innerHTML = '<div class="empty-state"><strong>没有符合条件的 Agent</strong><span>尝试清除搜索词或切换状态筛选。</span></div>';
+      return;
+    }
+    if (!visible.some(item => item.agent_key === state.selectedAgentKey)) state.selectedAgentKey = visible[0].agent_key;
+    $('resultAgentButtons').innerHTML = visible.map(item => {
+      const open = item.agent_key === state.selectedAgentKey;
+      const name = item.display_name || item.agent_key;
+      const profile = item.definition?.innate || item.definition?.learned || '角色定义已锁定';
+      const statusText = { CHAT: '对话中', MOVING: '移动中', REST: '休息中', OTHER: '活动中' }[item.latest_activity_kind] || item.latest_activity_kind;
+      return `<article class="agent-result-card${open ? ' open' : ''}" data-agent-key="${escapeHtml(item.agent_key)}" data-agent-status="${escapeHtml(item.latest_activity_kind)}">
+        <button type="button" class="agent-result-header" aria-expanded="${String(open)}">
+          <span class="agent-result-identity"><span class="agent-result-avatar-fallback">${escapeHtml(name.slice(0, 1))}</span><img class="agent-result-portrait" src="${escapeHtml(item.portrait_url || '')}" alt=""/><span><strong>${escapeHtml(name)}</strong><span>${escapeHtml(profile)} · ${escapeHtml(item.address || '位置未记录')}</span></span></span>
+          <span class="agent-result-fact"><small>当前状态</small><strong>${escapeHtml(item.currently || item.latest_action || '尚无状态')}</strong></span>
+          <span class="agent-result-fact"><small>最近活动 · ${escapeHtml(item.latest_virtual_time ? formatTime(item.latest_virtual_time) : `Step ${item.updated_step}`)}</small><strong>${escapeHtml(item.latest_action || '尚无行动')}</strong></span>
+          <span class="agent-result-badges"><span class="agent-result-badge">${escapeHtml(statusText)}</span><span class="agent-result-badge">计划 ${item.plan_count || 0}</span><span class="agent-result-badge">事件 ${item.event_count || 0}</span><span class="agent-result-chevron">⌄</span></span>
+        </button>
+        <div class="agent-result-body">${open ? '<div class="agent-result-loading">正在读取 Agent 结构化内容…</div>' : ''}</div>
+      </article>`;
+    }).join('');
+    document.querySelectorAll('.agent-result-portrait').forEach(image => image.addEventListener('error', () => {
+      image.hidden = true;
+      image.previousElementSibling.style.display = 'grid';
+    }, { once: true }));
   }
 
   async function showAgentDetail(agentKey) {
     state.selectedAgentKey = agentKey;
     const runId = state.selectedRunId;
+    const generation = ++state.agentDetailGeneration;
+    document.querySelectorAll('.agent-result-card').forEach(card => {
+      const open = card.dataset.agentKey === agentKey;
+      card.classList.toggle('open', open);
+      card.querySelector('.agent-result-header')?.setAttribute('aria-expanded', String(open));
+      if (open) card.querySelector('.agent-result-body').innerHTML = '<div class="agent-result-loading">正在读取 Agent 结构化内容…</div>';
+    });
     const detail = await api(`/runs/${runId}/results/agents/${encodeURIComponent(agentKey)}`);
-    if (detail.run_id !== state.selectedRunId || runId !== state.selectedRunId || agentKey !== state.selectedAgentKey) return;
-    document.querySelectorAll('.result-agent-button').forEach(button => button.classList.toggle('active', button.dataset.agentKey === agentKey));
+    if (generation !== state.agentDetailGeneration
+      || detail.run_id !== state.selectedRunId
+      || runId !== state.selectedRunId
+      || agentKey !== state.selectedAgentKey) return;
+    const card = [...document.querySelectorAll('.agent-result-card')].find(item => item.dataset.agentKey === agentKey);
+    const body = card?.querySelector('.agent-result-body');
+    if (body) body.innerHTML = renderAgentDetail(detail);
+  }
+
+  function renderAgentDetail(detail) {
     const agent = detail.agent;
-    $('agentResultName').textContent = agent.display_name || agent.agent_key;
-    $('agentResultRole').textContent = `${agent.address || '位置未记录'} · ${agent.conversation_count} 次对话`;
-    $('agentResultState').textContent = agent.currently || '未记录最终状态';
-    $('agentActionCount').textContent = agent.action_count;
-    $('agentMemoryCount').textContent = agent.memory_created_count;
-    $('agentChatCount').textContent = agent.message_count;
-    const total = Math.max(1, Object.values(agent.activity_minutes).reduce((sum, value) => sum + value, 0));
-    const activityLabels = { REST: '休息', CHAT: '对话', MOVING: '移动', OTHER: '其他活动' };
-    $('agentDistribution').innerHTML = Object.entries(agent.activity_minutes).map(([kind, minutes]) => `<div class="distribution-row"><span>${activityLabels[kind] || kind}</span><i><b style="width:${Math.round(minutes / total * 100)}%"></b></i><strong>${minutes}m</strong></div>`).join('');
-    const schedule = detail.latest_schedule?.items || [];
-    $('agentSchedule').innerHTML = schedule.length ? schedule.map(item => `<div><time>${escapeHtml(item.start ?? item.start_time ?? '—')} – ${escapeHtml(item.end ?? item.end_time ?? '—')}</time><span>${escapeHtml(item.activity ?? item.describe ?? item.task ?? JSON.stringify(item))}</span></div>`).join('') : '<div><span>本次运行未提交日程修订</span></div>';
+    const definition = agent.definition || {};
+    const counts = detail.content_counts || {};
+    const goal = definition.daily_plan || definition.initial_currently || agent.currently || '未记录角色目标';
+    const latestPlan = detail.latest_schedule?.items?.[0];
+    const currentPlan = latestPlan ? agentPlanText(latestPlan) : goal;
+    const totalMinutes = Math.max(1, Object.values(agent.activity_minutes || {}).reduce((sum, value) => sum + value, 0));
+    const activeMinutes = (agent.activity_minutes?.MOVING || 0) + (agent.activity_minutes?.CHAT || 0) + (agent.activity_minutes?.OTHER || 0);
+    return `<div class="agent-result-overview">
+      <div class="agent-overview-card"><small>角色目标</small><strong>${escapeHtml(goal)}</strong></div>
+      <div class="agent-overview-card"><small>当前行动</small><strong>${escapeHtml(agent.currently || detail.actions?.[0]?.action || '尚无行动')}</strong></div>
+      <div class="agent-overview-card"><small>位置与状态</small><strong>${escapeHtml(agent.address || '位置未记录')}<br>更新至 Step ${agent.updated_step}</strong></div>
+      <div class="agent-overview-card"><small>活动占比</small><strong>非休息活动 ${Math.round(activeMinutes / totalMinutes * 100)}%</strong><div class="agent-overview-meter"><i style="width:${Math.round(activeMinutes / totalMinutes * 100)}%"></i></div></div>
+    </div>
+    <div class="agent-content-filters"><span>显示内容</span>${agentContentChip('all','全部',null,true)}${agentContentChip('plan','计划',counts.plans)}${agentContentChip('event','事件',counts.events)}${agentContentChip('action','行动',counts.actions)}${agentContentChip('conversation','对话',counts.conversations)}${agentContentChip('memory','记忆',counts.memories)}${agentContentChip('state','状态变化',counts.state_changes)}</div>
+    <div class="agent-content-grid">
+      ${renderAgentPlanSection(detail, currentPlan)}
+      ${renderAgentEventSection(detail.events || [])}
+      ${renderAgentActionSection(detail.actions || [])}
+      ${renderAgentConversationSection(detail.conversations || [])}
+      ${renderAgentMemorySection(detail.memories || [])}
+      ${renderAgentStateSection(detail.state_changes || [])}
+    </div>`;
+  }
+
+  function agentContentChip(kind, label, count, active = false) {
+    return `<button type="button" class="agent-content-filter${active ? ' active' : ''}" data-agent-content="${kind}">${label}${count === null || count === undefined ? '' : `<i>${count}</i>`}</button>`;
+  }
+
+  function agentSection(kind, icon, title, subtitle, count, content) {
+    return `<section class="agent-content-section" data-agent-content-section="${kind}"><div class="agent-section-head"><span class="agent-section-icon">${icon}</span><span><strong>${title}</strong><span>${subtitle}</span></span><span class="agent-section-count">${count}</span></div>${content}</section>`;
+  }
+
+  function agentRecord(time, title, detail, tag, tagClass = '') {
+    return `<div class="agent-record"><time>${escapeHtml(time || '—')}</time><span class="agent-record-copy"><strong>${escapeHtml(title || '未命名记录')}</strong>${detail ? `<span>${escapeHtml(detail)}</span>` : ''}</span><span class="agent-record-tag ${tagClass}">${escapeHtml(tag || '记录')}</span></div>`;
+  }
+
+  function renderAgentPlanSection(detail, currentPlan) {
+    const definition = detail.agent.definition || {};
+    const revisions = detail.plan_revisions || [];
+    const records = revisions.slice(0, 4).map(item => {
+      const plan = item.items?.length ? agentPlanText(item.items[0]) : '日程内容未记录';
+      return agentRecord(`Step ${item.effective_step}`, plan, item.reason || '日程修订', `修订 ${item.revision_no}`);
+    }).join('');
+    const empty = records || '<div class="agent-section-empty">本次运行尚未产生计划修订；这里显示已发布角色的初始计划。</div>';
+    return agentSection('plan','▤','计划','初始目标、日程与计划修订',revisions.length,
+      `<div class="agent-current-plan"><small>当前计划</small><strong>${escapeHtml(currentPlan)}</strong><p>${escapeHtml(definition.daily_plan || definition.lifestyle || '未记录日常计划')}</p></div><div class="agent-record-list">${empty}</div>`);
+  }
+
+  function renderAgentEventSection(events) {
+    const rows = events.slice(0, 8).map(event => {
+      const payload = event.payload || {};
+      const title = event.title && event.title !== event.event_type ? event.title : agentEventTitle(event.event_type, payload);
+      const detail = event.detail || agentEventDetail(event.event_type, payload) || event.location || '';
+      return agentRecord(`Step ${event.step_no}`, title, detail, agentEventLabel(event.event_type), 'event');
+    }).join('');
+    return agentSection('event','✦','事件','产生、感知与参与的领域事件',events.length,
+      `<div class="agent-record-list">${rows || '<div class="agent-section-empty">当前 Agent 尚未产生可归属的领域事件。</div>'}</div>`);
+  }
+
+  function renderAgentActionSection(actions) {
+    const rows = actions.slice(0, 8).map(action => {
+      const context = action.decision_context || {};
+      const perceptions = context.perceptions?.length || 0;
+      const schedule = Object.keys(context.schedule || {});
+      const evidence = (perceptions || schedule.length)
+        ? `<div class="agent-decision-context">感知 ${perceptions} 条${schedule.length ? ` · 当步计划：${escapeHtml(schedule[0])}` : ''}</div>` : '';
+      return `<div class="agent-record"><time>Step ${action.step_no}</time><span class="agent-record-copy"><strong>${escapeHtml(action.action || '未记录行动')}</strong><span>${escapeHtml(action.address || '位置未记录')} · ${escapeHtml(formatTime(action.virtual_time))}</span>${evidence}</span><span class="agent-record-tag">${escapeHtml(agentActivityLabel(action.activity_kind))}</span></div>`;
+    }).join('');
+    return agentSection('action','➜','行动','执行动作、移动与当步决策上下文',actions.length,
+      `<div class="agent-record-list">${rows || '<div class="agent-section-empty">尚无已提交行动。</div>'}</div>`);
+  }
+
+  function renderAgentConversationSection(items) {
+    const rows = items.slice(0, 6).map(item => agentRecord(`Step ${item.start_step}`,
+      (item.participant_names || item.participants || []).join(' ↔ '),
+      item.summary || `${item.message_count} 条消息 · ${item.location || '位置未记录'}`,
+      `${item.message_count} 条`, '')) .join('');
+    return agentSection('conversation','◌','对话','与其他 Agent 的实际交流',items.length,
+      `<div class="agent-record-list">${rows || '<div class="agent-section-empty">当前 Agent 尚未产生对话。相邻的计划、事件和行动仍可用于定位原因。</div>'}</div>`);
+  }
+
+  function renderAgentMemorySection(items) {
+    const rows = items.slice(0, 8).map(item => agentRecord(`Step ${item.created_step ?? '—'}`,
+      item.description || item.memory_id,
+      `重要度 ${item.poignancy ?? '—'} · ${item.state || 'UNKNOWN'}`,
+      item.type || '记忆', 'memory')).join('');
+    return agentSection('memory','◇','记忆','新增、访问与淘汰的记忆',items.length,
+      `<div class="agent-record-list">${rows || '<div class="agent-section-empty">当前 Agent 尚未提交记忆变化。</div>'}</div>`);
+  }
+
+  function renderAgentStateSection(items) {
+    const rows = items.slice(0, 10).map(item => agentRecord(`Step ${item.step_no}`,
+      `${item.title}发生变化`, `${item.before || '—'} → ${item.after || '—'}`, item.kind)).join('');
+    return agentSection('state','↕','状态变化','位置、当前状态与行动切换',items.length,
+      `<div class="agent-record-list">${rows || '<div class="agent-section-empty">当前采样窗口内没有状态变化。</div>'}</div>`);
+  }
+
+  function agentPlanText(item) {
+    if (!item || typeof item !== 'object') return String(item || '未记录计划');
+    return item.description || item.activity || item.describe || item.task || item.plan || JSON.stringify(item);
+  }
+
+  function agentActivityLabel(kind) {
+    return { CHAT: '对话', MOVING: '移动', REST: '休息', OTHER: '行动' }[kind] || kind || '行动';
+  }
+
+  function agentEventLabel(kind) {
+    return { MOVED: '移动', CONVERSATION: '参与', MEMORY: '记忆', SCHEDULE: '计划' }[kind] || kind || '事件';
+  }
+
+  function agentEventTitle(kind, payload) {
+    if (kind === 'MOVED') return 'Agent 移动到新的位置';
+    if (kind === 'CONVERSATION') return 'Agent 参与了一次对话';
+    return payload.title || kind || '领域事件';
+  }
+
+  function agentEventDetail(kind, payload) {
+    if (kind === 'MOVED') return `${JSON.stringify(payload.from_coord || [])} → ${JSON.stringify(payload.to_coord || [])}`;
+    if (kind === 'CONVERSATION') return `${payload.message_count || 0} 条消息`;
+    return payload.detail || '';
   }
 
   function renderConversations(items) {
@@ -2274,10 +2442,20 @@
     event.stopImmediatePropagation(); closeModal('agentEditorModal');
   }, true));
   $('resultAgentButtons').addEventListener('click', event => {
-    const button = event.target.closest('.result-agent-button');
-    if (!button) return;
+    const contentFilter = event.target.closest('[data-agent-content]');
+    if (contentFilter) {
+      const card = contentFilter.closest('.agent-result-card');
+      card.querySelectorAll('[data-agent-content]').forEach(item => item.classList.toggle('active', item === contentFilter));
+      card.querySelectorAll('[data-agent-content-section]').forEach(section => {
+        section.hidden = contentFilter.dataset.agentContent !== 'all'
+          && section.dataset.agentContentSection !== contentFilter.dataset.agentContent;
+      });
+      return;
+    }
+    const header = event.target.closest('.agent-result-header');
+    if (!header) return;
     event.stopImmediatePropagation();
-    showAgentDetail(button.dataset.agentKey).catch(reportError);
+    showAgentDetail(header.closest('.agent-result-card').dataset.agentKey).catch(reportError);
   }, true);
   $('conversationIndex').addEventListener('click', event => {
     const button = event.target.closest('.conversation-button');
@@ -2331,9 +2509,19 @@
     if (marker) state.replayPlayer?.seek(Number(marker.dataset.replayStep)).catch(reportError);
   });
   $('resultAgentSearch').addEventListener('input', event => {
-    const query = event.target.value.trim().toLowerCase();
-    document.querySelectorAll('.result-agent-button').forEach(button => { button.hidden = Boolean(query && !button.textContent.toLowerCase().includes(query)); });
+    renderAgentCards();
+    if (document.querySelector('.agent-result-card.open') && state.selectedAgentKey) {
+      showAgentDetail(state.selectedAgentKey).catch(reportError);
+    }
   });
+  document.querySelectorAll('[data-agent-status]').forEach(button => button.addEventListener('click', () => {
+    state.agentStatusFilter = button.dataset.agentStatus;
+    document.querySelectorAll('[data-agent-status]').forEach(item => item.classList.toggle('active', item === button));
+    renderAgentCards();
+    if (document.querySelector('.agent-result-card.open') && state.selectedAgentKey) {
+      showAgentDetail(state.selectedAgentKey).catch(reportError);
+    }
+  }));
   let resultFilterTimer;
   async function reloadConversations() {
     const generation = ++state.conversationGeneration;

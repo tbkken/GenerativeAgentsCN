@@ -31,6 +31,7 @@ class StepResultCollector:
 
     def capture_agent(self, agent_key: str, agent, from_coord, outcome: Mapping) -> None:
         plan = outcome.get("plan") or {}
+        info = outcome.get("info") or {}
         observed_path = tuple(tuple(coord) for coord in plan.get("path") or ())
         to_coord = tuple(agent.coord)
         event = agent.get_event()
@@ -61,8 +62,9 @@ class StepResultCollector:
                 ),
                 activity_kind=activity,
                 location=tuple(agent.get_tile().get_address()),
-                currently=outcome.get("info", {}).get("currently"),
+                currently=info.get("currently"),
                 path_source="OBSERVED",
+                decision_context=self._decision_context(plan, info),
             )
         )
         if tuple(from_coord) != to_coord:
@@ -73,6 +75,27 @@ class StepResultCollector:
             )
         for raw_event in outcome.get("events") or ():
             self._capture_event(raw_event)
+
+    @staticmethod
+    def _decision_context(plan: Mapping, info: Mapping) -> dict:
+        """Keep the human-readable decision facts without duplicating full memory storage."""
+
+        perceptions = []
+        for node_id, abstract in list((info.get("concepts") or {}).items())[:20]:
+            perceptions.append({"node_id": str(node_id), "content": abstract})
+        schedule = info.get("schedule") or {}
+        action = info.get("action") or {}
+        associate = info.get("associate") or {}
+        return {
+            "perceptions": perceptions,
+            "schedule": schedule,
+            "action": action,
+            "path": [list(coord) for coord in (plan.get("path") or ())],
+            "memory_counts": {
+                kind: len(associate.get(kind) or ())
+                for kind in ("event", "chat", "thought")
+            },
+        }
 
     def _capture_event(self, event: Mapping) -> None:
         kind = event.get("kind")

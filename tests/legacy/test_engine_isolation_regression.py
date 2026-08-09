@@ -206,6 +206,33 @@ def test_memory_eviction_is_preserved_as_a_result_delta():
     assert result.memory_deltas[0].kind is MemoryDeltaKind.EVICTED
 
 
+def test_agent_decision_context_keeps_product_facts_without_full_memory_storage():
+    context = StepResultCollector._decision_context(
+        {"path": [(1, 2), (2, 2)]},
+        {
+            "concepts": {
+                f"node-{index}": {"event(P.5)": f"perception {index}"}
+                for index in range(25)
+            },
+            "schedule": {"10:00~10:30": "prepare party"},
+            "action": {"event": "collect decorations"},
+            "associate": {
+                "nodes": 120,
+                "event": ["event"] * 8,
+                "chat": ["chat"] * 4,
+                "thought": ["thought"] * 3,
+            },
+        },
+    )
+
+    assert len(context["perceptions"]) == 20
+    assert context["schedule"] == {"10:00~10:30": "prepare party"}
+    assert context["action"]["event"] == "collect decorations"
+    assert context["path"] == [[1, 2], [2, 2]]
+    assert context["memory_counts"] == {"event": 8, "chat": 4, "thought": 3}
+    assert "associate" not in context, "the full memory index must not be duplicated per step"
+
+
 def test_maze_action_and_config_adapter_do_not_mutate_revision_inputs():
     publishable_definition = make_blank_definition(
         key="adapter-test", name="Adapter test"

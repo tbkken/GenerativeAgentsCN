@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Foundry · Agent</title>
+  <style>
+    :root {
+      --ink:#172522; --muted:#657671; --line:#dce7e2; --soft:#f3f7f5;
+      --green:#167968; --green-2:#0e5e52; --mint:#e9f6f1; --nav:#102d29;
+      --purple:#7357b8; --purple-soft:#f2edfb; --amber:#b87517; --amber-soft:#fff5df;
+      --blue:#3c6fb6; --blue-soft:#ebf2fc; --red:#b84d55; --red-soft:#fff0f1;
+      --shadow:0 8px 30px rgba(26,64,55,.08); --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:#f5f8f6}
+    body{min-width:1120px}
+    button,input{font:inherit}
+    button{color:inherit}
+    .app{min-height:100vh;display:grid;grid-template-columns:220px minmax(0,1fr)}
+    .sidebar{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#12342f 0%,#0c2522 100%);color:#dbe9e5;padding:20px 14px;display:flex;flex-direction:column}
+    .brand{display:flex;align-items:center;gap:11px;padding:0 8px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(145deg,#2b9680,#215c79);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+    .brand-mark:before{content:"";width:6px;height:6px;border-radius:99px;background:#d4ee73;box-shadow:8px 8px 0 #79ceb7}
+    .brand strong{font-size:15px;display:block}.brand small{display:block;margin-top:3px;font-size:9px;letter-spacing:1.4px;color:#7fa19a}
+    .nav-label{margin:22px 10px 8px;font-size:10px;color:#698b84}
+    .nav-item{border:0;background:transparent;color:#aec5bf;width:100%;height:42px;border-radius:9px;text-align:left;padding:0 12px;display:flex;align-items:center;gap:10px;cursor:pointer;margin:2px 0}
+    .nav-item:hover{background:rgba(255,255,255,.05)}.nav-item.active{background:#204b43;color:#fff;box-shadow:inset 3px 0 0 #a8df67}
+    .nav-icon{width:18px;height:18px;border:1px solid currentColor;border-radius:5px;display:grid;place-items:center;font-size:10px}
+    .nav-count{margin-left:auto;background:rgba(255,255,255,.09);padding:2px 7px;border-radius:99px;font-size:10px}
+    .run-mini{margin-top:13px;padding:14px 12px;border-radius:11px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08)}
+    .run-mini-top{display:flex;justify-content:space-between;font-size:12px;font-weight:700}.live-dot{width:7px;height:7px;border-radius:50%;background:#a9e05b;box-shadow:0 0 0 5px rgba(169,224,91,.08)}
+    .run-mini p{margin:8px 0;color:#789b93;font-size:10px}.progress{height:4px;border-radius:5px;background:rgba(255,255,255,.09);overflow:hidden}.progress i{display:block;width:38%;height:100%;background:#55b99d}
+    .run-mini-foot{display:flex;justify-content:space-between;color:#789b93;margin-top:8px;font-size:9px}.sidebar-foot{margin-top:auto;color:#63877f;font-size:10px;padding:12px 4px}
+    .main{min-width:0}
+    .topbar{height:66px;background:white;border-bottom:1px solid #e6ece9;display:flex;align-items:center;padding:0 26px;position:sticky;top:0;z-index:20}
+    .crumb{font-size:12px;color:#81918d}.crumb b{color:var(--green);font-weight:600}.crumb span{margin:0 10px;color:#b5c0bd}
+    .run-state{margin-left:auto;display:flex;align-items:center;gap:10px}.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:7px 12px;background:#eff9f5;color:var(--green);font-size:11px;font-weight:700;border:1px solid #d8eee6}.pill:before{content:"";width:6px;height:6px;background:#35ae82;border-radius:50%}
+    .top-metric{padding:0 14px;border-left:1px solid #edf0ef}.top-metric small{font-size:9px;color:#9aa9a5;display:block}.top-metric b{font-size:12px}.btn{border:1px solid var(--line);background:white;border-radius:9px;height:34px;padding:0 13px;cursor:pointer;font-size:11px}.btn:hover{border-color:#9bc9bb}.btn.primary{background:var(--green);border-color:var(--green);color:white}
+    .hero{background:white;padding:22px 26px 0;border-bottom:1px solid #e6ece9}
+    .hero-row{display:flex;align-items:flex-start}.hero h1{font-size:20px;margin:0 0 7px}.hero p{margin:0;color:#82908d;font-size:11px}.health{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:11px;padding:9px 12px;gap:20px;background:#fbfcfc}.health-item small{display:block;color:#8b9b97;font-size:9px}.health-item b{font-size:12px}.health-item b.good{color:var(--green)}
+    .tabs{display:flex;gap:30px;margin-top:20px;height:39px}.tab{border:0;background:transparent;color:#5f706b;font-size:12px;cursor:pointer;position:relative;padding:0 2px}.tab.active{color:var(--green);font-weight:700}.tab.active:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--green)}.tab em{font-style:normal;background:#fff0f1;color:#bf4c56;border-radius:99px;padding:1px 5px;font-size:8px;margin-left:4px}
+    .workspace{padding:18px 26px 60px;max-width:1440px;margin:auto}
+    .page-title{display:flex;align-items:center;gap:10px}.page-title h2{font-size:17px;margin:0}.page-title .count{font-size:10px;color:#72827e;background:#eaf1ee;border-radius:99px;padding:4px 8px}.help{width:18px;height:18px;border-radius:50%;border:1px solid #cad8d3;background:white;color:#7b8d88;display:inline-grid;place-items:center;font-size:10px;cursor:help;position:relative}.help:hover:after{content:attr(data-tip);position:absolute;top:24px;right:0;width:220px;background:#18352f;color:white;padding:9px 11px;border-radius:8px;font-size:10px;line-height:1.5;z-index:10;box-shadow:var(--shadow)}
+    .page-title p{margin:5px 0 0;color:#7b8b87;font-size:11px}.view-note{margin-left:auto;font-size:10px;color:#71817d;display:flex;align-items:center;gap:7px}.view-note i{width:7px;height:7px;background:#58b99a;border-radius:50%}
+    .toolbar{margin-top:15px;display:flex;align-items:center;gap:10px}.search{width:280px;height:38px;border:1px solid #d7e2de;background:white;border-radius:10px;padding:0 12px;display:flex;align-items:center;gap:8px}.search svg{width:15px;color:#8da09a}.search input{border:0;outline:0;width:100%;font-size:11px;background:transparent}.filters{display:flex;gap:6px}.filter{height:34px;padding:0 12px;border-radius:9px;border:1px solid #dce5e2;background:white;color:#687a75;font-size:10px;cursor:pointer}.filter.active{background:#e8f5f0;border-color:#a8d3c5;color:var(--green);font-weight:700}.toolbar .sort{margin-left:auto}
+    .agent-list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+    .agent{background:white;border:1px solid #dce6e2;border-radius:13px;box-shadow:0 3px 12px rgba(38,69,61,.035);overflow:hidden;transition:.18s}.agent.open{border-color:#9ccabc;box-shadow:var(--shadow)}
+    .agent-header{width:100%;border:0;background:white;min-height:78px;padding:12px 16px;display:grid;grid-template-columns:minmax(245px,1.05fr) minmax(220px,.9fr) minmax(240px,1fr) auto;align-items:center;text-align:left;cursor:pointer;gap:18px}.agent-header:hover{background:#fbfdfc}
+    .identity{display:flex;align-items:center;min-width:0}.portrait{width:48px;height:48px;border-radius:11px;background:#e9f2ee;image-rendering:pixelated;object-fit:contain;border:1px solid #d4e0dc;margin-right:12px}.identity h3{font-size:13px;margin:0 0 5px}.identity p{font-size:10px;color:#748681;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity p .dot{display:inline-block;width:4px;height:4px;background:#a8b7b3;border-radius:50%;margin:0 7px 2px}.status-line small,.activity-line small{display:block;color:#93a19e;font-size:9px;margin-bottom:5px}.status-line b{font-size:11px;font-weight:600}.activity-line p{margin:0;font-size:10px;color:#52655f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agent-badges{display:flex;align-items:center;justify-content:flex-end;gap:6px}.mini-badge{font-size:9px;padding:5px 8px;border-radius:7px;background:#f2f6f4;color:#62736f;white-space:nowrap}.mini-badge.warn{background:var(--amber-soft);color:var(--amber)}.chev{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;margin-left:5px;color:#69807a;transition:.2s}.agent.open .chev{transform:rotate(180deg);background:var(--mint);border-color:#b5dacd;color:var(--green)}
+    .agent-body{display:none;border-top:1px solid #e5ece9;background:#f9fbfa}.agent.open .agent-body{display:block}
+    .agent-overview{padding:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.summary-card{background:white;border:1px solid #e0e8e5;border-radius:10px;padding:11px 12px}.summary-card small{font-size:9px;color:#8b9b97;display:flex;align-items:center;gap:6px}.summary-card b{display:block;font-size:11px;margin-top:7px;line-height:1.45}.summary-card .meter{height:4px;background:#edf2f0;border-radius:9px;margin-top:9px;overflow:hidden}.summary-card .meter i{display:block;height:100%;background:#64ba9f;width:70%}
+    .content-filter{padding:0 16px 13px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #e3ebe8}.content-filter span{font-size:10px;color:#889792;margin-right:5px}.content-chip{border:1px solid #dbe5e1;background:white;border-radius:8px;height:30px;padding:0 10px;font-size:9px;color:#667873;cursor:pointer}.content-chip.active{background:#173e37;color:white;border-color:#173e37}.content-chip i{font-style:normal;margin-left:5px;opacity:.6}
+    .agent-content{padding:14px 16px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}.section{background:white;border:1px solid #dfe8e4;border-radius:11px;overflow:hidden}.section.hidden{display:none}.section.full{grid-column:1/-1}.section-title{min-height:46px;display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid #edf1ef}.section-icon{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;margin-right:9px;font-size:12px}.plan .section-icon{background:var(--purple-soft);color:var(--purple)}.action .section-icon{background:var(--mint);color:var(--green)}.event .section-icon{background:var(--amber-soft);color:var(--amber)}.conversation .section-icon{background:var(--blue-soft);color:var(--blue)}.memory .section-icon{background:#f1f0fa;color:#695baa}.state .section-icon{background:#eef4f1;color:#48665d}.section-title h4{font-size:11px;margin:0}.section-title p{font-size:9px;color:#96a29f;margin:2px 0 0}.section-title .section-count{margin-left:auto;font-size:9px;color:#7c8d88;background:#f3f6f5;border-radius:99px;padding:4px 7px}.section-list{padding:4px 12px 8px}.record{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:9px;padding:10px 0;border-bottom:1px solid #edf2f0;align-items:start}.record:last-child{border-bottom:0}.record-time{font-size:9px;color:#91a09c;padding-top:2px}.record-main b{font-size:10px;font-weight:650;display:block;line-height:1.45}.record-main p{font-size:9px;color:#72827e;margin:4px 0 0;line-height:1.55}.record-tag{font-size:8px;border-radius:5px;padding:4px 6px;background:#f1f5f3;color:#6d7e79;white-space:nowrap}.record-tag.changed{background:var(--amber-soft);color:var(--amber)}.record-tag.done{background:var(--mint);color:var(--green)}.record-tag.failed{background:var(--red-soft);color:var(--red)}
+    .plan-current{margin:10px 12px 3px;padding:10px 11px;background:linear-gradient(135deg,#f5f1fc,#faf9fd);border:1px solid #e4dcf5;border-radius:9px}.plan-current small{font-size:8px;color:#8b7aaf}.plan-current b{font-size:11px;display:block;margin:5px 0}.plan-current p{font-size:9px;color:#746a89;margin:0;line-height:1.5}.priority{float:right;color:var(--purple);font-size:8px;background:white;border-radius:6px;padding:3px 5px}
+    .event-row{display:grid;grid-template-columns:22px 1fr auto;gap:9px;padding:10px 0;border-bottom:1px solid #edf2f0}.event-row:last-child{border:0}.event-dot{width:22px;height:22px;border-radius:7px;background:var(--amber-soft);display:grid;place-items:center;color:var(--amber);font-size:9px}.event-row b{font-size:10px;display:block}.event-row p{font-size:9px;line-height:1.5;color:#70817c;margin:4px 0 0}.event-relation{font-size:8px;color:#8b9a96}.empty-reason{margin:8px 12px 12px;padding:10px;border-radius:9px;background:#fff9ea;border:1px solid #f0dfb8}.empty-reason b{font-size:10px;color:#8d641c}.empty-reason p{font-size:9px;line-height:1.55;color:#826f4a;margin:5px 0 0}.more{height:30px;border:0;background:transparent;color:var(--green);font-size:9px;cursor:pointer;margin:0 12px 8px;padding:0}.more:hover{text-decoration:underline}
+    .agent-empty{display:none;padding:48px;text-align:center;background:white;border:1px dashed #cbdad5;border-radius:12px;color:#71817d;font-size:11px}.agent-empty.show{display:block}
+    .toast{position:fixed;right:26px;bottom:24px;background:#173d36;color:white;padding:11px 15px;border-radius:9px;box-shadow:var(--shadow);font-size:10px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;z-index:50}.toast.show{opacity:1;transform:none}
+    @media(max-width:1180px){.agent-header{grid-template-columns:minmax(230px,1fr) minmax(190px,.8fr) auto}.activity-line{display:none}.agent-overview{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark"></div><div><strong>Agent Foundry</strong><small>EXPERIMENT CONSOLE</small></div></div>
+    <div class="nav-label">实验</div>
+    <button class="nav-item"><span class="nav-icon">⌗</span>实验列表</button>
+    <button class="nav-item"><span class="nav-icon">≡</span>实验配置</button>
+    <button class="nav-item active"><span class="nav-icon">▣</span>运行记录 <span class="nav-count">4</span></button>
+    <div class="run-mini"><div class="run-mini-top"><span>Run #4</span><i class="live-dot"></i></div><p>情人节派对传播实验</p><div class="progress"><i></i></div><div class="run-mini-foot"><span>Step 38 / 100</span><span>运行中</span></div></div>
+    <div class="sidebar-foot">本机运行 · 2 个并发槽位</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><b>实验</b><span>›</span><b>情人节派对传播实验</b><span>›</span><strong>Run #4</strong></div>
+      <div class="run-state"><div class="pill">运行中</div><div class="top-metric"><small>当前进度</small><b>38 / 100</b></div><div class="top-metric"><small>虚拟时间</small><b>2月13日 10:40</b></div><button class="btn">暂停</button><button class="btn">•••</button></div>
+    </header>
+    <section class="hero">
+      <div class="hero-row"><div><h1>情人节派对传播实验</h1><p>Revision 3 · run_cbbdd28e · 25 个 Agent · 从 2024-02-13 08:00 开始</p></div><div class="health"><div class="health-item"><small>仿真健康</small><b class="good">正常</b></div><div class="health-item"><small>活跃 Agent</small><b>25 / 25</b></div><div class="health-item"><small>Agent 事件</small><b>1,284</b></div><div class="health-item"><small>可恢复点</small><b>Step 38</b></div></div></div>
+      <nav class="tabs"><button class="tab">仿真总览</button><button class="tab active">Agent</button><button class="tab">全局事件</button><button class="tab">运行诊断 <em>1</em></button><button class="tab">结果与导出</button></nav>
+    </section>
+    <section class="workspace">
+      <div class="page-title"><div><div style="display:flex;align-items:center;gap:8px"><h2>Agent</h2><span class="count">25</span><button class="help" data-tip="每个 Agent 是独立的结果单元。展开后查看它的计划、行动、事件、对话、记忆和状态变化。">?</button></div><p>查看每个 Agent 在本次 Run 中产生的全部结构化内容</p></div><div class="view-note"><i></i>内容随运行自动更新</div></div>
+      <div class="toolbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><input id="agentSearch" placeholder="搜索 Agent、计划或事件"></label>
+        <div class="filters"><button class="filter active" data-status="all">全部 25</button><button class="filter" data-status="active">活跃 19</button><button class="filter" data-status="talking">对话中 3</button><button class="filter" data-status="attention">需要关注 1</button></div>
+        <button class="btn sort">按最近活动排序⌄</button>
+      </div>
+      <div id="agentList" class="agent-list"></div>
+      <div id="agentEmpty" class="agent-empty">没有符合当前条件的 Agent</div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const portrait = name => `../generative_agents/frontend/static/assets/village/agents/${name}/portrait.png`;
+const agents = [
+  {
+    id:'isabella', name:'伊莎贝拉', role:'咖啡馆店主', location:'霍布斯咖啡馆 · 储物区', status:'active', statusText:'专注 · 稳定', current:'准备派对材料', updated:'刚刚', badges:[['计划 4',''],['事件 9','']],
+    goal:'确保明天下午的情人节派对按计划举行，并让社区居民都收到邀请。', focus:'筹备派对', progress:70, planCount:4, actionCount:38, eventCount:9, conversationCount:3, memoryCount:16, stateCount:12,
+    plans:[
+      ['当前','整理咖啡馆装饰材料','执行中','优先级 高 · 预计 11:10 完成'],
+      ['10:30','将派对准备延后 10 分钟','已调整','由于材料仍未找齐，保留与卡洛斯交流的时间'],
+      ['09:50','邀请卡洛斯参加明天下午的派对','已完成','卡洛斯已确认，并可能邀请其他居民']
+    ],
+    actions:[
+      ['10:40','从储物柜取出彩带和胶带','完成','霍布斯咖啡馆 · 储物区'],
+      ['10:30','从顾客座位区移动到储物区','完成','移动 9 格 · 耗时 10 分钟'],
+      ['10:20','巡视咖啡馆并确认在场居民','完成','感知到卡洛斯和亚瑟']
+    ],
+    events:[
+      ['产生','10:40','找到派对装饰材料','使当前计划进度从 58% 提升到 70%'],
+      ['感知','10:20','卡洛斯进入咖啡馆','未触发新对话：已有邀请共识，且当前计划优先级更高'],
+      ['参与','10:10','与阿伊莎讨论邀请名单','生成一项日程调整和两条新记忆']
+    ],
+    conversations:[
+      ['10:10','阿伊莎','6 条消息','“我会再确认一次邀请名单，别漏掉公园附近的邻居。”'],
+      ['09:50','卡洛斯','4 条消息','“明天下午来咖啡馆参加派对吧。”']
+    ],
+    memories:[
+      ['10:12','新记忆','阿伊莎会负责检查邀请名单','重要性 7 · 关联派对计划'],
+      ['10:11','新记忆','社区花园附近可能还有居民未被邀请','重要性 6 · 来源：对话'],
+      ['09:52','强化','卡洛斯确认会参加情人节派对','访问次数 +1']
+    ],
+    states:[
+      ['10:40','计划进度','58% → 70%','找到装饰材料'],
+      ['10:30','日程','准备派对 10:20–11:00 → 10:30–11:10','任务延后'],
+      ['10:10','当前位置','共享办公区 → 霍布斯咖啡馆','完成移动']
+    ]
+  },
+  {
+    id:'carlos', name:'卡洛斯', role:'诗人', location:'霍布斯咖啡馆 · 顾客座位区', status:'active', statusText:'思考中', current:'构思明天朗诵的诗', updated:'1 分钟前', badges:[['计划 3',''],['对话 4','']],
+    goal:'完成一首适合情人节派对朗诵的新诗，并在下午前确定最终版本。', focus:'创作诗歌', progress:42, planCount:3, actionCount:31, eventCount:7, conversationCount:4, memoryCount:12, stateCount:8,
+    plans:[['当前','构思诗歌第二段的意象','执行中','已生成 3 个候选主题'],['10:20','在咖啡馆安静创作 40 分钟','进行中','期间不主动发起社交'],['09:55','明天在派对上朗诵新诗','已确认','来源：伊莎贝拉邀请']],
+    actions:[['10:40','记录“花园与灯光”的诗句草稿','完成','产生 1 条创作记忆'],['10:30','坐到靠窗位置继续思考','完成','移动 2 格'],['10:20','拒绝与当前目标无关的闲聊','完成','保留创作计划']],
+    events:[['产生','10:40','完成一段诗歌草稿','计划进度提升到 42%'],['感知','10:30','伊莎贝拉进入储物区','无直接影响'],['参与','09:50','接受伊莎贝拉的派对邀请','新增朗诵日程']],
+    conversations:[['09:50','伊莎贝拉','4 条消息','确认参加派对并考虑朗诵新诗']], memories:[['10:41','新记忆','“灯光落在花园长椅上”可以作为第二段意象','重要性 6'],['09:52','新记忆','明天下午有情人节派对','重要性 8']], states:[['10:40','计划进度','30% → 42%','完成第二段草稿'],['09:52','日程','新增 2月14日 15:00 派对朗诵','接受邀请']]
+  },
+  {
+    id:'arthur', name:'亚瑟', role:'图书管理员', location:'图书馆 · 服务台', status:'attention', statusText:'Planning 重试', current:'安排下午的图书整理工作', updated:'2 分钟前', badges:[['重试 1','warn'],['事件 5','']],
+    goal:'在闭馆前完成归还图书分类，并为下午的读书会准备座位。', focus:'图书整理', progress:34, planCount:2, actionCount:27, eventCount:5, conversationCount:1, memoryCount:10, stateCount:9,
+    plans:[['10:38','生成下午任务顺序','重试中','首次结果缺少有效地点，系统保留原计划'],['09:30','先整理归还图书，再准备读书会','执行中','当前完成 34%']],
+    actions:[['10:40','继续整理历史类归还图书','完成','使用上一次有效计划'],['10:38','尝试更新下午行动计划','失败','模型返回地点不存在']],
+    events:[['产生','10:38','Planning 校验失败','未改变当前行动，已进入一次自动重试'],['感知','10:20','两名居民归还图书','新增 7 本待整理图书']],
+    conversations:[['09:20','瑞恩','3 条消息','确认下午读书会仍按原时间举行']], memories:[['10:21','新记忆','今天新增 7 本归还图书','重要性 5']], states:[['10:38','Planning 状态','正常 → 重试','地点校验失败'],['10:20','待办数量','12 → 19','居民归还图书']]
+  },
+  {id:'ryan',name:'瑞恩',role:'软件工程师',location:'共享办公区',status:'talking',statusText:'对话中',current:'与玛丽亚讨论社区活动网站',updated:'3 分钟前',badges:[['对话 6',''],['事件 8','']],goal:'完成社区活动网站的报名页面。',focus:'产品讨论',progress:61,planCount:3,actionCount:34,eventCount:8,conversationCount:6,memoryCount:14,stateCount:11},
+  {id:'mei',name:'梅',role:'教师',location:'社区花园',status:'active',statusText:'移动中',current:'前往社区中心',updated:'4 分钟前',badges:[['计划 2',''],['事件 6','']],goal:'为下午的课程准备绘画材料。',focus:'课程准备',progress:55,planCount:2,actionCount:29,eventCount:6,conversationCount:2,memoryCount:9,stateCount:7},
+  {id:'aisha',name:'阿伊莎',role:'律师',location:'公寓',status:'active',statusText:'专注',current:'整理派对邀请名单',updated:'5 分钟前',badges:[['计划 3',''],['记忆 11','']],goal:'帮助伊莎贝拉确认全部邀请名单。',focus:'邀请名单',progress:76,planCount:3,actionCount:33,eventCount:7,conversationCount:4,memoryCount:11,stateCount:10},
+  {id:'sam',name:'山姆',role:'学生',location:'家中厨房',status:'active',statusText:'休息中',current:'吃早餐',updated:'7 分钟前',badges:[['计划 2',''],['事件 3','']],goal:'上午完成作业并去公园见朋友。',focus:'早餐',progress:20,planCount:2,actionCount:21,eventCount:3,conversationCount:2,memoryCount:7,stateCount:6}
+];
+
+const cloneFallback = (agent, type) => {
+  if(type==='plans') return [['当前',agent.current,'执行中',`当前目标：${agent.goal}`],['08:00','生成今日计划','已确认','按环境与角色约束安排']];
+  if(type==='actions') return [['10:40',agent.current,'进行中',agent.location],['10:30','完成上一项行动','完成','未发现异常']];
+  if(type==='events') return [['产生','10:40',agent.current,'Agent 当前行为事件'],['感知','10:30','环境状态发生变化','已纳入下一次决策']];
+  if(type==='conversations') return [['09:40','其他居民','3 条消息','围绕当前任务进行了简短交流']];
+  if(type==='memories') return [['10:31','新记忆','记录与当前目标相关的环境变化','重要性 5']];
+  return [['10:40','当前位置',agent.location,agent.current]];
+};
+
+function section(agent,type,title,icon,subtitle,rows){
+  const source = rows?.length ? rows : cloneFallback(agent,type);
+  if(type==='plans') return `<section class="section plan" data-kind="plan"><div class="section-title"><span class="section-icon">▤</span><div><h4>计划</h4><p>目标、日程与计划修订</p></div><span class="section-count">${agent.planCount}</span></div><div class="plan-current"><span class="priority">优先级 高</span><small>当前长期目标</small><b>${agent.goal}</b><p>当前关注：${agent.focus} · 完成度 ${agent.progress}%</p></div><div class="section-list">${source.map(r=>record(r)).join('')}</div><button class="more" data-more="计划">查看全部计划与修订 →</button></section>`;
+  if(type==='events') return `<section class="section event" data-kind="event"><div class="section-title"><span class="section-icon">✦</span><div><h4>事件</h4><p>产生、感知与参与的事件</p></div><span class="section-count">${agent.eventCount}</span></div><div class="section-list">${source.map(r=>`<div class="event-row"><span class="event-dot">${r[0]==='产生'?'＋':r[0]==='参与'?'↔':'◉'}</span><div><b>${r[2]}</b><p>${r[3]}</p></div><span class="event-relation">${r[0]} · ${r[1]}</span></div>`).join('')}</div>${agent.id==='isabella'?'<div class="empty-reason"><b>为什么 10:20 没有发起对话？</b><p>Agent 已知卡洛斯接受邀请，当前没有新的社交信息；“整理派对材料”的计划优先级更高，因此继续执行原行动。</p></div>':''}<button class="more" data-more="事件">查看完整事件关系 →</button></section>`;
+  return `<section class="section ${type==='actions'?'action':type==='conversations'?'conversation':type==='memories'?'memory':'state'}" data-kind="${type==='actions'?'action':type==='conversations'?'conversation':type==='memories'?'memory':'state'}"><div class="section-title"><span class="section-icon">${icon}</span><div><h4>${title}</h4><p>${subtitle}</p></div><span class="section-count">${type==='actions'?agent.actionCount:type==='conversations'?agent.conversationCount:type==='memories'?agent.memoryCount:agent.stateCount}</span></div><div class="section-list">${source.map(r=>record(r)).join('')}</div><button class="more" data-more="${title}">查看全部${title} →</button></section>`;
+}
+function record(r){const status=r[2]||'';const cls=/失败|重试/.test(status)?'failed':/调整|变化|强化/.test(status)?'changed':'done';return `<div class="record"><span class="record-time">${r[0]}</span><div class="record-main"><b>${r[1]}</b><p>${r[3]||''}</p></div><span class="record-tag ${cls}">${status}</span></div>`}
+function renderBody(a){return `<div class="agent-overview"><div class="summary-card"><small>当前目标</small><b>${a.goal}</b></div><div class="summary-card"><small>当前行动</small><b>${a.current}</b></div><div class="summary-card"><small>位置与状态</small><b>${a.location}<br>${a.statusText}</b></div><div class="summary-card"><small>总体进度</small><b>${a.focus} · ${a.progress}%</b><div class="meter"><i style="width:${a.progress}%"></i></div></div></div><div class="content-filter"><span>显示内容</span>${[['all','全部'],['plan','计划'],['event','事件'],['action','行动'],['conversation','对话'],['memory','记忆'],['state','状态变化']].map((c,i)=>`<button class="content-chip ${i===0?'active':''}" data-content="${c[0]}">${c[1]}${c[0]!=='all'?` <i>${c[0]==='plan'?a.planCount:c[0]==='action'?a.actionCount:c[0]==='event'?a.eventCount:c[0]==='conversation'?a.conversationCount:c[0]==='memory'?a.memoryCount:a.stateCount}</i>`:''}</button>`).join('')}</div><div class="agent-content">${section(a,'plans','计划','▤','目标、日程与计划修订',a.plans)}${section(a,'events','事件','✦','产生、感知与参与的事件',a.events)}${section(a,'actions','行动','➜','执行过的动作与移动',a.actions)}${section(a,'conversations','对话','◌','与其他 Agent 的交流',a.conversations)}${section(a,'memories','记忆','◇','新增、强化与淘汰的记忆',a.memories)}${section(a,'states','状态变化','↕','位置、日程与内部状态',a.states)}</div>`}
+function renderAgents(){
+  const query=document.querySelector('#agentSearch').value.trim().toLowerCase();const status=document.querySelector('.filter.active')?.dataset.status||'all';const list=document.querySelector('#agentList');
+  const visible=agents.filter(a=>(status==='all'||a.status===status)&&(a.name+a.role+a.current+a.goal+a.focus).toLowerCase().includes(query));
+  list.innerHTML=visible.map((a,i)=>`<article class="agent ${a.id==='isabella'?'open':''}" data-id="${a.id}" data-status="${a.status}"><button class="agent-header" aria-expanded="${a.id==='isabella'}"><div class="identity"><img class="portrait" src="${portrait(a.name)}" alt=""><div><h3>${a.name}</h3><p>${a.role}<span class="dot"></span>${a.location}</p></div></div><div class="status-line"><small>当前状态</small><b>${a.current} · ${a.statusText}</b></div><div class="activity-line"><small>最近活动 · ${a.updated}</small><p>${a.id==='isabella'?'找到装饰材料，派对准备进度提升':a.id==='arthur'?'Planning 地点校验失败，保留原计划':a.current}</p></div><div class="agent-badges">${a.badges.map(b=>`<span class="mini-badge ${b[1]}">${b[0]}</span>`).join('')}<span class="chev">⌄</span></div></button><div class="agent-body">${a.id==='isabella'?renderBody(a):''}</div></article>`).join('');
+  document.querySelector('#agentEmpty').classList.toggle('show',visible.length===0);bindAgentEvents();
+}
+function bindAgentEvents(){
+  document.querySelectorAll('.agent-header').forEach(head=>head.addEventListener('click',()=>{const card=head.closest('.agent');const wasOpen=card.classList.contains('open');document.querySelectorAll('.agent.open').forEach(x=>{x.classList.remove('open');x.querySelector('.agent-header').setAttribute('aria-expanded','false')});if(!wasOpen){const a=agents.find(x=>x.id===card.dataset.id);if(!card.querySelector('.agent-body').innerHTML.trim())card.querySelector('.agent-body').innerHTML=renderBody(a);card.classList.add('open');head.setAttribute('aria-expanded','true');bindContentEvents(card);setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),40)}}));
+  document.querySelectorAll('.agent.open').forEach(bindContentEvents);
+}
+function bindContentEvents(card){
+  card.querySelectorAll('.content-chip').forEach(chip=>chip.onclick=()=>{card.querySelectorAll('.content-chip').forEach(x=>x.classList.remove('active'));chip.classList.add('active');const kind=chip.dataset.content;card.querySelectorAll('.section').forEach(s=>s.classList.toggle('hidden',kind!=='all'&&s.dataset.kind!==kind));});
+  card.querySelectorAll('.more').forEach(btn=>btn.onclick=()=>showToast(`${card.querySelector('h3').textContent} · ${btn.dataset.more}完整列表将在产品页打开`));
+}
+function showToast(message){const toast=document.querySelector('#toast');toast.textContent=message;toast.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>toast.classList.remove('show'),1800)}
+document.querySelector('#agentSearch').addEventListener('input',renderAgents);
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderAgents()}));
+document.querySelectorAll('.tab,.nav-item').forEach(btn=>btn.addEventListener('click',()=>{if(!btn.classList.contains('active'))showToast(`${btn.textContent.trim()}：当前为 Agent 视图高保真原型`)}));
+renderAgents();
+</script>
+</body>
+</html>
