@@ -122,3 +122,26 @@ def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
     )
     payload["simulation"]["random_seed"] += 1
     assert definition_hash(ExperimentDefinition.model_validate(payload)) != original
+
+
+def test_publication_rejects_duplicate_enabled_agent_display_names(
+    publishable_definition,
+):
+    payload = copy.deepcopy(
+        publishable_definition.model_dump(mode="json", exclude_none=False)
+    )
+    duplicate = copy.deepcopy(payload["agents"][0])
+    duplicate["agent_key"] = "duplicate-agent-key"
+    payload["agents"].append(duplicate)
+
+    definition = ExperimentDefinition.model_validate(payload)
+    report = validate_for_publish(definition)
+    assert {item.code for item in report.errors} == {
+        "DUPLICATE_ENABLED_AGENT_NAME"
+    }
+
+    payload["agents"][-1]["enabled"] = False
+    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
+    assert "DUPLICATE_ENABLED_AGENT_NAME" not in {
+        item.code for item in report.errors
+    }
