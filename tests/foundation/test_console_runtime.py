@@ -206,12 +206,56 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "pageName === 'results' && state.selectedRunId" in route
     assert "url.searchParams.set('run_id', state.selectedRunId)" in route
     assert "if (pageName !== 'experiments'" in route
-    assert "history.replaceState(null, '', nextUrl)" in route
+    assert "history[push ? 'pushState' : 'replaceState'](null, '', nextUrl)" in route
     assert "syncWorkspaceUrl();" in route
     assert "openExperiment(id, targetPage = 'overview', preferredRunId = null)" in source
     assert "preferredRunId || state.latestRunId" in source
     assert "requestedView !== 'experiments' && $(`page-${requestedView}`)" in bootstrap
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
+
+
+def test_content_workspaces_use_tabs_while_metric_strips_remain_visible():
+    root = Path(__file__).parents[2]
+    shell = (
+        root
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "experiment-console.html"
+    ).read_text(encoding="utf-8")
+    script = (
+        root / "generative_agents" / "web" / "static" / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    for group in ("overview", "models", "summary", "world", "advanced", "agent-editor"):
+        assert f'data-content-tabs="{group}"' in shell
+    assert 'class="stats"' in shell
+    assert 'class="result-metrics"' in shell
+    assert "function setContentTab" in script
+    assert "url.searchParams.set('tab'," in script
+    assert "window.addEventListener('popstate'" in script
+    assert "Apply deep-link state before loading the experiment" in script
+    assert script.index("state.selectedAgentContent = requestedTab") < script.index(
+        "await openExperiment(experimentId"
+    )
+
+
+def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
+    source = (
+        Path(__file__).parents[2]
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "console-api.js"
+    ).read_text(encoding="utf-8")
+    detail = source[
+        source.index("function renderAgentDetail") : source.index("function agentPlanText")
+    ]
+
+    assert 'role="tablist"' in detail
+    assert 'role="tabpanel"' in detail
+    assert "agentContentChip('all'" not in detail
+    assert "state.selectedAgentContent" in detail
 
 
 def test_recoverable_run_action_is_visible_before_rerun_and_uses_resume():
