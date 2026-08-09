@@ -67,7 +67,18 @@
     selectedAgentKey: null,
     agentResults: [],
     agentStatusFilter: 'all',
+    selectedAgentContent: 'plan',
     agentDetailGeneration: 0,
+    resultTab: 'summary',
+    operationTab: 'logs',
+    contentTabs: {
+      overview: 'definition',
+      models: 'chat',
+      world: 'map',
+      advanced: 'perception',
+      summary: 'activity',
+      'agent-editor': 'identity',
+    },
     selectedConversationId: null,
     editingAgentKey: null,
     currentExperimentName: '',
@@ -121,14 +132,27 @@
       if (pageName === 'results' && state.selectedRunId) {
         url.searchParams.set('run_id', state.selectedRunId);
       }
+      if (pageName === 'results') {
+        url.searchParams.set('result_tab', state.resultTab);
+        const resultContentTab = state.resultTab === 'summary'
+          ? state.contentTabs.summary
+          : state.resultTab === 'agents'
+            ? state.selectedAgentContent
+            : state.resultTab === 'operations'
+              ? state.operationTab
+              : null;
+        if (resultContentTab) url.searchParams.set('tab', resultContentTab);
+      } else if (state.contentTabs[pageName]) {
+        url.searchParams.set('tab', state.contentTabs[pageName]);
+      }
     }
     return `${url.pathname}${url.search}`;
   }
 
-  function syncWorkspaceUrl() {
+  function syncWorkspaceUrl({ push = false } = {}) {
     const nextUrl = workspaceUrl();
     const currentUrl = `${window.location.pathname}${window.location.search}`;
-    if (nextUrl !== currentUrl) history.replaceState(null, '', nextUrl);
+    if (nextUrl !== currentUrl) history[push ? 'pushState' : 'replaceState'](null, '', nextUrl);
   }
 
   function goToPage(pageName) {
@@ -227,11 +251,35 @@
     $('publishBtn').textContent = status === '运行中' ? '查看当前运行' : status === '排队中' ? '取消排队' : status === '已暂停' ? '恢复此运行' : status === '已完成' ? '查看实验结果' : '发布版本并启动实验';
   }
 
-  function setResultTab(tabName) {
+  function setContentTab(groupName, tabName, { sync = true, push = false } = {}) {
+    const root = document.querySelector(`[data-content-tabs="${groupName}"]`);
+    if (!root || !root.querySelector(`[data-content-tab="${tabName}"]`)) return false;
+    state.contentTabs[groupName] = tabName;
+    root.querySelectorAll('[data-content-tab]').forEach(tab => {
+      const active = tab.dataset.contentTab === tabName;
+      tab.classList.toggle('active', active);
+      tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
+    });
+    root.querySelectorAll('[data-content-panel]').forEach(panel => {
+      const active = panel.dataset.contentPanel === tabName;
+      panel.classList.toggle('active', active);
+      panel.hidden = !active;
+    });
+    const ownsUrl = groupName === state.workspacePage
+      || (state.workspacePage === 'results' && state.resultTab === 'summary' && groupName === 'summary');
+    if (sync && ownsUrl) syncWorkspaceUrl({ push });
+    return true;
+  }
+
+  function setResultTab(tabName, { sync = true, push = false } = {}) {
+    if (!document.querySelector(`[data-result-tab="${tabName}"]`)) return false;
+    state.resultTab = tabName;
     document.querySelectorAll('[data-result-tab]').forEach(tab => {
       const active = tab.dataset.resultTab === tabName;
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
     });
     document.querySelectorAll('[data-result-panel]').forEach(panel => {
       panel.classList.toggle('active', panel.dataset.resultPanel === tabName);
@@ -239,17 +287,24 @@
     if (tabName === 'timeline' && state.selectedRunId) {
       ensureReplayPlayer(state.selectedRunId, state.resultGeneration).catch(reportError);
     }
+    if (sync) syncWorkspaceUrl({ push });
+    return true;
   }
 
-  function setOperationTab(tabName) {
+  function setOperationTab(tabName, { sync = true, push = false } = {}) {
+    if (!document.querySelector(`[data-operation-tab="${tabName}"]`)) return false;
+    state.operationTab = tabName;
     document.querySelectorAll('[data-operation-tab]').forEach(tab => {
       const active = tab.dataset.operationTab === tabName;
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
+      tab.tabIndex = active ? 0 : -1;
     });
     document.querySelectorAll('[data-operation-panel]').forEach(panel => {
       panel.classList.toggle('active', panel.dataset.operationPanel === tabName);
     });
+    if (sync) syncWorkspaceUrl({ push });
+    return true;
   }
 
   function renderWizardStep() {
@@ -1192,7 +1247,7 @@
       <div class="agent-overview-card"><small>位置与状态</small><strong>${escapeHtml(agent.address || '位置未记录')}<br>更新至 Step ${agent.updated_step}</strong></div>
       <div class="agent-overview-card"><small>活动占比</small><strong>非休息活动 ${Math.round(activeMinutes / totalMinutes * 100)}%</strong><div class="agent-overview-meter"><i style="width:${Math.round(activeMinutes / totalMinutes * 100)}%"></i></div></div>
     </div>
-    <div class="agent-content-filters"><span>显示内容</span>${agentContentChip('all','全部',null,true)}${agentContentChip('plan','计划',counts.plans)}${agentContentChip('event','事件',counts.events)}${agentContentChip('action','行动',counts.actions)}${agentContentChip('conversation','对话',counts.conversations)}${agentContentChip('memory','记忆',counts.memories)}${agentContentChip('state','状态变化',counts.state_changes)}</div>
+    <div class="agent-content-filters" role="tablist" aria-label="Agent 结构化内容">${agentContentChip('plan','计划',counts.plans)}${agentContentChip('event','事件',counts.events)}${agentContentChip('action','行动',counts.actions)}${agentContentChip('conversation','对话',counts.conversations)}${agentContentChip('memory','记忆',counts.memories)}${agentContentChip('state','状态变化',counts.state_changes)}</div>
     <div class="agent-content-grid">
       ${renderAgentPlanSection(detail, currentPlan)}
       ${renderAgentEventSection(detail.events || [])}
@@ -1203,12 +1258,14 @@
     </div>`;
   }
 
-  function agentContentChip(kind, label, count, active = false) {
-    return `<button type="button" class="agent-content-filter${active ? ' active' : ''}" data-agent-content="${kind}">${label}${count === null || count === undefined ? '' : `<i>${count}</i>`}</button>`;
+  function agentContentChip(kind, label, count) {
+    const active = state.selectedAgentContent === kind;
+    return `<button type="button" role="tab" aria-selected="${String(active)}" tabindex="${active ? '0' : '-1'}" class="agent-content-filter${active ? ' active' : ''}" data-agent-content="${kind}">${label}${count === null || count === undefined ? '' : `<i>${count}</i>`}</button>`;
   }
 
   function agentSection(kind, icon, title, subtitle, count, content) {
-    return `<section class="agent-content-section" data-agent-content-section="${kind}"><div class="agent-section-head"><span class="agent-section-icon">${icon}</span><span><strong>${title}</strong><span>${subtitle}</span></span><span class="agent-section-count">${count}</span></div>${content}</section>`;
+    const hidden = state.selectedAgentContent !== kind ? ' hidden' : '';
+    return `<section class="agent-content-section" role="tabpanel" data-agent-content-section="${kind}"${hidden}><div class="agent-section-head"><span class="agent-section-icon">${icon}</span><span><strong>${title}</strong><span>${subtitle}</span></span><span class="agent-section-count">${count}</span></div>${content}</section>`;
   }
 
   function agentRecord(time, title, detail, tag, tagClass = '') {
@@ -2130,6 +2187,7 @@
     $('agentEditDailyPlan').value = agent.scratch.daily_plan || '';
     $('agentEditSpatial').value = JSON.stringify(agent.spatial || { address: {}, tree: {} }, null, 2);
     $('deleteAgentBtn').hidden = !existing;
+    setContentTab('agent-editor', 'identity', { sync: false });
     const agentEditorReturnFocus = document.activeElement;
     const agentEditorInitialFocus = existing ? $('agentEditName') : $('agentEditKey');
     openModal('agentEditorModal', agentEditorInitialFocus.id, agentEditorReturnFocus);
@@ -2304,12 +2362,41 @@
     openWorkspacePage(button.dataset.goto);
   }));
   document.querySelectorAll('[data-result-tab]').forEach(tab => tab.addEventListener('click', () => {
-    setResultTab(tab.dataset.resultTab);
+    setResultTab(tab.dataset.resultTab, { push: true });
   }));
+  document.querySelector('.result-tabs').addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = [...document.querySelectorAll('[data-result-tab]')];
+    const index = Math.max(0, tabs.indexOf(event.target.closest('[data-result-tab]')));
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : event.key === 'ArrowLeft' ? Math.max(0, index - 1) : Math.min(tabs.length - 1, index + 1);
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    setResultTab(tabs[nextIndex].dataset.resultTab, { push: true });
+  });
   document.querySelectorAll('[data-open-result-tab]').forEach(button => button.addEventListener('click', () => {
-    setResultTab(button.dataset.openResultTab);
+    setResultTab(button.dataset.openResultTab, { push: true });
   }));
-  $('openReplayBtn').addEventListener('click', () => setResultTab('timeline'));
+  $('openReplayBtn').addEventListener('click', () => setResultTab('timeline', { push: true }));
+  document.addEventListener('click', event => {
+    const tab = event.target.closest('[data-content-tab]');
+    if (!tab) return;
+    const root = tab.closest('[data-content-tabs]');
+    if (!root) return;
+    setContentTab(root.dataset.contentTabs, tab.dataset.contentTab, { push: true });
+  });
+  document.addEventListener('keydown', event => {
+    const tab = event.target.closest('[data-content-tab]');
+    if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const root = tab.closest('[data-content-tabs]');
+    const tabs = [...root.querySelectorAll('[data-content-tab]')];
+    const index = Math.max(0, tabs.indexOf(tab));
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : event.key === 'ArrowLeft' ? Math.max(0, index - 1) : Math.min(tabs.length - 1, index + 1);
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    setContentTab(root.dataset.contentTabs, tabs[nextIndex].dataset.contentTab, { push: true });
+  });
   document.querySelectorAll('[data-toast]').forEach(button => button.addEventListener('click', () => {
     showToast(button.dataset.toast);
   }));
@@ -2528,12 +2615,28 @@
   $('resultAgentDetail').addEventListener('click', event => {
     const contentFilter = event.target.closest('[data-agent-content]');
     if (!contentFilter) return;
-    $('resultAgentDetail').querySelectorAll('[data-agent-content]').forEach(item => item.classList.toggle('active', item === contentFilter));
-    $('resultAgentDetail').querySelectorAll('[data-agent-content-section]').forEach(section => {
-      section.hidden = contentFilter.dataset.agentContent !== 'all'
-        && section.dataset.agentContentSection !== contentFilter.dataset.agentContent;
+    state.selectedAgentContent = contentFilter.dataset.agentContent;
+    $('resultAgentDetail').querySelectorAll('[data-agent-content]').forEach(item => {
+      const active = item === contentFilter;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-selected', String(active));
+      item.tabIndex = active ? 0 : -1;
     });
+    $('resultAgentDetail').querySelectorAll('[data-agent-content-section]').forEach(section => {
+      section.hidden = section.dataset.agentContentSection !== state.selectedAgentContent;
+    });
+    syncWorkspaceUrl({ push: true });
   }, true);
+  $('resultAgentDetail').addEventListener('keydown', event => {
+    if (!event.target.closest('[data-agent-content]') || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = [...$('resultAgentDetail').querySelectorAll('[data-agent-content]')];
+    const index = Math.max(0, tabs.indexOf(event.target.closest('[data-agent-content]')));
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : event.key === 'ArrowLeft' ? Math.max(0, index - 1) : Math.min(tabs.length - 1, index + 1);
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    tabs[nextIndex].click();
+  });
   [$('agentTabPrev'), $('agentTabNext')].forEach(button => button.addEventListener('click', () => {
     const direction = button === $('agentTabPrev') ? -1 : 1;
     $('resultAgentButtons').scrollBy({ left: direction * Math.max(260, $('resultAgentButtons').clientWidth * .72), behavior: 'smooth' });
@@ -2699,7 +2802,17 @@
   }, true);
   $('operationsSubtabs').addEventListener('click', event => {
     const tab = event.target.closest('[data-operation-tab]');
-    if (tab) setOperationTab(tab.dataset.operationTab);
+    if (tab) setOperationTab(tab.dataset.operationTab, { push: true });
+  });
+  $('operationsSubtabs').addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = [...document.querySelectorAll('[data-operation-tab]')];
+    const index = Math.max(0, tabs.indexOf(event.target.closest('[data-operation-tab]')));
+    const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : event.key === 'ArrowLeft' ? Math.max(0, index - 1) : Math.min(tabs.length - 1, index + 1);
+    event.preventDefault();
+    tabs[nextIndex].focus();
+    setOperationTab(tabs[nextIndex].dataset.operationTab, { push: true });
   });
   $('attemptLogSelect').addEventListener('change', event => {
     if (event.target.value && state.selectedRunId) {
@@ -2914,17 +3027,48 @@
 
   async function bootstrapConsole() {
     const params = new URLSearchParams(location.search);
-    await loadExperiments();
     const experimentId = params.get('experiment_id');
+    const requestedView = params.get('view');
+    const targetPage = requestedView && requestedView !== 'experiments' && $(`page-${requestedView}`)
+      ? requestedView
+      : 'overview';
+    const requestedTab = params.get('tab');
+    const requestedResultTab = params.get('result_tab') || 'summary';
+
+    // Apply deep-link state before loading the experiment. Result renderers use
+    // these values while creating Agent panels, so a direct URL must never
+    // become stuck on a different nested tab.
+    if (experimentId && targetPage === 'results') {
+      state.resultTab = requestedResultTab;
+      if (requestedResultTab === 'agents' && requestedTab) state.selectedAgentContent = requestedTab;
+      if (requestedResultTab === 'summary' && requestedTab) state.contentTabs.summary = requestedTab;
+      if (requestedResultTab === 'operations' && requestedTab) state.operationTab = requestedTab;
+    } else if (experimentId && requestedTab && Object.hasOwn(state.contentTabs, targetPage)) {
+      state.contentTabs[targetPage] = requestedTab;
+    }
+    Object.entries(state.contentTabs).forEach(([groupName, tabName]) => {
+      setContentTab(groupName, tabName, { sync: false });
+    });
+    setResultTab(state.resultTab, { sync: false });
+    setOperationTab(state.operationTab, { sync: false });
+    await loadExperiments();
     if (experimentId) {
-      const requestedView = params.get('view');
-      const targetPage = requestedView && requestedView !== 'experiments' && $(`page-${requestedView}`)
-        ? requestedView
-        : 'overview';
       await openExperiment(experimentId, targetPage, params.get('run_id'));
+      if (targetPage === 'results') {
+        setResultTab(requestedResultTab, { sync: false });
+        if (requestedResultTab === 'summary' && requestedTab) {
+          setContentTab('summary', requestedTab, { sync: false });
+        } else if (requestedResultTab === 'operations' && requestedTab) {
+          setOperationTab(requestedTab, { sync: false });
+        }
+      } else if (requestedTab) {
+        setContentTab(targetPage, requestedTab, { sync: false });
+      }
+      syncWorkspaceUrl();
     }
     state.bootstrapped = true;
     await startGlobalActivityStream();
   }
+  window.addEventListener('popstate', () => window.location.reload());
   bootstrapConsole().catch(reportError);
 })();

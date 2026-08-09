@@ -374,6 +374,27 @@
     .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-top: 1px solid var(--line); background: #fbfcfc; color: var(--muted); font-size: 10px; }
 
     .two-col { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .content-workspace { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow-sm); }
+    .content-tabs { display: flex; min-height: 45px; align-items: flex-end; gap: 22px; overflow-x: auto; padding: 0 20px; border-bottom: 1px solid var(--line); background: #fbfcfc; scrollbar-width: thin; }
+    .content-tab { position: relative; min-height: 44px; padding: 2px 0 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; font-weight: 620; white-space: nowrap; cursor: pointer; }
+    .content-tab::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; border-radius: 2px 2px 0 0; background: transparent; content: ""; }
+    .content-tab:hover { color: var(--ink); }
+    .content-tab.active { color: var(--teal-2); font-weight: 750; }
+    .content-tab.active::after { background: var(--teal); }
+    .content-tab .tab-count { display: inline-grid; min-width: 17px; height: 17px; margin-left: 5px; padding: 0 4px; place-items: center; border-radius: 99px; background: #edf2f0; color: var(--muted); font-family: var(--mono); font-size: 7px; }
+    .content-tab.active .tab-count { background: var(--teal-soft); color: var(--teal-2); }
+    .content-tab-panel { display: none; min-height: 320px; padding: 22px; animation: pageIn .16s ease both; }
+    .content-tab-panel.active { display: block; }
+    .content-tab-panel > .section-head:first-child { margin-top: 0; }
+    .content-tab-panel .panel-intro { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+    .content-tab-panel .panel-intro h2 { margin: 0; font-size: 13px; }
+    .content-tab-panel .panel-intro p { max-width: 720px; margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.55; }
+    .content-tab-panel .panel-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 28px; align-items: start; }
+    .content-tab-panel .panel-section + .panel-section { margin-top: 24px; padding-top: 22px; border-top: 1px solid #edf1ef; }
+    .content-tab-panel .panel-section h3 { margin: 0 0 12px; font-size: 11px; }
+    .content-tab-panel > article.card,
+    .content-tab-panel > .card { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+    .content-tab-panel > .card-pad { padding: 0; }
     .provider-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
     .provider-logo { display: grid; width: 39px; height: 39px; place-items: center; border-radius: 10px; background: #173e37; color: #c7ee89; font-family: var(--mono); font-size: 11px; font-weight: 800; }
     .provider-logo.blue { background: #233c74; color: #cfdbff; }
@@ -468,10 +489,12 @@
     .result-sync.partial { color: var(--blue); }
     .result-sync.partial::before { background: var(--blue); box-shadow: 0 0 0 3px rgba(63,111,217,.12); }
 
-    .result-tabs { display: flex; align-items: center; gap: 2px; margin-bottom: 14px; padding: 4px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #edf2f0; }
-    .result-tab { min-height: 32px; padding: 0 13px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 9px; font-weight: 590; white-space: nowrap; cursor: pointer; }
+    .result-tabs { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 14px; padding: 0 18px; overflow-x: auto; border-bottom: 1px solid var(--line); background: #fff; }
+    .result-tab { position: relative; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; font-weight: 590; white-space: nowrap; cursor: pointer; }
+    .result-tab::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: transparent; content: ""; }
     .result-tab:hover { color: var(--ink); }
-    .result-tab.active { background: #fff; color: var(--teal-2); box-shadow: 0 1px 4px rgba(18,32,31,.09); font-weight: 700; }
+    .result-tab.active { color: var(--teal-2); font-weight: 700; }
+    .result-tab.active::after { background: var(--teal); }
     .result-panel { display: none; animation: pageIn .18s ease both; }
     .result-panel.active { display: block; }
     .result-empty { padding: 74px 24px; border: 1px dashed var(--line-strong); border-radius: 13px; background: rgba(255,255,255,.62); text-align: center; }
@@ -644,15 +667,16 @@
     .agent-overview-card strong { display: block; font-size: 9px; line-height: 1.5; }
     .agent-overview-meter { height: 4px; margin-top: 8px; overflow: hidden; border-radius: 99px; background: #edf2f0; }
     .agent-overview-meter i { display: block; height: 100%; border-radius: inherit; background: #5ab393; }
-    .agent-content-filters { display: flex; align-items: center; gap: 5px; padding: 0 13px 10px; border-bottom: 1px solid #e3ebe8; }
-    .agent-content-filters > span { margin-right: 4px; color: var(--muted); font-size: 8px; }
-    .agent-content-filter { height: 27px; padding: 0 9px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: #657772; font-size: 8px; cursor: pointer; }
-    .agent-content-filter.active { border-color: #173f37; background: #173f37; color: #fff; }
+    .agent-content-filters { display: flex; min-height: 43px; align-items: flex-end; gap: 20px; overflow-x: auto; padding: 0 14px; border-bottom: 1px solid #e3ebe8; background: #fff; }
+    .agent-content-filter { position: relative; height: 42px; padding: 0; border: 0; background: transparent; color: #657772; font-size: 9px; font-weight: 620; white-space: nowrap; cursor: pointer; }
+    .agent-content-filter::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: transparent; content: ""; }
+    .agent-content-filter.active { color: var(--teal-2); font-weight: 750; }
+    .agent-content-filter.active::after { background: var(--teal); }
     .agent-content-filter i { margin-left: 4px; font-style: normal; opacity: .65; }
-    .agent-content-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; padding: 11px 13px 14px; align-items: start; }
-    .agent-content-section { overflow: hidden; border: 1px solid #dee7e4; border-radius: 9px; background: #fff; }
+    .agent-content-grid { display: block; padding: 0 14px 16px; }
+    .agent-content-section { overflow: hidden; border: 0; border-radius: 0; background: #fff; }
     .agent-content-section[hidden] { display: none; }
-    .agent-section-head { display: flex; min-height: 42px; align-items: center; padding: 8px 10px; border-bottom: 1px solid #edf1ef; }
+    .agent-section-head { display: flex; min-height: 52px; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf1ef; }
     .agent-section-icon { display: grid; width: 25px; height: 25px; margin-right: 8px; place-items: center; border-radius: 7px; background: #f0edf9; color: #7258af; font-size: 10px; }
     .agent-content-section[data-agent-content-section="event"] .agent-section-icon { background: #fff5df; color: #b67618; }
     .agent-content-section[data-agent-content-section="action"] .agent-section-icon { background: var(--teal-soft); color: var(--teal); }
@@ -728,12 +752,14 @@
     .artifact-result strong { display: block; font-size: 9px; }
     .artifact-result span { display: block; margin-top: 2px; color: var(--muted); font-family: var(--mono); font-size: 7px; }
     .artifact-action { padding: 4px 7px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: #40564e; font-size: 8px; cursor: pointer; }
-    .operations-shell { display: grid; gap: 12px; }
-    .operations-subtabs { display: flex; gap: 4px; padding: 4px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: #f5f8f7; }
-    .operations-subtab { flex: 0 0 auto; padding: 7px 11px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 8px; font-weight: 650; cursor: pointer; }
-    .operations-subtab.active { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(35,55,48,.1); }
+    .operations-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: var(--shadow-sm); }
+    .operations-subtabs { display: flex; min-height: 45px; align-items: flex-end; gap: 22px; padding: 0 20px; overflow-x: auto; border-bottom: 1px solid var(--line); background: #fbfcfc; }
+    .operations-subtab { position: relative; flex: 0 0 auto; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 10px; font-weight: 650; cursor: pointer; }
+    .operations-subtab::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: transparent; content: ""; }
+    .operations-subtab.active { color: var(--teal-2); }
+    .operations-subtab.active::after { background: var(--teal); }
     .operation-panel { display: none; }
-    .operation-panel.active { display: block; }
+    .operation-panel.active { display: block; border: 0; border-radius: 0; box-shadow: none; }
     .observability-toolbar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid var(--line); }
     .observability-toolbar select, .observability-toolbar input { min-height: 29px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--ink); font-size: 8px; }
     .observability-toolbar input { min-width: 190px; flex: 1 1 190px; }
@@ -983,7 +1009,9 @@
       .main { width: calc(100% - 74px); margin-left: 0; }
       .topbar { padding: 0 18px; }
       .content { padding: 24px 18px 44px; }
-      .two-col, .advanced-grid { grid-template-columns: 1fr; }
+      .two-col, .advanced-grid, .content-tab-panel .panel-columns { grid-template-columns: 1fr; }
+      .content-tabs { gap: 18px; padding: 0 16px; }
+      .content-tab-panel { min-height: 260px; padding: 18px; }
       .prompt-layout { grid-template-columns: 190px minmax(0,1fr); }
       .unsaved, .top-actions .btn:first-of-type { display: none; }
       .hub-hero-metric { display: none; }
@@ -1148,77 +1176,47 @@
             <div class="stat"><div class="stat-label">最近运行</div><div class="stat-value"><span id="overviewLatestStep">—</span><small>步</small></div><div class="stat-foot" id="overviewLatestMeta">尚未运行</div></div>
           </div>
 
-          <div class="overview-grid">
-            <div class="stack">
-              <article class="card card-pad">
-                <div class="section-head">
-                  <div class="section-title"><h2>实验定义</h2><button type="button" class="help-tip" aria-label="实验定义说明" data-tooltip="这些参数决定虚拟时间推进、状态记录与随机行为复现。">?</button></div>
-                  <span class="chip teal">配置有效</span>
-                </div>
-                <div class="form-grid">
-                  <div class="field"><div class="field-label"><label for="expName">实验名称</label><button type="button" class="help-tip" aria-label="实验名称说明" data-tooltip="用于列表展示和检索，可随草稿修改。">?</button></div><input class="control dirty-track" id="expName" value="" /></div>
-                  <div class="field"><div class="field-label"><label for="expKey">实验标识</label><button type="button" class="help-tip" aria-label="实验标识说明" data-tooltip="实验的稳定唯一键，创建后不可修改。">?</button></div><div class="locked-input" id="expKey"><span class="lock">▣</span>exp_valentine_2024_02</div></div>
-                  <div class="field"><label for="startTime">虚拟世界起始时间</label><input class="control dirty-track" id="startTime" type="datetime-local" value="2024-02-13T09:30" /></div>
-                  <div class="field"><label for="timezone">时区</label><select class="control dirty-track" id="timezone"><option value="Asia/Shanghai">Asia/Shanghai (UTC+08:00)</option><option value="UTC">UTC</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></div>
-                  <div class="field"><label for="stride">单步时间跨度</label><div class="input-unit"><input class="control dirty-track" id="stride" type="number" min="1" value="10" /><span>分钟</span></div></div>
-                  <div class="field"><label for="maxSteps">模拟总步数</label><div class="input-unit"><input class="control dirty-track" id="maxSteps" type="number" min="1" max="1000000" value="144" /><span>步</span></div></div>
-                  <div class="field"><label for="recordInterval">状态记录间隔</label><div class="input-unit"><input class="control dirty-track" id="recordInterval" type="number" min="1" value="30" /><span>分钟</span></div></div>
-                  <div class="field"><div class="field-label"><label for="seed">随机种子</label><button type="button" class="help-tip" aria-label="随机种子说明" data-tooltip="固定路径选择、候选位置和失败回退的随机序列。">?</button></div><input class="control dirty-track" id="seed" type="number" value="240213" /></div>
-                  <div class="field"><label for="logLevel">日志级别</label><select class="control dirty-track" id="logLevel"><option value="INFO">INFO · 推荐</option><option value="DEBUG">DEBUG · 详细</option><option value="WARNING">WARNING · 精简</option><option value="ERROR">ERROR · 仅错误</option></select></div>
-                </div>
-              </article>
-
-              <article class="card card-pad">
-                <div class="section-head compact">
-                  <div class="section-title"><h2>版本信息</h2><button type="button" class="help-tip" aria-label="版本隔离说明" data-tooltip="发布时解析所有引用并锁定内容哈希；每次运行只读取自己的 Revision。">?</button></div>
-                  <span class="chip blue" id="overviewRevisionChip">Draft Revision</span>
-                </div>
-                <div class="model-summary">
-                  <div class="summary-cell"><span>基于版本</span><strong id="overviewBaseRevision">新实验</strong></div>
-                  <div class="summary-cell"><span>配置哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
-                  <div class="summary-cell"><span>引擎算法</span><strong id="overviewAlgorithm">ga-cn-v1</strong></div>
-                </div>
-              </article>
-
-              <article class="card card-pad">
-                <div class="section-head compact">
-                  <div><div class="section-title"><h2>Agent 编组</h2><button type="button" class="help-tip" aria-label="Agent 编组说明" data-tooltip="本实验保存完整、独立的角色定义；这里的修改不会影响其他实验。">?</button></div><span class="section-side" id="overviewAgentDefinitionCount">0 份独立角色定义</span></div>
-                  <button class="btn btn-sm" data-goto="agents">管理 Agent</button>
-                </div>
-                <div class="agent-strip" id="overviewAgentStrip"><div class="empty-state"><strong>等待实验数据</strong></div></div>
-              </article>
+          <div class="content-workspace" data-content-tabs="overview">
+            <nav class="content-tabs" role="tablist" aria-label="实验概览内容">
+              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="definition">实验定义</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="release">版本与发布</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="agents">Agent 编组</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="run">最近运行</button>
+            </nav>
+            <div class="content-tab-panel active" role="tabpanel" data-content-panel="definition">
+              <div class="panel-intro"><div><h2>实验定义</h2><p>配置虚拟时间、运行规模、记录粒度和随机复现边界。</p></div><span class="chip teal">配置有效</span></div>
+              <div class="form-grid">
+                <div class="field"><div class="field-label"><label for="expName">实验名称</label><button type="button" class="help-tip" aria-label="实验名称说明" data-tooltip="用于列表展示和检索，可随草稿修改。">?</button></div><input class="control dirty-track" id="expName" value="" /></div>
+                <div class="field"><div class="field-label"><label for="expKey">实验标识</label><button type="button" class="help-tip" aria-label="实验标识说明" data-tooltip="实验的稳定唯一键，创建后不可修改。">?</button></div><div class="locked-input" id="expKey"><span class="lock">▣</span>exp_valentine_2024_02</div></div>
+                <div class="field"><label for="startTime">虚拟世界起始时间</label><input class="control dirty-track" id="startTime" type="datetime-local" value="2024-02-13T09:30" /></div>
+                <div class="field"><label for="timezone">时区</label><select class="control dirty-track" id="timezone"><option value="Asia/Shanghai">Asia/Shanghai (UTC+08:00)</option><option value="UTC">UTC</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></div>
+                <div class="field"><label for="stride">单步时间跨度</label><div class="input-unit"><input class="control dirty-track" id="stride" type="number" min="1" value="10" /><span>分钟</span></div></div>
+                <div class="field"><label for="maxSteps">模拟总步数</label><div class="input-unit"><input class="control dirty-track" id="maxSteps" type="number" min="1" max="1000000" value="144" /><span>步</span></div></div>
+                <div class="field"><label for="recordInterval">状态记录间隔</label><div class="input-unit"><input class="control dirty-track" id="recordInterval" type="number" min="1" value="30" /><span>分钟</span></div></div>
+                <div class="field"><div class="field-label"><label for="seed">随机种子</label><button type="button" class="help-tip" aria-label="随机种子说明" data-tooltip="固定路径选择、候选位置和失败回退的随机序列。">?</button></div><input class="control dirty-track" id="seed" type="number" value="240213" /></div>
+                <div class="field"><label for="logLevel">日志级别</label><select class="control dirty-track" id="logLevel"><option value="INFO">INFO · 推荐</option><option value="DEBUG">DEBUG · 详细</option><option value="WARNING">WARNING · 精简</option><option value="ERROR">ERROR · 仅错误</option></select></div>
+              </div>
             </div>
-
-            <aside class="stack">
-              <article class="card card-pad">
-                <div class="section-head compact">
-                  <div class="section-title"><h2>发布前检查</h2><button type="button" class="help-tip" aria-label="发布前检查说明" data-tooltip="存在阻塞项时不能发布；警告项可由研究员确认后继续。">?</button></div>
-                  <span class="chip teal" id="overviewValidationCount">待检查</span>
-                </div>
-                <div class="checklist">
-                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>实验 Schema</strong><span>全部字段类型和范围有效</span></div><span class="check-state">通过</span></div>
-                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>聊天模型</strong><span id="overviewChatCheck">尚未配置</span></div><span class="check-state">定义</span></div>
-                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Embedding 服务</strong><span id="overviewEmbeddingCheck">尚未配置</span></div><span class="check-state">定义</span></div>
-                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Agent 定义</strong><span id="overviewAgentCheck">0 个角色</span></div><span class="check-state">定义</span></div>
-                  <div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Prompt 变量</strong><span id="overviewPromptCheck">0 个 Prompt</span></div><span class="check-state">定义</span></div>
-                  <div class="check-row"><span class="check-mark warn">!</span><div class="check-copy"><strong>世界快照</strong><span id="overviewWorldCheck">尚未配置</span></div><span class="check-state warn">快照</span></div>
-                </div>
-                <div class="snapshot-box">
-                  <div class="snapshot-id"><span>配置快照</span><code id="overviewSnapshotHash">草稿尚未发布</code></div>
-                  <div class="snapshot-files"><span>definition.json</span><span id="overviewSnapshotAgents">agents ×0</span><span id="overviewSnapshotPrompts">prompts ×0</span><span>world</span><span>assets.lock</span><span>schema v1</span></div>
-                </div>
-                <button class="btn btn-primary btn-block" id="publishBtn">发布版本并启动实验</button>
-              </article>
-
-              <article class="card card-pad" id="runSummaryCard">
-                <div class="section-head compact"><div><h2 id="runSummaryTitle">最近一次运行</h2><span class="section-side" id="runSummaryMeta">2026-08-04 · revision 003</span></div><span class="chip teal" id="runSummaryStatus">已完成</span></div>
-                <div class="model-summary">
-                  <div class="summary-cell"><span id="runMetricLabel1">模拟步数</span><strong id="runMetricValue1">144</strong></div>
-                  <div class="summary-cell"><span id="runMetricLabel2">LLM 调用</span><strong id="runMetricValue2">8,621</strong></div>
-                  <div class="summary-cell"><span id="runMetricLabel3">运行时间</span><strong id="runMetricValue3">19h 42m</strong></div>
-                </div>
-              </article>
-            </aside>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="release">
+              <div class="panel-intro"><div><h2>版本与发布</h2><p>发布前统一检查配置，并将模型、Agent、Prompt、世界和资源锁定为只读 Revision。</p></div><span class="chip blue" id="overviewRevisionChip">Draft Revision</span></div>
+              <div class="model-summary">
+                <div class="summary-cell"><span>基于版本</span><strong id="overviewBaseRevision">新实验</strong></div>
+                <div class="summary-cell"><span>配置哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
+                <div class="summary-cell"><span>引擎算法</span><strong id="overviewAlgorithm">ga-cn-v1</strong></div>
+              </div>
+              <div class="panel-columns" style="margin-top:22px">
+                <section class="panel-section"><div class="section-head compact"><div class="section-title"><h2>发布前检查</h2><button type="button" class="help-tip" aria-label="发布前检查说明" data-tooltip="存在阻塞项时不能发布；警告项可由研究员确认后继续。">?</button></div><span class="chip teal" id="overviewValidationCount">待检查</span></div><div class="checklist"><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>实验 Schema</strong><span>全部字段类型和范围有效</span></div><span class="check-state">通过</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>聊天模型</strong><span id="overviewChatCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Embedding 服务</strong><span id="overviewEmbeddingCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Agent 定义</strong><span id="overviewAgentCheck">0 个角色</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Prompt 变量</strong><span id="overviewPromptCheck">0 个 Prompt</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark warn">!</span><div class="check-copy"><strong>世界快照</strong><span id="overviewWorldCheck">尚未配置</span></div><span class="check-state warn">快照</span></div></div></section>
+                <section class="panel-section"><h3>配置快照</h3><div class="snapshot-box"><div class="snapshot-id"><span>配置快照</span><code id="overviewSnapshotHash">草稿尚未发布</code></div><div class="snapshot-files"><span>definition.json</span><span id="overviewSnapshotAgents">agents ×0</span><span id="overviewSnapshotPrompts">prompts ×0</span><span>world</span><span>assets.lock</span><span>schema v1</span></div></div><button class="btn btn-primary btn-block" id="publishBtn">发布版本并启动实验</button></section>
+              </div>
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="agents">
+              <div class="panel-intro"><div><h2>Agent 编组</h2><p id="overviewAgentDefinitionCount">0 份独立角色定义</p></div><button class="btn btn-sm" data-goto="agents">管理 Agent</button></div>
+              <div class="agent-strip" id="overviewAgentStrip"><div class="empty-state"><strong>等待实验数据</strong></div></div>
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="run" id="runSummaryCard">
+              <div class="panel-intro"><div><h2 id="runSummaryTitle">最近一次运行</h2><p id="runSummaryMeta">尚未运行</p></div><span class="chip teal" id="runSummaryStatus">等待运行</span></div>
+              <div class="model-summary"><div class="summary-cell"><span id="runMetricLabel1">模拟步数</span><strong id="runMetricValue1">—</strong></div><div class="summary-cell"><span id="runMetricLabel2">LLM 调用</span><strong id="runMetricValue2">—</strong></div><div class="summary-cell"><span id="runMetricLabel3">运行时间</span><strong id="runMetricValue3">—</strong></div></div>
+            </div>
           </div>
         </section>
 
@@ -1267,40 +1265,42 @@
               <button class="result-tab" role="tab" aria-selected="false" data-result-tab="artifacts">结果与导出</button>
             </div>
 
-            <div class="result-panel active" data-result-panel="summary">
-              <div class="result-metrics">
-                <div class="result-metric"><span>模拟进度</span><strong id="resultStepMetric">—</strong></div>
-                <div class="result-metric"><span>对话</span><strong id="resultConversationMetric">—</strong></div>
-                <div class="result-metric"><span>新增记忆</span><strong id="resultMemoryMetric">—</strong></div>
-                <div class="result-metric"><span>模型调用</span><strong id="resultLlmMetric">—</strong></div>
-                <div class="result-metric"><span>实际耗时</span><strong id="resultDurationMetric">—</strong></div>
-              </div>
+            <div class="result-metrics">
+              <div class="result-metric"><span>模拟进度</span><strong id="resultStepMetric">—</strong></div>
+              <div class="result-metric"><span>对话</span><strong id="resultConversationMetric">—</strong></div>
+              <div class="result-metric"><span>新增记忆</span><strong id="resultMemoryMetric">—</strong></div>
+              <div class="result-metric"><span>模型调用</span><strong id="resultLlmMetric">—</strong></div>
+              <div class="result-metric"><span>实际耗时</span><strong id="resultDurationMetric">—</strong></div>
+            </div>
 
-              <div class="result-grid">
-                <article class="card result-card">
+            <div class="result-panel active" data-result-panel="summary">
+              <div class="content-workspace" data-content-tabs="summary">
+                <nav class="content-tabs" role="tablist" aria-label="仿真总览内容">
+                  <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="activity">活动趋势</button>
+                  <button class="content-tab" role="tab" aria-selected="false" data-content-tab="events">关键事件</button>
+                  <button class="content-tab" role="tab" aria-selected="false" data-content-tab="network">对话网络</button>
+                  <button class="content-tab" role="tab" aria-selected="false" data-content-tab="active-agents">活跃 Agent</button>
+                </nav>
+                <div class="content-tab-panel active" role="tabpanel" data-content-panel="activity">
                   <div class="result-card-head"><div><strong>活动变化</strong><span id="activityChartMeta">正在读取</span></div><div class="result-chart-legend"><span><i></i>行动</span><span><i class="chat"></i>对话</span><span><i class="memory"></i>记忆</span></div></div>
                   <div class="result-card-body">
                     <svg class="activity-chart" id="activityChart" viewBox="0 0 720 230" role="img" aria-label="行动、对话和记忆数量变化折线图"><text x="285" y="118">正在读取</text></svg>
                   </div>
-                </article>
-
-                <article class="card result-card">
+                </div>
+                <div class="content-tab-panel" role="tabpanel" data-content-panel="events">
                   <div class="result-card-head"><div><strong>关键事件</strong><span>按虚拟时间排序</span></div><button class="btn btn-sm" data-open-result-tab="timeline">查看全部</button></div>
                   <div class="result-card-body result-event-list" id="summaryKeyEvents"><div class="empty-state"><strong>正在读取</strong></div></div>
-                </article>
-              </div>
-
-              <div class="result-grid equal">
-                <article class="card result-card">
+                </div>
+                <div class="content-tab-panel" role="tabpanel" data-content-panel="network">
                   <div class="result-card-head"><div><strong>对话网络</strong><span>连线粗细表示实际对话场次</span></div><span class="chip teal" id="summaryNetworkMeta">最大连通分量 0</span></div>
                   <div class="result-card-body">
                     <div class="relation-map" id="summaryNetwork"><div class="empty-state"><strong>正在读取</strong></div></div>
                   </div>
-                </article>
-                <article class="card result-card">
+                </div>
+                <div class="content-tab-panel" role="tabpanel" data-content-panel="active-agents">
                   <div class="result-card-head"><div><strong>活跃 Agent</strong><span>按实际对话场次排序</span></div><button class="btn btn-sm" data-open-result-tab="agents">查看全部</button></div>
                   <div class="result-card-body rank-list" id="summaryActiveAgents"><div class="empty-state"><strong>正在读取</strong></div></div>
-                </article>
+                </div>
               </div>
             </div>
 
@@ -1453,8 +1453,13 @@
             <div><div class="heading-line"><h1>模型服务</h1><button type="button" class="help-tip" aria-label="模型服务说明" data-tooltip="这里保存当前实验的模型连接；发布后解析为明确模型 ID 并锁定。">?</button></div></div>
             <span class="revision-meta"><span class="connection-status">2 个服务在线</span></span>
           </div>
-          <div class="two-col">
-            <article class="card card-pad">
+          <div class="content-workspace" data-content-tabs="models">
+            <nav class="content-tabs" role="tablist" aria-label="模型服务配置">
+              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="chat">Chat 模型</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="embedding">Embedding 模型</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="resolution">解析结果</button>
+            </nav>
+            <div class="content-tab-panel active" role="tabpanel" data-content-panel="chat">
               <div class="provider-head"><div class="provider-logo">LLM</div><div class="section-title"><strong>聊天与推理模型</strong><button type="button" class="help-tip" aria-label="聊天模型用途" data-tooltip="用于规划、对话、反思和动作决策。">?</button></div><span class="connection-status">在线</span></div>
               <div class="form-grid">
                 <div class="field"><label for="chatProvider">Provider</label><select class="control dirty-track" id="chatProvider"><option value="vllm">vLLM</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option></select></div>
@@ -1469,8 +1474,8 @@
                 <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
               <div class="provider-foot"><span id="chatServiceCapability">服务上下文：发布启动时自动检测</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
-            </article>
-            <article class="card card-pad">
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="embedding">
               <div class="provider-head"><div class="provider-logo blue">EMB</div><div class="section-title"><strong>记忆 Embedding 模型</strong><button type="button" class="help-tip" aria-label="Embedding 模型用途" data-tooltip="用于记忆索引、相似度检索和关联排序。">?</button></div><span class="connection-status">在线</span></div>
               <div class="form-grid">
                 <div class="field"><label for="embeddingProvider">Provider</label><select class="control dirty-track" id="embeddingProvider"><option value="openai_compatible">OpenAI Compatible</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option><option value="hugging_face">Hugging Face</option></select></div>
@@ -1483,16 +1488,12 @@
                 <div class="field" style="grid-column:1/-1"><label for="embeddingSecret">API Key</label><input class="control dirty-track" id="embeddingSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
               <div class="provider-foot"><span>向量维度 1,024 · 最近检测于 21:42</span><button class="btn btn-sm test-connection" data-kind="Embedding 模型">测试连接</button></div>
-            </article>
-          </div>
-          <article class="card card-pad" style="margin-top:16px">
-            <div class="section-head compact"><div class="section-title"><h2>实验级解析结果</h2><button type="button" class="help-tip" aria-label="模型解析结果说明" data-tooltip="auto 会在发布时解析为明确模型 ID；运行期间不会跟随服务列表变化。">?</button></div><span class="chip blue">Revision Pinning</span></div>
-            <div class="model-summary">
-              <div class="summary-cell"><span>Chat Model</span><strong id="resolvedChatModel">尚未解析</strong></div>
-              <div class="summary-cell"><span>Embedding Model</span><strong id="resolvedEmbeddingModel">尚未解析</strong></div>
-              <div class="summary-cell"><span>连接配置哈希</span><strong>mdl_9f2a03c8</strong></div>
             </div>
-          </article>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="resolution">
+              <div class="panel-intro"><div><h2>实验级解析结果</h2><p>auto 会在发布启动时解析为明确模型 ID；运行期间始终使用 Revision 中锁定的模型。</p></div><span class="chip blue">Revision Pinning</span></div>
+              <div class="model-summary"><div class="summary-cell"><span>Chat Model</span><strong id="resolvedChatModel">尚未解析</strong></div><div class="summary-cell"><span>Embedding Model</span><strong id="resolvedEmbeddingModel">尚未解析</strong></div><div class="summary-cell"><span>连接配置哈希</span><strong>随 Revision 生成</strong></div></div>
+            </div>
+          </div>
         </section>
 
         <section class="page" id="page-prompts">
@@ -1523,32 +1524,29 @@ ${name} 当前的情况：${currently}</textarea>
             <div><div class="heading-line"><h1>世界与地图</h1><button type="button" class="help-tip" aria-label="世界版本说明" data-tooltip="地图结构和视觉资源一起锁定，保证模拟与回放使用相同世界版本。">?</button></div></div>
             <span class="revision-meta"><span>世界快照</span><code id="worldRevisionCode">未发布</code></span>
           </div>
-          <div class="world-layout">
-            <article class="card card-pad">
-              <div class="section-head"><div><h2 id="worldPreviewTitle">世界待配置</h2><span class="section-side" id="worldPreviewMeta">等待世界定义</span></div></div>
+          <div class="content-workspace" data-content-tabs="world">
+            <nav class="content-tabs" role="tablist" aria-label="世界与地图内容">
+              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="map">地图预览</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="definition">地图定义</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="assets">资源版本</button>
+            </nav>
+            <div class="content-tab-panel active" role="tabpanel" data-content-panel="map">
+              <div class="panel-intro"><div><h2 id="worldPreviewTitle">世界待配置</h2><p id="worldPreviewMeta">等待世界定义</p></div><span class="chip teal">Revision 世界快照</span></div>
               <div class="map-preview">
                 <img src="/static/console/snapshot.png" alt="实验地图预览" />
                 <span class="map-badge" id="worldMapBadge">当前 Revision 世界快照</span>
                 <div class="map-tools"><button class="map-tool" data-toast="地图已适配视口" aria-label="适配地图">⌗</button></div>
               </div>
               <div class="map-legend"><span><i class="legend-dot"></i><b id="worldWalkableTiles">0</b> 可访问 Tile</span><span><i class="legend-dot collision"></i><b id="worldCollisionTiles">0</b> 碰撞 Tile</span><span><i class="legend-dot agent"></i><b id="worldAgentPositions">0</b> Agent 初始位置</span></div>
-            </article>
-            <aside class="stack">
-              <article class="card card-pad">
-                <div class="section-head compact"><div class="section-title"><h2>地图定义</h2><button type="button" class="help-tip" aria-label="地图校验说明" data-tooltip="发布前校验地图尺寸、地址层级与所有资源引用。">?</button></div><span class="chip teal">有效</span></div>
-                <div class="form-grid" style="grid-template-columns:1fr">
-                  <div class="field"><label for="worldName">世界名称</label><input class="control dirty-track" id="worldName" value="the Ville" /></div>
-                  <div class="field"><label for="worldKey">世界稳定键</label><input class="control dirty-track" id="worldKey" /></div>
-                  <div class="field"><label>地址层级</label><div class="locked-input" id="worldAddressKeys">尚未配置</div></div>
-                  <div class="field"><label>地图尺寸</label><div class="locked-input" id="worldDimensions">尚未配置</div></div>
-                  <div class="field"><label for="worldDefinition">完整世界定义 JSON</label><textarea class="control dirty-track" id="worldDefinition" style="min-height:220px;font-family:var(--mono)"></textarea></div>
-                </div>
-              </article>
-              <article class="card card-pad">
-                <div class="section-head compact"><div class="section-title"><h2>资源版本锁</h2><button type="button" class="help-tip edge" aria-label="资源版本锁说明" data-tooltip="发布时按内容哈希锁定文件；同名文件变化不会影响已有 Revision。">?</button></div><label class="btn btn-sm" for="worldAssetInput">上传资源</label><input id="worldAssetInput" type="file" hidden multiple /></div>
-                <div class="asset-list" id="worldAssetList"><div class="empty-state"><strong>等待实验数据</strong></div></div>
-              </article>
-            </aside>
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="definition">
+              <div class="panel-intro"><div><h2>地图定义</h2><p>发布前校验地图尺寸、地址层级与完整世界结构。</p></div><span class="chip teal">有效</span></div>
+              <div class="form-grid"><div class="field"><label for="worldName">世界名称</label><input class="control dirty-track" id="worldName" value="the Ville" /></div><div class="field"><label for="worldKey">世界稳定键</label><input class="control dirty-track" id="worldKey" /></div><div class="field"><label>地址层级</label><div class="locked-input" id="worldAddressKeys">尚未配置</div></div><div class="field"><label>地图尺寸</label><div class="locked-input" id="worldDimensions">尚未配置</div></div><div class="field" style="grid-column:1/-1"><label for="worldDefinition">完整世界定义 JSON</label><textarea class="control dirty-track" id="worldDefinition" style="min-height:360px;font-family:var(--mono)"></textarea></div></div>
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="assets">
+              <div class="panel-intro"><div><h2>资源版本锁</h2><p>按内容哈希锁定视觉与结构资源；同名文件变化不会影响已有 Revision。</p></div><div><label class="btn btn-sm" for="worldAssetInput">上传资源</label><input id="worldAssetInput" type="file" hidden multiple /></div></div>
+              <div class="asset-list" id="worldAssetList"><div class="empty-state"><strong>等待实验数据</strong></div></div>
+            </div>
           </div>
         </section>
 
@@ -1557,16 +1555,23 @@ ${name} 当前的情况：${currently}</textarea>
             <div><div class="heading-line"><h1>行为参数</h1><button type="button" class="help-tip" aria-label="行为参数说明" data-tooltip="这些参数随实验 Revision 保存，用于对比不同阈值下的行为结果。">?</button></div></div>
             <span class="revision-meta"><span>参数方案</span><code>balanced-social@1.0</code></span>
           </div>
-          <div class="advanced-grid">
-            <article class="card card-pad">
+          <div class="content-workspace" data-content-tabs="advanced">
+            <nav class="content-tabs" role="tablist" aria-label="行为参数分类">
+              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="perception">感知与反思</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="memory">记忆检索</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="social">社交行为</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="execution">执行与复现</button>
+              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="results">结果记录</button>
+            </nav>
+            <div class="content-tab-panel active" role="tabpanel" data-content-panel="perception">
               <div class="section-head compact"><div class="section-title"><h2>感知与反思</h2><button type="button" class="help-tip" aria-label="感知与反思参数说明" data-tooltip="影响 Agent 观察环境、积累情感和生成反思。">?</button></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>视野半径</strong><button type="button" class="help-tip" aria-label="视野半径说明" data-tooltip="以 Agent 当前 Tile 为中心的 box 半径。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="visionOutput" /><output class="range-value" id="visionOutput">8</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>注意力带宽</strong><button type="button" class="help-tip" aria-label="注意力带宽说明" data-tooltip="每步最多处理的事件数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="bandwidthOutput" /><output class="range-value" id="bandwidthOutput">8</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>反思阈值</strong><button type="button" class="help-tip" aria-label="反思阈值说明" data-tooltip="情感强度累计到该值后触发反思。">?</button></div><div class="range-wrap"><input type="range" min="20" max="300" step="10" value="150" data-range-output="reflectOutput" /><output class="range-value" id="reflectOutput">150</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>反思焦点数量</strong><button type="button" class="help-tip" aria-label="反思焦点数量说明" data-tooltip="每次反思生成的问题数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="3" data-range-output="focusOutput" /><output class="range-value" id="focusOutput">3</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>每个焦点洞察</strong><button type="button" class="help-tip" aria-label="每个焦点洞察说明" data-tooltip="每个反思焦点最多生成的洞察数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="5" data-range-output="insightOutput" /><output class="range-value" id="insightOutput">5</output></div></div>
-            </article>
-            <article class="card card-pad">
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="memory">
               <div class="section-head compact"><div class="section-title"><h2>记忆检索</h2><button type="button" class="help-tip" aria-label="记忆检索参数说明" data-tooltip="控制记忆候选数量和排序权重。">?</button></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>近期记忆保留</strong><button type="button" class="help-tip" aria-label="近期记忆保留说明" data-tooltip="每种记忆默认返回的最近条数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="30" value="8" data-range-output="retentionOutput" /><output class="range-value" id="retentionOutput">8</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>每类记忆上限</strong><button type="button" class="help-tip" aria-label="每类记忆上限说明" data-tooltip="事件、反思和对话记忆分别允许保留的最大条数；-1 表示不限。">?</button></div><div class="input-unit"><input class="control dirty-track" id="maxMemories" type="number" min="-1" value="-1" /><span>条</span></div></div>
@@ -1575,28 +1580,28 @@ ${name} 当前的情况：${currently}</textarea>
               <div class="setting-row"><div class="setting-copy"><strong>新近性权重</strong><button type="button" class="help-tip" aria-label="新近性权重说明" data-tooltip="时间接近程度对最终排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="0.5" data-range-output="recencyOutput" /><output class="range-value" id="recencyOutput">0.5</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>相关性权重</strong><button type="button" class="help-tip" aria-label="相关性权重说明" data-tooltip="向量语义相似度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="3" data-range-output="relevanceOutput" /><output class="range-value" id="relevanceOutput">3.0</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>重要性权重</strong><button type="button" class="help-tip" aria-label="重要性权重说明" data-tooltip="事件情感强度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="2" data-range-output="importanceOutput" /><output class="range-value" id="importanceOutput">2.0</output></div></div>
-            </article>
-            <article class="card card-pad">
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="social">
               <div class="section-head compact"><div class="section-title"><h2>社交行为</h2><button type="button" class="help-tip" aria-label="社交行为参数说明" data-tooltip="控制对话频率、轮数和夜间互动。">?</button></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>最大对话轮数</strong><button type="button" class="help-tip" aria-label="最大对话轮数说明" data-tooltip="每次社交互动允许的最大往返轮数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="12" value="4" data-range-output="chatOutput" /><output class="range-value" id="chatOutput">4</output></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>再次对话冷却</strong><button type="button" class="help-tip" aria-label="再次对话冷却说明" data-tooltip="同一组 Agent 再次发起对话前的间隔。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatCooldown" value="60" /><span>分钟</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>夜间停止社交</strong><button type="button" class="help-tip" aria-label="夜间停止社交说明" data-tooltip="到达指定虚拟时间后不再发起新互动。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatStopHour" value="23:00" /><span>时刻</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>重复内容检测</strong><button type="button" class="help-tip" aria-label="重复内容检测说明" data-tooltip="从第二轮开始检测对话复读。">?</button></div><button class="switch on" id="repeatDetection" aria-label="切换重复内容检测"></button></div>
-            </article>
-            <article class="card card-pad">
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="execution">
               <div class="section-head compact"><div class="section-title"><h2>执行与复现</h2><button type="button" class="help-tip" aria-label="执行与复现参数说明" data-tooltip="控制随机序列、检查点和记忆有效期。">?</button></div><span class="inline-risk">高影响 <button type="button" class="help-tip edge" aria-label="高影响参数说明" data-tooltip="调整这些参数可能显著改变实验结果，建议从现有 Revision 创建新修订。">?</button></span></div>
               <div class="setting-row"><div class="setting-copy"><strong>日程生成重试</strong><button type="button" class="help-tip" aria-label="日程生成重试说明" data-tooltip="日程未满足时间或多样性约束时的最大重试次数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleRetries" type="number" min="1" max="100" value="5" /><span>次</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>日程活动多样性</strong><button type="button" class="help-tip" aria-label="日程活动多样性说明" data-tooltip="日程生成结果至少包含的不同活动数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleDiversity" type="number" min="1" max="100" value="5" /><span>类</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>检查点频率</strong><button type="button" class="help-tip" aria-label="检查点频率说明" data-tooltip="每完成指定步数持久化一次运行状态。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointInterval" value="1" /><span>步</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>检查点保留</strong><button type="button" class="help-tip" aria-label="检查点保留说明" data-tooltip="成功生成新检查点后保留的最近完整恢复点数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointRetention" type="number" min="2" max="20" value="2" /><span>份</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>记忆默认有效期</strong><button type="button" class="help-tip" aria-label="记忆默认有效期说明" data-tooltip="事件与反思记忆的默认过期天数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="memoryExpireDays" value="30" /><span>天</span></div></div>
-            </article>
-            <article class="card card-pad">
+            </div>
+            <div class="content-tab-panel" role="tabpanel" data-content-panel="results">
               <div class="section-head compact"><div class="section-title"><h2>结果记录</h2><button type="button" class="help-tip" aria-label="结果记录参数说明" data-tooltip="控制结果查询粒度、兼容回放和模型调用留痕。">?</button></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>Agent 状态投影</strong><button type="button" class="help-tip" aria-label="Agent 状态投影说明" data-tooltip="每隔多少步写入可查询的 Agent 状态；原始逐步结果仍完整保存。">?</button></div><div class="input-unit"><input class="control dirty-track" id="projectionInterval" type="number" min="1" max="100" value="1" /><span>步</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>兼容回放插值</strong><button type="button" class="help-tip" aria-label="兼容回放插值说明" data-tooltip="旧 movement.json 中每个模拟步骤生成的动画采样数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="replayFrames" type="number" min="1" max="120" value="60" /><span>帧</span></div></div>
               <div class="setting-row"><div class="setting-copy"><strong>记录模型输入输出</strong><button type="button" class="help-tip" aria-label="记录模型输入输出说明" data-tooltip="关闭时只记录调用统计；开启后额外保存脱敏 payload。">?</button></div><button class="switch" id="capturePayloads" aria-label="切换模型输入输出记录"></button></div>
-            </article>
+            </div>
           </div>
         </section>
       </div>
@@ -1713,19 +1718,11 @@ ${name} 当前的情况：${currently}</textarea>
     <div class="modal wide">
       <div class="modal-head"><div><h2 id="agentEditorTitle">编辑 Agent</h2><p>保存到当前实验 Draft；稳定键用于历史结果关联，显示名称可以修改。</p></div><button class="close" id="closeAgentEditor" aria-label="关闭">×</button></div>
       <div class="modal-body">
-        <div class="form-grid">
-          <div class="field"><label for="agentEditKey">稳定键</label><input class="control" id="agentEditKey" placeholder="resident-026" /></div>
-          <div class="field"><label for="agentEditName">显示名称</label><input class="control" id="agentEditName" /></div>
-          <div class="field"><label for="agentEditAge">年龄</label><input class="control" id="agentEditAge" type="number" min="0" max="150" /></div>
-          <div class="field"><label for="agentEditPortrait">画像资源引用</label><input class="control" id="agentEditPortrait" placeholder="可留空" /></div>
-          <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
-          <div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div>
-          <div class="field" style="grid-column:1/-1"><label for="agentEditCurrently">当前目标</label><textarea class="control" id="agentEditCurrently"></textarea></div>
-          <div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div>
-          <div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div>
-          <div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div>
-          <div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div>
-          <div class="field" style="grid-column:1/-1"><label for="agentEditSpatial">空间定义 JSON</label><textarea class="control" id="agentEditSpatial" style="min-height:150px;font-family:var(--mono)"></textarea></div>
+        <div class="content-workspace" data-content-tabs="agent-editor">
+          <nav class="content-tabs" role="tablist" aria-label="Agent 定义内容"><button class="content-tab active" role="tab" aria-selected="true" data-content-tab="identity">身份</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="traits">特质与计划</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="space">初始位置与空间</button></nav>
+          <div class="content-tab-panel active" role="tabpanel" data-content-panel="identity"><div class="form-grid"><div class="field"><label for="agentEditKey">稳定键</label><input class="control" id="agentEditKey" placeholder="resident-026" /></div><div class="field"><label for="agentEditName">显示名称</label><input class="control" id="agentEditName" /></div><div class="field"><label for="agentEditAge">年龄</label><input class="control" id="agentEditAge" type="number" min="0" max="150" /></div><div class="field"><label for="agentEditPortrait">画像资源引用</label><input class="control" id="agentEditPortrait" placeholder="可留空" /></div><div class="field" style="grid-column:1/-1"><label for="agentEditCurrently">当前目标</label><textarea class="control" id="agentEditCurrently"></textarea></div></div></div>
+          <div class="content-tab-panel" role="tabpanel" data-content-panel="traits"><div class="form-grid"><div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div><div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div><div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div><div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div></div></div>
+          <div class="content-tab-panel" role="tabpanel" data-content-panel="space"><div class="form-grid"><div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div><div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div><div class="field" style="grid-column:1/-1"><label for="agentEditSpatial">空间定义 JSON</label><textarea class="control" id="agentEditSpatial" style="min-height:240px;font-family:var(--mono)"></textarea></div></div></div>
         </div>
       </div>
       <div class="modal-foot"><button class="btn" id="deleteAgentBtn">删除 Agent</button><button class="btn" id="cancelAgentEditor">取消</button><button class="btn btn-primary" id="saveAgentEditor">保存 Agent</button></div>
