@@ -582,6 +582,10 @@
       this.publicEditor.setWorld(this.draft.world);
       document.getElementById('mapCatalogShell').hidden = true;
       document.getElementById('mapEditorShell').hidden = false;
+      requestAnimationFrame(() => {
+        this.publicEditor.resize();
+        this.publicEditor.fit();
+      });
       document.getElementById('mapEditorTitle').textContent = this.detail.name;
       document.getElementById('mapEditorMeta').textContent = `${this.detail.map_key} · ${this.draft.world.definition.size[1]} × ${this.draft.world.definition.size[0]} · Revision ${this.draft.revision_no}`;
       const editable = this.draft.state === 'DRAFT';
@@ -722,7 +726,10 @@
       document.getElementById('experimentMapOverlayTitle').textContent = `${this.baseExperimentRevision.map_name} · 实验微调`;
       document.getElementById('experimentMapOverlayMeta').textContent = `公共 v${this.baseExperimentRevision.revision_no} + 当前实验覆盖层`;
       modal('open', 'experimentMapOverlayModal');
-      requestAnimationFrame(() => this.overlayEditor.fit());
+      requestAnimationFrame(() => {
+        this.overlayEditor.resize();
+        this.overlayEditor.fit();
+      });
     },
 
     async saveExperimentOverlay() {

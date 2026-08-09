@@ -116,6 +116,7 @@ class CreateMapRequest(StrictModel):
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     source_revision_id: str | None = None
+    map_key: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")
 
 
 class MapDraftUpdateRequest(StrictModel):
@@ -306,6 +307,7 @@ def create_app(
             name=body.name,
             description=body.description,
             source_revision_id=body.source_revision_id,
+            map_key=body.map_key,
         )
 
     @app.get("/api/v1/maps")

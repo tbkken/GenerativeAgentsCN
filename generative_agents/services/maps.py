@@ -255,11 +255,23 @@ class WorldMapService:
         name: str,
         description: str = "",
         source_revision_id: str | None = None,
+        map_key: str | None = None,
     ) -> dict[str, Any]:
         name = name.strip()
         if not name:
             raise ServiceError("INVALID_MAP_NAME", "地图名称不能为空", status_code=422)
+        stable_key = map_key.strip() if map_key else _make_key(name)
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]{1,63}", stable_key):
+            raise ServiceError(
+                "INVALID_MAP_KEY",
+                "地图稳定键必须由小写字母、数字和连字符组成",
+                status_code=422,
+            )
         with self.database.session_factory.begin() as session:
+            if session.scalar(select(WorldMap.id).where(WorldMap.map_key == stable_key)):
+                raise ServiceError(
+                    "MAP_KEY_CONFLICT", "地图稳定键已被使用", status_code=409
+                )
             base_revision: WorldMapRevision | None = None
             if source_revision_id:
                 base_revision = session.get(WorldMapRevision, source_revision_id)
@@ -273,7 +285,7 @@ class WorldMapService:
             now = _utc_now()
             public_map = WorldMap(
                 id=str(uuid4()),
-                map_key=_make_key(name),
+                map_key=stable_key,
                 name=name,
                 description=description,
                 status="DRAFT",
