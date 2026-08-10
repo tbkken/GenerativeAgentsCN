@@ -97,12 +97,46 @@ class SimulationRunner:
                 agent = self.game.get_agent(agent_key)
                 from_coord = tuple(agent.coord)
                 outcome = self.game.agent_think(agent_key, status)
-                collector.capture_agent(agent_key, agent, from_coord, outcome)
-                observed_path = outcome.get("plan", {}).get("path") or ()
-                status["coord"] = (
-                    tuple(observed_path[-1]) if observed_path else tuple(agent.coord)
+                planned_path = tuple(
+                    tuple(coord)
+                    for coord in (outcome.get("plan", {}).get("path") or ())
                 )
-                status["path"] = tuple()
+                movement_budget = self._movement_budget(stride_minutes)
+                consumed = planned_path[:movement_budget]
+                remaining = planned_path[len(consumed) :]
+                executed_path = tuple()
+                if consumed:
+                    move = getattr(agent, "move", None)
+                    if callable(move):
+                        move(tuple(consumed[-1]), remaining)
+                    else:
+                        # Lightweight domain adapters used by importers/tests
+                        # may expose only coord/path state.
+                        agent.coord = tuple(consumed[-1])
+                        agent.path = list(remaining)
+                    # A committed path is an interval fact.  Include both the
+                    # observed origin and every consumed waypoint so
+                    # from_coord -> path -> to_coord is self-consistent.
+                    observed_waypoints = (
+                        consumed[1:]
+                        if consumed[0] == from_coord
+                        else consumed
+                    )
+                    executed_path = (from_coord, *observed_waypoints)
+                collector.capture_agent(
+                    agent_key,
+                    agent,
+                    from_coord,
+                    outcome,
+                    executed_path=executed_path,
+                    planned_path=planned_path,
+                    remaining_path=remaining,
+                )
+                # Agent.path is part of Game.snapshot_state, so an interrupted
+                # Run resumes with the exact unconsumed route rather than
+                # teleporting to its destination or recalculating a new path.
+                status["coord"] = tuple(agent.coord)
+                status["path"] = tuple(agent.path or ())
             result = collector.freeze()
             terminal_boundary = (
                 offset == steps - 1
@@ -117,6 +151,13 @@ class SimulationRunner:
             if not terminal_boundary:
                 self.context.clock.forward(stride_minutes)
         return self.completed_steps
+
+    def _movement_budget(self, stride_minutes: int) -> int:
+        profile = getattr(self.context, "algorithm", None)
+        tiles_per_minute = int(
+            getattr(profile, "movement_tiles_per_minute", 4)
+        )
+        return max(1, stride_minutes * max(1, tiles_per_minute))
 
 
 def build_file_committer(context: SimulationContext, game: Game) -> FileStepCommitter:

@@ -22,6 +22,32 @@ def estimate_chat_duration(chats, chars_per_minute=240):
     )
 
 
+_INVALID_CHAT_MARKERS = ("填坑", "待补充", "占位", "todo", "placeholder")
+
+
+def valid_chat_message(message, previous=()):
+    """Reject empty, placeholder and exact-repeat turns before persistence."""
+
+    if not isinstance(message, str):
+        return False
+    text = " ".join(message.split()).strip()
+    if len(text) < 2:
+        return False
+    folded = text.casefold()
+    if any(marker in folded for marker in _INVALID_CHAT_MARKERS):
+        return False
+    normalized = "".join(char for char in folded if char.isalnum())
+    if len(normalized) < 2:
+        return False
+    for _speaker, prior in previous:
+        prior_normalized = "".join(
+            char for char in str(prior).casefold() if char.isalnum()
+        )
+        if normalized == prior_normalized:
+            return False
+    return True
+
+
 class Agent:
     def __init__(
         self,
@@ -85,6 +111,16 @@ class Agent:
         self.repeat_detection_enabled = chat_config.get(
             "repeat_detection_enabled", True
         )
+        clock_timezone = clock.get_date().tzinfo
+        self.last_chat_at = {
+            str(agent_key): utils.to_date(
+                observed_at,
+                naive_timezone=clock_timezone,
+            )
+            for agent_key, observed_at in (
+                agent_config.get("last_chat_at") or {}
+            ).items()
+        }
 
         # memory
         self.spatial = memory.Spatial(
@@ -203,9 +239,6 @@ class Agent:
         if (plan["describe"] == "sleeping" or "睡" in plan["describe"]) and self.is_awake():
             self.logger.info("{} is going to sleep...".format(self.name))
             address = self.spatial.find_address("睡觉", as_list=True)
-            tiles = self.maze.get_address_tiles(address)
-            coord = self._rng.choice(list(tiles))
-            events = self.move(coord)
             self.action = memory.Action(
                 memory.Event(self.name, "正在", "睡觉", address=address, emoji="😴"),
                 memory.Event(
@@ -353,15 +386,28 @@ class Agent:
             plan["decompose"] = decompose
         return self.schedule.current_plan()
 
-    def revise_schedule(self, event, start, duration):
+    def revise_schedule(
+        self,
+        event,
+        start,
+        duration,
+        *,
+        local_interruption=False,
+        reason="ACTION_REVISED",
+    ):
         self.action = memory.Action(
             event, start=start, duration=duration, clock=self._clock
         )
-        plan, _ = self.schedule.current_plan()
-        if len(plan["decompose"]) > 0:
-            plan["decompose"] = self.completion(
-                "schedule_revise", self.action, self.schedule
+        if local_interruption:
+            self.schedule.insert_interruption(
+                event.get_describe(), start, duration
             )
+        else:
+            plan, _ = self.schedule.current_plan()
+            if len(plan["decompose"]) > 0:
+                plan["decompose"] = self.completion(
+                    "schedule_revise", self.action, self.schedule
+                )
         schedule = copy.deepcopy(self.schedule.daily_schedule)
         content_hash = hashlib.sha256(
             json.dumps(
@@ -375,7 +421,7 @@ class Agent:
             {
                 "kind": "schedule",
                 "agent_key": self.agent_key,
-                "reason": "ACTION_REVISED",
+                "reason": reason,
                 "content_hash": content_hash,
                 "schedule": tuple(schedule),
             }
@@ -624,21 +670,25 @@ class Agent:
             return False
         if self._skip_react(other):
             return False
-        if other.path:
+        if self.path or other.path:
             return False
         if self.get_event().fit(predicate="对话") or other.get_event().fit(predicate="对话"):
             return False
 
-        chats = self.associate.retrieve_chats(other.name)
-        if chats:
-            delta = self._clock.get_delta(chats[0].create)
+        self.last_chat_at = getattr(self, "last_chat_at", {})
+        other.last_chat_at = getattr(other, "last_chat_at", {})
+        last_chat_at = self.last_chat_at.get(other.agent_key)
+        if last_chat_at is not None:
+            delta = self._clock.get_delta(last_chat_at)
             self.logger.info(
-                "retrieved chat between {} and {}({} min):\n{}".format(
-                    self.name, other.name, delta, chats[0]
+                "last chat between {} and {} was {} min ago".format(
+                    self.name, other.name, delta
                 )
             )
             if delta < self.chat_cooldown_minutes:
                 return False
+
+        chats = self.associate.retrieve_chats(other.name)
 
         if not self.completion("decide_chat", self, other, focus, chats):
             return False
@@ -650,10 +700,24 @@ class Agent:
             other.completion("summarize_relation", other, self.name),
         ]
 
+        def generate_valid_turn(speaker, listener, relation):
+            for attempt in range(2):
+                text = speaker.completion(
+                    "generate_chat", speaker, listener, relation, chats
+                )
+                if valid_chat_message(text, chats):
+                    return " ".join(text.split()).strip()
+                speaker.logger.warning(
+                    "%s rejected invalid chat turn (attempt %s)",
+                    speaker.name,
+                    attempt + 1,
+                )
+            return None
+
         for i in range(self.chat_iter):
-            text = self.completion(
-                "generate_chat", self, other, relations[0], chats
-            )
+            text = generate_valid_turn(self, other, relations[0])
+            if text is None:
+                break
 
             if i > 0:
                 if self.repeat_detection_enabled:
@@ -673,9 +737,9 @@ class Agent:
             else:
                 chats.append((self.name, text))
 
-            text = other.completion(
-                "generate_chat", other, self, relations[1], chats
-            )
+            text = generate_valid_turn(other, self, relations[1])
+            if text is None:
+                break
             if i > 0 and self.repeat_detection_enabled:
                 # 对于响应对话的Agent，从第2轮开始，检查是否出现“复读”现象
                 end = self.completion(
@@ -693,6 +757,14 @@ class Agent:
             if end:
                 break
 
+        if len(chats) < 2:
+            self.logger.warning(
+                "%s and %s discarded an incomplete conversation",
+                self.name,
+                other.name,
+            )
+            return False
+
         key = self._clock.get_date("%Y%m%d-%H:%M")
         if key not in self.conversation.keys():
             self.conversation[key] = []
@@ -706,6 +778,11 @@ class Agent:
             )
         )
         chat_summary = self.completion("summarize_chats", chats)
+        if not valid_chat_message(chat_summary):
+            chat_summary = "；".join(
+                "{}：{}".format(speaker, content)
+                for speaker, content in chats
+            )
         chars_per_minute = (
             self._algorithm.chat_chars_per_minute if self._algorithm else 240
         )
@@ -722,6 +799,8 @@ class Agent:
                 "duration_source": "ESTIMATED",
             }
         )
+        self.last_chat_at[other.agent_key] = start
+        other.last_chat_at[self.agent_key] = start
         self.schedule_chat(
             chats, chat_summary, start, duration, other
         )
@@ -762,7 +841,13 @@ class Agent:
             address=address or self.get_tile().get_address(),
             emoji=f"💬",
         )
-        self.revise_schedule(event, start, duration)
+        self.revise_schedule(
+            event,
+            start,
+            duration,
+            local_interruption=True,
+            reason="CHAT_INSERTED",
+        )
 
     def _add_concept(
         self,
@@ -843,6 +928,10 @@ class Agent:
             "associate": self.associate.to_dict(),
             "chats": self.chats,
             "currently": self.scratch.currently,
+            "last_chat_at": {
+                agent_key: observed_at.isoformat()
+                for agent_key, observed_at in self.last_chat_at.items()
+            },
         }
         if with_action:
             info.update({"action": self.action.to_dict()})

@@ -29,15 +29,41 @@ class StepResultCollector:
         self._name_to_key = dict(name_to_key)
         self._sequences = {"conversation": 0, "memory": 0, "schedule": 0, "domain": 0}
 
-    def capture_agent(self, agent_key: str, agent, from_coord, outcome: Mapping) -> None:
+    def capture_agent(
+        self,
+        agent_key: str,
+        agent,
+        from_coord,
+        outcome: Mapping,
+        *,
+        executed_path=None,
+        planned_path=None,
+        remaining_path=None,
+    ) -> None:
         plan = outcome.get("plan") or {}
         info = outcome.get("info") or {}
-        observed_path = tuple(tuple(coord) for coord in plan.get("path") or ())
+        planned_path = tuple(
+            tuple(coord)
+            for coord in (
+                plan.get("path") if planned_path is None else planned_path
+            )
+            or ()
+        )
+        observed_path = tuple(
+            tuple(coord)
+            for coord in (
+                planned_path if executed_path is None else executed_path
+            )
+            or ()
+        )
+        remaining_path = tuple(
+            tuple(coord) for coord in (remaining_path or ())
+        )
         to_coord = tuple(agent.coord)
         event = agent.get_event()
         description = event.get_describe() if event else ""
         predicate = event.predicate if event else ""
-        if observed_path and len(observed_path) > 1:
+        if observed_path and tuple(from_coord) != to_coord:
             activity = ActivityKind.MOVING
         elif predicate in {"对话", "chat", "聊天"}:
             activity = ActivityKind.CHAT
@@ -64,7 +90,12 @@ class StepResultCollector:
                 location=tuple(agent.get_tile().get_address()),
                 currently=info.get("currently"),
                 path_source="OBSERVED",
-                decision_context=self._decision_context(plan, info),
+                decision_context=self._decision_context(
+                    plan,
+                    info,
+                    planned_path=planned_path,
+                    remaining_path=remaining_path,
+                ),
             )
         )
         if tuple(from_coord) != to_coord:
@@ -77,8 +108,19 @@ class StepResultCollector:
             self._capture_event(raw_event)
 
     @staticmethod
-    def _decision_context(plan: Mapping, info: Mapping) -> dict:
+    def _decision_context(
+        plan: Mapping,
+        info: Mapping,
+        *,
+        planned_path=None,
+        remaining_path=(),
+    ) -> dict:
         """Keep the human-readable decision facts without duplicating full memory storage."""
+
+        if planned_path is None:
+            planned_path = tuple(
+                tuple(coord) for coord in (plan.get("path") or ())
+            )
 
         perceptions = []
         for node_id, abstract in list((info.get("concepts") or {}).items())[:20]:
@@ -90,7 +132,12 @@ class StepResultCollector:
             "perceptions": perceptions,
             "schedule": schedule,
             "action": action,
-            "path": [list(coord) for coord in (plan.get("path") or ())],
+            # path remains a backwards-compatible alias for the newly planned
+            # route; StepResult.path is exclusively the route already executed
+            # during this committed interval.
+            "path": [list(coord) for coord in planned_path],
+            "planned_path": [list(coord) for coord in planned_path],
+            "remaining_path": [list(coord) for coord in remaining_path],
             "memory_counts": {
                 kind: len(associate.get(kind) or ())
                 for kind in ("event", "chat", "thought")

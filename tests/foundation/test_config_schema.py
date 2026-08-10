@@ -27,6 +27,7 @@ def test_algorithm_profile_is_the_fixed_ga_cn_v1_contract():
         "focus_retrieve_max": 30,
         "schedule_decompose_threshold_minutes": 60,
         "path_target_sample_limit": 4,
+        "movement_tiles_per_minute": 4,
         "chat_chars_per_minute": 240,
         "default_event_poignancy": 1,
     }

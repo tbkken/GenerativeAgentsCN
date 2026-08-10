@@ -15,6 +15,7 @@ class AlgorithmProfile:
     focus_retrieve_max: int
     schedule_decompose_threshold_minutes: int
     path_target_sample_limit: int
+    movement_tiles_per_minute: int
     chat_chars_per_minute: int
     default_event_poignancy: int
 
@@ -31,6 +32,7 @@ GA_CN_V1 = AlgorithmProfile(
     focus_retrieve_max=30,
     schedule_decompose_threshold_minutes=60,
     path_target_sample_limit=4,
+    movement_tiles_per_minute=4,
     chat_chars_per_minute=240,
     default_event_poignancy=1,
 )

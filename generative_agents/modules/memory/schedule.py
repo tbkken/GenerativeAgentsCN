@@ -1,5 +1,7 @@
 """generative_agents.memory.schedule"""
 
+import copy
+
 from generative_agents.modules import utils
 
 
@@ -65,6 +67,71 @@ class Schedule:
             return plan, plan
         last_plan = self.daily_schedule[-1]
         return last_plan, last_plan
+
+    def insert_interruption(self, describe, start, duration):
+        """Splice a short observed interruption into the current plan.
+
+        Conversations are already facts by the time this method is called.  A
+        deterministic local splice preserves the unaffected schedule instead
+        of asking an LLM to rewrite the remainder of the hour on every chat.
+        """
+
+        if duration < 1:
+            raise ValueError("interruption duration must be positive")
+        plan, _ = self.current_plan()
+        plan_start, plan_end = self.plan_stamps(plan)
+        observed_start = utils.daily_duration(start)
+        begin = max(plan_start, observed_start)
+        finish = min(plan_end, begin + duration)
+        if finish <= begin:
+            return False
+
+        source = list(plan.get("decompose") or ())
+        if not source:
+            source = [
+                {
+                    "idx": 0,
+                    "describe": plan["describe"],
+                    "start": plan_start,
+                    "duration": plan_end - plan_start,
+                }
+            ]
+
+        interruption = {
+            "describe": describe,
+            "start": begin,
+            "duration": finish - begin,
+        }
+        revised = []
+        inserted = False
+        for item in sorted(source, key=lambda value: value["start"]):
+            item = copy.deepcopy(item)
+            item_start, item_end = self.plan_stamps(item)
+            if item_end <= begin or item_start >= finish:
+                if not inserted and item_start >= finish:
+                    revised.append(dict(interruption))
+                    inserted = True
+                revised.append(item)
+                continue
+            if item_start < begin:
+                before = copy.deepcopy(item)
+                before["duration"] = begin - item_start
+                revised.append(before)
+            if not inserted:
+                revised.append(dict(interruption))
+                inserted = True
+            if item_end > finish:
+                after = copy.deepcopy(item)
+                after["start"] = finish
+                after["duration"] = item_end - finish
+                revised.append(after)
+        if not inserted:
+            revised.append(dict(interruption))
+        revised.sort(key=lambda value: value["start"])
+        for index, item in enumerate(revised):
+            item["idx"] = index
+        plan["decompose"] = revised
+        return True
 
     def plan_stamps(self, plan, time_format=None):
         def _to_date(minutes):
