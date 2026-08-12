@@ -65,7 +65,7 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             "map_revision_id": map_revision_id,
             "clock": {
                 "base_tick_ms": 100,
-                "duration_ms": 8_000,
+                "duration_ms": 9_000,
                 "snapshot_interval_ms": 1_000,
             },
             "actors": [
@@ -73,8 +73,8 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
                     "actor_key": "pedestrian",
                     "experiment_agent_key": agent_keys[0],
                     "role": "PEDESTRIAN",
-                    "initial_pose": {"x_m": 24, "y_m": 18, "heading_degrees": 90},
-                    "route": [{"x_m": 24, "y_m": 36, "heading_degrees": 90}],
+                    "initial_pose": {"x_m": 24, "y_m": 36, "heading_degrees": 270},
+                    "route": [{"x_m": 24, "y_m": 11, "heading_degrees": 270}],
                     "reasoning_interval_ms": 200,
                 },
                 {
@@ -146,10 +146,11 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
                         "subject": "actor:driver",
                         "vehicle": "tool:car-one",
                     },
-                    "input_bindings": {
-                        "relative_motion": "channel:vehicle-relative-motion",
-                        "current_motion": "state:tool:car-one:motion",
-                        "route": "state:tool:car-one:route",
+                        "input_bindings": {
+                            "relative_motion": "channel:vehicle-relative-motion",
+                            "signal_state": "state:map-object:signal-west:signal",
+                            "current_motion": "state:tool:car-one:motion",
+                            "route": "state:tool:car-one:route",
                     },
                     "output_bindings": {"motion": "channel:vehicle-motion"},
                 },
@@ -217,8 +218,8 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             checkpoint_interval_steps=1,
             committer=committer,
         )
-        assert runner.run(8) == 8
-        assert len(committer.results) == 8
+        assert runner.run(9) == 9
+        assert len(committer.results) == 9
         last = committer.results[-1][0]
         assert {item.agent_key for item in last.agents} == set(agent_keys)
         snapshots = [
@@ -227,7 +228,7 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             for event in result.domain_events
             if event.event_type == "capability.snapshot"
         ]
-        assert len(snapshots) == 8
+        assert len(snapshots) == 9
         assert snapshots[-1].payload["trajectory_samples"]
         execution_events = [
             event
@@ -247,13 +248,34 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             for execution in event.payload["executions"]
             if execution["task_key"].startswith("spatial-")
         }
-        assert len(attachment_tasks) == 4
+        assert len(attachment_tasks) == 8
         presence_channels = {
             key
             for key in snapshots[-1].payload["channels"]
             if key.startswith("state:zone:wait-") and key.endswith(":presence")
         }
         assert len(presence_channels) == 4
+        signal_states = [
+            snapshot.payload["placements"]["signal-west"]["state"]["state"]
+            for snapshot in snapshots
+        ]
+        assert set(signal_states) == {
+            "VEHICLE_GREEN",
+            "VEHICLE_YELLOW",
+            "VEHICLE_RED",
+        }
+        assert snapshots[-1].payload["placements"]["signal-west"]["state"] == {
+            "state": "VEHICLE_RED",
+            "phase": "VEHICLE_RED",
+            "request_since_ms": 200,
+        }
+        assert snapshots[-1].payload["placements"]["signal-north"]["state"] == {
+            "state": "VEHICLE_GREEN",
+            "phase": "VEHICLE_GREEN",
+            "request_since_ms": -1,
+        }
+        assert runner.scene.last_decisions["actor:driver"]["reason"] == "signal"
+        assert runner.scene.last_decisions["actor:driver"]["action"] == "YIELD"
         assert any(
             event.event_type == "traffic.passage-decision"
             for result, _ in committer.results
@@ -276,7 +298,7 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             checkpoint_interval_steps=1,
             committer=repeated,
         )
-        assert repeated_runner.run(8) == 8
+        assert repeated_runner.run(9) == 9
         assert snapshot_payloads(repeated) == reference_payloads
 
         before_resume = _MemoryCommitter()
@@ -297,7 +319,7 @@ def test_one_car_one_pedestrian_executes_published_capability_graph(tmp_path):
             committer=after_resume,
         )
         resumed_runner.completed_steps = 4
-        assert resumed_runner.run(4) == 8
+        assert resumed_runner.run(5) == 9
         assert (
             snapshot_payloads(before_resume) + snapshot_payloads(after_resume)
             == reference_payloads

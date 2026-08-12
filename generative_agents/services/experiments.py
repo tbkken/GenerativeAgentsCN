@@ -11,6 +11,7 @@ from uuid import uuid4
 
 from sqlalchemy import Text, cast, exists, func, or_, select, update
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 
 from generative_agents.config import (
     ExperimentDefinition,
@@ -1171,7 +1172,19 @@ class ExperimentService:
                 ).model_dump(mode="json", exclude_none=False)
                 definition = ExperimentDefinition.model_validate(payload)
             refs = set(session.scalars(select(Secret.id)).all())
-            report = validate_for_publish(definition, existing_secret_refs=refs)
+            capability_extension = session.get(
+                ExperimentRevisionCapability, revision.id
+            )
+            is_composed = (
+                capability_extension is not None
+                and capability_extension.extension_json.get("mode")
+                == "CAPABILITY_COMPOSED"
+            )
+            report = validate_for_publish(
+                definition,
+                existing_secret_refs=refs,
+                validate_legacy_agent_locations=not is_composed,
+            )
             from .workflows import (
                 WorkflowService,
                 workflow_execution_issues,
@@ -1285,7 +1298,17 @@ class ExperimentService:
             )
             definition = ExperimentDefinition.model_validate(normalized_payload)
         refs = set(session.scalars(select(Secret.id)).all())
-        report = validate_for_publish(definition, existing_secret_refs=refs)
+        capability_extension = session.get(ExperimentRevisionCapability, revision.id)
+        is_composed = (
+            capability_extension is not None
+            and capability_extension.extension_json.get("mode")
+            == "CAPABILITY_COMPOSED"
+        )
+        report = validate_for_publish(
+            definition,
+            existing_secret_refs=refs,
+            validate_legacy_agent_locations=not is_composed,
+        )
         from .scenarios import composed_scenario_requires_models_in_session
 
         if not composed_scenario_requires_models_in_session(session, revision):
@@ -1345,6 +1368,11 @@ class ExperimentService:
             )
         now = _utc_now()
         revision.definition_json = definition.model_dump(mode="json", exclude_none=False)
+        # JSON equality treats ``1`` and ``1.0`` as equal.  Published map
+        # materialization intentionally normalizes metre values to floats, so
+        # force the JSON column update or its normalized hash can describe a
+        # value that SQLAlchemy silently leaves in the draft representation.
+        flag_modified(revision, "definition_json")
         revision.definition_hash = report.definition_hash
         revision.validation_json = report.model_dump(mode="json")
         revision.validated_hash = report.definition_hash

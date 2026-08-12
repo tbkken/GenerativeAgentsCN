@@ -202,7 +202,17 @@ def _gap_acceptance(
     ttc = relative.get("time_to_collision_s")
     signal = inputs.get("signal_state") or {}
     signal_state = str(signal.get("state", signal.get("phase", ""))).upper()
-    signal_blocks = signal_state in {"RED", "VEHICLE-RED", "PEDESTRIAN-RED"}
+    signal_blocks = signal_state in {
+        "RED",
+        "VEHICLE-RED",
+        "PEDESTRIAN-RED",
+        "VEHICLE_RED",
+        "PEDESTRIAN_RED",
+        "YELLOW",
+        "AMBER",
+        "VEHICLE-YELLOW",
+        "VEHICLE_YELLOW",
+    }
     unsafe_gap = clearance <= collision_distance or (
         ttc is not None and 0 <= float(ttc) < safe_gap
     )
@@ -649,9 +659,23 @@ class CapabilityRuntimeEngine:
             ):
                 if not attachment.get("enabled", True):
                     continue
+                attachment = dict(attachment)
+                attachment_key = attachment["attachment_key"]
+                for binding_name, override_name in (
+                    ("target_bindings", "capability_target_overrides"),
+                    ("input_bindings", "capability_input_overrides"),
+                    ("output_bindings", "capability_output_overrides"),
+                ):
+                    attachment[binding_name] = {
+                        **(attachment.get(binding_name) or {}),
+                        **(
+                            (placement.get(override_name) or {}).get(attachment_key)
+                            or {}
+                        ),
+                    }
                 parameters = dict(attachment.get("parameters") or {})
                 parameters.update(
-                    parameter_overrides.get(attachment["attachment_key"]) or {}
+                    parameter_overrides.get(attachment_key) or {}
                 )
                 mounts.append(
                     self._attachment_mount(

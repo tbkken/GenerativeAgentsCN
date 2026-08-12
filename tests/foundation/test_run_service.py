@@ -77,7 +77,7 @@ def test_run_creation_revalidates_legacy_published_revision(
     )
     monkeypatch.setattr(
         "generative_agents.services.runs.validate_for_publish",
-        lambda _definition: legacy_report,
+        lambda _definition, **_kwargs: legacy_report,
     )
 
     runs = RunService(database, var_dir=tmp_path / "var")

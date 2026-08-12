@@ -1,7 +1,7 @@
 # 可组合能力仿真平台设计
 
-状态：实施中
-设计版本：1.0
+状态：第一阶段已实施并通过最终发布门禁
+设计版本：1.1
 能力合同版本：`ga-capability/v1`
 首次验证组合：一辆右转汽车 × 一名过街行人
 兼容基线：斯坦福小镇现有实验、地图、大脑、人群和 Run Manifest 不迁移、不重写
@@ -318,3 +318,37 @@ WALKING -> APPROACHING_TOOL -> ENTERING -> DRIVING -> PARKING -> EXITING -> WALK
 10. 固定种子结果可复现；
 11. 斯坦福小镇既有配置、发布、运行和回放回归通过；
 12. 数据迁移、API、产品工作区和端到端旅程都有测试证据。
+
+## 13. 第一阶段实现证据矩阵
+
+以下证据用于发布审计。页面文字、设计意图和单一 API 响应不单独作为完成证据；每项都必须同时存在可执行实现与直接回归测试。
+
+| 完成标准 | 可执行实现 | 直接证据 |
+| --- | --- | --- |
+| 1. 能力完整版本生命周期 | `services/capabilities.py` | `test_capability_draft_publish_conflict_and_fork_lifecycle`、`test_builtin_reseeding_versions_changed_capabilities_and_bundles` |
+| 2. 完整能力合同 | `config/capabilities.py`、能力中心表单 | `test_capability_bundle_validates_parameters_ports_and_versions`、`test_capability_workspace_exposes_form_driven_editors` |
+| 3. 六类挂载目标 | 空间资产、Agent 扩展、大脑扩展、工具附件和场景互动挂载 | `test_spatial_asset_can_attach_published_perception_capability`、`test_agent_can_own_car_and_use_capability_driven_mobility_choice`、`test_brain_revision_mounts_capability_packages_by_category`、`test_one_car_one_pedestrian_executes_published_capability_graph` |
+| 4. 画块外观、语义、能力和实例参数 | `config/spatial_assets.py`、`services/spatial_assets.py`、地图工作区 | `test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings`、`test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1` |
+| 5. 感知输出连接能力输入 | 等待区 `presence` → 信号控制器 → 司机信号输入 | `test_reusable_three_lane_intersection_map_is_seeded_from_spatial_assets`、`test_one_car_one_pedestrian_executes_published_capability_graph` |
+| 6. 人拥有并控制交通工具 | Agent 工具授权与出行方式决策扩展 | `test_agent_can_own_car_and_use_capability_driven_mobility_choice`、`test_agent_extension_rejects_mobility_choice_without_vehicle` |
+| 7. 多频率时间推进 | `runtime/multirate.py` | `test_multirate_scheduler_runs_dynamics_more_often_than_reasoning`、`test_event_tasks_run_only_when_matching_events_exist` |
+| 8. 一车一人纯配置装配 | 版本化三车道路口和 `one-car-one-pedestrian` 场景模板 | `test_versioned_one_car_one_pedestrian_template_applies_by_actor_slots` |
+| 9. 连续轨迹、信号与互动回放 | `runtime/replay_v2.py`、`web/static/replay-player.js` | `test_one_car_one_pedestrian_executes_published_capability_graph` 加浏览器端到端验收 |
+| 10. 固定输入可复现 | 能力快照、确定性虚拟时钟和可恢复检查点 | `test_one_car_one_pedestrian_executes_published_capability_graph` 的重复运行与中断恢复等值断言 |
+| 11. 斯坦福小镇兼容 | `LEGACY_TOWN` 运行路径和旧流程适配器 | `test_new_experiment_defaults_to_unmodified_legacy_town_mode`、`test_stanford_agents_keep_empty_default_extensions`、全量旧引擎回归 |
+| 12. 数据、API、工作区与 E2E | 0009–0022 数据迁移、V1 API、四类产品工作区 | 全量 `pytest` 发布门禁和浏览器端到端验收 |
+
+大脑编排的完成判定另有一条硬门禁：发布图必须由 `runtime/workflow_engine.py` 的 `WorkflowExecutor` 真实执行，不能只保存或渲染节点。标准新建节点只提供开始、结束、大模型、代码、选择器、变量赋值、变量聚合和子工作流；旧节点仅用于读取已发布的斯坦福小镇 Revision。`test_agent_completion_result_is_changed_by_the_published_workflow_graph` 直接证明发布图会改变 Agent 的真实完成结果。
+
+## 14. 最终发布验收记录
+
+最终验收使用独立数据库，通过真实产品界面完成“标准四向三车道路口 + 斯坦福小镇 25 人公共人群 + 一车一人场景模板”的创建、校验、发布、运行和回放旅程：
+
+- 发布门禁只计算场景中绑定的 2 个物理角色和 1 个工具，不再用未参演居民的小镇地址阻断组合场景；组合角色与工具的米制初始位置和路线改由场景边界校验负责；
+- 发布弹窗显示 0 个阻断项、0 次模型调用、20 秒场景、100 ms 物理 tick、20 个结果快照和 1300 次确定性能力执行；
+- revision 002 在 8 秒墙钟时间内完成 20/20 个结果步，空间路口、四组信号灯、行人与车辆均可回放；
+- Step 8 显示黄灯，Step 10 显示红灯；驾驶员检查器在信号阻断阶段显示 `YIELD`，证明“等待区感知 → 信号控制 → 司机决策”通过运行数据闭环；
+- 运行生成 Replay V2 和 Markdown 报告两个可下载产物；
+- 自动化发布门禁最终结果为 `357 passed, 7 skipped`。唯一警告为测试依赖的 Starlette TestClient/httpx2 迁移提示，不影响运行语义。
+
+浏览器验收额外发现并固化了三项回归保护：组合模式不得继承小镇地址校验；发布后的规范化 JSON 必须与 Revision 哈希严格一致；空间角色使用 Phaser Circle 时必须支持选中、跟随和逐步回放，不能假定所有对象都是 Sprite。

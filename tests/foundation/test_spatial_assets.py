@@ -45,7 +45,19 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
             "vehicle-yellow",
             "vehicle-red",
         }
-        assert contract["initial_state"]["phase"] == "vehicle-green"
+        assert contract["initial_state"] == {
+            "state": "VEHICLE_GREEN",
+            "phase": "VEHICLE_GREEN",
+        }
+        signal_controller = _capability_by_key(client, "traffic-signal-cycle")
+        attachment = contract["capability_attachments"][0]
+        assert attachment["attachment_key"] == "signal-cycle"
+        assert attachment["capability_revision_id"] == signal_controller[
+            "current_published"
+        ]["id"]
+        assert attachment["output_bindings"] == {
+            "signal_state": "state:${target}:signal"
+        }
 
 
 def test_spatial_asset_can_attach_published_perception_capability(database_url):

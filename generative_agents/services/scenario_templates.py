@@ -103,10 +103,10 @@ class ScenarioTemplateService:
 
             contract = ScenarioTemplateContract.model_validate(
                 {
-                    "name": "一辆车 × 一名行人：无信号过街博弈",
+                    "name": "一辆车 × 一名行人：信号感知过街博弈",
                     "summary": (
-                        "在标准四向三车道路口中，用相对运动感知、安全间隙决策、"
-                        "连续运动和最小距离观测研究人车让行博弈。"
+                        "在标准四向三车道路口中，用交通信号与相对运动感知、"
+                        "安全间隙决策、连续运动和最小距离观测研究人车让行博弈。"
                     ),
                     "tags": ["traffic", "pedestrian-safety", "game"],
                     "actor_slots": [
@@ -138,14 +138,14 @@ class ScenarioTemplateService:
                                 "role": "PEDESTRIAN",
                                 "initial_pose": {
                                     "x_m": 24,
-                                    "y_m": 18,
-                                    "heading_degrees": 90,
+                                    "y_m": 36,
+                                    "heading_degrees": 270,
                                 },
                                 "route": [
                                     {
                                         "x_m": 24,
-                                        "y_m": 36,
-                                        "heading_degrees": 90,
+                                        "y_m": 11,
+                                        "heading_degrees": 270,
                                     }
                                 ],
                                 "reasoning_interval_ms": 200,
@@ -227,6 +227,7 @@ class ScenarioTemplateService:
                                 },
                                 inputs={
                                     "relative_motion": "channel:vehicle-relative-motion",
+                                    "signal_state": "state:map-object:signal-west:signal",
                                     "current_motion": "state:tool:car-one:motion",
                                     "route": "state:tool:car-one:route",
                                 },

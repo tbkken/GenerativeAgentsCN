@@ -223,6 +223,96 @@ def _builtin_contracts() -> dict[str, CapabilityContract]:
                 "observability": {"record_outputs": True, "record_state": True},
             }
         ),
+        "traffic-signal-cycle": CapabilityContract.model_validate(
+            {
+                "name": "交通信号周期控制",
+                "summary": "按虚拟时间和相位偏移驱动可复现的绿、黄、红灯循环。",
+                "kind": "CONTROLLER",
+                "targets": ["MAP_OBJECT"],
+                "interfaces": ["traffic-signal-controller"],
+                "parameters_schema": {
+                    "type": "object",
+                    "properties": {
+                        "green_ms": {"type": "integer", "minimum": 100},
+                        "yellow_ms": {"type": "integer", "minimum": 100},
+                        "red_ms": {"type": "integer", "minimum": 100},
+                        "phase_offset_ms": {"type": "integer", "minimum": 0},
+                    },
+                    "required": [
+                        "green_ms",
+                        "yellow_ms",
+                        "red_ms",
+                        "phase_offset_ms",
+                    ],
+                    "additionalProperties": False,
+                },
+                "inputs": [
+                    {
+                        "key": "pedestrian_presence",
+                        "name": "行人等待请求",
+                        "data_type": "state/zone_presence",
+                    }
+                ],
+                "outputs": [
+                    {
+                        "key": "signal_state",
+                        "name": "交通信号状态",
+                        "data_type": "state/signal",
+                    }
+                ],
+                "state_schema": {
+                    "type": "object",
+                    "properties": {
+                        "state": {"type": "string"},
+                        "phase": {"type": "string"},
+                        "request_since_ms": {"type": "integer", "minimum": -1},
+                    },
+                    "required": ["state", "phase", "request_since_ms"],
+                    "additionalProperties": False,
+                },
+                "triggers": [
+                    {"mode": "FIXED_INTERVAL", "interval_ms": 200, "default": True}
+                ],
+                "implementation": {
+                    "kind": "PYTHON",
+                    "source": (
+                        "def main(inputs, context):\n"
+                        "    parameters = context.get(\"parameters\", {})\n"
+                        "    green_ms = int(parameters.get(\"green_ms\", 6000))\n"
+                        "    yellow_ms = int(parameters.get(\"yellow_ms\", 2000))\n"
+                        "    red_ms = int(parameters.get(\"red_ms\", 8000))\n"
+                        "    cycle_ms = green_ms + yellow_ms + red_ms\n"
+                        "    offset_ms = int(parameters.get(\"phase_offset_ms\", 0))\n"
+                        "    virtual_time_ms = int(context.get(\"virtual_time_ms\", 0))\n"
+                        "    presence = inputs.get(\"pedestrian_presence\", {})\n"
+                        "    has_request = int(presence.get(\"count\", 0)) > 0\n"
+                        "    previous = context.get(\"state\", {})\n"
+                        "    request_since_ms = int(previous.get(\"request_since_ms\", -1))\n"
+                        "    if request_since_ms < 0 and not has_request:\n"
+                        "        phase = \"VEHICLE_GREEN\"\n"
+                        "    else:\n"
+                        "        if request_since_ms < 0:\n"
+                        "            request_since_ms = virtual_time_ms\n"
+                        "        if not has_request and virtual_time_ms - request_since_ms >= cycle_ms:\n"
+                        "            request_since_ms = -1\n"
+                        "            phase = \"VEHICLE_GREEN\"\n"
+                        "        else:\n"
+                        "            elapsed_ms = (virtual_time_ms - request_since_ms + offset_ms) % cycle_ms\n"
+                        "            if elapsed_ms < green_ms:\n"
+                        "                phase = \"VEHICLE_GREEN\"\n"
+                        "            elif elapsed_ms < green_ms + yellow_ms:\n"
+                        "                phase = \"VEHICLE_YELLOW\"\n"
+                        "            else:\n"
+                        "                phase = \"VEHICLE_RED\"\n"
+                        "    signal = {\"state\": phase, \"phase\": phase, \"request_since_ms\": request_since_ms}\n"
+                        "    return {\"state\": signal, \"outputs\": {\"signal_state\": signal}}\n"
+                    ),
+                    "deterministic": True,
+                },
+                "permissions": ["execute-python", "read-virtual-time"],
+                "observability": {"record_outputs": True, "record_state": True},
+            }
+        ),
         "spatial-relative-motion": CapabilityContract.model_validate(
             {
                 "name": "相对运动感知",
@@ -558,7 +648,7 @@ class CapabilityService:
         self.database = database
 
     def ensure_builtin_capabilities(self) -> None:
-        """Create immutable baseline contracts without rewriting existing versions."""
+        """Create or version immutable built-ins without rewriting old revisions."""
 
         with self.database.session_factory.begin() as session:
             for capability_key, contract in _builtin_contracts().items():
@@ -567,31 +657,54 @@ class CapabilityService:
                         CapabilityDefinition.capability_key == capability_key
                     )
                 )
-                if existing is not None:
-                    continue
                 now = _utc_now()
                 document = contract.model_dump(mode="json", exclude_none=False)
-                capability = CapabilityDefinition(
-                    id=str(uuid4()),
-                    capability_key=capability_key,
-                    name=contract.name,
-                    description=contract.summary,
-                    status="PUBLISHED",
-                    is_builtin=True,
-                    row_version=1,
-                    created_at=now,
-                    updated_at=now,
-                )
-                session.add(capability)
-                session.flush()
+                contract_hash = _digest(document)
+                if existing is not None:
+                    current = session.get(
+                        CapabilityRevision, existing.current_published_revision_id
+                    )
+                    if current is not None and current.contract_hash == contract_hash:
+                        continue
+                    revision_no = int(
+                        session.scalar(
+                            select(func.max(CapabilityRevision.revision_no)).where(
+                                CapabilityRevision.capability_id == existing.id
+                            )
+                        )
+                        or 0
+                    ) + 1
+                    capability = existing
+                else:
+                    current = None
+                    revision_no = 1
+                    capability = CapabilityDefinition(
+                        id=str(uuid4()),
+                        capability_key=capability_key,
+                        name=contract.name,
+                        description=contract.summary,
+                        status="PUBLISHED",
+                        is_builtin=True,
+                        row_version=1,
+                        created_at=now,
+                        updated_at=now,
+                    )
+                    session.add(capability)
+                    session.flush()
+                errors = self._capability_publish_errors(session, contract)
+                if errors:
+                    raise RuntimeError(
+                        f"invalid built-in capability {capability_key}: {errors}"
+                    )
                 revision = CapabilityRevision(
                     id=str(uuid4()),
                     capability_id=capability.id,
-                    revision_no=1,
+                    revision_no=revision_no,
                     state="PUBLISHED",
+                    base_revision_id=current.id if current else None,
                     schema_version=contract.schema_version,
                     contract_json=document,
-                    contract_hash=_digest(document),
+                    contract_hash=contract_hash,
                     validation_json={"valid": True, "errors": [], "warnings": []},
                     lock_version=1,
                     created_at=now,
@@ -601,6 +714,11 @@ class CapabilityService:
                 session.add(revision)
                 session.flush()
                 capability.current_published_revision_id = revision.id
+                capability.name = contract.name
+                capability.description = contract.summary
+                if current is not None:
+                    capability.row_version += 1
+                    capability.updated_at = now
 
     def ensure_builtin_bundles(self) -> None:
         """Seed reusable traffic behavior packages from published atomic abilities."""
@@ -772,6 +890,15 @@ class CapabilityService:
                                     "port_key": "relative_motion",
                                 },
                                 "required": True,
+                            },
+                            {
+                                "key": "signal_state",
+                                "name": "交通信号状态",
+                                "endpoint": {
+                                    "instance_key": "gap_decision",
+                                    "port_key": "signal_state",
+                                },
+                                "required": False,
                             }
                         ],
                         "exposed_outputs": [
@@ -862,6 +989,15 @@ class CapabilityService:
                                 "required": True,
                             },
                             {
+                                "key": "signal_state",
+                                "name": "交通信号状态",
+                                "endpoint": {
+                                    "instance_key": "gap_decision",
+                                    "port_key": "signal_state",
+                                },
+                                "required": False,
+                            },
+                            {
                                 "key": "current_motion",
                                 "name": "车辆当前运动",
                                 "endpoint": {
@@ -933,40 +1069,61 @@ class CapabilityService:
                 ),
             }
             for bundle_key, composition in bundles.items():
-                if session.scalar(
+                existing = session.scalar(
                     select(CapabilityBundle.id).where(
                         CapabilityBundle.bundle_key == bundle_key
                     )
-                ):
-                    continue
+                )
+                bundle = session.get(CapabilityBundle, existing) if existing else None
+                document = composition.model_dump(mode="json", exclude_none=False)
+                composition_hash = _digest(document)
+                if bundle is not None:
+                    current = session.get(
+                        CapabilityBundleRevision,
+                        bundle.current_published_revision_id,
+                    )
+                    if current is not None and current.composition_hash == composition_hash:
+                        continue
+                    revision_no = int(
+                        session.scalar(
+                            select(func.max(CapabilityBundleRevision.revision_no)).where(
+                                CapabilityBundleRevision.bundle_id == bundle.id
+                            )
+                        )
+                        or 0
+                    ) + 1
+                else:
+                    current = None
+                    revision_no = 1
                 errors = self._bundle_publish_errors(session, composition)
                 if errors:
                     raise RuntimeError(
                         f"invalid built-in capability bundle {bundle_key}: {errors}"
                     )
                 now = _utc_now()
-                document = composition.model_dump(mode="json", exclude_none=False)
-                bundle = CapabilityBundle(
-                    id=str(uuid4()),
-                    bundle_key=bundle_key,
-                    name=composition.name,
-                    description=composition.summary,
-                    status="PUBLISHED",
-                    is_builtin=True,
-                    row_version=1,
-                    created_at=now,
-                    updated_at=now,
-                )
-                session.add(bundle)
-                session.flush()
+                if bundle is None:
+                    bundle = CapabilityBundle(
+                        id=str(uuid4()),
+                        bundle_key=bundle_key,
+                        name=composition.name,
+                        description=composition.summary,
+                        status="PUBLISHED",
+                        is_builtin=True,
+                        row_version=1,
+                        created_at=now,
+                        updated_at=now,
+                    )
+                    session.add(bundle)
+                    session.flush()
                 revision = CapabilityBundleRevision(
                     id=str(uuid4()),
                     bundle_id=bundle.id,
-                    revision_no=1,
+                    revision_no=revision_no,
                     state="PUBLISHED",
+                    base_revision_id=current.id if current else None,
                     schema_version=composition.schema_version,
                     composition_json=document,
-                    composition_hash=_digest(document),
+                    composition_hash=composition_hash,
                     validation_json={"valid": True, "errors": [], "warnings": []},
                     lock_version=1,
                     created_at=now,
@@ -976,6 +1133,11 @@ class CapabilityService:
                 session.add(revision)
                 session.flush()
                 bundle.current_published_revision_id = revision.id
+                bundle.name = composition.name
+                bundle.description = composition.summary
+                if current is not None:
+                    bundle.row_version += 1
+                    bundle.updated_at = now
 
     def create_capability(
         self,

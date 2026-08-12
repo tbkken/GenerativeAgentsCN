@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from fastapi.testclient import TestClient
 from uuid import UUID
 
@@ -201,6 +202,39 @@ def test_reusable_three_lane_intersection_map_is_seeded_from_spatial_assets(data
         definition = revision["world"]["definition"]
         assert definition["size"] == [48, 48]
         assert len(definition["tiles"]) == 48 * 48
+        layout = definition["traffic_layout"]
+        assert layout["intersection_type"] == "FOUR_WAY"
+        assert layout["approaches"] == ["NORTH", "EAST", "SOUTH", "WEST"]
+        assert layout["lanes_per_direction"] == 3
+        assert layout["lane_width_m"] == 3.0
+        assert {item["crosswalk_key"] for item in layout["crosswalks"]} == {
+            "north",
+            "east",
+            "south",
+            "west",
+        }
+        expected_crosswalk_coords = set()
+        for crosswalk in layout["crosswalks"]:
+            bounds = crosswalk["bounds_m"]
+            expected_crosswalk_coords.update(
+                (x, y)
+                for y in range(bounds["y"], bounds["y"] + bounds["height"])
+                for x in range(bounds["x"], bounds["x"] + bounds["width"])
+            )
+        actual_crosswalk_coords = {
+            tuple(item["coord"])
+            for item in definition["tiles"]
+            if item["tile"] == "crosswalk"
+        }
+        assert actual_crosswalk_coords == expected_crosswalk_coords
+        assert len(actual_crosswalk_coords) == 4 * 18 * 3
+        assert len(
+            [
+                item
+                for item in definition["tiles"]
+                if item["coord"][0] == 0 and item["tile"] == "road"
+            ]
+        ) == 2 * layout["lanes_per_direction"] * layout["lane_width_m"]
         scene = definition["spatial_scene"]
         assert set(scene["palette_refs"]) == {
             "ground",
@@ -208,7 +242,30 @@ def test_reusable_three_lane_intersection_map_is_seeded_from_spatial_assets(data
             "sidewalk",
             "crosswalk",
         }
-        assert len([item for item in scene["placements"] if item["instance_key"].startswith("signal-")]) == 4
+        signals = [
+            item
+            for item in scene["placements"]
+            if item["instance_key"].startswith("signal-")
+        ]
+        assert len(signals) == 4
+        assert {
+            item["capability_parameter_overrides"]
+            .get("signal-cycle", {})
+            .get("phase_offset_ms", 0)
+            for item in signals
+        } == {0, 8_000}
+        signal_inputs = {
+            item["instance_key"]: item["capability_input_overrides"][
+                "signal-cycle"
+            ]["pedestrian_presence"]
+            for item in signals
+        }
+        assert signal_inputs == {
+            "signal-north": "state:zone:wait-east:presence",
+            "signal-east": "state:zone:wait-north:presence",
+            "signal-south": "state:zone:wait-west:presence",
+            "signal-west": "state:zone:wait-south:presence",
+        }
         assert len([item for item in scene["placements"] if item["instance_key"].startswith("wait-")]) == 4
 
 
@@ -249,6 +306,14 @@ def test_versioned_one_car_one_pedestrian_template_applies_by_actor_slots(databa
             agent_keys
         )
         assert len(extension["capability_mounts"]) == 5
+        vehicle_mount = next(
+            item
+            for item in extension["capability_mounts"]
+            if item["mount_key"] == "vehicle-behavior"
+        )
+        assert vehicle_mount["input_bindings"]["signal_state"] == (
+            "state:map-object:signal-west:signal"
+        )
         report = client.post(
             f"/api/v1/experiments/{experiment['id']}/draft/capability-assembly/validate"
         ).json()
@@ -259,12 +324,16 @@ def test_versioned_one_car_one_pedestrian_template_applies_by_actor_slots(databa
             for item in report["schedule"]["tasks"]
             if item["source_kind"] == "SPATIAL_ASSET_ATTACHMENT"
         ]
-        assert len(inherited) == 4
+        assert len(inherited) == 8
         assert {item["source_ref"] for item in inherited} == {
-            "wait-north-west",
-            "wait-north-east",
-            "wait-south-east",
-            "wait-south-west",
+            "signal-north",
+            "signal-east",
+            "signal-south",
+            "signal-west",
+            "wait-north",
+            "wait-east",
+            "wait-south",
+            "wait-west",
         }
         estimate = client.get(
             f"/api/v1/experiments/{experiment['id']}/run-estimate"
@@ -381,6 +450,134 @@ def test_versioned_one_car_one_pedestrian_template_applies_by_actor_slots(databa
         assert manifest.capability_snapshot is not None
         assert manifest.capability_snapshot["experiment_extension"]["mode"] == "CAPABILITY_COMPOSED"
         assert len(manifest.capability_snapshot["capability_bundles"]) == 4
+
+
+def test_intersection_with_stanford_crowd_publishes_only_composed_actor_locations(
+    database_url,
+):
+    """Exercise the exact map + crowd + scenario path exposed by the create UI."""
+
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        intersection = next(
+            item
+            for item in client.get("/api/v1/maps?page_size=100").json()["items"]
+            if item["map_key"] == "standard-3lane-intersection"
+        )
+        crowd = next(
+            item
+            for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
+            if item["is_builtin"]
+        )
+        experiment_response = client.post(
+            "/api/v1/experiments",
+            json={
+                "name": "Intersection with Stanford residents",
+                "map_revision_id": intersection["current_published"]["id"],
+                "crowd_revision_ids": [crowd["current_published"]["id"]],
+            },
+        )
+        assert experiment_response.status_code == 201, experiment_response.text
+        experiment = experiment_response.json()
+        draft = client.get(f"/api/v1/experiments/{experiment['id']}/draft").json()
+        assert len(draft["definition"]["agents"]) == 25
+
+        template = next(
+            item
+            for item in client.get("/api/v1/scenario-templates").json()["items"]
+            if item["template_key"] == "one-car-one-pedestrian"
+        )
+        agent_keys = [item["agent_key"] for item in draft["definition"]["agents"][:2]]
+        applied = client.post(
+            f"/api/v1/experiments/{experiment['id']}/draft/scenario-templates/"
+            f"{template['current_published']['id']}/apply",
+            json={
+                "lock_version": draft["lock_version"],
+                "actor_bindings": {
+                    "pedestrian": agent_keys[0],
+                    "driver": agent_keys[1],
+                },
+                "clock_overrides": {"duration_ms": 2_000},
+            },
+        )
+        assert applied.status_code == 200, applied.text
+
+        assembly = client.get(
+            f"/api/v1/experiments/{experiment['id']}/draft/capability-assembly"
+        ).json()
+        original_x = assembly["extension"]["actors"][0]["initial_pose"]["x_m"]
+        invalid_extension = deepcopy(assembly["extension"])
+        invalid_extension["actors"][0]["initial_pose"]["x_m"] = 48
+        current_draft = client.get(
+            f"/api/v1/experiments/{experiment['id']}/draft"
+        ).json()
+        invalid_save = client.put(
+            f"/api/v1/experiments/{experiment['id']}/draft/capability-assembly",
+            json={
+                "lock_version": current_draft["lock_version"],
+                "extension": invalid_extension,
+            },
+        )
+        assert invalid_save.status_code == 200, invalid_save.text
+        invalid_report = client.post(
+            f"/api/v1/experiments/{experiment['id']}/draft/capability-assembly/validate"
+        ).json()
+        assert "SCENARIO_POSE_OUT_OF_BOUNDS" in {
+            item["code"] for item in invalid_report["errors"]
+        }
+
+        valid_extension = deepcopy(invalid_extension)
+        valid_extension["actors"][0]["initial_pose"]["x_m"] = original_x
+        current_draft = client.get(
+            f"/api/v1/experiments/{experiment['id']}/draft"
+        ).json()
+        valid_save = client.put(
+            f"/api/v1/experiments/{experiment['id']}/draft/capability-assembly",
+            json={
+                "lock_version": current_draft["lock_version"],
+                "extension": valid_extension,
+            },
+        )
+        assert valid_save.status_code == 200, valid_save.text
+
+        publish_gate = client.post(
+            f"/api/v1/experiments/{experiment['id']}/draft/validate"
+        ).json()
+        assert publish_gate["valid"] is True, publish_gate
+        assert not {
+            "AGENT_INITIAL_POSITION_INVALID",
+            "AGENT_SPATIAL_MAP_ADDRESS_INVALID",
+        } & {item["code"] for item in publish_gate["errors"]}
+
+        latest_draft = client.get(
+            f"/api/v1/experiments/{experiment['id']}/draft"
+        ).json()
+        started = client.post(
+            f"/api/v1/experiments/{experiment['id']}/actions/publish-and-run",
+            json={
+                "draft_revision_id": latest_draft["id"],
+                "lock_version": latest_draft["lock_version"],
+            },
+        )
+        assert started.status_code == 202, started.text
+        assert started.json()["requested_steps"] == 2
+        supervisor = LocalProcessSupervisor(
+            app.state.database,
+            var_dir=app.state.run_service._var_dir,
+            code_build_id="intersection-crowd-publication-test",
+        )
+        claimed = supervisor.repository.claim_next()
+        assert claimed is not None
+        supervisor._materialize_manifest(claimed)
+        manifest = RunManifestStore(
+            RunPaths.under(
+                app.state.run_service._var_dir, UUID(started.json()["run_id"])
+            )
+        ).load_verified()
+        assert manifest.capability_snapshot is not None
+        assert manifest.capability_snapshot["experiment_extension"]["mode"] == (
+            "CAPABILITY_COMPOSED"
+        )
 
 
 def test_deterministic_composed_publish_skips_unused_model_probes(

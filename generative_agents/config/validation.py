@@ -69,8 +69,16 @@ def validate_for_publish(
     definition: ExperimentDefinition,
     *,
     existing_secret_refs: set[str] | None = None,
+    validate_legacy_agent_locations: bool = True,
 ) -> ValidationReport:
-    """Perform deterministic publication checks; network checks live in model adapters."""
+    """Perform deterministic publication checks; network checks live in model adapters.
+
+    ``ExperimentDefinition.agents`` stores the tile/address based location used by
+    the legacy town runtime.  Capability-composed scenarios own their physical
+    actors, tools and metre-based routes in a separate versioned extension, so
+    their service-level publication gate disables this legacy-only location
+    check and validates the scene poses instead.
+    """
 
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
@@ -171,6 +179,8 @@ def validate_for_publish(
         )
         for index, agent in enumerate(definition.agents):
             if not agent.enabled:
+                continue
+            if not validate_legacy_agent_locations:
                 continue
             if tuple(agent.coord) not in accessible:
                 errors.append(

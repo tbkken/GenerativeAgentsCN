@@ -45,6 +45,52 @@ def _digest(document: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_json_bytes(document)).hexdigest()
 
 
+def _placement_attachment(attachment: Any, placement: dict[str, Any]) -> Any:
+    """Apply instance-local wiring without mutating the reusable asset revision."""
+
+    attachment_key = attachment.attachment_key
+    return attachment.model_copy(
+        update={
+            "parameters": {
+                **attachment.parameters,
+                **(
+                    (placement.get("capability_parameter_overrides") or {}).get(
+                        attachment_key
+                    )
+                    or {}
+                ),
+            },
+            "target_bindings": {
+                **attachment.target_bindings,
+                **(
+                    (placement.get("capability_target_overrides") or {}).get(
+                        attachment_key
+                    )
+                    or {}
+                ),
+            },
+            "input_bindings": {
+                **attachment.input_bindings,
+                **(
+                    (placement.get("capability_input_overrides") or {}).get(
+                        attachment_key
+                    )
+                    or {}
+                ),
+            },
+            "output_bindings": {
+                **attachment.output_bindings,
+                **(
+                    (placement.get("capability_output_overrides") or {}).get(
+                        attachment_key
+                    )
+                    or {}
+                ),
+            },
+        }
+    )
+
+
 def validate_experiment_capability_in_session(
     session: Session,
     revision: ExperimentRevision | None,
@@ -81,6 +127,45 @@ def validate_experiment_capability_in_session(
         else None
     )
     experiment_agents = {item.agent_key for item in definition.agents} if definition else set()
+
+    if map_revision is not None and map_revision.state == "PUBLISHED":
+        map_definition = map_revision.world_json.get("definition") or {}
+        size = map_definition.get("size") or []
+        scene = map_definition.get("spatial_scene") or {}
+        meters_per_tile = scene.get("meters_per_tile", 1.0)
+        if (
+            isinstance(size, list)
+            and len(size) == 2
+            and all(isinstance(value, int) and value > 0 for value in size)
+            and isinstance(meters_per_tile, (int, float))
+            and meters_per_tile > 0
+        ):
+            max_x = size[1] * meters_per_tile
+            max_y = size[0] * meters_per_tile
+
+            def validate_scene_poses(items, collection_path: str) -> None:
+                for item_index, item in enumerate(items):
+                    poses = [("initial_pose", item.initial_pose)]
+                    poses.extend(
+                        (f"route.{route_index}", pose)
+                        for route_index, pose in enumerate(item.route)
+                    )
+                    for pose_path, pose in poses:
+                        if not (0 <= pose.x_m < max_x and 0 <= pose.y_m < max_y):
+                            errors.append(
+                                {
+                                    "code": "SCENARIO_POSE_OUT_OF_BOUNDS",
+                                    "path": f"{collection_path}.{item_index}.{pose_path}",
+                                    "message": (
+                                        "场景角色或工具的米制坐标超出地图边界"
+                                        f"（0 ≤ x < {max_x:g}, 0 ≤ y < {max_y:g}）"
+                                    ),
+                                }
+                            )
+
+            validate_scene_poses(extension.actors, "actors")
+            validate_scene_poses(extension.tool_instances, "tool_instances")
+
     for index, actor in enumerate(extension.actors):
         if definition is not None and actor.experiment_agent_key not in experiment_agents:
             errors.append(
@@ -248,7 +333,7 @@ def validate_experiment_capability_in_session(
                 contract.capability_attachments
             ):
                 register_attachment_channels(
-                    attachment,
+                    _placement_attachment(attachment, placement),
                     f"map.placements.{placement_index}.attachments.{attachment_index}",
                     target_ref,
                 )
@@ -781,6 +866,7 @@ class ScenarioAssemblyService:
                 else f"map-object:{placement['instance_key']}"
             )
             for attachment in contract.capability_attachments:
+                attachment = _placement_attachment(attachment, placement)
                 append_attachment_tasks(
                     attachment,
                     task_prefix=(

@@ -485,7 +485,11 @@ class CapabilityScene:
                 key: value.snapshot() for key, value in sorted(self.entities.items())
             },
             "placements": {
-                key: {"state": value["state"], "x_m": value["x_m"], "y_m": value["y_m"]}
+                key: {
+                    "state": dict(value["state"]),
+                    "x_m": value["x_m"],
+                    "y_m": value["y_m"],
+                }
                 for key, value in sorted(self.placements.items())
                 if value["state"]
             },

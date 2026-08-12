@@ -485,6 +485,10 @@ class WorldMapService:
                 y: float,
                 rotation: float = 0,
                 state: dict[str, Any] | None = None,
+                capability_parameters: dict[str, dict[str, Any]] | None = None,
+                capability_inputs: dict[str, dict[str, str]] | None = None,
+                capability_outputs: dict[str, dict[str, str]] | None = None,
+                capability_targets: dict[str, dict[str, str]] | None = None,
             ) -> dict[str, Any]:
                 return {
                     "instance_key": key,
@@ -493,18 +497,73 @@ class WorldMapService:
                     "y_m": y,
                     "rotation_degrees": rotation,
                     "state_overrides": state or {},
-                    "capability_parameter_overrides": {},
+                    "capability_parameter_overrides": capability_parameters or {},
+                    "capability_input_overrides": capability_inputs or {},
+                    "capability_output_overrides": capability_outputs or {},
+                    "capability_target_overrides": capability_targets or {},
                 }
 
             placements = [
-                placement("signal-north", "object-traffic-light", 14, 14, 0, {"state": "RED"}),
-                placement("signal-east", "object-traffic-light", 34, 14, 90, {"state": "GREEN"}),
-                placement("signal-south", "object-traffic-light", 34, 34, 180, {"state": "RED"}),
-                placement("signal-west", "object-traffic-light", 14, 34, 270, {"state": "GREEN"}),
-                placement("wait-north-west", "zone-pedestrian-wait", 13, 13),
-                placement("wait-north-east", "zone-pedestrian-wait", 34, 13),
-                placement("wait-south-east", "zone-pedestrian-wait", 34, 34),
-                placement("wait-south-west", "zone-pedestrian-wait", 13, 34),
+                placement(
+                    "signal-north",
+                    "object-traffic-light",
+                    14,
+                    14,
+                    0,
+                    {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
+                    {"signal-cycle": {"phase_offset_ms": 8_000}},
+                    {
+                        "signal-cycle": {
+                            "pedestrian_presence": "state:zone:wait-east:presence"
+                        }
+                    },
+                ),
+                placement(
+                    "signal-east",
+                    "object-traffic-light",
+                    34,
+                    14,
+                    90,
+                    {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
+                    None,
+                    {
+                        "signal-cycle": {
+                            "pedestrian_presence": "state:zone:wait-north:presence"
+                        }
+                    },
+                ),
+                placement(
+                    "signal-south",
+                    "object-traffic-light",
+                    34,
+                    34,
+                    180,
+                    {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
+                    {"signal-cycle": {"phase_offset_ms": 8_000}},
+                    {
+                        "signal-cycle": {
+                            "pedestrian_presence": "state:zone:wait-west:presence"
+                        }
+                    },
+                ),
+                placement(
+                    "signal-west",
+                    "object-traffic-light",
+                    14,
+                    34,
+                    270,
+                    {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
+                    None,
+                    {
+                        "signal-cycle": {
+                            "pedestrian_presence": "state:zone:wait-south:presence"
+                        }
+                    },
+                ),
+                placement("wait-north", "zone-pedestrian-wait", 24, 11),
+                placement("wait-east", "zone-pedestrian-wait", 36, 24),
+                placement("wait-south", "zone-pedestrian-wait", 24, 36),
+                placement("wait-west", "zone-pedestrian-wait", 11, 24),
                 placement("stop-north", "marking-vehicle-stop-line", 24, 12, 0),
                 placement("stop-east", "marking-vehicle-stop-line", 35, 24, 90),
                 placement("stop-south", "marking-vehicle-stop-line", 24, 35, 180),
@@ -524,6 +583,30 @@ class WorldMapService:
                             "arena",
                             "object",
                         ],
+                        "traffic_layout": {
+                            "intersection_type": "FOUR_WAY",
+                            "approaches": ["NORTH", "EAST", "SOUTH", "WEST"],
+                            "lanes_per_direction": 3,
+                            "lane_width_m": 3.0,
+                            "crosswalks": [
+                                {
+                                    "crosswalk_key": "north",
+                                    "bounds_m": {"x": 15, "y": 12, "width": 18, "height": 3},
+                                },
+                                {
+                                    "crosswalk_key": "east",
+                                    "bounds_m": {"x": 33, "y": 15, "width": 3, "height": 18},
+                                },
+                                {
+                                    "crosswalk_key": "south",
+                                    "bounds_m": {"x": 15, "y": 33, "width": 18, "height": 3},
+                                },
+                                {
+                                    "crosswalk_key": "west",
+                                    "bounds_m": {"x": 12, "y": 15, "width": 3, "height": 18},
+                                },
+                            ],
+                        },
                         "tiles": tiles,
                         "palette": [],
                         "spatial_scene": {

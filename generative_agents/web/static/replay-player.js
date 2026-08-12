@@ -186,10 +186,16 @@
 
     selectAgent(agentKey) {
       this.selectedAgentKey = agentKey || null;
-      const object = this.agentObjects.get(this.selectedAgentKey);
-      if (object?.sprite) object.sprite.setTint(0xffd166);
       this.agentObjects.forEach((value, key) => {
-        if (key !== this.selectedAgentKey && value.sprite?.clearTint) value.sprite.clearTint();
+        const sprite = value?.sprite;
+        if (!sprite) return;
+        if (key === this.selectedAgentKey) {
+          if (typeof sprite.setTint === 'function') sprite.setTint(0xffd166);
+          else if (typeof sprite.setStrokeStyle === 'function') sprite.setStrokeStyle(3, 0xffd166, 1);
+          return;
+        }
+        if (typeof sprite.clearTint === 'function') sprite.clearTint();
+        else if (typeof sprite.setStrokeStyle === 'function') sprite.setStrokeStyle(0, 0xffd166, 0);
       });
       const step = this._cachedStep(this.currentStep);
       const fact = step?.agents.find(item => item.agent_key === this.selectedAgentKey) || null;
@@ -548,7 +554,8 @@
       if (value.includes('YELLOW') || value.includes('AMBER')) return '🟡';
       if (value.includes('GREEN')) return '🟢';
       const variants = appearance.state_variants || {};
-      const variant = variants[state.state] || variants[String(state.state || '').toLowerCase()] || {};
+      const stableState = String(state.state || '').toLowerCase().replaceAll('_', '-');
+      const variant = variants[state.state] || variants[stableState] || {};
       return variant.emoji || appearance.emoji || '◆';
     }
 

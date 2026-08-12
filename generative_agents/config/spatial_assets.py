@@ -161,6 +161,15 @@ class SpatialPlacement(StrictModel):
     capability_parameter_overrides: dict[StableKey, dict[str, Any]] = Field(
         default_factory=dict
     )
+    capability_target_overrides: dict[
+        StableKey, dict[StableKey, AttachmentRef]
+    ] = Field(default_factory=dict)
+    capability_input_overrides: dict[
+        StableKey, dict[PortKey, AttachmentRef]
+    ] = Field(default_factory=dict)
+    capability_output_overrides: dict[
+        StableKey, dict[PortKey, AttachmentRef]
+    ] = Field(default_factory=dict)
 
 
 class SpatialSceneExtension(StrictModel):

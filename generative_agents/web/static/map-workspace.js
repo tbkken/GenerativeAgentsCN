@@ -821,6 +821,9 @@
           rotation_degrees: 0,
           state_overrides: {},
           capability_parameter_overrides: {},
+          capability_target_overrides: {},
+          capability_input_overrides: {},
+          capability_output_overrides: {},
         });
         notify(`${asset.name} 已放置在地图中心；保存后会锁定其版本引用。`, '物件已加入地图');
       }

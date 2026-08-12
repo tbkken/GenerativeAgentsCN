@@ -143,7 +143,10 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
             "🚦",
             traversal=["ALL"],
             tags=["traffic-light", "signal-controller"],
-            initial_state={"phase": "vehicle-green"},
+            initial_state={
+                "state": "VEHICLE_GREEN",
+                "phase": "VEHICLE_GREEN",
+            },
             state_variants={
                 "vehicle-green": {"emoji": "🟢"},
                 "vehicle-yellow": {"emoji": "🟡"},
@@ -200,6 +203,34 @@ class SpatialAssetService:
                                     "entered": "event:${target}:entered",
                                     "left": "event:${target}:left",
                                     "presence": "state:${target}:presence",
+                                },
+                            )
+                        ]
+                    }
+                )
+            signal_definition = session.scalar(
+                select(CapabilityDefinition).where(
+                    CapabilityDefinition.capability_key == "traffic-signal-cycle"
+                )
+            )
+            if signal_definition and signal_definition.current_published_revision_id:
+                traffic_light = contracts["object-traffic-light"]
+                contracts["object-traffic-light"] = traffic_light.model_copy(
+                    update={
+                        "capability_attachments": [
+                            SpatialCapabilityAttachment(
+                                attachment_key="signal-cycle",
+                                capability_revision_id=(
+                                    signal_definition.current_published_revision_id
+                                ),
+                                parameters={
+                                    "green_ms": 6_000,
+                                    "yellow_ms": 2_000,
+                                    "red_ms": 8_000,
+                                    "phase_offset_ms": 0,
+                                },
+                                output_bindings={
+                                    "signal_state": "state:${target}:signal"
                                 },
                             )
                         ]

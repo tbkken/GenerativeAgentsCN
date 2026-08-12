@@ -257,7 +257,16 @@ class RunService:
                 requested_steps, stride_minutes = _run_shape(
                     session, revision, definition
                 )
-                validation = validate_for_publish(definition)
+                extension_row = session.get(ExperimentRevisionCapability, revision.id)
+                is_composed = (
+                    extension_row is not None
+                    and extension_row.extension_json.get("mode")
+                    == "CAPABILITY_COMPOSED"
+                )
+                validation = validate_for_publish(
+                    definition,
+                    validate_legacy_agent_locations=not is_composed,
+                )
                 if not validation.valid:
                     first = validation.errors[0]
                     raise ServiceError(
