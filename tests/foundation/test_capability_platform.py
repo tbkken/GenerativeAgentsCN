@@ -4,7 +4,14 @@ from copy import deepcopy
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
+from generative_agents.persistence.models import (
+    CapabilityBundle,
+    CapabilityBundleRevision,
+    CapabilityDefinition,
+    CapabilityRevision,
+)
 from generative_agents.web import create_app
 
 
@@ -90,7 +97,7 @@ def test_builtin_capability_catalog_is_versioned_and_filterable(database_url):
         data = catalog.json()
         assert data["total"] >= 10
         builtins = [item for item in data["items"] if item["is_builtin"]]
-        assert len(builtins) == 10
+        assert len(builtins) == 11
         assert all(item["current_draft"] is None for item in builtins)
         assert all(item["current_published"]["state"] == "PUBLISHED" for item in builtins)
         assert all(
@@ -106,6 +113,94 @@ def test_builtin_capability_catalog_is_versioned_and_filterable(database_url):
         draft = client.get(f"/api/v1/capabilities/{builtin['id']}/draft")
         assert draft.status_code == 409
         assert draft.json()["error"]["code"] == "CAPABILITY_DRAFT_UNAVAILABLE"
+
+        signal = next(
+            item
+            for item in builtins
+            if item["capability_key"] == "traffic-signal-cycle"
+        )
+        signal_contract = signal["active_contract"]
+        assert signal_contract["implementation"]["kind"] == "PYTHON"
+        assert signal_contract["implementation"]["deterministic"] is True
+        assert signal_contract["permissions"] == [
+            "execute-python",
+            "read-virtual-time",
+        ]
+        assert signal_contract["inputs"][0]["data_type"] == "state/zone_presence"
+        assert signal_contract["outputs"][0]["data_type"] == "state/signal"
+
+
+def test_builtin_reseeding_versions_changed_capabilities_and_bundles(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        timer = next(
+            item
+            for item in client.get("/api/v1/capabilities?page_size=100").json()[
+                "items"
+            ]
+            if item["capability_key"] == "core-timer"
+        )
+        vehicle = next(
+            item
+            for item in client.get("/api/v1/capability-bundles?page_size=100").json()[
+                "items"
+            ]
+            if item["bundle_key"] == "vehicle-yield-behavior"
+        )
+        old_timer_revision = timer["current_published"]["id"]
+        old_vehicle_revision = vehicle["current_published"]["id"]
+        with app.state.database.session_factory.begin() as session:
+            timer_model = session.scalar(
+                select(CapabilityDefinition).where(
+                    CapabilityDefinition.capability_key == "core-timer"
+                )
+            )
+            timer_revision = session.get(
+                CapabilityRevision, timer_model.current_published_revision_id
+            )
+            timer_revision.contract_hash = "previous-builtin-contract"
+            vehicle_model = session.scalar(
+                select(CapabilityBundle).where(
+                    CapabilityBundle.bundle_key == "vehicle-yield-behavior"
+                )
+            )
+            vehicle_revision = session.get(
+                CapabilityBundleRevision,
+                vehicle_model.current_published_revision_id,
+            )
+            vehicle_revision.composition_hash = "previous-builtin-composition"
+
+        app.state.capability_service.ensure_builtin_capabilities()
+        app.state.capability_service.ensure_builtin_bundles()
+        updated_timer = client.get(f"/api/v1/capabilities/{timer['id']}").json()
+        updated_vehicle = client.get(
+            f"/api/v1/capability-bundles/{vehicle['id']}"
+        ).json()
+        assert updated_timer["current_published"]["id"] != old_timer_revision
+        assert updated_timer["current_published"]["revision_no"] == 2
+        assert updated_vehicle["current_published"]["id"] != old_vehicle_revision
+        assert updated_vehicle["current_published"]["revision_no"] == 2
+        updated_timer_revision = client.get(
+            f"/api/v1/capabilities/{timer['id']}/revisions/"
+            f"{updated_timer['current_published']['id']}"
+        ).json()
+        updated_vehicle_revision = client.get(
+            f"/api/v1/capability-bundles/{vehicle['id']}/revisions/"
+            f"{updated_vehicle['current_published']['id']}"
+        ).json()
+        assert updated_timer_revision["base_revision_id"] == old_timer_revision
+        assert updated_vehicle_revision["base_revision_id"] == old_vehicle_revision
+
+        current_timer_revision = updated_timer["current_published"]["id"]
+        current_vehicle_revision = updated_vehicle["current_published"]["id"]
+        app.state.capability_service.ensure_builtin_capabilities()
+        app.state.capability_service.ensure_builtin_bundles()
+        assert client.get(f"/api/v1/capabilities/{timer['id']}").json()[
+            "current_published"
+        ]["id"] == current_timer_revision
+        assert client.get(f"/api/v1/capability-bundles/{vehicle['id']}").json()[
+            "current_published"
+        ]["id"] == current_vehicle_revision
 
 
 def test_capability_draft_publish_conflict_and_fork_lifecycle(database_url):

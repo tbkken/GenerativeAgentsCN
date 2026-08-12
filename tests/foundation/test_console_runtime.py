@@ -666,15 +666,22 @@ const outcomes = {
 if (JSON.stringify(outcomes) !== JSON.stringify({sameRevision:'resident-001',otherRevision:null,removedAgent:null})) process.exit(1);
 const cameraEvents = [];
 const sprite = {setTint(){return this},clearTint(){return this}};
+const circleEvents = [];
+const circle = {setStrokeStyle(...args){circleEvents.push(args);return this}};
 const instance = new GAReplayPlayer({onAgent(){}});
 instance.scene = {cameras:{main:{startFollow(){cameraEvents.push('follow')},stopFollow(){cameraEvents.push('free')}}}};
 instance.agentObjects.set('resident-001', {sprite});
+instance.agentObjects.set('resident-002', {sprite:circle});
 instance.agentDefinitions.set('resident-001', agents[0]);
+instance.agentDefinitions.set('resident-002', agents[1]);
 if (instance.toggleAgentFollow('resident-001') !== 'resident-001') process.exit(2);
 if (instance.selectedAgentKey !== 'resident-001' || instance.followedAgentKey !== 'resident-001') process.exit(3);
 if (instance.toggleAgentFollow('resident-001') !== null) process.exit(4);
 if (instance.selectedAgentKey !== null || instance.followedAgentKey !== null) process.exit(5);
 if (JSON.stringify(cameraEvents) !== JSON.stringify(['follow','free'])) process.exit(6);
+instance.selectAgent('resident-002');
+instance.selectAgent(null);
+if (JSON.stringify(circleEvents) !== JSON.stringify([[0,0xffd166,0],[0,0xffd166,0],[3,0xffd166,1],[0,0xffd166,0]])) process.exit(7);
 """
     subprocess.run(
         [node, "-e", program, str(player)],
