@@ -57,7 +57,13 @@ def _definition(key: str) -> ExperimentDefinition:
         "map": [[0]],
         "camera": [0, 0],
         "tile_address_keys": {},
-        "tiles": [{"coord": [0, 0], "collision": False}],
+        "tiles": [
+            {
+                "coord": [0, 0],
+                "collision": False,
+                "address": ["home", "bedroom", "bed"],
+            }
+        ],
     }
     payload["agents"] = [
         {
@@ -74,7 +80,13 @@ def _definition(key: str) -> ExperimentDefinition:
                 "lifestyle": "repeatable",
                 "daily_plan": "",
             },
-            "spatial": {"address": {}, "tree": {}},
+            "spatial": {
+                "address": {
+                    "living_area": ["test", "home", "bedroom"],
+                    "sleeping": ["test", "home", "bedroom", "bed"],
+                },
+                "tree": {"test": {"home": {"bedroom": ["bed"]}}},
+            },
         }
     ]
     payload["prompts"] = {

@@ -1,9 +1,24 @@
 from io import BytesIO
+import struct
+import zlib
 
 import pytest
 
 from generative_agents.services import ServiceError
 from generative_agents.services.catalog import AssetService, SecretService
+
+
+def _png(width: int, height: int) -> bytes:
+    def chunk(kind: bytes, payload: bytes) -> bytes:
+        return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload))
+
+    rows = b"".join(b"\x00" + b"\x19\x8f\x77\xff" * width for _ in range(height))
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(rows))
+        + chunk(b"IEND", b"")
+    )
 
 
 def test_asset_registration_is_content_idempotent_without_exposing_path(database, tmp_path):
@@ -35,6 +50,29 @@ def test_asset_validation_is_a_client_error_not_an_unhandled_exception(database,
         )
     assert error.value.code == "INVALID_ASSET"
     assert error.value.status_code == 422
+
+
+def test_agent_images_are_validated_and_saved_as_database_blobs(database, tmp_path):
+    var_dir = tmp_path / "var"
+    service = AssetService(database, var_dir=var_dir)
+    result = service.upload_database_images(
+        {
+            "portrait": (BytesIO(_png(32, 32)), "portrait.png"),
+            "sprite": (BytesIO(_png(128, 128)), "sprite.png"),
+        }
+    )
+
+    assert result["portrait"]["width"] == 32
+    assert result["sprite"]["width"] == result["sprite"]["height"] == 128
+    record, content = service.database_image_content(result["sprite"]["asset_id"])
+    assert content == _png(128, 128)
+    assert record.relative_path == ""
+    assert not any(path.is_file() for path in (var_dir / "assets").rglob("*"))
+
+    with pytest.raises(ServiceError, match="128×128"):
+        service.upload_database_images(
+            {"sprite": (BytesIO(_png(96, 128)), "legacy-sprite.png")}
+        )
 
 
 def test_secret_replacement_keeps_old_ciphertext_and_never_returns_plaintext(database, tmp_path):

@@ -9,8 +9,13 @@ from sqlalchemy import select
 
 import pytest
 
-from generative_agents.config import ExperimentDefinition
-from generative_agents.persistence.models import Experiment, Run, RunAttempt, RunQueue
+from generative_agents.config import ExperimentDefinition, validate_for_publish
+from generative_agents.persistence.models import (
+    Experiment,
+    Run,
+    RunAttempt,
+    RunQueue,
+)
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.runs import RunService
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
@@ -59,6 +64,30 @@ def test_published_revision_creates_uuid_scoped_fifo_run(
     with pytest.raises(ServiceError) as exc:
         runs.create_from_published(experiment["id"], revision["id"])
     assert exc.value.code == "EXPERIMENT_RUN_ACTIVE"
+
+
+def test_run_creation_revalidates_legacy_published_revision(
+    service, database, publishable_definition, tmp_path, monkeypatch
+):
+    experiment, revision = _publish(service, publishable_definition)
+    legacy_payload = publishable_definition.model_dump(mode="json", exclude_none=False)
+    legacy_payload["agents"][0]["spatial"] = {"address": {}, "tree": {}}
+    legacy_report = validate_for_publish(
+        ExperimentDefinition.model_validate(legacy_payload)
+    )
+    monkeypatch.setattr(
+        "generative_agents.services.runs.validate_for_publish",
+        lambda _definition: legacy_report,
+    )
+
+    runs = RunService(database, var_dir=tmp_path / "var")
+    with pytest.raises(ServiceError) as caught:
+        runs.create_from_published(experiment["id"], revision["id"])
+
+    assert caught.value.code == "AGENT_SPATIAL_ADDRESS_REQUIRED"
+    assert "当前运行要求" in caught.value.message
+    with database.session_factory() as session:
+        assert session.scalar(select(Run.id)) is None
 
 
 def test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip(
@@ -245,6 +274,34 @@ def test_worker_finish_honors_pause_boundary_and_releases_slot(
         assert row.slot_no is None
         assert row.recoverable_step == 3
         assert attempt.stop_reason == "PAUSED"
+
+
+def test_worker_finish_preserves_structured_runtime_error(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    runs = RunService(database, var_dir=tmp_path / "var")
+    created = runs.create_from_published(experiment["id"], revision["id"])
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert scheduler.register_worker(claimed, pid=os.getpid(), pid_create_time=1.0)
+
+    assert scheduler.finish_worker(
+        claimed.run_id,
+        claimed.attempt_id,
+        exit_code=1,
+        error_code="AGENT_SPATIAL_CONFIGURATION_INVALID",
+        error_message="Agent missing sleeping address",
+    )
+
+    with database.session_factory() as session:
+        row = session.get(Run, created["run_id"])
+        attempt = session.get(RunAttempt, claimed.attempt_id)
+        assert row.status == "FAILED"
+        assert row.error_code == "AGENT_SPATIAL_CONFIGURATION_INVALID"
+        assert row.error_message == "Agent missing sleeping address"
+        assert attempt.error_code == row.error_code
+        assert attempt.error_message == row.error_message
 
 
 def test_supervisor_materializes_manifest_before_process_registration(

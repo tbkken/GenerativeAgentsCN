@@ -54,12 +54,20 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
                 "world_map_revisions",
                 "experiment_workflows",
                 "experiment_workflow_versions",
+                "model_probe_statuses",
+                "experiment_saved_views",
+                "experiment_comparison_groups",
+                "agent_templates",
+                "agent_template_revisions",
+                "crowd_templates",
+                "crowd_revisions",
+                "crowd_revision_members",
             } <= tables
         assert connection.exec_driver_sql("PRAGMA foreign_keys").scalar() == 1
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-            ).scalar() == "0008_prompt_workflows"
+            ).scalar() == "0022_scenario_templates"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):
@@ -73,6 +81,8 @@ def test_create_and_list_experiments_isolated_and_paginated(service):
     assert result["items"][0]["id"] == first["id"]
     assert result["status_counts"]["DRAFT"] == 1
     assert result["status_counts"]["ALL"] == 1
+    five_item_page = service.list_experiments(page=1, page_size=5)
+    assert five_item_page["page_size"] == 5
 
 
 def test_builtin_template_is_materialized_once_per_independent_draft(service):

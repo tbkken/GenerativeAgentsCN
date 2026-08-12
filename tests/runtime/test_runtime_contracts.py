@@ -426,6 +426,12 @@ def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path
     revision_id = uuid4()
     definition = make_blank_definition(key="workflow-manifest", name="Workflow Manifest")
     workflows = make_default_workflows()
+    function_sources = {
+        "custom_normalize": (
+            "def main(inputs, context):\n"
+            "    return {'result': inputs.get('input')}\n"
+        )
+    }
     document = build_manifest_document(
         run_id=run_id,
         experiment_id=experiment_id,
@@ -437,10 +443,12 @@ def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path
         materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
         dependency_versions={},
         workflows=workflows,
+        workflow_functions=function_sources,
     )
     store = RunManifestStore(RunPaths.under(tmp_path, run_id))
     verified = store.materialize(document)
     assert set(verified.workflows) == set(workflows)
+    assert verified.workflow_functions == function_sources
     repository = WorkflowPromptRepository(
         {
             **{key: value.content for key, value in definition.prompts.items()},
@@ -452,6 +460,10 @@ def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path
         "social",
         "prompt_decide_chat",
     )
+    assert repository.config_for_prompt("decide_chat")["retry_policy"] == {
+        "max_attempts": 3,
+        "retry_on_schema_error": True,
+    }
     with pytest.raises(KeyError, match="not placed"):
         repository.get("unused_optional_prompt")
 
@@ -472,6 +484,20 @@ def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path
     ).hexdigest()
     with pytest.raises(ValueError, match="workflow_bundle_hash mismatch"):
         tampered_store.materialize(tampered)
+
+    function_tampered = copy.deepcopy(document)
+    function_tampered["workflow_functions"]["custom_normalize"] += "# changed\n"
+    function_tampered_run_id = uuid4()
+    function_tampered["run_id"] = str(function_tampered_run_id)
+    unsigned = dict(function_tampered)
+    unsigned.pop("manifest_hash")
+    function_tampered["manifest_hash"] = hashlib.sha256(
+        canonical_json_bytes(unsigned)
+    ).hexdigest()
+    with pytest.raises(ValueError, match="workflow_function_bundle_hash mismatch"):
+        RunManifestStore(
+            RunPaths.under(tmp_path, function_tampered_run_id)
+        ).materialize(function_tampered)
 
 
 def test_model_trace_is_attempt_scoped_contiguous_and_redacted(tmp_path):

@@ -159,10 +159,10 @@ def _definition(key: str) -> ExperimentDefinition:
         "size": [2, 1],
         "map": [[0, 0]],
         "camera": [0, 0],
-        "tile_address_keys": ["world"],
+        "tile_address_keys": ["world", "sector", "arena", "game_object"],
         "tiles": [
-            {"coord": [0, 0], "collision": False},
-            {"coord": [1, 0], "collision": False},
+            {"coord": [0, 0], "collision": False, "address": ["home", "bedroom", "bed"]},
+            {"coord": [1, 0], "collision": False, "address": ["home", "bedroom", "bed"]},
         ],
     }
     payload["agents"] = [
@@ -180,7 +180,13 @@ def _definition(key: str) -> ExperimentDefinition:
                 "lifestyle": "repeatable",
                 "daily_plan": "",
             },
-            "spatial": {"address": {}, "tree": {}},
+            "spatial": {
+                "address": {
+                    "living_area": ["test", "home", "bedroom"],
+                    "sleeping": ["test", "home", "bedroom", "bed"],
+                },
+                "tree": {"test": {"home": {"bedroom": ["bed"]}}},
+            },
         }
     ]
     payload["prompts"] = {
@@ -1185,6 +1191,7 @@ const state = { selectedAttemptId: 'attempt-1', selectedRunId: 'run-a' };
 const $ = id => elements[id];
 const escapeHtml = value => String(value ?? '');
 const formatTime = value => String(value ?? '');
+const renderModelUsage = () => {};
 eval(renderAttemptsSource);
 eval(renderOperationsSource);
 const first = {attempt_id:'attempt-1',attempt_no:1,status:'ENDED',start_step:1,end_step:10,started_at:'t1',stop_reason:null,error_message:null,log:{available:true,size_bytes:128}};
@@ -2528,6 +2535,7 @@ const select = {
 };
 const elements = {
   replayAgentSelect:select, replayTimelineMarkers:{innerHTML:''}, replayStatus:{textContent:''},
+  replayCameraMode:{value:'free'}, replayCameraState:{textContent:''}, replayAgentRoster:{innerHTML:''},
   timelinePlay:{textContent:''}, timelineRange:{max:0,min:0,value:0,disabled:false},
   ...Object.fromEntries(inspectorIds.map(id => [id,{textContent:`OLD:${id}`}]))
 };
@@ -2537,7 +2545,8 @@ const state = {
   selectedRunId:'run-new', resultGeneration:2, replayRunId:'run-old',
   replayPlayer:{destroy(){}}, replayAbortController:{abort(){}}, replayPlaying:false,
   replayMarkerFacts:new Map(), selectedReplayAgentKey:'resident-001',
-  selectedReplayRevisionId:'revision-1', currentRun:{revision_id:'revision-1'}
+  selectedReplayRevisionId:'revision-1', currentRun:{revision_id:'revision-1'},
+  replayAgentDefinitions:[], agentResults:[]
 };
 let activePlayer = null;
 class GAReplayPlayer {
@@ -2555,15 +2564,17 @@ class GAReplayPlayer {
   async refreshAvailable(){}
   destroy(){}
   selectAgent(key){ this.selectedAgentKey=key || null; }
+  followAgent(key){ this.followedAgentKey=key || null; }
 }
 const renderReplayStep = () => {};
 const renderReplayInspector = () => {};
+const syncReplayControls = () => {};
 eval(clearInspectorSource);
 eval(teardownSource);
 eval(ensureSource);
 (async () => {
   await ensureReplayPlayer('run-new',2);
-  if (select.value !== 'resident-001' || activePlayer.selectedAgentKey !== 'resident-001') {
+  if (select.value !== 'resident-001' || activePlayer.selectedAgentKey !== 'resident-001' || activePlayer.followedAgentKey !== 'resident-001') {
     throw new Error('same-definition Agent selection was not restored after switching Run');
   }
   select.value='resident-999';
@@ -2572,7 +2583,7 @@ eval(ensureSource);
   inspectorIds.forEach(id => { elements[id].textContent=`STALE:${id}`; });
   state.selectedRunId='run-other'; state.resultGeneration=3;
   await ensureReplayPlayer('run-other',3);
-  if (select.value !== '' || activePlayer.selectedAgentKey !== null) {
+  if (select.value !== '' || activePlayer.selectedAgentKey !== null || activePlayer.followedAgentKey !== null) {
     throw new Error('missing Agent remained selected in the new Run');
   }
   if (inspectorIds.some(id => elements[id].textContent.startsWith('STALE:'))) {
@@ -2609,8 +2620,26 @@ def test_def_066_phaser_canvas_and_normalized_tiles_are_package_owned(web_runtim
     assert __import__("re").search(
         r'id="resultMap"[^>]*>\s*<canvas id="resultMapCanvas"', shell
     ), "the controlled canvas must be a direct result-map descendant"
+    timeline_layout_css = __import__("re").search(
+        r"\.timeline-layout\s*\{([^}]*)\}", shell
+    )
+    assert timeline_layout_css and "--replay-stage-height: 520px" in timeline_layout_css.group(1)
+    assert "height: var(--replay-stage-height)" in timeline_layout_css.group(1)
     result_map_css = __import__("re").search(r"\.result-map\s*\{([^}]*)\}", shell)
     assert result_map_css and "overflow: hidden" in result_map_css.group(1)
+    assert "height: 100%" in result_map_css.group(1)
+    assert "min-height: 0" in result_map_css.group(1)
+    result_canvas_css = __import__("re").search(
+        r"\.result-map\s*>\s*canvas\s*\{([^}]*)\}", shell
+    )
+    assert result_canvas_css and "height: 100%" in result_canvas_css.group(1)
+    assert "min-height: 0" in result_canvas_css.group(1)
+    timeline_stream_css = __import__("re").search(
+        r"\.timeline-stream\s*\{([^}]*)\}", shell
+    )
+    assert timeline_stream_css and "height: 100%" in timeline_stream_css.group(1)
+    assert "max-height: 100%" in timeline_stream_css.group(1)
+    assert "min-height: 0" in timeline_stream_css.group(1)
 
     # The legacy image has a 16 px non-tile footer. Replay must consume a
     # controlled crop while leaving the legacy source byte-for-byte untouched.
@@ -2866,7 +2895,7 @@ def test_def_068_supervisor_child_chinese_stdout_is_explicit_utf8_and_byte_exact
         supervisor.stop()
 
 
-def test_def_054_time_explorer_exposes_the_full_replay_control_contract():
+def test_def_054_simulation_replay_exposes_the_full_control_contract():
     """ROL-RPL-002 the formal player UX is controllable and fact-backed."""
 
     shell = SHELL.read_text(encoding="utf-8")
@@ -2879,10 +2908,9 @@ def test_def_054_time_explorer_exposes_the_full_replay_control_contract():
         "replaySpeed",
         "replayCameraMode",
         "replayAgentSelect",
-        "replayLayerAgentNames",
-        "replayLayerActionBubbles",
+        "replayAgentRoster",
+        "replayCameraState",
         "replayLayerTrails",
-        "replayLayerConversations",
         "replayLayerKeyEvents",
         "replayTimelineMarkers",
         "replayInspector",
@@ -2895,6 +2923,14 @@ def test_def_054_time_explorer_exposes_the_full_replay_control_contract():
     }
     missing = [name for name in sorted(required_controls) if f'id="{name}"' not in shell]
     assert not missing, f"time explorer controls are unreachable: {missing}"
+    replay = shell[shell.index('data-result-panel="timeline"') : shell.index('data-result-panel="agents"')]
+    assert 'data-result-tab="timeline">仿真回放</button>' in shell
+    assert replay.index('id="resultMap"') < replay.index('id="timelineRange"') < replay.index('id="replayInspector"') < replay.index('id="timelineStreamItems"') < replay.index('id="replayAgentRoster"')
+    assert 'class="timeline-toolbar replay-sidebar-controls"' in replay
+    assert 'class="replay-sidebar-events"' in replay
+    assert 'id="replayLayerAgentNames"' not in replay
+    assert 'id="replayLayerActionBubbles"' not in replay
+    assert 'id="replayLayerConversations"' not in replay
 
     assert PLAYER.is_file(), "formal replay-player.js is not packaged"
     player = PLAYER.read_text(encoding="utf-8")
@@ -3981,8 +4017,16 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
         def heartbeat(self, _run_id, _attempt_id):
             return "RUNNING"
 
-        def finish_worker(self, _run_id, _attempt_id, *, exit_code):
-            calls.append(("finish", exit_code))
+        def finish_worker(
+            self,
+            _run_id,
+            _attempt_id,
+            *,
+            exit_code,
+            error_code=None,
+            error_message=None,
+        ):
+            calls.append(("finish", exit_code, error_code, error_message))
             return True
 
     class FakeLock:
@@ -4025,6 +4069,7 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
                     "definition_hash": "definition-hash",
                 },
                 manifest_hash="manifest-hash",
+                workflows={},
             )
 
     class FakeMasterKeyStore:
@@ -4071,4 +4116,9 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
     assert ("exception", "worker attempt failed") in calls
     assert ("project-missing-trace",) not in calls
     assert ("exception", "final model trace projection failed") not in calls
-    assert ("finish", 1) in calls
+    assert (
+        "finish",
+        1,
+        "WORKER_EXECUTION_FAILED",
+        "primary legacy checkpoint datetime failure",
+    ) in calls

@@ -5,12 +5,57 @@ from fastapi.testclient import TestClient
 from generative_agents.web import create_app
 
 
+def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        for index in range(6):
+            response = client.post(
+                "/api/v1/maps",
+                json={"name": f"分页地图 {index + 1}", "description": "地图列表 UX 验收"},
+            )
+            assert response.status_code == 201, response.text
+
+        first_page = client.get("/api/v1/maps?page=1&page_size=5").json()
+        second_page = client.get("/api/v1/maps?page=2&page_size=5").json()
+        assert first_page["page_size"] == 5
+        assert len(first_page["items"]) == 5
+        assert first_page["total_pages"] >= 2
+        assert second_page["items"]
+        assert first_page["status_counts"]["ALL"] == first_page["total"]
+        assert (
+            first_page["status_counts"]["DRAFT"]
+            + first_page["status_counts"]["PUBLISHED"]
+            == first_page["status_counts"]["ALL"]
+        )
+
+        drafts = client.get("/api/v1/maps?status=DRAFT&page=1&page_size=5").json()
+        assert drafts["total"] == drafts["status_counts"]["DRAFT"]
+        assert all(item["status"] == "DRAFT" for item in drafts["items"])
+
+        invalid = client.get("/api/v1/maps?status=ARCHIVED")
+        assert invalid.status_code == 422
+        assert invalid.json()["error"]["code"] == "INVALID_MAP_STATUS"
+
+
+def test_map_workspace_populates_experiment_creation_selector():
+    javascript = (
+        __import__("pathlib").Path(__file__).parents[2]
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "map-workspace.js"
+    ).read_text(encoding="utf-8")
+
+    assert "newExperimentMap" in javascript
+    assert "prepareExperimentCreate" in javascript
+
+
 def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         catalog = client.get("/api/v1/maps").json()
-        assert catalog["total"] == 1
-        builtin = catalog["items"][0]
+        assert catalog["total"] >= 2
+        builtin = next(item for item in catalog["items"] if item["map_key"] == "the-ville")
         assert builtin["map_key"] == "the-ville"
         assert builtin["current_published"]["state"] == "PUBLISHED"
 
