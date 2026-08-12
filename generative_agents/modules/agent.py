@@ -6,10 +6,12 @@ import datetime
 import copy
 import hashlib
 import json
+from collections.abc import Mapping
 
 from generative_agents.modules import memory, prompt, utils
 from generative_agents.modules.model.llm_model import create_llm_model
 from generative_agents.modules.memory.associate import Concept
+from generative_agents.runtime.json_schema import validate_json_schema
 
 
 def estimate_chat_duration(chats, chars_per_minute=240):
@@ -23,6 +25,12 @@ def estimate_chat_duration(chats, chars_per_minute=240):
 
 
 _INVALID_CHAT_MARKERS = ("填坑", "待补充", "占位", "todo", "placeholder")
+
+
+class AgentSpatialConfigurationError(RuntimeError):
+    """A published legacy Agent cannot resolve a required runtime address."""
+
+    code = "AGENT_SPATIAL_CONFIGURATION_INVALID"
 
 
 def valid_chat_message(message, previous=()):
@@ -98,6 +106,8 @@ class Agent:
         self._model_trace = model_trace
         self._algorithm = algorithm
         self._result_events = []
+        self._workflow_state = {}
+        self._workflow_invocation_seq = 0
 
         # agent config
         self.percept_config = agent_config["percept"]
@@ -218,8 +228,83 @@ class Agent:
         ), "Can not find func prompt_{} from scratch".format(func_hint)
         func = getattr(self.scratch, "prompt_" + func_hint)
         res = func(*args, **kwargs)._asdict()
+        config_for_prompt = getattr(self._prompts, "config_for_prompt", None)
+        if callable(config_for_prompt):
+            node_config = config_for_prompt(func_hint)
+            response_schema = node_config.get("response_schema")
+            retry_policy = node_config.get("retry_policy", {})
+            if isinstance(response_schema, dict):
+                callback = res.get("callback")
+
+                def validate_structured_output(output):
+                    validate_json_schema({"res": output}, response_schema)
+                    return callback(output) if callback else output
+
+                res["callback"] = validate_structured_output
+            attempts = retry_policy.get("max_attempts")
+            if isinstance(attempts, int) and not isinstance(attempts, bool):
+                res["retry"] = attempts if retry_policy.get("retry_on_schema_error", True) else 1
         title, msg = "{}.{}".format(self.name, func_hint), {}
-        if self.llm_available():
+        output = res.get("failsafe")
+        execution_mode_for_prompt = getattr(
+            self._prompts, "execution_mode_for_prompt", None
+        )
+        execution_mode = (
+            execution_mode_for_prompt(func_hint)
+            if callable(execution_mode_for_prompt)
+            else None
+        )
+        if execution_mode == "prompt_router":
+            execute_prompt = getattr(self._prompts, "execute_prompt")
+            self._workflow_invocation_seq += 1
+            invocation_id = f"{self.agent_key}:{func_hint}:{self._workflow_invocation_seq}"
+            step_context = self._workflow_runtime_context(func_hint)
+            step_context["prompt_key"] = func_hint
+            step_context["prompt_request"] = res
+
+            def invoke_graph_llm(node, node_inputs, _runtime_context):
+                if node.prompt_key != func_hint:
+                    raise RuntimeError(
+                        f"Prompt router for {func_hint} reached unexpected LLM "
+                        f"node {node.prompt_key}"
+                    )
+                context = node_inputs.get("context")
+                request = (
+                    context.get("prompt_request")
+                    if isinstance(context, Mapping)
+                    else None
+                )
+                if not isinstance(request, Mapping):
+                    raise RuntimeError(
+                        f"LLM node {node.node_id} did not receive prompt_request"
+                    )
+                if self.llm_available():
+                    result = self._llm.completion(
+                        **dict(request),
+                        caller=node.prompt_key,
+                        agent_key=self.agent_key,
+                        prompt_key=node.prompt_key,
+                    )
+                else:
+                    result = request.get("failsafe")
+                msg.update(
+                    {
+                        "<PROMPT>": "\n" + str(request.get("prompt", "")) + "\n",
+                        "response": result,
+                    }
+                )
+                return result
+
+            if self.llm_available():
+                self.logger.info("{} -> {}".format(self.name, func_hint))
+            output = execute_prompt(
+                func_hint,
+                step_context,
+                llm_handler=invoke_graph_llm,
+                state=self._workflow_state,
+                invocation_id=invocation_id,
+            ).value
+        elif self.llm_available():
             self.logger.info("{} -> {}".format(self.name, func_hint))
             output = self._llm.completion(
                 **res,
@@ -229,8 +314,56 @@ class Agent:
             )
             msg = {"<PROMPT>": "\n" + res["prompt"] + "\n"}
             msg.update({"response": output})
+        if execution_mode != "prompt_router":
+            invoke_prompt_result = getattr(self._prompts, "invoke_prompt_result", None)
+            if callable(invoke_prompt_result):
+                self._workflow_invocation_seq += 1
+                output = invoke_prompt_result(
+                    func_hint,
+                    output,
+                    runtime_context=self._workflow_runtime_context(func_hint),
+                    state=self._workflow_state,
+                    invocation_id=(
+                        f"{self.agent_key}:{func_hint}:{self._workflow_invocation_seq}"
+                    ),
+                )
         self.logger.debug(utils.block_msg(title, msg))
         return output
+
+    def _workflow_runtime_context(self, prompt_key):
+        """Build the serializable StepContext consumed by workflow nodes."""
+
+        if prompt_key in {
+            "retrieve_plan",
+            "retrieve_thought",
+            "retrieve_currently",
+            "wake_up",
+            "schedule_init",
+            "schedule_daily",
+        }:
+            trigger = "new_day"
+        elif prompt_key == "schedule_decompose":
+            trigger = "current_plan"
+        elif prompt_key == "schedule_revise":
+            trigger = "interruption"
+        else:
+            trigger = "step"
+        concepts = list(getattr(self, "concepts", ()) or ())
+        return {
+            "agent_key": self.agent_key,
+            "agent": {"key": self.agent_key, "name": self.name},
+            "clock": self._clock.get_date().isoformat(),
+            "virtual_time": self._clock.get_date().isoformat(),
+            "memories": [
+                getattr(concept, "describe", str(concept)) for concept in concepts
+            ],
+            "visible_events": [
+                getattr(getattr(concept, "event", None), "describe", "")
+                for concept in concepts
+            ],
+            "trigger": trigger,
+            "prompt_key": prompt_key,
+        }
 
     def think(self, status, agents_by_name):
         events = self.move(status["coord"], status.get("path"))
@@ -238,7 +371,7 @@ class Agent:
 
         if (plan["describe"] == "sleeping" or "睡" in plan["describe"]) and self.is_awake():
             self.logger.info("{} is going to sleep...".format(self.name))
-            address = self.spatial.find_address("睡觉", as_list=True)
+            address = self._required_spatial_address("睡觉")
             self.action = memory.Action(
                 memory.Event(self.name, "正在", "睡觉", address=address, emoji="😴"),
                 memory.Event(
@@ -273,6 +406,21 @@ class Agent:
             "emojis": emojis,
         }
         return self.plan
+
+    def _required_spatial_address(self, hint):
+        address = self.spatial.find_address(hint, as_list=True)
+        if not address:
+            raise AgentSpatialConfigurationError(
+                f"Agent“{self.name}”缺少有效的{hint}地址；"
+                "请在 Agent 的“初始位置与空间”中配置居住地、睡觉地址和床"
+            )
+        address_key = ":".join(address)
+        if address_key not in self.maze.address_tiles:
+            raise AgentSpatialConfigurationError(
+                f"Agent“{self.name}”的{hint}地址“{address_key}”不属于当前地图；"
+                "请检查 Agent 的空间定义与实验地图"
+            )
+        return address
 
     def move(self, coord, path=None):
         events = {}

@@ -36,14 +36,26 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
         shell = client.get("/").text
         script_response = client.get("/static/console/console-api.js")
         focus_script_response = client.get("/static/console/modal-focus.js")
+        ux_style_response = client.get("/static/console/console-ux.css")
         listing = client.get("/api/v1/experiments").json()
 
     assert script_response.status_code == 200
     assert focus_script_response.status_code == 200
+    assert ux_style_response.status_code == 200
     script = script_response.text
+    ux_style = ux_style_response.text
     assert listing["items"][0]["id"] == created.json()["id"]
     assert shell.count('/static/console/console-api.js') == 1
     assert shell.count('/static/console/modal-focus.js') == 1
+    assert shell.count('/static/console/console-ux.css') == 1
+    assert "--sidebar-width: 216px" in ux_style
+    assert "--text-control: 13px" in ux_style
+    assert "max-width: none" in ux_style
+    assert "grid-template-columns: 184px minmax(0, 1fr) 360px" in ux_style
+    assert 'id="sidebarToggle"' in shell
+    assert '<span class="nav-text">实验</span>' in shell
+    assert "pageSize: 5" in script
+    assert "sidebar-collapsed" in ux_style
     assert not [body for body in re.findall(r"<script[^>]*>(.*?)</script>", shell, re.S) if body.strip()]
 
     shell_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', shell))
@@ -72,22 +84,54 @@ def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_resto
     shell_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', shell))
     lookups = set(re.findall(r"\$\('([A-Za-z0-9_-]+)'\)", editor))
     dynamic_ids = {
+        "workflowFailurePolicy",
         "workflowNodeBody",
         "workflowNodeOperation",
         "workflowNodeSubflow",
         "workflowNodeTitle",
+        "workflowResponseSchema",
+        "workflowRetryAttempts",
+        "workflowRetrySchema",
+        "workflowSelectorMode",
+        "workflowTimeout",
     }
     assert lookups - dynamic_ids <= shell_ids, sorted(lookups - dynamic_ids - shell_ids)
     assert all(f'id="{item}"' in editor for item in dynamic_ids)
     assert 'id="workflowTabs" role="tablist"' in shell
-    assert 'data-workflow-add="script"' in shell
-    assert 'data-workflow-add="llm"' in shell
+    for kind in (
+        "llm",
+        "code",
+        "selector",
+        "variable_assigner",
+        "variable_aggregator",
+        "subflow",
+    ):
+        assert f'data-workflow-add="{kind}"' in shell
+    assert 'data-workflow-add="script"' not in shell
     assert 'id="workflowVersionPopover"' in shell
+    assert 'id="workflowFunctionPage"' in shell
+    assert 'id="workflowFunctionManagerBtn"' in shell
+    assert 'id="workflowExecutionMode"' in shell
+    assert 'id="workflowMigrateRouterBtn"' in shell
+    assert 'id="workflowConnectHint"' in shell
+    assert 'id="workflowCanvasScroller"' in shell
+    assert 'id="workflowHorizontalLayoutBtn"' in shell
     assert 'id="promptList"' not in shell
     assert 'id="promptEditor"' not in shell
     assert "新建流程" not in shell
     assert "Prompt 套件说明" not in shell
     assert "function enableDrag" in editor
+    assert "function enableCanvasPan" in editor
+    assert "scroller.scrollLeft = pan.scrollLeft - dx" in editor
+    assert "autoLayout('horizontal')" in editor
+    assert "function handleConnectionClick" in editor
+    assert "真实执行 · Prompt 路由" in editor
+    assert "/migrate-router" in editor
+    assert "data-remove-edge" in editor
+    assert "结构化输出 JSON Schema" in editor
+    assert "{step_context.agent.name}" in editor
+    assert "dataTypeOptions" in editor
+    assert "api('/workflow-functions')" in editor
     assert "async function restoreVersion" in editor
     assert "async function save" in editor
     assert "一键恢复" in editor
@@ -128,7 +172,7 @@ def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab
     assert 'id="resultAgentButtons" role="tablist"' in shell
     assert 'id="resultAgentDetail" role="tabpanel"' in shell
     assert 'id="agentTabPrev"' in shell and 'id="agentTabNext"' in shell
-    assert 'data-tooltip="每个 Agent 是一个独立结果单元；切换上方 Tab' in shell
+    assert 'data-tooltip="每个 Agent 是一个独立结果单元；切换上方 Tab' not in shell
     assert '.agent-result-card' not in shell
     assert "function renderAgentTabs()" in script
     assert 'role="tab" class="agent-result-tab' in script
@@ -156,7 +200,8 @@ def test_dynamic_card_and_error_paths_are_owned_by_the_production_script():
 
     assert "function showToast(message, title" in script
     assert "function reportError(error)" in script
-    assert "showToast(error.message || String(error), '操作失败')" in script
+    assert "发生了什么：${error.message || String(error)}" in script
+    assert "service_error_code: error.code || 'CLIENT_ERROR'" in script
     assert "openExperiment(card.dataset.id).catch(reportError)" in script
     assert "state.currentExperimentName = experiment.name" in script
     assert "state.currentExperimentStatus = statusLabels[experiment.status]" in script
@@ -270,7 +315,7 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
 
 
-def test_content_workspaces_use_tabs_while_metric_strips_remain_visible():
+def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_tabs():
     root = Path(__file__).parents[2]
     shell = (
         root
@@ -283,11 +328,46 @@ def test_content_workspaces_use_tabs_while_metric_strips_remain_visible():
         root / "generative_agents" / "web" / "static" / "console-api.js"
     ).read_text(encoding="utf-8")
 
-    for group in ("overview", "models", "summary", "world", "advanced", "agent-editor"):
+    for group in ("models", "world", "advanced", "agent-editor"):
         assert f'data-content-tabs="{group}"' in shell
-    assert 'class="stats"' in shell
-    assert 'class="result-metrics"' in shell
+    overview = shell[shell.index('id="page-overview"') : shell.index('id="page-results"')]
+    agents = shell[shell.index('id="page-agents"') : shell.index('id="page-models"')]
+    topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
+    assert 'data-content-tabs="overview"' not in overview
+    assert 'role="tablist"' not in overview
+    assert '<h1>实验概览</h1>' not in overview
+    assert 'id="overviewRevisionState"' not in overview
+    assert 'id="overviewRevisionCode"' not in overview
+    assert 'id="overviewRevisionTime"' not in overview
+    assert 'class="stats overview-stats"' in overview
+    assert 'id="overviewReleaseDetails" hidden' in overview
+    assert 'id="publishBtn">发布版本并启动实验</button>' in overview
+    assert 'Agent 编组' not in overview
+    assert 'for="expName"' not in overview
+    assert 'for="expKey"' not in overview
+    assert 'for="logLevel"' not in overview
+    assert 'id="experimentHeaderMeta" hidden' in topbar
+    assert 'id="experimentOwnerMeta"' in topbar
+    assert 'id="experimentTagsMeta"' in topbar
+    assert 'id="expOwner"' not in shell
+    assert 'id="expTags"' not in shell
+    assert topbar.index('id="topbarTitle"') < topbar.index('id="experimentHeaderMeta"')
+    assert '控制 Agent 状态记录点的密度' in overview
+    assert 'id="overviewLatestRunCode"' in overview
+    assert 'class="result-metrics"' not in shell
+    assert '<h1>Agent 配置</h1>' not in agents
+    assert 'Agent 配置说明' not in agents
+    assert 'id="selectedAgentCount"' not in agents
+    assert "$('selectedAgentCount')" not in script
     assert "function setContentTab" in script
+    assert "definition.simulation.log_level = 'INFO';" in script
+    latest_summary = script[
+        script.index("async function fillLatestRunSummary") : script.index(
+            "function behaviorControlKey"
+        )
+    ]
+    assert "/results/summary" not in latest_summary
+    assert "/results/operations" not in latest_summary
     assert "url.searchParams.set('tab'," in script
     assert "window.addEventListener('popstate'" in script
     assert "Apply deep-link state before loading the experiment" in script
@@ -304,8 +384,15 @@ def test_running_duration_uses_utc_instants_and_a_live_execution_label():
     script_path = root / "generative_agents" / "web" / "static" / "console-api.js"
     script = script_path.read_text(encoding="utf-8")
 
-    assert 'id="resultDurationLabel">执行时间' in shell
-    assert "terminal ? '实际耗时' : '执行时间'" in script
+    topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
+    assert 'id="resultDurationMeta" hidden' in topbar
+    assert 'id="resultDurationLabel">实际耗时' in topbar
+    assert topbar.index('id="topbarTitle"') < topbar.index('id="resultDurationMeta"') < topbar.index('id="statusPill"')
+    assert 'id="resultStepMetric"' not in shell
+    assert 'id="resultConversationMetric"' not in shell
+    assert 'id="resultMemoryMetric"' not in shell
+    assert 'id="resultLlmMetric"' not in shell
+    assert "/results/summary" not in script
     assert "function startResultDurationTimer(run)" in script
     assert "`${text}Z`" in script
 
@@ -342,7 +429,7 @@ def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
     assert "state.selectedAgentContent" in detail
 
 
-def test_recoverable_run_action_is_visible_before_rerun_and_uses_resume():
+def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     node = shutil.which("node")
     assert node, "Node.js is required for the executable Run action contract"
     root = Path(__file__).parents[2]
@@ -351,7 +438,99 @@ def test_recoverable_run_action_is_visible_before_rerun_and_uses_resume():
     shell = shell_path.read_text(encoding="utf-8")
     source = script_path.read_text(encoding="utf-8")
 
-    assert shell.index('id="runContinueBtn"') < shell.index('id="runAgainBtn"')
+    topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
+    results = shell[shell.index('id="page-results"') : shell.index('id="page-agents"')]
+    assert 'id="runContinueBtn"' in topbar
+    assert 'id="exportResultsBtn"' in topbar
+    assert 'id="resultRunSelect"' in topbar
+    assert 'id="resultRunControls"' in topbar
+    assert 'id="runPauseResumeBtn"' in topbar
+    assert 'id="runCancelBtn"' in topbar
+    assert 'id="resultRunControls"' not in results
+    assert topbar.index('id="resultRunSelect"') < topbar.index('id="resultRunControls"') < topbar.index('id="cloneBtn"')
+    assert ".top-actions .btn { flex: 0 0 auto; white-space: nowrap; }" in shell
+    assert '<h1>实验结果</h1>' not in results
+    assert 'id="resultRunTabs"' not in results
+    assert 'data-content-tab="events"' not in results
+    assert 'id="summaryKeyEvents"' not in results
+    assert "$('summaryKeyEvents')" not in source
+    assert 'data-result-tab="summary"' not in results
+    assert 'data-result-panel="summary"' not in results
+    assert 'data-content-tabs="summary"' not in results
+    assert 'data-result-tab="timeline">仿真回放</button>' in results
+    assert 'class="result-panel active" data-result-panel="timeline"' in results
+    assert ".result-tabs, .content-tabs, .operations-subtabs, .filter-tabs { overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; }" in shell
+    assert ".result-tabs::-webkit-scrollbar, .content-tabs::-webkit-scrollbar, .operations-subtabs::-webkit-scrollbar, .filter-tabs::-webkit-scrollbar { display: none; width: 0; height: 0; }" in shell
+    ux_style = (root / "generative_agents" / "web" / "static" / "console-ux.css").read_text(encoding="utf-8")
+    assert '[role="tablist"] {' in ux_style
+    assert "overflow-y: hidden" in ux_style
+    assert '[role="tablist"]::-webkit-scrollbar {' in ux_style
+    assert results.index('id="resultMap"') < results.index('id="timelineRange"') < results.index('id="replayInspector"') < results.index('id="timelineStreamItems"') < results.index('id="replayAgentRoster"')
+    assert 'class="timeline-toolbar replay-sidebar-controls"' in results
+    assert 'class="replay-sidebar-events"' in results
+    assert ".replay-sidebar-controls .replay-options select { width: 46px; height: 24px; min-height: 24px;" in shell
+    assert 'id="replayLayerAgentNames"' not in results
+    assert 'id="replayLayerActionBubbles"' not in results
+    assert 'id="replayLayerConversations"' not in results
+    assert "const conversations = step.conversations;" in source
+    assert 'id="replayCameraMode" aria-label="回放镜头模式" hidden' in results
+    assert 'id="replayAgentSelect" aria-label="回放 Agent" hidden' in results
+    assert 'id="replayCameraState">自由镜头' in results
+    assert 'function applyReplayAgentSelection(agentKey)' in source
+    assert 'state.replayPlayer?.followAgent(key);' in source
+    assert "applyReplayAgentSelection(state.selectedReplayAgentKey === key ? null : key)" in source
+    assert "resultTab: 'timeline'" in source
+    assert "requestedResultTabParam === 'summary' ? 'timeline'" in source
+    assert "function renderSummary" not in source
+    assert "function renderActivityChart" not in source
+    for removed_id in (
+        "openRunHistory",
+        "resultStatusChip",
+        "resultRevision",
+        "resultWindow",
+        "resultSync",
+    ):
+        assert f'id="{removed_id}"' not in shell
+    assert "function renderRunSelect" in source
+    assert 'id="agentResultCount"' not in results
+    assert "Agent 结果说明" not in results
+    assert "在 Agent 之间快速切换" not in results
+    assert "内容随运行自动更新" not in results
+    assert "$('agentResultCount')" not in source
+    assert "refreshResultData(runId, generation, { silent: true })" in source
+    assert "showAgentDetail(state.selectedAgentKey, { silent })" in source
+    assert "if (!silent) panel.innerHTML" in source
+    assert "state.agentDetailSignatures.get(agentKey) === signature" in source
+    assert "strip.scrollLeft = previousScrollLeft" in source
+    assert "if (silent) window.scrollTo(scrollX, scrollY)" in source
+    assert "const AGENT_CONTENT_PAGE_SIZE = 5" in source
+    assert source.count("agentContentPager('") == 6
+    assert 'class="agent-content-pagination"' in source
+    assert 'data-agent-page-kind="${kind}"' in source
+    assert "state.agentContentPages.set(pageKey, targetPage)" in source
+    assert "state.agentDetailCache.get(`${state.selectedRunId}:${state.selectedAgentKey}`)" in source
+    agent_sections = source[source.index("function renderAgentPlanSection") : source.index("function agentPlanText")]
+    assert "slice(0," not in agent_sections
+    assert agent_sections.count("slice(pagination.itemsFrom, pagination.itemsTo)") == 6
+    assert "const OPERATION_LIST_PAGE_SIZE = 5" in source
+    assert 'id="modelUsagePagination"' in results
+    assert 'id="modelTracePagination"' in results
+    assert 'id="systemEventPagination"' in results
+    assert 'id="checkpointPagination"' in results
+    assert 'class="diagnostic-lists-grid"' in results
+    assert ".diagnostic-lists-grid { display: grid; grid-template-columns: minmax(390px,.82fr) minmax(520px,1.18fr);" in shell
+    assert "state.modelUsageItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
+    assert "state.traceItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
+    assert "filtered.slice(pagination.itemsFrom, pagination.itemsTo)" in source
+    assert "state.checkpointItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
+    assert "state.eventPage = 1" in source
+    assert "state.checkpointPage = page" in source
+    assert 'data-operation-list="${kind}"' in source
+    assert ".trace-row[data-trace-id] { cursor: pointer; }" in shell
+    assert "document.querySelectorAll('.filter-tab[data-filter]')" in source
+    assert "while (cursor)" in source
+    assert 'id="runAgainBtn"' not in shell
+    assert 'id="openReplayBtn"' not in shell
     assert 'id="resumeRunModal"' in shell
     assert 'id="resumeRunStep"' in shell
     assert 'id="resumeRunNextStep"' in shell
@@ -365,6 +544,7 @@ const fs = require('fs');
 const source = fs.readFileSync(process.argv[1], 'utf8');
 const start = source.indexOf('function isRunRecoverable(');
 const end = source.indexOf('function renderAgents(', start);
+const state = {workspacePage:'results'};
 const values = new Set(['btn-primary']);
 const elements = new Map();
 const element = id => {
@@ -383,8 +563,6 @@ const snapshot = run => {
     cancelHidden: element('runCancelBtn').hidden,
     continueHidden: element('runContinueBtn').hidden,
     continueText: element('runContinueBtn').textContent,
-    againHidden: element('runAgainBtn').hidden,
-    replayPrimary: values.has('btn-primary'),
   };
 };
 const failed = snapshot({status:'FAILED', recoverable:true, recoverable_step:30});
@@ -393,11 +571,11 @@ const paused = snapshot({status:'PAUSED', recoverable:true, recoverable_step:7})
 const running = snapshot({status:'RUNNING', recoverable:false, recoverable_step:7});
 if (JSON.stringify(failed) !== JSON.stringify({
   pauseHidden:true, cancelHidden:true, continueHidden:false,
-  continueText:'继续执行 · Step 30', againHidden:false, replayPrimary:false,
+  continueText:'继续执行 · Step 30',
 })) process.exit(1);
-if (!unavailable.continueHidden || unavailable.againHidden || !unavailable.replayPrimary) process.exit(2);
+if (!unavailable.continueHidden) process.exit(2);
 if (paused.continueHidden || paused.continueText !== '继续执行 · Step 7' || paused.cancelHidden) process.exit(3);
-if (running.pauseHidden || running.cancelHidden || !running.continueHidden || !running.againHidden) process.exit(4);
+if (running.pauseHidden || running.cancelHidden || !running.continueHidden) process.exit(4);
 """
     subprocess.run(
         [node, "-e", program, str(script_path)],
@@ -427,6 +605,10 @@ def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
     assert "state.selectedRunId = run.run_id" in publish
     assert "/draft/validate" not in publish
     assert "/actions/publish-and-run" in publish
+    assert "function modelAutoProbeMarkup" in source
+    assert "report.auto_model_probe" in source
+    assert "上次自动检测失败" in source
+    assert "const report = await refreshValidation();" in source
     assert "operations.artifact_jobs" in source
     assert "artifact_queued" in source
     assert "artifact_running" in source
@@ -482,6 +664,17 @@ const outcomes = {
   removedAgent: GAReplayPlayer.resolveAgentSelection('resident-999', 'rev-a', 'rev-a', agents),
 };
 if (JSON.stringify(outcomes) !== JSON.stringify({sameRevision:'resident-001',otherRevision:null,removedAgent:null})) process.exit(1);
+const cameraEvents = [];
+const sprite = {setTint(){return this},clearTint(){return this}};
+const instance = new GAReplayPlayer({onAgent(){}});
+instance.scene = {cameras:{main:{startFollow(){cameraEvents.push('follow')},stopFollow(){cameraEvents.push('free')}}}};
+instance.agentObjects.set('resident-001', {sprite});
+instance.agentDefinitions.set('resident-001', agents[0]);
+if (instance.toggleAgentFollow('resident-001') !== 'resident-001') process.exit(2);
+if (instance.selectedAgentKey !== 'resident-001' || instance.followedAgentKey !== 'resident-001') process.exit(3);
+if (instance.toggleAgentFollow('resident-001') !== null) process.exit(4);
+if (instance.selectedAgentKey !== null || instance.followedAgentKey !== null) process.exit(5);
+if (JSON.stringify(cameraEvents) !== JSON.stringify(['follow','free'])) process.exit(6);
 """
     subprocess.run(
         [node, "-e", program, str(player)],
@@ -496,7 +689,115 @@ if (JSON.stringify(outcomes) !== JSON.stringify({sameRevision:'resident-001',oth
     )
     assert "clearReplayInspector();" in console
     assert "selectedReplayRevisionId" in console
-    assert "replayPlayer.selectAgent(restoredAgentKey)" in console
+    assert "applyReplayAgentSelection(restoredAgentKey)" in console
+    assert "sprite.on('pointerdown', () => this.toggleAgentFollow(definition.agent_key));" in player.read_text(encoding="utf-8")
+    assert "if (!payload.selectedAgentKey)" in console
+
+
+def test_replay_playback_starts_at_step_one_and_restarts_after_the_end():
+    node = shutil.which("node")
+    assert node, "Node.js is required for the replay transport contract"
+    root = Path(__file__).parents[2]
+    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    program = r"""
+global.window = global;
+global.Phaser = {};
+const { GAReplayPlayer } = require(process.argv[1]);
+const statuses = [];
+const manifest = {
+  schema_version:2,run_id:'run-1',revision_id:'revision-1',available_step:3,partial:false,
+  world:{render_asset:{status:'READY'}},agents:[],
+};
+const steps = [1,2,3].map(step_no => ({step_no}));
+const fetchImpl = async url => ({
+  ok:true,
+  json:async() => url.includes('/manifest')
+    ? manifest
+    : {run_id:'run-1',available_step:3,result_version:1,steps},
+});
+(async()=>{
+  const instance = new GAReplayPlayer({fetchImpl,onStatus:status=>statuses.push(status.state)});
+  instance._createGame = async()=>{};
+  instance._renderStep = ()=>{};
+  await instance.loadRun('run-1');
+  if (!instance.ready || instance.currentStep !== 1) throw new Error(`replay did not start at Step 1: ${instance.currentStep}`);
+  await Promise.all([instance.stepBy(1), instance.stepBy(1)]);
+  if (instance.currentStep !== 3) throw new Error(`queued steps were lost: ${instance.currentStep}`);
+  await instance.play();
+  if (instance.currentStep !== 1 || !instance.timer) throw new Error('play at the end did not restart from Step 1');
+  if (statuses.at(-1) !== 'PLAYING') throw new Error(`unexpected playback state: ${statuses.at(-1)}`);
+  instance.pause();
+  instance.ready = false;
+  await instance.play();
+  if (instance.timer) throw new Error('loading replay accepted a play request');
+})().catch(error=>{console.error(error);process.exit(1)});
+"""
+    subprocess.run(
+        [node, "-e", program, str(player)],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(encoding="utf-8")
+    console = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(encoding="utf-8")
+    assert 'id="timelinePlay" aria-label="播放" disabled' in shell
+    assert "replayReady: false" in console
+    assert "atEnd ? '↻' : '▶'" in console
+    assert "updateTimelineStep(Number(slider.value), { seekReplay: false });" in console
+    assert "state.replayPlayer.play().catch(reportError);" in console
+
+
+def test_running_replay_refetches_an_incomplete_cached_tail_after_growth():
+    node = shutil.which("node")
+    assert node, "Node.js is required for the replay cache growth contract"
+    root = Path(__file__).parents[2]
+    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    program = r"""
+global.window = global;
+global.Phaser = {};
+const { GAReplayPlayer } = require(process.argv[1]);
+let availableStep = 63;
+let windowRequests = 0;
+const manifest = () => ({
+  schema_version:2,run_id:'run-growing',revision_id:'revision-1',available_step:availableStep,partial:true,
+  world:{render_asset:{status:'READY'}},agents:[],
+});
+const fetchImpl = async url => ({
+  ok:true,
+  json:async() => {
+    if (url.includes('/manifest')) return manifest();
+    windowRequests += 1;
+    const from = Number(new URL(url, 'http://localhost').searchParams.get('from_step'));
+    const steps = Array.from(
+      {length: Math.max(0, availableStep - from + 1)},
+      (_, index) => ({step_no: from + index}),
+    ).slice(0, 100);
+    return {run_id:'run-growing',available_step:availableStep,result_version:availableStep,steps};
+  },
+});
+(async()=>{
+  const instance = new GAReplayPlayer({fetchImpl});
+  instance._createGame = async()=>{};
+  instance._renderStep = ()=>{};
+  await instance.loadRun('run-growing');
+  await instance.seek(63);
+  if (windowRequests !== 1) throw new Error(`initial tail was fetched ${windowRequests} times`);
+  availableStep = 72;
+  await instance.refreshAvailable();
+  const step = await instance.seek(72);
+  if (!step || instance.currentStep !== 72) throw new Error(`replay remained at Step ${instance.currentStep}`);
+  if (windowRequests !== 2) throw new Error(`growing tail was not refetched: ${windowRequests}`);
+})().catch(error=>{console.error(error);process.exit(1)});
+"""
+    subprocess.run(
+        [node, "-e", program, str(player)],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_replay_phaser_canvas_stays_owned_by_the_result_map_container():
@@ -506,12 +807,14 @@ def test_replay_phaser_canvas_stays_owned_by_the_result_map_container():
     player = root / "generative_agents" / "web" / "static" / "replay-player.js"
     program = r"""
 global.window = global;
+global.devicePixelRatio = 1.5;
 global.ResizeObserver = undefined;
 let captured;
+let initialZoom;
 const layer = {setDepth(){return this},setVisible(){return this}};
 const scene = {
   make:{tilemap(){return {widthInPixels:3200,heightInPixels:2400,addTilesetImage(name){return name},createLayer(){return layer}}}},
-  cameras:{main:{setBounds(){},setZoom(){}}},
+  cameras:{main:{setBounds(){},setZoom(value){initialZoom=value}}},
   input:{on(){}},
   scale:{resize(){}},
 };
@@ -533,6 +836,8 @@ instance._createGame(manifest, 1).then(() => {
   if (captured.parent !== host) throw new Error('root Phaser parent is not resultMap');
   if (captured.canvas !== canvas) throw new Error('existing resultMapCanvas was replaced');
   if (Object.hasOwn(captured.scale, 'parent')) throw new Error('parent was incorrectly nested under scale');
+  if (captured.resolution !== 1.5) throw new Error(`unexpected display resolution: ${captured.resolution}`);
+  if (initialZoom !== 0.7) throw new Error(`unexpected initial zoom: ${initialZoom}`);
   if (!String(process.argv[1])) process.exit(1);
 }).catch(error => { console.error(error); process.exit(1); });
 """
@@ -548,6 +853,49 @@ instance._createGame(manifest, 1).then(() => {
     assert "'Interior Furniture L2 '" in source
     assert "'Interior Furniture L2'," not in source
     assert "new ResizeObserver" in source
+    assert "label.setResolution(TEXT_RENDER_RESOLUTION)" in source
+    assert "bubble.setResolution(TEXT_RENDER_RESOLUTION)" in source
+    assert source.count("fontSize: '11px'") == 2
+    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(encoding="utf-8")
+    result_canvas_css = re.search(r"\.result-map\s*>\s*canvas\s*\{([^}]*)\}", shell)
+    assert result_canvas_css and "transform:" not in result_canvas_css.group(1)
+
+
+def test_replay_agent_name_and_action_emoji_use_separate_offsets():
+    node = shutil.which("node")
+    assert node, "Node.js is required for the replay overlay layout contract"
+    root = Path(__file__).parents[2]
+    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    program = r"""
+global.window = global;
+global.Phaser = {};
+const {GAReplayPlayer}=require(process.argv[1]);
+const positions={};
+const instance=new GAReplayPlayer({});
+instance.scene={
+  tweens:{killTweensOf(){},add(){}},
+};
+instance.agentObjects.set('agent-1',{
+  sprite:{},
+  label:{setPosition(x,y){positions.label=[x,y]}},
+  bubble:{setText(){return this},setPosition(x,y){positions.bubble=[x,y]}},
+});
+instance._renderStep({
+  step_no:1,
+  agents:[{agent_key:'agent-1',coord:[2,3],path:[],action:{emoji:'🙂'}}],
+});
+const expected={label:[62,68],bubble:[118,88]};
+if(JSON.stringify(positions)!==JSON.stringify(expected)){
+  throw new Error(`unexpected replay overlay positions: ${JSON.stringify(positions)}`);
+}
+"""
+    subprocess.run(
+        [node, "-e", program, str(player)],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_replay_canvas_survives_running_completed_running_switches():

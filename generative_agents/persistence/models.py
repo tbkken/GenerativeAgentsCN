@@ -58,6 +58,32 @@ class BuiltinCatalogSnapshot(Base):
     __table_args__ = (Index("ix_builtin_catalog_created_at", "created_at", "id"),)
 
 
+class WorkflowFunctionRecord(Base):
+    """Globally reusable user-authored Function; system Functions remain code-owned."""
+
+    __tablename__ = "workflow_functions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    function_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    title: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    input_type: Mapped[str] = mapped_column(String(120), nullable=False, default="any")
+    output_type: Mapped[str] = mapped_column(String(120), nullable=False, default="any")
+    source: Mapped[str] = mapped_column(Text, nullable=False)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint("row_version >= 1", name="ck_workflow_function_row_version"),
+        Index("ix_workflow_functions_updated", "updated_at", "function_key"),
+    )
+
+
 class WorldMap(Base):
     """Reusable public map container; editable drafts and published revisions are separate."""
 
@@ -130,6 +156,705 @@ class WorldMapRevision(Base):
     )
 
 
+class SpatialAssetDefinition(Base):
+    """Reusable visual/physical map component identity."""
+
+    __tablename__ = "spatial_asset_definitions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    asset_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    asset_kind: Mapped[str] = mapped_column(String(24), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "asset_kind IN ('TILE','OBJECT','ZONE','MARKING','NETWORK')",
+            name="ck_spatial_asset_definitions_kind",
+        ),
+        CheckConstraint(
+            "status IN ('DRAFT','PUBLISHED')", name="ck_spatial_asset_definitions_status"
+        ),
+        CheckConstraint("row_version >= 1", name="ck_spatial_asset_definitions_version"),
+        Index("ix_spatial_asset_definitions_updated", "updated_at", "id"),
+    )
+
+
+class SpatialAssetRevision(Base):
+    """Editable draft or immutable spatial asset contract."""
+
+    __tablename__ = "spatial_asset_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    spatial_asset_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("spatial_asset_definitions.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("spatial_asset_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-spatial-asset/v1"
+    )
+    contract_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    contract_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "spatial_asset_id", "revision_no", name="uq_spatial_asset_revision_number"
+        ),
+        CheckConstraint("revision_no >= 1", name="ck_spatial_asset_revision_number"),
+        CheckConstraint(
+            "state IN ('DRAFT','PUBLISHED')", name="ck_spatial_asset_revision_state"
+        ),
+        CheckConstraint("lock_version >= 1", name="ck_spatial_asset_revision_lock"),
+        Index(
+            "uq_spatial_asset_one_draft",
+            "spatial_asset_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index(
+            "ix_spatial_asset_revisions_asset", "spatial_asset_id", "revision_no"
+        ),
+    )
+
+
+class CapabilityDefinition(Base):
+    """Reusable capability identity; behavior lives in immutable revisions."""
+
+    __tablename__ = "capability_definitions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    capability_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('DRAFT','PUBLISHED')", name="ck_capability_definitions_status"
+        ),
+        CheckConstraint(
+            "row_version >= 1", name="ck_capability_definitions_row_version"
+        ),
+        Index("ix_capability_definitions_updated", "updated_at", "id"),
+    )
+
+
+class CapabilityRevision(Base):
+    """Editable draft or immutable published capability contract."""
+
+    __tablename__ = "capability_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    capability_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("capability_definitions.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("capability_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-capability/v1"
+    )
+    contract_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    contract_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "capability_id", "revision_no", name="uq_capability_revision_number"
+        ),
+        CheckConstraint("revision_no >= 1", name="ck_capability_revision_number"),
+        CheckConstraint(
+            "state IN ('DRAFT','PUBLISHED')", name="ck_capability_revision_state"
+        ),
+        CheckConstraint("lock_version >= 1", name="ck_capability_revision_lock"),
+        Index(
+            "uq_capability_one_draft",
+            "capability_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index(
+            "ix_capability_revisions_capability", "capability_id", "revision_no"
+        ),
+    )
+
+
+class CapabilityBundle(Base):
+    """Named composition of capability revisions and typed bindings."""
+
+    __tablename__ = "capability_bundles"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    bundle_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('DRAFT','PUBLISHED')", name="ck_capability_bundles_status"
+        ),
+        CheckConstraint("row_version >= 1", name="ck_capability_bundles_row_version"),
+        Index("ix_capability_bundles_updated", "updated_at", "id"),
+    )
+
+
+class CapabilityBundleRevision(Base):
+    """Version-locked composition document for a capability bundle."""
+
+    __tablename__ = "capability_bundle_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    bundle_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("capability_bundles.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("capability_bundle_revisions.id", ondelete="RESTRICT"),
+        nullable=True,
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-capability-bundle/v1"
+    )
+    composition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    composition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("bundle_id", "revision_no", name="uq_capability_bundle_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_capability_bundle_revision_number"),
+        CheckConstraint(
+            "state IN ('DRAFT','PUBLISHED')", name="ck_capability_bundle_revision_state"
+        ),
+        CheckConstraint("lock_version >= 1", name="ck_capability_bundle_revision_lock"),
+        Index(
+            "uq_capability_bundle_one_draft",
+            "bundle_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index(
+            "ix_capability_bundle_revisions_bundle", "bundle_id", "revision_no"
+        ),
+    )
+
+
+class ScenarioTemplate(Base):
+    """Reusable capability-scene identity with immutable published revisions."""
+
+    __tablename__ = "scenario_templates"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    template_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_scenario_templates_status"),
+        CheckConstraint("row_version >= 1", name="ck_scenario_templates_row_version"),
+        Index("ix_scenario_templates_updated", "updated_at", "id"),
+    )
+
+
+class ScenarioTemplateRevision(Base):
+    """One editable or immutable scenario assembly blueprint."""
+
+    __tablename__ = "scenario_template_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    template_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("scenario_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("scenario_template_revisions.id", ondelete="RESTRICT")
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(48), nullable=False, default="ga-scenario-template/v1"
+    )
+    contract_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    contract_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        UniqueConstraint("template_id", "revision_no", name="uq_scenario_template_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_scenario_template_revision_number"),
+        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_scenario_template_revision_state"),
+        CheckConstraint("lock_version >= 1", name="ck_scenario_template_revision_lock"),
+        Index(
+            "uq_scenario_template_one_draft",
+            "template_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_scenario_template_revisions_template", "template_id", "revision_no"),
+    )
+
+
+class BrainTemplate(Base):
+    """Reusable Agent-orchestration template with immutable published revisions."""
+
+    __tablename__ = "brain_templates"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    brain_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_brain_templates_status"),
+        CheckConstraint("row_version >= 1", name="ck_brain_templates_row_version"),
+        Index("ix_brain_templates_updated_at", "updated_at", "id"),
+    )
+
+
+class BrainRevision(Base):
+    """One editable or immutable snapshot of a reusable brain template."""
+
+    __tablename__ = "brain_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    brain_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("brain_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("brain_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    prompts_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    bundle_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("brain_id", "revision_no", name="uq_brain_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_brain_revision_number"),
+        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_brain_revision_state"),
+        CheckConstraint("schema_version >= 1", name="ck_brain_revision_schema"),
+        CheckConstraint("lock_version >= 1", name="ck_brain_revision_lock"),
+        Index(
+            "uq_brain_one_draft",
+            "brain_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_brain_revisions_brain", "brain_id", "revision_no"),
+    )
+
+
+class BrainWorkflow(Base):
+    """Workflow graph owned by exactly one brain Revision."""
+
+    __tablename__ = "brain_workflows"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    brain_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("brain_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("brain_revisions.id", ondelete="CASCADE"), nullable=False
+    )
+    workflow_key: Mapped[str] = mapped_column(String(80), nullable=False)
+    definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    workflow_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        UniqueConstraint("revision_id", "workflow_key", name="uq_brain_revision_workflow_key"),
+        Index("ix_brain_workflows_brain_revision", "brain_id", "revision_id"),
+    )
+
+
+class BrainRevisionExtension(Base):
+    """Optional capability composition attached to one brain revision."""
+
+    __tablename__ = "brain_revision_extensions"
+
+    revision_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("brain_revisions.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    brain_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("brain_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-brain-extension/v1"
+    )
+    extension_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    extension_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        Index("ix_brain_revision_extensions_brain", "brain_id", "revision_id"),
+    )
+
+
+class ToolDefinition(Base):
+    """Reusable non-Agent tool identity such as a car, card, or bicycle."""
+
+    __tablename__ = "tool_definitions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    tool_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    tool_kind: Mapped[str] = mapped_column(String(24), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (
+        CheckConstraint(
+            "tool_kind IN ('CAR','BICYCLE','MOTORCYCLE','ACCESS_CARD','DEVICE','OTHER')",
+            name="ck_tool_definitions_kind",
+        ),
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_tool_definitions_status"),
+        CheckConstraint("row_version >= 1", name="ck_tool_definitions_version"),
+        Index("ix_tool_definitions_updated", "updated_at", "id"),
+    )
+
+
+class ToolRevision(Base):
+    """Editable draft or immutable tool contract."""
+
+    __tablename__ = "tool_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    tool_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("tool_definitions.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("tool_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[str] = mapped_column(String(40), nullable=False, default="ga-tool/v1")
+    contract_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    contract_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("tool_id", "revision_no", name="uq_tool_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_tool_revision_number"),
+        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_tool_revision_state"),
+        CheckConstraint("lock_version >= 1", name="ck_tool_revision_lock"),
+        Index(
+            "uq_tool_one_draft",
+            "tool_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_tool_revisions_tool", "tool_id", "revision_no"),
+    )
+
+
+class AgentTemplate(Base):
+    """Globally reusable, versioned Agent identity and spatial baseline."""
+
+    __tablename__ = "agent_templates"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    agent_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    normalized_name: Mapped[str] = mapped_column(String(240), nullable=False, unique=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_agent_templates_status"),
+        CheckConstraint("row_version >= 1", name="ck_agent_templates_row_version"),
+        Index("ix_agent_templates_updated_at", "updated_at", "id"),
+    )
+
+
+class AgentTemplateRevision(Base):
+    """Editable or immutable snapshot of one public Agent template."""
+
+    __tablename__ = "agent_template_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    agent_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("agent_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    definition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("agent_id", "revision_no", name="uq_agent_template_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_agent_template_revision_number"),
+        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_agent_template_revision_state"),
+        CheckConstraint("schema_version >= 1", name="ck_agent_template_revision_schema"),
+        CheckConstraint("lock_version >= 1", name="ck_agent_template_revision_lock"),
+        Index(
+            "uq_agent_template_one_draft",
+            "agent_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_agent_template_revisions_agent", "agent_id", "revision_no"),
+    )
+
+
+class AgentRevisionExtension(Base):
+    """Optional V2 capability/tool snapshot without changing the V1 Agent hash."""
+
+    __tablename__ = "agent_revision_extensions"
+
+    revision_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("agent_template_revisions.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    agent_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("agent_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-agent-extension/v1"
+    )
+    extension_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    extension_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (Index("ix_agent_revision_extensions_agent", "agent_id", "revision_id"),)
+
+
+class CrowdTemplate(Base):
+    """Public named collection of Agent template revisions."""
+
+    __tablename__ = "crowd_templates"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    crowd_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (
+        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_crowd_templates_status"),
+        CheckConstraint("row_version >= 1", name="ck_crowd_templates_row_version"),
+        Index("ix_crowd_templates_updated_at", "updated_at", "id"),
+    )
+
+
+class CrowdRevision(Base):
+    """Versioned membership snapshot for one public crowd."""
+
+    __tablename__ = "crowd_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    crowd_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("crowd_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    base_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("crowd_revisions.id", ondelete="RESTRICT"), nullable=True
+    )
+    membership_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("crowd_id", "revision_no", name="uq_crowd_revision_number"),
+        CheckConstraint("revision_no >= 1", name="ck_crowd_revision_number"),
+        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_crowd_revision_state"),
+        CheckConstraint("lock_version >= 1", name="ck_crowd_revision_lock"),
+        Index(
+            "uq_crowd_one_draft",
+            "crowd_id",
+            unique=True,
+            sqlite_where=text("state = 'DRAFT'"),
+        ),
+        Index("ix_crowd_revisions_crowd", "crowd_id", "revision_no"),
+    )
+
+
+class CrowdRevisionMember(Base):
+    """Ordered reference to one immutable Agent template revision."""
+
+    __tablename__ = "crowd_revision_members"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    crowd_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("crowd_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    crowd_revision_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("crowd_revisions.id", ondelete="CASCADE"), nullable=False
+    )
+    agent_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("agent_templates.id", ondelete="RESTRICT"), nullable=False
+    )
+    agent_revision_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"), nullable=False
+    )
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+
+    __table_args__ = (
+        UniqueConstraint("crowd_revision_id", "agent_id", name="uq_crowd_revision_agent"),
+        UniqueConstraint("crowd_revision_id", "position", name="uq_crowd_revision_position"),
+        CheckConstraint("position >= 0", name="ck_crowd_revision_member_position"),
+        Index("ix_crowd_revision_members_revision", "crowd_revision_id", "position"),
+    )
+
+
 class Experiment(Base):
     __tablename__ = "experiments"
 
@@ -137,6 +862,12 @@ class Experiment(Base):
     experiment_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     goal: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    owner: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    template_key: Mapped[str | None] = mapped_column(String(48), nullable=True)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     status: Mapped[str] = mapped_column(String(24), nullable=False, default="DRAFT")
     current_draft_revision_id: Mapped[str | None] = mapped_column(
         String(36),
@@ -181,6 +912,79 @@ class Experiment(Base):
         CheckConstraint("row_version >= 1", name="ck_experiments_row_version"),
         Index("ix_experiments_updated_at", "updated_at"),
         Index("ix_experiments_status_updated_at", "status", "updated_at"),
+        Index("ix_experiments_archived_updated_at", "archived_at", "updated_at"),
+    )
+
+
+class ModelProbeStatus(Base):
+    """Latest durable connectivity fact for one experiment model purpose."""
+
+    __tablename__ = "model_probe_statuses"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    experiment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiments.id", ondelete="CASCADE"), nullable=False
+    )
+    draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("experiment_revisions.id", ondelete="CASCADE"), nullable=True
+    )
+    purpose: Mapped[str] = mapped_column(String(16), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="UNTESTED")
+    latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    resolved_model: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    configuration_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    reason_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    reason_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    http_status: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    service_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_failure_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        UniqueConstraint("experiment_id", "purpose", name="uq_model_probe_experiment_purpose"),
+        CheckConstraint("purpose IN ('chat','embedding')", name="ck_model_probe_purpose"),
+        CheckConstraint(
+            "status IN ('UNTESTED','CHECKING','ONLINE','OFFLINE','STALE')",
+            name="ck_model_probe_status",
+        ),
+        Index("ix_model_probe_status_checked", "status", "checked_at"),
+    )
+
+
+class ExperimentSavedView(Base):
+    """Persistent, shareable experiment-list query definition."""
+
+    __tablename__ = "experiment_saved_views"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    share_key: Mapped[str] = mapped_column(String(36), nullable=False, unique=True, default=uuid_str)
+    query_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+
+class ExperimentComparisonGroup(Base):
+    """Named, reusable set of experiments used as a research control group."""
+
+    __tablename__ = "experiment_comparison_groups"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    experiment_ids_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
     )
 
 
@@ -225,6 +1029,40 @@ class ExperimentRevision(Base):
             sqlite_where=text("state = 'DRAFT'"),
         ),
         Index("ix_revisions_experiment", "experiment_id", "revision_no"),
+    )
+
+
+class ExperimentRevisionCapability(Base):
+    """Optional composed-scenario definition attached to an experiment revision."""
+
+    __tablename__ = "experiment_revision_capabilities"
+
+    revision_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("experiment_revisions.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    experiment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("experiments.id", ondelete="RESTRICT"), nullable=False
+    )
+    schema_version: Mapped[str] = mapped_column(
+        String(48), nullable=False, default="ga-experiment-capability/v1"
+    )
+    extension_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    extension_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        Index(
+            "ix_experiment_revision_capabilities_experiment",
+            "experiment_id",
+            "revision_id",
+        ),
     )
 
 
@@ -482,6 +1320,7 @@ class Asset(Base):
     media_type: Mapped[str] = mapped_column(String(120), nullable=False)
     size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
     relative_path: Mapped[str] = mapped_column(Text, nullable=False)
+    content_blob: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )

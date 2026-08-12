@@ -11,13 +11,12 @@ from functools import lru_cache
 from pathlib import Path
 
 from .schema import ExperimentDefinition, make_blank_definition
+from .prompt_variables import canonicalize_prompt_content
 
 
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _PROMPTS_ROOT = _PACKAGE_ROOT / "data" / "prompts"
 _VILLAGE_ROOT = _PACKAGE_ROOT / "frontend" / "static" / "assets" / "village"
-
-
 def _read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -39,7 +38,11 @@ def _bundled_payload() -> dict:
         "assets": [],
     }
     base["prompts"] = {
-        path.stem: {"content": path.read_text(encoding="utf-8")}
+        path.stem: {
+            "content": canonicalize_prompt_content(
+                path.read_text(encoding="utf-8"), prompt_key=path.stem
+            )
+        }
         for path in sorted(_PROMPTS_ROOT.glob("*.txt"), key=lambda item: item.name)
     }
     agents = []

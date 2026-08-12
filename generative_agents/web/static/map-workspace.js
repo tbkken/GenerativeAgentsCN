@@ -18,6 +18,9 @@
       const error = new Error(body.error?.message || `请求失败（${response.status}）`);
       error.code = body.error?.code;
       error.details = body.error?.details;
+      error.requestId = body.error?.request_id || response.headers.get('X-Request-ID');
+      error.status = response.status;
+      error.path = path;
       throw error;
     }
     return body;
@@ -63,6 +66,7 @@
     editor.schema_version = 1;
     if (!Array.isArray(editor.palette) || !editor.palette.length) editor.palette = defaultPalette();
     if (!editor.cells || typeof editor.cells !== 'object' || Array.isArray(editor.cells)) editor.cells = {};
+    if (!editor.spatial_assets || typeof editor.spatial_assets !== 'object' || Array.isArray(editor.spatial_assets)) editor.spatial_assets = {};
     return world;
   }
 
@@ -172,7 +176,7 @@
       const palette = this.root.querySelector('[data-map-palette]');
       palette.innerHTML = this.editor.palette.map(item => `
         <button class="map-palette-item${item.id === this.paletteId ? ' active' : ''}" data-palette-id="${escapeHtml(item.id)}">
-          <span class="map-palette-swatch" style="background:${escapeHtml(item.color)}"></span>
+          <span class="map-palette-swatch" style="background:${escapeHtml(item.color || '#eef2ef')}">${escapeHtml(item.emoji || '')}</span>
           <span>${escapeHtml(item.name)}${item.collision ? ' · 碰撞' : ''}</span>
         </button>`).join('');
       palette.querySelectorAll('[data-palette-id]').forEach(button => button.addEventListener('click', () => {
@@ -270,14 +274,18 @@
       this.root.focus({ preventScroll: true });
       this.canvas.setPointerCapture(event.pointerId);
       const point = this.eventPoint(event);
-      if (this.tool === 'pan' || this.spaceDown || event.button === 1) {
+      const cell = this.pointCell(point);
+      if (this.tool === 'pan' || this.spaceDown || event.button === 1 || (event.button === 0 && !cell)) {
         this.drag = { mode: 'pan', pointerId: event.pointerId, point, offsetX: this.offsetX, offsetY: this.offsetY };
         this.host.classList.add('dragging');
         return;
       }
-      const cell = this.pointCell(point);
       if (!cell) return;
       if (this.readonly && !['select', 'semantic'].includes(this.tool)) return;
+      if (event.button === 0 && ['brush', 'eraser', 'collision'].includes(this.tool)) {
+        this.drag = { mode: 'pending-edit', pointerId: event.pointerId, point, cell, offsetX: this.offsetX, offsetY: this.offsetY };
+        return;
+      }
       this.snapshot();
       this.drag = { mode: 'edit', pointerId: event.pointerId, last: null };
       this.applyTool(cell);
@@ -286,7 +294,16 @@
     pointerMove(event) {
       if (!this.drag || this.drag.pointerId !== event.pointerId) return;
       const point = this.eventPoint(event);
-      if (this.drag.mode === 'pan') {
+      if (this.drag.mode === 'pending-edit') {
+        const distance = Math.hypot(point.x - this.drag.point.x, point.y - this.drag.point.y);
+        if (distance >= 7) {
+          this.drag.mode = 'pan';
+          this.host.classList.add('dragging');
+          this.offsetX = this.drag.offsetX + point.x - this.drag.point.x;
+          this.offsetY = this.drag.offsetY + point.y - this.drag.point.y;
+          this.render();
+        }
+      } else if (this.drag.mode === 'pan') {
         this.offsetX = this.drag.offsetX + point.x - this.drag.point.x;
         this.offsetY = this.drag.offsetY + point.y - this.drag.point.y;
         this.render();
@@ -298,6 +315,10 @@
 
     pointerUp(event) {
       if (!this.drag || this.drag.pointerId !== event.pointerId) return;
+      if (this.drag.mode === 'pending-edit') {
+        this.snapshot();
+        this.applyTool(this.drag.cell);
+      }
       if (this.drag.mode === 'edit' && !this.changed) this.history.pop();
       this.drag = null;
       this.host.classList.remove('dragging');
@@ -312,7 +333,7 @@
       if (this.tool === 'brush') {
         const palette = this.editor.palette.find(item => item.id === this.paletteId) || this.editor.palette[0];
         this.editor.cells[key] = { kind: palette.id };
-        this.updateRuntimeTile(cell, { collision: Boolean(palette.collision) });
+        this.updateRuntimeTile(cell, { collision: Boolean(palette.collision), tile: palette.id });
         this.changed = true;
       } else if (this.tool === 'eraser') {
         delete this.editor.cells[key];
@@ -491,6 +512,41 @@
         }
         context.stroke();
       }
+      const scene = this.definition.spatial_scene;
+      if (scene?.placements?.length) {
+        const metersPerTile = Number(scene.meters_per_tile) || 1;
+        scene.placements.forEach(placement => {
+          const contract = this.editor.spatial_assets?.[placement.spatial_asset_revision_id];
+          if (!contract) return;
+          const x = this.offsetX + (placement.x_m / metersPerTile + .5) * size;
+          const y = this.offsetY + (placement.y_m / metersPerTile + .5) * size;
+          const state = { ...(contract.initial_state || {}), ...(placement.state_overrides || {}) };
+          const stateValue = state.phase || state.state || state.mode;
+          const variant = contract.appearance?.state_variants?.[stateValue] || {};
+          const color = variant.color || contract.appearance?.color || '#78b6a9';
+          const emoji = variant.emoji || contract.appearance?.emoji;
+          context.save();
+          context.translate(x, y);
+          context.rotate((Number(placement.rotation_degrees) || 0) * Math.PI / 180);
+          if (contract.kind === 'ZONE') {
+            context.globalAlpha = .3;
+            context.fillStyle = color;
+            context.fillRect(-size * .48, -size * .48, size * .96, size * .96);
+            context.globalAlpha = .85;
+            context.strokeStyle = color;
+            context.setLineDash([3, 2]);
+            context.strokeRect(-size * .48, -size * .48, size * .96, size * .96);
+          } else if (emoji) {
+            context.font = `${Math.max(12, size * .78)}px system-ui`;
+            context.textAlign = 'center'; context.textBaseline = 'middle';
+            context.fillText(emoji, 0, 0);
+          } else {
+            context.fillStyle = color;
+            context.fillRect(-size * .3, -size * .3, size * .6, size * .6);
+          }
+          context.restore();
+        });
+      }
       if (this.selected) {
         context.strokeStyle = '#f0a33a';
         context.lineWidth = 2;
@@ -502,6 +558,7 @@
 
   const manager = {
     maps: [],
+    selectorMaps: [],
     selectedMapId: null,
     detail: null,
     draft: null,
@@ -510,6 +567,12 @@
     baseExperimentRevision: null,
     publicEditor: null,
     overlayEditor: null,
+    page: 1,
+    pageSize: 5,
+    status: '',
+    query: '',
+    listGeneration: 0,
+    searchTimer: null,
     initialized: false,
 
     init() {
@@ -521,7 +584,29 @@
       document.getElementById('backToMapsBtn').addEventListener('click', () => this.showCatalog());
       document.getElementById('saveMapBtn').addEventListener('click', () => this.savePublic().catch(error => this.fail(error)));
       document.getElementById('publishMapBtn').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
-      document.getElementById('mapSearch').addEventListener('input', event => this.loadMaps(event.target.value).catch(error => this.fail(error)));
+      document.getElementById('mapSearch').addEventListener('input', event => {
+        clearTimeout(this.searchTimer);
+        this.searchTimer = setTimeout(() => {
+          this.query = event.target.value.trim();
+          this.page = 1;
+          this.loadMaps().catch(error => this.fail(error));
+        }, 250);
+      });
+      document.querySelectorAll('[data-map-filter]').forEach(tab => tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-map-filter]').forEach(item => item.classList.toggle('active', item === tab));
+        this.status = tab.dataset.mapFilter === 'all' ? '' : tab.dataset.mapFilter.toUpperCase();
+        this.page = 1;
+        this.loadMaps().catch(error => this.fail(error));
+      }));
+      document.getElementById('mapPagination').addEventListener('click', event => {
+        const pageButton = event.target.closest('[data-map-page]');
+        const totalPages = Number(document.getElementById('mapPagination').dataset.totalPages || 1);
+        if (pageButton) this.page = Number(pageButton.dataset.mapPage);
+        else if (event.target === document.getElementById('mapPrev')) this.page = Math.max(1, this.page - 1);
+        else if (event.target === document.getElementById('mapNext')) this.page = Math.min(totalPages, this.page + 1);
+        else return;
+        this.loadMaps().catch(error => this.fail(error));
+      });
       document.getElementById('confirmCreateMap').addEventListener('click', () => this.create().catch(error => this.fail(error)));
       ['closeCreateMap', 'cancelCreateMap'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'createMapModal')));
       document.getElementById('applyExperimentMapBtn').addEventListener('click', () => this.selectExperimentMap().catch(error => this.fail(error)));
@@ -529,46 +614,112 @@
       document.getElementById('saveExperimentMapOverlay').addEventListener('click', () => this.saveExperimentOverlay().catch(error => this.fail(error)));
       ['closeExperimentMapOverlay', 'cancelExperimentMapOverlay'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'experimentMapOverlayModal')));
       document.querySelectorAll('[data-map-tab]').forEach(tab => tab.addEventListener('click', () => this.setTab(tab.dataset.mapTab)));
+      window.addEventListener('spatial-asset-workspace:add-to-map', event => this.addSpatialAsset(event.detail?.asset));
     },
 
     async activate() {
       this.init();
-      await this.loadMaps(document.getElementById('mapSearch').value);
+      this.query = document.getElementById('mapSearch').value.trim();
+      await this.loadMaps();
       const mapId = new URLSearchParams(location.search).get('map_id');
       if (mapId) await this.openMap(mapId, false);
     },
 
-    async loadMaps(query = '') {
+    async loadMaps() {
       this.init();
-      const params = new URLSearchParams({ page: '1', page_size: '100' });
-      if (query.trim()) params.set('q', query.trim());
-      const result = await request(`/maps?${params}`);
+      const generation = ++this.listGeneration;
+      const requestState = { page: this.page, status: this.status, query: this.query };
+      const params = new URLSearchParams({ page: String(this.page), page_size: String(this.pageSize) });
+      if (this.query) params.set('q', this.query);
+      if (this.status) params.set('status', this.status);
+      const selectorParams = new URLSearchParams({ page: '1', page_size: '100' });
+      const [result, selectorResult] = await Promise.all([
+        request(`/maps?${params}`),
+        request(`/maps?${selectorParams}`),
+      ]);
+      if (generation !== this.listGeneration
+        || requestState.page !== this.page
+        || requestState.status !== this.status
+        || requestState.query !== this.query) return;
+      const lastPage = Math.max(1, result.total_pages || 1);
+      if (this.page > lastPage) {
+        this.page = lastPage;
+        await this.loadMaps();
+        return;
+      }
       this.maps = result.items;
-      document.getElementById('mapCatalogCount').textContent = `${result.total} 张公共地图`;
+      this.selectorMaps = selectorResult.items;
       const grid = document.getElementById('mapCatalogGrid');
       grid.innerHTML = this.maps.length ? this.maps.map(item => `
         <button class="map-card" data-map-id="${item.id}">
           <span class="map-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span><code>${escapeHtml(item.map_key)}</code></span>
           <h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.description || '暂无用途说明')}</p>
           <span class="map-card-foot"><span>${item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]}` : '待设置尺寸'}</span><span>${item.usage_count} 个实验使用</span></span>
-        </button>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以新建空白地图或从已发布版本复制。</span></div>';
+        </button>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
       grid.querySelectorAll('[data-map-id]').forEach(card => card.addEventListener('click', () => this.openMap(card.dataset.mapId).catch(error => this.fail(error))));
+      const footer = document.getElementById('mapListFooter');
+      footer.hidden = result.total === 0;
+      if (result.total) {
+        const first = (result.page - 1) * result.page_size + 1;
+        const last = Math.min(result.total, first + result.items.length - 1);
+        document.getElementById('mapCatalogCount').textContent = `显示 ${first}–${last}，共 ${result.total} 张地图`;
+      }
+      this.renderMapPages(result.total_pages || 1);
+      this.updateMapStatusCounts(result.status_counts || {});
       this.populateMapSelectors();
     },
 
+    renderMapPages(totalPages) {
+      const pagination = document.getElementById('mapPagination');
+      pagination.hidden = totalPages <= 1;
+      pagination.dataset.totalPages = String(totalPages);
+      document.getElementById('mapPages').innerHTML = Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+        return `<button class="page-button${page === this.page ? ' active' : ''}" data-map-page="${page}"${page === this.page ? ' aria-current="page"' : ''}>${page}</button>`;
+      }).join('');
+      document.getElementById('mapPrev').disabled = this.page <= 1;
+      document.getElementById('mapNext').disabled = this.page >= totalPages;
+    },
+
+    updateMapStatusCounts(counts) {
+      const labels = { all: '全部', draft: '编辑中', published: '已发布' };
+      document.querySelectorAll('[data-map-filter]').forEach(tab => {
+        const key = tab.dataset.mapFilter;
+        const count = key === 'all' ? counts.ALL : counts[key.toUpperCase()];
+        tab.textContent = Number.isFinite(count) ? `${labels[key]} ${count}` : labels[key];
+      });
+    },
+
     populateMapSelectors() {
+      const catalog = this.selectorMaps.length ? this.selectorMaps : this.maps;
+      const published = catalog.filter(item => item.current_published);
       const source = document.getElementById('newMapSource');
       const currentSource = source.value;
-      source.innerHTML = '<option value="">空白地图</option>' + this.maps
-        .filter(item => item.current_published)
+      source.innerHTML = '<option value="">空白地图</option>' + published
         .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
       source.value = currentSource;
       const select = document.getElementById('experimentMapSelect');
       const current = this.experiment?.world?.map_revision_id || select.value;
-      select.innerHTML = '<option value="">请选择已发布地图</option>' + this.maps
-        .filter(item => item.current_published)
+      select.innerHTML = '<option value="">请选择已发布地图</option>' + published
         .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
       select.value = current || '';
+      const experimentCreateSelect = document.getElementById('newExperimentMap');
+      if (experimentCreateSelect) {
+        const previousCreateValue = experimentCreateSelect.value;
+        experimentCreateSelect.innerHTML = published
+          .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}${item.map_key === 'the-ville' ? ' · 默认' : ''}</option>`).join('');
+        experimentCreateSelect.value = published.some(item => item.current_published.id === previousCreateValue)
+          ? previousCreateValue
+          : (published.find(item => item.map_key === 'the-ville')?.current_published.id || published[0]?.current_published.id || '');
+      }
+    },
+
+    async prepareExperimentCreate() {
+      this.init();
+      if (!this.selectorMaps.length) await this.loadMaps();
+      this.populateMapSelectors();
+      const baseline = this.selectorMaps.find(item => item.map_key === 'the-ville')?.current_published?.id;
+      if (baseline) document.getElementById('newExperimentMap').value = baseline;
     },
 
     async openMap(mapId, push = true) {
@@ -626,7 +777,56 @@
         panel.classList.toggle('active', panel.dataset.mapPanel.split(' ').includes(name));
       });
       if (name === 'audit') this.renderAudit();
+      else if (name === 'assets') window.SpatialAssetWorkspace?.activate().catch(error => this.fail(error));
       else requestAnimationFrame(() => this.publicEditor.resize());
+    },
+
+    addSpatialAsset(asset) {
+      if (!asset || !this.draft || this.draft.state !== 'DRAFT') {
+        notify('请先打开一个可编辑的地图草稿。', '无法加入地图');
+        return;
+      }
+      const contract = asset.contract;
+      const definition = this.publicEditor.definition;
+      const scene = definition.spatial_scene ||= {
+        schema_version: 'ga-spatial-scene/v1', meters_per_tile: 1,
+        palette_refs: {}, placements: [],
+      };
+      this.publicEditor.editor.spatial_assets[asset.revision_id] = deepClone(contract);
+      if (['TILE', 'MARKING'].includes(contract.kind)) {
+        scene.palette_refs[asset.asset_key] = asset.revision_id;
+        const palette = this.publicEditor.editor.palette;
+        const visual = {
+          id: asset.asset_key,
+          name: asset.name,
+          color: contract.appearance.color || '#eef2ef',
+          emoji: contract.appearance.emoji || '',
+          collision: Boolean(contract.physics.collision),
+          spatial_asset_revision_id: asset.revision_id,
+        };
+        const index = palette.findIndex(item => item.id === asset.asset_key);
+        if (index >= 0) palette[index] = visual; else palette.push(visual);
+        this.publicEditor.paletteId = asset.asset_key;
+        this.publicEditor.renderPalette();
+        notify(`${asset.name} 已加入画块面板；选择画笔即可使用。`, '画块已加入地图');
+      } else {
+        const existing = new Set(scene.placements.map(item => item.instance_key));
+        const base = asset.asset_key; let key = base; let suffix = 2;
+        while (existing.has(key)) key = `${base}-${suffix++}`;
+        scene.placements.push({
+          instance_key: key,
+          spatial_asset_revision_id: asset.revision_id,
+          x_m: (definition.size[1] * scene.meters_per_tile) / 2,
+          y_m: (definition.size[0] * scene.meters_per_tile) / 2,
+          rotation_degrees: 0,
+          state_overrides: {},
+          capability_parameter_overrides: {},
+        });
+        notify(`${asset.name} 已放置在地图中心；保存后会锁定其版本引用。`, '物件已加入地图');
+      }
+      this.publicEditor.changed = true;
+      this.publicEditor.render();
+      this.renderAudit();
     },
 
     renderAudit() {
@@ -635,10 +835,15 @@
       const tiles = definition.tiles || [];
       const collisions = tiles.filter(tile => tile.collision).length;
       const addressed = tiles.filter(tile => tile.address?.length).length;
+      const spatialScene = definition.spatial_scene;
+      const spatialAssets = spatialScene
+        ? Object.keys(spatialScene.palette_refs || {}).length + (spatialScene.placements || []).length
+        : 0;
       document.querySelector('[data-map-audit-cards]').innerHTML = `
         <div class="map-audit-card"><span>地图尺寸</span><strong>${definition.size[1]} × ${definition.size[0]}</strong></div>
         <div class="map-audit-card"><span>碰撞 Tile</span><strong>${collisions.toLocaleString('zh-CN')}</strong></div>
-        <div class="map-audit-card"><span>语义 Tile</span><strong>${addressed.toLocaleString('zh-CN')}</strong></div>`;
+        <div class="map-audit-card"><span>语义 Tile</span><strong>${addressed.toLocaleString('zh-CN')}</strong></div>
+        <div class="map-audit-card"><span>版本化空间资产</span><strong>${spatialAssets.toLocaleString('zh-CN')}</strong></div>`;
       document.querySelector('[data-map-revisions]').innerHTML = '<h3>版本记录</h3>' + this.revisions.map(item => `
         <div class="map-revision-row"><strong>v${item.revision_no}</strong><code>${item.world_hash.slice(0, 16)}…</code><span>${new Date(item.updated_at).toLocaleString('zh-CN')}</span><span class="map-state ${item.state === 'DRAFT' ? 'draft' : ''}">${item.state === 'DRAFT' ? '草稿' : '已发布'}</span></div>`).join('');
     },
@@ -648,6 +853,9 @@
       document.getElementById('newMapName').value = '';
       document.getElementById('newMapDescription').value = '';
       document.getElementById('newMapSource').value = '';
+      document.getElementById('newMapWidth').value = '48';
+      document.getElementById('newMapHeight').value = '32';
+      document.getElementById('newMapTileSize').value = '32';
       modal('open', 'createMapModal', 'newMapName');
     },
 
@@ -656,7 +864,14 @@
       if (!name) return document.getElementById('newMapName').focus();
       const created = await request('/maps', {
         method: 'POST',
-        body: JSON.stringify({ name, description: document.getElementById('newMapDescription').value.trim(), source_revision_id: document.getElementById('newMapSource').value || null }),
+        body: JSON.stringify({
+          name,
+          description: document.getElementById('newMapDescription').value.trim(),
+          source_revision_id: document.getElementById('newMapSource').value || null,
+          width: Number(document.getElementById('newMapWidth').value),
+          height: Number(document.getElementById('newMapHeight').value),
+          tile_size: Number(document.getElementById('newMapTileSize').value),
+        }),
       });
       modal('close', 'createMapModal');
       await this.loadMaps();
@@ -695,10 +910,10 @@
     async setExperimentContext(context) {
       this.init();
       this.experiment = context;
-      if (!this.maps.length) await this.loadMaps();
+      if (!this.selectorMaps.length) await this.loadMaps();
       this.populateMapSelectors();
       const world = context.world || {};
-      const map = this.maps.find(item => item.id === world.map_id);
+      const map = this.selectorMaps.find(item => item.id === world.map_id);
       document.getElementById('experimentMapSourceMeta').textContent = map
         ? `${map.name} · 公共 Revision ${map.current_published?.revision_no || '—'} · 当前实验有独立覆盖层`
         : '当前实验仍使用自身世界定义';
@@ -765,7 +980,7 @@
 
     fail(error) {
       console.error(error);
-      notify(error.message || String(error), '操作失败');
+      window.dispatchEvent(new CustomEvent('map-workspace:error', { detail: { error } }));
     },
   };
 
@@ -773,5 +988,6 @@
     activate: () => manager.activate(),
     setExperimentContext: context => manager.setExperimentContext(context),
     refresh: () => manager.loadMaps(),
+    prepareExperimentCreate: () => manager.prepareExperimentCreate(),
   };
 })();

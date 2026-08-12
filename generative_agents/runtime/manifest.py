@@ -23,6 +23,10 @@ from generative_agents.config import (
 )
 
 from .context import RunPaths
+from .capability_snapshot import (
+    CAPABILITY_SNAPSHOT_SCHEMA_VERSION,
+    capability_snapshot_hash,
+)
 
 
 MANIFEST_SCHEMA_VERSION = 1
@@ -48,6 +52,23 @@ class VerifiedRunManifest:
             key: WorkflowDefinition.model_validate(value)
             for key, value in (self.document.get("workflows") or {}).items()
         }
+
+    @property
+    def workflow_functions(self) -> Mapping[str, str]:
+        return {
+            str(key): str(value)
+            for key, value in (self.document.get("workflow_functions") or {}).items()
+        }
+
+    @property
+    def capability_snapshot(self) -> Mapping[str, Any] | None:
+        value = self.document.get("capability_snapshot")
+        return value if isinstance(value, Mapping) else None
+
+
+def workflow_function_bundle_hash(functions: Mapping[str, str]) -> str:
+    normalized = {str(key): str(value) for key, value in sorted(functions.items())}
+    return hashlib.sha256(canonical_json_bytes(normalized)).hexdigest()
 
 
 def collect_dependency_versions(
@@ -80,6 +101,8 @@ def build_manifest_document(
     materialized_at: datetime,
     dependency_versions: Mapping[str, str | None] | None = None,
     workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
+    workflow_functions: Mapping[str, str] | None = None,
+    capability_snapshot: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     actual_definition_hash = definition_hash(definition)
     if actual_definition_hash != expected_definition_hash:
@@ -126,6 +149,20 @@ def build_manifest_document(
         }
         envelope["workflows"] = workflow_documents
         envelope["workflow_bundle_hash"] = workflow_bundle_hash(workflow_documents)
+        function_documents = {
+            str(key): str(value)
+            for key, value in sorted((workflow_functions or {}).items())
+        }
+        envelope["workflow_functions"] = function_documents
+        envelope["workflow_function_bundle_hash"] = workflow_function_bundle_hash(
+            function_documents
+        )
+    if capability_snapshot is not None:
+        snapshot_document = dict(capability_snapshot)
+        envelope["capability_snapshot"] = snapshot_document
+        envelope["capability_snapshot_hash"] = capability_snapshot_hash(
+            snapshot_document
+        )
     envelope["manifest_hash"] = hashlib.sha256(canonical_json_bytes(envelope)).hexdigest()
     return envelope
 
@@ -165,6 +202,8 @@ class RunManifestStore:
         expected_definition_hash: str,
         assets: Iterable[Mapping[str, Any]],
         workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
+        workflow_functions: Mapping[str, str] | None = None,
+        capability_snapshot: Mapping[str, Any] | None = None,
     ) -> VerifiedRunManifest:
         """Verify an existing Run manifest against its published Revision.
 
@@ -199,6 +238,23 @@ class RunManifestStore:
                 )
                 for key, value in sorted(workflows.items())
             }
+        expected_functions = {
+            str(key): str(value)
+            for key, value in sorted((workflow_functions or {}).items())
+        }
+        expected_capability_snapshot = (
+            dict(capability_snapshot) if capability_snapshot is not None else None
+        )
+        has_function_bundle = "workflow_functions" in document
+        function_bundle_matches = (
+            (
+                document.get("workflow_functions") == expected_functions
+                and document.get("workflow_function_bundle_hash")
+                == workflow_function_bundle_hash(expected_functions)
+            )
+            if has_function_bundle
+            else not expected_functions
+        )
         matches = (
             document.get("experiment_id") == str(experiment_id)
             and document.get("revision_id") == str(revision_id)
@@ -212,6 +268,15 @@ class RunManifestStore:
             == (
                 workflow_bundle_hash(expected_workflows)
                 if expected_workflows is not None
+                else None
+            )
+            and function_bundle_matches
+            and document.get("capability_snapshot")
+            == expected_capability_snapshot
+            and document.get("capability_snapshot_hash")
+            == (
+                capability_snapshot_hash(expected_capability_snapshot)
+                if expected_capability_snapshot is not None
                 else None
             )
         )
@@ -269,6 +334,32 @@ class RunManifestStore:
             }
             if workflow_bundle_hash(normalized_workflows) != workflow_digest:
                 raise ValueError("manifest workflow_bundle_hash mismatch")
+        function_documents = document.get("workflow_functions")
+        function_digest = document.get("workflow_function_bundle_hash")
+        if (function_documents is None) != (function_digest is None):
+            raise ValueError("manifest workflow Function bundle is incomplete")
+        if function_documents is not None:
+            if not isinstance(function_documents, Mapping) or not all(
+                isinstance(key, str) and isinstance(value, str)
+                for key, value in function_documents.items()
+            ):
+                raise ValueError("manifest workflow Function bundle is invalid")
+            if workflow_function_bundle_hash(function_documents) != function_digest:
+                raise ValueError("manifest workflow_function_bundle_hash mismatch")
+        capability_snapshot = document.get("capability_snapshot")
+        capability_digest = document.get("capability_snapshot_hash")
+        if (capability_snapshot is None) != (capability_digest is None):
+            raise ValueError("manifest capability snapshot is incomplete")
+        if capability_snapshot is not None:
+            if not isinstance(capability_snapshot, dict):
+                raise ValueError("manifest capability snapshot is invalid")
+            if (
+                capability_snapshot.get("schema_version")
+                != CAPABILITY_SNAPSHOT_SCHEMA_VERSION
+            ):
+                raise ValueError("unsupported capability snapshot schema version")
+            if capability_snapshot_hash(capability_snapshot) != capability_digest:
+                raise ValueError("manifest capability_snapshot_hash mismatch")
         return actual_manifest_hash
 
     @staticmethod

@@ -8,13 +8,14 @@ import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Mapping, Protocol
+from typing import Any, Callable, Mapping, MutableMapping, Protocol
 from uuid import UUID
 
 from generative_agents.config import WorkflowDefinition
 from generative_agents.config.schema import REQUIRED_PROMPT_KEYS
 
 from .algorithm import AlgorithmProfile
+from .workflow_engine import LLMNodeHandler, WorkflowExecutionResult, WorkflowExecutor
 
 
 @dataclass(slots=True)
@@ -217,14 +218,21 @@ class MappingPromptRepository:
 
 @dataclass(frozen=True, slots=True)
 class WorkflowPromptRepository:
-    """Prompt lookup constrained by the immutable workflow bundle in a Run manifest."""
+    """Prompt lookup plus executable graph pinned by one immutable Run manifest."""
 
     prompts: Mapping[str, str]
     workflows: Mapping[str, WorkflowDefinition]
+    function_sources: Mapping[str, str] = field(default_factory=dict)
+    trace_handler: Callable[[Mapping[str, Any]], None] | None = field(
+        default=None, repr=False, compare=False
+    )
     _prompt_nodes: Mapping[str, tuple[str, str]] = field(init=False, repr=False)
+    _prompt_configs: Mapping[str, Mapping[str, Any]] = field(init=False, repr=False)
+    _executor: WorkflowExecutor = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         placements: dict[str, tuple[str, str]] = {}
+        configs: dict[str, Mapping[str, Any]] = {}
         for workflow_key, workflow in self.workflows.items():
             for node in workflow.nodes:
                 if node.kind != "llm" or node.prompt_key is None:
@@ -234,12 +242,23 @@ class WorkflowPromptRepository:
                         f"prompt is placed in multiple workflow nodes: {node.prompt_key}"
                     )
                 placements[node.prompt_key] = (workflow_key, node.node_id)
+                configs[node.prompt_key] = node.config
         missing = REQUIRED_PROMPT_KEYS - set(placements)
         if missing:
             raise ValueError(
                 "run manifest workflows do not place prompts: " + ", ".join(sorted(missing))
             )
         object.__setattr__(self, "_prompt_nodes", placements)
+        object.__setattr__(self, "_prompt_configs", configs)
+        object.__setattr__(
+            self,
+            "_executor",
+            WorkflowExecutor(
+                self.workflows,
+                function_sources=self.function_sources,
+                trace_handler=self.trace_handler,
+            ),
+        )
 
     def get(self, key: str) -> str:
         if key not in self._prompt_nodes:
@@ -254,6 +273,84 @@ class WorkflowPromptRepository:
             return self._prompt_nodes[key]
         except KeyError as exc:
             raise KeyError(f"prompt is not placed in a run workflow: {key}") from exc
+
+    def config_for_prompt(self, key: str) -> Mapping[str, Any]:
+        try:
+            return self._prompt_configs[key]
+        except KeyError as exc:
+            raise KeyError(f"prompt is not placed in a run workflow: {key}") from exc
+
+    def execution_mode_for_prompt(self, key: str) -> str:
+        workflow_key, _node_id = self.node_for_prompt(key)
+        return self.workflows[workflow_key].execution_mode
+
+    def execute_prompt(
+        self,
+        key: str,
+        step_context: Mapping[str, Any],
+        *,
+        llm_handler: LLMNodeHandler,
+        state: MutableMapping[str, Any],
+        invocation_id: str | None = None,
+    ) -> WorkflowExecutionResult:
+        """Execute the complete selector-routed graph for one Agent Prompt call."""
+
+        workflow_key, _node_id = self.node_for_prompt(key)
+        workflow = self.workflows[workflow_key]
+        if workflow.execution_mode != "prompt_router":
+            raise RuntimeError(
+                f"workflow {workflow_key} is not a runnable Prompt router"
+            )
+        return self._executor.execute(
+            workflow_key,
+            {"step_context": dict(step_context)},
+            llm_handler=llm_handler,
+            runtime_context=step_context,
+            state=state,
+            invocation_id=invocation_id,
+        )
+
+    def invoke_prompt_result(
+        self,
+        key: str,
+        value: Any,
+        *,
+        runtime_context: Mapping[str, Any],
+        state: MutableMapping[str, Any],
+        invocation_id: str | None = None,
+    ) -> Any:
+        """Pass a legacy Agent prompt result through its real graph hook."""
+
+        workflow_key, node_id = self.node_for_prompt(key)
+        return self._executor.execute_prompt_hook(
+            workflow_key,
+            node_id,
+            value,
+            runtime_context=runtime_context,
+            state=state,
+            invocation_id=invocation_id,
+        ).value
+
+    def execute_workflow(
+        self,
+        workflow_key: str,
+        inputs: Mapping[str, Any],
+        *,
+        llm_handler: LLMNodeHandler,
+        runtime_context: Mapping[str, Any] | None = None,
+        state: MutableMapping[str, Any] | None = None,
+        invocation_id: str | None = None,
+    ) -> WorkflowExecutionResult:
+        """Native entry point for scenario capabilities that do not use Agent hooks."""
+
+        return self._executor.execute(
+            workflow_key,
+            inputs,
+            llm_handler=llm_handler,
+            runtime_context=runtime_context,
+            state=state,
+            invocation_id=invocation_id,
+        )
 
 
 @dataclass(slots=True)

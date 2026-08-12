@@ -34,6 +34,12 @@ from .results import (
 )
 from .result_projector import ResultProjectionError, SqliteResultProjector
 from .trace_projector import ModelTraceProjectionError, ModelTraceProjector
+from .workflow_engine import (
+    WorkflowExecutionError,
+    WorkflowExecutionResult,
+    WorkflowExecutor,
+)
+from .workflow_trace import WorkflowTraceWriter
 
 __all__ = [
     "ActionSnapshot",
@@ -69,6 +75,10 @@ __all__ = [
     "SqliteResultProjector",
     "VerifiedRunManifest",
     "WorkflowPromptRepository",
+    "WorkflowExecutionError",
+    "WorkflowExecutionResult",
+    "WorkflowExecutor",
+    "WorkflowTraceWriter",
     "build_manifest_document",
     "get_algorithm_profile",
 ]

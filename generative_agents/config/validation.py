@@ -12,6 +12,7 @@ from pydantic import Field
 from .algorithm import get_algorithm_profile
 from .hashing import definition_hash
 from .schema import ExperimentDefinition, REQUIRED_PROMPT_KEYS, StrictModel
+from .spatial import build_map_address_index, validate_agent_spatial
 
 
 class ValidationIssue(StrictModel):
@@ -19,6 +20,8 @@ class ValidationIssue(StrictModel):
     path: str
     message: str
     severity: Literal["ERROR", "WARNING"]
+    fix_page: str | None = None
+    fix_control: str | None = None
 
 
 class ValidationReport(StrictModel):
@@ -36,8 +39,30 @@ def _is_loopback(url: str) -> bool:
     return host in {"127.0.0.1", "localhost", "::1"}
 
 
+def _fix_target(path: str) -> tuple[str, str | None]:
+    if path.startswith("agents"):
+        return "agents", "agentSearch"
+    if path.startswith("world"):
+        return "world", "worldDefinition"
+    if path.startswith("models"):
+        return "models", "chatModel" if ".chat" in path else "embeddingModel"
+    if path.startswith("prompts") or path.startswith("workflows"):
+        return "prompts", "workflowCanvasScroller"
+    if path.startswith("simulation") or path.startswith("results"):
+        return "overview", "maxSteps"
+    return "overview", None
+
+
 def _issue(code: str, path: str, message: str, severity: Literal["ERROR", "WARNING"]):
-    return ValidationIssue(code=code, path=path, message=message, severity=severity)
+    fix_page, fix_control = _fix_target(path)
+    return ValidationIssue(
+        code=code,
+        path=path,
+        message=message,
+        severity=severity,
+        fix_page=fix_page,
+        fix_control=fix_control,
+    )
 
 
 def validate_for_publish(
@@ -91,6 +116,91 @@ def validate_for_publish(
     world = definition.world.definition
     if not world:
         errors.append(_issue("WORLD_EMPTY", "world.definition", "世界定义不能为空", "ERROR"))
+    else:
+        size = world.get("size") if isinstance(world, dict) else None
+        tiles = world.get("tiles") if isinstance(world, dict) else None
+        if (
+            not isinstance(size, list)
+            or len(size) != 2
+            or any(not isinstance(value, int) or value < 1 for value in size)
+        ):
+            errors.append(
+                _issue(
+                    "WORLD_SIZE_INVALID",
+                    "world.definition.size",
+                    "世界必须设置有效的高度和宽度",
+                    "ERROR",
+                )
+            )
+        if not isinstance(tiles, list) or not tiles:
+            errors.append(
+                _issue(
+                    "WORLD_TILES_MISSING",
+                    "world.definition.tiles",
+                    "世界必须包含至少一个可访问 Tile",
+                    "ERROR",
+                )
+            )
+            accessible: set[tuple[int, int]] = set()
+        else:
+            accessible = {
+                tuple(tile["coord"])
+                for tile in tiles
+                if isinstance(tile, dict)
+                and isinstance(tile.get("coord"), list)
+                and len(tile["coord"]) == 2
+                and not tile.get("collision", False)
+            }
+            if not accessible:
+                errors.append(
+                    _issue(
+                        "WORLD_NO_ACCESSIBLE_TILE",
+                        "world.definition.tiles",
+                        "世界中没有可供 Agent 行走的 Tile",
+                        "ERROR",
+                    )
+                )
+        world_roots = {
+            definition.world.world_name,
+            world.get("world", "") if isinstance(world, dict) else "",
+        }
+        world_address_index = (
+            build_map_address_index(world_roots=world_roots, tiles=tiles)
+            if isinstance(tiles, list) and tiles
+            else None
+        )
+        for index, agent in enumerate(definition.agents):
+            if not agent.enabled:
+                continue
+            if tuple(agent.coord) not in accessible:
+                errors.append(
+                    _issue(
+                        "AGENT_INITIAL_POSITION_INVALID",
+                        f"agents.{index}.coord",
+                        f"Agent“{agent.name}”的初始位置不可访问",
+                        "ERROR",
+                    )
+                )
+            spatial_issues = validate_agent_spatial(
+                agent.spatial.address,
+                agent.spatial.tree,
+                world_roots=world_roots,
+                world_address_index=world_address_index,
+            )
+            for spatial_issue in spatial_issues:
+                suffix = (
+                    f".address.{spatial_issue.purpose}"
+                    if spatial_issue.purpose
+                    else ""
+                )
+                errors.append(
+                    _issue(
+                        spatial_issue.code,
+                        f"agents.{index}.spatial{suffix}",
+                        f"Agent“{agent.name}”：{spatial_issue.message}",
+                        "ERROR",
+                    )
+                )
 
     for purpose, model in (
         ("chat", definition.models.chat),

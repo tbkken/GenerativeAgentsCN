@@ -1699,23 +1699,20 @@ ${name} 当前的情况：${currently}</textarea>
           </div>
         </div>
         <div class="wizard-panel" data-wizard-panel="2">
-          <div class="section-title"><h3>选择实验的配置起点</h3><button type="button" class="help-tip" aria-label="配置起点说明" data-tooltip="所选配置会复制到新实验，不会继续与来源联动。">?</button></div>
-          <div class="template-options">
-            <button class="template-option selected" data-template="标准小镇模板"><span class="template-symbol">▦</span><strong>标准小镇模板</strong><span>25 个居民、the Ville 世界、中文 Prompt 套件和推荐行为参数。</span></button>
-            <button class="template-option" data-template="从空白开始"><span class="template-symbol">＋</span><strong>从空白开始</strong><span>仅创建实验基本信息，Agent、模型和世界全部手动配置。</span></button>
-            <button class="template-option" data-template="复制已有实验"><span class="template-symbol">◇</span><strong>复制已有实验</strong><span>选择一个实验的最新 Revision 作为新实验的完整起点。</span></button>
-          </div>
-          <div class="field" id="copyRevisionField" hidden style="margin-top:14px">
-            <label for="copyRevisionSelect">来源实验与已发布版本</label>
-            <select class="control" id="copyRevisionSelect"><option value="">请选择已发布实验</option></select>
+          <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="所选资源版本会复制到新实验，不会继续与来源联动。">?</button></div>
+          <div class="form-grid">
+            <div class="field"><label>大脑模板</label><select class="control"><option>斯坦福小镇 · v1</option></select></div>
+            <div class="field"><label>地图</label><select class="control"><option>the Ville 标准小镇 · v1</option></select></div>
+            <div class="field" style="grid-column:1/-1"><label>人群（可多选）</label><label class="template-option selected"><input type="checkbox" checked /><strong>斯坦福小镇居民</strong><span>25 个 Agent · v1 · 系统</span></label></div>
           </div>
         </div>
         <div class="wizard-panel" data-wizard-panel="3">
           <div class="section-title"><h3>确认实验草稿</h3><button type="button" class="help-tip" aria-label="实验草稿说明" data-tooltip="创建后直接进入实验概览；完成校验并发布后才能启动。">?</button></div>
           <div class="create-summary">
             <div class="create-summary-row"><span>实验名称</span><strong id="createSummaryName">未填写</strong></div>
-            <div class="create-summary-row"><span>配置起点</span><strong id="createSummaryTemplate">标准小镇模板</strong></div>
-            <div class="create-summary-row"><span>隔离策略</span><strong>复制所有定义为独立 Draft Revision</strong></div>
+            <div class="create-summary-row"><span>大脑与地图</span><strong>斯坦福小镇 · the Ville</strong></div>
+            <div class="create-summary-row"><span>人群</span><strong>斯坦福小镇居民 · 25 个 Agent</strong></div>
+            <div class="create-summary-row"><span>隔离策略</span><strong>锁定资源版本并创建独立 Draft Revision</strong></div>
             <div class="create-summary-row"><span>初始状态</span><strong>草稿 · 未发布</strong></div>
           </div>
         </div>
@@ -2480,7 +2477,6 @@ ${name} 当前的情况：${currently}</textarea>
     const wizardBack = document.getElementById('wizardBack');
     const wizardNext = document.getElementById('wizardNext');
     let wizardStep = 1;
-    let selectedTemplate = '标准小镇模板';
 
     function renderWizardStep() {
       document.querySelectorAll('[data-wizard-panel]').forEach(panel => panel.classList.toggle('active', Number(panel.dataset.wizardPanel) === wizardStep));
@@ -2493,25 +2489,18 @@ ${name} 当前的情况：${currently}</textarea>
       wizardNext.textContent = wizardStep === 3 ? '创建实验草稿' : '下一步';
       if (wizardStep === 3) {
         document.getElementById('createSummaryName').textContent = newExperimentName.value.trim();
-        document.getElementById('createSummaryTemplate').textContent = selectedTemplate;
       }
     }
 
     function closeCreateModal() { createModal.classList.remove('open'); }
     document.getElementById('createExperimentBtn').addEventListener('click', () => {
       wizardStep = 1;
-      selectedTemplate = '标准小镇模板';
       newExperimentName.value = '';
-      document.querySelectorAll('.template-option').forEach(option => option.classList.toggle('selected', option.dataset.template === selectedTemplate));
       renderWizardStep();
       createModal.classList.add('open');
       newExperimentName.focus();
     });
     document.getElementById('closeCreateModal').addEventListener('click', closeCreateModal);
-    document.querySelectorAll('.template-option').forEach(option => option.addEventListener('click', () => {
-      selectedTemplate = option.dataset.template;
-      document.querySelectorAll('.template-option').forEach(other => other.classList.toggle('selected', other === option));
-    }));
     wizardBack.addEventListener('click', () => { wizardStep = Math.max(1, wizardStep - 1); renderWizardStep(); });
     wizardNext.addEventListener('click', () => {
       if (wizardStep === 1 && !newExperimentName.value.trim()) {
@@ -2529,7 +2518,7 @@ ${name} 当前的情况：${currently}</textarea>
       currentExperiment = newExperimentName.value.trim();
       currentExperimentStatus = '草稿';
       document.getElementById('expName').value = currentExperiment;
-      const defaultAgents = selectedTemplate === '从空白开始' ? 0 : 25;
+      const defaultAgents = 25;
       document.getElementById('statAgentCount').textContent = defaultAgents;
       document.getElementById('navAgentCount').textContent = defaultAgents;
       applyStatusPill('草稿');

@@ -1,5 +1,6 @@
 import datetime
 import re
+from collections.abc import Mapping
 from string import Template
 from pydantic import BaseModel, Field
 from collections import namedtuple
@@ -9,6 +10,7 @@ from generative_agents.modules.memory import Event
 
 
 Result = namedtuple("Result", ["prompt", "callback", "failsafe", "return_type"])
+_PATH_VARIABLE = re.compile(r"(?<!\$)\{([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\}")
 
 class Scratch:
     def __init__(self, name, currently, config, *, clock, random_source, prompts):
@@ -19,9 +21,57 @@ class Scratch:
         self._rng = random_source
         self._prompts = prompts
 
+    @staticmethod
+    def _structured_context(data):
+        """Expose legacy runtime fields through the explicit Prompt context contract."""
+
+        raw_context = data.get("context")
+        context = dict(raw_context) if isinstance(raw_context, Mapping) else {}
+        if "context" in data and not isinstance(raw_context, Mapping):
+            context["background"] = raw_context
+        for key, value in data.items():
+            if key != "context":
+                context.setdefault(key, value)
+
+        for key in ("agent", "another"):
+            value = context.get(key)
+            if value is None and key == "agent":
+                value = data.get("name")
+            if value is None or isinstance(value, Mapping) or hasattr(value, "name"):
+                continue
+            context[key] = {"name": value}
+        return context
+
     def build_prompt(self, template, data):
+        render_data = dict(data)
+        render_data["context"] = self._structured_context(data)
         prompt_template = Template(self._prompts.get(template))
-        filled_content = prompt_template.substitute(data)
+        filled_content = prompt_template.substitute(render_data)
+
+        def replace_path(match):
+            path = match.group(1)
+            parts = path.split(".")
+            if parts[0] not in render_data:
+                raise KeyError(f"prompt {template} references unknown variable {parts[0]}")
+            value = render_data[parts[0]]
+            # Drafts published before the explicit-path migration may still use
+            # ``{context}`` for a business field while also referencing nested
+            # paths such as ``{context.agent.name}``. Preserve that snapshot by
+            # resolving the exact root to its namespaced scalar value.
+            if path == "context" and isinstance(value, Mapping) and "background" in value:
+                value = value["background"]
+            for part in parts[1:]:
+                if isinstance(value, Mapping):
+                    if part not in value:
+                        raise KeyError(f"prompt {template} references unknown path {path}")
+                    value = value[part]
+                else:
+                    if not hasattr(value, part):
+                        raise KeyError(f"prompt {template} references unknown path {path}")
+                    value = getattr(value, part)
+            return str(value)
+
+        filled_content = _PATH_VARIABLE.sub(replace_path, filled_content)
 
         return filled_content
 

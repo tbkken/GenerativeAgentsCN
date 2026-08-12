@@ -18,6 +18,8 @@ class ReplayManifestResponse(StrictModel):
     source_step: int
     available_step: int
     stride_minutes: int
+    execution_mode: Literal["LEGACY_TOWN", "CAPABILITY_COMPOSED"]
+    step_interval_ms: int | None = None
     start_time: str
     agents: list[dict[str, Any]]
     partial: bool

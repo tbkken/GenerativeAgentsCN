@@ -80,8 +80,8 @@ def _definition(key: str) -> ExperimentDefinition:
         "camera": [0, 0],
         "tile_address_keys": ["world", "sector", "arena", "game_object"],
         "tiles": [
-            {"coord": [0, 0], "collision": False},
-            {"coord": [1, 0], "collision": False},
+            {"coord": [0, 0], "collision": False, "address": ["home", "bedroom", "bed"]},
+            {"coord": [1, 0], "collision": False, "address": ["home", "bedroom", "bed"]},
         ],
     }
     payload["agents"] = [
@@ -99,7 +99,13 @@ def _definition(key: str) -> ExperimentDefinition:
                 "lifestyle": "repeatable",
                 "daily_plan": "",
             },
-            "spatial": {"address": {}, "tree": {}},
+            "spatial": {
+                "address": {
+                    "living_area": ["test", "home", "bedroom"],
+                    "sleeping": ["test", "home", "bedroom", "bed"],
+                },
+                "tree": {"test": {"home": {"bedroom": ["bed"]}}},
+            },
         }
     ]
     payload["prompts"] = {
@@ -513,7 +519,6 @@ def test_def_045_console_api_owns_every_required_ui_global():
         "currentExperiment": "state.currentExperimentName",
         "currentExperimentStatus": "state.currentExperimentStatus",
         "currentWorkspaceReadonly": "state.workspaceReadonly",
-        "selectedTemplate": "state.selectedTemplate",
     }
     required_functions = {
         "showToast",
@@ -570,8 +575,6 @@ def test_def_045_console_api_owns_foundational_ui_interactions():
         missing.append("left navigation")
     if not result_tabs_owned:
         missing.append("result tabs")
-    if "state.selectedTemplate = button.dataset.template" not in source:
-        missing.append("template selection state")
     assert missing == [], (
         "foundational interactions still existed only in the removed prototype: "
         f"{missing}"

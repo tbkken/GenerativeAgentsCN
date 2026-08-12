@@ -24,11 +24,14 @@ from generative_agents.persistence.models import (
     ExperimentWorkflow,
     Run,
     RunEvent,
+    WorkflowFunctionRecord,
 )
 
 from .context import RunPaths
 from .manifest import RunManifestStore, build_manifest_document
+from .capability_snapshot import build_capability_runtime_snapshot
 from .scheduler import ClaimedRun, LocalRunSchedulerRepository
+from .workflow_functions import get_workflow_function
 
 
 @dataclass(slots=True)
@@ -136,6 +139,7 @@ class LocalProcessSupervisor:
             if revision is None or revision.state != "PUBLISHED":
                 raise RuntimeError("claimed Run does not reference a published Revision")
             definition = ExperimentDefinition.model_validate(revision.definition_json)
+            capability_snapshot = build_capability_runtime_snapshot(session, revision)
             workflows = {
                 row.workflow_key: WorkflowDefinition.model_validate(row.definition_json)
                 for row in session.query(ExperimentWorkflow)
@@ -143,6 +147,28 @@ class LocalProcessSupervisor:
                 .order_by(ExperimentWorkflow.workflow_key)
                 .all()
             }
+            custom_operations = {
+                node.operation
+                for workflow in workflows.values()
+                for node in workflow.nodes
+                if node.kind in {"code", "script"}
+                and node.script_mode == "shared"
+                and node.operation
+                and get_workflow_function(node.operation) is None
+            }
+            workflow_functions = {
+                row.function_key: row.source
+                for row in session.query(WorkflowFunctionRecord)
+                .filter(WorkflowFunctionRecord.function_key.in_(custom_operations))
+                .order_by(WorkflowFunctionRecord.function_key)
+                .all()
+            }
+            missing_operations = custom_operations - workflow_functions.keys()
+            if missing_operations:
+                raise RuntimeError(
+                    "published workflow references missing Functions: "
+                    + ", ".join(sorted(missing_operations))
+                )
             assets: list[dict] = []
             for reference in definition.world.assets:
                 digest = reference.asset_hash.removeprefix("sha256:")
@@ -173,6 +199,8 @@ class LocalProcessSupervisor:
                     expected_definition_hash=revision.definition_hash,
                     assets=assets,
                     workflows=workflows or None,
+                    workflow_functions=workflow_functions,
+                    capability_snapshot=capability_snapshot,
                 )
                 return
             document = build_manifest_document(
@@ -185,6 +213,8 @@ class LocalProcessSupervisor:
                 assets=assets,
                 materialized_at=datetime.now(timezone.utc),
                 workflows=workflows or None,
+                workflow_functions=workflow_functions,
+                capability_snapshot=capability_snapshot,
             )
             store.materialize(document)
 

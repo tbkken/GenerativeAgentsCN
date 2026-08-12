@@ -37,6 +37,10 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert 'id="experimentMapEditor"' in shell
     assert 'id="experimentMapSelect"' in shell
     assert 'id="tuneExperimentMapBtn"' in shell
+    assert 'id="mapStatusFilters"' in shell
+    assert 'data-map-filter="draft"' in shell
+    assert 'id="mapPagination"' in shell
+    assert 'id="createMapBtn" hidden' in shell
     assert shell.count("map-workspace.js") == 1
     assert shell.count("map-workspace.css") == 1
 
@@ -53,6 +57,9 @@ def test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay():
     assert "/draft/map-overlay" in source
     assert "this.publicEditor.resize();" in source
     assert "this.publicEditor.fit();" in source
+    assert "pageSize: 5" in source
+    assert "data-map-page" in source
+    assert "status_counts" in source
     assert "window.prompt" not in source
     subprocess.run(
         ["node", "--check", str(STATIC / "map-workspace.js")],

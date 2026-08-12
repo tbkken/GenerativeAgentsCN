@@ -12,12 +12,16 @@ from uuid import uuid4
 
 from sqlalchemy import func, or_, select, update
 from sqlalchemy.orm import Session
+from pydantic import ValidationError
 
 from generative_agents.config import canonical_json_bytes, make_builtin_definition
-from generative_agents.config.schema import WorldConfig, WorldOverlayConfig, make_blank_definition
+from generative_agents.config.schema import WorldConfig, WorldOverlayConfig
+from generative_agents.config.spatial_assets import SpatialSceneExtension
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     ExperimentRevision,
+    SpatialAssetDefinition,
+    SpatialAssetRevision,
     WorldMap,
     WorldMapRevision,
 )
@@ -66,6 +70,45 @@ def world_hash(world: WorldConfig | dict[str, Any]) -> str:
     return hashlib.sha256(
         canonical_json_bytes(normalized.model_dump(mode="json", exclude_none=False))
     ).hexdigest()
+
+
+def _blank_public_world(
+    *, name: str, stable_key: str, width: int, height: int, tile_size: int
+) -> WorldConfig:
+    """Create a complete editable grid instead of a dimensionless placeholder."""
+
+    tiles = [
+        {
+            "coord": [x, y],
+            "collision": False,
+            "address": [],
+            "tile": "ground",
+        }
+        for y in range(height)
+        for x in range(width)
+    ]
+    return WorldConfig.model_validate(
+        {
+            "world_key": stable_key,
+            "world_name": name,
+            "definition": {
+                "world": name,
+                "size": [height, width],
+                "tile_size": tile_size,
+                "tile_address_keys": ["world", "sector", "arena", "object"],
+                "tiles": tiles,
+                "palette": [
+                    {
+                        "key": "ground",
+                        "label": "地面",
+                        "color": "#dce9df",
+                        "collision": False,
+                    }
+                ],
+            },
+            "assets": [],
+        }
+    )
 
 
 def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
@@ -164,6 +207,14 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
                 }
             )
         seen.add((x, y))
+        if not isinstance(tile.get("collision"), bool):
+            errors.append(
+                {
+                    "code": "WORLD_TILE_COLLISION_INVALID",
+                    "path": f"definition.tiles.{index}.collision",
+                    "message": "每个 Tile 必须显式声明是否碰撞",
+                }
+            )
         address = tile.get("address") if isinstance(tile, dict) else None
         if address is not None and (
             not isinstance(address, list)
@@ -175,6 +226,119 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
                     "code": "WORLD_TILE_ADDRESS_INVALID",
                     "path": f"definition.tiles.{index}.address",
                     "message": "Tile 地址必须是非空字符串数组，且层级数不能超过地址定义",
+                }
+            )
+    expected_tiles = height * width
+    if len(seen) != expected_tiles:
+        errors.append(
+            {
+                "code": "WORLD_TILE_GRID_INCOMPLETE",
+                "path": "definition.tiles",
+                "message": f"地图应包含 {expected_tiles} 个 Tile，当前为 {len(seen)} 个",
+            }
+        )
+    return errors
+
+
+def _validate_spatial_scene(
+    session: Session, world: WorldConfig
+) -> list[dict[str, str]]:
+    """Validate the opt-in spatial extension without changing legacy map hashes."""
+
+    raw_scene = world.definition.get("spatial_scene")
+    if raw_scene is None:
+        return []
+    try:
+        scene = SpatialSceneExtension.model_validate(raw_scene)
+    except ValidationError as exc:
+        return [
+            {
+                "code": "SPATIAL_SCENE_INVALID",
+                "path": "definition.spatial_scene",
+                "message": item["msg"],
+            }
+            for item in exc.errors(include_url=False)
+        ]
+    errors: list[dict[str, str]] = []
+    definition = world.definition
+    size = definition.get("size")
+    height, width = (
+        size
+        if isinstance(size, list)
+        and len(size) == 2
+        and all(isinstance(value, int) and value >= 0 for value in size)
+        else [0, 0]
+    )
+    max_x = width * scene.meters_per_tile
+    max_y = height * scene.meters_per_tile
+    for palette_key, revision_id in scene.palette_refs.items():
+        revision = session.get(SpatialAssetRevision, revision_id)
+        kind = (revision.contract_json or {}).get("kind") if revision else None
+        if revision is None or revision.state != "PUBLISHED":
+            errors.append(
+                {
+                    "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
+                    "path": f"definition.spatial_scene.palette_refs.{palette_key}",
+                    "message": "画块必须引用已发布的空间资产版本",
+                }
+            )
+        elif kind not in {"TILE", "MARKING"}:
+            errors.append(
+                {
+                    "code": "SPATIAL_PALETTE_KIND_INVALID",
+                    "path": f"definition.spatial_scene.palette_refs.{palette_key}",
+                    "message": "画块调色板只能引用 TILE 或 MARKING 空间资产",
+                }
+            )
+    tile_keys = {
+        tile.get("tile")
+        for tile in definition.get("tiles", [])
+        if isinstance(tile, dict) and tile.get("tile")
+    }
+    unresolved = sorted(
+        key
+        for key in tile_keys
+        if key not in scene.palette_refs
+        and key not in {
+            item.get("key")
+            for item in definition.get("palette", [])
+            if isinstance(item, dict)
+        }
+    )
+    for key in unresolved:
+        errors.append(
+            {
+                "code": "SPATIAL_PALETTE_REFERENCE_MISSING",
+                "path": "definition.spatial_scene.palette_refs",
+                "message": f"Tile 使用的画块 {key} 没有可解析的调色板引用",
+            }
+        )
+    for index, placement in enumerate(scene.placements):
+        revision = session.get(SpatialAssetRevision, placement.spatial_asset_revision_id)
+        if revision is None or revision.state != "PUBLISHED":
+            errors.append(
+                {
+                    "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
+                    "path": f"definition.spatial_scene.placements.{index}.spatial_asset_revision_id",
+                    "message": "地图物件必须引用已发布的空间资产版本",
+                }
+            )
+            continue
+        kind = (revision.contract_json or {}).get("kind")
+        if kind == "TILE":
+            errors.append(
+                {
+                    "code": "SPATIAL_PLACEMENT_KIND_INVALID",
+                    "path": f"definition.spatial_scene.placements.{index}",
+                    "message": "TILE 资产应通过画块调色板使用，不能作为物件放置",
+                }
+            )
+        if not (0 <= placement.x_m < max_x and 0 <= placement.y_m < max_y):
+            errors.append(
+                {
+                    "code": "SPATIAL_PLACEMENT_OUT_OF_BOUNDS",
+                    "path": f"definition.spatial_scene.placements.{index}",
+                    "message": "地图物件坐标超出米制地图边界",
                 }
             )
     return errors
@@ -249,6 +413,225 @@ class WorldMapService:
             public_map.current_draft_revision_id = draft.id
             return self._map_detail(session, public_map)
 
+    def ensure_intersection_map(self) -> dict[str, Any]:
+        """Seed a reusable four-way, three-lane-per-direction test intersection."""
+
+        with self.database.session_factory.begin() as session:
+            existing = session.scalar(
+                select(WorldMap).where(WorldMap.map_key == "standard-3lane-intersection")
+            )
+            asset_keys = {
+                "tile-ground",
+                "tile-road-asphalt",
+                "tile-sidewalk",
+                "marking-crosswalk",
+                "object-traffic-light",
+                "zone-pedestrian-wait",
+                "marking-vehicle-stop-line",
+            }
+            assets = list(
+                session.scalars(
+                    select(SpatialAssetDefinition).where(
+                        SpatialAssetDefinition.asset_key.in_(asset_keys)
+                    )
+                )
+            )
+            revisions = {
+                item.asset_key: session.get(
+                    SpatialAssetRevision, item.current_published_revision_id
+                )
+                for item in assets
+                if item.current_published_revision_id
+            }
+            if set(revisions) != asset_keys or any(
+                item is None for item in revisions.values()
+            ):
+                raise RuntimeError("intersection spatial assets are unavailable")
+
+            size = 48
+            road_min, road_max = 15, 32
+            crosswalk_bands = (
+                lambda x, y: (
+                    road_min <= x <= road_max and y in {12, 13, 14, 33, 34, 35}
+                )
+                or (
+                    road_min <= y <= road_max and x in {12, 13, 14, 33, 34, 35}
+                )
+            )
+            tiles: list[dict[str, Any]] = []
+            for y in range(size):
+                for x in range(size):
+                    if crosswalk_bands(x, y):
+                        tile_key = "crosswalk"
+                    elif road_min <= x <= road_max or road_min <= y <= road_max:
+                        tile_key = "road"
+                    elif x in {13, 14, 33, 34} or y in {13, 14, 33, 34}:
+                        tile_key = "sidewalk"
+                    else:
+                        tile_key = "ground"
+                    tiles.append(
+                        {
+                            "coord": [x, y],
+                            "collision": False,
+                            "address": ["标准路口", "公共道路"],
+                            "tile": tile_key,
+                        }
+                    )
+
+            def placement(
+                key: str,
+                asset_key: str,
+                x: float,
+                y: float,
+                rotation: float = 0,
+                state: dict[str, Any] | None = None,
+            ) -> dict[str, Any]:
+                return {
+                    "instance_key": key,
+                    "spatial_asset_revision_id": revisions[asset_key].id,
+                    "x_m": x,
+                    "y_m": y,
+                    "rotation_degrees": rotation,
+                    "state_overrides": state or {},
+                    "capability_parameter_overrides": {},
+                }
+
+            placements = [
+                placement("signal-north", "object-traffic-light", 14, 14, 0, {"state": "RED"}),
+                placement("signal-east", "object-traffic-light", 34, 14, 90, {"state": "GREEN"}),
+                placement("signal-south", "object-traffic-light", 34, 34, 180, {"state": "RED"}),
+                placement("signal-west", "object-traffic-light", 14, 34, 270, {"state": "GREEN"}),
+                placement("wait-north-west", "zone-pedestrian-wait", 13, 13),
+                placement("wait-north-east", "zone-pedestrian-wait", 34, 13),
+                placement("wait-south-east", "zone-pedestrian-wait", 34, 34),
+                placement("wait-south-west", "zone-pedestrian-wait", 13, 34),
+                placement("stop-north", "marking-vehicle-stop-line", 24, 12, 0),
+                placement("stop-east", "marking-vehicle-stop-line", 35, 24, 90),
+                placement("stop-south", "marking-vehicle-stop-line", 24, 35, 180),
+                placement("stop-west", "marking-vehicle-stop-line", 12, 24, 270),
+            ]
+            world = WorldConfig.model_validate(
+                {
+                    "world_key": "standard-3lane-intersection",
+                    "world_name": "标准四向三车道路口",
+                    "definition": {
+                        "world": "标准路口",
+                        "size": [size, size],
+                        "tile_size": 16,
+                        "tile_address_keys": [
+                            "world",
+                            "sector",
+                            "arena",
+                            "object",
+                        ],
+                        "tiles": tiles,
+                        "palette": [],
+                        "spatial_scene": {
+                            "meters_per_tile": 1.0,
+                            "palette_refs": {
+                                "ground": revisions["tile-ground"].id,
+                                "road": revisions["tile-road-asphalt"].id,
+                                "sidewalk": revisions["tile-sidewalk"].id,
+                                "crosswalk": revisions["marking-crosswalk"].id,
+                            },
+                            "placements": placements,
+                        },
+                    },
+                    "assets": [],
+                }
+            )
+            errors = [
+                *_validate_world_definition(world),
+                *_validate_spatial_scene(session, world),
+            ]
+            if errors:
+                raise RuntimeError(f"invalid built-in intersection map: {errors}")
+            now = _utc_now()
+            payload = normalize_public_world(world).model_dump(
+                mode="json", exclude_none=False
+            )
+            expected_hash = world_hash(world)
+            if existing is not None:
+                current = session.get(
+                    WorldMapRevision, existing.current_published_revision_id
+                )
+                if current is not None and current.world_hash == expected_hash:
+                    return self._map_detail(session, existing)
+                revision_no = int(
+                    session.scalar(
+                        select(func.max(WorldMapRevision.revision_no)).where(
+                            WorldMapRevision.map_id == existing.id
+                        )
+                    )
+                    or 0
+                ) + 1
+                published = WorldMapRevision(
+                    id=str(uuid4()),
+                    map_id=existing.id,
+                    revision_no=revision_no,
+                    state="PUBLISHED",
+                    base_revision_id=current.id if current else None,
+                    schema_version=1,
+                    world_json=payload,
+                    world_hash=expected_hash,
+                    validation_json={"valid": True, "errors": [], "warnings": []},
+                    lock_version=1,
+                    created_at=now,
+                    updated_at=now,
+                    published_at=now,
+                )
+                session.add(published)
+                session.flush()
+                existing.current_published_revision_id = published.id
+                existing.row_version += 1
+                existing.updated_at = now
+                return self._map_detail(session, existing)
+            public_map = WorldMap(
+                id=str(uuid4()),
+                map_key="standard-3lane-intersection",
+                name="标准四向三车道路口",
+                description="48m × 48m、每个方向三车道、四条人行横道与可感知交通设施的复用地图。",
+                status="PUBLISHED",
+                row_version=1,
+                created_at=now,
+                updated_at=now,
+            )
+            session.add(public_map)
+            session.flush()
+            published = WorldMapRevision(
+                id=str(uuid4()),
+                map_id=public_map.id,
+                revision_no=1,
+                state="PUBLISHED",
+                schema_version=1,
+                world_json=payload,
+                world_hash=expected_hash,
+                validation_json={"valid": True, "errors": [], "warnings": []},
+                lock_version=1,
+                created_at=now,
+                updated_at=now,
+                published_at=now,
+            )
+            session.add(published)
+            session.flush()
+            public_map.current_published_revision_id = published.id
+            return self._map_detail(session, public_map)
+
+    def default_revision_id(self) -> str:
+        """Return the published revision used by resource-first experiment creation."""
+
+        with self.database.session_factory() as session:
+            public_map = session.scalar(
+                select(WorldMap).where(WorldMap.map_key == "the-ville")
+            )
+            if public_map is None or not public_map.current_published_revision_id:
+                raise ServiceError(
+                    "DEFAULT_MAP_UNAVAILABLE",
+                    "the Ville 基准地图尚未初始化",
+                    status_code=503,
+                )
+            return public_map.current_published_revision_id
+
     def create_map(
         self,
         *,
@@ -256,6 +639,9 @@ class WorldMapService:
         description: str = "",
         source_revision_id: str | None = None,
         map_key: str | None = None,
+        width: int = 48,
+        height: int = 32,
+        tile_size: int = 32,
     ) -> dict[str, Any]:
         name = name.strip()
         if not name:
@@ -265,6 +651,12 @@ class WorldMapService:
             raise ServiceError(
                 "INVALID_MAP_KEY",
                 "地图稳定键必须由小写字母、数字和连字符组成",
+                status_code=422,
+            )
+        if not (4 <= width <= 240 and 4 <= height <= 240 and 8 <= tile_size <= 128):
+            raise ServiceError(
+                "INVALID_MAP_DIMENSIONS",
+                "地图宽高需在 4–240 之间，Tile 尺寸需在 8–128 像素之间",
                 status_code=422,
             )
         with self.database.session_factory.begin() as session:
@@ -280,7 +672,13 @@ class WorldMapService:
                 world = normalize_public_world(base_revision.world_json)
             else:
                 world = normalize_public_world(
-                    make_blank_definition(key="blank-map", name="空白地图").world
+                    _blank_public_world(
+                        name=name,
+                        stable_key=stable_key,
+                        width=width,
+                        height=height,
+                        tile_size=tile_size,
+                    )
                 )
             now = _utc_now()
             public_map = WorldMap(
@@ -318,19 +716,32 @@ class WorldMapService:
         self,
         *,
         query: str | None = None,
+        status: str | None = None,
         page: int = 1,
-        page_size: int = 20,
+        page_size: int = 5,
     ) -> dict[str, Any]:
         if page < 1 or page_size < 1 or page_size > 100:
             raise ServiceError("INVALID_PAGINATION", "地图分页参数无效", status_code=422)
+        normalized_status = status.upper() if status else None
+        if normalized_status not in {None, "DRAFT", "PUBLISHED"}:
+            raise ServiceError("INVALID_MAP_STATUS", "地图状态筛选无效", status_code=422)
         with self.database.session_factory() as session:
             statement = select(WorldMap)
             count_statement = select(func.count()).select_from(WorldMap)
+            status_count_statement = select(WorldMap.status, func.count()).group_by(WorldMap.status)
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
                 predicate = or_(WorldMap.name.ilike(pattern), WorldMap.map_key.ilike(pattern))
                 statement = statement.where(predicate)
                 count_statement = count_statement.where(predicate)
+                status_count_statement = status_count_statement.where(predicate)
+            status_counts = {"DRAFT": 0, "PUBLISHED": 0}
+            for item_status, item_count in session.execute(status_count_statement):
+                status_counts[item_status] = int(item_count)
+            status_counts["ALL"] = sum(status_counts.values())
+            if normalized_status:
+                statement = statement.where(WorldMap.status == normalized_status)
+                count_statement = count_statement.where(WorldMap.status == normalized_status)
             total = int(session.scalar(count_statement) or 0)
             rows = list(
                 session.scalars(
@@ -345,6 +756,7 @@ class WorldMapService:
                 "page_size": page_size,
                 "total": total,
                 "total_pages": max(1, ceil(total / page_size)),
+                "status_counts": status_counts,
             }
 
     def get_map(self, map_id: str) -> dict[str, Any]:
@@ -433,6 +845,7 @@ class WorldMapService:
                 )
             world = normalize_public_world(revision.world_json)
             errors = _validate_world_definition(world)
+            errors.extend(_validate_spatial_scene(session, world))
             if errors:
                 revision.validation_json = {"valid": False, "errors": errors, "warnings": []}
                 raise ServiceError(

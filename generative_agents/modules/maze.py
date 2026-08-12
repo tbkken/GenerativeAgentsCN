@@ -6,6 +6,12 @@ from generative_agents.modules import utils
 from generative_agents.modules.memory.event import Event
 
 
+class MazeAddressNotFoundError(RuntimeError):
+    """Raised instead of silently sending an Agent to an unrelated map tile."""
+
+    code = "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
+
+
 class Tile:
     def __init__(
         self,
@@ -212,4 +218,4 @@ class Maze:
         addr = ":".join(address)
         if addr in self.address_tiles:
             return self.address_tiles[addr]
-        return self._rng.choice(tuple(self.address_tiles.values()))
+        raise MazeAddressNotFoundError(f"当前地图中不存在可到达地址“{addr}”")

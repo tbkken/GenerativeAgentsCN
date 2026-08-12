@@ -36,6 +36,7 @@ from .model_trace import ModelTraceWriter
 from .scheduler import LocalRunSchedulerRepository
 from .sqlite_result_projector import SqliteResultProjector
 from .trace_projector import ModelTraceProjector
+from .workflow_trace import WorkflowTraceWriter
 
 if TYPE_CHECKING:
     from generative_agents.start import SimulationRunner
@@ -105,7 +106,7 @@ def _logger(run_id: UUID, level: str) -> logging.LoggerAdapter:
 
 
 def _install_sqlite_committer(
-    runner: SimulationRunner,
+    runner,
     database,
     var_dir: Path,
     *,
@@ -166,6 +167,8 @@ def main(argv=None) -> int:
         daemon=True,
     )
     exit_code = 1
+    worker_error_code: str | None = None
+    worker_error_message: str | None = None
     logger = _logger(args.run_id, "INFO")
     recorder: ModelTraceWriter | None = None
     try:
@@ -177,6 +180,7 @@ def main(argv=None) -> int:
 
         manifest = RunManifestStore(paths).load_verified()
         definition = manifest.definition
+        capability_snapshot = getattr(manifest, "capability_snapshot", None)
         logger = _logger(args.run_id, definition.simulation.log_level)
         cipher = SecretCipher(MasterKeyStore(var_dir).load_or_create())
         recorder = ModelTraceWriter(
@@ -192,8 +196,14 @@ def main(argv=None) -> int:
         prompt_contents = {
             key: prompt.content for key, prompt in definition.prompts.items()
         }
+        workflow_trace = WorkflowTraceWriter(paths, attempt_id=args.attempt_id)
         prompts = (
-            WorkflowPromptRepository(prompt_contents, manifest.workflows)
+            WorkflowPromptRepository(
+                prompt_contents,
+                manifest.workflows,
+                function_sources=manifest.workflow_functions,
+                trace_handler=workflow_trace.write,
+            )
             if manifest.workflows
             else MappingPromptRepository(prompt_contents)
         )
@@ -206,10 +216,14 @@ def main(argv=None) -> int:
             stride_minutes=definition.simulation.stride_minutes,
         )
         start_time = (
-            datetime.fromisoformat(checkpoint_state["virtual_time"])
-            + timedelta(minutes=definition.simulation.stride_minutes)
-            if checkpoint_state is not None
-            else definition.simulation.start_time
+            definition.simulation.start_time
+            if capability_snapshot is not None
+            else (
+                datetime.fromisoformat(checkpoint_state["virtual_time"])
+                + timedelta(minutes=definition.simulation.stride_minutes)
+                if checkpoint_state is not None
+                else definition.simulation.start_time
+            )
         )
         context = SimulationContext(
             run_id=args.run_id,
@@ -230,19 +244,39 @@ def main(argv=None) -> int:
             ),
             control=control,
             logger=logger,
-            metadata={"model_trace": recorder, "manifest_hash": manifest.manifest_hash},
+            metadata={
+                "model_trace": recorder,
+                "manifest_hash": manifest.manifest_hash,
+                "execution_mode": (
+                    "CAPABILITY_COMPOSED"
+                    if capability_snapshot is not None
+                    else "LEGACY_TOWN"
+                ),
+            },
         )
-        # Keep the expensive legacy engine import behind the active heartbeat.
-        from generative_agents.start import build_runner
+        if capability_snapshot is not None:
+            from .capability_simulation import build_capability_runner
 
-        runner = build_runner(
-            context,
-            definition,
-            embedding_api_key=embedding_key,
-            checkpoint_state=checkpoint_state,
-            checkpoint_conversation=checkpoint_conversation,
-            storage_root=attempt_storage,
-        )
+            runner = build_capability_runner(
+                context,
+                capability_snapshot,
+                workflows=manifest.workflows,
+                workflow_functions=manifest.workflow_functions,
+                checkpoint_state=checkpoint_state,
+                checkpoint_interval_steps=definition.simulation.checkpoint_interval_steps,
+            )
+        else:
+            # Keep the expensive legacy engine import behind the active heartbeat.
+            from generative_agents.start import build_runner
+
+            runner = build_runner(
+                context,
+                definition,
+                embedding_api_key=embedding_key,
+                checkpoint_state=checkpoint_state,
+                checkpoint_conversation=checkpoint_conversation,
+                storage_root=attempt_storage,
+            )
         runner.completed_steps = args.start_step - 1
         _install_sqlite_committer(
             runner,
@@ -251,11 +285,18 @@ def main(argv=None) -> int:
             checkpoint_retention=definition.simulation.checkpoint_retention,
             trace_writer=recorder,
         )
-        remaining = definition.simulation.max_steps - runner.completed_steps
+        with database.session_factory() as session:
+            run_record = session.get(Run, str(args.run_id))
+            if run_record is None:
+                raise RuntimeError("Run disappeared before execution")
+            requested_steps = run_record.requested_steps
+        remaining = requested_steps - runner.completed_steps
         if remaining > 0:
             runner.run(remaining, stride_minutes=definition.simulation.stride_minutes)
         exit_code = 0
-    except Exception:
+    except Exception as exc:
+        worker_error_code = getattr(exc, "code", "WORKER_EXECUTION_FAILED")
+        worker_error_message = str(exc) or exc.__class__.__name__
         logger.exception("worker attempt failed")
     finally:
         stop_monitor.set()
@@ -270,9 +311,16 @@ def main(argv=None) -> int:
                 )
             except Exception:
                 exit_code = 1
+                if worker_error_code is None:
+                    worker_error_code = "MODEL_TRACE_PROJECTION_FAILED"
+                    worker_error_message = "final model trace projection failed"
                 logger.exception("final model trace projection failed")
         repository.finish_worker(
-            str(args.run_id), str(args.attempt_id), exit_code=exit_code
+            str(args.run_id),
+            str(args.attempt_id),
+            exit_code=exit_code,
+            error_code=worker_error_code,
+            error_message=worker_error_message,
         )
         worker_lock.release()
         database.close()

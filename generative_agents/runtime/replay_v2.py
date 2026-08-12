@@ -38,6 +38,9 @@ class ReplayAgentDefinition(StrictModel):
     display_name: str
     initial_coord: tuple[int, int]
     sprite_asset: dict[str, Any]
+    role: str | None = None
+    actor_key: str | None = None
+    active_tool_instance_key: str | None = None
 
 
 class ReplayAgentStep(StrictModel):
@@ -50,6 +53,7 @@ class ReplayAgentStep(StrictModel):
     address: list[str]
     currently: str | None = None
     schedule_item_id: str | None = None
+    decision_context: dict[str, Any] = Field(default_factory=dict)
 
 
 class ReplayStep(StrictModel):
@@ -76,6 +80,8 @@ class ReplayBundleV2(StrictModel):
     source_step: int = Field(ge=0)
     available_step: int = Field(ge=0)
     stride_minutes: int = Field(ge=1)
+    execution_mode: Literal["LEGACY_TOWN", "CAPABILITY_COMPOSED"] = "LEGACY_TOWN"
+    step_interval_ms: int | None = Field(default=None, ge=1)
     start_time: str
     agents: list[ReplayAgentDefinition]
     partial: bool
@@ -93,7 +99,45 @@ def _builtin_sprite_map() -> dict[str, str]:
     }
 
 
-def _world_descriptor(definition: ExperimentDefinition) -> dict[str, Any]:
+def _world_descriptor(
+    definition: ExperimentDefinition,
+    capability_snapshot: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    if capability_snapshot is not None:
+        world = dict(capability_snapshot["map_revision"]["world"])
+        scene = (world.get("definition") or {}).get("spatial_scene") or {}
+        spatial_assets = capability_snapshot.get("spatial_assets") or {}
+        palette = {}
+        for palette_key, revision_id in (scene.get("palette_refs") or {}).items():
+            contract = (spatial_assets.get(revision_id) or {}).get("contract") or {}
+            palette[palette_key] = contract.get("appearance") or {
+                "mode": "COLOR",
+                "color": "#d9e2df",
+            }
+        objects = []
+        for placement in scene.get("placements") or []:
+            revision_id = placement.get("spatial_asset_revision_id")
+            contract = (spatial_assets.get(revision_id) or {}).get("contract") or {}
+            state = dict(contract.get("initial_state") or {})
+            state.update(placement.get("state_overrides") or {})
+            objects.append(
+                {
+                    **placement,
+                    "appearance": contract.get("appearance") or {},
+                    "kind": contract.get("kind"),
+                    "tags": (contract.get("semantics") or {}).get("tags") or [],
+                    "state": state,
+                }
+            )
+        world["render_asset"] = {
+            "status": "READY",
+            "source": "CAPABILITY_SNAPSHOT",
+            "renderer": "SPATIAL_GRID",
+            "pixels_per_meter": 16,
+            "palette": palette,
+            "objects": objects,
+        }
+        return world
     world = definition.world.model_dump(mode="json", exclude_none=False)
     if definition.world.world_key == "the-ville":
         world["render_asset"] = {
@@ -130,25 +174,67 @@ def _world_descriptor(definition: ExperimentDefinition) -> dict[str, Any]:
     return world
 
 
-def _agents(definition: ExperimentDefinition) -> list[dict[str, Any]]:
+def _agents(
+    definition: ExperimentDefinition,
+    capability_snapshot: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    if capability_snapshot is not None:
+        by_key = {item.agent_key: item for item in definition.agents}
+        extension = capability_snapshot["experiment_extension"]
+        tools = {
+            item["instance_key"]: item
+            for item in extension.get("tool_instances") or []
+        }
+        output = []
+        for actor in extension.get("actors") or []:
+            agent = by_key[actor["experiment_agent_key"]]
+            active_tool = actor.get("active_tool_instance_key")
+            pose = (
+                tools[active_tool]["initial_pose"]
+                if active_tool and active_tool in tools
+                else actor["initial_pose"]
+            )
+            output.append(
+                {
+                    "agent_key": agent.agent_key,
+                    "display_name": agent.name,
+                    "initial_coord": (round(pose["x_m"]), round(pose["y_m"])),
+                    "sprite_asset": {
+                        "status": "MISSING",
+                        "source": "CAPABILITY_ROLE",
+                        "error_code": "CAPABILITY_ROLE_GLYPH",
+                    },
+                    "role": actor["role"],
+                    "actor_key": actor["actor_key"],
+                    "active_tool_instance_key": active_tool,
+                }
+            )
+        return output
     builtin = _builtin_sprite_map() if definition.world.world_key == "the-ville" else {}
     output = []
     for agent in definition.agents:
         if not agent.enabled:
             continue
         directory = builtin.get(agent.agent_key)
-        if directory:
+        if agent.sprite_asset and agent.sprite_asset.startswith("/api/v1/agent-images/"):
+            sprite = {
+                "status": "READY",
+                "source": "REVISION_DATABASE",
+                "texture_url": agent.sprite_asset,
+                "atlas_url": "/static/console/replay-assets/agent-sprite-4x4.json",
+            }
+        elif directory:
             sprite = {
                 "status": "READY",
                 "source": "BUILTIN_PACKAGE",
                 "texture_url": f"{_VILLAGE_URL}/agents/{quote(directory)}/texture.png",
                 "atlas_url": f"{_VILLAGE_URL}/agents/sprite.json",
             }
-        elif agent.portrait_asset:
+        elif agent.sprite_asset:
             sprite = {
                 "status": "MISSING",
                 "source": "REVISION_ASSET",
-                "logical_reference": agent.portrait_asset,
+                "logical_reference": agent.sprite_asset,
                 "error_code": "AGENT_SPRITE_ASSET_UNRESOLVED",
             }
         else:
@@ -196,6 +282,7 @@ def _step_document(
                 "address": list(agent.location),
                 "currently": agent.currently,
                 "schedule_item_id": agent.schedule_item_id,
+                "decision_context": dict(agent.decision_context),
             }
             for agent in result.agents
         ],
@@ -246,6 +333,7 @@ def build_replay_v2(
     source_kind: Literal["RUN_FRAMES", "RUN_PROJECTION", "LEGACY_ADAPTER"] = "RUN_FRAMES",
     generator_version: str = GENERATOR_VERSION,
     previous_attempt_id: str | UUID | None = None,
+    capability_snapshot: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     checkpoints = set(checkpoint_steps)
     ordered = sorted((result for result in results if result.step_no <= source_step), key=lambda item: item.step_no)
@@ -269,12 +357,20 @@ def build_replay_v2(
             "run_id": run_id,
             "revision_id": revision_id,
             "definition_hash": definition_hash,
-            "world": _world_descriptor(definition),
+            "world": _world_descriptor(definition, capability_snapshot),
             "source_step": source_step,
             "available_step": source_step,
             "stride_minutes": definition.simulation.stride_minutes,
+            "execution_mode": (
+                "CAPABILITY_COMPOSED" if capability_snapshot is not None else "LEGACY_TOWN"
+            ),
+            "step_interval_ms": (
+                capability_snapshot["experiment_extension"]["clock"]["snapshot_interval_ms"]
+                if capability_snapshot is not None
+                else None
+            ),
             "start_time": definition.simulation.start_time.isoformat(),
-            "agents": _agents(definition),
+            "agents": _agents(definition, capability_snapshot),
             "partial": partial,
             "steps": steps,
         }

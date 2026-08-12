@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy import select
 
@@ -16,6 +17,8 @@ from generative_agents.persistence.models import (
     RunStep,
 )
 from generative_agents.runtime.replay_v2 import build_replay_v2, validate_replay_v2
+from generative_agents.runtime.context import RunPaths
+from generative_agents.runtime.manifest import RunManifestStore
 
 from .errors import ServiceError, not_found
 from .replay_frames import VerifiedRunFrameReader
@@ -26,7 +29,8 @@ class ReplayService:
 
     def __init__(self, database: Database, *, var_dir: str | Path):
         self._database = database
-        self._frames = VerifiedRunFrameReader(var_dir)
+        self._var_dir = Path(var_dir).resolve()
+        self._frames = VerifiedRunFrameReader(self._var_dir)
 
     def manifest(self, run_id: str) -> dict[str, Any]:
         context = self._context(run_id)
@@ -40,6 +44,7 @@ class ReplayService:
             source_step=context["available_step"],
             partial=context["partial"],
             results=(),
+            capability_snapshot=context["capability_snapshot"],
         )
         document.pop("steps")
         return document
@@ -107,6 +112,7 @@ class ReplayService:
             session.expunge(run)
 
         results = [self._frames.read(run, row) for row in rows]
+        capability_snapshot = self._capability_snapshot(run_id)
         document = build_replay_v2(
             run_id=run_id,
             revision_id=revision_id,
@@ -117,6 +123,7 @@ class ReplayService:
             results=results,
             checkpoint_steps=(row.step_no for row in rows if row.checkpoint),
             previous_attempt_id=previous_attempt_id,
+            capability_snapshot=capability_snapshot,
         )
         # Both live windows and immutable artifacts pass through the same V2
         # validator.  The transport wrapper only adds cursor/version facts.
@@ -174,4 +181,11 @@ class ReplayService:
                 "definition": ExperimentDefinition.model_validate(revision.definition_json),
                 "available_step": available_step,
                 "partial": summary is None or summary.result_state != "COMPLETE",
+                "capability_snapshot": self._capability_snapshot(run_id),
             }
+
+    def _capability_snapshot(self, run_id: str):
+        store = RunManifestStore(RunPaths.under(self._var_dir, UUID(run_id)))
+        if not store.exists():
+            return None
+        return store.load_verified().capability_snapshot

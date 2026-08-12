@@ -255,6 +255,7 @@ class LocalRunSchedulerRepository:
         attempt_id: str,
         *,
         exit_code: int,
+        error_code: str | None = None,
         error_message: str | None = None,
     ) -> bool:
         """Close exactly the currently-owned attempt and release its slot.
@@ -294,7 +295,7 @@ class LocalRunSchedulerRepository:
             attempt.exit_code = exit_code
             attempt.stop_reason = stop_reason
             if final_status == "FAILED":
-                attempt.error_code = "WORKER_EXITED"
+                attempt.error_code = error_code or "WORKER_EXITED"
                 attempt.error_message = (error_message or "worker exited unexpectedly")[:2000]
 
             run.status = final_status
@@ -304,7 +305,7 @@ class LocalRunSchedulerRepository:
             run.finished_at = now if final_status != "PAUSED" else None
             run.heartbeat_at = now
             if final_status == "FAILED":
-                run.error_code = "WORKER_EXITED"
+                run.error_code = error_code or "WORKER_EXITED"
                 run.error_message = (error_message or "worker exited unexpectedly")[:2000]
             self._clear_active_identity(run)
             session.add(
@@ -316,6 +317,7 @@ class LocalRunSchedulerRepository:
                         "completed_steps": run.completed_steps,
                         "recoverable_step": run.recoverable_step,
                         "exit_code": exit_code,
+                        "error_code": error_code if final_status == "FAILED" else None,
                     },
                     created_at=now,
                 )

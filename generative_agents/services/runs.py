@@ -14,11 +14,13 @@ from sqlalchemy import and_, delete, func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from generative_agents.config import ExperimentDefinition
+from generative_agents.config import ExperimentDefinition, validate_for_publish
+from generative_agents.config.scenarios import ExperimentCapabilityExtension
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     Experiment,
     ExperimentRevision,
+    ExperimentRevisionCapability,
     Run,
     RunAttempt,
     RunEvent,
@@ -84,6 +86,25 @@ def _decode_cursor(value: str) -> tuple[datetime, str]:
     return created_at, payload["id"]
 
 
+def _run_shape(
+    session: Session,
+    revision: ExperimentRevision,
+    definition: ExperimentDefinition,
+) -> tuple[int, int]:
+    """Return durable run steps and legacy stride for either execution mode."""
+
+    row = session.get(ExperimentRevisionCapability, revision.id)
+    if row is None:
+        return definition.simulation.max_steps, definition.simulation.stride_minutes
+    extension = ExperimentCapabilityExtension.model_validate(row.extension_json)
+    if extension.mode == "LEGACY_TOWN":
+        return definition.simulation.max_steps, definition.simulation.stride_minutes
+    requested_steps = (
+        extension.clock.duration_ms + extension.clock.snapshot_interval_ms - 1
+    ) // extension.clock.snapshot_interval_ms
+    return max(1, requested_steps), 1
+
+
 class RunService:
     def __init__(
         self,
@@ -109,7 +130,20 @@ class RunService:
 
         from .experiments import ExperimentService
 
-        if self._model_probes is not None:
+        requires_models = True
+        with self._database.session_factory() as session:
+            experiment = session.get(Experiment, experiment_id)
+            draft = session.get(
+                ExperimentRevision,
+                experiment.current_draft_revision_id if experiment else None,
+            )
+            if draft is not None:
+                from .scenarios import composed_scenario_requires_models_in_session
+
+                requires_models = composed_scenario_requires_models_in_session(
+                    session, draft
+                )
+        if self._model_probes is not None and requires_models:
             prepared = self._model_probes.resolve_for_publish(
                 experiment_id,
                 expected_lock_version=expected_lock_version,
@@ -142,6 +176,9 @@ class RunService:
                 )
                 experiment = session.get(Experiment, experiment_id)
                 definition = ExperimentDefinition.model_validate(revision.definition_json)
+                requested_steps, stride_minutes = _run_shape(
+                    session, revision, definition
+                )
                 paths = RunPaths.under(self._var_dir, UUID(run_id))
                 run = Run(
                     id=run_id,
@@ -150,10 +187,10 @@ class RunService:
                     status="QUEUED",
                     queued_at=now,
                     start_step=0,
-                    requested_steps=definition.simulation.max_steps,
+                    requested_steps=requested_steps,
                     completed_steps=0,
                     recoverable_step=0,
-                    stride_minutes=definition.simulation.stride_minutes,
+                    stride_minutes=stride_minutes,
                     virtual_time=definition.simulation.start_time,
                     run_dir=paths.root.relative_to(self._var_dir).as_posix(),
                     created_at=now,
@@ -217,6 +254,24 @@ class RunService:
                         details={"run_id": existing},
                     )
                 definition = ExperimentDefinition.model_validate(revision.definition_json)
+                requested_steps, stride_minutes = _run_shape(
+                    session, revision, definition
+                )
+                validation = validate_for_publish(definition)
+                if not validation.valid:
+                    first = validation.errors[0]
+                    raise ServiceError(
+                        first.code,
+                        f"该实验版本不满足当前运行要求：{first.message}",
+                        status_code=422,
+                        details={
+                            "revision_id": revision_id,
+                            "errors": [
+                                issue.model_dump(mode="json")
+                                for issue in validation.errors
+                            ],
+                        },
+                    )
                 run_id = str(uuid4())
                 paths = RunPaths.under(self._var_dir, UUID(run_id))
                 relative_run_dir = paths.root.relative_to(self._var_dir).as_posix()
@@ -227,10 +282,10 @@ class RunService:
                     status="QUEUED",
                     queued_at=now,
                     start_step=0,
-                    requested_steps=definition.simulation.max_steps,
+                    requested_steps=requested_steps,
                     completed_steps=0,
                     recoverable_step=0,
-                    stride_minutes=definition.simulation.stride_minutes,
+                    stride_minutes=stride_minutes,
                     virtual_time=definition.simulation.start_time,
                     run_dir=relative_run_dir,
                     created_at=now,
@@ -501,6 +556,15 @@ class RunService:
                     select(func.count()).select_from(RunQueue).where(RunQueue.id <= queue_id)
                 )
         revision = session.get(ExperimentRevision, run.revision_id)
+        capability_row = session.get(ExperimentRevisionCapability, run.revision_id)
+        capability_extension = (
+            ExperimentCapabilityExtension.model_validate(capability_row.extension_json)
+            if capability_row is not None
+            else None
+        )
+        execution_mode = (
+            capability_extension.mode if capability_extension else "LEGACY_TOWN"
+        )
         result_summary = session.get(RunResultSummary, run.id)
         return {
             "run_id": run.id,
@@ -512,6 +576,14 @@ class RunService:
             "queue_position": queue_position,
             "slot_no": run.slot_no,
             "requested_steps": run.requested_steps,
+            "execution_mode": execution_mode,
+            "step_interval_ms": (
+                capability_extension.clock.snapshot_interval_ms
+                if capability_extension
+                and capability_extension.mode == "CAPABILITY_COMPOSED"
+                else None
+            ),
+            "stride_minutes": run.stride_minutes,
             "completed_steps": run.completed_steps,
             "recoverable_step": run.recoverable_step,
             "available_step": result_summary.available_step if result_summary else 0,

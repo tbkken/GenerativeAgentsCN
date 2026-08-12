@@ -1,11 +1,26 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import struct
+import zlib
 
 from fastapi.testclient import TestClient
 
 from generative_agents.persistence.models import ExperimentRevision, Run, RunEvent
 from generative_agents.web import create_app
+
+
+def _test_png(width: int, height: int) -> bytes:
+    def chunk(kind: bytes, payload: bytes) -> bytes:
+        return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload))
+
+    rows = b"".join(b"\x00" + b"\x2c\x91\x76\xff" * width for _ in range(height))
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(rows))
+        + chunk(b"IEND", b"")
+    )
 
 
 class _ModelResponse:
@@ -234,6 +249,28 @@ def test_asset_and_secret_http_contracts_are_safe_and_idempotent(database_url):
         )
         assert invalid.status_code == 422
         assert invalid.json()["error"]["code"] == "INVALID_ASSET"
+
+        agent_images = client.post(
+            "/api/v1/agent-images",
+            files={
+                "portrait": ("portrait.png", _test_png(64, 64), "image/png"),
+                "sprite": ("sprite.png", _test_png(128, 128), "image/png"),
+            },
+        )
+        assert agent_images.status_code == 201, agent_images.text
+        image_payload = agent_images.json()
+        assert image_payload["sprite"]["content_url"].startswith("/api/v1/agent-images/")
+        sprite_content = client.get(image_payload["sprite"]["content_url"])
+        assert sprite_content.content == _test_png(128, 128)
+        assert sprite_content.headers["content-type"] == "image/png"
+        assert "immutable" in sprite_content.headers["cache-control"]
+
+        invalid_sprite = client.post(
+            "/api/v1/agent-images",
+            files={"sprite": ("sprite.png", _test_png(96, 128), "image/png")},
+        )
+        assert invalid_sprite.status_code == 422
+        assert invalid_sprite.json()["error"]["code"] == "INVALID_AGENT_SPRITE_SIZE"
 
         secret = client.post(
             "/api/v1/secrets",

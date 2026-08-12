@@ -146,3 +146,62 @@ def test_publication_rejects_duplicate_enabled_agent_display_names(
     assert "DUPLICATE_ENABLED_AGENT_NAME" not in {
         item.code for item in report.errors
     }
+
+
+def test_publication_rejects_agent_without_spatial_configuration(
+    publishable_definition,
+):
+    payload = copy.deepcopy(
+        publishable_definition.model_dump(mode="json", exclude_none=False)
+    )
+    payload["agents"][0]["spatial"] = {"address": {}, "tree": {}}
+
+    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
+
+    issue = next(
+        item for item in report.errors if item.code == "AGENT_SPATIAL_ADDRESS_REQUIRED"
+    )
+    assert issue.path == "agents.0.spatial"
+    assert "Test Agent" in issue.message
+
+
+def test_publication_rejects_agent_address_missing_from_selected_map(
+    publishable_definition,
+):
+    payload = copy.deepcopy(
+        publishable_definition.model_dump(mode="json", exclude_none=False)
+    )
+    payload["agents"][0]["spatial"] = {
+        "address": {
+            "living_area": ["test", "elsewhere", "bedroom"],
+            "sleeping": ["test", "elsewhere", "bedroom", "bed"],
+        },
+        "tree": {"test": {"elsewhere": {"bedroom": ["bed"]}}},
+    }
+
+    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
+
+    assert "AGENT_SPATIAL_MAP_ADDRESS_INVALID" in {
+        item.code for item in report.errors
+    }
+
+
+def test_publication_names_incompatible_spatial_tree_path(
+    publishable_definition,
+):
+    payload = copy.deepcopy(
+        publishable_definition.model_dump(mode="json", exclude_none=False)
+    )
+    payload["agents"][0]["spatial"]["tree"]["test"]["elsewhere"] = {
+        "room": ["missing object"]
+    }
+
+    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
+
+    issue = next(
+        item
+        for item in report.errors
+        if item.code == "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
+    )
+    assert issue.path == "agents.0.spatial"
+    assert "test > elsewhere > room > missing object" in issue.message

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import struct
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import BinaryIO
@@ -18,6 +20,9 @@ from .errors import ServiceError, not_found
 
 
 class AssetService:
+    _PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+    _AGENT_IMAGE_MAX_BYTES = 2 * 1024 * 1024
+
     def __init__(
         self,
         database: Database,
@@ -76,6 +81,78 @@ class AssetService:
                 raise not_found("asset", asset_id)
             return self._detail(asset)
 
+    def upload_database_images(
+        self,
+        images: dict[str, tuple[BinaryIO, str]],
+    ) -> dict[str, dict]:
+        """Validate and persist Agent images as database BLOBs, never filesystem files."""
+
+        prepared: dict[str, tuple[bytes, str, str, int, int]] = {}
+        for kind, (stream, logical_name) in images.items():
+            if kind not in {"portrait", "sprite"}:
+                raise ServiceError("INVALID_AGENT_IMAGE_KIND", "Agent 图片类型不受支持", status_code=422)
+            data = stream.read(self._AGENT_IMAGE_MAX_BYTES + 1)
+            if len(data) > self._AGENT_IMAGE_MAX_BYTES:
+                raise ServiceError("AGENT_IMAGE_TOO_LARGE", "Agent 图片不能超过 2 MB", status_code=422)
+            width, height = self._validate_agent_png(data, kind=kind)
+            prepared[kind] = (
+                data,
+                logical_name or f"agent-{kind}.png",
+                hashlib.sha256(data).hexdigest(),
+                width,
+                height,
+            )
+
+        if not prepared:
+            raise ServiceError("AGENT_IMAGE_REQUIRED", "请至少选择一张 Agent 图片", status_code=422)
+
+        result: dict[str, dict] = {}
+        with self._database.session_factory.begin() as session:
+            for kind, (data, logical_name, digest, width, height) in prepared.items():
+                asset = session.scalar(select(Asset).where(Asset.sha256 == digest))
+                deduplicated = asset is not None
+                if asset is None:
+                    asset = Asset(
+                        sha256=digest,
+                        logical_name=logical_name,
+                        media_type="image/png",
+                        size_bytes=len(data),
+                        relative_path="",
+                        content_blob=data,
+                    )
+                    session.add(asset)
+                    session.flush()
+                elif asset.content_blob is None:
+                    # A byte-identical legacy filesystem asset may already exist.  Keep its
+                    # old reference intact while making the image independently DB-backed.
+                    asset.content_blob = data
+                detail = self._detail(asset, deduplicated=deduplicated)
+                detail.update(
+                    {
+                        "kind": kind,
+                        "width": width,
+                        "height": height,
+                        "content_url": f"/api/v1/agent-images/{asset.id}/content",
+                    }
+                )
+                result[kind] = detail
+        return result
+
+    def database_image_content(self, asset_id: str) -> tuple[Asset, bytes]:
+        with self._database.session_factory() as session:
+            asset = session.get(Asset, asset_id)
+            if asset is None:
+                raise not_found("asset", asset_id)
+            if asset.content_blob is None:
+                raise ServiceError(
+                    "AGENT_IMAGE_NOT_DATABASE_BACKED",
+                    "该资源不是数据库 Agent 图片",
+                    status_code=404,
+                )
+            content = bytes(asset.content_blob)
+            session.expunge(asset)
+        return asset, content
+
     def content(self, asset_id: str) -> tuple[Asset, Path]:
         with self._database.session_factory() as session:
             asset = session.get(Asset, asset_id)
@@ -84,6 +161,27 @@ class AssetService:
             session.expunge(asset)
         path = self.store.resolve(asset.relative_path, expected_sha256=asset.sha256)
         return asset, path
+
+    @classmethod
+    def _validate_agent_png(cls, data: bytes, *, kind: str) -> tuple[int, int]:
+        if len(data) < 24 or not data.startswith(cls._PNG_SIGNATURE) or data[12:16] != b"IHDR":
+            raise ServiceError("INVALID_AGENT_IMAGE", "Agent 图片必须是有效 PNG", status_code=422)
+        width, height = struct.unpack(">II", data[16:24])
+        if width < 1 or height < 1 or width > 4096 or height > 4096:
+            raise ServiceError("INVALID_AGENT_IMAGE_SIZE", "Agent 图片尺寸无效", status_code=422)
+        if kind == "portrait" and (width != height or width < 32):
+            raise ServiceError(
+                "INVALID_AGENT_PORTRAIT_SIZE",
+                "头像必须是边长至少 32px 的正方形 PNG",
+                status_code=422,
+            )
+        if kind == "sprite" and (width, height) != (128, 128):
+            raise ServiceError(
+                "INVALID_AGENT_SPRITE_SIZE",
+                "4×4 行走图必须是 128×128 PNG（每格 32×32）",
+                status_code=422,
+            )
+        return width, height
 
     @staticmethod
     def _detail(asset: Asset, *, deduplicated: bool | None = None) -> dict:

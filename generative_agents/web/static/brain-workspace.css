@@ -1,0 +1,40 @@
+.brain-catalog-toolbar { align-items:center; display:flex; gap:12px; justify-content:space-between; margin-bottom:16px; }
+.brain-catalog-toolbar .search { width:100%; max-width:440px; }
+.brain-catalog-toolbar .filter-tabs { flex:0 0 auto; }
+.brain-catalog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+.brain-catalog-grid > .empty-state { grid-column:1/-1; }
+.brain-card { position:relative; display:grid; min-height:178px; padding:18px; border:1px solid var(--line); border-radius:14px; background:#fff; color:var(--ink); text-align:left; cursor:pointer; transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
+.brain-card:hover,.brain-card:focus-visible { border-color:#9bcac0; outline:none; box-shadow:0 10px 28px rgba(31,74,67,.09); transform:translateY(-2px); }
+.brain-card-top,.brain-card-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.brain-card-top code { color:var(--muted); font:8px var(--mono); }
+.brain-card h2 { margin:16px 0 6px; font-size:17px; }
+.brain-card p { min-height:40px; margin:0; color:var(--muted); font-size:13px; line-height:1.55; }
+.brain-card-foot { align-self:end; margin-top:16px; padding-top:13px; border-top:1px solid var(--line-soft); color:var(--muted); font-size:12px; }
+.brain-builtin { display:inline-flex; min-height:22px; align-items:center; padding:0 7px; border-radius:99px; background:#e9f3ff; color:#426b9e; font-size:7px; font-weight:700; }
+.brain-editor-heading { display:flex; min-height:82px; align-items:center; justify-content:space-between; gap:20px; padding:12px 20px; border-bottom:1px solid var(--line); background:#fff; }
+.brain-editor-heading h1 { display:inline-block; margin:0 0 0 12px; font-size:17px; }
+.brain-editor-heading p { margin:5px 0 0; color:var(--muted); font-size:9px; }
+.brain-editor-actions { display:flex; align-items:center; gap:8px; }
+.brain-editor-tabs { display:flex; gap:22px; min-height:44px; align-items:center; padding:0 22px; border-bottom:1px solid var(--line); background:#f8faf9; }
+.brain-editor-tabs button { align-self:stretch; padding:0 3px; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--muted); cursor:pointer; font-size:10px; }
+.brain-editor-tabs button.active { border-bottom-color:var(--primary); color:var(--primary); font-weight:700; }
+.brain-editor-panel { display:none; }.brain-editor-panel.active { display:block; }
+.brain-capability-shell { display:grid; grid-template-columns:minmax(300px,.7fr) minmax(520px,1.3fr); gap:16px; padding:20px 24px 60px; background:#f7f9f8; }
+.brain-capability-overview,.brain-capability-mounts { padding:18px; border:1px solid var(--line); border-radius:13px; background:#fff; }
+.brain-capability-overview h2,.brain-capability-mounts h2 { margin:4px 0 5px; font-size:17px; }
+.brain-capability-overview p,.brain-capability-mounts p { margin:0; color:var(--muted); font-size:10px; line-height:1.6; }
+.brain-capability-settings { display:grid; gap:14px; margin-top:22px; padding-top:18px; border-top:1px solid var(--line-soft); }
+.brain-capability-mounts>header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+#brainCapabilityMountList { display:grid; gap:9px; }
+.brain-capability-mount { display:grid; grid-template-columns:minmax(120px,.65fr) minmax(180px,1fr) minmax(120px,.75fr) 28px; gap:7px; padding:10px; border:1px solid var(--line); border-radius:9px; background:#fbfdfc; }
+.brain-capability-mount .control { min-width:0; font-size:9px; }
+.brain-capability-mount .brain-mount-parameters { grid-column:1/-1; }
+.brain-editor-shell #brainWorkflowMount > .workflow-workspace-tabs { border-top:0; }
+.experiment-brain-source { display:grid; grid-template-columns:minmax(210px,1fr) minmax(240px,380px) auto auto; align-items:center; gap:8px; min-height:56px; padding:8px 16px; border-bottom:1px solid var(--line); background:#f7faf9; }
+.experiment-brain-source strong,.experiment-brain-source span { display:block; }
+.experiment-brain-source strong { font-size:9px; }.experiment-brain-source span { margin-top:3px; color:var(--muted); font-size:8px; }
+body.brain-editor-mode { overflow:hidden; }
+body.brain-editor-mode .content { width:100%; max-width:none; height:calc(100vh - 72px); margin:0; padding:0; }
+body.brain-editor-mode #brainWorkflowMount .workflow-shell { height:calc(100vh - 306px); }
+body.workflow-mode #page-prompts .workflow-shell { height:calc(100vh - 182px); }
+@media (max-width:900px) { .brain-catalog-grid,.brain-capability-shell { grid-template-columns:1fr; }.brain-capability-mount { grid-template-columns:1fr; }.brain-capability-mount .brain-mount-parameters { grid-column:auto; }.experiment-brain-source { grid-template-columns:1fr; }.brain-editor-heading { align-items:flex-start; flex-direction:column; }.brain-editor-actions { width:100%; } }

@@ -358,11 +358,32 @@ class AgentSpatial(StrictModel):
     tree: dict[str, Any] = Field(default_factory=dict)
 
 
+class AgentTemplateDefinition(StrictModel):
+    """Versioned public Agent data copied into experiment-owned Agents."""
+
+    agent_key: Key
+    enabled: bool = True
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    portrait_asset: str | None = None
+    sprite_asset: str | None = None
+    model_override: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    goals: list[str] = Field(default_factory=list)
+    coord: tuple[int, int] = (0, 0)
+    currently: str = ""
+    scratch: AgentScratch
+    spatial: AgentSpatial = Field(default_factory=AgentSpatial)
+
+
 class AgentDefinition(StrictModel):
     agent_key: Key
     enabled: bool = True
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
     portrait_asset: str | None = None
+    sprite_asset: str | None = None
+    model_override: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    goals: list[str] = Field(default_factory=list)
     coord: tuple[int, int]
     currently: str = ""
     scratch: AgentScratch
@@ -380,6 +401,15 @@ class PromptDefinition(StrictModel):
             raise ValueError("prompt sha256 does not match normalized content")
         object.__setattr__(self, "sha256", expected)
         return self
+
+
+class CustomWorkflowFunctionDefinition(StrictModel):
+    function_key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,79}$")]
+    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    description: Annotated[str, StringConstraints(max_length=2_000)] = ""
+    input_type: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] = "any"
+    output_type: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] = "any"
+    source: Annotated[str, StringConstraints(min_length=1, max_length=12_000)]
 
 
 class ExperimentDefinition(StrictModel):

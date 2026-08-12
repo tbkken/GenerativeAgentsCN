@@ -38,12 +38,12 @@ const statusLabels = {RUNNING:'运行中',COMPLETED:'已完成',FAILED:'失败'}
 const formatTime = value => value || '—';
 const formatDuration = () => '1m';
 const startResultDurationTimer = run => { $('duration').textContent = run.status; };
-const renderSummary = () => {};
 const renderTimeline = () => {};
 const renderAgents = () => {};
 const renderConversations = () => {};
 const renderMemories = () => {};
 const renderRunActions = run => { $('actions').textContent = run.status; };
+const renderRunSelect = () => {};
 const renderOperations = operations => { $('artifacts').textContent = operations.marker; };
 const syncWorkspaceUrl = () => {};
 const refreshOperationFacts = async () => {};
@@ -77,15 +77,14 @@ function resolveBatch(batch, status, marker) {
 
 (async () => {
   const older = refreshResultData('run-1', 4);
-  const olderBatch = deferred.splice(0, 7);
+  const olderBatch = deferred.splice(0, 6);
   const newer = refreshResultData('run-1', 4);
-  const newerBatch = deferred.splice(0, 7);
+  const newerBatch = deferred.splice(0, 6);
   resolveBatch(newerBatch, 'COMPLETED', 'new');
   await newer;
   resolveBatch(olderBatch, 'RUNNING', 'old');
   await older;
   if (state.currentRun.status !== 'COMPLETED') throw new Error('older same-Run response regressed currentRun');
-  if ($('resultStatusChip').textContent !== '已完成') throw new Error('older same-Run response regressed top status');
   if ($('artifacts').textContent !== 'new') throw new Error('older same-Run response regressed artifacts');
 
   applyRunActivity({experiment_id:'exp-1',run_id:'run-1',payload:{status:'FAILED',completed_steps:0}});

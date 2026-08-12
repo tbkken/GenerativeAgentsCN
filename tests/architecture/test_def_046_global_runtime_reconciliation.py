@@ -85,14 +85,14 @@ const production = [
   cut('async function syncSelectedExperiment(', 'function fillDraft(definition)'),
   cut('async function fillLatestRunSummary(experiment)', 'function setSwitch('),
   cut('async function refreshRunHistoryList(', 'async function loadRunHistory('),
-  cut('function renderRunHistory(', 'async function loadMoreRunHistory('),
+  cut('function renderRunSelect(', 'function resetResultRuntime('),
   cut('function scheduleResultRefresh(', 'async function refreshResultData('),
   cut('async function refreshResultData(', 'function applyRunActivity(activity)'),
   cut('function applyRunActivity(activity)', 'function scheduleGlobalReconcile('),
   cut('function scheduleGlobalReconcile(', 'async function reconcileGlobalState('),
   cut('async function reconcileGlobalState(', 'async function startGlobalActivityStream()'),
   cut('async function startGlobalActivityStream()', 'function renderRunActions(run)'),
-  cut('function renderRunActions(run)', 'function renderAgents(items)'),
+  cut('function renderRunActions(run)', 'function renderAgents('),
   cut('function reconcileAfterPageResume()', "document.addEventListener('visibilitychange'"),
 ].join('\n');
 const resumeHooks = cut(
@@ -127,7 +127,7 @@ const windowHandlers = {};
 global.document = {
   visibilityState: 'visible',
   getElementById: element,
-  querySelectorAll: selector => selector === '.filter-tab' ? filterTabs : [],
+  querySelectorAll: selector => selector === '.filter-tab[data-filter]' ? filterTabs : [],
   querySelector: selector => selector === '[data-result-panel="timeline"]'
     ? { classList: { contains: () => false } }
     : null,
@@ -211,11 +211,6 @@ const operationsForPhase = () => ({
     { job_type: 'BUILD_REPORT', status: 'SUCCEEDED' },
   ] : [],
 });
-const summaryForPhase = () => ({
-  available_step: runForPhase().available_step,
-  result_state: phase() === 'COMPLETED' ? 'COMPLETE' : phase() === 'DRAFT' ? 'EMPTY' : 'PARTIAL',
-  result_version: phaseIndex, counts: { conversations: 0, memories: 0, model_calls: phaseIndex },
-});
 async function api(path) {
   if (path === '/events?tail=true') return { next_after_id: phaseIndex };
   if (path.startsWith('/experiments?')) {
@@ -224,11 +219,10 @@ async function api(path) {
     return { items: [experimentListItem()], total: 1, page: 1, page_size: 10, total_pages: 1, status_counts: counts };
   }
   if (path === '/experiments/exp-1') return experimentForPhase();
-  if (path === '/experiments/exp-1/runs?limit=50') return {
+  if (path === '/experiments/exp-1/runs?limit=100') return {
     items: phase() === 'DRAFT' ? [] : [runForPhase()], next_cursor: null,
   };
   if (path === '/runs/run-00000001') return runForPhase();
-  if (path === '/runs/run-00000001/results/summary') return summaryForPhase();
   if (path.startsWith('/runs/run-00000001/results/timeline')) return { events: [] };
   if (path === '/runs/run-00000001/results/agents') return { items: [] };
   if (path.startsWith('/runs/run-00000001/results/conversations')) return { items: [] };
@@ -241,7 +235,7 @@ const state = {
   page: 1, pageSize: 10, status: '', query: '', selectedExperimentId: 'exp-1',
   experiment: experimentForPhase(), draft: null, definition: null,
   revision: { id: 'rev-1', state: 'PUBLISHED', definition_hash: 'abc123def456' },
-  currentRun: null, latestRunId: null, selectedRunId: null, runHistory: [], runCursor: null,
+  currentRun: null, latestRunId: null, selectedRunId: null, runHistory: [],
   runHistoryGeneration: 0, experimentListGeneration: 0, selectedExperimentGeneration: 0,
   latestSummaryGeneration: 0, activityGeneration: 0, resultGeneration: 1,
   globalRefreshTimer: null, resultRefreshTimer: null, resultDurationTimer: null,
@@ -266,11 +260,11 @@ const startResultDurationTimer = run => {
 };
 const applyStatusPill = status => { $('statusPill').textContent = status; };
 const setWorkspaceMode = status => { $('workspaceMode').textContent = status; };
+const executionLocksRevision = () => false;
 const fillDefinitionOverview = () => {};
 const fillDraft = () => {};
 const showToast = () => {};
 const reportError = error => { throw error; };
-const renderSummary = () => {};
 const renderTimeline = () => {};
 const renderAgents = () => {};
 const renderConversations = () => {};
@@ -306,9 +300,8 @@ function assertPhase(expected) {
   if (run) {
     check($('overviewLatestStep').textContent === `${run.completed_steps}/10`, `${expected}: overview progress stale`);
     check($('overviewLatestMeta').textContent === label, `${expected}: overview status stale`);
-    check($('resultRunSelect').innerHTML.includes('run-00000001'), `${expected}: selector missing run`);
-    check($('runHistoryList').innerHTML.includes(label), `${expected}: history status stale`);
-    check($('resultStatusChip').textContent === label, `${expected}: result top stale`);
+    check($('resultRunSelect').innerHTML.includes('run-00000001'), `${expected}: run selector missing`);
+    check(state.runHistory[0].status === expected, `${expected}: run selector source stale`);
   }
 }
 async function emitPhase(nextPhase) {
@@ -334,28 +327,26 @@ async function emitPhase(nextPhase) {
   await refreshResultData('run-00000001', state.resultGeneration);
   assertPhase('QUEUED');
   check($('runPauseResumeBtn').hidden, 'QUEUED: pause must be hidden');
-  check(!$('runCancelBtn').hidden && $('runAgainBtn').hidden, 'QUEUED: action buttons stale');
+  check(!$('runCancelBtn').hidden, 'QUEUED: cancel action stale');
 
   await emitPhase('RUNNING');
   assertPhase('RUNNING');
   check(!$('runPauseResumeBtn').hidden && !$('runCancelBtn').hidden, 'RUNNING: controls stale');
-  check($('runAgainBtn').hidden, 'RUNNING: rerun must remain hidden');
 
   const staleSource = state.activitySource;
   await startGlobalActivityStream();
   check(staleSource.closed, 'reconnect did not close the old global stream');
-  const beforeStale = $('resultStatusChip').textContent;
+  const beforeStale = state.currentRun.status;
   staleSource.emit('activity', {
     experiment_id: 'exp-1', run_id: 'run-00000001', event_type: 'state',
     payload: { status: 'FAILED', completed_steps: 0 },
   });
   await drainTimers();
-  check($('resultStatusChip').textContent === beforeStale, 'stale EventSource overwrote the active runtime');
+  check(state.currentRun.status === beforeStale, 'stale EventSource overwrote the active runtime');
 
   await emitPhase('COMPLETED');
   assertPhase('COMPLETED');
   check($('runPauseResumeBtn').hidden && $('runCancelBtn').hidden, 'COMPLETED: live controls visible');
-  check(!$('runAgainBtn').hidden, 'COMPLETED: rerun action missing');
   check($('artifactStatus').textContent === 'BUILD_REPLAY:SUCCEEDED|BUILD_REPORT:SUCCEEDED', 'COMPLETED: artifacts stale');
 
   state.activitySource.close();
@@ -365,12 +356,12 @@ async function emitPhase(nextPhase) {
   document.visibilityState = 'visible';
   documentHandlers.visibilitychange();
   await drainTimers();
-  check($('resultStatusChip').textContent === '已完成', 'visibility reconcile regressed terminal state');
+  check(state.currentRun.status === 'COMPLETED', 'visibility reconcile regressed terminal state');
 
   process.stdout.write(JSON.stringify({
     phases: statuses,
     streamCount: FakeEventSource.instances.length,
-    finalStatus: $('resultStatusChip').textContent,
+    finalStatus: state.currentRun.status,
     finalFilter: tabText('completed'),
     finalArtifacts: $('artifactStatus').textContent,
   }));
@@ -390,7 +381,7 @@ async function emitPhase(nextPhase) {
     assert evidence == {
         "phases": ["DRAFT", "QUEUED", "RUNNING", "COMPLETED"],
         "streamCount": 3,
-        "finalStatus": "已完成",
+        "finalStatus": "COMPLETED",
         "finalFilter": "已完成 1",
         "finalArtifacts": "BUILD_REPLAY:SUCCEEDED|BUILD_REPORT:SUCCEEDED",
     }
