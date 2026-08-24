@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field, is_dataclass
+from dataclasses import asdict, dataclass, field, is_dataclass, replace
 from datetime import datetime
 from enum import StrEnum
 from typing import Any, Iterable, Mapping
@@ -21,6 +21,21 @@ class MemoryDeltaKind(StrEnum):
     ACCESSED = "ACCESSED"
     EXPIRED = "EXPIRED"
     EVICTED = "EVICTED"
+
+
+class StepEffectKind(StrEnum):
+    """Canonical facts produced while executing one simulation step."""
+
+    ACTION_SELECTED = "ACTION_SELECTED"
+    EVENT_PERCEIVED = "EVENT_PERCEIVED"
+    MEMORY_CREATED = "MEMORY_CREATED"
+    MEMORY_ACCESSED = "MEMORY_ACCESSED"
+    MEMORY_EXPIRED = "MEMORY_EXPIRED"
+    MEMORY_EVICTED = "MEMORY_EVICTED"
+    REFLECTION_CREATED = "REFLECTION_CREATED"
+    SCHEDULE_REVISED = "SCHEDULE_REVISED"
+    DOMAIN_EVENT = "DOMAIN_EVENT"
+    SKILL_EXECUTED = "SKILL_EXECUTED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +91,13 @@ class MemoryDelta:
     description: str | None = None
     poignancy: float | None = None
     source_event_id: UUID | None = None
+    subject: str | None = None
+    predicate: str | None = None
+    object: str | None = None
+    address: tuple[str, ...] = ()
+    created_at: datetime | None = None
+    expires_at: datetime | None = None
+    evidence_memory_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,6 +118,26 @@ class DomainEventRecord:
     event_type: str
     agent_keys: tuple[str, ...]
     payload: Mapping[str, Any]
+
+
+@dataclass(frozen=True, slots=True)
+class StepEffectRecord:
+    """One immutable cognitive or world-side effect in the step ledger.
+
+    Specialized memory, schedule, and domain records remain query projections;
+    this record is the shared causal history used by checkpoints, replay, and
+    future Skill-driven execution.
+    """
+
+    effect_id: UUID
+    sequence: int
+    kind: StepEffectKind
+    agent_keys: tuple[str, ...]
+    payload: Mapping[str, Any]
+    source_effect_id: UUID | None = None
+    skill_name: str | None = None
+    skill_revision: str | None = None
+    call_id: UUID | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -148,6 +190,7 @@ class StepResult:
     schedule_revisions: tuple[ScheduleRevisionRecord, ...]
     domain_events: tuple[DomainEventRecord, ...]
     committed_model_usage: tuple[ModelUsageDelta, ...]
+    effects: tuple[StepEffectRecord, ...] = ()
 
     def __post_init__(self) -> None:
         if self.step_no < 1:
@@ -157,6 +200,87 @@ class StepResult:
         agent_keys = [item.agent_key for item in self.agents]
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agents must contain at most one result per agent_key")
+        if not self.effects:
+            object.__setattr__(self, "effects", self._project_effects())
+
+    def _project_effects(self) -> tuple[StepEffectRecord, ...]:
+        """Build the canonical ledger for callers still supplying typed views."""
+
+        effects: list[StepEffectRecord] = []
+        memory_effects = {
+            MemoryDeltaKind.CREATED: StepEffectKind.MEMORY_CREATED,
+            MemoryDeltaKind.ACCESSED: StepEffectKind.MEMORY_ACCESSED,
+            MemoryDeltaKind.EXPIRED: StepEffectKind.MEMORY_EXPIRED,
+            MemoryDeltaKind.EVICTED: StepEffectKind.MEMORY_EVICTED,
+        }
+        for item in self.memory_deltas:
+            payload = {
+                "memory_id": item.memory_id,
+                "memory_type": item.memory_type,
+                "description": item.description,
+                "poignancy": item.poignancy,
+                "subject": item.subject,
+                "predicate": item.predicate,
+                "object": item.object,
+                "address": list(item.address),
+                "created_at": item.created_at.isoformat() if item.created_at else None,
+                "expires_at": item.expires_at.isoformat() if item.expires_at else None,
+                "evidence_memory_ids": list(item.evidence_memory_ids),
+            }
+            effects.append(
+                StepEffectRecord(
+                    effect_id=item.event_id,
+                    sequence=item.sequence,
+                    kind=memory_effects[item.kind],
+                    agent_keys=(item.agent_key,),
+                    payload=payload,
+                    source_effect_id=item.source_event_id,
+                )
+            )
+            if item.kind == MemoryDeltaKind.CREATED and item.memory_type.upper() == "THOUGHT":
+                effects.append(
+                    StepEffectRecord(
+                        effect_id=deterministic_record_id(
+                            self.run_id,
+                            self.step_no,
+                            "reflection",
+                            f"{item.agent_key}:{item.memory_id}",
+                        ),
+                        sequence=item.sequence,
+                        kind=StepEffectKind.REFLECTION_CREATED,
+                        agent_keys=(item.agent_key,),
+                        payload=payload,
+                        source_effect_id=item.event_id,
+                    )
+                )
+        for item in self.schedule_revisions:
+            effects.append(
+                StepEffectRecord(
+                    effect_id=item.revision_id,
+                    sequence=item.sequence,
+                    kind=StepEffectKind.SCHEDULE_REVISED,
+                    agent_keys=(item.agent_key,),
+                    payload={
+                        "reason": item.reason,
+                        "content_hash": item.content_hash,
+                        "schedule": list(item.schedule),
+                    },
+                    source_effect_id=item.source_event_id,
+                )
+            )
+        for item in self.domain_events:
+            effects.append(
+                StepEffectRecord(
+                    effect_id=item.event_id,
+                    sequence=item.sequence,
+                    kind=StepEffectKind.DOMAIN_EVENT,
+                    agent_keys=item.agent_keys,
+                    payload={"event_type": item.event_type, **dict(item.payload)},
+                )
+            )
+        return tuple(
+            sorted(effects, key=lambda value: (value.sequence, value.kind.value, str(value.effect_id)))
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return _wire_value(self)
@@ -221,6 +345,21 @@ class StepResult:
                     description=item.get("description"),
                     poignancy=item.get("poignancy"),
                     source_event_id=optional_uuid(item.get("source_event_id")),
+                    subject=item.get("subject"),
+                    predicate=item.get("predicate"),
+                    object=item.get("object"),
+                    address=tuple(item.get("address", ())),
+                    created_at=(
+                        datetime.fromisoformat(item["created_at"])
+                        if item.get("created_at")
+                        else None
+                    ),
+                    expires_at=(
+                        datetime.fromisoformat(item["expires_at"])
+                        if item.get("expires_at")
+                        else None
+                    ),
+                    evidence_memory_ids=tuple(item.get("evidence_memory_ids", ())),
                 )
                 for item in value.get("memory_deltas", ())
             ),
@@ -261,6 +400,20 @@ class StepResult:
                 )
                 for item in value.get("committed_model_usage", ())
             ),
+            effects=tuple(
+                StepEffectRecord(
+                    effect_id=UUID(item["effect_id"]),
+                    sequence=int(item["sequence"]),
+                    kind=StepEffectKind(item["kind"]),
+                    agent_keys=tuple(item.get("agent_keys", ())),
+                    payload=dict(item.get("payload", {})),
+                    source_effect_id=optional_uuid(item.get("source_effect_id")),
+                    skill_name=item.get("skill_name"),
+                    skill_revision=item.get("skill_revision"),
+                    call_id=optional_uuid(item.get("call_id")),
+                )
+                for item in value.get("effects", ())
+            ),
         )
 
 
@@ -278,6 +431,7 @@ class StepResultBuilder:
     _schedule_revisions: list[ScheduleRevisionRecord] = field(default_factory=list)
     _domain_events: list[DomainEventRecord] = field(default_factory=list)
     _model_usage: list[ModelUsageDelta] = field(default_factory=list)
+    _effects: list[StepEffectRecord] = field(default_factory=list)
     _frozen: bool = False
 
     def _append(self, target: list[Any], value: Any) -> None:
@@ -303,6 +457,9 @@ class StepResultBuilder:
     def add_model_usage(self, value: ModelUsageDelta) -> None:
         self._append(self._model_usage, value)
 
+    def add_effect(self, value: StepEffectRecord) -> None:
+        self._append(self._effects, value)
+
     def extend_model_usage(self, values: Iterable[ModelUsageDelta]) -> None:
         for value in values:
             self.add_model_usage(value)
@@ -311,7 +468,7 @@ class StepResultBuilder:
         if self._frozen:
             raise RuntimeError("StepResultBuilder is already frozen")
         self._frozen = True
-        return StepResult(
+        result = StepResult(
             run_id=self.run_id,
             attempt_id=self.attempt_id,
             step_no=self.step_no,
@@ -334,5 +491,18 @@ class StepResultBuilder:
             ),
             committed_model_usage=tuple(
                 sorted(self._model_usage, key=lambda value: str(value.logical_call_id))
+            ),
+        )
+        if not self._effects:
+            return result
+        effects = {item.effect_id: item for item in result.effects}
+        effects.update({item.effect_id: item for item in self._effects})
+        return replace(
+            result,
+            effects=tuple(
+                sorted(
+                    effects.values(),
+                    key=lambda value: (value.sequence, value.kind.value, str(value.effect_id)),
+                )
             ),
         )

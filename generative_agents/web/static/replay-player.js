@@ -69,7 +69,7 @@
         keyEvents: true,
       };
       this.mapLayers = new Map();
-      this.capabilityObjects = new Map();
+      this.worldObjects = new Map();
       this.resizeObserver = null;
     }
 
@@ -108,7 +108,7 @@
       this.windows.clear();
       this.agentObjects.clear();
       this.mapLayers.clear();
-      this.capabilityObjects.clear();
+      this.worldObjects.clear();
       // `canvas` is the package shell's single long-lived DOM node.  Phaser's
       // removeCanvas=true would detach it and make the next Run impossible to
       // mount.  Destroy the renderer/game state while retaining that owned
@@ -289,8 +289,6 @@
 
     _renderStep(step) {
       if (!this.scene) return;
-      const snapshot = (step.domain_events || []).find(event => event.event_type === 'capability.snapshot')?.payload || null;
-      const trajectories = snapshot?.trajectory_samples || [];
       step.agents.forEach(fact => {
         const object = this.agentObjects.get(fact.agent_key);
         if (!object) return;
@@ -324,30 +322,13 @@
           object.trail.clear();
           object.trail.lineStyle(2, 0x2c7f74, 0.65);
           object.trail.beginPath();
-          const definition = this.agentDefinitions.get(fact.agent_key);
-          const entityRefs = new Set([
-            definition?.actor_key ? `actor:${definition.actor_key}` : null,
-            definition?.active_tool_instance_key ? `tool:${definition.active_tool_instance_key}` : null,
-          ].filter(Boolean));
-          const samples = trajectories
-            .filter(item => entityRefs.has(item.entity_ref))
-            .map(item => [item.x_m, item.y_m]);
-          const path = samples.length ? samples : fact.path;
-          path.forEach((pathCoord, index) => {
+          fact.path.forEach((pathCoord, index) => {
             const [px, py] = this._worldPoint(pathCoord);
             if (index === 0) object.trail.moveTo(px, py); else object.trail.lineTo(px, py);
           });
           object.trail.strokePath();
         }
       });
-      if (snapshot?.placements) {
-        Object.entries(snapshot.placements).forEach(([instanceKey, placement]) => {
-          const object = this.capabilityObjects.get(instanceKey);
-          if (!object?.glyph) return;
-          const state = placement?.state || {};
-          object.glyph.setText(this._appearanceGlyph(object.appearance, state));
-        });
-      }
       if (this.followedAgentKey) this.followAgent(this.followedAgentKey);
       if (this.selectedAgentKey) this.selectAgent(this.selectedAgentKey);
       this.onStep({
@@ -358,6 +339,7 @@
         domain_events: step.domain_events,
         memory_deltas: step.memory_deltas,
         schedule_revisions: step.schedule_revisions,
+        effects: step.effects || [],
         availableStep: this.availableStep,
       });
     }
@@ -460,6 +442,33 @@
       const height = Number(definition.height || size[0] || 48);
       const scale = Number(assets.pixels_per_meter || 16);
       const tiles = definition.tiles || [];
+      const editorV2 = definition.editor_v2 && typeof definition.editor_v2 === 'object'
+        ? definition.editor_v2
+        : {};
+      const materialSources = Array.isArray(editorV2.material_sources)
+        ? editorV2.material_sources
+        : [];
+      const materialSlices = Array.isArray(editorV2.material_slices)
+        ? editorV2.material_slices
+        : [];
+      const visualLayers = Array.isArray(editorV2.visual_layers)
+        ? editorV2.visual_layers
+        : [];
+      const hierarchyNodes = Array.isArray(editorV2.hierarchy_nodes)
+        ? editorV2.hierarchy_nodes
+        : [];
+      const sourceById = new Map(materialSources.map(item => [String(item.id), item]));
+      const sliceById = new Map(materialSlices.map(item => [String(item.id), item]));
+      const sliceByGid = new Map(materialSlices
+        .filter(item => Number(item.indexed_gid) > 0)
+        .map(item => [Number(item.indexed_gid), item]));
+      const hierarchyById = new Map(hierarchyNodes.map(item => [String(item.id), item]));
+      const sourceTextureKey = sourceId => `world-source:${sourceId}`;
+      const sourceTextureUrl = source => source?.asset_id
+        ? `/api/v1/assets/${encodeURIComponent(source.asset_id)}/content`
+        : (source?.bundled_path
+          ? `/generative_agents/frontend/static/assets/village/${source.bundled_path}`
+          : '');
       const host = player.canvas?.parentElement;
       if (!host) throw new Error('REPLAY_CANVAS_HOST_MISSING');
       await new Promise((resolve, reject) => {
@@ -472,6 +481,16 @@
           render: { antialias: true, pixelArt: false },
           scale: { mode: PhaserRuntime.Scale.RESIZE },
           scene: {
+            preload() {
+              materialSources.forEach(source => {
+                const sourceUrl = sourceTextureUrl(source);
+                if (!sourceUrl) return;
+                this.load.image(
+                  sourceTextureKey(String(source.id)),
+                  sourceUrl,
+                );
+              });
+            },
             create() {
               if (!player._owns(manifest.run_id, generation)) return;
               player.scene = this;
@@ -483,25 +502,182 @@
                 graphics.fillStyle(color, 1);
                 graphics.fillRect(x * scale, y * scale, scale, scale);
               };
-              if (Array.isArray(tiles[0])) {
+              const drawMaterialSlice = (sliceId, x, y, {
+                widthInTiles = 1,
+                heightInTiles = 1,
+                rotationDegrees = null,
+                depth = 1,
+              } = {}) => {
+                const slice = sliceById.get(String(sliceId || ''));
+                const source = slice ? sourceById.get(String(slice.source_id || '')) : null;
+                const textureKey = source ? sourceTextureKey(String(source.id)) : '';
+                const rect = slice?.pixel_rect;
+                if (!slice || !sourceTextureUrl(source) || !rect || !this.textures.exists(textureKey)) return false;
+                const frameKey = `slice-frame:${slice.id}`;
+                const texture = this.textures.get(textureKey);
+                if (!texture.has(frameKey)) {
+                  texture.add(
+                    frameKey,
+                    0,
+                    Number(rect.x || 0),
+                    Number(rect.y || 0),
+                    Number(rect.width || source.width_px || scale),
+                    Number(rect.height || source.height_px || scale),
+                  );
+                }
+                const image = this.add.image(
+                  (Number(x) + Number(widthInTiles) / 2) * scale,
+                  (Number(y) + Number(heightInTiles) / 2) * scale,
+                  textureKey,
+                  frameKey,
+                );
+                image.setDisplaySize(
+                  Math.max(1, Number(widthInTiles)) * scale,
+                  Math.max(1, Number(heightInTiles)) * scale,
+                );
+                image.setAngle(Number(rotationDegrees ?? slice.rotation_degrees ?? 0));
+                image.setDepth(depth);
+                return true;
+              };
+              const compositeCanvas = document.createElement('canvas');
+              compositeCanvas.width = Math.max(1, width * scale);
+              compositeCanvas.height = Math.max(1, height * scale);
+              const composite = compositeCanvas.getContext('2d');
+              composite.imageSmoothingEnabled = false;
+              const drawCompositeSlice = (slice, rawGid, dx, dy, drawWidth, drawHeight, rotationOverride = null) => {
+                const source = slice ? sourceById.get(String(slice.source_id || '')) : null;
+                const textureKey = source ? sourceTextureKey(String(source.id)) : '';
+                const rect = slice?.pixel_rect;
+                if (!slice || !sourceTextureUrl(source) || !rect || !this.textures.exists(textureKey)) return false;
+                const image = this.textures.get(textureKey).getSourceImage();
+                if (!image) return false;
+                const raw = Number(rawGid || 0) >>> 0;
+                const horizontal = Boolean(raw & 0x80000000);
+                const vertical = Boolean(raw & 0x40000000);
+                const diagonal = Boolean(raw & 0x20000000);
+                const requestedRotation = Number(rotationOverride);
+                const sliceRotation = Number(slice.rotation_degrees || 0);
+                const rotation = [0, 90, 180, 270].includes(requestedRotation)
+                  ? requestedRotation
+                  : ([0, 90, 180, 270].includes(sliceRotation) ? sliceRotation : 0);
+                const sourceWidth = rotation % 180 === 90 ? drawHeight : drawWidth;
+                const sourceHeight = rotation % 180 === 90 ? drawWidth : drawHeight;
+                composite.save();
+                composite.translate(dx + drawWidth / 2, dy + drawHeight / 2);
+                if (rotation) composite.rotate(rotation * Math.PI / 180);
+                if (diagonal) composite.transform(0, 1, 1, 0, 0, 0);
+                composite.scale(horizontal ? -1 : 1, vertical ? -1 : 1);
+                composite.drawImage(
+                  image,
+                  Number(rect.x || 0),
+                  Number(rect.y || 0),
+                  Number(rect.width || scale),
+                  Number(rect.height || scale),
+                  -sourceWidth / 2,
+                  -sourceHeight / 2,
+                  sourceWidth,
+                  sourceHeight,
+                );
+                composite.restore();
+                return true;
+              };
+              let detailedWorldDrawn = false;
+              visualLayers.filter(layer => layer?.visible !== false).forEach(layer => {
+                composite.globalAlpha = Number.isFinite(Number(layer.opacity)) ? Number(layer.opacity) : 1;
+                (layer.raw_gids || []).forEach((raw, index) => {
+                  const gid = Number(raw) & 0x1fffffff;
+                  const slice = sliceByGid.get(gid);
+                  if (!slice) return;
+                  detailedWorldDrawn = drawCompositeSlice(
+                    slice,
+                    raw,
+                    (index % width) * scale,
+                    Math.floor(index / width) * scale,
+                    scale,
+                    scale,
+                  ) || detailedWorldDrawn;
+                });
+              });
+              composite.globalAlpha = 1;
+              const overrideIndexes = new Set([
+                ...Object.keys(editorV2.tile_overrides || {}),
+                ...Object.keys(editorV2.tile_override_layers || {}),
+              ]);
+              overrideIndexes.forEach(indexText => {
+                const index = Number(indexText);
+                const stacked = editorV2.tile_override_layers?.[indexText];
+                const entries = Array.isArray(stacked) && stacked.length
+                  ? stacked
+                  : [{
+                    slice_id: editorV2.tile_overrides?.[indexText],
+                    part: editorV2.tile_override_parts?.[indexText] || null,
+                  }];
+                entries.filter(entry => entry?.slice_id).forEach(entry => {
+                  const slice = sliceById.get(String(entry.slice_id));
+                  const part = entry.part;
+                  const dx = (index % width) * scale;
+                  const dy = Math.floor(index / width) * scale;
+                  if (!part) {
+                    detailedWorldDrawn = drawCompositeSlice(slice, 0, dx, dy, scale, scale) || detailedWorldDrawn;
+                    return;
+                  }
+                  const columns = Math.max(1, Number(part.columns) || 1);
+                  const rows = Math.max(1, Number(part.rows) || 1);
+                  const column = Math.max(0, Number(part.column) || 0);
+                  const row = Math.max(0, Number(part.row) || 0);
+                  composite.save();
+                  composite.beginPath();
+                  composite.rect(dx, dy, scale, scale);
+                  composite.clip();
+                  detailedWorldDrawn = drawCompositeSlice(
+                    slice,
+                    0,
+                    dx - column * scale,
+                    dy - row * scale,
+                    columns * scale,
+                    rows * scale,
+                    part.rotation_degrees,
+                  ) || detailedWorldDrawn;
+                  composite.restore();
+                });
+              });
+              if (detailedWorldDrawn) {
+                this.textures.addCanvas('world-composite', compositeCanvas);
+                this.add.image(0, 0, 'world-composite').setOrigin(0).setDepth(1);
+              } else if (Array.isArray(tiles[0])) {
                 tiles.forEach((row, y) => row.forEach((paletteKey, x) => {
                   drawTile(paletteKey, x, y);
                 }));
               } else {
                 tiles.forEach(tile => {
                   const coord = Array.isArray(tile?.coord) ? tile.coord : [];
-                  drawTile(
-                    tile?.tile || tile?.palette_key || 'ground',
-                    Number(coord[0] || 0),
-                    Number(coord[1] || 0),
-                  );
+                  const x = Number(coord[0] || 0);
+                  const y = Number(coord[1] || 0);
+                  const sliceId = tile?.visual_slice_id || tile?.tile;
+                  const rotationDegrees = tile?.visual_slice_part?.rotation_degrees;
+                  if (!drawMaterialSlice(sliceId, x, y, { rotationDegrees })) {
+                    drawTile(tile?.tile || tile?.palette_key || 'ground', x, y);
+                  }
                 });
               }
-              graphics.lineStyle(1, 0xffffff, 0.08);
-              for (let x = 0; x <= width; x += 1) graphics.lineBetween(x * scale, 0, x * scale, height * scale);
-              for (let y = 0; y <= height; y += 1) graphics.lineBetween(0, y * scale, width * scale, y * scale);
+              const gridGraphics = this.add.graphics().setDepth(2);
+              gridGraphics.lineStyle(1, 0xffffff, 0.08);
+              for (let x = 0; x <= width; x += 1) gridGraphics.lineBetween(x * scale, 0, x * scale, height * scale);
+              for (let y = 0; y <= height; y += 1) gridGraphics.lineBetween(0, y * scale, width * scale, y * scale);
 
               (assets.objects || []).forEach(item => {
+                const hierarchyNode = hierarchyById.get(String(item.instance_key || ''));
+                const bounds = hierarchyNode?.bounds || {};
+                if (hierarchyNode?.material_slice_id && drawMaterialSlice(
+                  hierarchyNode.material_slice_id,
+                  Number(bounds.x ?? item.x_m ?? item.x ?? 0),
+                  Number(bounds.y ?? item.y_m ?? item.y ?? 0),
+                  {
+                    widthInTiles: Number(bounds.width || 1),
+                    heightInTiles: Number(bounds.height || 1),
+                    depth: 10,
+                  },
+                )) return;
                 const [px, py] = player._worldPoint([
                   item.x_m ?? item.x,
                   item.y_m ?? item.y,
@@ -513,11 +689,16 @@
                   { fontFamily: REPLAY_FONT_FAMILY, fontSize: `${Math.max(14, scale)}px` },
                 ).setOrigin(0.5).setDepth(10);
                 if (typeof glyph.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);
-                player.capabilityObjects.set(item.instance_key, { glyph, appearance: item.appearance || {} });
+                player.worldObjects.set(item.instance_key, { glyph, appearance: item.appearance || {} });
               });
 
               this.cameras.main.setBounds(0, 0, width * scale, height * scale);
-              this.cameras.main.setZoom(Math.min(1.2, Math.max(0.35, INITIAL_CAMERA_ZOOM)));
+              const fitZoom = Math.min(
+                (host.clientWidth || width * scale) / Math.max(1, width * scale),
+                (host.clientHeight || height * scale) / Math.max(1, height * scale),
+              ) * 0.9;
+              this.cameras.main.setZoom(Math.min(1.8, Math.max(0.35, fitZoom)));
+              this.cameras.main.centerOn(width * scale / 2, height * scale / 2);
               let dragX = 0; let dragY = 0;
               this.input.on('pointerdown', pointer => { dragX = pointer.x; dragY = pointer.y; });
               this.input.on('pointermove', pointer => {
@@ -582,7 +763,7 @@
         sprite = scene.add.sprite(px, py, `agent:${definition.agent_key}`, 'down-walk.000').setDepth(15).setInteractive();
       } else {
         const roleGlyph = definition.role === 'DRIVER' ? '🚗' : definition.role === 'PEDESTRIAN' ? '🚶' : '!';
-        const size = this.manifest?.execution_mode === 'CAPABILITY_COMPOSED' ? 22 : 26;
+        const size = 26;
         sprite = scene.add.circle(px, py, size / 2, definition.role === 'DRIVER' ? 0x315d8a : 0xb64b4b).setDepth(15).setInteractive();
         glyph = scene.add.text(px, py, roleGlyph, { fontFamily: REPLAY_FONT_FAMILY, fontSize: '17px' }).setOrigin(0.5).setDepth(16);
         if (typeof glyph.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);

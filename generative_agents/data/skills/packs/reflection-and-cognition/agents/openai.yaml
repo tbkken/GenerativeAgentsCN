@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflection And Cognition"
+  short_description: "Run the Reflection And Cognition agent skill"
+  default_prompt: "Use $reflection-and-cognition to handle the current agent context and return the result directly."

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections import Counter
-from string import Template
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -11,7 +10,7 @@ from pydantic import Field
 
 from .algorithm import get_algorithm_profile
 from .hashing import definition_hash
-from .schema import ExperimentDefinition, REQUIRED_PROMPT_KEYS, StrictModel
+from .schema import ExperimentDefinition, StrictModel
 from .spatial import build_map_address_index, validate_agent_spatial
 
 
@@ -46,8 +45,6 @@ def _fix_target(path: str) -> tuple[str, str | None]:
         return "world", "worldDefinition"
     if path.startswith("models"):
         return "models", "chatModel" if ".chat" in path else "embeddingModel"
-    if path.startswith("prompts") or path.startswith("workflows"):
-        return "prompts", "workflowCanvasScroller"
     if path.startswith("simulation") or path.startswith("results"):
         return "overview", "maxSteps"
     return "overview", None
@@ -71,14 +68,7 @@ def validate_for_publish(
     existing_secret_refs: set[str] | None = None,
     validate_legacy_agent_locations: bool = True,
 ) -> ValidationReport:
-    """Perform deterministic publication checks; network checks live in model adapters.
-
-    ``ExperimentDefinition.agents`` stores the tile/address based location used by
-    the legacy town runtime.  Capability-composed scenarios own their physical
-    actors, tools and metre-based routes in a separate versioned extension, so
-    their service-level publication gate disables this legacy-only location
-    check and validates the scene poses instead.
-    """
+    """Perform deterministic publication checks; network checks live in model adapters."""
 
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
@@ -100,26 +90,6 @@ def validate_for_publish(
             )
         )
 
-    missing_prompts = sorted(REQUIRED_PROMPT_KEYS - definition.prompts.keys())
-    if missing_prompts:
-        errors.append(
-            _issue(
-                "PROMPTS_MISSING",
-                "prompts",
-                f"缺少必需 Prompt: {', '.join(missing_prompts)}",
-                "ERROR",
-            )
-        )
-    for key in sorted(REQUIRED_PROMPT_KEYS & definition.prompts.keys()):
-        content = definition.prompts[key].content
-        if not content.strip():
-            errors.append(_issue("PROMPT_EMPTY", f"prompts.{key}", "Prompt 正文不能为空", "ERROR"))
-        try:
-            # substitute is intentionally called with an empty mapping to distinguish
-            # valid placeholders from malformed '$' syntax. Missing names are valid here.
-            Template(content).safe_substitute({})
-        except ValueError as exc:
-            errors.append(_issue("PROMPT_SYNTAX", f"prompts.{key}", str(exc), "ERROR"))
 
     world = definition.world.definition
     if not world:

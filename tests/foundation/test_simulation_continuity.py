@@ -173,6 +173,27 @@ def test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work():
     ]
 
 
+def test_restored_schedule_compares_the_simulation_local_calendar_day():
+    clock = SimulationClock(
+        datetime(2026, 2, 13, 0, 30, tzinfo=timezone(timedelta(hours=8)))
+    )
+    schedule = Schedule(
+        clock=clock,
+        create="20260213-00:00:00",
+        daily_schedule=[
+            {
+                "idx": 0,
+                "describe": "sleep",
+                "start": 0,
+                "duration": 60,
+                "decompose": {},
+            }
+        ],
+    )
+
+    assert schedule.scheduled()
+
+
 def test_chat_quality_guard_rejects_placeholders_and_exact_repeats():
     assert valid_chat_message("我们一起核对住房政策数据。")
     assert not valid_chat_message("填坑")

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wake Up"
+  short_description: "Run the Wake Up agent skill"
+  default_prompt: "Use $wake-up to handle the current agent context and return the result directly."

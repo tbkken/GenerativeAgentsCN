@@ -43,12 +43,39 @@ def _atomic_write(path: Path, content: bytes) -> None:
 
 
 def _read_frames(paths: RunPaths) -> list[dict]:
+    """Read only frames admitted by the standalone commit projection.
+
+    Production database-backed runs use ArtifactBuilder.  This adapter exists
+    for the filesystem runner and deliberately refuses uncommitted frame files.
+    """
+
+    projection_path = paths.root / "projection.json"
+    if not projection_path.is_file():
+        raise RuntimeError(
+            "standalone compression requires projection.json; database-backed "
+            "runs must use the artifact job pipeline"
+        )
+    projection = json.loads(projection_path.read_text(encoding="utf-8"))
+    if projection.get("run_id") != str(paths.run_id):
+        raise ValueError("projection belongs to another run")
+    available_step = int(projection.get("available_step") or 0)
+    committed = projection.get("steps") or {}
     frames: list[tuple[int, dict]] = []
-    for frame_path in paths.frames.iterdir():
-        match = _FRAME_NAME.fullmatch(frame_path.name)
-        if not match or not frame_path.is_file():
-            continue
-        step_no = int(match.group(1))
+    for step_no in range(1, available_step + 1):
+        record = committed.get(str(step_no))
+        if not isinstance(record, dict):
+            raise ValueError(f"projection is missing committed step {step_no}")
+        frame_path = (paths.root / str(record.get("frame") or "")).resolve()
+        if (
+            frame_path.parent != paths.frames.resolve()
+            or not _FRAME_NAME.fullmatch(frame_path.name)
+            or not frame_path.is_file()
+            or frame_path.is_symlink()
+        ):
+            raise ValueError(f"unsafe committed frame path at step {step_no}")
+        digest = hashlib.sha256(frame_path.read_bytes()).hexdigest()
+        if digest != record.get("frame_sha256"):
+            raise ValueError(f"committed frame hash mismatch at step {step_no}")
         with gzip.open(frame_path, "rt", encoding="utf-8") as file_handle:
             document = json.load(file_handle)
         result = document.get("result")
@@ -57,10 +84,6 @@ def _read_frames(paths: RunPaths) -> list[dict]:
         if result.get("run_id") != str(paths.run_id) or result.get("step_no") != step_no:
             raise ValueError(f"frame ownership mismatch: {frame_path.name}")
         frames.append((step_no, result))
-    frames.sort(key=lambda item: item[0])
-    for expected, (actual, _result) in enumerate(frames, 1):
-        if actual != expected:
-            raise ValueError(f"canonical frames are not contiguous at step {expected}")
     return [result for _step, result in frames]
 
 

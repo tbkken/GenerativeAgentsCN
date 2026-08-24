@@ -6,12 +6,10 @@ import datetime
 import copy
 import hashlib
 import json
-from collections.abc import Mapping
 
 from generative_agents.modules import memory, prompt, utils
 from generative_agents.modules.model.llm_model import create_llm_model
 from generative_agents.modules.memory.associate import Concept
-from generative_agents.runtime.json_schema import validate_json_schema
 
 
 def estimate_chat_duration(chats, chars_per_minute=240):
@@ -66,10 +64,11 @@ class Agent:
         *,
         clock,
         random_source,
-        prompts,
+        skills,
         models=None,
         model_trace=None,
         algorithm=None,
+        memory_stream=None,
     ):
         # Runtime-only collaborators such as RunControl contain thread locks and
         # must retain identity. Copy the serializable definition first, then put
@@ -101,13 +100,17 @@ class Agent:
         self.logger = logger
         self._clock = clock
         self._rng = random_source
-        self._prompts = prompts
+        self._skills = skills
         self._models = models
         self._model_trace = model_trace
         self._algorithm = algorithm
+        self._memory_stream = memory_stream
+        self._current_step_no = None
+        self._memory_id_map = {
+            str(index_id): str(memory_id)
+            for index_id, memory_id in (agent_config.get("memory_id_map") or {}).items()
+        }
         self._result_events = []
-        self._workflow_state = {}
-        self._workflow_invocation_seq = 0
 
         # agent config
         self.percept_config = agent_config["percept"]
@@ -151,7 +154,7 @@ class Agent:
             agent_config["scratch"],
             clock=clock,
             random_source=random_source,
-            prompts=prompts,
+            skills=skills,
         )
 
         # status
@@ -222,148 +225,46 @@ class Agent:
                     self.think_config["llm"], recorder=self._model_trace
                 )
 
+    def begin_step(self, step_no):
+        if not isinstance(step_no, int) or isinstance(step_no, bool) or step_no < 1:
+            raise ValueError("step_no must be a positive integer")
+        self._current_step_no = step_no
+
     def completion(self, func_hint, *args, **kwargs):
         assert hasattr(
             self.scratch, "prompt_" + func_hint
         ), "Can not find func prompt_{} from scratch".format(func_hint)
         func = getattr(self.scratch, "prompt_" + func_hint)
         res = func(*args, **kwargs)._asdict()
-        config_for_prompt = getattr(self._prompts, "config_for_prompt", None)
-        if callable(config_for_prompt):
-            node_config = config_for_prompt(func_hint)
-            response_schema = node_config.get("response_schema")
-            retry_policy = node_config.get("retry_policy", {})
-            if isinstance(response_schema, dict):
-                callback = res.get("callback")
-
-                def validate_structured_output(output):
-                    validate_json_schema({"res": output}, response_schema)
-                    return callback(output) if callback else output
-
-                res["callback"] = validate_structured_output
-            attempts = retry_policy.get("max_attempts")
-            if isinstance(attempts, int) and not isinstance(attempts, bool):
-                res["retry"] = attempts if retry_policy.get("retry_on_schema_error", True) else 1
         title, msg = "{}.{}".format(self.name, func_hint), {}
         output = res.get("failsafe")
-        execution_mode_for_prompt = getattr(
-            self._prompts, "execution_mode_for_prompt", None
-        )
-        execution_mode = (
-            execution_mode_for_prompt(func_hint)
-            if callable(execution_mode_for_prompt)
-            else None
-        )
-        if execution_mode == "prompt_router":
-            execute_prompt = getattr(self._prompts, "execute_prompt")
-            self._workflow_invocation_seq += 1
-            invocation_id = f"{self.agent_key}:{func_hint}:{self._workflow_invocation_seq}"
-            step_context = self._workflow_runtime_context(func_hint)
-            step_context["prompt_key"] = func_hint
-            step_context["prompt_request"] = res
-
-            def invoke_graph_llm(node, node_inputs, _runtime_context):
-                if node.prompt_key != func_hint:
-                    raise RuntimeError(
-                        f"Prompt router for {func_hint} reached unexpected LLM "
-                        f"node {node.prompt_key}"
-                    )
-                context = node_inputs.get("context")
-                request = (
-                    context.get("prompt_request")
-                    if isinstance(context, Mapping)
-                    else None
-                )
-                if not isinstance(request, Mapping):
-                    raise RuntimeError(
-                        f"LLM node {node.node_id} did not receive prompt_request"
-                    )
-                if self.llm_available():
-                    result = self._llm.completion(
-                        **dict(request),
-                        caller=node.prompt_key,
-                        agent_key=self.agent_key,
-                        prompt_key=node.prompt_key,
-                    )
-                else:
-                    result = request.get("failsafe")
-                msg.update(
-                    {
-                        "<PROMPT>": "\n" + str(request.get("prompt", "")) + "\n",
-                        "response": result,
-                    }
-                )
-                return result
-
-            if self.llm_available():
-                self.logger.info("{} -> {}".format(self.name, func_hint))
-            output = execute_prompt(
-                func_hint,
-                step_context,
-                llm_handler=invoke_graph_llm,
-                state=self._workflow_state,
-                invocation_id=invocation_id,
-            ).value
-        elif self.llm_available():
+        if self.llm_available():
             self.logger.info("{} -> {}".format(self.name, func_hint))
             output = self._llm.completion(
                 **res,
                 caller=func_hint,
                 agent_key=self.agent_key,
                 prompt_key=func_hint,
+                step_no=self._current_step_no,
             )
             msg = {"<PROMPT>": "\n" + res["prompt"] + "\n"}
             msg.update({"response": output})
-        if execution_mode != "prompt_router":
-            invoke_prompt_result = getattr(self._prompts, "invoke_prompt_result", None)
-            if callable(invoke_prompt_result):
-                self._workflow_invocation_seq += 1
-                output = invoke_prompt_result(
-                    func_hint,
-                    output,
-                    runtime_context=self._workflow_runtime_context(func_hint),
-                    state=self._workflow_state,
-                    invocation_id=(
-                        f"{self.agent_key}:{func_hint}:{self._workflow_invocation_seq}"
-                    ),
-                )
         self.logger.debug(utils.block_msg(title, msg))
+        revision_resolver = getattr(self._skills, "revision", None)
+        skill_revision = (
+            revision_resolver(func_hint) if callable(revision_resolver) else "unversioned"
+        )
+        self._result_events.append(
+            {
+                "kind": "skill_execution",
+                "agent_key": self.agent_key,
+                "skill_name": str(func_hint).replace("_", "-"),
+                "skill_revision": skill_revision,
+                "output_text": str(output)[:8192],
+                "execution_source": "MODEL" if self.llm_available() else "FAILSAFE",
+            }
+        )
         return output
-
-    def _workflow_runtime_context(self, prompt_key):
-        """Build the serializable StepContext consumed by workflow nodes."""
-
-        if prompt_key in {
-            "retrieve_plan",
-            "retrieve_thought",
-            "retrieve_currently",
-            "wake_up",
-            "schedule_init",
-            "schedule_daily",
-        }:
-            trigger = "new_day"
-        elif prompt_key == "schedule_decompose":
-            trigger = "current_plan"
-        elif prompt_key == "schedule_revise":
-            trigger = "interruption"
-        else:
-            trigger = "step"
-        concepts = list(getattr(self, "concepts", ()) or ())
-        return {
-            "agent_key": self.agent_key,
-            "agent": {"key": self.agent_key, "name": self.name},
-            "clock": self._clock.get_date().isoformat(),
-            "virtual_time": self._clock.get_date().isoformat(),
-            "memories": [
-                getattr(concept, "describe", str(concept)) for concept in concepts
-            ],
-            "visible_events": [
-                getattr(getattr(concept, "event", None), "describe", "")
-                for concept in concepts
-            ],
-            "trigger": trigger,
-            "prompt_key": prompt_key,
-        }
 
     def think(self, status, agents_by_name):
         events = self.move(status["coord"], status.get("path"))
@@ -625,6 +526,70 @@ class Agent:
             return
         if self.action.finished():
             self.action = self._determine_action()
+
+    def choose_game_object_interaction(self, interactions, planned_path):
+        """Explicitly select one nearby affordance, or decline with ``NONE``."""
+
+        if not interactions:
+            return "NONE"
+        return self.completion(
+            "decide_game_object_interaction",
+            self.get_event().get_describe(),
+            self.get_tile().get_address(as_list=False),
+            tuple(tuple(coord) for coord in (planned_path or ())),
+            interactions,
+        )
+
+    def receive_game_object_observation(
+        self,
+        *,
+        object_key,
+        object_name,
+        interaction_key,
+        skill_name,
+        skill_revision,
+        request,
+        response,
+        address,
+    ):
+        """Store a passive object response, then let the Agent decide movement."""
+
+        description = f"{object_name}回应{self.name}：{response}"
+        event = memory.Event(
+            object_name,
+            "回应",
+            self.name,
+            describe=description,
+            address=list(address) or self.get_tile().get_address(),
+            emoji="ℹ️",
+        )
+        concept = self._add_concept("event", event)
+        self.concepts.append(concept)
+        directive = self.completion(
+            "decide_game_object_response",
+            self.get_event().get_describe(),
+            object_name,
+            request,
+            response,
+        )
+        if directive not in {"WAIT", "CONTINUE"}:
+            directive = "WAIT"
+        self._result_events.append(
+            {
+                "kind": "game_object_interaction",
+                "agent_key": self.agent_key,
+                "object_key": object_key,
+                "object_name": object_name,
+                "interaction_key": interaction_key,
+                "skill_name": skill_name,
+                "skill_revision": skill_revision,
+                "request": request,
+                "response": response,
+                "agent_decision": directive,
+                "location": tuple(event.address),
+            }
+        )
+        return directive
 
     # create action && object events
     def make_event(self, subject, describe, address):
@@ -1022,30 +987,98 @@ class Agent:
             expire=expire,
             filling=filling,
         )
+        canonical_memory_id = concept.node_id
+        canonical_evidence = tuple(
+            self._memory_id_map.get(str(memory_id), str(memory_id))
+            for memory_id in concept.evidence_memory_ids
+        )
+        if self._memory_stream is not None:
+            stored_memory = self._memory_stream.append(
+                agent_key=self.agent_key,
+                content=concept.describe,
+                kind=e_type,
+                poignancy=max(1, min(10, int(round(concept.poignancy)))),
+                expires_at=concept.expire,
+                subject=concept.event.subject,
+                predicate=concept.event.predicate,
+                object=concept.event.object,
+                address=concept.event.address,
+                evidence_memory_ids=canonical_evidence,
+                emit_event=False,
+            )
+            canonical_memory_id = stored_memory["id"]
+        self._memory_id_map[concept.node_id] = canonical_memory_id
         self._result_events.append(
             {
                 "kind": "memory",
                 "memory_kind": "CREATED",
                 "agent_key": self.agent_key,
-                "memory_id": concept.node_id,
+                "memory_id": canonical_memory_id,
+                "index_node_id": concept.node_id,
                 "memory_type": e_type.upper(),
                 "description": concept.describe,
                 "poignancy": concept.poignancy,
+                "event": concept.event.to_dict(),
+                "created_at": concept.create.isoformat(),
+                "expires_at": concept.expire.isoformat(),
+                "evidence_memory_ids": list(canonical_evidence),
             }
         )
         for memory_id in self.associate.last_evicted:
+            canonical_memory_id = self._memory_id_map.pop(memory_id, memory_id)
+            if self._memory_stream is not None:
+                self._memory_stream.remove(
+                    canonical_memory_id, state="EVICTED", emit_event=False
+                )
             self._result_events.append(
                 {
                     "kind": "memory",
                     "memory_kind": "EVICTED",
                     "agent_key": self.agent_key,
-                    "memory_id": memory_id,
+                    "memory_id": canonical_memory_id,
+                    "index_node_id": memory_id,
                     "memory_type": e_type.upper(),
                 }
             )
         return concept
 
     def drain_result_events(self):
+        lifecycle_reader = getattr(self.associate, "drain_lifecycle_events", None)
+        lifecycle = (
+            lifecycle_reader()
+            if callable(lifecycle_reader)
+            else {"accessed": (), "expired": ()}
+        )
+        for memory_id, memory_type in lifecycle["accessed"]:
+            canonical_memory_id = self._memory_id_map.get(memory_id, memory_id)
+            if self._memory_stream is not None:
+                self._memory_stream.access(canonical_memory_id, emit_event=False)
+            self._result_events.append(
+                {
+                    "kind": "memory",
+                    "memory_kind": "ACCESSED",
+                    "agent_key": self.agent_key,
+                    "memory_id": canonical_memory_id,
+                    "index_node_id": memory_id,
+                    "memory_type": memory_type.upper(),
+                }
+            )
+        for memory_id, memory_type in lifecycle["expired"]:
+            canonical_memory_id = self._memory_id_map.pop(memory_id, memory_id)
+            if self._memory_stream is not None:
+                self._memory_stream.remove(
+                    canonical_memory_id, state="EXPIRED", emit_event=False
+                )
+            self._result_events.append(
+                {
+                    "kind": "memory",
+                    "memory_kind": "EXPIRED",
+                    "agent_key": self.agent_key,
+                    "memory_id": canonical_memory_id,
+                    "index_node_id": memory_id,
+                    "memory_type": memory_type.upper(),
+                }
+            )
         events, self._result_events = tuple(self._result_events), []
         return events
 
@@ -1080,6 +1113,7 @@ class Agent:
                 agent_key: observed_at.isoformat()
                 for agent_key, observed_at in self.last_chat_at.items()
             },
+            "memory_id_map": dict(self._memory_id_map),
         }
         if with_action:
             info.update({"action": self.action.to_dict()})

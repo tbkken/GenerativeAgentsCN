@@ -1,0 +1,4 @@
+interface:
+  display_name: "人行横道信号建议"
+  short_description: "被动返回实例化信号灯的自然语言通行建议"
+  default_prompt: "使用 $crosswalk-signal-advisor 响应 Agent 对附近行人信号灯的主动查询。"

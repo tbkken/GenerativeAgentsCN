@@ -41,6 +41,9 @@ ALLOWED_JOB_TYPES = frozenset(
     }
 )
 
+_CORE_ARTIFACT_PARAMETERS = frozenset({"source_step"})
+
+
 class ArtifactService:
     _integrity_lock = threading.RLock()
     _verified_content: OrderedDict[tuple, None] = OrderedDict()
@@ -59,6 +62,17 @@ class ArtifactService:
                 "INVALID_ARTIFACT_JOB_TYPE", "不支持的制品任务类型", status_code=422
             )
         requested_parameters = dict(parameters or {})
+        if job_type in {"BUILD_REPLAY", "BUILD_REPORT"}:
+            unknown_parameters = sorted(
+                set(requested_parameters) - _CORE_ARTIFACT_PARAMETERS
+            )
+            if unknown_parameters:
+                raise ServiceError(
+                    "INVALID_ARTIFACT_PARAMETERS",
+                    "回放和报告只接受 source_step 参数",
+                    status_code=422,
+                    details={"unknown_parameters": unknown_parameters},
+                )
         if job_type == "CHECKPOINT_BUNDLE":
             # Keep one authoritative validation path even for callers that use
             # the generic job service directly instead of the dedicated API.

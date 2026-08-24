@@ -15,21 +15,15 @@ from uuid import UUID, uuid4
 
 from generative_agents.config import (
     ExperimentDefinition,
-    WorkflowDefinition,
     canonical_json_bytes,
     definition_hash,
     get_algorithm_profile,
-    workflow_bundle_hash,
 )
 
 from .context import RunPaths
-from .capability_snapshot import (
-    CAPABILITY_SNAPSHOT_SCHEMA_VERSION,
-    capability_snapshot_hash,
-)
 
 
-MANIFEST_SCHEMA_VERSION = 1
+MANIFEST_SCHEMA_VERSION = 2
 
 
 class ManifestConflictError(RuntimeError):
@@ -47,27 +41,15 @@ class VerifiedRunManifest:
         return ExperimentDefinition.model_validate(self.document["definition"])
 
     @property
-    def workflows(self) -> Mapping[str, WorkflowDefinition]:
-        return {
-            key: WorkflowDefinition.model_validate(value)
-            for key, value in (self.document.get("workflows") or {}).items()
-        }
-
-    @property
-    def workflow_functions(self) -> Mapping[str, str]:
-        return {
-            str(key): str(value)
-            for key, value in (self.document.get("workflow_functions") or {}).items()
-        }
-
-    @property
-    def capability_snapshot(self) -> Mapping[str, Any] | None:
-        value = self.document.get("capability_snapshot")
-        return value if isinstance(value, Mapping) else None
+    def skill_bundle(self) -> Mapping[str, Mapping[str, Any]]:
+        value = self.document.get("skill_bundle")
+        if not isinstance(value, Mapping):
+            raise ValueError("run manifest has no Skill bundle")
+        return value
 
 
-def workflow_function_bundle_hash(functions: Mapping[str, str]) -> str:
-    normalized = {str(key): str(value) for key, value in sorted(functions.items())}
+def skill_bundle_hash(skills: Mapping[str, Mapping[str, Any]]) -> str:
+    normalized = {str(key): dict(value) for key, value in sorted(skills.items())}
     return hashlib.sha256(canonical_json_bytes(normalized)).hexdigest()
 
 
@@ -100,9 +82,7 @@ def build_manifest_document(
     assets: Iterable[Mapping[str, Any]],
     materialized_at: datetime,
     dependency_versions: Mapping[str, str | None] | None = None,
-    workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
-    workflow_functions: Mapping[str, str] | None = None,
-    capability_snapshot: Mapping[str, Any] | None = None,
+    skill_bundle: Mapping[str, Mapping[str, Any]],
 ) -> dict[str, Any]:
     actual_definition_hash = definition_hash(definition)
     if actual_definition_hash != expected_definition_hash:
@@ -135,34 +115,11 @@ def build_manifest_document(
         ),
         "assets": asset_list,
         "materialized_at": materialized_at.isoformat(),
+        "brain_skill": definition.engine.brain_skill,
     }
-    if workflows:
-        workflow_documents = {
-            key: (
-                value.model_dump(mode="json", exclude_none=False)
-                if isinstance(value, WorkflowDefinition)
-                else WorkflowDefinition.model_validate(value).model_dump(
-                    mode="json", exclude_none=False
-                )
-            )
-            for key, value in sorted(workflows.items())
-        }
-        envelope["workflows"] = workflow_documents
-        envelope["workflow_bundle_hash"] = workflow_bundle_hash(workflow_documents)
-        function_documents = {
-            str(key): str(value)
-            for key, value in sorted((workflow_functions or {}).items())
-        }
-        envelope["workflow_functions"] = function_documents
-        envelope["workflow_function_bundle_hash"] = workflow_function_bundle_hash(
-            function_documents
-        )
-    if capability_snapshot is not None:
-        snapshot_document = dict(capability_snapshot)
-        envelope["capability_snapshot"] = snapshot_document
-        envelope["capability_snapshot_hash"] = capability_snapshot_hash(
-            snapshot_document
-        )
+    skills = {str(key): dict(value) for key, value in sorted(skill_bundle.items())}
+    envelope["skill_bundle"] = skills
+    envelope["skill_bundle_hash"] = skill_bundle_hash(skills)
     envelope["manifest_hash"] = hashlib.sha256(canonical_json_bytes(envelope)).hexdigest()
     return envelope
 
@@ -201,9 +158,7 @@ class RunManifestStore:
         definition: ExperimentDefinition,
         expected_definition_hash: str,
         assets: Iterable[Mapping[str, Any]],
-        workflows: Mapping[str, WorkflowDefinition | Mapping[str, Any]] | None = None,
-        workflow_functions: Mapping[str, str] | None = None,
-        capability_snapshot: Mapping[str, Any] | None = None,
+        skill_bundle: Mapping[str, Mapping[str, Any]] | None = None,
     ) -> VerifiedRunManifest:
         """Verify an existing Run manifest against its published Revision.
 
@@ -226,35 +181,6 @@ class RunManifestStore:
             ),
         )
         document = verified.document
-        expected_workflows = None
-        if workflows:
-            expected_workflows = {
-                key: (
-                    value.model_dump(mode="json", exclude_none=False)
-                    if isinstance(value, WorkflowDefinition)
-                    else WorkflowDefinition.model_validate(value).model_dump(
-                        mode="json", exclude_none=False
-                    )
-                )
-                for key, value in sorted(workflows.items())
-            }
-        expected_functions = {
-            str(key): str(value)
-            for key, value in sorted((workflow_functions or {}).items())
-        }
-        expected_capability_snapshot = (
-            dict(capability_snapshot) if capability_snapshot is not None else None
-        )
-        has_function_bundle = "workflow_functions" in document
-        function_bundle_matches = (
-            (
-                document.get("workflow_functions") == expected_functions
-                and document.get("workflow_function_bundle_hash")
-                == workflow_function_bundle_hash(expected_functions)
-            )
-            if has_function_bundle
-            else not expected_functions
-        )
         matches = (
             document.get("experiment_id") == str(experiment_id)
             and document.get("revision_id") == str(revision_id)
@@ -263,22 +189,6 @@ class RunManifestStore:
             == definition.model_dump(mode="json", exclude_none=False)
             and document.get("algorithm_version") == definition.engine.algorithm_version
             and document.get("assets") == expected_assets
-            and document.get("workflows") == expected_workflows
-            and document.get("workflow_bundle_hash")
-            == (
-                workflow_bundle_hash(expected_workflows)
-                if expected_workflows is not None
-                else None
-            )
-            and function_bundle_matches
-            and document.get("capability_snapshot")
-            == expected_capability_snapshot
-            and document.get("capability_snapshot_hash")
-            == (
-                capability_snapshot_hash(expected_capability_snapshot)
-                if expected_capability_snapshot is not None
-                else None
-            )
         )
         if not matches:
             raise ManifestConflictError(
@@ -321,45 +231,14 @@ class RunManifestStore:
         if algorithm_version != definition.engine.algorithm_version:
             raise ValueError("manifest algorithm_version mismatch")
         get_algorithm_profile(algorithm_version)
-        workflow_documents = document.get("workflows")
-        workflow_digest = document.get("workflow_bundle_hash")
-        if (workflow_documents is None) != (workflow_digest is None):
-            raise ValueError("manifest workflow bundle is incomplete")
-        if workflow_documents is not None:
-            normalized_workflows = {
-                key: WorkflowDefinition.model_validate(value).model_dump(
-                    mode="json", exclude_none=False
-                )
-                for key, value in sorted(workflow_documents.items())
-            }
-            if workflow_bundle_hash(normalized_workflows) != workflow_digest:
-                raise ValueError("manifest workflow_bundle_hash mismatch")
-        function_documents = document.get("workflow_functions")
-        function_digest = document.get("workflow_function_bundle_hash")
-        if (function_documents is None) != (function_digest is None):
-            raise ValueError("manifest workflow Function bundle is incomplete")
-        if function_documents is not None:
-            if not isinstance(function_documents, Mapping) or not all(
-                isinstance(key, str) and isinstance(value, str)
-                for key, value in function_documents.items()
-            ):
-                raise ValueError("manifest workflow Function bundle is invalid")
-            if workflow_function_bundle_hash(function_documents) != function_digest:
-                raise ValueError("manifest workflow_function_bundle_hash mismatch")
-        capability_snapshot = document.get("capability_snapshot")
-        capability_digest = document.get("capability_snapshot_hash")
-        if (capability_snapshot is None) != (capability_digest is None):
-            raise ValueError("manifest capability snapshot is incomplete")
-        if capability_snapshot is not None:
-            if not isinstance(capability_snapshot, dict):
-                raise ValueError("manifest capability snapshot is invalid")
-            if (
-                capability_snapshot.get("schema_version")
-                != CAPABILITY_SNAPSHOT_SCHEMA_VERSION
-            ):
-                raise ValueError("unsupported capability snapshot schema version")
-            if capability_snapshot_hash(capability_snapshot) != capability_digest:
-                raise ValueError("manifest capability_snapshot_hash mismatch")
+        skills = document.get("skill_bundle")
+        digest = document.get("skill_bundle_hash")
+        if not isinstance(skills, Mapping) or not skills:
+            raise ValueError("manifest Skill bundle is missing")
+        if document.get("brain_skill") not in skills:
+            raise ValueError("manifest brain Skill is missing from the Skill bundle")
+        if skill_bundle_hash(skills) != digest:
+            raise ValueError("manifest skill_bundle_hash mismatch")
         return actual_manifest_hash
 
     @staticmethod

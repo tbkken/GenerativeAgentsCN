@@ -18,8 +18,6 @@ from pydantic import (
     model_validator,
 )
 
-from .hashing import content_hash
-
 Key = Annotated[str, StringConstraints(pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")]
 SecretRef = Annotated[str, StringConstraints(min_length=1, max_length=64)]
 ModelName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=512)]
@@ -55,6 +53,7 @@ class ExperimentMetadata(StrictModel):
 
 class EngineConfig(StrictModel):
     algorithm_version: Literal["ga-cn-v1"] = "ga-cn-v1"
+    brain_skill: Key = "stanford-town-brain"
 
 
 class SimulationConfig(StrictModel):
@@ -390,28 +389,6 @@ class AgentDefinition(StrictModel):
     spatial: AgentSpatial = Field(default_factory=AgentSpatial)
 
 
-class PromptDefinition(StrictModel):
-    content: str
-    sha256: Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")] | None = None
-
-    @model_validator(mode="after")
-    def calculate_server_hash(self) -> "PromptDefinition":
-        expected = content_hash(self.content)
-        if self.sha256 is not None and self.sha256 != expected:
-            raise ValueError("prompt sha256 does not match normalized content")
-        object.__setattr__(self, "sha256", expected)
-        return self
-
-
-class CustomWorkflowFunctionDefinition(StrictModel):
-    function_key: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,79}$")]
-    title: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
-    description: Annotated[str, StringConstraints(max_length=2_000)] = ""
-    input_type: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] = "any"
-    output_type: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)] = "any"
-    source: Annotated[str, StringConstraints(min_length=1, max_length=12_000)]
-
-
 class ExperimentDefinition(StrictModel):
     schema_version: Literal[1] = 1
     experiment: ExperimentMetadata
@@ -422,7 +399,6 @@ class ExperimentDefinition(StrictModel):
     behavior: BehaviorConfig = Field(default_factory=BehaviorConfig)
     world: WorldConfig
     agents: list[AgentDefinition] = Field(default_factory=list)
-    prompts: dict[str, PromptDefinition] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_internal_relations(self) -> "ExperimentDefinition":
@@ -436,8 +412,9 @@ class ExperimentDefinition(StrictModel):
         return self
 
 
-REQUIRED_PROMPT_KEYS = frozenset(
+REQUIRED_ATOMIC_SKILLS = frozenset(
     """base_desc decide_chat decide_chat_terminate decide_wait decide_wait_example
+    decide_game_object_interaction decide_game_object_response
     describe_emoji describe_event describe_object determine_arena determine_object
     determine_sector generate_chat generate_chat_check_repeat poignancy_chat
     poignancy_event reflect_chat_memory reflect_chat_planing reflect_focus
@@ -450,7 +427,6 @@ REQUIRED_PROMPT_KEYS = frozenset(
 def make_blank_definition(*, key: str, name: str, goal: str = "") -> ExperimentDefinition:
     """Create an explicit draft starter; publishing still requires real catalog data."""
 
-    prompt_map = {prompt_key: {"content": ""} for prompt_key in REQUIRED_PROMPT_KEYS}
     return ExperimentDefinition.model_validate(
         {
             "schema_version": 1,
@@ -475,8 +451,8 @@ def make_blank_definition(*, key: str, name: str, goal: str = "") -> ExperimentD
             "models": {
                 "chat": {
                     "provider": "vllm",
-                    "model": "auto",
-                    "base_url": "http://127.0.0.1:5001",
+                    "model": "qwen3.8:27b-q4_K_M",
+                    "base_url": "http://127.0.0.1:11434/v1",
                 },
                 "embedding": {
                     "provider": "openai_compatible",
@@ -492,6 +468,5 @@ def make_blank_definition(*, key: str, name: str, goal: str = "") -> ExperimentD
                 "assets": [],
             },
             "agents": [],
-            "prompts": prompt_map,
         }
     )

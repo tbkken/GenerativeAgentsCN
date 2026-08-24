@@ -15,8 +15,9 @@ from sqlalchemy.orm import Session
 from pydantic import ValidationError
 
 from generative_agents.config import canonical_json_bytes, make_builtin_definition
+from generative_agents.config.map_editor import MapEditorDocumentV2
 from generative_agents.config.schema import WorldConfig, WorldOverlayConfig
-from generative_agents.config.spatial_assets import SpatialSceneExtension
+from generative_agents.config.spatial_assets import SpatialAssetContract, SpatialSceneExtension
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     ExperimentRevision,
@@ -25,6 +26,7 @@ from generative_agents.persistence.models import (
     WorldMap,
     WorldMapRevision,
 )
+from generative_agents.skills import SkillRegistry, SkillRegistryError
 
 from .errors import ServiceError, not_found
 
@@ -70,6 +72,400 @@ def world_hash(world: WorldConfig | dict[str, Any]) -> str:
     return hashlib.sha256(
         canonical_json_bytes(normalized.model_dump(mode="json", exclude_none=False))
     ).hexdigest()
+
+
+def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
+    """Compile the authoring hierarchy into the Tile addresses used by ``Maze``.
+
+    The map workspace edits ``definition.editor_v2.hierarchy_nodes`` while the
+    simulation indexes ``definition.tiles[*].address``.  Keeping those two
+    representations disconnected makes a published tree look correct in the
+    editor but leaves Agents navigating the previous addresses.  Publication
+    is the contract boundary where the immutable runtime grid is rebuilt.
+
+    Sibling bounds may overlap (for example a narrow crossing Arena on top of
+    a road Arena).  The smallest containing child is the most specific spatial
+    definition and therefore wins; ``sort_order`` and ``id`` make ties stable.
+    """
+
+    raw_document = world.definition.get("editor_v2")
+    if raw_document is None:
+        return world
+    document = MapEditorDocumentV2.model_validate(raw_document)
+    node_by_id = {node.id: node for node in document.hierarchy_nodes}
+    root = node_by_id[document.root_node_id]
+    children_by_parent: dict[str, list[Any]] = {}
+    for node in document.hierarchy_nodes:
+        if node.parent_id is not None:
+            children_by_parent.setdefault(node.parent_id, []).append(node)
+
+    def contains(node: Any, x: int, y: int) -> bool:
+        bounds = node.bounds
+        return (
+            bounds.x <= x < bounds.x + bounds.width
+            and bounds.y <= y < bounds.y + bounds.height
+        )
+
+    definition = copy.deepcopy(world.definition)
+    compiled_tiles: list[dict[str, Any]] = []
+    expected_kinds = ("SECTOR", "ARENA", "GAME_OBJECT")
+    for raw_tile in definition.get("tiles", []):
+        tile = copy.deepcopy(raw_tile)
+        coord = tile.get("coord")
+        if not isinstance(coord, list) or len(coord) != 2:
+            compiled_tiles.append(tile)
+            continue
+        x, y = coord
+        path = [root.name]
+        parent = root
+        for expected_kind in expected_kinds:
+            candidates = [
+                child
+                for child in children_by_parent.get(parent.id, [])
+                if child.kind == expected_kind and contains(child, x, y)
+            ]
+            if not candidates:
+                break
+            parent = min(
+                candidates,
+                key=lambda node: (
+                    node.bounds.width * node.bounds.height,
+                    node.sort_order,
+                    node.id,
+                ),
+            )
+            path.append(parent.name)
+        tile["address"] = path
+        compiled_tiles.append(tile)
+
+    definition["world"] = root.name
+    definition["tile_address_keys"] = [
+        "world",
+        "sector",
+        "arena",
+        "game_object",
+    ]
+    definition["tiles"] = compiled_tiles
+    payload = world.model_dump(mode="json", exclude_none=False)
+    payload["world_name"] = root.name
+    payload["definition"] = definition
+    return WorldConfig.model_validate(payload)
+
+
+MAP_BLUEPRINTS: tuple[dict[str, Any], ...] = (
+    {
+        "key": "two-day-commute",
+        "name": "住宅—公司两日通勤",
+        "summary": "从空白网格逐步配置住宅、公司、两个三车道路口、行人网络、信号灯、门禁与停车位。",
+        "width": 96,
+        "height": 56,
+        "tile_size": 32,
+        "steps": [
+            {"step": 1, "key": "zones", "name": "住宅区与公司园区", "tool": "区域"},
+            {"step": 2, "key": "road", "name": "双向六车道主路", "tool": "道路"},
+            {"step": 3, "key": "intersection-a", "name": "三车道路口 A", "tool": "模块"},
+            {"step": 4, "key": "intersection-b", "name": "复制三车道路口 B", "tool": "模块"},
+            {"step": 5, "key": "pedestrian-network", "name": "人行道与步行网络", "tool": "人行"},
+            {"step": 6, "key": "signals", "name": "8 个信号灯与等待区", "tool": "信号灯"},
+            {"step": 7, "key": "facilities", "name": "车辆门禁与 P01–P03", "tool": "设施"},
+            {"step": 8, "key": "semantics", "name": "空间语义与导航校验", "tool": "语义"},
+        ],
+    },
+)
+
+
+def _map_blueprint(key: str) -> dict[str, Any] | None:
+    return next((copy.deepcopy(item) for item in MAP_BLUEPRINTS if item["key"] == key), None)
+
+
+def _commute_blueprint_world(
+    session: Session,
+    *,
+    name: str,
+    stable_key: str,
+    step: int,
+) -> WorldConfig:
+    """Materialize one deterministic step of the approved commute-map build guide."""
+
+    blueprint = _map_blueprint("two-day-commute")
+    assert blueprint is not None
+    if not 0 <= step <= len(blueprint["steps"]):
+        raise ServiceError(
+            "MAP_BLUEPRINT_STEP_INVALID",
+            "地图蓝图步骤超出范围",
+            status_code=422,
+        )
+    required_asset_keys = {
+        "tile-ground",
+        "tile-road-asphalt",
+        "tile-sidewalk",
+        "marking-crosswalk",
+        "object-traffic-light",
+        "zone-pedestrian-wait",
+        "marking-vehicle-stop-line",
+        "object-vehicle-gate",
+        "zone-parking-slot",
+    }
+    assets = list(
+        session.scalars(
+            select(SpatialAssetDefinition).where(
+                SpatialAssetDefinition.asset_key.in_(required_asset_keys)
+            )
+        )
+    )
+    revisions = {
+        asset.asset_key: session.get(
+            SpatialAssetRevision, asset.current_published_revision_id
+        )
+        for asset in assets
+        if asset.current_published_revision_id
+    }
+    if set(revisions) != required_asset_keys or any(
+        revision is None or revision.state != "PUBLISHED"
+        for revision in revisions.values()
+    ):
+        raise ServiceError(
+            "MAP_BLUEPRINT_ASSET_UNAVAILABLE",
+            "两日通勤蓝图依赖的地图资产尚未全部发布",
+            status_code=503,
+        )
+
+    width, height, tile_size = (
+        blueprint["width"],
+        blueprint["height"],
+        blueprint["tile_size"],
+    )
+    world = _blank_public_world(
+        name=name,
+        stable_key=stable_key,
+        width=width,
+        height=height,
+        tile_size=tile_size,
+    ).model_dump(mode="json", exclude_none=False)
+    definition = world["definition"]
+    palette = [
+        {"id": "ground", "name": "基础地面", "color": "#c9d9bd", "collision": False},
+        {"id": "home-zone", "name": "住宅区", "color": "#dbe8ce", "collision": False},
+        {"id": "office-zone", "name": "公司园区", "color": "#c9ded7", "collision": False},
+        {"id": "building", "name": "建筑", "color": "#f0e4cf", "collision": True},
+        {"id": "road", "name": "六车道道路", "color": "#53605d", "collision": False},
+        {"id": "sidewalk", "name": "人行道", "color": "#d5ddd7", "collision": False},
+        {"id": "crosswalk", "name": "斑马线", "color": "#f7faf8", "collision": False},
+        {"id": "parking", "name": "停车区域", "color": "#b7d8cc", "collision": False},
+    ]
+    cells: dict[str, dict[str, str]] = {
+        f"{x},{y}": {"kind": "ground"}
+        for y in range(height)
+        for x in range(width)
+    }
+    tiles = {
+        tuple(tile["coord"]): tile
+        for tile in definition["tiles"]
+    }
+
+    def paint(
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+        kind: str,
+        *,
+        address: list[str] | None = None,
+        collision: bool | None = None,
+    ) -> None:
+        for y in range(max(0, y1), min(height - 1, y2) + 1):
+            for x in range(max(0, x1), min(width - 1, x2) + 1):
+                cells[f"{x},{y}"] = {"kind": kind}
+                tile = tiles[(x, y)]
+                tile["tile"] = kind
+                if address is not None:
+                    tile["address"] = list(address)
+                if collision is not None:
+                    tile["collision"] = collision
+
+    module_map = session.scalar(
+        select(WorldMap).where(WorldMap.map_key == "standard-3lane-intersection")
+    )
+    module_revision_id = (
+        module_map.current_published_revision_id if module_map is not None else None
+    )
+    module_instances: list[dict[str, Any]] = []
+    intersections: list[dict[str, Any]] = []
+    placements: list[dict[str, Any]] = []
+
+    def placement(
+        key: str,
+        asset_key: str,
+        x: float,
+        y: float,
+        rotation: float = 0,
+        state: dict[str, Any] | None = None,
+    ) -> None:
+        placements.append(
+            {
+                "instance_key": key,
+                "spatial_asset_revision_id": revisions[asset_key].id,
+                "x_m": x,
+                "y_m": y,
+                "rotation_degrees": rotation,
+                "state_overrides": state or {},
+            }
+        )
+
+    def intersection(key: str, cx: int) -> None:
+        paint(cx - 3, 0, cx + 2, height - 1, "road", address=["城市道路", f"三车道路口 {key}"])
+        paint(cx - 3, 21, cx + 2, 23, "crosswalk", address=["城市道路", f"三车道路口 {key}", "北侧斑马线"])
+        paint(cx - 3, 32, cx + 2, 34, "crosswalk", address=["城市道路", f"三车道路口 {key}", "南侧斑马线"])
+        paint(cx - 6, 25, cx - 4, 30, "crosswalk", address=["城市道路", f"三车道路口 {key}", "西侧斑马线"])
+        paint(cx + 3, 25, cx + 5, 30, "crosswalk", address=["城市道路", f"三车道路口 {key}", "东侧斑马线"])
+        module_instances.append(
+            {
+                "instance_key": f"intersection-{key.casefold()}",
+                "module_key": "standard-3lane-intersection",
+                "source_map_revision_id": module_revision_id,
+                "center": [cx, 28],
+                "rotation_degrees": 0,
+            }
+        )
+        intersections.append(
+            {
+                "intersection_key": key.casefold(),
+                "center": [cx, 28],
+                "lanes_per_direction": 3,
+                "lane_width_m": 1.0,
+                "crosswalk_keys": [f"{key.casefold()}-{side}" for side in ("north", "east", "south", "west")],
+            }
+        )
+
+    if step >= 1:
+        paint(3, 37, 18, 52, "home-zone", address=["住宅区", "林晨住宅"])
+        paint(7, 41, 15, 49, "building", address=["住宅区", "林晨住宅", "住宅建筑"], collision=True)
+        paint(76, 2, 92, 17, "office-zone", address=["公司园区"])
+        paint(80, 4, 90, 11, "building", address=["公司园区", "办公楼"], collision=True)
+    if step >= 2:
+        paint(0, 25, width - 1, 30, "road", address=["城市道路", "东西向通勤主路"])
+        paint(0, 23, width - 1, 24, "sidewalk", address=["城市道路", "北侧人行道"])
+        paint(0, 31, width - 1, 32, "sidewalk", address=["城市道路", "南侧人行道"])
+        paint(11, 31, 14, 40, "road", address=["住宅区", "车辆出入口"])
+        paint(79, 12, 82, 24, "road", address=["公司园区", "车辆入口"])
+    if step >= 3:
+        intersection("A", 34)
+    if step >= 4:
+        intersection("B", 60)
+    if step >= 5:
+        definition["navigation_networks"] = [
+            {
+                "network_key": "vehicle-commute",
+                "mode": "CAR",
+                "route": ["home.driveway", "intersection.a", "intersection.b", "office.gate", "parking.P03"],
+                "distance_km": 1.8,
+            },
+            {
+                "network_key": "pedestrian-commute",
+                "mode": "PEDESTRIAN",
+                "route": ["home.entry", "crosswalk.a", "crosswalk.b", "office.entry"],
+                "distance_km": 1.2,
+            },
+        ]
+        paint(15, 33, 15, 40, "sidewalk", address=["住宅区", "步行出口"])
+        paint(83, 12, 83, 23, "sidewalk", address=["公司园区", "步行入口"])
+    if step >= 6:
+        for key, cx, offset in (("a", 34, 0), ("b", 60, 8_000)):
+            signal_specs = (
+                ("north", cx - 5, 22, 0, "wait-east"),
+                ("east", cx + 4, 22, 90, "wait-north"),
+                ("south", cx + 4, 33, 180, "wait-west"),
+                ("west", cx - 5, 33, 270, "wait-south"),
+            )
+            for index, (side, x, y, rotation, wait_side) in enumerate(signal_specs):
+                placement(
+                    f"signal-{key}-{side}",
+                    "object-traffic-light",
+                    x,
+                    y,
+                    rotation,
+                    {"state": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED", "phase": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED"},
+                )
+            for side, x, y in (
+                ("north", cx, 20), ("east", cx + 7, 28),
+                ("south", cx, 36), ("west", cx - 7, 28),
+            ):
+                placement(f"{key}-wait-{side}", "zone-pedestrian-wait", x, y)
+    if step >= 7:
+        placement(
+            "gate-office-entry",
+            "object-vehicle-gate",
+            80,
+            20,
+            0,
+            {"state": "closed", "required_credential": "company.vehicle.enter"},
+        )
+        for index, x in enumerate((85, 88, 91), start=1):
+            placement(
+                f"parking-p{index:02d}",
+                "zone-parking-slot",
+                x,
+                14,
+                0,
+                {"occupied": index < 3, "slot_key": f"P{index:02d}"},
+            )
+        paint(83, 12, 93, 16, "parking", address=["公司园区", "停车场"])
+    if step >= 8:
+        definition["commute_semantics"] = {
+            "home": "sector.home",
+            "office": "sector.office",
+            "intersection_waiting_zones": ["a-wait-north", "a-wait-east", "a-wait-south", "a-wait-west", "b-wait-north", "b-wait-east", "b-wait-south", "b-wait-west"],
+            "gate_credential": "company.vehicle.enter",
+            "parking_slots": ["P01", "P02", "P03"],
+        }
+
+    definition["palette"] = [
+        {
+            "key": item["id"],
+            "label": item["name"],
+            "color": item["color"],
+            "collision": item["collision"],
+        }
+        for item in palette
+    ]
+    definition["traffic_layout"] = {
+        "intersection_type": "FOUR_WAY",
+        "approaches": ["NORTH", "EAST", "SOUTH", "WEST"],
+        "lanes_per_direction": 3,
+        "lane_width_m": 1.0,
+        "intersection_instances": intersections,
+        "crosswalk_count": len(intersections) * 4,
+    }
+    definition["spatial_scene"] = {
+        "schema_version": "ga-spatial-scene/v1",
+        "meters_per_tile": 1.0,
+        "palette_refs": {
+            "ground": revisions["tile-ground"].id,
+            "road": revisions["tile-road-asphalt"].id,
+            "sidewalk": revisions["tile-sidewalk"].id,
+            "crosswalk": revisions["marking-crosswalk"].id,
+        },
+        "placements": placements,
+    }
+    definition["editor"] = {
+        "schema_version": 1,
+        "palette": palette,
+        "cells": cells,
+        "spatial_assets": {
+            revision.id: copy.deepcopy(revision.contract_json)
+            for revision in revisions.values()
+        },
+        "module_instances": module_instances,
+        "build_guide": {
+            "blueprint_key": blueprint["key"],
+            "name": blueprint["name"],
+            "current_step": step,
+            "total_steps": len(blueprint["steps"]),
+            "steps": blueprint["steps"],
+            "complete": step == len(blueprint["steps"]),
+        },
+    }
+    return WorldConfig.model_validate(world)
 
 
 def _blank_public_world(
@@ -218,8 +614,12 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
         address = tile.get("address") if isinstance(tile, dict) else None
         if address is not None and (
             not isinstance(address, list)
-            or len(address) >= len(address_keys)
+            or len(address) > len(address_keys)
             or any(not isinstance(value, str) or not value.strip() for value in address)
+            or (
+                len(address) == len(address_keys)
+                and address[0] != definition.get("world")
+            )
         ):
             errors.append(
                 {
@@ -235,6 +635,20 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
                 "code": "WORLD_TILE_GRID_INCOMPLETE",
                 "path": "definition.tiles",
                 "message": f"地图应包含 {expected_tiles} 个 Tile，当前为 {len(seen)} 个",
+            }
+        )
+    editor = definition.get("editor") if isinstance(definition, dict) else None
+    build_guide = editor.get("build_guide") if isinstance(editor, dict) else None
+    if isinstance(build_guide, dict) and not build_guide.get("complete"):
+        errors.append(
+            {
+                "code": "MAP_BLUEPRINT_INCOMPLETE",
+                "path": "definition.editor.build_guide",
+                "message": (
+                    "地图构建向导尚未完成："
+                    f"当前 {build_guide.get('current_step', 0)} / "
+                    f"{build_guide.get('total_steps', '?')} 步"
+                ),
             }
         )
     return errors
@@ -333,6 +747,17 @@ def _validate_spatial_scene(
                     "message": "TILE 资产应通过画块调色板使用，不能作为物件放置",
                 }
             )
+        try:
+            contract = SpatialAssetContract.model_validate(revision.contract_json)
+        except ValidationError:
+            contract = None
+        if contract is not None:
+            errors.extend(
+                _validate_passive_skill_bindings(
+                    contract.skill_bindings,
+                    path=f"definition.spatial_scene.placements.{index}",
+                )
+            )
         if not (0 <= placement.x_m < max_x and 0 <= placement.y_m < max_y):
             errors.append(
                 {
@@ -344,9 +769,69 @@ def _validate_spatial_scene(
     return errors
 
 
+def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, str]]:
+    errors: list[dict[str, str]] = []
+    registry = SkillRegistry()
+    for index, binding in enumerate(bindings):
+        binding_path = f"{path}.skill_bindings.{index}"
+        try:
+            document = registry.get(binding.skill_name)
+        except SkillRegistryError:
+            errors.append(
+                {
+                    "code": "GAME_OBJECT_SKILL_UNAVAILABLE",
+                    "path": f"{binding_path}.skill_name",
+                    "message": f"Game Object 引用的 Skill {binding.skill_name} 不存在",
+                }
+            )
+            continue
+        if document.kind != "atomic" or "scripts/main.py" not in document.scripts:
+            errors.append(
+                {
+                    "code": "GAME_OBJECT_SKILL_NOT_PASSIVE",
+                    "path": f"{binding_path}.skill_name",
+                    "message": (
+                        f"Game Object Skill {binding.skill_name} 必须是包含 "
+                        "scripts/main.py 的 atomic Skill"
+                    ),
+                }
+            )
+    return errors
+
+
+def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
+    raw_document = world.definition.get("editor_v2")
+    if raw_document is None:
+        return []
+    try:
+        document = MapEditorDocumentV2.model_validate(raw_document)
+    except ValidationError as exc:
+        return [
+            {
+                "code": "MAP_EDITOR_V2_INVALID",
+                "path": "definition.editor_v2",
+                "message": item["msg"],
+            }
+            for item in exc.errors(include_url=False)
+        ]
+    errors: list[dict[str, str]] = []
+    for index, node in enumerate(document.hierarchy_nodes):
+        errors.extend(
+            _validate_passive_skill_bindings(
+                node.skill_bindings,
+                path=f"definition.editor_v2.hierarchy_nodes.{index}",
+            )
+        )
+    return errors
+
+
 class WorldMapService:
     def __init__(self, database: Database) -> None:
         self.database = database
+
+    @staticmethod
+    def list_blueprints() -> list[dict[str, Any]]:
+        return [copy.deepcopy(item) for item in MAP_BLUEPRINTS]
 
     def ensure_builtin_map(self) -> dict[str, Any]:
         """Register the bundled town once and keep its first public revision immutable."""
@@ -485,10 +970,6 @@ class WorldMapService:
                 y: float,
                 rotation: float = 0,
                 state: dict[str, Any] | None = None,
-                capability_parameters: dict[str, dict[str, Any]] | None = None,
-                capability_inputs: dict[str, dict[str, str]] | None = None,
-                capability_outputs: dict[str, dict[str, str]] | None = None,
-                capability_targets: dict[str, dict[str, str]] | None = None,
             ) -> dict[str, Any]:
                 return {
                     "instance_key": key,
@@ -497,10 +978,6 @@ class WorldMapService:
                     "y_m": y,
                     "rotation_degrees": rotation,
                     "state_overrides": state or {},
-                    "capability_parameter_overrides": capability_parameters or {},
-                    "capability_input_overrides": capability_inputs or {},
-                    "capability_output_overrides": capability_outputs or {},
-                    "capability_target_overrides": capability_targets or {},
                 }
 
             placements = [
@@ -511,12 +988,6 @@ class WorldMapService:
                     14,
                     0,
                     {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
-                    {"signal-cycle": {"phase_offset_ms": 8_000}},
-                    {
-                        "signal-cycle": {
-                            "pedestrian_presence": "state:zone:wait-east:presence"
-                        }
-                    },
                 ),
                 placement(
                     "signal-east",
@@ -525,12 +996,6 @@ class WorldMapService:
                     14,
                     90,
                     {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
-                    None,
-                    {
-                        "signal-cycle": {
-                            "pedestrian_presence": "state:zone:wait-north:presence"
-                        }
-                    },
                 ),
                 placement(
                     "signal-south",
@@ -539,12 +1004,6 @@ class WorldMapService:
                     34,
                     180,
                     {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
-                    {"signal-cycle": {"phase_offset_ms": 8_000}},
-                    {
-                        "signal-cycle": {
-                            "pedestrian_presence": "state:zone:wait-west:presence"
-                        }
-                    },
                 ),
                 placement(
                     "signal-west",
@@ -553,12 +1012,6 @@ class WorldMapService:
                     34,
                     270,
                     {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
-                    None,
-                    {
-                        "signal-cycle": {
-                            "pedestrian_presence": "state:zone:wait-south:presence"
-                        }
-                    },
                 ),
                 placement("wait-north", "zone-pedestrian-wait", 24, 11),
                 placement("wait-east", "zone-pedestrian-wait", 36, 24),
@@ -608,7 +1061,12 @@ class WorldMapService:
                             ],
                         },
                         "tiles": tiles,
-                        "palette": [],
+                        "palette": [
+                            {"key": "ground", "label": "基础地面", "color": "#c9d9bd", "collision": False},
+                            {"key": "road", "label": "六车道道路", "color": "#53605d", "collision": False},
+                            {"key": "sidewalk", "label": "人行道", "color": "#d5ddd7", "collision": False},
+                            {"key": "crosswalk", "label": "斑马线", "color": "#f7faf8", "collision": False},
+                        ],
                         "spatial_scene": {
                             "meters_per_tile": 1.0,
                             "palette_refs": {
@@ -619,6 +1077,30 @@ class WorldMapService:
                             },
                             "placements": placements,
                         },
+                        "editor": {
+                            "schema_version": 1,
+                            "palette": [
+                                {"id": "ground", "name": "基础地面", "color": "#c9d9bd", "collision": False},
+                                {"id": "road", "name": "六车道道路", "color": "#53605d", "collision": False},
+                                {"id": "sidewalk", "name": "人行道", "color": "#d5ddd7", "collision": False},
+                                {"id": "crosswalk", "name": "斑马线", "color": "#f7faf8", "collision": False},
+                            ],
+                            "cells": {
+                                f"{item['coord'][0]},{item['coord'][1]}": {"kind": item["tile"]}
+                                for item in tiles
+                            },
+                            "spatial_assets": {
+                                revision.id: copy.deepcopy(revision.contract_json)
+                                for revision in revisions.values()
+                            },
+                            "module_definition": {
+                                "module_key": "standard-3lane-intersection",
+                                "name": "标准四向三车道路口",
+                                "lanes_per_direction": 3,
+                                "crosswalk_count": 4,
+                                "anchor": [24, 24],
+                            },
+                        },
                     },
                     "assets": [],
                 }
@@ -626,6 +1108,7 @@ class WorldMapService:
             errors = [
                 *_validate_world_definition(world),
                 *_validate_spatial_scene(session, world),
+                *_validate_map_editor_v2(world),
             ]
             if errors:
                 raise RuntimeError(f"invalid built-in intersection map: {errors}")
@@ -721,6 +1204,7 @@ class WorldMapService:
         name: str,
         description: str = "",
         source_revision_id: str | None = None,
+        blueprint_key: str | None = None,
         map_key: str | None = None,
         width: int = 48,
         height: int = 32,
@@ -742,6 +1226,19 @@ class WorldMapService:
                 "地图宽高需在 4–240 之间，Tile 尺寸需在 8–128 像素之间",
                 status_code=422,
             )
+        if source_revision_id and blueprint_key:
+            raise ServiceError(
+                "MAP_CREATE_SOURCE_CONFLICT",
+                "复制已发布地图与使用构建蓝图不能同时选择",
+                status_code=422,
+            )
+        blueprint = _map_blueprint(blueprint_key) if blueprint_key else None
+        if blueprint_key and blueprint is None:
+            raise ServiceError(
+                "MAP_BLUEPRINT_NOT_FOUND",
+                "地图构建蓝图不存在",
+                status_code=404,
+            )
         with self.database.session_factory.begin() as session:
             if session.scalar(select(WorldMap.id).where(WorldMap.map_key == stable_key)):
                 raise ServiceError(
@@ -753,6 +1250,15 @@ class WorldMapService:
                 if base_revision is None or base_revision.state != "PUBLISHED":
                     raise not_found("map_revision", source_revision_id)
                 world = normalize_public_world(base_revision.world_json)
+            elif blueprint is not None:
+                world = normalize_public_world(
+                    _commute_blueprint_world(
+                        session,
+                        name=name,
+                        stable_key=stable_key,
+                        step=0,
+                    )
+                )
             else:
                 world = normalize_public_world(
                     _blank_public_world(
@@ -794,6 +1300,83 @@ class WorldMapService:
             session.flush()
             public_map.current_draft_revision_id = revision.id
             return self._map_detail(session, public_map)
+
+    def apply_blueprint_step(
+        self,
+        map_id: str,
+        *,
+        expected_lock_version: int,
+        step: int,
+    ) -> dict[str, Any]:
+        """Apply exactly the next persisted build-guide step to a map Draft."""
+
+        now = _utc_now()
+        with self.database.session_factory.begin() as session:
+            public_map, revision = self._require_draft(session, map_id)
+            if revision.lock_version != expected_lock_version:
+                raise ServiceError(
+                    "MAP_REVISION_CONFLICT",
+                    "地图草稿已变化，请重新载入后继续构建",
+                    status_code=409,
+                    details={
+                        "expected_lock_version": expected_lock_version,
+                        "actual_lock_version": revision.lock_version,
+                    },
+                )
+            current_world = WorldConfig.model_validate(revision.world_json)
+            editor = current_world.definition.get("editor") or {}
+            guide = editor.get("build_guide") or {}
+            blueprint_key = guide.get("blueprint_key")
+            if blueprint_key != "two-day-commute":
+                raise ServiceError(
+                    "MAP_BLUEPRINT_NOT_ATTACHED",
+                    "当前地图草稿没有两日通勤构建向导",
+                    status_code=409,
+                )
+            current_step = int(guide.get("current_step") or 0)
+            if step != current_step + 1:
+                raise ServiceError(
+                    "MAP_BLUEPRINT_STEP_OUT_OF_ORDER",
+                    "地图蓝图必须按顺序构建",
+                    status_code=409,
+                    details={"current_step": current_step, "requested_step": step},
+                )
+            world = normalize_public_world(
+                _commute_blueprint_world(
+                    session,
+                    name=public_map.name,
+                    stable_key=public_map.map_key,
+                    step=step,
+                )
+            )
+            digest = world_hash(world)
+            result = session.execute(
+                update(WorldMapRevision)
+                .where(
+                    WorldMapRevision.id == revision.id,
+                    WorldMapRevision.state == "DRAFT",
+                    WorldMapRevision.lock_version == expected_lock_version,
+                )
+                .values(
+                    world_json=world.model_dump(mode="json", exclude_none=False),
+                    world_hash=digest,
+                    validation_json=None,
+                    lock_version=WorldMapRevision.lock_version + 1,
+                    updated_at=now,
+                )
+            )
+            if result.rowcount != 1:
+                raise ServiceError(
+                    "MAP_REVISION_CONFLICT",
+                    "地图草稿已变化，请重新载入后继续构建",
+                    status_code=409,
+                )
+            public_map.updated_at = now
+            public_map.row_version += 1
+            session.flush()
+            return self._revision_detail(
+                session.get(WorldMapRevision, revision.id), public_map
+            )
 
     def list_maps(
         self,
@@ -927,8 +1510,12 @@ class WorldMapService:
                     status_code=409,
                 )
             world = normalize_public_world(revision.world_json)
+            editor_errors = _validate_map_editor_v2(world)
+            if not editor_errors:
+                world = _compile_editor_v2_runtime_addresses(world)
             errors = _validate_world_definition(world)
             errors.extend(_validate_spatial_scene(session, world))
+            errors.extend(editor_errors)
             if errors:
                 revision.validation_json = {"valid": False, "errors": errors, "warnings": []}
                 raise ServiceError(

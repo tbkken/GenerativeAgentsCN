@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from string import Template
 from pydantic import BaseModel, Field
 from collections import namedtuple
-from typing import List, Tuple
+from typing import List, Literal, Tuple
 from generative_agents.modules import utils
 from generative_agents.modules.memory import Event
 
@@ -13,13 +13,13 @@ Result = namedtuple("Result", ["prompt", "callback", "failsafe", "return_type"])
 _PATH_VARIABLE = re.compile(r"(?<!\$)\{([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\}")
 
 class Scratch:
-    def __init__(self, name, currently, config, *, clock, random_source, prompts):
+    def __init__(self, name, currently, config, *, clock, random_source, skills):
         self.name = name
         self.currently = currently
         self.config = config
         self._clock = clock
         self._rng = random_source
-        self._prompts = prompts
+        self._skills = skills
 
     @staticmethod
     def _structured_context(data):
@@ -45,7 +45,7 @@ class Scratch:
     def build_prompt(self, template, data):
         render_data = dict(data)
         render_data["context"] = self._structured_context(data)
-        prompt_template = Template(self._prompts.get(template))
+        prompt_template = Template(self._skills.get(template))
         filled_content = prompt_template.substitute(render_data)
 
         def replace_path(match):
@@ -405,6 +405,81 @@ class Scratch:
             return response if response in objects else failsafe
 
         return Result(prompt, _callback, failsafe, determine_objectResponse)
+
+    def prompt_decide_game_object_interaction(
+        self, current_action, current_location, planned_path, interactions
+    ):
+        selection_keys = [
+            str(item.get("selection_key"))
+            for item in interactions
+            if item.get("selection_key")
+        ]
+        interaction_text = "\n".join(
+            "- {selection_key}｜{object_name}｜{description}｜距离 {distance_tiles} Tile".format(
+                **item
+            )
+            for item in interactions
+        )
+        prompt = self.build_prompt(
+            "decide_game_object_interaction",
+            {
+                "current_action": current_action,
+                "current_location": current_location,
+                "planned_path": " → ".join(
+                    f"({coord[0]}, {coord[1]})" for coord in planned_path
+                )
+                or "无移动路径",
+                "interactions": interaction_text or "无",
+            },
+        )
+        failsafe = selection_keys[0] if selection_keys and planned_path else "NONE"
+
+        class DecideGameObjectInteractionResponse(BaseModel):
+            res: str = Field(description="一个可用 selection_key，或 NONE")
+
+        def _callback(response):
+            normalized = str(response).strip()
+            return normalized if normalized in {*selection_keys, "NONE"} else failsafe
+
+        return Result(
+            prompt,
+            _callback,
+            failsafe,
+            DecideGameObjectInteractionResponse,
+        )
+
+    def prompt_decide_game_object_response(
+        self, current_action, object_name, request, response
+    ):
+        prompt = self.build_prompt(
+            "decide_game_object_response",
+            {
+                "current_action": current_action,
+                "object_name": object_name,
+                "request": request,
+                "response": response,
+            },
+        )
+        folded = str(response).casefold()
+        wait_markers = ("红灯", "等待", "禁止", "不可", "不要进入", "危险")
+        continue_markers = ("绿灯", "可以通行", "允许通行", "安全通过")
+        if any(marker in folded for marker in wait_markers):
+            failsafe = "WAIT"
+        elif any(marker in folded for marker in continue_markers):
+            failsafe = "CONTINUE"
+        else:
+            failsafe = "WAIT"
+
+        class DecideGameObjectResponse(BaseModel):
+            res: Literal["WAIT", "CONTINUE"] = Field(
+                description="Agent 基于外部信息作出的移动决策"
+            )
+
+        def _callback(value):
+            normalized = str(value).strip().upper()
+            return normalized if normalized in {"WAIT", "CONTINUE"} else failsafe
+
+        return Result(prompt, _callback, failsafe, DecideGameObjectResponse)
 
     def prompt_describe_event(self, subject, describe, address, emoji=None):
         prompt = self.build_prompt(

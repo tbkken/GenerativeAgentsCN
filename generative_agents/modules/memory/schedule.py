@@ -164,7 +164,11 @@ class Schedule:
     def scheduled(self):
         if not self.daily_schedule:
             return False
-        return self._clock.daily_format() == self.create.strftime("%A %B %d")
+        current = self._clock.get_date()
+        created = self.create
+        if created.tzinfo is not None and current.tzinfo is not None:
+            created = created.astimezone(current.tzinfo)
+        return self._clock.daily_format() == created.strftime("%A %B %d")
 
     def to_dict(self):
         return {

@@ -19,19 +19,11 @@ from pydantic import Field, ValidationError
 
 from generative_agents.config import (
     AgentTemplateDefinition,
-    AgentCapabilityExtension,
-    BrainCapabilityExtension,
-    ExperimentCapabilityExtension,
-    CapabilityBundleContract,
-    CapabilityContract,
     ExperimentDefinition,
     SpatialAssetContract,
-    ScenarioTemplateContract,
     ToolContract,
-    WorkflowDefinition,
 )
 from generative_agents.config.schema import (
-    CustomWorkflowFunctionDefinition,
     StrictModel,
     WorldConfig,
     WorldOverlayConfig,
@@ -45,30 +37,27 @@ from generative_agents.persistence.models import (
     RunQueue,
 )
 from generative_agents.services import (
-    BrainService,
-    AgentExtensionService,
-    CapabilityService,
     CrowdService,
     ExperimentService,
     ServiceError,
     SpatialAssetService,
-    ScenarioAssemblyService,
-    ScenarioTemplateService,
     ToolService,
-    WorkflowService,
 )
 from generative_agents.services.maps import WorldMapService
+from generative_agents.services.map_importer import fresh_ville_editor_document
 from generative_agents.services.catalog import AssetService, SecretService
 from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
 from generative_agents.runtime.supervisor import LocalProcessSupervisor
 from generative_agents.runtime.artifact_scheduler import ArtifactProcessScheduler
 from generative_agents.services.artifacts import ArtifactService
-from generative_agents.services.byte_windows import read_utf8_handle, read_utf8_window
+from generative_agents.services.byte_windows import read_utf8_handle
 from generative_agents.services.checkpoints import CheckpointService
 from generative_agents.services.logs import LogService
 from generative_agents.services.replay import ReplayService
 from generative_agents.services.model_probes import ModelProbeService
+from generative_agents.skills import MemoryStream, SkillMCPServer, SkillRegistry, SkillRuntime
+from generative_agents.web.skill_api import create_skill_router
 from generative_agents.web.observability_schemas import (
     AttemptListResponse,
     CheckpointDetailResponse,
@@ -104,7 +93,6 @@ class CreateExperimentRequest(StrictModel):
     owner: str = Field(default="", max_length=120)
     tags: list[str] = Field(default_factory=list, max_length=20)
     source: SourceRequest | None = None
-    brain_revision_id: str | None = None
     map_revision_id: str | None = None
     crowd_revision_ids: list[str] = Field(default_factory=list, max_length=50)
 
@@ -190,36 +178,11 @@ class ModelProbeRequest(StrictModel):
     lock_version: int = Field(ge=1)
 
 
-class WorkflowSaveRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    workflow: WorkflowDefinition
-    prompts: dict[str, str] = Field(default_factory=dict)
-    label: str | None = Field(default=None, max_length=120)
-
-
-class WorkflowRestoreRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-
-
-class WorkflowTestRunRequest(StrictModel):
-    workflow: WorkflowDefinition
-    inputs: dict[str, Any] = Field(default_factory=dict)
-    llm_outputs: dict[str, Any] = Field(default_factory=dict)
-
-
-class WorkflowFunctionSaveRequest(StrictModel):
-    row_version: int | None = Field(default=None, ge=1)
-    function: CustomWorkflowFunctionDefinition
-
-
-class WorkflowFunctionDeleteRequest(StrictModel):
-    row_version: int = Field(ge=1)
-
-
 class CreateMapRequest(StrictModel):
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     source_revision_id: str | None = None
+    blueprint_key: str | None = Field(default=None, min_length=1, max_length=80)
     map_key: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")
     width: int = Field(default=48, ge=4, le=240)
     height: int = Field(default=32, ge=4, le=240)
@@ -236,6 +199,15 @@ class PublishMapRequest(StrictModel):
     lock_version: int = Field(ge=1)
 
 
+class PublishRevisionRequest(StrictModel):
+    draft_revision_id: str
+    lock_version: int = Field(ge=1)
+
+
+class MapBlueprintStepRequest(StrictModel):
+    lock_version: int = Field(ge=1)
+
+
 class ExperimentMapSelectionRequest(StrictModel):
     lock_version: int = Field(ge=1)
     map_revision_id: str
@@ -244,36 +216,6 @@ class ExperimentMapSelectionRequest(StrictModel):
 class ExperimentMapOverlayRequest(StrictModel):
     lock_version: int = Field(ge=1)
     overlay: dict[str, Any] = Field(default_factory=dict)
-
-
-class CreateBrainRequest(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(default="", max_length=10_000)
-    source_revision_id: str | None = None
-    brain_key: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")
-
-
-class PublishBrainRequest(StrictModel):
-    draft_revision_id: str
-    lock_version: int = Field(ge=1)
-
-
-class BrainWorkflowSaveRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    workflow: WorkflowDefinition
-    prompts: dict[str, str] = Field(default_factory=dict)
-    label: str | None = Field(default=None, max_length=120)
-
-
-class ExperimentBrainSelectionRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    brain_revision_id: str
-
-
-class SaveExperimentBrainRequest(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(default="", max_length=10_000)
-    revision_id: str | None = None
 
 
 class CreateAgentTemplateRequest(StrictModel):
@@ -299,40 +241,6 @@ class CreateCrowdRequest(StrictModel):
 class UpdateCrowdRequest(StrictModel):
     lock_version: int = Field(ge=1)
     agent_revision_ids: list[str] = Field(max_length=500)
-    name: str | None = Field(default=None, min_length=1, max_length=120)
-    description: str | None = Field(default=None, max_length=10_000)
-
-
-class CreateCapabilityRequest(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(default="", max_length=10_000)
-    capability_key: str | None = Field(
-        default=None, pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-    )
-    source_revision_id: str | None = None
-    contract: CapabilityContract | None = None
-
-
-class UpdateCapabilityRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    contract: CapabilityContract
-    name: str | None = Field(default=None, min_length=1, max_length=120)
-    description: str | None = Field(default=None, max_length=10_000)
-
-
-class CreateCapabilityBundleRequest(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(default="", max_length=10_000)
-    bundle_key: str | None = Field(
-        default=None, pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-    )
-    source_revision_id: str | None = None
-    composition: CapabilityBundleContract | None = None
-
-
-class UpdateCapabilityBundleRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    composition: CapabilityBundleContract
     name: str | None = Field(default=None, min_length=1, max_length=120)
     description: str | None = Field(default=None, max_length=10_000)
 
@@ -375,43 +283,6 @@ class UpdateToolRequest(StrictModel):
     description: str | None = Field(default=None, max_length=10_000)
 
 
-class UpdateAgentExtensionRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    extension: AgentCapabilityExtension
-
-
-class UpdateBrainCapabilityExtensionRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    extension: BrainCapabilityExtension
-
-
-class UpdateExperimentCapabilityExtensionRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    extension: ExperimentCapabilityExtension
-
-
-class ApplyScenarioTemplateRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    actor_bindings: dict[str, str] = Field(min_length=1, max_length=1_000)
-    clock_overrides: dict[str, int] = Field(default_factory=dict, max_length=3)
-    mount_parameter_overrides: dict[str, dict[str, Any]] = Field(
-        default_factory=dict, max_length=1_000
-    )
-
-
-class SaveScenarioTemplateRequest(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
-    description: str = Field(default="", max_length=2_000)
-    template_key: str | None = Field(
-        default=None, pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
-    )
-
-
-class UpdateScenarioTemplateRequest(StrictModel):
-    lock_version: int = Field(ge=1)
-    contract: ScenarioTemplateContract
-
-
 def _error_response(
     *, status_code: int, code: str, message: str, details: Any, request_id: str
 ) -> JSONResponse:
@@ -445,15 +316,12 @@ def create_app(
         )
     database = create_database(database_url)
     service = ExperimentService(database)
-    workflow_service = WorkflowService(database)
     map_service = WorldMapService(database)
-    brain_service = BrainService(database)
-    capability_service = CapabilityService(database)
+    skill_registry = SkillRegistry(history_root=Path(var_dir) / "skill-history")
+    skill_mcp = SkillMCPServer(MemoryStream(Path(var_dir) / "skill-memory.db"))
+    skill_runtime = SkillRuntime(skill_registry, mcp=skill_mcp)
     spatial_asset_service = SpatialAssetService(database)
     tool_service = ToolService(database)
-    agent_extension_service = AgentExtensionService(database)
-    scenario_assembly_service = ScenarioAssemblyService(database)
-    scenario_template_service = ScenarioTemplateService(database)
     crowd_service = CrowdService(database)
     result_service = ResultQueryService(database)
     asset_service = AssetService(database, var_dir=var_dir)
@@ -479,30 +347,30 @@ def create_app(
     console_shell = (
         Path(__file__).resolve().parent / "static" / "experiment-console.html"
     ).read_text(encoding="utf-8")
+    commute_demo_path = (
+        Path(__file__).resolve().parent / "static" / "commute-demo.html"
+    )
+    map_configuration_demo_path = (
+        Path(__file__).resolve().parent / "static" / "map-configuration-demo.html"
+    )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         if migrate:
             upgrade_database(database_url)
         map_service.ensure_builtin_map()
-        brain_service.ensure_builtin_brain()
         crowd_service.ensure_builtin_resources()
-        capability_service.ensure_builtin_capabilities()
-        capability_service.ensure_builtin_bundles()
         spatial_asset_service.ensure_builtin_assets()
         map_service.ensure_intersection_map()
         tool_service.ensure_builtin_tools()
-        scenario_template_service.ensure_builtin_templates()
         app.state.database = database
         app.state.experiment_service = service
         app.state.world_map_service = map_service
-        app.state.brain_service = brain_service
-        app.state.capability_service = capability_service
+        app.state.skill_registry = skill_registry
+        app.state.skill_runtime = skill_runtime
+        app.state.skill_mcp = skill_mcp
         app.state.spatial_asset_service = spatial_asset_service
         app.state.tool_service = tool_service
-        app.state.agent_extension_service = agent_extension_service
-        app.state.scenario_assembly_service = scenario_assembly_service
-        app.state.scenario_template_service = scenario_template_service
         app.state.crowd_service = crowd_service
         app.state.run_service = run_service
         app.state.result_service = result_service
@@ -530,6 +398,7 @@ def create_app(
             database.close()
 
     app = FastAPI(title="GenerativeAgentsCN Experiment API", version="1.0", lifespan=lifespan)
+    app.include_router(create_skill_router(skill_registry, skill_runtime, skill_mcp))
     console_static = Path(__file__).resolve().parent / "static"
     app.mount("/static/console", StaticFiles(directory=console_static), name="console-static")
     village_static = Path(__file__).resolve().parents[1] / "frontend" / "static" / "assets" / "village"
@@ -545,6 +414,13 @@ def create_app(
         try:
             response = await call_next(request)
             response.headers["X-Request-ID"] = request_id
+            if request.url.path == "/" or request.url.path.startswith(
+                "/static/console/"
+            ):
+                # The desktop console and its scripts must be deployed as one
+                # coherent UI version.  Revalidate on a normal refresh so a
+                # cached workspace script cannot overwrite newer HTML state.
+                response.headers["Cache-Control"] = "no-cache, must-revalidate"
             return response
         finally:
             request_id_var.reset(token)
@@ -591,150 +467,32 @@ def create_app(
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
     def experiment_console():
-        return HTMLResponse(console_shell)
+        return HTMLResponse(
+            console_shell,
+            headers={"Cache-Control": "no-cache, must-revalidate"},
+        )
+
+    @app.get("/demos/two-day-commute", include_in_schema=False)
+    def two_day_commute_demo():
+        return FileResponse(
+            commute_demo_path,
+            media_type="text/html",
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.get("/demos/map-configuration", include_in_schema=False)
+    def map_configuration_demo():
+        return FileResponse(
+            map_configuration_demo_path,
+            media_type="text/html",
+            headers={"Cache-Control": "no-store"},
+        )
 
     @app.get("/api/v1/health", include_in_schema=False)
     def health():
         with database.engine.connect() as connection:
             connection.exec_driver_sql("SELECT 1").scalar_one()
         return {"status": "ok"}
-
-    @app.post("/api/v1/capabilities", status_code=201)
-    def create_capability(body: CreateCapabilityRequest):
-        return capability_service.create_capability(
-            name=body.name,
-            description=body.description,
-            capability_key=body.capability_key,
-            source_revision_id=body.source_revision_id,
-            contract=body.contract,
-        )
-
-    @app.get("/api/v1/capabilities")
-    def list_capabilities(
-        q: str | None = None,
-        status: str | None = None,
-        kind: str | None = None,
-        target: str | None = None,
-        page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=20, ge=1, le=100),
-    ):
-        return capability_service.list_capabilities(
-            query=q,
-            status=status,
-            kind=kind,
-            target=target,
-            page=page,
-            page_size=page_size,
-        )
-
-    @app.get("/api/v1/capabilities/{capability_id}")
-    def get_capability(capability_id: str):
-        return capability_service.get_capability(capability_id)
-
-    @app.get("/api/v1/capabilities/{capability_id}/draft")
-    def get_capability_draft(capability_id: str):
-        return capability_service.get_capability_draft(capability_id)
-
-    @app.put("/api/v1/capabilities/{capability_id}/draft")
-    def update_capability_draft(capability_id: str, body: UpdateCapabilityRequest):
-        return capability_service.update_capability_draft(
-            capability_id,
-            expected_lock_version=body.lock_version,
-            contract=body.contract,
-            name=body.name,
-            description=body.description,
-        )
-
-    @app.post("/api/v1/capabilities/{capability_id}/draft/publish")
-    def publish_capability_draft(capability_id: str, body: PublishBrainRequest):
-        return capability_service.publish_capability_draft(
-            capability_id,
-            draft_revision_id=body.draft_revision_id,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/capabilities/{capability_id}/revisions")
-    def list_capability_revisions(capability_id: str):
-        return {
-            "items": capability_service.list_capability_revisions(capability_id)
-        }
-
-    @app.get("/api/v1/capabilities/{capability_id}/revisions/{revision_id}")
-    def get_capability_revision(capability_id: str, revision_id: str):
-        return capability_service.get_capability_revision(capability_id, revision_id)
-
-    @app.post(
-        "/api/v1/capabilities/{capability_id}/revisions/{revision_id}/fork",
-        status_code=201,
-    )
-    def fork_capability_revision(capability_id: str, revision_id: str):
-        return capability_service.fork_capability_revision(capability_id, revision_id)
-
-    @app.post("/api/v1/capability-bundles", status_code=201)
-    def create_capability_bundle(body: CreateCapabilityBundleRequest):
-        return capability_service.create_bundle(
-            name=body.name,
-            description=body.description,
-            bundle_key=body.bundle_key,
-            source_revision_id=body.source_revision_id,
-            composition=body.composition,
-        )
-
-    @app.get("/api/v1/capability-bundles")
-    def list_capability_bundles(
-        q: str | None = None,
-        status: str | None = None,
-        page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=20, ge=1, le=100),
-    ):
-        return capability_service.list_bundles(
-            query=q, status=status, page=page, page_size=page_size
-        )
-
-    @app.get("/api/v1/capability-bundles/{bundle_id}")
-    def get_capability_bundle(bundle_id: str):
-        return capability_service.get_bundle(bundle_id)
-
-    @app.get("/api/v1/capability-bundles/{bundle_id}/draft")
-    def get_capability_bundle_draft(bundle_id: str):
-        return capability_service.get_bundle_draft(bundle_id)
-
-    @app.put("/api/v1/capability-bundles/{bundle_id}/draft")
-    def update_capability_bundle_draft(
-        bundle_id: str, body: UpdateCapabilityBundleRequest
-    ):
-        return capability_service.update_bundle_draft(
-            bundle_id,
-            expected_lock_version=body.lock_version,
-            composition=body.composition,
-            name=body.name,
-            description=body.description,
-        )
-
-    @app.post("/api/v1/capability-bundles/{bundle_id}/draft/publish")
-    def publish_capability_bundle_draft(bundle_id: str, body: PublishBrainRequest):
-        return capability_service.publish_bundle_draft(
-            bundle_id,
-            draft_revision_id=body.draft_revision_id,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/capability-bundles/{bundle_id}/revisions")
-    def list_capability_bundle_revisions(bundle_id: str):
-        return {"items": capability_service.list_bundle_revisions(bundle_id)}
-
-    @app.get(
-        "/api/v1/capability-bundles/{bundle_id}/revisions/{revision_id}"
-    )
-    def get_capability_bundle_revision(bundle_id: str, revision_id: str):
-        return capability_service.get_bundle_revision(bundle_id, revision_id)
-
-    @app.post(
-        "/api/v1/capability-bundles/{bundle_id}/revisions/{revision_id}/fork",
-        status_code=201,
-    )
-    def fork_capability_bundle_revision(bundle_id: str, revision_id: str):
-        return capability_service.fork_bundle_revision(bundle_id, revision_id)
 
     @app.post("/api/v1/spatial-assets", status_code=201)
     def create_spatial_asset(body: CreateSpatialAssetRequest):
@@ -782,7 +540,7 @@ def create_app(
         )
 
     @app.post("/api/v1/spatial-assets/{asset_id}/draft/publish")
-    def publish_spatial_asset_draft(asset_id: str, body: PublishBrainRequest):
+    def publish_spatial_asset_draft(asset_id: str, body: PublishRevisionRequest):
         return spatial_asset_service.publish_draft(
             asset_id,
             draft_revision_id=body.draft_revision_id,
@@ -846,7 +604,7 @@ def create_app(
         )
 
     @app.post("/api/v1/tools/{tool_id}/draft/publish")
-    def publish_tool_draft(tool_id: str, body: PublishBrainRequest):
+    def publish_tool_draft(tool_id: str, body: PublishRevisionRequest):
         return tool_service.publish_draft(
             tool_id,
             draft_revision_id=body.draft_revision_id,
@@ -895,20 +653,6 @@ def create_app(
     def get_agent_template_draft(agent_id: str):
         return crowd_service.get_agent_draft(agent_id)
 
-    @app.get("/api/v1/agent-templates/{agent_id}/draft/extension")
-    def get_agent_template_draft_extension(agent_id: str):
-        return agent_extension_service.get_draft_extension(agent_id)
-
-    @app.put("/api/v1/agent-templates/{agent_id}/draft/extension")
-    def update_agent_template_draft_extension(
-        agent_id: str, body: UpdateAgentExtensionRequest
-    ):
-        return agent_extension_service.update_draft_extension(
-            agent_id,
-            expected_lock_version=body.lock_version,
-            extension=body.extension,
-        )
-
     @app.put("/api/v1/agent-templates/{agent_id}/draft")
     def update_agent_template_draft(agent_id: str, body: UpdateAgentTemplateRequest):
         return crowd_service.update_agent_draft(
@@ -919,7 +663,7 @@ def create_app(
         )
 
     @app.post("/api/v1/agent-templates/{agent_id}/draft/publish")
-    def publish_agent_template_draft(agent_id: str, body: PublishBrainRequest):
+    def publish_agent_template_draft(agent_id: str, body: PublishRevisionRequest):
         return crowd_service.publish_agent_draft(
             agent_id,
             draft_revision_id=body.draft_revision_id,
@@ -933,10 +677,6 @@ def create_app(
     @app.get("/api/v1/agent-templates/{agent_id}/revisions/{revision_id}")
     def get_agent_template_revision(agent_id: str, revision_id: str):
         return crowd_service.get_agent_revision(agent_id, revision_id)
-
-    @app.get("/api/v1/agent-templates/{agent_id}/revisions/{revision_id}/extension")
-    def get_agent_template_revision_extension(agent_id: str, revision_id: str):
-        return agent_extension_service.get_extension(agent_id, revision_id)
 
     @app.post(
         "/api/v1/agent-templates/{agent_id}/revisions/{revision_id}/fork",
@@ -985,7 +725,7 @@ def create_app(
         )
 
     @app.post("/api/v1/crowds/{crowd_id}/draft/publish")
-    def publish_crowd_draft(crowd_id: str, body: PublishBrainRequest):
+    def publish_crowd_draft(crowd_id: str, body: PublishRevisionRequest):
         return crowd_service.publish_crowd_draft(
             crowd_id,
             draft_revision_id=body.draft_revision_id,
@@ -1013,11 +753,16 @@ def create_app(
             name=body.name,
             description=body.description,
             source_revision_id=body.source_revision_id,
+            blueprint_key=body.blueprint_key,
             map_key=body.map_key,
             width=body.width,
             height=body.height,
             tile_size=body.tile_size,
         )
+
+    @app.get("/api/v1/map-blueprints")
+    def list_map_blueprints():
+        return {"items": map_service.list_blueprints()}
 
     @app.get("/api/v1/maps")
     def list_maps(
@@ -1027,6 +772,12 @@ def create_app(
         page_size: int = Query(default=5, ge=1, le=100),
     ):
         return map_service.list_maps(query=q, status=status, page=page, page_size=page_size)
+
+    @app.get("/api/v1/map-editor/ville-document")
+    def get_ville_map_editor_document():
+        """Return the deterministic authoring document built from bundled Tiled data."""
+
+        return fresh_ville_editor_document().model_dump(mode="json")
 
     @app.get("/api/v1/maps/{map_id}")
     def get_map(map_id: str):
@@ -1052,6 +803,16 @@ def create_app(
             expected_lock_version=body.lock_version,
         )
 
+    @app.post("/api/v1/maps/{map_id}/draft/blueprint-steps/{step}")
+    def apply_map_blueprint_step(
+        map_id: str, step: int, body: MapBlueprintStepRequest
+    ):
+        return map_service.apply_blueprint_step(
+            map_id,
+            expected_lock_version=body.lock_version,
+            step=step,
+        )
+
     @app.get("/api/v1/maps/{map_id}/revisions")
     def list_map_revisions(map_id: str):
         return {"items": map_service.list_revisions(map_id)}
@@ -1064,132 +825,6 @@ def create_app(
     def fork_map_revision(map_id: str, revision_id: str):
         return map_service.fork_revision(map_id, revision_id)
 
-    @app.post("/api/v1/brains", status_code=201)
-    def create_brain(body: CreateBrainRequest):
-        return brain_service.create_brain(
-            name=body.name,
-            description=body.description,
-            source_revision_id=body.source_revision_id,
-            brain_key=body.brain_key,
-        )
-
-    @app.get("/api/v1/brains")
-    def list_brains(
-        q: str | None = None,
-        status: str | None = None,
-        page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=5, ge=1, le=100),
-    ):
-        return brain_service.list_brains(
-            query=q, status=status, page=page, page_size=page_size
-        )
-
-    @app.get("/api/v1/brains/{brain_id}")
-    def get_brain(brain_id: str):
-        return brain_service.get_brain(brain_id)
-
-    @app.get("/api/v1/brains/{brain_id}/draft")
-    def get_brain_draft(brain_id: str):
-        return brain_service.get_draft(brain_id)
-
-    @app.get("/api/v1/brains/{brain_id}/draft/capability-extension")
-    def get_brain_draft_capability_extension(brain_id: str):
-        return brain_service.get_draft_capability_extension(brain_id)
-
-    @app.put("/api/v1/brains/{brain_id}/draft/capability-extension")
-    def update_brain_draft_capability_extension(
-        brain_id: str, body: UpdateBrainCapabilityExtensionRequest
-    ):
-        return brain_service.update_draft_capability_extension(
-            brain_id,
-            expected_lock_version=body.lock_version,
-            extension=body.extension,
-        )
-
-    @app.post("/api/v1/brains/{brain_id}/draft/publish")
-    def publish_brain_draft(brain_id: str, body: PublishBrainRequest):
-        return brain_service.publish_draft(
-            brain_id,
-            draft_revision_id=body.draft_revision_id,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/brains/{brain_id}/revisions")
-    def list_brain_revisions(brain_id: str):
-        return {"items": brain_service.list_revisions(brain_id)}
-
-    @app.get("/api/v1/brains/{brain_id}/revisions/{revision_id}")
-    def get_brain_revision(brain_id: str, revision_id: str):
-        return brain_service.get_revision(brain_id, revision_id)
-
-    @app.get(
-        "/api/v1/brains/{brain_id}/revisions/{revision_id}/capability-extension"
-    )
-    def get_brain_revision_capability_extension(
-        brain_id: str, revision_id: str
-    ):
-        return brain_service.get_capability_extension(brain_id, revision_id)
-
-    @app.post("/api/v1/brains/{brain_id}/revisions/{revision_id}/fork", status_code=201)
-    def fork_brain_revision(brain_id: str, revision_id: str):
-        return brain_service.fork_revision(brain_id, revision_id)
-
-    @app.get("/api/v1/brains/{brain_id}/draft/workflows")
-    def list_brain_workflows(brain_id: str):
-        return brain_service.list_workflows(brain_id)
-
-    @app.get("/api/v1/brains/{brain_id}/draft/workflows/{workflow_key}")
-    def get_brain_workflow(brain_id: str, workflow_key: str):
-        return brain_service.get_workflow(brain_id, workflow_key)
-
-    @app.put("/api/v1/brains/{brain_id}/draft/workflows/{workflow_key}")
-    def save_brain_workflow(
-        brain_id: str, workflow_key: str, body: BrainWorkflowSaveRequest
-    ):
-        return brain_service.save_workflow(
-            brain_id,
-            workflow_key,
-            expected_lock_version=body.lock_version,
-            workflow=body.workflow,
-            prompt_contents=body.prompts,
-        )
-
-    @app.post(
-        "/api/v1/brains/{brain_id}/draft/workflows/{workflow_key}/migrate-router"
-    )
-    def migrate_brain_workflow_router(
-        brain_id: str, workflow_key: str, body: WorkflowRestoreRequest
-    ):
-        return brain_service.migrate_to_prompt_router(
-            brain_id,
-            workflow_key,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.post(
-        "/api/v1/brains/{brain_id}/draft/workflows/{workflow_key}/test-run"
-    )
-    def test_run_brain_workflow(
-        brain_id: str, workflow_key: str, body: WorkflowTestRunRequest
-    ):
-        return brain_service.test_run_workflow(
-            brain_id,
-            workflow_key,
-            workflow=body.workflow,
-            inputs=body.inputs,
-            llm_outputs=body.llm_outputs,
-        )
-
-    @app.get("/api/v1/brains/{brain_id}/revisions/{revision_id}/workflows")
-    def list_brain_revision_workflows(brain_id: str, revision_id: str):
-        return brain_service.list_workflows(brain_id, revision_id)
-
-    @app.get("/api/v1/brains/{brain_id}/revisions/{revision_id}/workflows/{workflow_key}")
-    def get_brain_revision_workflow(
-        brain_id: str, revision_id: str, workflow_key: str
-    ):
-        return brain_service.get_workflow(brain_id, workflow_key, revision_id)
-
     @app.post("/api/v1/experiments", status_code=201)
     def create_experiment(body: CreateExperimentRequest):
         if body.source is None and not body.crowd_revision_ids:
@@ -1200,7 +835,6 @@ def create_app(
             )
         source_type = body.source.type if body.source else "BUILTIN_DEFAULT"
         source_revision_id = body.source.revision_id if body.source else None
-        brain_revision_id = body.brain_revision_id or brain_service.default_revision_id()
         map_revision_id = body.map_revision_id
         if body.source is None and not map_revision_id:
             map_revision_id = map_service.default_revision_id()
@@ -1211,7 +845,6 @@ def create_app(
             source_revision_id=source_revision_id,
             owner=body.owner,
             tags=body.tags,
-            brain_revision_id=brain_revision_id,
             map_revision_id=map_revision_id,
             crowd_revision_ids=body.crowd_revision_ids,
         )
@@ -1320,104 +953,6 @@ def create_app(
     def get_draft(experiment_id: str):
         return service.get_draft(experiment_id)
 
-    @app.get("/api/v1/experiments/{experiment_id}/draft/capability-assembly")
-    def get_experiment_capability_assembly(experiment_id: str):
-        return scenario_assembly_service.get_draft(experiment_id)
-
-    @app.get("/api/v1/scenario-templates")
-    def list_scenario_templates():
-        return scenario_template_service.list_templates()
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/scenario-templates",
-        status_code=201,
-    )
-    def save_experiment_as_scenario_template(
-        experiment_id: str, body: SaveScenarioTemplateRequest
-    ):
-        return scenario_template_service.create_from_experiment(
-            experiment_id=experiment_id,
-            name=body.name,
-            description=body.description,
-            template_key=body.template_key,
-        )
-
-    @app.get("/api/v1/scenario-templates/{template_id}")
-    def get_scenario_template(template_id: str):
-        return scenario_template_service.get_template(template_id)
-
-    @app.get("/api/v1/scenario-templates/{template_id}/draft")
-    def get_scenario_template_draft(template_id: str):
-        return scenario_template_service.get_draft(template_id)
-
-    @app.put("/api/v1/scenario-templates/{template_id}/draft")
-    def update_scenario_template_draft(
-        template_id: str, body: UpdateScenarioTemplateRequest
-    ):
-        return scenario_template_service.update_draft(
-            template_id,
-            expected_lock_version=body.lock_version,
-            contract=body.contract,
-        )
-
-    @app.post("/api/v1/scenario-templates/{template_id}/draft/publish")
-    def publish_scenario_template_draft(template_id: str, body: PublishMapRequest):
-        return scenario_template_service.publish_draft(
-            template_id,
-            draft_revision_id=body.draft_revision_id,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/scenario-templates/{template_id}/revisions")
-    def list_scenario_template_revisions(template_id: str):
-        return {"items": scenario_template_service.list_revisions(template_id)}
-
-    @app.get(
-        "/api/v1/scenario-templates/{template_id}/revisions/{revision_id}"
-    )
-    def get_scenario_template_revision(template_id: str, revision_id: str):
-        return scenario_template_service.get_revision(template_id, revision_id)
-
-    @app.post(
-        "/api/v1/scenario-templates/{template_id}/revisions/{revision_id}/fork",
-        status_code=201,
-    )
-    def fork_scenario_template_revision(template_id: str, revision_id: str):
-        return scenario_template_service.fork_revision(template_id, revision_id)
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/scenario-templates/{revision_id}/apply"
-    )
-    def apply_scenario_template(
-        experiment_id: str,
-        revision_id: str,
-        body: ApplyScenarioTemplateRequest,
-    ):
-        return scenario_template_service.apply_to_draft(
-            experiment_id=experiment_id,
-            template_revision_id=revision_id,
-            expected_lock_version=body.lock_version,
-            actor_bindings=body.actor_bindings,
-            clock_overrides=body.clock_overrides,
-            mount_parameter_overrides=body.mount_parameter_overrides,
-        )
-
-    @app.put("/api/v1/experiments/{experiment_id}/draft/capability-assembly")
-    def update_experiment_capability_assembly(
-        experiment_id: str, body: UpdateExperimentCapabilityExtensionRequest
-    ):
-        return scenario_assembly_service.update_draft(
-            experiment_id,
-            expected_lock_version=body.lock_version,
-            extension=body.extension,
-        )
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/capability-assembly/validate"
-    )
-    def validate_experiment_capability_assembly(experiment_id: str):
-        return scenario_assembly_service.validate_draft(experiment_id)
-
     @app.put("/api/v1/experiments/{experiment_id}/draft")
     def replace_draft(experiment_id: str, body: DraftUpdateRequest):
         definition = ExperimentDefinition.model_validate(body.data)
@@ -1451,27 +986,6 @@ def create_app(
             experiment_id,
             expected_lock_version=body.lock_version,
             map_revision_id=body.map_revision_id,
-        )
-
-    @app.put("/api/v1/experiments/{experiment_id}/draft/brain")
-    def select_experiment_brain(
-        experiment_id: str, body: ExperimentBrainSelectionRequest
-    ):
-        return brain_service.apply_to_experiment(
-            experiment_id,
-            expected_lock_version=body.lock_version,
-            brain_revision_id=body.brain_revision_id,
-        )
-
-    @app.post("/api/v1/experiments/{experiment_id}/brain-template", status_code=201)
-    def save_experiment_brain_template(
-        experiment_id: str, body: SaveExperimentBrainRequest
-    ):
-        return brain_service.create_from_experiment(
-            experiment_id,
-            revision_id=body.revision_id,
-            name=body.name,
-            description=body.description,
         )
 
     @app.put("/api/v1/experiments/{experiment_id}/draft/map-overlay")
@@ -1521,152 +1035,10 @@ def create_app(
             expected_lock_version=body.lock_version,
         )
 
-    @app.put("/api/v1/experiments/{experiment_id}/draft/prompts/{prompt_key}")
-    def replace_prompt(experiment_id: str, prompt_key: str, body: DraftUpdateRequest):
-        return service.put_draft_prompt(
-            experiment_id,
-            prompt_key,
-            expected_lock_version=body.lock_version,
-            data=body.data,
-        )
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/prompts/{prompt_key}/restore-base"
-    )
-    def restore_prompt(experiment_id: str, prompt_key: str, body: DraftUpdateRequest):
-        return service.restore_draft_prompt(
-            experiment_id,
-            prompt_key,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/experiments/{experiment_id}/draft/workflows")
-    def list_workflows(experiment_id: str):
-        return workflow_service.list_workflows(experiment_id)
-
-    @app.get(
-        "/api/v1/experiments/{experiment_id}/revisions/{revision_id}/workflows"
-    )
-    def list_revision_workflows(experiment_id: str, revision_id: str):
-        return workflow_service.list_revision_workflows(experiment_id, revision_id)
-
-    @app.get("/api/v1/workflow-functions")
-    def workflow_functions():
-        return workflow_service.list_functions()
-
-    @app.put("/api/v1/workflow-functions/{function_key}")
-    def save_workflow_function(function_key: str, body: WorkflowFunctionSaveRequest):
-        return workflow_service.save_custom_function(
-            function_key,
-            expected_row_version=body.row_version,
-            function=body.function,
-        )
-
-    @app.delete("/api/v1/workflow-functions/{function_key}")
-    def delete_workflow_function(function_key: str, body: WorkflowFunctionDeleteRequest):
-        return workflow_service.delete_custom_function(
-            function_key,
-            expected_row_version=body.row_version,
-        )
-
-    @app.get("/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}")
-    def get_workflow(experiment_id: str, workflow_key: str):
-        return workflow_service.get_workflow(experiment_id, workflow_key)
-
-    @app.get(
-        "/api/v1/experiments/{experiment_id}/revisions/{revision_id}/workflows/{workflow_key}"
-    )
-    def get_revision_workflow(
-        experiment_id: str, revision_id: str, workflow_key: str
-    ):
-        return workflow_service.get_revision_workflow(
-            experiment_id, revision_id, workflow_key
-        )
-
-    @app.put("/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}")
-    def save_workflow(
-        experiment_id: str, workflow_key: str, body: WorkflowSaveRequest
-    ):
-        return workflow_service.save_workflow(
-            experiment_id,
-            workflow_key,
-            expected_lock_version=body.lock_version,
-            workflow=body.workflow,
-            prompt_contents=body.prompts,
-            label=body.label,
-        )
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/validate"
-    )
-    def validate_workflow(experiment_id: str, workflow_key: str):
-        return workflow_service.validate_workflow(experiment_id, workflow_key)
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/migrate-router"
-    )
-    def migrate_workflow_router(
-        experiment_id: str, workflow_key: str, body: WorkflowRestoreRequest
-    ):
-        return workflow_service.migrate_to_prompt_router(
-            experiment_id,
-            workflow_key,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/test-run"
-    )
-    def test_run_workflow(
-        experiment_id: str, workflow_key: str, body: WorkflowTestRunRequest
-    ):
-        return workflow_service.test_run_workflow(
-            experiment_id,
-            workflow_key,
-            workflow=body.workflow,
-            inputs=body.inputs,
-            llm_outputs=body.llm_outputs,
-        )
-
-    @app.post(
-        "/api/v1/experiments/{experiment_id}/draft/workflows/{workflow_key}/versions/{version_id}/restore"
-    )
-    def restore_workflow_version(
-        experiment_id: str,
-        workflow_key: str,
-        version_id: str,
-        body: WorkflowRestoreRequest,
-    ):
-        return workflow_service.restore_version(
-            experiment_id,
-            workflow_key,
-            version_id,
-            expected_lock_version=body.lock_version,
-        )
-
     @app.post("/api/v1/experiments/{experiment_id}/draft/validate")
     def validate_draft(experiment_id: str):
         report = service.validate_draft(experiment_id)
-        requires_models = True
-        with database.session_factory() as session:
-            experiment = session.get(Experiment, experiment_id)
-            revision = session.get(
-                ExperimentRevision,
-                experiment.current_draft_revision_id if experiment else None,
-            )
-            if revision is not None:
-                from generative_agents.services.scenarios import (
-                    composed_scenario_requires_models_in_session,
-                )
-
-                requires_models = composed_scenario_requires_models_in_session(
-                    session, revision
-                )
-        model_status = (
-            model_probe_service.status_summary(experiment_id)
-            if requires_models
-            else {"items": [], "all_online": True}
-        )
+        model_status = model_probe_service.status_summary(experiment_id)
         # Publish-and-run performs one authoritative probe for every configured
         # model service and pins ``auto`` to the discovered model IDs before the
         # immutable Revision is created. An untested model is therefore pending
@@ -1678,10 +1050,10 @@ def create_app(
         ]
         report["valid"] = not report["errors"]
         automatic_model_checks = len(model_status["items"])
-        model_status["auto_probe_on_publish"] = requires_models
+        model_status["auto_probe_on_publish"] = True
         report["model_status"] = model_status
         report["auto_model_probe"] = {
-            "enabled": requires_models,
+            "enabled": True,
             "purposes": [item["purpose"] for item in model_status["items"]],
             "count": automatic_model_checks,
         }
@@ -1720,14 +1092,6 @@ def create_app(
     @app.get("/api/v1/experiments/{experiment_id}/revisions/{revision_id}")
     def get_revision(experiment_id: str, revision_id: str):
         return service.get_revision(experiment_id, revision_id)
-
-    @app.get(
-        "/api/v1/experiments/{experiment_id}/revisions/{revision_id}/capability-assembly"
-    )
-    def get_experiment_revision_capability_assembly(
-        experiment_id: str, revision_id: str
-    ):
-        return scenario_assembly_service.get_revision(experiment_id, revision_id)
 
     @app.post("/api/v1/experiments/{experiment_id}/revisions/{revision_id}/fork")
     def fork_revision(experiment_id: str, revision_id: str):

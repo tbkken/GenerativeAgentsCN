@@ -52,6 +52,7 @@ class CheckpointSnapshot:
     state: Mapping[str, Any]
     conversation: Mapping[str, Any]
     storage_exporters: Mapping[str, StorageExporter] = field(default_factory=dict)
+    runtime_storage_exporters: Mapping[str, StorageExporter] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,6 +130,18 @@ class CheckpointBundleWriter:
                     if not _SAFE_AGENT_KEY.fullmatch(agent_key):
                         raise ValueError(f"unsafe agent_key for storage path: {agent_key!r}")
                     destination = storage_root / agent_key / "associate"
+                    destination.mkdir(parents=True, exist_ok=False)
+                    exporter(destination)
+
+                runtime_storage_root = temporary / "runtime-storage"
+                for storage_key, exporter in sorted(
+                    snapshot.runtime_storage_exporters.items()
+                ):
+                    if not _SAFE_AGENT_KEY.fullmatch(storage_key):
+                        raise ValueError(
+                            f"unsafe runtime storage key: {storage_key!r}"
+                        )
+                    destination = runtime_storage_root / storage_key
                     destination.mkdir(parents=True, exist_ok=False)
                     exporter(destination)
 

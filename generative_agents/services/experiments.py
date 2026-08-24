@@ -15,23 +15,18 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from generative_agents.config import (
     ExperimentDefinition,
-    WorkflowDefinition,
     ValidationIssue,
     definition_hash,
     make_builtin_definition,
     validate_for_publish,
 )
 from generative_agents.config.schema import WorldOverlayConfig, make_blank_definition
-from generative_agents.config.prompt_variables import canonicalize_prompt_payload
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
-    BrainRevision,
-    BrainWorkflow,
     BuiltinCatalogSnapshot,
     Experiment,
     ExperimentComparisonGroup,
     ExperimentRevision,
-    ExperimentRevisionCapability,
     ExperimentSavedView,
     Run,
     RunArtifact,
@@ -177,7 +172,6 @@ class ExperimentService:
     ) -> ExperimentDefinition:
         payload = source.model_dump(mode="json", exclude_none=False)
         payload["experiment"].update({"key": key, "name": name, "goal": goal})
-        payload["prompts"] = canonicalize_prompt_payload(payload.get("prompts", {}))
         return ExperimentDefinition.model_validate(payload)
 
     def create_experiment(
@@ -189,7 +183,6 @@ class ExperimentService:
         source_revision_id: str | None = None,
         owner: str = "",
         tags: list[str] | None = None,
-        brain_revision_id: str | None = None,
         map_revision_id: str | None = None,
         crowd_revision_ids: list[str] | None = None,
     ) -> dict[str, Any]:
@@ -251,39 +244,6 @@ class ExperimentService:
                 ]
                 definition = ExperimentDefinition.model_validate(payload)
                 provenance = {**provenance, **crowd_provenance}
-            brain_workflows = None
-            if brain_revision_id:
-                brain_revision = session.get(BrainRevision, brain_revision_id)
-                if brain_revision is None or brain_revision.state != "PUBLISHED":
-                    raise not_found("brain_revision", brain_revision_id)
-                brain_rows = list(session.scalars(
-                    select(BrainWorkflow)
-                    .where(BrainWorkflow.revision_id == brain_revision.id)
-                    .order_by(BrainWorkflow.workflow_key)
-                ))
-                brain_workflows = {
-                    row.workflow_key: WorkflowDefinition.model_validate(row.definition_json)
-                    for row in brain_rows
-                }
-                from generative_agents.config import DEFAULT_WORKFLOW_KEYS
-
-                missing = [item for item in DEFAULT_WORKFLOW_KEYS if item not in brain_workflows]
-                if missing:
-                    raise ServiceError(
-                        "WORKFLOWS_MISSING",
-                        "所选大脑模板的流程快照不完整",
-                        status_code=409,
-                        details={"workflow_keys": missing},
-                    )
-                payload = definition.model_dump(mode="json", exclude_none=False)
-                payload["prompts"] = canonicalize_prompt_payload(brain_revision.prompts_json)
-                definition = ExperimentDefinition.model_validate(payload)
-                provenance = {
-                    **provenance,
-                    "brain_id": brain_revision.brain_id,
-                    "brain_revision_id": brain_revision.id,
-                    "brain_bundle_hash": brain_revision.bundle_hash,
-                }
             digest = definition_hash(definition)
             now = _utc_now()
             experiment = Experiment(
@@ -320,27 +280,6 @@ class ExperimentService:
             )
             session.add(revision)
             session.flush()
-            from .workflows import WorkflowService
-
-            WorkflowService.seed_revision_in_session(
-                session,
-                experiment_id=experiment.id,
-                revision=revision,
-                definition=definition,
-                source_revision_id=base_revision_id,
-                create_default_versions=True,
-                workflow_bundle=brain_workflows,
-            )
-            if base_revision_id:
-                from .scenarios import ScenarioAssemblyService
-
-                ScenarioAssemblyService(self.database).copy_extension(
-                    session,
-                    source_revision_id=base_revision_id,
-                    target_revision_id=revision.id,
-                    experiment_id=experiment.id,
-                    now=now,
-                )
             experiment.current_draft_revision_id = revision.id
             return self._experiment_detail(session, experiment)
 
@@ -423,25 +362,6 @@ class ExperimentService:
             )
             session.add(revision)
             session.flush()
-            from .workflows import WorkflowService
-
-            WorkflowService.seed_revision_in_session(
-                session,
-                experiment_id=experiment.id,
-                revision=revision,
-                definition=definition,
-                source_revision_id=source_revision.id,
-                create_default_versions=True,
-            )
-            from .scenarios import ScenarioAssemblyService
-
-            ScenarioAssemblyService(self.database).copy_extension(
-                session,
-                source_revision_id=source_revision.id,
-                target_revision_id=revision.id,
-                experiment_id=experiment.id,
-                now=now,
-            )
             experiment.current_draft_revision_id = revision.id
             return self._experiment_detail(session, experiment)
 
@@ -598,28 +518,6 @@ class ExperimentService:
                     select(ExperimentRevision).where(ExperimentRevision.id.in_(revision_ids))
                 ).all()
             } if revision_ids else {}
-            capability_extensions = {
-                extension.revision_id: extension
-                for extension in session.scalars(
-                    select(ExperimentRevisionCapability).where(
-                        ExperimentRevisionCapability.revision_id.in_(revision_ids)
-                    )
-                ).all()
-            } if revision_ids else {}
-            map_revision_ids = {
-                extension.extension_json.get("map_revision_id")
-                for extension in capability_extensions.values()
-                if extension.extension_json.get("mode") == "CAPABILITY_COMPOSED"
-                and extension.extension_json.get("map_revision_id")
-            }
-            map_revisions = {
-                revision.id: revision
-                for revision in session.scalars(
-                    select(WorldMapRevision).where(
-                        WorldMapRevision.id.in_(map_revision_ids)
-                    )
-                ).all()
-            } if map_revision_ids else {}
             run_ids = {item.latest_run_id for item in experiments if item.latest_run_id}
             runs = {
                 run.id: run
@@ -644,8 +542,6 @@ class ExperimentService:
                     session,
                     item,
                     revisions,
-                    capability_extensions,
-                    map_revisions,
                     runs,
                     run_counts,
                 )
@@ -665,8 +561,6 @@ class ExperimentService:
         session: Session,
         experiment: Experiment,
         revisions: dict[str, ExperimentRevision],
-        capability_extensions: dict[str, ExperimentRevisionCapability],
-        map_revisions: dict[str, WorldMapRevision],
         runs: dict[str, Run],
         run_counts: dict[str, int],
     ) -> dict[str, Any]:
@@ -692,47 +586,9 @@ class ExperimentService:
                 or definition.models.embedding.model,
                 "world_name": definition.world.world_name,
                 "random_seed": definition.simulation.random_seed,
+                "execution_mode": "SKILL_BRAIN",
+                "brain_skill": definition.engine.brain_skill,
             }
-            extension_row = capability_extensions.get(revision.id)
-            if (
-                extension_row is not None
-                and extension_row.extension_json.get("mode")
-                == "CAPABILITY_COMPOSED"
-            ):
-                from generative_agents.config.scenarios import (
-                    ExperimentCapabilityExtension,
-                )
-                from .scenarios import composed_scenario_requires_models_in_session
-
-                extension = ExperimentCapabilityExtension.model_validate(
-                    extension_row.extension_json
-                )
-                map_revision = map_revisions.get(extension.map_revision_id)
-                core_parameters.update(
-                    {
-                        "execution_mode": "CAPABILITY_COMPOSED",
-                        "agent_count": len(extension.actors),
-                        "tool_count": len(extension.tool_instances),
-                        "duration_ms": extension.clock.duration_ms,
-                        "base_tick_ms": extension.clock.base_tick_ms,
-                        "snapshot_interval_ms": extension.clock.snapshot_interval_ms,
-                        "max_steps": max(
-                            1,
-                            ceil(
-                                extension.clock.duration_ms
-                                / extension.clock.snapshot_interval_ms
-                            ),
-                        ),
-                        "requires_models": composed_scenario_requires_models_in_session(
-                            session, revision
-                        ),
-                        "world_name": (
-                            map_revision.world_json.get("world_name")
-                            if map_revision is not None
-                            else "能力场景地图"
-                        ),
-                    }
-                )
             revision_no = revision.revision_no
         return {
             "id": experiment.id,
@@ -1110,135 +966,17 @@ class ExperimentService:
         )
         return {**preview, "dry_run": False, "draft": saved}
 
-    def put_draft_prompt(
-        self,
-        experiment_id: str,
-        prompt_key: str,
-        *,
-        expected_lock_version: int,
-        data: dict[str, Any],
-    ) -> dict[str, Any]:
-        draft = self.get_draft(experiment_id)
-        payload = draft["definition"]
-        payload["prompts"][prompt_key] = data
-        return self.update_draft(
-            experiment_id=experiment_id,
-            expected_lock_version=expected_lock_version,
-            definition=ExperimentDefinition.model_validate(payload),
-        )
-
-    def restore_draft_prompt(
-        self,
-        experiment_id: str,
-        prompt_key: str,
-        *,
-        expected_lock_version: int,
-    ) -> dict[str, Any]:
-        draft = self.get_draft(experiment_id)
-        if not draft["base_revision_id"]:
-            raise ServiceError(
-                "PROMPT_BASE_UNAVAILABLE",
-                "当前草稿没有可恢复的发布版基线",
-                status_code=409,
-            )
-        with self.database.session_factory() as session:
-            base = session.get(ExperimentRevision, draft["base_revision_id"])
-            if base is None or base.experiment_id != experiment_id:
-                raise ServiceError(
-                    "PROMPT_BASE_UNAVAILABLE", "Prompt 基线不存在", status_code=409
-                )
-            prompt = (base.definition_json.get("prompts") or {}).get(prompt_key)
-        if prompt is None:
-            raise not_found("prompt", prompt_key)
-        return self.put_draft_prompt(
-            experiment_id,
-            prompt_key,
-            expected_lock_version=expected_lock_version,
-            data=prompt,
-        )
-
     def validate_draft(self, experiment_id: str) -> dict[str, Any]:
         with self.database.session_factory.begin() as session:
-            _experiment, revision = self._require_draft(session, experiment_id)
+            _, revision = self._require_draft(session, experiment_id)
             definition = ExperimentDefinition.model_validate(revision.definition_json)
-            if definition.world.map_revision_id:
-                from .maps import WorldMapService
-
-                payload = definition.model_dump(mode="json", exclude_none=False)
-                payload["world"] = WorldMapService(
-                    self.database
-                ).materialize_for_publish_in_session(
-                    session, definition.world
-                ).model_dump(mode="json", exclude_none=False)
-                definition = ExperimentDefinition.model_validate(payload)
             refs = set(session.scalars(select(Secret.id)).all())
-            capability_extension = session.get(
-                ExperimentRevisionCapability, revision.id
-            )
-            is_composed = (
-                capability_extension is not None
-                and capability_extension.extension_json.get("mode")
-                == "CAPABILITY_COMPOSED"
-            )
-            report = validate_for_publish(
-                definition,
-                existing_secret_refs=refs,
-                validate_legacy_agent_locations=not is_composed,
-            )
-            from .workflows import (
-                WorkflowService,
-                workflow_execution_issues,
-                workflow_function_sources_in_session,
-                workflow_validation_issues,
-            )
-
-            WorkflowService.ensure_revision_in_session(
-                session,
-                experiment_id=revision.experiment_id,
-                revision=revision,
-                definition=definition,
-            )
-            workflows = WorkflowService.load_revision_bundle_in_session(
-                session, revision.id
-            )
-            workflow_issues = workflow_validation_issues(
-                workflows,
-                definition,
-                allowed_script_operations=WorkflowService.allowed_script_operations_in_session(session),
-            )
-            if not workflow_issues:
-                workflow_issues.extend(
-                    workflow_execution_issues(
-                        workflows,
-                        function_sources=workflow_function_sources_in_session(
-                            session, workflows
-                        ),
-                    )
-                )
-            report.errors.extend(
-                ValidationIssue.model_validate(issue) for issue in workflow_issues
-            )
-            from .scenarios import ScenarioAssemblyService
-
-            for issue in ScenarioAssemblyService.validate_for_publish(
-                session, revision
-            ):
-                report.errors.append(
-                    ValidationIssue(
-                        code=issue["code"],
-                        path=f"capability_assembly.{issue['path']}",
-                        message=issue["message"],
-                        severity="ERROR",
-                        fix_page="overview",
-                        fix_control="scenarioAssemblyMode",
-                    )
-                )
+            report = validate_for_publish(definition, existing_secret_refs=refs)
             revision.validation_json = report.model_dump(mode="json")
             revision.validated_hash = report.definition_hash
             revision.updated_at = _utc_now()
             session.flush()
             return report.model_dump(mode="json") | {"valid": report.valid}
-
     def publish_draft(
         self,
         *,
@@ -1265,13 +1003,13 @@ class ExperimentService:
         draft_revision_id: str,
         expected_lock_version: int,
     ) -> ExperimentRevision:
-        """Publish inside a caller transaction so publish-and-run remains atomic."""
+        """Publish one validated world definition; Skills are pinned by the Run manifest."""
 
         experiment, revision = self._require_draft(session, experiment_id)
         if revision.id != draft_revision_id or revision.lock_version != expected_lock_version:
             raise ServiceError(
                 "REVISION_CONFLICT",
-                "草稿已被其他请求修改，请重新载入",
+                "Draft changed; reload it before publishing",
                 status_code=409,
                 details={
                     "expected_revision_id": draft_revision_id,
@@ -1298,80 +1036,16 @@ class ExperimentService:
             )
             definition = ExperimentDefinition.model_validate(normalized_payload)
         refs = set(session.scalars(select(Secret.id)).all())
-        capability_extension = session.get(ExperimentRevisionCapability, revision.id)
-        is_composed = (
-            capability_extension is not None
-            and capability_extension.extension_json.get("mode")
-            == "CAPABILITY_COMPOSED"
-        )
-        report = validate_for_publish(
-            definition,
-            existing_secret_refs=refs,
-            validate_legacy_agent_locations=not is_composed,
-        )
-        from .scenarios import composed_scenario_requires_models_in_session
-
-        if not composed_scenario_requires_models_in_session(session, revision):
-            report.errors = [
-                issue for issue in report.errors if issue.code != "MODEL_NOT_RESOLVED"
-            ]
-        from .workflows import (
-            WorkflowService,
-            workflow_execution_issues,
-            workflow_function_sources_in_session,
-            workflow_validation_issues,
-        )
-
-        WorkflowService.ensure_revision_in_session(
-            session,
-            experiment_id=experiment_id,
-            revision=revision,
-            definition=definition,
-        )
-        workflows = WorkflowService.load_revision_bundle_in_session(session, revision.id)
-        workflow_issues = workflow_validation_issues(
-            workflows,
-            definition,
-            allowed_script_operations=WorkflowService.allowed_script_operations_in_session(session),
-        )
-        if not workflow_issues:
-            workflow_issues.extend(
-                workflow_execution_issues(
-                    workflows,
-                    function_sources=workflow_function_sources_in_session(
-                        session, workflows
-                    ),
-                )
-            )
-        report.errors.extend(
-            ValidationIssue.model_validate(issue) for issue in workflow_issues
-        )
-        from .scenarios import ScenarioAssemblyService
-
-        for issue in ScenarioAssemblyService.validate_for_publish(session, revision):
-            report.errors.append(
-                ValidationIssue(
-                    code=issue["code"],
-                    path=f"capability_assembly.{issue['path']}",
-                    message=issue["message"],
-                    severity="ERROR",
-                    fix_page="overview",
-                    fix_control="scenarioAssemblyMode",
-                )
-            )
+        report = validate_for_publish(definition, existing_secret_refs=refs)
         if not report.valid:
             raise ServiceError(
                 "CONFIG_VALIDATION_FAILED",
-                "实验配置未通过发布校验",
+                "Experiment configuration did not pass publication validation",
                 status_code=422,
                 details=report.model_dump(mode="json"),
             )
         now = _utc_now()
         revision.definition_json = definition.model_dump(mode="json", exclude_none=False)
-        # JSON equality treats ``1`` and ``1.0`` as equal.  Published map
-        # materialization intentionally normalizes metre values to floats, so
-        # force the JSON column update or its normalized hash can describe a
-        # value that SQLAlchemy silently leaves in the draft representation.
         flag_modified(revision, "definition_json")
         revision.definition_hash = report.definition_hash
         revision.validation_json = report.model_dump(mode="json")
@@ -1385,7 +1059,6 @@ class ExperimentService:
         experiment.updated_at = now
         session.flush()
         return revision
-
     def list_revisions(self, experiment_id: str) -> list[dict[str, Any]]:
         with self.database.session_factory() as session:
             if session.get(Experiment, experiment_id) is None:
@@ -1431,9 +1104,6 @@ class ExperimentService:
             draft_payload = ExperimentDefinition.model_validate(source.definition_json).model_dump(
                 mode="json", exclude_none=False
             )
-            draft_payload["prompts"] = canonicalize_prompt_payload(
-                draft_payload.get("prompts", {})
-            )
             draft_definition = ExperimentDefinition.model_validate(draft_payload)
             draft = ExperimentRevision(
                 id=str(uuid4()),
@@ -1446,7 +1116,11 @@ class ExperimentService:
                 definition_hash=definition_hash(draft_definition),
                 validation_json=None,
                 validated_hash=None,
-                provenance_json={"source_type": "FORK", "source_revision_id": source.id},
+                provenance_json={
+                    **(source.provenance_json or {}),
+                    "source_type": "FORK",
+                    "source_revision_id": source.id,
+                },
                 snapshot_complete=False,
                 lock_version=1,
                 created_at=now,
@@ -1454,25 +1128,6 @@ class ExperimentService:
             )
             session.add(draft)
             session.flush()
-            from .workflows import WorkflowService
-
-            WorkflowService.seed_revision_in_session(
-                session,
-                experiment_id=experiment_id,
-                revision=draft,
-                definition=ExperimentDefinition.model_validate(draft.definition_json),
-                source_revision_id=source.id,
-                create_default_versions=False,
-            )
-            from .scenarios import ScenarioAssemblyService
-
-            ScenarioAssemblyService(self.database).copy_extension(
-                session,
-                source_revision_id=source.id,
-                target_revision_id=draft.id,
-                experiment_id=experiment_id,
-                now=now,
-            )
             experiment.current_draft_revision_id = draft.id
             experiment.status = "DRAFT"
             experiment.updated_at = now
@@ -1558,117 +1213,8 @@ class ExperimentService:
             revision_id = experiment.current_draft_revision_id or experiment.current_published_revision_id
             revision = session.get(ExperimentRevision, revision_id) if revision_id else None
             if revision is None:
-                raise ServiceError("REVISION_NOT_FOUND", "实验没有可估算的配置版本", status_code=409)
+                raise ServiceError("REVISION_NOT_FOUND", "Experiment has no version to estimate", status_code=409)
             definition = ExperimentDefinition.model_validate(revision.definition_json)
-            extension_row = session.get(ExperimentRevisionCapability, revision.id)
-            if extension_row is not None:
-                from generative_agents.config.scenarios import (
-                    ExperimentCapabilityExtension,
-                )
-
-                extension = ExperimentCapabilityExtension.model_validate(
-                    extension_row.extension_json
-                )
-            else:
-                extension = None
-            if extension is not None and extension.mode == "CAPABILITY_COMPOSED":
-                from .scenarios import ScenarioAssemblyService
-
-                schedule = ScenarioAssemblyService(self.database)._compile_schedule(
-                    session, extension
-                )
-                agents = len(extension.actors)
-                steps = max(
-                    1,
-                    ceil(
-                        extension.clock.duration_ms
-                        / extension.clock.snapshot_interval_ms
-                    ),
-                )
-                physical_ticks = ceil(
-                    extension.clock.duration_ms / extension.clock.base_tick_ms
-                )
-                llm_calls = schedule["estimated_llm_decisions"]
-                calls_low = llm_calls
-                calls_high = llm_calls
-                token_low = calls_low * 300
-                token_high = calls_high * 1400
-                capability_executions = schedule["total_executions"]
-                wall_low = max(
-                    1,
-                    ceil(physical_ticks * 0.0002 + capability_executions * 0.0004),
-                )
-                wall_high = max(
-                    wall_low,
-                    ceil(
-                        physical_ticks * 0.002
-                        + capability_executions * 0.004
-                        + calls_high * 15
-                    ),
-                )
-                storage_low = steps * max(1, agents) * 700 + capability_executions * 60
-                storage_high = steps * max(1, agents) * 4_000 + capability_executions * 400
-                thresholds = []
-                if physical_ticks >= 100_000:
-                    thresholds.append("物理 tick 达到高频长时实验规模")
-                if calls_high >= 500:
-                    thresholds.append("LLM 决策次数达到高成本规模")
-                if definition.results.capture_model_payloads and calls_high:
-                    thresholds.append("记录模型输入输出会增加存储与隐私风险")
-                map_revision = session.get(
-                    WorldMapRevision, extension.map_revision_id
-                )
-                world_map = (
-                    session.get(WorldMap, map_revision.map_id)
-                    if map_revision is not None
-                    else None
-                )
-                world_size = (
-                    ((map_revision.world_json or {}).get("definition") or {}).get(
-                        "size"
-                    )
-                    if map_revision is not None
-                    else None
-                )
-                actual = self._latest_run_actual(session, experiment)
-                return {
-                    "experiment_id": experiment_id,
-                    "revision_id": revision.id,
-                    "basis": (
-                        "按物理 tick、能力调度和结果快照估算；仅 LLM/工作流能力计入模型调用"
-                    ),
-                    "scale": {
-                        "execution_mode": "CAPABILITY_COMPOSED",
-                        "agents": agents,
-                        "tool_instances": len(extension.tool_instances),
-                        "steps": steps,
-                        "duration_ms": extension.clock.duration_ms,
-                        "base_tick_ms": extension.clock.base_tick_ms,
-                        "snapshot_interval_ms": extension.clock.snapshot_interval_ms,
-                        "physical_ticks": physical_ticks,
-                        "capability_tasks": len(schedule["tasks"]),
-                        "capability_executions": capability_executions,
-                        "virtual_minutes": extension.clock.duration_ms / 60_000,
-                        "world_name": world_map.name if world_map else "能力场景地图",
-                        "world_size": world_size
-                        if isinstance(world_size, list) and len(world_size) >= 2
-                        else None,
-                        "projection_interval_steps": 1,
-                        "capture_model_payloads": definition.results.capture_model_payloads,
-                    },
-                    "estimate": {
-                        "model_calls": {"low": calls_low, "high": calls_high},
-                        "tokens": {"low": token_low, "high": token_high},
-                        "wall_seconds": {"low": wall_low, "high": wall_high},
-                        "storage_bytes": {
-                            "low": storage_low,
-                            "high": storage_high,
-                        },
-                    },
-                    "high_scale": bool(thresholds),
-                    "threshold_reasons": thresholds,
-                    "actual": actual,
-                }
             agents = sum(agent.enabled for agent in definition.agents)
             steps = definition.simulation.max_steps
             agent_steps = agents * steps
@@ -1676,25 +1222,20 @@ class ExperimentService:
             calls_high = max(calls_low, round(agent_steps * 0.9))
             token_low = calls_low * 300
             token_high = calls_high * 1400
-            wall_low = calls_low * 2
-            wall_high = calls_high * 15
-            storage_low = agent_steps * 500 + token_low * 2
-            storage_high = agent_steps * 2_000 + token_high * 4
             thresholds = []
             if agents >= 20:
-                thresholds.append("Agent 数达到整镇规模")
+                thresholds.append("Agent count is at town scale")
             if steps >= 500:
-                thresholds.append("运行步数达到长时实验规模")
-            if definition.results.agent_step_projection_interval_steps == 1:
-                thresholds.append("每步写入 Agent 状态投影")
+                thresholds.append("Run length is at long-simulation scale")
             if definition.results.capture_model_payloads:
-                thresholds.append("记录模型输入输出会增加存储与隐私风险")
-            actual = self._latest_run_actual(session, experiment)
+                thresholds.append("Model payload capture increases storage and privacy exposure")
             return {
                 "experiment_id": experiment_id,
                 "revision_id": revision.id,
-                "basis": "按 Agent×步数及 UX-03 实测调用密度估算，模型和 Prompt 复杂度会造成约 2–3 倍误差",
+                "basis": "Skill-brain estimate based on enabled Agents and simulation steps",
                 "scale": {
+                    "execution_mode": "SKILL_BRAIN",
+                    "brain_skill": definition.engine.brain_skill,
                     "agents": agents,
                     "steps": steps,
                     "virtual_minutes": steps * definition.simulation.stride_minutes,
@@ -1704,14 +1245,16 @@ class ExperimentService:
                 "estimate": {
                     "model_calls": {"low": calls_low, "high": calls_high},
                     "tokens": {"low": token_low, "high": token_high},
-                    "wall_seconds": {"low": wall_low, "high": wall_high},
-                    "storage_bytes": {"low": storage_low, "high": storage_high},
+                    "wall_seconds": {"low": calls_low * 2, "high": calls_high * 15},
+                    "storage_bytes": {
+                        "low": agent_steps * 500 + token_low * 2,
+                        "high": agent_steps * 2_000 + token_high * 4,
+                    },
                 },
                 "high_scale": bool(thresholds),
                 "threshold_reasons": thresholds,
-                "actual": actual,
+                "actual": self._latest_run_actual(session, experiment),
             }
-
     @staticmethod
     def _latest_run_actual(session: Session, experiment: Experiment) -> dict[str, Any] | None:
         if not experiment.latest_run_id:
@@ -1766,7 +1309,7 @@ class ExperimentService:
                 )
                 flattened.append(_flatten_document(definition))
             paths = sorted(set().union(*(item.keys() for item in flattened)))
-            groups = {name: [] for name in ("experiment", "agents", "models", "prompts", "world", "behavior", "simulation", "results", "other")}
+            groups = {name: [] for name in ("experiment", "agents", "models", "world", "behavior", "simulation", "results", "other")}
             same_count = 0
             for path in paths:
                 values = [item.get(path) for item in flattened]

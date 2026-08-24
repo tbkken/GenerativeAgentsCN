@@ -481,38 +481,34 @@
     async openAgentEditor(agentId = null) {
       this.agentDraft = null;
       this.agentDetail = null;
-      let extensionRecord = null;
       this.modal('close', 'crowdAgentManagerModal');
       if (agentId) {
         this.agentDetail = await this.request(`/agent-templates/${agentId}`);
         this.agentDraft = this.agentDetail.current_draft
           ? await this.request(`/agent-templates/${agentId}/draft`)
           : await this.request(`/agent-templates/${agentId}/revisions/${this.agentDetail.current_published.id}/fork`, { method: 'POST' });
-        extensionRecord = await this.request(`/agent-templates/${agentId}/draft/extension`);
       }
       if (!window.SharedAgentEditor?.openPublic) throw new Error('Agent 编辑器尚未加载');
       await window.SharedAgentEditor.openPublic({
         agentDetail: this.agentDetail,
         agentDraft: this.agentDraft,
-        extensionRecord,
       });
     },
 
     async openAgentViewer(agentId, revisionId) {
-      const [agentDetail, agentRevision, extensionRecord] = await Promise.all([
+      const [agentDetail, agentRevision] = await Promise.all([
         this.request(`/agent-templates/${agentId}`),
         this.request(`/agent-templates/${agentId}/revisions/${revisionId}`),
-        this.request(`/agent-templates/${agentId}/revisions/${revisionId}/extension`),
       ]);
       if (!window.SharedAgentEditor?.openReadOnly) throw new Error('Agent 查看器尚未加载');
-      await window.SharedAgentEditor.openReadOnly({ agentDetail, agentRevision, extensionRecord });
+      await window.SharedAgentEditor.openReadOnly({ agentDetail, agentRevision });
     },
 
     async reopenAgentManager() {
       if (this.revision) await this.openAgentManager();
     },
 
-    async saveSharedAgent({ definition, extension, agentDetail, agentDraft }) {
+    async saveSharedAgent({ definition, agentDetail, agentDraft }) {
       const description = agentDraft?.description || agentDetail?.description || '';
       let draft;
       let agentId;
@@ -528,11 +524,8 @@
         agentId = created.id;
         draft = await this.request(`/agent-templates/${agentId}/draft`);
       }
-      const savedExtension = await this.request(`/agent-templates/${agentId}/draft/extension`, {
-        method: 'PUT', body: JSON.stringify({ lock_version: draft.lock_version, extension }),
-      });
       const published = await this.request(`/agent-templates/${agentId}/draft/publish`, {
-        method: 'POST', body: JSON.stringify({ draft_revision_id: draft.id, lock_version: savedExtension.lock_version }),
+        method: 'POST', body: JSON.stringify({ draft_revision_id: draft.id, lock_version: draft.lock_version }),
       });
       if (agentId) this.clearAgentSelection(agentId);
       this.memberSelection.add(published.id);

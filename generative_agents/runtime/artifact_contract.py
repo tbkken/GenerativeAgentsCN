@@ -1,7 +1,7 @@
 """Generator identities shared by scheduling and immutable builders."""
 
 REPLAY_GENERATOR_VERSION = "ga-replay-v2"
-REPORT_GENERATOR_VERSION = "ga-report-v1"
+REPORT_GENERATOR_VERSION = "ga-report-v2"
 
 GENERATOR_VERSIONS = {
     "BUILD_REPLAY": REPLAY_GENERATOR_VERSION,

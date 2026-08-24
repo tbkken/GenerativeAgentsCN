@@ -9,6 +9,7 @@ from typing import Mapping
 
 from generative_agents.modules import utils
 from generative_agents.modules.agent import Agent
+from generative_agents.modules.game_object_interaction import GameObjectInteractionSystem
 from generative_agents.modules.maze import Maze
 from generative_agents.runtime.context import SimulationContext
 
@@ -41,6 +42,11 @@ class Game:
             raise ValueError("run manifest must contain an inline maze/world definition")
         self.maze = Maze(
             copy.deepcopy(maze_definition), self.logger, context.random
+        )
+        self.game_object_interactions = GameObjectInteractionSystem(
+            maze_definition,
+            skill_executor=getattr(context, "passive_skills", None),
+            clock=context.clock,
         )
         self.conversation = conversation
         self.agents: dict[str, Agent] = {}
@@ -84,10 +90,11 @@ class Game:
                 self.logger,
                 clock=context.clock,
                 random_source=context.random,
-                prompts=context.prompts,
+                skills=context.skills,
                 models=context.models,
                 model_trace=context.metadata.get("model_trace"),
                 algorithm=context.algorithm,
+                memory_stream=getattr(context, "memory_stream", None),
             )
             self.agents[agent_key] = agent
             agents_by_name[agent_name] = agent
@@ -139,6 +146,37 @@ class Game:
                 "\n{}\n{}\n".format(utils.split_line(f"{agent_key}.reset"), agent)
             )
 
+    def resolve_game_object_interaction(
+        self, agent_key: str, outcome: dict, *, step_no: int
+    ) -> dict:
+        """Resolve at most one Agent-selected passive object request this step."""
+
+        agent = self.get_agent(agent_key)
+        plan = outcome.get("plan") or {}
+        interaction = self.game_object_interactions.interact(
+            agent,
+            plan.get("path") or (),
+            step_no=step_no,
+        )
+        if interaction is None:
+            return outcome
+        plan["movement_directive"] = interaction["agent_decision"]
+        info = outcome.setdefault("info", {})
+        info.setdefault("external_observations", []).append(interaction)
+        info["concepts"] = {
+            concept.node_id: concept.abstract() for concept in agent.concepts
+        }
+        interaction_events = []
+        for event in agent.drain_result_events():
+            if event.get("kind") == "game_object_interaction":
+                event = {**event, "trace": list(interaction.get("trace") or ())}
+            interaction_events.append(event)
+        outcome["events"] = (
+            *(outcome.get("events") or ()),
+            *interaction_events,
+        )
+        return outcome
+
     def snapshot_state(self) -> dict:
         return {
             "agents": {
@@ -168,6 +206,12 @@ class Game:
             agent_key: agent.associate.export_storage
             for agent_key, agent in self.agents.items()
         }
+
+    def runtime_storage_exporters(self):
+        memory_stream = getattr(self.context, "memory_stream", None)
+        if memory_stream is None:
+            return {}
+        return {"skill-memory": memory_stream.export_storage}
 
 
 def create_game(config, conversation, *, context: SimulationContext) -> Game:

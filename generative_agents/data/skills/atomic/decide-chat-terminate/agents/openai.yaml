@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decide Chat Terminate"
+  short_description: "Run the Decide Chat Terminate agent skill"
+  default_prompt: "Use $decide-chat-terminate to handle the current agent context and return the result directly."

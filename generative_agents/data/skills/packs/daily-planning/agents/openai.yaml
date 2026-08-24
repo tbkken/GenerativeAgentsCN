@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Planning"
+  short_description: "Run the Daily Planning agent skill"
+  default_prompt: "Use $daily-planning to handle the current agent context and return the result directly."

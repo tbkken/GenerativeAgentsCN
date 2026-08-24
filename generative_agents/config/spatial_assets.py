@@ -6,16 +6,20 @@ from typing import Annotated, Any, Literal
 
 from pydantic import Field, StringConstraints, field_validator, model_validator
 
-from .capabilities import PortKey, StableKey
 from .schema import StrictModel
+from .game_object_skills import GameObjectSkillBinding, validate_unique_skill_bindings
 
 
+StableKey = Annotated[
+    str,
+    StringConstraints(
+        strip_whitespace=True,
+        pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+        max_length=80,
+    ),
+]
 SpatialAssetKind = Literal["TILE", "OBJECT", "ZONE", "MARKING", "NETWORK"]
 AppearanceMode = Literal["COLOR", "EMOJI", "IMAGE", "SPRITE"]
-AttachmentRef = Annotated[
-    str,
-    StringConstraints(strip_whitespace=True, min_length=3, max_length=240),
-]
 
 
 class SpatialAppearanceVariant(StrictModel):
@@ -100,30 +104,6 @@ class SpatialSemantics(StrictModel):
         return value
 
 
-class SpatialCapabilityAttachment(StrictModel):
-    attachment_key: StableKey
-    capability_revision_id: str | None = Field(default=None, min_length=1, max_length=36)
-    capability_bundle_revision_id: str | None = Field(
-        default=None, min_length=1, max_length=36
-    )
-    parameters: dict[str, Any] = Field(default_factory=dict)
-    # Attachments use the same external port and target vocabulary as an
-    # experiment mount.  Keeping these bindings on the reusable asset makes a
-    # traffic light, access gate, or vehicle executable wherever it is placed.
-    target_bindings: dict[StableKey, AttachmentRef] = Field(default_factory=dict)
-    input_bindings: dict[PortKey, AttachmentRef] = Field(default_factory=dict)
-    output_bindings: dict[PortKey, AttachmentRef] = Field(default_factory=dict)
-    enabled: bool = True
-
-    @model_validator(mode="after")
-    def require_one_revision(self) -> "SpatialCapabilityAttachment":
-        if bool(self.capability_revision_id) == bool(self.capability_bundle_revision_id):
-            raise ValueError(
-                "attachment requires exactly one capability or capability bundle revision"
-            )
-        return self
-
-
 class SpatialAssetContract(StrictModel):
     schema_version: Literal["ga-spatial-asset/v1"] = "ga-spatial-asset/v1"
     name: Annotated[
@@ -135,19 +115,23 @@ class SpatialAssetContract(StrictModel):
     physics: SpatialPhysics = Field(default_factory=SpatialPhysics)
     semantics: SpatialSemantics = Field(default_factory=SpatialSemantics)
     initial_state: dict[str, Any] = Field(default_factory=dict)
-    capability_attachments: list[SpatialCapabilityAttachment] = Field(
-        default_factory=list, max_length=100
-    )
+    skill_bindings: list[GameObjectSkillBinding] = Field(default_factory=list, max_length=20)
+
+    @field_validator("skill_bindings")
+    @classmethod
+    def unique_skill_bindings(
+        cls, value: list[GameObjectSkillBinding]
+    ) -> list[GameObjectSkillBinding]:
+        return validate_unique_skill_bindings(value)
 
     @model_validator(mode="after")
     def validate_asset_relations(self) -> "SpatialAssetContract":
-        keys = [item.attachment_key for item in self.capability_attachments]
-        if len(keys) != len(set(keys)):
-            raise ValueError("capability attachment keys must be unique")
         if self.kind == "ZONE" and self.physics.collision:
             raise ValueError("ZONE assets cannot be collidable")
         if self.kind == "MARKING" and self.physics.collision:
             raise ValueError("MARKING assets cannot be collidable")
+        if self.skill_bindings and self.kind != "OBJECT":
+            raise ValueError("only OBJECT spatial assets may bind passive Skills")
         return self
 
 
@@ -158,18 +142,6 @@ class SpatialPlacement(StrictModel):
     y_m: float
     rotation_degrees: float = Field(default=0, ge=-360, le=360)
     state_overrides: dict[str, Any] = Field(default_factory=dict)
-    capability_parameter_overrides: dict[StableKey, dict[str, Any]] = Field(
-        default_factory=dict
-    )
-    capability_target_overrides: dict[
-        StableKey, dict[StableKey, AttachmentRef]
-    ] = Field(default_factory=dict)
-    capability_input_overrides: dict[
-        StableKey, dict[PortKey, AttachmentRef]
-    ] = Field(default_factory=dict)
-    capability_output_overrides: dict[
-        StableKey, dict[PortKey, AttachmentRef]
-    ] = Field(default_factory=dict)
 
 
 class SpatialSceneExtension(StrictModel):
@@ -189,9 +161,9 @@ class SpatialSceneExtension(StrictModel):
 __all__ = [
     "SpatialAppearance",
     "SpatialAssetContract",
-    "SpatialCapabilityAttachment",
     "SpatialPhysics",
     "SpatialPlacement",
     "SpatialSceneExtension",
     "SpatialSemantics",
+    "StableKey",
 ]

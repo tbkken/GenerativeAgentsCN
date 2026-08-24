@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Agent Foundry 两日通勤实验高保真自动演示" />
+  <title>两日通勤实验 · 完整配置演示</title>
+  <link rel="stylesheet" href="/static/console/product-demo.css?v=20260815c" />
+  <link rel="stylesheet" href="/static/console/commute-map.css?v=20260815d" />
+  <link rel="stylesheet" href="/static/console/commute-demo.css?v=20260815d" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/"><span class="brand-mark"></span><span class="brand-copy"><strong class="brand-name">Agent Foundry</strong><small class="brand-meta">RESEARCH CONSOLE</small></span><span class="sidebar-toggle">‹</span></a>
+      <span class="nav-label">实验</span>
+      <nav class="nav" aria-label="全局导航">
+        <a class="nav-item active" href="/"><span class="nav-icon">▦</span><span class="nav-text">实验</span><span class="nav-count">4</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">▧</span><span class="nav-text">地图</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">◇</span><span class="nav-text">大脑</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">○</span><span class="nav-text">人群</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">⌁</span><span class="nav-text">能力</span></a>
+      </nav>
+      <div id="experimentNavigation" hidden>
+        <span class="nav-label">当前实验</span>
+        <nav class="nav" aria-label="当前实验导航">
+          <button class="nav-item" data-page="overview"><span class="nav-icon">⌂</span><span class="nav-text">实验概览</span></button>
+          <button class="nav-item" data-page="results"><span class="nav-icon">▤</span><span class="nav-text">实验结果</span></button>
+          <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">Agent 配置</span><span class="nav-count">1</span></button>
+          <button class="nav-item" data-page="scenario"><span class="nav-icon">⌘</span><span class="nav-text">场景装配</span></button>
+          <button class="nav-item" data-page="models"><span class="nav-icon">●</span><span class="nav-text">模型服务</span></button>
+          <button class="nav-item" data-page="brain"><span class="nav-icon">◇</span><span class="nav-text">大脑编排</span></button>
+          <button class="nav-item" data-page="world"><span class="nav-icon">▧</span><span class="nav-text">世界与地图</span></button>
+          <button class="nav-item" data-page="advanced"><span class="nav-icon">≡</span><span class="nav-text">行为参数</span></button>
+        </nav>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-context"><span>正在演示</span><strong>周一开车 × 周二步行通勤</strong></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div class="top-title" id="commuteTopTitle"><strong>实验中心</strong></div><div class="top-actions" id="commuteTopActions"></div></header>
+      <div class="content" id="commuteDemoStage" aria-live="polite"></div>
+    </main>
+  </div>
+  <div class="demo-controller" aria-label="完整实验自动演示控制器">
+    <div class="demo-controller-copy"><span id="demoCounter">实验配置 · 1/11</span><strong id="demoTitle">从实验中心新建草稿</strong><small id="demoCaption">演示沿用系统真实页面与导航。</small></div>
+    <div class="demo-controller-progress"><i id="demoProgress"></i></div>
+    <div class="demo-controller-actions">
+      <select class="demo-speed" id="demoSpeed" aria-label="演示速度"><option value="1.25">0.8×</option><option value="1" selected>1×</option><option value=".68">1.5×</option><option value=".48">2×</option></select>
+      <button class="demo-icon-btn" id="previousStep" aria-label="上一步">←</button><button class="demo-icon-btn primary" id="autoDemo" aria-label="播放或暂停">▶</button><button class="demo-icon-btn" id="nextStep" aria-label="下一步">→</button><button class="demo-icon-btn" id="restartDemo" aria-label="重新开始">↻</button>
+    </div>
+  </div>
+  <div class="demo-cursor" id="demoCursor" aria-hidden="true"></div>
+  <div class="demo-toast" id="demoToast" role="status"><span class="demo-toast-icon">✓</span><div><strong id="toastTitle">实验草稿已保存</strong><small id="toastCopy">变更已写入当前 Draft Revision</small></div></div>
+  <script src="/static/console/commute-map.js?v=20260815d"></script>
+  <script src="/static/console/commute-demo.js?v=20260815d"></script>
+</body>
+</html>

@@ -645,6 +645,9 @@ class ResultQueryService:
                         "media_type": item.media_type,
                         "size_bytes": item.size_bytes,
                         "sha256": item.sha256,
+                        "generator_version": item.generator_version,
+                        "source_step": item.source_step,
+                        "partial": item.partial,
                         "state": item.state,
                     }
                     for item in artifacts

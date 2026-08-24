@@ -33,6 +33,7 @@ class Concept:
         create=None,
         expire=None,
         access=None,
+        evidence_memory_ids=None,
         clock=None,
     ):
         self.node_id = node_id
@@ -57,6 +58,7 @@ class Concept:
             if access
             else self.create
         )
+        self.evidence_memory_ids = tuple(evidence_memory_ids or ())
 
     def abstract(self):
         return {
@@ -167,7 +169,9 @@ class Associate:
         self._clock = clock
         self._index = LlamaIndex(embedding, path, clock=clock)
         self.memory = memory or {"event": [], "thought": [], "chat": []}
-        self.cleanup_index()
+        self._pending_accessed: dict[str, str] = {}
+        self._pending_expired: list[tuple[str, str]] = []
+        self.cleanup_index(record=False)
         self.retention = retention
         self.max_memory = max_memory
         self.max_importance = max_importance
@@ -188,8 +192,13 @@ class Associate:
     def __str__(self):
         return utils.dump_dict(self.abstract())
 
-    def cleanup_index(self):
+    def cleanup_index(self, *, record=True):
         node_ids = self._index.cleanup()
+        if record:
+            for node_type, nodes in self.memory.items():
+                self._pending_expired.extend(
+                    (node_id, node_type) for node_id in nodes if node_id in node_ids
+                )
         self.memory = {
             n_type: [n for n in nodes if n not in node_ids]
             for n_type, nodes in self.memory.items()
@@ -216,6 +225,7 @@ class Associate:
             "create": create.strftime("%Y%m%d-%H:%M:%S"),
             "expire": expire.strftime("%Y%m%d-%H:%M:%S"),
             "access": create.strftime("%Y%m%d-%H:%M:%S"),
+            "evidence_memory_ids": list(filling or ()),
         }
         node = self._index.add_node(event.get_describe(), metadata)
         memory = self.memory[node_type]
@@ -249,7 +259,9 @@ class Associate:
             )
         else:
             nodes = [self._index.find_node(n) for n in self.memory[node_type]]
-        return [self.to_concept(n) for n in nodes[: self.retention]]
+        selected = nodes[: self.retention]
+        self._mark_accessed(selected, node_type)
+        return [self.to_concept(n) for n in selected]
 
     def retrieve_events(self, text=None):
         return self._retrieve_nodes("event", text)
@@ -275,6 +287,10 @@ class Associate:
                 node_ids=node_ids,
                 retriever_creator=_create_retriever,
             )
+            for node in nodes:
+                self._pending_accessed[node.id_] = str(
+                    node.metadata.get("node_type") or "event"
+                )
             if reduce_all:
                 retrieved.update({n.id_: n for n in nodes})
             else:
@@ -285,6 +301,19 @@ class Associate:
             text: [self.to_concept(n) for n in nodes]
             for text, nodes, in retrieved.items()
         }
+
+    def _mark_accessed(self, nodes, node_type):
+        for node in nodes:
+            self._pending_accessed[node.id_] = node_type
+
+    def drain_lifecycle_events(self):
+        """Return retrieval/expiry facts once for the current simulation step."""
+
+        accessed = tuple(sorted(self._pending_accessed.items()))
+        expired = tuple(self._pending_expired)
+        self._pending_accessed.clear()
+        self._pending_expired.clear()
+        return {"accessed": accessed, "expired": expired}
 
     def get_relation(self, node):
         return {

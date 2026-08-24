@@ -1,0 +1,4 @@
+interface:
+  display_name: "Describe Emoji"
+  short_description: "Run the Describe Emoji agent skill"
+  default_prompt: "Use $describe-emoji to handle the current agent context and return the result directly."

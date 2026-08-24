@@ -1,0 +1,4 @@
+interface:
+  display_name: "Poignancy Chat"
+  short_description: "Run the Poignancy Chat agent skill"
+  default_prompt: "Use $poignancy-chat to handle the current agent context and return the result directly."

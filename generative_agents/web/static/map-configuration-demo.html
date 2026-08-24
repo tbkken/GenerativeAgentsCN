@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Agent Foundry 住宅到公司通勤地图配置高保真自动演示" />
+  <title>住宅—公司两日通勤地图 · 配置演示</title>
+  <link rel="stylesheet" href="/static/console/product-demo.css?v=20260815c" />
+  <link rel="stylesheet" href="/static/console/commute-map.css?v=20260815d" />
+  <link rel="stylesheet" href="/static/console/map-configuration-demo.css?v=20260815d" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/"><span class="brand-mark"></span><span class="brand-copy"><strong class="brand-name">Agent Foundry</strong><small class="brand-meta">RESEARCH CONSOLE</small></span><span class="sidebar-toggle">‹</span></a>
+      <span class="nav-label">实验</span>
+      <nav class="nav" aria-label="全局导航">
+        <a class="nav-item" href="/"><span class="nav-icon">▦</span><span class="nav-text">实验</span></a>
+        <a class="nav-item active" href="/"><span class="nav-icon">▧</span><span class="nav-text">地图</span><span class="nav-count">6</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">◇</span><span class="nav-text">大脑</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">○</span><span class="nav-text">人群</span></a>
+        <a class="nav-item" href="/"><span class="nav-icon">⌁</span><span class="nav-text">能力</span></a>
+      </nav>
+      <div class="nav-spacer"></div>
+      <div class="nav-context"><span>正在演示</span><strong>从空白地图到可发布 Revision</strong></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="top-title" id="mapTopTitle"><strong>地图中心</strong></div>
+        <div class="top-actions" id="mapTopActions"></div>
+      </header>
+      <div class="content" id="mapDemoStage" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <div class="demo-controller" aria-label="地图自动演示控制器">
+    <div class="demo-controller-copy"><span id="mapDemoCounter">地图配置 · 1/16</span><strong id="mapDemoTitle">检查公共地图资产</strong><small id="mapDemoCaption">从系统地图中心开始，不跳过任何产品操作。</small></div>
+    <div class="demo-controller-progress"><i id="mapDemoProgress"></i></div>
+    <div class="demo-controller-actions">
+      <select class="demo-speed" id="mapDemoSpeed" aria-label="演示速度"><option value="1.25">0.8×</option><option value="1" selected>1×</option><option value="0.68">1.5×</option><option value="0.48">2×</option></select>
+      <button class="demo-icon-btn" id="mapPrevious" aria-label="上一步">←</button>
+      <button class="demo-icon-btn primary" id="mapAutoDemo" aria-label="播放或暂停">▶</button>
+      <button class="demo-icon-btn" id="mapNext" aria-label="下一步">→</button>
+      <button class="demo-icon-btn" id="mapRestart" aria-label="重新开始">↻</button>
+    </div>
+  </div>
+  <div class="demo-cursor" id="mapDemoCursor" aria-hidden="true"></div>
+  <div class="demo-toast" id="mapDemoToast" role="status"><span class="demo-toast-icon">✓</span><div><strong id="mapToastTitle">已保存地图草稿</strong><small id="mapToastCopy">所有变更已写入当前 Draft Revision</small></div></div>
+  <script src="/static/console/commute-map.js?v=20260815d"></script>
+  <script src="/static/console/map-configuration-demo.js?v=20260815d"></script>
+</body>
+</html>

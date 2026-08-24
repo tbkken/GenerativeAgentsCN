@@ -16,22 +16,20 @@ from uuid import UUID
 import psutil
 from filelock import FileLock
 
-from generative_agents.config import ExperimentDefinition, WorkflowDefinition
+from generative_agents.config import ExperimentDefinition
+from generative_agents.config.schema import REQUIRED_ATOMIC_SKILLS
+from generative_agents.skills import SkillRegistry
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     Asset,
     ExperimentRevision,
-    ExperimentWorkflow,
     Run,
     RunEvent,
-    WorkflowFunctionRecord,
 )
 
 from .context import RunPaths
 from .manifest import RunManifestStore, build_manifest_document
-from .capability_snapshot import build_capability_runtime_snapshot
 from .scheduler import ClaimedRun, LocalRunSchedulerRepository
-from .workflow_functions import get_workflow_function
 
 
 @dataclass(slots=True)
@@ -139,36 +137,6 @@ class LocalProcessSupervisor:
             if revision is None or revision.state != "PUBLISHED":
                 raise RuntimeError("claimed Run does not reference a published Revision")
             definition = ExperimentDefinition.model_validate(revision.definition_json)
-            capability_snapshot = build_capability_runtime_snapshot(session, revision)
-            workflows = {
-                row.workflow_key: WorkflowDefinition.model_validate(row.definition_json)
-                for row in session.query(ExperimentWorkflow)
-                .filter(ExperimentWorkflow.revision_id == revision.id)
-                .order_by(ExperimentWorkflow.workflow_key)
-                .all()
-            }
-            custom_operations = {
-                node.operation
-                for workflow in workflows.values()
-                for node in workflow.nodes
-                if node.kind in {"code", "script"}
-                and node.script_mode == "shared"
-                and node.operation
-                and get_workflow_function(node.operation) is None
-            }
-            workflow_functions = {
-                row.function_key: row.source
-                for row in session.query(WorkflowFunctionRecord)
-                .filter(WorkflowFunctionRecord.function_key.in_(custom_operations))
-                .order_by(WorkflowFunctionRecord.function_key)
-                .all()
-            }
-            missing_operations = custom_operations - workflow_functions.keys()
-            if missing_operations:
-                raise RuntimeError(
-                    "published workflow references missing Functions: "
-                    + ", ".join(sorted(missing_operations))
-                )
             assets: list[dict] = []
             for reference in definition.world.assets:
                 digest = reference.asset_hash.removeprefix("sha256:")
@@ -198,11 +166,16 @@ class LocalProcessSupervisor:
                     definition=definition,
                     expected_definition_hash=revision.definition_hash,
                     assets=assets,
-                    workflows=workflows or None,
-                    workflow_functions=workflow_functions,
-                    capability_snapshot=capability_snapshot,
                 )
                 return
+            skill_roots = {
+                definition.engine.brain_skill,
+                *(key.replace("_", "-") for key in REQUIRED_ATOMIC_SKILLS),
+                *self._bound_skill_names(
+                    definition.world.model_dump(mode="json", exclude_none=False)
+                ),
+            }
+            skill_bundle = SkillRegistry().snapshot(skill_roots)
             document = build_manifest_document(
                 run_id=UUID(claimed.run_id),
                 experiment_id=UUID(claimed.experiment_id),
@@ -212,11 +185,23 @@ class LocalProcessSupervisor:
                 code_build_id=self._code_build_id,
                 assets=assets,
                 materialized_at=datetime.now(timezone.utc),
-                workflows=workflows or None,
-                workflow_functions=workflow_functions,
-                capability_snapshot=capability_snapshot,
+                skill_bundle=skill_bundle,
             )
             store.materialize(document)
+
+    @staticmethod
+    def _bound_skill_names(value) -> set[str]:
+        names: set[str] = set()
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key == "skill_name" and isinstance(item, str) and item.strip():
+                    names.add(item.strip().casefold().replace("_", "-"))
+                else:
+                    names.update(LocalProcessSupervisor._bound_skill_names(item))
+        elif isinstance(value, list):
+            for item in value:
+                names.update(LocalProcessSupervisor._bound_skill_names(item))
+        return names
 
     def _spawn(self, claimed: ClaimedRun) -> None:
         log_path = (self._var_dir / claimed.log_path).resolve()

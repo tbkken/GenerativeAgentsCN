@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from datetime import datetime
 from uuid import UUID
 
 from .results import (
@@ -15,6 +16,8 @@ from .results import (
     MemoryDelta,
     MemoryDeltaKind,
     ScheduleRevisionRecord,
+    StepEffectKind,
+    StepEffectRecord,
     StepResult,
     StepResultBuilder,
     deterministic_record_id,
@@ -27,7 +30,13 @@ class StepResultCollector:
     def __init__(self, builder: StepResultBuilder, *, name_to_key: Mapping[str, str]):
         self.builder = builder
         self._name_to_key = dict(name_to_key)
-        self._sequences = {"conversation": 0, "memory": 0, "schedule": 0, "domain": 0}
+        self._sequences = {
+            "conversation": 0,
+            "memory": 0,
+            "schedule": 0,
+            "domain": 0,
+            "effect": 0,
+        }
 
     def capture_agent(
         self,
@@ -98,6 +107,22 @@ class StepResultCollector:
                 ),
             )
         )
+        self._add_effect(
+            StepEffectKind.ACTION_SELECTED,
+            (agent_key,),
+            {
+                "action": self._event_payload(event),
+                "object_event": (
+                    self._event_payload(agent.get_event(False))
+                    if agent.get_event(False) is not None
+                    else None
+                ),
+                "from_coord": list(from_coord),
+                "to_coord": list(to_coord),
+                "location": list(agent.get_tile().get_address()),
+            },
+            key=f"action:{agent_key}",
+        )
         if tuple(from_coord) != to_coord:
             self._add_domain_event(
                 "MOVED",
@@ -106,6 +131,22 @@ class StepResultCollector:
             )
         for raw_event in outcome.get("events") or ():
             self._capture_event(raw_event)
+
+    @staticmethod
+    def _event_payload(event) -> dict | None:
+        if event is None:
+            return None
+        serializer = getattr(event, "to_dict", None)
+        if callable(serializer):
+            return dict(serializer())
+        return {
+            "subject": getattr(event, "subject", None),
+            "predicate": getattr(event, "predicate", None),
+            "object": getattr(event, "object", None),
+            "describe": event.get_describe(),
+            "address": list(getattr(event, "address", ()) or ()),
+            "emoji": getattr(event, "emoji", None),
+        }
 
     @staticmethod
     def _decision_context(
@@ -130,6 +171,7 @@ class StepResultCollector:
         associate = info.get("associate") or {}
         return {
             "perceptions": perceptions,
+            "external_observations": list(info.get("external_observations") or ()),
             "schedule": schedule,
             "action": action,
             # path remains a backwards-compatible alias for the newly planned
@@ -196,11 +238,15 @@ class StepResultCollector:
                 raise ValueError(
                     f"unsupported memory delta kind: {event.get('memory_kind')!r}"
                 ) from exc
+            semantic_event = event.get("event") or {}
+            created_at = event.get("created_at")
+            expires_at = event.get("expires_at")
+            memory_event_id = deterministic_record_id(
+                self.builder.run_id, self.builder.step_no, "memory", str(sequence)
+            )
             self.builder.add_memory_delta(
                 MemoryDelta(
-                    event_id=deterministic_record_id(
-                        self.builder.run_id, self.builder.step_no, "memory", str(sequence)
-                    ),
+                    event_id=memory_event_id,
                     sequence=sequence,
                     agent_key=event["agent_key"],
                     memory_id=event["memory_id"],
@@ -208,8 +254,32 @@ class StepResultCollector:
                     memory_type=event["memory_type"],
                     description=event.get("description"),
                     poignancy=event.get("poignancy"),
+                    source_event_id=(
+                        UUID(event["source_event_id"])
+                        if event.get("source_event_id")
+                        else None
+                    ),
+                    subject=semantic_event.get("subject"),
+                    predicate=semantic_event.get("predicate"),
+                    object=semantic_event.get("object"),
+                    address=tuple(semantic_event.get("address") or event.get("address") or ()),
+                    created_at=(datetime.fromisoformat(created_at) if created_at else None),
+                    expires_at=(datetime.fromisoformat(expires_at) if expires_at else None),
+                    evidence_memory_ids=tuple(event.get("evidence_memory_ids") or ()),
                 )
             )
+            if delta_kind == MemoryDeltaKind.CREATED and semantic_event:
+                self._add_effect(
+                    StepEffectKind.EVENT_PERCEIVED,
+                    (event["agent_key"],),
+                    {
+                        "memory_id": event["memory_id"],
+                        "memory_type": event["memory_type"],
+                        "event": dict(semantic_event),
+                    },
+                    key=f"perceived:{event['agent_key']}:{event['memory_id']}",
+                    source_effect_id=memory_event_id,
+                )
         elif kind == "schedule":
             self._sequences["schedule"] += 1
             sequence = self._sequences["schedule"]
@@ -226,6 +296,82 @@ class StepResultCollector:
                     schedule=tuple(event["schedule"]),
                 )
             )
+        elif kind == "game_object_interaction":
+            location = event.get("location") or ()
+            if isinstance(location, (list, tuple)):
+                location = ":".join(str(segment) for segment in location)
+            common = {
+                "object_key": event["object_key"],
+                "object_name": event["object_name"],
+                "interaction_key": event["interaction_key"],
+                "skill_name": event["skill_name"],
+                "skill_revision": event.get("skill_revision"),
+                "location": str(location),
+                "source_type": "GAME_OBJECT_SKILL",
+                "source_id": event["object_key"],
+            }
+            self._add_domain_event(
+                "GAME_OBJECT_INTERACTION_REQUESTED",
+                (event["agent_key"],),
+                {
+                    **common,
+                    "title": f"{event['object_name']}收到交互请求",
+                    "detail": event["request"],
+                    "request": event["request"],
+                },
+            )
+            self._add_domain_event(
+                "GAME_OBJECT_SKILL_RESPONDED",
+                (event["agent_key"],),
+                {
+                    **common,
+                    "title": f"{event['object_name']}返回外部信息",
+                    "detail": event["response"],
+                    "request": event["request"],
+                    "response": event["response"],
+                    "agent_decision": event["agent_decision"],
+                    "skill_trace": list(event.get("trace") or ()),
+                },
+            )
+            self._add_effect(
+                StepEffectKind.SKILL_EXECUTED,
+                (event["agent_key"],),
+                {
+                    "input_text": event["request"],
+                    "output_text": event["response"],
+                    "trace": list(event.get("trace") or ()),
+                    "source_type": "GAME_OBJECT_SKILL",
+                    "source_id": event["object_key"],
+                },
+                key=(
+                    f"skill:{event['agent_key']}:{event['object_key']}:"
+                    f"{event['interaction_key']}"
+                ),
+                skill_name=event["skill_name"],
+                skill_revision=event.get("skill_revision"),
+            )
+
+        elif kind == "skill_execution":
+            self._add_effect(
+                StepEffectKind.SKILL_EXECUTED,
+                (event["agent_key"],),
+                {
+                    "output_text": event.get("output_text"),
+                    "execution_source": event.get("execution_source"),
+                    "source_type": "AGENT_COGNITION",
+                },
+                key=(
+                    f"skill:{event['agent_key']}:{event['skill_name']}:"
+                    f"{self._sequences['effect'] + 1}"
+                ),
+                skill_name=event["skill_name"],
+                skill_revision=event.get("skill_revision"),
+            )
+
+    def capture_event(self, event: Mapping) -> None:
+        """Capture a side effect emitted by a run-scoped Skill service."""
+
+        self._capture_event(event)
 
     def _add_domain_event(self, event_type: str, agent_keys, payload) -> None:
         self._sequences["domain"] += 1
@@ -239,6 +385,36 @@ class StepResultCollector:
                 event_type=event_type,
                 agent_keys=tuple(sorted(agent_keys)),
                 payload=payload,
+            )
+        )
+
+    def _add_effect(
+        self,
+        kind: StepEffectKind,
+        agent_keys,
+        payload,
+        *,
+        key: str,
+        source_effect_id: UUID | None = None,
+        skill_name: str | None = None,
+        skill_revision: str | None = None,
+    ) -> None:
+        self._sequences["effect"] += 1
+        self.builder.add_effect(
+            StepEffectRecord(
+                effect_id=deterministic_record_id(
+                    self.builder.run_id,
+                    self.builder.step_no,
+                    "effect",
+                    key,
+                ),
+                sequence=self._sequences["effect"],
+                kind=kind,
+                agent_keys=tuple(sorted(agent_keys)),
+                payload=payload,
+                source_effect_id=source_effect_id,
+                skill_name=skill_name,
+                skill_revision=skill_revision,
             )
         )
 

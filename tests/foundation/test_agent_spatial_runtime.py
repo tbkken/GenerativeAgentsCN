@@ -62,3 +62,67 @@ def test_maze_never_falls_back_to_an_unrelated_random_address():
         maze.get_address_tiles(["test", "unknown", "room", "object"])
 
     assert caught.value.code == "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
+
+
+def test_system_map_object_level_is_available_to_legacy_game_object_runtime():
+    maze = Maze(
+        {
+            "world": "system-map",
+            "size": [1, 1],
+            "tile_size": 32,
+            "tile_address_keys": ["world", "sector", "arena", "object"],
+            "tiles": [
+                {
+                    "coord": [0, 0],
+                    "collision": False,
+                    "address": [
+                        "system-map",
+                        "street",
+                        "crosswalk",
+                        "traffic-light",
+                    ],
+                }
+            ],
+        },
+        logging.getLogger("test-system-map-object-alias"),
+        random.Random(1),
+    )
+
+    tile = maze.tile_at((0, 0))
+    assert tile.address == [
+        "system-map",
+        "street",
+        "crosswalk",
+        "traffic-light",
+    ]
+    assert tile.has_address("object")
+    assert tile.has_address("game_object")
+    assert tile.get_address("object") == [
+        "system-map",
+        "street",
+        "crosswalk",
+        "traffic-light",
+    ]
+    assert tile.get_address("game_object") == tile.get_address("object")
+
+
+def test_editor_partial_address_does_not_duplicate_world_root():
+    maze = Maze(
+        {
+            "world": "system-map",
+            "size": [1, 1],
+            "tile_size": 32,
+            "tile_address_keys": ["world", "sector", "arena", "object"],
+            "tiles": [
+                {
+                    "coord": [0, 0],
+                    "collision": False,
+                    "address": ["system-map", "street", "crosswalk"],
+                }
+            ],
+        },
+        logging.getLogger("test-system-map-partial-address"),
+        random.Random(1),
+    )
+
+    assert maze.tile_at((0, 0)).address == ["system-map", "street", "crosswalk"]

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect Chat Planing"
+  short_description: "Run the Reflect Chat Planing agent skill"
+  default_prompt: "Use $reflect-chat-planing to handle the current agent context and return the result directly."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Object Response Decision"
+  short_description: "根据物件返回的外部信息决定等待或继续"
+  default_prompt: "使用 $decide-game-object-response 根据 Game Object 的响应决定下一步。"

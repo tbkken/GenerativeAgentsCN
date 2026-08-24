@@ -1,4 +1,4 @@
-"""Canonical Prompt variable paths for workflow-owned LLM nodes."""
+"""Canonical variable paths used inside atomic Skill instruction templates."""
 
 from __future__ import annotations
 

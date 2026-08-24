@@ -111,7 +111,6 @@ def test_publication_validation_keeps_incomplete_blank_draft_editable():
     assert {item.code for item in report.errors} >= {
         "NO_ENABLED_AGENT",
         "MODEL_NOT_RESOLVED",
-        "PROMPT_EMPTY",
         "WORLD_EMPTY",
     }
 

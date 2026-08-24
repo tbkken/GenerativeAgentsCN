@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import REQUIRED_PROMPT_KEYS, make_blank_definition
+from generative_agents.config.schema import make_blank_definition
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.services import ExperimentService
 
@@ -75,7 +75,4 @@ def publishable_definition() -> ExperimentDefinition:
             },
         }
     ]
-    payload["prompts"] = {
-        key: {"content": f"Prompt {key}"} for key in REQUIRED_PROMPT_KEYS
-    }
     return ExperimentDefinition.model_validate(payload)

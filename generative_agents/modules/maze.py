@@ -12,6 +12,16 @@ class MazeAddressNotFoundError(RuntimeError):
     code = "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
 
 
+_ADDRESS_LEVEL_ALIASES = {
+    # The map workspace persists its deepest hierarchy level as ``object``.
+    # The legacy simulation runtime calls the same level ``game_object``.
+    # Keep both public contracts valid at the Tile boundary so editor-built
+    # maps do not need to rewrite their immutable published definitions.
+    "game_object": "object",
+    "object": "game_object",
+}
+
+
 class Tile:
     def __init__(
         self,
@@ -25,6 +35,13 @@ class Tile:
         self.coord = coord
         self.address = [world]
         if address:
+            address = list(address)
+            # Editor-v2 stores a complete hierarchy path, including the world,
+            # while legacy runtime maps store only the levels below it.  Strip
+            # the duplicated root at this adapter boundary before building the
+            # runtime address indexes.
+            if address and address[0] == world:
+                address = address[1:]
             self.address += address
         self.address_keys = address_keys
         self.address_map = dict(zip(address_keys[: len(self.address)], self.address))
@@ -82,12 +99,17 @@ class Tile:
         return u_events
 
     def has_address(self, key):
-        return key in self.address_map
+        if key in self.address_map:
+            return True
+        return _ADDRESS_LEVEL_ALIASES.get(key) in self.address_map
 
     def get_address(self, level=None, as_list=True):
         level = level or self.address_keys[-1]
+        requested_level = level
+        if level not in self.address_keys:
+            level = _ADDRESS_LEVEL_ALIASES.get(level, level)
         assert level in self.address_keys, "Can not find {} from {}".format(
-            level, self.address_keys
+            requested_level, self.address_keys
         )
         pos = self.address_keys.index(level) + 1
         if as_list:
@@ -126,8 +148,14 @@ class Maze:
         ]
         for tile_definition in config["tiles"]:
             x, y = tile_definition["coord"]
+            # Public-map editors may persist presentation metadata such as the
+            # palette ``tile`` key beside runtime fields.  Keep the Maze
+            # boundary explicit so editor extensions cannot leak unexpected
+            # keyword arguments into the runtime Tile contract.
             tile_attributes = {
-                key: value for key, value in tile_definition.items() if key != "coord"
+                key: tile_definition[key]
+                for key in ("address", "collision")
+                if key in tile_definition
             }
             self.tiles[y][x] = Tile(
                 (x, y), config["world"], address_keys, **tile_attributes

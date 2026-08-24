@@ -26,6 +26,7 @@ from generative_agents.persistence.models import (
     RunResultSummary,
     RunScheduleRevision,
     RunStep,
+    RunStepEffect,
 )
 
 from .frame_store import StoredFrame
@@ -140,6 +141,30 @@ class SqliteResultProjector:
                 )
             )
             session.flush()
+            wire_effects = {
+                item["effect_id"]: item for item in result.to_dict().get("effects", ())
+            }
+            for effect in result.effects:
+                wire = wire_effects[str(effect.effect_id)]
+                session.add(
+                    RunStepEffect(
+                        run_id=run.id,
+                        effect_id=str(effect.effect_id),
+                        step_no=result.step_no,
+                        sequence_no=effect.sequence,
+                        virtual_time=result.virtual_time,
+                        effect_type=effect.kind.value,
+                        primary_agent_key=(effect.agent_keys[0] if effect.agent_keys else None),
+                        agent_keys_json=list(effect.agent_keys),
+                        payload_json=dict(wire.get("payload") or {}),
+                        source_effect_id=(
+                            str(effect.source_effect_id) if effect.source_effect_id else None
+                        ),
+                        skill_name=effect.skill_name,
+                        skill_revision=effect.skill_revision,
+                        call_id=str(effect.call_id) if effect.call_id else None,
+                    )
+                )
             forced_agent_keys = {
                 key
                 for conversation in result.conversations
@@ -384,10 +409,11 @@ class SqliteResultProjector:
                         description=delta.description,
                         poignancy=delta.poignancy,
                         created_step=result.step_no,
-                        created_at=result.virtual_time,
+                        created_at=delta.created_at or result.virtual_time,
                         last_accessed_step=result.step_no,
                         last_accessed_at=result.virtual_time,
-                        evidence_node_ids_json=[],
+                        expires_at=delta.expires_at,
+                        evidence_node_ids_json=list(delta.evidence_memory_ids),
                     )
                 )
             agent_summary = session.get(RunAgentSummary, (run_id, delta.agent_key))

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Chat Check Repeat"
+  short_description: "Run the Generate Chat Check Repeat agent skill"
+  default_prompt: "Use $generate-chat-check-repeat to handle the current agent context and return the result directly."

@@ -15,19 +15,13 @@ def _asset_by_key(client: TestClient, key: str) -> dict:
     return next(item for item in result.json()["items"] if item["asset_key"] == key)
 
 
-def _capability_by_key(client: TestClient, key: str) -> dict:
-    result = client.get(f"/api/v1/capabilities?q={key}&page_size=100")
-    assert result.status_code == 200, result.text
-    return next(item for item in result.json()["items"] if item["capability_key"] == key)
-
-
 def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         response = client.get("/api/v1/spatial-assets?page_size=100")
         assert response.status_code == 200, response.text
         builtins = [item for item in response.json()["items"] if item["is_builtin"]]
-        assert len(builtins) == 7
+        assert len(builtins) == 9
         assert {item["asset_kind"] for item in builtins} == {
             "TILE",
             "OBJECT",
@@ -35,6 +29,9 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
             "MARKING",
         }
         assert all(item["current_published"] for item in builtins)
+        assert {"object-vehicle-gate", "zone-parking-slot"} <= {
+            item["asset_key"] for item in builtins
+        }
         traffic_light = next(
             item for item in builtins if item["asset_key"] == "object-traffic-light"
         )
@@ -49,102 +46,16 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
             "state": "VEHICLE_GREEN",
             "phase": "VEHICLE_GREEN",
         }
-        signal_controller = _capability_by_key(client, "traffic-signal-cycle")
-        attachment = contract["capability_attachments"][0]
-        assert attachment["attachment_key"] == "signal-cycle"
-        assert attachment["capability_revision_id"] == signal_controller[
-            "current_published"
-        ]["id"]
-        assert attachment["output_bindings"] == {
-            "signal_state": "state:${target}:signal"
-        }
-
-
-def test_spatial_asset_can_attach_published_perception_capability(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        base = _asset_by_key(client, "zone-pedestrian-wait")
-        perception = _capability_by_key(client, "spatial-zone-presence")
-        created = client.post(
-            "/api/v1/spatial-assets",
-            json={
-                "name": "Smart pedestrian wait zone",
-                "asset_key": "smart-pedestrian-wait-zone-test",
-                "source_revision_id": base["current_published"]["id"],
-            },
-        )
-        assert created.status_code == 201, created.text
-        asset = created.json()
-        draft = client.get(f"/api/v1/spatial-assets/{asset['id']}/draft").json()
-        contract = deepcopy(draft["contract"])
-        contract["name"] = "Smart pedestrian wait zone"
-        contract["capability_attachments"] = [
+        assert contract["skill_bindings"] == [
             {
-                "attachment_key": "presence-sensor",
-                "capability_revision_id": perception["current_published"]["id"],
-                "capability_bundle_revision_id": None,
-                "parameters": {"entity_types": ["PEDESTRIAN"], "debounce_ms": 200},
-                "enabled": True,
+                "interaction_key": "query-pedestrian-signal",
+                "skill_name": "traffic-signal-state",
+                "description": "查询当前行人是否可以安全通过斑马线",
+                "interaction_radius_m": 2.5,
+                "default_request": "请告诉我当前行人信号，以及现在是否可以过马路。",
             }
         ]
-        saved = client.put(
-            f"/api/v1/spatial-assets/{asset['id']}/draft",
-            json={"lock_version": draft["lock_version"], "contract": contract},
-        )
-        assert saved.status_code == 200, saved.text
-        published = client.post(
-            f"/api/v1/spatial-assets/{asset['id']}/draft/publish",
-            json={
-                "draft_revision_id": draft["id"],
-                "lock_version": saved.json()["lock_version"],
-            },
-        )
-        assert published.status_code == 200, published.text
-        assert published.json()["readonly"] is True
-        assert published.json()["validation"]["valid"] is True
-
-
-def test_spatial_asset_rejects_capability_with_wrong_mount_target(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        base = _asset_by_key(client, "object-traffic-light")
-        walking = _capability_by_key(client, "mobility-continuous-walk")
-        created = client.post(
-            "/api/v1/spatial-assets",
-            json={
-                "name": "Invalid walking signal",
-                "asset_key": "invalid-walking-signal-test",
-                "source_revision_id": base["current_published"]["id"],
-            },
-        ).json()
-        draft = client.get(f"/api/v1/spatial-assets/{created['id']}/draft").json()
-        contract = draft["contract"]
-        contract["capability_attachments"] = [
-            {
-                "attachment_key": "walk-action",
-                "capability_revision_id": walking["current_published"]["id"],
-                "capability_bundle_revision_id": None,
-                "parameters": {"speed_mps": 1.2, "max_acceleration_mps2": 1.0},
-                "enabled": True,
-            }
-        ]
-        saved = client.put(
-            f"/api/v1/spatial-assets/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "contract": contract},
-        )
-        assert saved.status_code == 200, saved.text
-        rejected = client.post(
-            f"/api/v1/spatial-assets/{created['id']}/draft/publish",
-            json={
-                "draft_revision_id": draft["id"],
-                "lock_version": saved.json()["lock_version"],
-            },
-        )
-        assert rejected.status_code == 422
-        codes = {
-            item["code"] for item in rejected.json()["error"]["details"]["errors"]
-        }
-        assert "SPATIAL_CAPABILITY_TARGET_MISMATCH" in codes
+        assert "capability_attachments" not in contract
 
 
 def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(database_url):
@@ -180,7 +91,6 @@ def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(dat
                     "y_m": 8.0,
                     "rotation_degrees": 0,
                     "state_overrides": {"phase": "vehicle-green"},
-                    "capability_parameter_overrides": {},
                 }
             ],
         }
@@ -238,8 +148,9 @@ def test_map_workspace_exposes_spatial_asset_management_and_versioned_import():
     assert 'id="spatialAssetGrid"' in html
     assert 'id="spatialStateVariantList"' in html
     assert 'id="spatialInitialStateList"' in html
-    assert 'id="spatialCapabilityList"' in html
+    assert 'id="spatialCapabilityList"' not in html
     assert "spatial-asset-workspace:add-to-map" in map_javascript
     assert "definition.spatial_scene" in map_javascript
     assert "spatial_asset_revision_id" in map_javascript
-    assert "parameterFields(schema, parameters)" in asset_javascript
+    assert "readStateRows('initial')" in asset_javascript
+    assert "capability_attachments" not in asset_javascript

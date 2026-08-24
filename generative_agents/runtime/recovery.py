@@ -9,7 +9,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 from filelock import FileLock
-from sqlalchemy import delete, update
+from sqlalchemy import delete, select, update
 
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
@@ -24,10 +24,12 @@ from generative_agents.persistence.models import (
     RunEvent,
     RunMemoryEvent,
     RunMessage,
+    RunModelTraceCursor,
     RunRelationshipEdge,
     RunResultSummary,
     RunScheduleRevision,
     RunStep,
+    RunStepEffect,
 )
 
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
@@ -35,12 +37,14 @@ from .context import RunPaths
 from .frame_store import FrameStore, StoredFrame
 from .results import StepResult
 from .sqlite_result_projector import SqliteResultProjector
+from .trace_projector import ModelTraceProjector
 
 
 class RunProjectionRewinder:
     """Rebuild all mutable result views from immutable frames up to one step."""
 
     _PROJECTION_MODELS = (
+        RunStepEffect,
         RunDomainEventAgent,
         RunConversationParticipant,
         RunMessage,
@@ -116,6 +120,31 @@ class RunProjectionRewinder:
                     frame=frame,
                     checkpoint_path=checkpoint_path,
                     allow_reconcile=True,
+                )
+
+            # Trace cursors survive projection rewind because the append-only
+            # JSONL files and usage aggregates are still valid.  Reconcile
+            # their exact per-step totals after RunStep rows have been rebuilt.
+            with self._database.session_factory() as session:
+                trace_cursors = list(
+                    session.scalars(
+                        select(RunModelTraceCursor)
+                        .where(RunModelTraceCursor.run_id == run_id)
+                        .order_by(RunModelTraceCursor.attempt_id)
+                    )
+                )
+                trace_inputs = [
+                    (cursor.attempt_id, cursor.relative_path)
+                    for cursor in trace_cursors
+                ]
+            trace_projector = ModelTraceProjector(
+                self._database, var_dir=self._var_dir
+            )
+            for attempt_id, relative_path in trace_inputs:
+                trace_projector.project(
+                    run_id=run_id,
+                    attempt_id=attempt_id,
+                    relative_path=relative_path,
                 )
 
             now = datetime.now(timezone.utc)

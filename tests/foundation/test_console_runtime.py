@@ -8,6 +8,7 @@ import struct
 import subprocess
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from generative_agents.web import create_app
@@ -35,23 +36,32 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
         assert created.status_code == 201
         shell = client.get("/").text
         script_response = client.get("/static/console/console-api.js")
+        skill_script_response = client.get("/static/console/skill-workspace.js")
+        skill_style_response = client.get("/static/console/skill-workspace.css")
         focus_script_response = client.get("/static/console/modal-focus.js")
         ux_style_response = client.get("/static/console/console-ux.css")
         listing = client.get("/api/v1/experiments").json()
 
     assert script_response.status_code == 200
+    assert skill_script_response.status_code == 200
+    assert skill_script_response.headers["cache-control"] == (
+        "no-cache, must-revalidate"
+    )
+    assert skill_style_response.status_code == 200
     assert focus_script_response.status_code == 200
     assert ux_style_response.status_code == 200
     script = script_response.text
     ux_style = ux_style_response.text
     assert listing["items"][0]["id"] == created.json()["id"]
     assert shell.count('/static/console/console-api.js') == 1
+    assert '/static/console/skill-workspace.js?v=' in shell
+    assert '/static/console/skill-workspace.css?v=' in shell
     assert shell.count('/static/console/modal-focus.js') == 1
     assert shell.count('/static/console/console-ux.css') == 1
     assert "--sidebar-width: 216px" in ux_style
     assert "--text-control: 13px" in ux_style
     assert "max-width: none" in ux_style
-    assert "grid-template-columns: 184px minmax(0, 1fr) 360px" in ux_style
+    assert "grid-template-columns: 200px minmax(480px, 1fr) 300px" in ux_style
     assert 'id="sidebarToggle"' in shell
     assert '<span class="nav-text">实验</span>' in shell
     assert "pageSize: 5" in script
@@ -66,7 +76,89 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     )
 
 
-def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_restore(
+def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
+    root = Path(__file__).resolve().parents[2]
+    static = root / "generative_agents" / "web" / "static"
+    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
+    script = (static / "console-api.js").read_text(encoding="utf-8")
+
+    topbar = shell[shell.index('<header class="topbar">') : shell.index("</header>")]
+    editor_shell_start = shell.index(
+        '<div class="map-editor-shell" id="mapEditorShell"'
+    )
+    editor_tabs_start = shell.index('<nav class="map-editor-tabs"', editor_shell_start)
+    editor_shell_lead = shell[editor_shell_start:editor_tabs_start]
+
+    for element_id in (
+        "mapEditorTopbarContext",
+        "backToMapsBtn",
+        "mapEditorTitle",
+        "mapEditorMeta",
+        "mapEditorState",
+        "mapAutosaveStatus",
+        "mapEditorActions",
+        "saveMapBtn",
+        "publishMapBtn",
+    ):
+        assert f'id="{element_id}"' in topbar
+        assert f'id="{element_id}"' not in editor_shell_lead
+    assert "syncMapEditorTopbar" in script
+    assert "document.body.classList.toggle('map-editor-mode', active)" in script
+
+
+def test_crowd_editor_identity_and_publish_actions_share_the_global_topbar():
+    root = Path(__file__).resolve().parents[2]
+    static = root / "generative_agents" / "web" / "static"
+    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
+    script = (static / "console-api.js").read_text(encoding="utf-8")
+
+    topbar = shell[shell.index('<header class="topbar">') : shell.index("</header>")]
+    editor_shell_start = shell.index(
+        '<div class="crowd-editor-shell" id="crowdEditorShell"'
+    )
+    editor_body_start = shell.index(
+        '<div class="crowd-editor-body">', editor_shell_start
+    )
+    editor_shell_lead = shell[editor_shell_start:editor_body_start]
+
+    for element_id in (
+        "crowdEditorTopbarContext",
+        "backToCrowdsBtn",
+        "crowdEditorTitle",
+        "crowdEditorMeta",
+        "crowdEditorState",
+        "crowdEditorTopbarActions",
+        "manageCrowdAgentsBtn",
+        "saveCrowdBtn",
+        "publishCrowdBtn",
+    ):
+        assert f'id="{element_id}"' in topbar
+        assert f'id="{element_id}"' not in editor_shell_lead
+    assert "const crowdActive =" in script
+    assert "document.body.classList.toggle('crowd-editor-mode', crowdActive)" in script
+
+
+def test_console_ui_font_uses_sidebar_typography_as_the_global_baseline():
+    root = Path(__file__).resolve().parents[2]
+    static = root / "generative_agents" / "web" / "static"
+    ux_style = (static / "console-ux.css").read_text(encoding="utf-8")
+    map_style = (static / "map-workspace.css").read_text(encoding="utf-8")
+    crowd_style = (static / "crowd-workspace.css").read_text(encoding="utf-8")
+
+    assert "--sans: var(--font)" in ux_style
+    assert "body {\n  font-family: var(--font);" in ux_style
+    assert "button,\ninput,\nselect,\ntextarea {\n  font-family: var(--font);" in ux_style
+    assert "#mapEditorMeta { color: var(--muted); font: 10px/1.3 var(--font);" in map_style
+    assert "font-family: var(--font);\n  font-size: 12px;" in map_style
+    assert "system-ui" not in map_style
+    assert ".me2-node-copy strong { font-size: 12px;" in map_style
+    assert ".me2-form-section .control { font-size: 12px;" in map_style
+    assert ".crowd-editor-shell { font-size:12px; }" in crowd_style
+    assert ".crowd-editor-shell .control { font-size:12px; }" in crowd_style
+
+
+@pytest.mark.skip(reason="the graph workflow editor was intentionally removed")
+def test_removed_prompt_workspace_was_a_self_contained_workflow_editor(
     database_url,
 ):
     app = create_app(database_url=database_url, supervisor_enabled=False)
@@ -80,6 +172,7 @@ def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_resto
     assert style_response.status_code == 200
     assert console_response.status_code == 200
     editor = editor_response.text
+    style = style_response.text
     console = console_response.text
     shell_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', shell))
     lookups = set(re.findall(r"\$\('([A-Za-z0-9_-]+)'\)", editor))
@@ -121,7 +214,18 @@ def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_resto
     assert "新建流程" not in shell
     assert "Prompt 套件说明" not in shell
     assert "function enableDrag" in editor
+    assert "data-node-drag-handle" in editor
+    assert "if (drag.moved && !editorState.readonly) setDirty(true)" in editor
     assert "function enableCanvasPan" in editor
+    assert "function enableMinimapPan" in editor
+    assert "async function openBrain" in editor
+    assert "async function openExperiment" in editor
+    assert "function openCapability" in editor
+    assert "function refreshViewport" in editor
+    assert "minimap.classList.add('dragging')" in editor
+    assert "cursor:grab" in style
+    assert ".workflow-minimap.dragging { cursor:grabbing; }" in style
+    assert "cursor:crosshair" not in next(line for line in style.splitlines() if line.startswith(".workflow-minimap {"))
     assert "scroller.scrollLeft = pan.scrollLeft - dx" in editor
     assert "autoLayout('horizontal')" in editor
     assert "function handleConnectionClick" in editor
@@ -148,6 +252,49 @@ def test_prompt_workspace_is_a_self_contained_workflow_editor_with_version_resto
     assert node, "Node.js is required for production JavaScript syntax checks"
     subprocess.run(
         [node, "--check", str(Path(__file__).parents[2] / "generative_agents" / "web" / "static" / "workflow-editor.js")],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_skill_workspace_is_file_backed_and_self_contained(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        shell = client.get("/").text
+        script_response = client.get("/static/console/skill-workspace.js")
+        style_response = client.get("/static/console/skill-workspace.css")
+
+    assert script_response.status_code == 200
+    assert style_response.status_code == 200
+    script = script_response.text
+    assert 'id="page-skills"' in shell
+    assert 'id="page-brains"' in shell
+    assert 'id="page-experiment-brain"' in shell
+    assert "/api/v1/skills" in script
+    assert "SKILL.md" in script
+    assert "Scripts 与 MCP" in script
+    assert "使用 Qwen3.8 27B 运行" in script
+    assert "/dependencies" in script
+    assert "/history" in script
+    assert "workflow-editor.js" not in shell
+    assert "brain-workspace.js" not in shell
+    assert "capability-workspace.js" not in shell
+
+    node = shutil.which("node")
+    assert node, "Node.js is required for production JavaScript syntax checks"
+    subprocess.run(
+        [
+            node,
+            "--check",
+            str(
+                Path(__file__).parents[2]
+                / "generative_agents"
+                / "web"
+                / "static"
+                / "skill-workspace.js"
+            ),
+        ],
         check=True,
         capture_output=True,
         text=True,
@@ -630,7 +777,7 @@ def test_chat_output_limit_is_not_presented_as_the_model_context_window():
 
     assert "单次最大输出" in shell
     assert "不是模型的上下文窗口" in shell
-    assert 'id="chatServiceCapability"' in shell
+    assert 'id="chatServiceStatus"' in shell
     assert "result.service?.context_window" in script
     assert "chat.context_window" in script
 

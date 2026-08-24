@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect Focus"
+  short_description: "Run the Reflect Focus agent skill"
+  default_prompt: "Use $reflect-focus to handle the current agent context and return the result directly."

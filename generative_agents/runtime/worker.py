@@ -19,14 +19,14 @@ from generative_agents.config import get_algorithm_profile
 from generative_agents.persistence import create_database
 from generative_agents.persistence.models import Run
 from generative_agents.security import MasterKeyStore, SecretCipher
+from generative_agents.skills import MemoryStream, SkillMCPServer, SnapshotPassiveSkillRuntime
 
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from .commit import FileStepCommitter
 from .context import (
-    MappingPromptRepository,
-    WorkflowPromptRepository,
     RunControl,
     RunPaths,
+    SnapshotSkillInstructionRepository,
     SimulationClock,
     SimulationContext,
 )
@@ -36,7 +36,6 @@ from .model_trace import ModelTraceWriter
 from .scheduler import LocalRunSchedulerRepository
 from .sqlite_result_projector import SqliteResultProjector
 from .trace_projector import ModelTraceProjector
-from .workflow_trace import WorkflowTraceWriter
 
 if TYPE_CHECKING:
     from generative_agents.start import SimulationRunner
@@ -119,6 +118,7 @@ def _install_sqlite_committer(
             state=runner.game.snapshot_state(),
             conversation=runner.game.conversation,
             storage_exporters=runner.game.storage_exporters(),
+            runtime_storage_exporters=runner.game.runtime_storage_exporters(),
         ),
         retention=checkpoint_retention,
     )
@@ -180,7 +180,6 @@ def main(argv=None) -> int:
 
         manifest = RunManifestStore(paths).load_verified()
         definition = manifest.definition
-        capability_snapshot = getattr(manifest, "capability_snapshot", None)
         logger = _logger(args.run_id, definition.simulation.log_level)
         cipher = SecretCipher(MasterKeyStore(var_dir).load_or_create())
         recorder = ModelTraceWriter(
@@ -193,19 +192,9 @@ def main(argv=None) -> int:
         chat_config = definition.models.chat.model_dump(mode="json", exclude_none=False)
         chat_config["api_key"] = _secret_value(definition, "chat", cipher, database)
         embedding_key = _secret_value(definition, "embedding", cipher, database)
-        prompt_contents = {
-            key: prompt.content for key, prompt in definition.prompts.items()
-        }
-        workflow_trace = WorkflowTraceWriter(paths, attempt_id=args.attempt_id)
-        prompts = (
-            WorkflowPromptRepository(
-                prompt_contents,
-                manifest.workflows,
-                function_sources=manifest.workflow_functions,
-                trace_handler=workflow_trace.write,
-            )
-            if manifest.workflows
-            else MappingPromptRepository(prompt_contents)
+        skills = SnapshotSkillInstructionRepository(
+            manifest.skill_bundle,
+            brain=str(manifest.document.get("brain_skill") or definition.engine.brain_skill),
         )
         checkpoint_state, checkpoint_conversation, attempt_storage = _prepare_attempt_state(
             database,
@@ -216,14 +205,20 @@ def main(argv=None) -> int:
             stride_minutes=definition.simulation.stride_minutes,
         )
         start_time = (
-            definition.simulation.start_time
-            if capability_snapshot is not None
-            else (
-                datetime.fromisoformat(checkpoint_state["virtual_time"])
-                + timedelta(minutes=definition.simulation.stride_minutes)
-                if checkpoint_state is not None
-                else definition.simulation.start_time
-            )
+            datetime.fromisoformat(checkpoint_state["virtual_time"])
+            + timedelta(minutes=definition.simulation.stride_minutes)
+            if checkpoint_state is not None
+            else definition.simulation.start_time
+        )
+        simulation_clock = SimulationClock(start_time)
+        memory_stream = MemoryStream(
+            attempt_storage.parent
+            / "runtime-storage"
+            / "skill-memory"
+            / "memory.sqlite",
+            run_id=args.run_id,
+            attempt_id=args.attempt_id,
+            clock=lambda: simulation_clock.get_date(),
         )
         context = SimulationContext(
             run_id=args.run_id,
@@ -232,10 +227,10 @@ def main(argv=None) -> int:
             attempt_id=args.attempt_id,
             definition_hash=manifest.document["definition_hash"],
             algorithm=get_algorithm_profile(definition.engine.algorithm_version),
-            clock=SimulationClock(start_time),
+            clock=simulation_clock,
             random=random.Random(definition.simulation.random_seed),
             paths=paths,
-            prompts=prompts,
+            skills=skills,
             models=ModelFactoryRegistry(
                 chat_config,
                 recorder,
@@ -244,39 +239,28 @@ def main(argv=None) -> int:
             ),
             control=control,
             logger=logger,
+            passive_skills=SnapshotPassiveSkillRuntime(manifest.skill_bundle),
+            memory_stream=memory_stream,
+            skill_mcp=SkillMCPServer(memory_stream),
             metadata={
                 "model_trace": recorder,
                 "manifest_hash": manifest.manifest_hash,
-                "execution_mode": (
-                    "CAPABILITY_COMPOSED"
-                    if capability_snapshot is not None
-                    else "LEGACY_TOWN"
-                ),
+                "execution_mode": "SKILL_BRAIN",
+                "brain_skill": skills.brain,
             },
         )
-        if capability_snapshot is not None:
-            from .capability_simulation import build_capability_runner
+        # Keep the expensive world engine import behind the active heartbeat.
+        # Its cognitive calls are now resolved from the selected file-backed brain.
+        from generative_agents.start import build_runner
 
-            runner = build_capability_runner(
-                context,
-                capability_snapshot,
-                workflows=manifest.workflows,
-                workflow_functions=manifest.workflow_functions,
-                checkpoint_state=checkpoint_state,
-                checkpoint_interval_steps=definition.simulation.checkpoint_interval_steps,
-            )
-        else:
-            # Keep the expensive legacy engine import behind the active heartbeat.
-            from generative_agents.start import build_runner
-
-            runner = build_runner(
-                context,
-                definition,
-                embedding_api_key=embedding_key,
-                checkpoint_state=checkpoint_state,
-                checkpoint_conversation=checkpoint_conversation,
-                storage_root=attempt_storage,
-            )
+        runner = build_runner(
+            context,
+            definition,
+            embedding_api_key=embedding_key,
+            checkpoint_state=checkpoint_state,
+            checkpoint_conversation=checkpoint_conversation,
+            storage_root=attempt_storage,
+        )
         runner.completed_steps = args.start_step - 1
         _install_sqlite_committer(
             runner,
@@ -390,6 +374,16 @@ def _prepare_attempt_state(
                 if not agent_dir.is_dir() or agent_dir.is_symlink():
                     raise RuntimeError("checkpoint storage contains an unsafe member")
                 shutil.copytree(agent_dir, storage_root / agent_dir.name)
+        source_runtime_storage = checkpoint.path / "runtime-storage"
+        if source_runtime_storage.exists():
+            target_runtime_storage = attempt_root / "runtime-storage"
+            for storage_dir in source_runtime_storage.iterdir():
+                if not storage_dir.is_dir() or storage_dir.is_symlink():
+                    raise RuntimeError(
+                        "checkpoint runtime storage contains an unsafe member"
+                    )
+                target_runtime_storage.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(storage_dir, target_runtime_storage / storage_dir.name)
     return state, conversation, storage_root
 
 

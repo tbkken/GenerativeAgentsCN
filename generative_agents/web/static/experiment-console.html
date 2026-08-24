@@ -440,18 +440,6 @@
     .summary-cell span { display: block; color: var(--muted); font-size: 9px; }
     .summary-cell strong { display: block; margin-top: 4px; font-size: 11px; font-family: var(--mono); }
 
-    .prompt-layout { display: grid; grid-template-columns: 248px minmax(0,1fr); overflow: hidden; min-height: 640px; }
-    .prompt-list { border-right: 1px solid var(--line); background: #fafcfb; }
-    .prompt-list-head { padding: 16px; border-bottom: 1px solid var(--line); }
-    .prompt-list-head strong { display: block; font-size: 11px; }
-    .prompt-list-head span { color: var(--muted); font-size: 9px; }
-    .prompt-group { padding: 13px 10px 5px; color: var(--muted-2); font-size: 8px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
-    .prompt-item { display: flex; width: calc(100% - 12px); min-height: 38px; align-items: center; justify-content: space-between; margin: 2px 6px; padding: 0 10px; border: 0; border-radius: 7px; background: transparent; color: #50615a; text-align: left; font-family: var(--mono); font-size: 9px; cursor: pointer; }
-    .prompt-item:hover { background: #f1f5f3; }
-    .prompt-item.active { background: var(--teal-soft); color: var(--teal-2); font-weight: 700; }
-    .prompt-item i { width: 5px; height: 5px; border-radius: 50%; background: #91c677; opacity: 0; }
-    .prompt-item.changed i { opacity: 1; }
-    .prompt-editor { display: flex; min-width: 0; flex-direction: column; }
     .editor-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
     .editor-head strong { display: block; font-family: var(--mono); font-size: 11px; }
     .editor-head span { color: var(--muted); font-size: 9px; }
@@ -1010,8 +998,7 @@
       .two-col, .advanced-grid, .content-tab-panel .panel-columns, .overview-release-details .panel-columns { grid-template-columns: 1fr; }
       .content-tabs { gap: 18px; padding: 0 16px; }
       .content-tab-panel { min-height: 260px; padding: 18px; }
-      .prompt-layout { grid-template-columns: 190px minmax(0,1fr); }
-      .unsaved, .top-actions .btn:first-of-type { display: none; }
+      .unsaved, .experiment-actions .btn:first-of-type { display: none; }
       .hub-hero-metric { display: none; }
       .experiment-card { grid-template-columns: 1fr 34px; }
       .experiment-params { border-top: 1px solid var(--line); grid-column: 1/2; }
@@ -1032,8 +1019,6 @@
       .revision-meta { display: none; }
       .isolation-flow { grid-template-columns: 1fr; }
       .flow-arrow { transform: rotate(90deg); min-height: 20px; }
-      .prompt-layout { grid-template-columns: 1fr; }
-      .prompt-list { max-height: 220px; overflow-y: auto; border-right: 0; border-bottom: 1px solid var(--line); }
       .table-head, .agent-row { grid-template-columns: 28px minmax(160px,1fr) 76px 34px; }
       .table-head > :nth-child(3), .agent-row > :nth-child(3), .table-head > :nth-child(4), .agent-row > :nth-child(4) { display: none; }
       .toolbar { align-items: stretch; flex-direction: column; }
@@ -1071,13 +1056,10 @@
       .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
     }
   </style>
-  <link rel="stylesheet" href="/static/console/workflow-editor.css?v=20260812g" />
-  <link rel="stylesheet" href="/static/console/brain-workspace.css?v=20260812c" />
-  <link rel="stylesheet" href="/static/console/crowd-workspace.css?v=20260812k" />
-  <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260812a" />
-  <link rel="stylesheet" href="/static/console/capability-workspace.css?v=20260812a" />
-  <link rel="stylesheet" href="/static/console/scenario-workspace.css?v=20260813a" />
-  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260812b" />
+  <link rel="stylesheet" href="/static/console/crowd-workspace.css?v=20260823b" />
+  <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260823d" />
+  <link rel="stylesheet" href="/static/console/skill-workspace.css?v=20260823c" />
+  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260823a" />
 </head>
 <body class="hub-mode">
   <div class="app-shell">
@@ -1097,7 +1079,7 @@
         <button class="nav-item" data-page="maps"><span class="nav-icon">▧</span><span class="nav-text">地图</span></button>
         <button class="nav-item" data-page="brains"><span class="nav-icon">⌬</span><span class="nav-text">大脑</span></button>
         <button class="nav-item" data-page="crowds"><span class="nav-icon">◉</span><span class="nav-text">人群</span></button>
-        <button class="nav-item" data-page="capabilities"><span class="nav-icon">◇</span><span class="nav-text">能力</span></button>
+        <button class="nav-item" data-page="skills"><span class="nav-icon">◇</span><span class="nav-text">技能</span></button>
       </nav>
 
       <div class="nav-label experiment-scope">当前实验</div>
@@ -1105,9 +1087,8 @@
         <button class="nav-item" data-page="overview"><span class="nav-icon">◫</span><span class="nav-text">实验概览</span></button>
         <button class="nav-item" data-page="results"><span class="nav-icon">◈</span><span class="nav-text">实验结果</span><span class="nav-count" id="navRunCount"></span></button>
         <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">Agent 配置</span><span class="nav-count" id="navAgentCount"></span></button>
-        <button class="nav-item" data-page="scenario"><span class="nav-icon">⌘</span><span class="nav-text">场景装配</span></button>
         <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型服务</span><span class="nav-count"></span></button>
-        <button class="nav-item" data-page="prompts"><span class="nav-icon">¶</span><span class="nav-text">大脑编排</span><span class="nav-count"></span></button>
+        <button class="nav-item" data-page="experiment-brain"><span class="nav-icon">¶</span><span class="nav-text">实验大脑</span><span class="nav-count"></span></button>
         <button class="nav-item" data-page="world"><span class="nav-icon">⌗</span><span class="nav-text">世界与地图</span></button>
         <button class="nav-item" data-page="advanced"><span class="nav-icon">⌘</span><span class="nav-text">行为参数</span></button>
       </nav>
@@ -1117,22 +1098,60 @@
       <header class="topbar">
         <div class="experiment-title">
           <button class="back-to-hub" id="backToHub" aria-label="返回实验列表">‹</button>
-          <div class="experiment-title-stack">
-            <div class="experiment-title-line"><strong id="topbarTitle">实验中心</strong><span class="result-duration-meta" id="resultDurationMeta" hidden><span id="resultDurationLabel">实际耗时</span><strong id="resultDurationMetric">—</strong></span><span class="draft-pill" id="statusPill" hidden>草稿</span></div>
+          <div class="experiment-title-stack" id="defaultTopbarContext">
+            <div class="experiment-title-line">
+              <strong id="topbarTitle">实验中心</strong>
+              <span class="result-duration-meta" id="resultDurationMeta" hidden><span id="resultDurationLabel">实际耗时</span><strong id="resultDurationMetric">—</strong></span><span class="draft-pill" id="statusPill" hidden>草稿</span>
+            </div>
             <div class="experiment-header-meta" id="experimentHeaderMeta" hidden>
               <div class="header-meta-field"><span>负责人</span><span class="header-meta-value" id="experimentOwnerMeta">未设置</span></div>
               <div class="header-meta-field tags"><span>标签</span><span class="header-meta-value" id="experimentTagsMeta">未设置</span></div>
             </div>
           </div>
+          <nav class="map-editor-context" id="mapEditorTopbarContext" aria-label="地图面包屑" hidden>
+            <button type="button" class="map-breadcrumb-link" id="backToMapsBtn">地图列表</button>
+            <span class="map-breadcrumb-separator" aria-hidden="true">/</span>
+            <div class="map-editor-title-copy">
+              <div class="map-editor-title-line">
+                <strong id="mapEditorTitle">地图编辑器</strong>
+                <span class="map-state draft" id="mapEditorState">草稿</span>
+              </div>
+              <span id="mapEditorMeta">正在载入地图草稿…</span>
+            </div>
+          </nav>
+          <nav class="crowd-editor-context" id="crowdEditorTopbarContext" aria-label="人群面包屑" hidden>
+            <button type="button" class="crowd-breadcrumb-link" id="backToCrowdsBtn">人群列表</button>
+            <span class="crowd-breadcrumb-separator" aria-hidden="true">/</span>
+            <div class="crowd-editor-title-copy">
+              <div class="crowd-editor-title-line">
+                <strong id="crowdEditorTitle">人群编辑器</strong>
+                <span class="map-state draft" id="crowdEditorState">草稿</span>
+              </div>
+              <span id="crowdEditorMeta">正在载入人群 Revision…</span>
+            </div>
+          </nav>
+          <nav class="skill-editor-context" id="skillEditorTopbarContext" aria-label="技能面包屑" hidden>
+            <button type="button" class="skill-breadcrumb-link" id="skillEditorBack">技能列表</button>
+            <span class="skill-breadcrumb-separator" aria-hidden="true">/</span>
+            <div class="skill-editor-title-copy">
+              <div class="skill-editor-title-line">
+                <strong id="skillEditorTitle">Skill</strong>
+                <span class="skill-editor-kind" id="skillEditorKind">ATOMIC SKILL</span>
+              </div>
+              <span id="skillEditorDescription"></span>
+            </div>
+          </nav>
         </div>
         <div class="top-actions">
           <div class="hub-actions" id="hubActions">
+            <a class="btn" href="/demos/two-day-commute?autoplay=1" id="commuteDemoBtn">演示配置流程</a>
+            <a class="btn" href="/demos/map-configuration?autoplay=1" id="mapConfigurationDemoBtn" hidden>地图配置演示</a>
             <button class="btn" id="operationHistoryBtn">操作历史</button>
             <button class="btn btn-primary" id="createExperimentBtn">＋ 新建实验</button>
             <button class="btn btn-primary" id="createMapBtn" hidden>＋ 新建地图</button>
             <button class="btn btn-primary" id="createBrainBtn" hidden>＋ 新建大脑</button>
             <button class="btn btn-primary" id="createCrowdBtn" hidden>＋ 新建人群</button>
-            <button class="btn btn-primary" id="createCapabilityBtn" hidden>＋ 新建能力资产</button>
+            <button class="btn btn-primary" id="createSkillBtn" hidden>＋ 新建 Skill</button>
           </div>
           <div class="experiment-actions" id="experimentActions" hidden>
             <span class="unsaved" id="unsaved" hidden><i class="unsaved-dot"></i><span>有未保存更改</span></span>
@@ -1143,6 +1162,20 @@
             </div>
             <button class="btn" id="cloneBtn">复制实验</button>
             <button class="btn btn-primary" id="saveBtn">保存草稿</button>
+          </div>
+          <div class="map-editor-actions" id="mapEditorActions" hidden>
+            <span class="map-autosave-status" id="mapAutosaveStatus" data-state="saved" role="status" aria-live="polite">草稿已保存</span>
+            <button class="btn" id="saveMapBtn">保存草稿</button>
+            <button class="btn btn-primary" id="publishMapBtn">发布版本</button>
+          </div>
+          <div class="crowd-editor-top-actions" id="crowdEditorTopbarActions" hidden>
+            <button class="btn" id="manageCrowdAgentsBtn">Agent 管理</button>
+            <button class="btn" id="saveCrowdBtn">保存草稿</button>
+            <button class="btn btn-primary" id="publishCrowdBtn">发布版本</button>
+          </div>
+          <div class="skill-editor-top-actions" id="skillEditorTopbarActions" hidden>
+            <span class="skill-revision" id="skillEditorRevision">REV —</span>
+            <button class="btn btn-primary" id="skillSave">保存 SKILL.md</button>
           </div>
           <div class="result-header-actions" id="resultHeaderActions" hidden>
             <button class="btn btn-primary" id="runContinueBtn" hidden>继续执行</button>
@@ -1214,27 +1247,10 @@
             <div class="map-catalog-grid" id="mapCatalogGrid"><div class="empty-state"><strong>正在加载地图…</strong></div></div>
             <div class="list-footer" id="mapListFooter" hidden>
               <span id="mapCatalogCount">正在加载</span>
-              <div class="pagination" id="mapPagination" aria-label="地图列表分页">
-                <button class="page-button" id="mapPrev" aria-label="上一页">‹</button>
-                <div class="pagination-pages" id="mapPages"></div>
-                <button class="page-button" id="mapNext" aria-label="下一页">›</button>
-              </div>
             </div>
           </div>
 
           <div class="map-editor-shell" id="mapEditorShell" hidden>
-            <div class="map-editor-heading">
-              <div>
-                <button class="btn btn-sm" id="backToMapsBtn">← 返回地图</button>
-                <h1 id="mapEditorTitle">地图编辑器</h1>
-                <p id="mapEditorMeta">正在载入地图草稿…</p>
-              </div>
-              <div class="map-editor-actions">
-                <span class="map-state draft" id="mapEditorState">草稿</span>
-                <button class="btn" id="saveMapBtn">保存草稿</button>
-                <button class="btn btn-primary" id="publishMapBtn">发布版本</button>
-              </div>
-            </div>
             <nav class="map-editor-tabs" role="tablist" aria-label="地图编辑内容">
               <button class="map-editor-tab active" data-map-tab="edit" role="tab" aria-selected="true">地图画布</button>
               <button class="map-editor-tab" data-map-tab="semantics" role="tab" aria-selected="false">空间语义</button>
@@ -1265,6 +1281,12 @@
                 </div>
               </div>
               <aside class="map-inspector map-editor-panel active" data-map-panel="edit semantics">
+                <section class="map-build-guide" id="mapBuildGuide" hidden>
+                  <div class="map-build-guide-head"><div><span>SCENE BUILD GUIDE</span><h3 id="mapBuildGuideTitle">地图构建向导</h3></div><strong id="mapBuildGuideProgress">0 / 0</strong></div>
+                  <div class="map-build-guide-list" id="mapBuildGuideList"></div>
+                  <button class="btn btn-primary btn-sm" id="applyMapBlueprintStep" style="width:100%">应用下一步</button>
+                  <p id="mapBuildGuideHint">每一步都会写入当前地图 Draft。</p>
+                </section>
                 <h3>Tile 属性</h3>
                 <div class="map-coordinate" data-map-coordinate>尚未选择格子</div>
                 <div class="field"><label>区域 Sector</label><input class="control" data-map-address="0" placeholder="例如：商业区" /></div>
@@ -1279,7 +1301,7 @@
                 <div class="map-revision-list" data-map-revisions></div>
               </section>
               <section class="map-editor-panel spatial-assets-panel" data-map-panel="assets">
-                <div class="spatial-assets-heading"><div><span class="capability-eyebrow">REUSABLE MAP COMPONENTS</span><h2>画块与物件管理</h2><p>视觉、物理语义、感知和能力一起发布为版本；地图只引用明确 Revision。</p></div><button class="btn btn-primary btn-sm" id="createSpatialAssetBtn">＋ 新建空间资产</button></div>
+                <div class="spatial-assets-heading"><div><span class="eyebrow">REUSABLE MAP COMPONENTS</span><h2>画块与物件管理</h2><p>视觉、物理语义和初始状态一起发布为版本；地图只引用明确 Revision。</p></div><button class="btn btn-primary btn-sm" id="createSpatialAssetBtn">＋ 新建空间资产</button></div>
                 <div class="spatial-assets-toolbar"><div class="filter-tabs" role="tablist" aria-label="空间资产类型"><button class="filter-tab active" data-spatial-kind="">全部</button><button class="filter-tab" data-spatial-kind="TILE">画块</button><button class="filter-tab" data-spatial-kind="OBJECT">物件</button><button class="filter-tab" data-spatial-kind="ZONE">区域</button><button class="filter-tab" data-spatial-kind="MARKING">标线</button><button class="filter-tab" data-spatial-kind="NETWORK">网络</button></div><div class="search"><input class="control" id="spatialAssetSearch" placeholder="搜索画块、物件或稳定键…" /></div></div>
                 <div class="spatial-asset-create" id="spatialAssetCreate" hidden><select class="control" id="newSpatialAssetKind"><option value="TILE">画块</option><option value="OBJECT">物件</option><option value="ZONE">感知区域</option><option value="MARKING">道路标线</option><option value="NETWORK">通行网络</option></select><input class="control" id="newSpatialAssetName" placeholder="资产名称" /><input class="control" id="newSpatialAssetKey" placeholder="稳定键，例如 smart-traffic-light" /><button class="btn" id="cancelCreateSpatialAsset">取消</button><button class="btn btn-primary" id="confirmCreateSpatialAsset">创建草稿</button></div>
                 <div class="spatial-asset-grid" id="spatialAssetGrid"><div class="empty-state"><strong>正在加载空间资产…</strong></div></div>
@@ -1289,7 +1311,6 @@
                   <div class="spatial-asset-editor-grid">
                     <section><h3>外观与身份</h3><div class="form-grid"><div class="field"><label for="spatialAssetEditName">名称</label><input class="control spatial-dirty" id="spatialAssetEditName" /></div><div class="field"><label for="spatialAssetEditKey">稳定键</label><input class="control" id="spatialAssetEditKey" readonly /></div><div class="field"><label for="spatialAssetEditKind">类型</label><select class="control spatial-dirty" id="spatialAssetEditKind"><option value="TILE">画块</option><option value="OBJECT">物件</option><option value="ZONE">区域</option><option value="MARKING">标线</option><option value="NETWORK">网络</option></select></div><div class="field"><label for="spatialAppearanceMode">外观</label><select class="control spatial-dirty" id="spatialAppearanceMode"><option value="COLOR">颜色</option><option value="EMOJI">Emoji</option><option value="IMAGE">图片</option><option value="SPRITE">精灵图</option></select></div><div class="field" id="spatialColorField"><label for="spatialAppearanceColor">颜色</label><input type="color" id="spatialAppearanceColor" class="spatial-dirty" /></div><div class="field" id="spatialEmojiField" hidden><label for="spatialAppearanceEmoji">Emoji</label><input class="control spatial-dirty" id="spatialAppearanceEmoji" maxlength="16" /></div><div class="field span-2" id="spatialAssetPathField" hidden><label for="spatialAppearancePath">资源路径</label><input class="control spatial-dirty" id="spatialAppearancePath" placeholder="assets/maps/traffic-light.png" /></div><div class="field span-2"><label for="spatialAssetSummary">用途说明</label><textarea class="control spatial-dirty" id="spatialAssetSummary"></textarea></div></div><div class="spatial-state-builder"><header><div><h3>状态外观</h3><p>例如红灯、黄灯、绿灯；能力改变 state 后自动切换显示。</p></div><button class="btn btn-sm" id="addSpatialStateVariant">＋ 状态</button></header><div id="spatialStateVariantList"></div></div><div class="spatial-state-builder"><header><div><h3>初始状态</h3><p>以键值方式提供给挂载能力，不需要编写 JSON。</p></div><button class="btn btn-sm" id="addSpatialInitialState">＋ 状态字段</button></header><div id="spatialInitialStateList"></div></div></section>
                     <section><h3>物理与语义</h3><label class="map-check-row"><input type="checkbox" class="spatial-dirty" id="spatialCollision" /> 参与碰撞</label><label class="map-check-row"><input type="checkbox" class="spatial-dirty" id="spatialPresenceEvents" /> 产生进入/离开感知事件</label><div class="field"><label for="spatialSurface">表面语义</label><select class="control spatial-dirty" id="spatialSurface"><option value="GENERIC">通用</option><option value="ROAD">道路</option><option value="SIDEWALK">人行道</option><option value="CROSSWALK">斑马线</option><option value="BUILDING">建筑</option><option value="GRASS">草地</option><option value="WATER">水域</option></select></div><div class="field"><label for="spatialTraversal">允许通行</label><select class="control spatial-dirty" id="spatialTraversal" multiple size="5"><option value="ALL">全部</option><option value="PEDESTRIAN">行人</option><option value="CAR">汽车</option><option value="BICYCLE">自行车</option><option value="MOTORCYCLE">摩托车</option></select></div><div class="field"><label for="spatialSpeedLimit">限速（m/s，可留空）</label><input class="control spatial-dirty" type="number" min="0.1" step="0.1" id="spatialSpeedLimit" /></div></section>
-                    <section class="spatial-capability-section"><header><div><h3>感知与能力挂载</h3><p>区域感知、信号状态机或脚本控制都复用能力中心的发布版本。</p></div><button class="btn btn-sm" id="addSpatialCapability">＋ 挂载能力</button></header><div id="spatialCapabilityList"></div></section>
                   </div>
                 </div>
               </section>
@@ -1297,51 +1318,7 @@
           </div>
         </section>
 
-        <section class="page" id="page-brains">
-          <div class="brain-catalog-shell" id="brainCatalogShell">
-            <div class="toolbar brain-catalog-toolbar">
-              <div class="filter-tabs" id="brainStatusFilters" role="tablist" aria-label="大脑状态筛选">
-                <button class="filter-tab active" data-brain-filter="all">全部</button>
-                <button class="filter-tab" data-brain-filter="draft">编辑中</button>
-                <button class="filter-tab" data-brain-filter="published">已发布</button>
-              </div>
-              <div class="search"><input class="control" id="brainSearch" placeholder="搜索大脑名称或稳定键…" /></div>
-            </div>
-            <div class="brain-catalog-grid" id="brainCatalogGrid"><div class="empty-state"><strong>正在加载大脑…</strong></div></div>
-            <div class="list-footer" id="brainListFooter" hidden>
-              <span id="brainCatalogCount">正在加载</span>
-              <div class="pagination" id="brainPagination" aria-label="大脑列表分页">
-                <button class="page-button" id="brainPrev" aria-label="上一页">‹</button>
-                <div class="pagination-pages" id="brainPages"></div>
-                <button class="page-button" id="brainNext" aria-label="下一页">›</button>
-              </div>
-            </div>
-          </div>
-          <div class="brain-editor-shell" id="brainEditorShell" hidden>
-            <header class="brain-editor-heading">
-              <div><button class="btn btn-sm" id="backToBrainsBtn">← 返回大脑</button><h1 id="brainEditorTitle">大脑编辑器</h1><p id="brainEditorMeta">正在载入大脑 Revision…</p></div>
-              <div class="brain-editor-actions"><span class="map-state draft" id="brainEditorState">草稿</span><button class="btn" id="saveBrainBtn">保存草稿</button><button class="btn btn-primary" id="publishBrainBtn">发布版本</button></div>
-            </header>
-            <nav class="brain-editor-tabs" role="tablist" aria-label="大脑编辑内容"><button class="active" data-brain-editor-tab="capabilities" role="tab" aria-selected="true">能力装配</button><button data-brain-editor-tab="workflows" role="tab" aria-selected="false">流程与 Prompt</button></nav>
-            <div class="brain-editor-panel active" data-brain-editor-panel="capabilities">
-              <div class="brain-capability-shell">
-                <section class="brain-capability-overview">
-                  <div><span class="capability-eyebrow">BRAIN COMPOSITION</span><h2>按能力构建大脑</h2><p>把日程与状态、感知与记忆、行动与空间、社交和反思作为可复用能力包挂载；原有 5 个流程通过兼容适配器继续工作。</p></div>
-                  <div class="brain-capability-settings">
-                    <div class="field"><label for="brainReasoningInterval">默认推理间隔</label><div class="input-unit"><input class="control brain-capability-control" id="brainReasoningInterval" type="number" min="100" max="86400000" step="100" value="60000" /><span>毫秒</span></div></div>
-                    <label class="agent-extension-switch"><input class="brain-capability-control" id="brainLegacyAdapter" type="checkbox" checked />启用旧流程兼容适配器</label>
-                  </div>
-                </section>
-                <section class="brain-capability-mounts">
-                  <header><div><h2>能力挂载</h2><p>一个能力包可按类别挂载到大脑；参数在当前 Brain Revision 中锁定。</p></div><button class="btn btn-sm" id="addBrainCapabilityMount">＋ 挂载能力包</button></header>
-                  <div id="brainCapabilityMountList"><div class="empty-state"><span>正在加载可用能力包…</span></div></div>
-                  <div class="capability-validation" id="brainCapabilityValidation"></div>
-                </section>
-              </div>
-            </div>
-            <div class="brain-editor-panel" data-brain-editor-panel="workflows"><div id="brainWorkflowMount"></div></div>
-          </div>
-        </section>
+        <section class="page" id="page-brains"></section>
 
         <section class="page" id="page-crowds">
           <div class="crowd-catalog-shell" id="crowdCatalogShell">
@@ -1364,10 +1341,6 @@
             </div>
           </div>
           <div class="crowd-editor-shell" id="crowdEditorShell" hidden>
-            <header class="crowd-editor-heading">
-              <div><button class="btn btn-sm" id="backToCrowdsBtn">← 返回人群</button><h1 id="crowdEditorTitle">人群编辑器</h1><p id="crowdEditorMeta">正在载入人群 Revision…</p></div>
-              <div class="crowd-editor-actions"><span class="map-state draft" id="crowdEditorState">草稿</span><button class="btn" id="manageCrowdAgentsBtn">Agent 管理</button><button class="btn" id="saveCrowdBtn">保存草稿</button><button class="btn btn-primary" id="publishCrowdBtn">发布版本</button></div>
-            </header>
             <div class="crowd-editor-body">
               <section class="crowd-definition-panel">
                 <div class="section-title"><div><h2>人群定义</h2><p>人群保存一组公共 Agent 的版本引用；初始位置与空间随各 Agent Revision 锁定。</p></div></div>
@@ -1385,166 +1358,14 @@
           </div>
         </section>
 
-        <section class="page" id="page-capabilities">
-          <div class="capability-catalog-shell" id="capabilityCatalogShell">
-            <div class="capability-hero">
-              <div>
-                <span class="capability-eyebrow">COMPOSABLE SIMULATION</span>
-                <h1>能力中心</h1>
-                <p>把感知、决策、行动、控制器和观测器做成可发布资产，再通过类型化连线组合为场景能力包。</p>
-              </div>
-              <div class="capability-hero-stats" id="capabilityHeroStats"></div>
-            </div>
-            <div class="toolbar capability-toolbar">
-              <div class="filter-tabs" role="tablist" aria-label="能力资产类型">
-                <button class="filter-tab active" data-capability-asset="capability">原子能力</button>
-                <button class="filter-tab" data-capability-asset="bundle">能力包</button>
-                <button class="filter-tab" data-capability-asset="tool">工具资产</button>
-              </div>
-              <div class="capability-toolbar-right">
-                <select class="control compact" id="capabilityKindFilter" aria-label="能力类型">
-                  <option value="">全部类型</option><option value="SENSOR">感知</option><option value="DECISION">决策</option><option value="ACTION">行动</option><option value="CONTROLLER">控制器</option><option value="OBSERVER">观测器</option><option value="ADAPTER">适配器</option>
-                </select>
-                <div class="search"><input class="control" id="capabilitySearch" placeholder="搜索名称、稳定键或接口…" /></div>
-              </div>
-            </div>
-            <div class="capability-create-panel" id="capabilityCreatePanel" hidden>
-              <div><strong>创建能力资产</strong><p>先确定资产边界；创建后在编辑器中配置端口、触发策略和实现。</p></div>
-              <div class="capability-create-fields">
-                <select class="control" id="newCapabilityAssetType"><option value="capability">原子能力</option><option value="bundle">能力包</option><option value="tool">工具资产</option></select>
-                <input class="control" id="newCapabilityName" placeholder="资产名称" maxlength="120" />
-                <input class="control" id="newCapabilityKey" placeholder="稳定键，例如 traffic-light-control" maxlength="80" />
-                <select class="control" id="newBundleBaseCapability" hidden aria-label="能力包的首个能力"></select>
-                <select class="control" id="newToolKind" hidden aria-label="工具类型"><option value="CAR">汽车</option><option value="BICYCLE">自行车</option><option value="MOTORCYCLE">摩托车</option><option value="ACCESS_CARD">门禁卡</option><option value="DEVICE">设备</option><option value="OTHER">其他</option></select>
-                <button class="btn" id="cancelCreateCapability">取消</button>
-                <button class="btn btn-primary" id="confirmCreateCapability">创建草稿</button>
-              </div>
-            </div>
-            <div class="capability-catalog-grid" id="capabilityCatalogGrid"><div class="empty-state"><strong>正在加载能力资产…</strong></div></div>
-            <div class="list-footer" id="capabilityListFooter" hidden><span id="capabilityCatalogCount"></span></div>
-          </div>
-
-          <div class="capability-editor-shell" id="capabilityEditorShell" hidden>
-            <header class="capability-editor-heading">
-              <div><button class="btn btn-sm" id="backToCapabilitiesBtn">← 返回能力中心</button><h1 id="capabilityEditorTitle">能力编辑器</h1><p id="capabilityEditorMeta"></p></div>
-              <div class="capability-editor-actions"><span class="map-state draft" id="capabilityEditorState">草稿</span><button class="btn" id="saveCapabilityBtn">保存草稿</button><button class="btn btn-primary" id="publishCapabilityBtn">发布版本</button></div>
-            </header>
-
-            <div class="capability-editor-body" id="atomicCapabilityEditor">
-              <aside class="capability-editor-nav" aria-label="能力编辑步骤">
-                <button class="active" data-capability-section="identity"><span>01</span>定义与挂载</button>
-                <button data-capability-section="ports"><span>02</span>输入与输出</button>
-                <button data-capability-section="runtime"><span>03</span>触发与实现</button>
-                <button data-capability-section="observability"><span>04</span>权限与观测</button>
-                <button data-capability-section="audit"><span>05</span>校验与版本</button>
-              </aside>
-              <main class="capability-form-canvas">
-                <section class="capability-form-section active" data-capability-panel="identity">
-                  <div class="section-title"><div><h2>定义与挂载</h2><p>一个能力只解决一种可复用问题；挂载目标决定它可用于人、工具、地图物件或交互。</p></div></div>
-                  <div class="form-grid">
-                    <div class="field"><label for="capabilityEditName">名称</label><input class="control capability-dirty" id="capabilityEditName" /></div>
-                    <div class="field"><label for="capabilityEditKey">稳定键</label><input class="control" id="capabilityEditKey" readonly /></div>
-                    <div class="field"><label for="capabilityEditKind">能力类型</label><select class="control capability-dirty" id="capabilityEditKind"><option value="SENSOR">感知</option><option value="DECISION">决策</option><option value="ACTION">行动</option><option value="CONTROLLER">控制器</option><option value="OBSERVER">观测器</option><option value="ADAPTER">适配器</option></select></div>
-                    <div class="field"><label for="capabilityEditInterfaces">提供的接口</label><input class="control capability-dirty" id="capabilityEditInterfaces" placeholder="逗号分隔，例如 zone-presence-sensor" /></div>
-                    <div class="field span-2"><label for="capabilityEditSummary">用途说明</label><textarea class="control capability-dirty" id="capabilityEditSummary"></textarea></div>
-                  </div>
-                  <div class="field"><label>可挂载目标</label><div class="capability-check-grid" id="capabilityTargetChecks"></div></div>
-                  <div class="capability-guidance"><strong>产品约束</strong><span>车、自行车与门禁卡是工具实体；人仍是 Agent。能力通过挂载与关系控制它们，而不是把每个工具做成一种 Agent。</span></div>
-                </section>
-
-                <section class="capability-form-section" data-capability-panel="ports">
-                  <div class="section-title"><div><h2>输入与输出</h2><p>端口的数据类型必须匹配，能力包发布时会校验缺失输入、重复连接与错误连线。</p></div></div>
-                  <div class="capability-port-columns">
-                    <section><header><div><h3>输入端口</h3><p>能力从环境或其他能力接收什么。</p></div><button class="btn btn-sm" id="addCapabilityInput">＋ 输入</button></header><div class="capability-port-list" id="capabilityInputList"></div></section>
-                    <section><header><div><h3>输出端口</h3><p>能力产生状态、事件、指令或指标。</p></div><button class="btn btn-sm" id="addCapabilityOutput">＋ 输出</button></header><div class="capability-port-list" id="capabilityOutputList"></div></section>
-                  </div>
-                </section>
-
-                <section class="capability-form-section" data-capability-panel="runtime">
-                  <div class="section-title"><div><h2>触发与实现</h2><p>实例可选择能力声明的触发策略；高频运动用固定间隔，认知决策可由事件或较低频率触发。</p></div></div>
-                  <div class="form-grid">
-                    <div class="field"><label for="capabilityTriggerMode">默认触发</label><select class="control capability-dirty" id="capabilityTriggerMode"><option value="FIXED_INTERVAL">固定间隔</option><option value="EVENT">事件</option><option value="STATE_CHANGE">状态变化</option><option value="DECISION">认知决策</option><option value="MANUAL">手动</option></select></div>
-                    <div class="field" id="capabilityIntervalField"><label for="capabilityIntervalMs">间隔</label><div class="input-unit"><input class="control capability-dirty" id="capabilityIntervalMs" type="number" min="1" value="1000" /><span>毫秒</span></div></div>
-                    <div class="field" id="capabilityEventTypesField" hidden><label for="capabilityEventTypes">监听事件</label><input class="control capability-dirty" id="capabilityEventTypes" placeholder="event/zone_entered, event/card_scanned" /></div>
-                    <div class="field"><label for="capabilityImplementationKind">实现方式</label><select class="control capability-dirty" id="capabilityImplementationKind"><option value="BUILTIN">系统内置</option><option value="STATE_MACHINE">状态机</option><option value="WORKFLOW">工作流</option><option value="RULES">规则</option><option value="PYTHON">Python 沙箱</option><option value="LLM">LLM 决策</option></select></div>
-                    <div class="field span-2" id="capabilityEntrypointField"><label for="capabilityEntrypoint">系统入口</label><input class="control capability-dirty" id="capabilityEntrypoint" placeholder="例如 traffic.signal-controller.v1" /></div>
-                    <div class="field span-2" id="capabilitySourceField" hidden><label for="capabilitySource">规则或 Python 脚本</label><textarea class="control capability-code capability-dirty" id="capabilitySource" spellcheck="false"></textarea></div>
-                  </div>
-                  <section class="capability-parameter-builder"><header><div><h3>可配置参数</h3><p>场景实例只填写这些参数，不修改能力实现。</p></div><button class="btn btn-sm" id="addCapabilityParameter">＋ 参数</button></header><div id="capabilityParameterList"></div></section>
-                </section>
-
-                <section class="capability-form-section" data-capability-panel="observability">
-                  <div class="section-title"><div><h2>权限与观测</h2><p>脚本和空间控制必须显式授权；记录策略决定实验结果里能否解释一次能力运行。</p></div></div>
-                  <div class="field"><label for="capabilityPermissions">权限</label><input class="control capability-dirty" id="capabilityPermissions" placeholder="逗号分隔，例如 read-world-position, execute-python" /></div>
-                  <div class="capability-toggle-grid">
-                    <label><input type="checkbox" id="capabilityRecordInputs" class="capability-dirty" />记录输入</label>
-                    <label><input type="checkbox" id="capabilityRecordOutputs" class="capability-dirty" />记录输出</label>
-                    <label><input type="checkbox" id="capabilityRecordState" class="capability-dirty" />记录内部状态</label>
-                  </div>
-                </section>
-
-                <section class="capability-form-section" data-capability-panel="audit">
-                  <div class="section-title"><div><h2>校验与版本</h2><p>发布后版本不可变；实验与能力包只引用明确的 Revision。</p></div></div>
-                  <div class="capability-validation" id="capabilityValidation"></div>
-                  <div class="capability-revision-list" id="capabilityRevisionList"></div>
-                </section>
-              </main>
-            </div>
-
-            <div class="capability-bundle-editor" id="capabilityBundleEditor" hidden>
-              <section class="capability-bundle-meta">
-                <div class="form-grid"><div class="field"><label for="bundleEditName">能力包名称</label><input class="control bundle-dirty" id="bundleEditName" /></div><div class="field"><label for="bundleEditKey">稳定键</label><input class="control" id="bundleEditKey" readonly /></div><div class="field span-2"><label for="bundleEditSummary">用途说明</label><textarea class="control bundle-dirty" id="bundleEditSummary"></textarea></div></div>
-              </section>
-              <div class="capability-composer">
-                <aside><header><div><h2>能力实例</h2><p>同一能力可挂载多次，并配置不同频率和目标。</p></div><button class="btn btn-sm" id="addBundleInstance">＋ 实例</button></header><div id="bundleInstanceList"></div></aside>
-                <main><div class="capability-composer-intro"><span>装配画布</span><strong>输出 → 输入</strong><p>连线使用稳定实例键和类型化端口；发布前会检查所有必填输入。</p></div><div class="capability-binding-list" id="bundleBindingList"></div><button class="btn btn-sm" id="addBundleBinding">＋ 添加连线</button></main>
-                <aside class="capability-bundle-audit"><h2>装配检查</h2><div id="bundleValidation"></div><h3>版本</h3><div id="bundleRevisionList"></div></aside>
-              </div>
-            </div>
-            <div class="capability-tool-editor" id="capabilityToolEditor" hidden>
-              <section class="capability-bundle-meta">
-                <div class="section-title"><div><h2>工具实体定义</h2><p>工具不是 Agent；它拥有外观、物理上限、状态与能力挂载，Agent 只通过授权关系使用它。</p></div></div>
-                <div class="form-grid">
-                  <div class="field"><label for="toolEditName">工具名称</label><input class="control tool-dirty" id="toolEditName" /></div>
-                  <div class="field"><label for="toolEditKey">稳定键</label><input class="control" id="toolEditKey" readonly /></div>
-                  <div class="field"><label for="toolEditKind">类型</label><select class="control tool-dirty" id="toolEditKind"><option value="CAR">汽车</option><option value="BICYCLE">自行车</option><option value="MOTORCYCLE">摩托车</option><option value="ACCESS_CARD">门禁卡</option><option value="DEVICE">设备</option><option value="OTHER">其他</option></select></div>
-                  <div class="field"><label for="toolEditEmoji">Emoji 外观</label><input class="control tool-dirty" id="toolEditEmoji" maxlength="8" /></div>
-                  <div class="field span-2"><label for="toolEditSummary">用途说明</label><textarea class="control tool-dirty" id="toolEditSummary"></textarea></div>
-                  <div class="field"><label for="toolEditTags">标签</label><input class="control tool-dirty" id="toolEditTags" placeholder="逗号分隔，例如 vehicle, road-vehicle" /></div>
-                  <div class="field"><label for="toolEditInterfaces">提供接口</label><input class="control tool-dirty" id="toolEditInterfaces" placeholder="逗号分隔，例如 drivable, occupiable" /></div>
-                </div>
-              </section>
-              <section class="capability-tool-motion">
-                <div class="section-title"><div><h2>移动与物理上限</h2><p>车辆必须声明移动网络和速度上限；卡片或设备保持为不可移动。</p></div></div>
-                <div class="form-grid">
-                  <div class="field"><label for="toolMobilityMode">移动网络</label><select class="control tool-dirty" id="toolMobilityMode"><option value="NONE">不可移动</option><option value="ROAD">道路网络</option><option value="BICYCLE_NETWORK">自行车网络</option><option value="PEDESTRIAN_NETWORK">步行网络</option></select></div>
-                  <div class="field"><label for="toolMaxSpeed">最高速度</label><div class="input-unit"><input class="control tool-dirty" id="toolMaxSpeed" type="number" min="0" step="0.1" /><span>m/s</span></div></div>
-                  <div class="field"><label for="toolMaxAcceleration">最大加速度</label><div class="input-unit"><input class="control tool-dirty" id="toolMaxAcceleration" type="number" min="0" step="0.1" /><span>m/s²</span></div></div>
-                  <div class="field"><label for="toolMaxDeceleration">最大减速度</label><div class="input-unit"><input class="control tool-dirty" id="toolMaxDeceleration" type="number" min="0" step="0.1" /><span>m/s²</span></div></div>
-                  <div class="field"><label for="toolCapacity">容量</label><input class="control tool-dirty" id="toolCapacity" type="number" min="1" max="500" /></div>
-                  <label class="agent-extension-switch"><input class="tool-dirty" type="checkbox" id="toolOperatorRequired" />需要 Agent 操作</label>
-                </div>
-              </section>
-              <section class="capability-tool-attachments">
-                <header><div><h2>工具能力挂载</h2><p>把速度控制、刷卡事件等发布能力挂到工具实体；参数属于当前工具 Revision。</p></div><button class="btn btn-sm" id="addToolCapabilityAttachment">＋ 挂载能力</button></header>
-                <div id="toolCapabilityAttachmentList"></div>
-              </section>
-              <section class="capability-tool-audit">
-                <div class="section-title"><div><h2>状态与版本检查</h2><p>初始状态使用 JSON；发布时校验能力目标、参数与工具物理约束。</p></div></div>
-                <div class="field"><label for="toolInitialState">初始状态 JSON</label><textarea class="control capability-code tool-dirty" id="toolInitialState" spellcheck="false"></textarea></div>
-                <div class="capability-validation" id="toolValidation"></div>
-                <div class="capability-revision-list" id="toolRevisionList"></div>
-              </section>
-            </div>
-          </div>
-        </section>
+        <section class="page" id="page-skills"></section>
 
         <section class="page" id="page-overview">
           <div class="workspace-notice" id="workspaceNotice" hidden><span class="readonly-tag">只读</span><strong>当前版本已发布</strong><button type="button" class="help-tip edge" id="workspaceNoticeHelp" aria-label="已发布版本为只读；如需调整，请创建新的修订草稿。" data-tooltip="已发布版本为只读；如需调整，请创建新的修订草稿。">?</button></div>
 
           <div class="stats overview-stats">
             <div class="stat"><div class="stat-label" id="overviewAgentLabel">参与 Agent</div><div class="stat-value"><span id="statAgentCount">25</span><small id="overviewAgentUnit">个角色</small></div><div class="stat-foot" id="overviewAgentMetaStatus">等待检查</div></div>
-            <div class="stat"><div class="stat-label" id="overviewPromptLabel">Prompt 套件</div><div class="stat-value"><span id="overviewPromptCount">0</span><small id="overviewPromptMeta">个定义</small></div><div class="stat-foot" id="overviewPromptFoot">随 Revision 独立保存</div></div>
+            <div class="stat"><div class="stat-label" id="overviewSkillLabel">SKILL 大脑</div><div class="stat-value"><span id="overviewSkillCount">已连接</span><small id="overviewSkillMeta">stanford-town-brain</small></div><div class="stat-foot" id="overviewSkillFoot">运行时从文件加载并随 Run 固化</div></div>
             <div class="stat"><div class="stat-label">模拟世界</div><div class="stat-value"><span id="overviewTileCount">0</span><small id="overviewWorldUnit">tiles</small></div><div class="stat-foot" id="overviewWorldMeta">世界待配置</div></div>
             <div class="stat"><div class="stat-label">最近运行</div><div class="stat-value"><span id="overviewLatestStep">—</span><small id="overviewLatestUnit">步</small></div><div class="stat-foot with-code"><span id="overviewLatestMeta">尚未运行</span><code id="overviewLatestRunCode"></code></div></div>
           </div>
@@ -1553,6 +1374,9 @@
             <div class="overview-panel">
               <div class="panel-intro"><div><h2 id="overviewDefinitionTitle">实验定义</h2><p id="overviewDefinitionDescription">配置虚拟时间、运行规模、记录粒度和随机复现边界。</p></div><span class="chip amber" id="overviewConfigStatus">等待检查</span></div>
               <div class="form-grid" id="overviewLegacyDefinitionFields">
+                <div class="field"><label for="experimentNameDraft">实验名称</label><input class="control" id="experimentNameDraft" maxlength="120" /></div>
+                <div class="field" style="grid-column:1/-1"><label for="experimentGoalDraft">实验目标与故事</label><textarea class="control" id="experimentGoalDraft" maxlength="10000" rows="4" placeholder="说明要观察的完整故事、时间范围和预期结果"></textarea></div>
+                <div class="field" style="grid-column:1/-1"><button class="btn" id="saveExperimentMetadata" type="button">保存实验名称与目标</button></div>
                 <div class="field"><label for="startTime">虚拟世界起始时间</label><input class="control dirty-track" id="startTime" type="datetime-local" value="2024-02-13T09:30" /></div>
                 <div class="field"><label for="timezone">时区</label><select class="control dirty-track" id="timezone"><option value="Asia/Shanghai">Asia/Shanghai (UTC+08:00)</option><option value="UTC">UTC</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></div>
                 <div class="field"><label for="stride">单步时间跨度</label><div class="input-unit"><input class="control dirty-track" id="stride" type="number" min="1" value="10" /><span>分钟</span></div></div>
@@ -1560,26 +1384,18 @@
                 <div class="field"><div class="field-label"><label for="recordInterval">状态记录间隔</label><button type="button" class="help-tip" aria-label="状态记录间隔说明" data-tooltip="每经过这段虚拟时间，为 Agent 生成一次状态记录点。间隔越短，回放和问题排查越细致，但结果数据量也越大；它不会改变模拟步进速度。">?</button></div><div class="input-unit"><input class="control dirty-track" id="recordInterval" type="number" min="1" value="30" /><span>分钟</span></div><small class="field-hint">控制 Agent 状态记录点的密度，用于回放和排查；越短记录越细、数据量越大。</small></div>
                 <div class="field"><div class="field-label"><label for="seed">随机种子</label><button type="button" class="help-tip" aria-label="随机种子说明" data-tooltip="固定路径选择、候选位置和失败回退的随机序列。">?</button></div><input class="control dirty-track" id="seed" type="number" value="240213" /></div>
               </div>
-              <div class="form-grid" id="overviewComposedDefinitionFields" hidden>
-                <div class="field"><label>运行模式</label><div class="locked-input" id="overviewExecutionMode">能力组合运行时</div></div>
-                <div class="field"><label>场景总时长</label><div class="locked-input" id="overviewDuration">—</div></div>
-                <div class="field"><label>物理推进间隔</label><div class="locked-input" id="overviewBaseTick">—</div></div>
-                <div class="field"><label>结果快照间隔</label><div class="locked-input" id="overviewSnapshotInterval">—</div></div>
-                <div class="field"><label>能力执行计划</label><div class="locked-input" id="overviewCapabilitySchedule">—</div></div>
-                <div class="field"><label>随机种子</label><div class="locked-input" id="overviewComposedSeed">—</div></div>
-              </div>
               <section class="overview-release">
                 <button class="btn btn-primary btn-block" id="publishBtn">发布版本并启动实验</button>
                 <div class="overview-release-details" id="overviewReleaseDetails" hidden>
-                  <div class="panel-intro"><div><h2>已发布版本</h2><p>本次运行使用的模型、Agent、Prompt、世界和资源已锁定为只读 Revision。</p></div><span class="chip blue" id="overviewRevisionChip">Published Revision</span></div>
+                  <div class="panel-intro"><div><h2>已发布版本</h2><p>本次运行使用的模型、Agent、Skill bundle、世界和资源已锁定为只读 Revision。</p></div><span class="chip blue" id="overviewRevisionChip">Published Revision</span></div>
                   <div class="model-summary">
                     <div class="summary-cell"><span>基于版本</span><strong id="overviewBaseRevision">新实验</strong></div>
                     <div class="summary-cell"><span>配置哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
                     <div class="summary-cell"><span>引擎算法</span><strong id="overviewAlgorithm">ga-cn-v1</strong></div>
                   </div>
                   <div class="panel-columns">
-                    <section class="panel-section"><div class="section-head compact"><div class="section-title"><h2>发布检查</h2><button type="button" class="help-tip" aria-label="发布检查说明" data-tooltip="展示启动该实验时通过的配置检查和留存信息。">?</button></div><span class="chip teal" id="overviewValidationCount">待检查</span></div><div class="checklist"><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>实验 Schema</strong><span>全部字段类型和范围有效</span></div><span class="check-state">通过</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>聊天模型</strong><span id="overviewChatCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Embedding 服务</strong><span id="overviewEmbeddingCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Agent 定义</strong><span id="overviewAgentCheck">0 个角色</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Prompt 变量</strong><span id="overviewPromptCheck">0 个 Prompt</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark warn">!</span><div class="check-copy"><strong>世界快照</strong><span id="overviewWorldCheck">尚未配置</span></div><span class="check-state warn">快照</span></div></div></section>
-                    <section class="panel-section"><h3>配置快照</h3><div class="snapshot-box"><div class="snapshot-id"><span>配置快照</span><code id="overviewSnapshotHash">草稿尚未发布</code></div><div class="snapshot-files"><span>definition.json</span><span id="overviewSnapshotAgents">agents ×0</span><span id="overviewSnapshotPrompts">prompts ×0</span><span>world</span><span>assets.lock</span><span>schema v1</span></div></div></section>
+                    <section class="panel-section"><div class="section-head compact"><div class="section-title"><h2>发布检查</h2><button type="button" class="help-tip" aria-label="发布检查说明" data-tooltip="展示启动该实验时通过的配置检查和留存信息。">?</button></div><span class="chip teal" id="overviewValidationCount">待检查</span></div><div class="checklist"><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>实验 Schema</strong><span>全部字段类型和范围有效</span></div><span class="check-state">通过</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>聊天模型</strong><span id="overviewChatCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Embedding 服务</strong><span id="overviewEmbeddingCheck">尚未配置</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Agent 定义</strong><span id="overviewAgentCheck">0 个角色</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark">✓</span><div class="check-copy"><strong>Skill Runtime</strong><span id="overviewSkillCheck">stanford-town-brain</span></div><span class="check-state">定义</span></div><div class="check-row"><span class="check-mark warn">!</span><div class="check-copy"><strong>世界快照</strong><span id="overviewWorldCheck">尚未配置</span></div><span class="check-state warn">快照</span></div></div></section>
+                    <section class="panel-section"><h3>配置快照</h3><div class="snapshot-box"><div class="snapshot-id"><span>配置快照</span><code id="overviewSnapshotHash">草稿尚未发布</code></div><div class="snapshot-files"><span>definition.json</span><span id="overviewSnapshotAgents">agents ×0</span><span id="overviewSnapshotSkills">skill bundle · immutable</span><span>world</span><span>assets.lock</span><span>schema v1</span></div></div></section>
                   </div>
                 </div>
               </section>
@@ -1768,50 +1584,6 @@
           </div>
         </section>
 
-        <section class="page" id="page-scenario">
-          <div class="scenario-heading">
-            <div><span class="capability-eyebrow">SCENE COMPOSITION</span><h1>场景装配</h1><p>选择版本化模板并绑定 Agent；地图、工具、感知、决策、行动和观测通过公开端口组成同一条执行链。</p></div>
-            <div class="scenario-mode" id="scenarioMode"><span>执行模式</span><strong>正在读取…</strong></div>
-          </div>
-          <div class="scenario-layout">
-            <main class="scenario-main">
-              <section class="card scenario-template-card">
-                <header><div><h2>从场景模板开始</h2><p>模板锁定资源 Revision，但允许为本实验选择角色、时间和公开参数。</p></div><span class="chip teal">Versioned</span></header>
-                <div class="scenario-form-grid">
-                  <div class="field scenario-template-field"><label for="scenarioTemplateSelect">场景模板</label><select class="control" id="scenarioTemplateSelect"><option value="">正在加载模板…</option></select></div>
-                  <div class="scenario-template-summary" id="scenarioTemplateSummary">选择模板后查看它需要的角色和能力。</div>
-                  <div class="scenario-slot-list" id="scenarioActorSlots"></div>
-                  <div class="field"><label for="scenarioDuration">仿真时长</label><div class="input-unit"><input class="control" id="scenarioDuration" type="number" min="100" step="100" value="20000" /><span>ms</span></div></div>
-                  <div class="field"><label for="scenarioSnapshotInterval">结果快照间隔</label><div class="input-unit"><input class="control" id="scenarioSnapshotInterval" type="number" min="10" step="10" value="1000" /><span>ms</span></div></div>
-                </div>
-                <footer><button class="btn" id="scenarioUseLegacy">切回斯坦福小镇模式</button><button class="btn" id="scenarioOpenSaveTemplate">将当前装配保存为模板</button><button class="btn btn-primary" id="scenarioApplyTemplate">应用模板到草稿</button></footer>
-                <div class="scenario-save-template" id="scenarioSaveTemplatePanel" hidden>
-                  <div class="field"><label for="scenarioTemplateName">模板名称</label><input class="control" id="scenarioTemplateName" maxlength="120" placeholder="例如：谨慎型驾驶员 × 冒险型行人" /></div>
-                  <div class="field"><label for="scenarioTemplateDescription">说明</label><input class="control" id="scenarioTemplateDescription" maxlength="2000" placeholder="记录可复用的研究假设和参数边界" /></div>
-                  <div class="scenario-save-actions"><button class="btn btn-sm" id="scenarioCancelSaveTemplate">取消</button><button class="btn btn-sm btn-primary" id="scenarioConfirmSaveTemplate">校验并发布模板</button></div>
-                </div>
-              </section>
-
-              <section class="card scenario-chain-card">
-                <header><div><h2>真实执行链</h2><p>这里展示当前草稿的能力挂载和跨能力通道；缺少生产者或类型不匹配会阻止发布。</p></div><button class="btn btn-sm" id="scenarioValidate">校验执行链</button></header>
-                <div class="scenario-chain-summary" id="scenarioChainSummary"><span>等待场景配置</span></div>
-                <div class="scenario-mount-list" id="scenarioMountList"><div class="empty-state"><strong>尚未装配能力场景</strong></div></div>
-                <div class="scenario-validation" id="scenarioValidation" hidden></div>
-              </section>
-
-              <details class="card scenario-advanced">
-                <summary><div><strong>高级 JSON 配置</strong><span>编辑完整场景装配；仍会经过 Schema、Revision 和通道校验。</span></div></summary>
-                <textarea class="control" id="scenarioAssemblyJson" spellcheck="false"></textarea>
-                <footer><button class="btn btn-primary" id="scenarioSaveJson">保存高级配置</button></footer>
-              </details>
-            </main>
-            <aside class="scenario-aside">
-              <section class="card"><h3>运行预算</h3><div class="scenario-stat-grid" id="scenarioScheduleStats"><div><span>物理 tick</span><strong>—</strong></div><div><span>能力执行</span><strong>—</strong></div><div><span>LLM 决策</span><strong>—</strong></div><div><span>结果快照</span><strong>—</strong></div></div></section>
-              <section class="card scenario-principles"><h3>组合边界</h3><ul><li>Agent 始终是人，车辆是可持有、可驾驶的工具。</li><li>地图物件、工具和 Agent 都只能挂载发布后的能力版本。</li><li>物理更新和 Agent 推理可使用不同频率。</li><li>发布后运行只读取不可变快照，不追随资源最新版本。</li></ul></section>
-            </aside>
-          </div>
-        </section>
-
         <section class="page" id="page-models">
           <div class="page-heading">
             <div><div class="heading-line"><h1>模型服务</h1><button type="button" class="help-tip" aria-label="模型服务说明" data-tooltip="这里保存当前实验的模型连接；发布后解析为明确模型 ID 并锁定。">?</button></div></div>
@@ -1837,7 +1609,7 @@
                 <div class="field"><label>思考模式</label><button class="switch" id="chatThinking" aria-label="切换聊天模型思考模式"></button></div>
                 <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
-              <div class="provider-foot"><span id="chatServiceCapability">服务上下文：发布启动时自动检测</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
+              <div class="provider-foot"><span id="chatServiceStatus">服务上下文：发布启动时自动检测</span><button class="btn btn-sm test-connection" data-kind="聊天模型">测试连接</button></div>
             </div>
             <div class="content-tab-panel" role="tabpanel" data-content-panel="embedding">
               <div class="provider-head"><div class="provider-logo blue">EMB</div><div class="section-title"><strong>记忆 Embedding 模型</strong><button type="button" class="help-tip" aria-label="Embedding 模型用途" data-tooltip="用于记忆索引、相似度检索和关联排序。">?</button></div><span class="connection-status untested" id="embeddingConnectionStatus">未检测</span></div>
@@ -1851,7 +1623,7 @@
                 <div class="field"><label for="embeddingBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="embeddingBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
                 <div class="field" style="grid-column:1/-1"><label for="embeddingSecret">API Key</label><input class="control dirty-track" id="embeddingSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
-              <div class="provider-foot"><span id="embeddingServiceCapability">尚未进行真实连接检测</span><button class="btn btn-sm test-connection" data-kind="Embedding 模型">测试连接</button></div>
+              <div class="provider-foot"><span id="embeddingServiceStatus">尚未进行真实连接检测</span><button class="btn btn-sm test-connection" data-kind="Embedding 模型">测试连接</button></div>
             </div>
             <div class="content-tab-panel" role="tabpanel" data-content-panel="resolution">
               <div class="panel-intro"><div><h2>实验级解析结果</h2><p>auto 会在发布启动时解析为明确模型 ID；运行期间始终使用 Revision 中锁定的模型。</p></div><span class="chip blue">Revision Pinning</span></div>
@@ -1860,79 +1632,7 @@
           </div>
         </section>
 
-        <section class="page" id="page-prompts">
-          <div class="experiment-brain-source" id="experimentBrainSource">
-            <div><strong>大脑模板</strong><span id="experimentBrainSourceMeta">当前实验使用自身大脑编排</span></div>
-            <select class="control" id="experimentBrainSelect" aria-label="选择已发布大脑"><option value="">载入大脑模板…</option></select>
-            <button class="btn btn-sm" id="applyExperimentBrainBtn">使用此大脑</button>
-            <button class="btn btn-sm" id="saveExperimentBrainTemplateBtn">另存为大脑模板</button>
-          </div>
-          <div class="workflow-workspace-tabs">
-            <div class="workflow-tabs" id="workflowTabs" role="tablist" aria-label="大脑编排流程"></div>
-            <span class="workflow-readonly-notice" id="workflowReadonlyNotice" hidden>已发布 Revision · 只读查看</span>
-            <button type="button" class="btn btn-sm" id="workflowMigrateRouterBtn" hidden>迁移为真实路由图</button>
-            <button type="button" class="workflow-manager-button" id="workflowFunctionManagerBtn"><span>ƒ</span> Function 管理</button>
-          </div>
-          <div class="workflow-shell" id="workflowShell" aria-busy="true">
-            <aside class="workflow-palette" aria-label="节点库">
-              <div class="workflow-side-head"><strong>节点库</strong><span>6 个可执行原子节点</span></div>
-              <div class="workflow-palette-body">
-                <section><h2>智能与处理</h2><button type="button" data-workflow-add="llm"><i>✣</i>大模型</button><button type="button" data-workflow-add="code"><i>&lt;/&gt;</i>代码</button></section>
-                <section><h2>逻辑</h2><button type="button" data-workflow-add="selector"><i>⑂</i>选择器</button></section>
-                <section><h2>变量</h2><button type="button" data-workflow-add="variable_assigner"><i>▰</i>变量赋值</button><button type="button" data-workflow-add="variable_aggregator"><i>⋈</i>变量聚合</button></section>
-                <section><h2>复用</h2><button type="button" data-workflow-add="subflow"><i>⌘</i>子工作流</button></section>
-              </div>
-            </aside>
-            <section class="workflow-canvas-column" aria-label="流程画布">
-              <div class="workflow-canvas-bar">
-                <div><strong id="workflowCanvasTitle">等待流程数据</strong><code id="workflowCanvasVersion">—</code><span class="workflow-execution-mode" id="workflowExecutionMode">等待执行语义</span></div>
-                <div class="workflow-canvas-actions">
-                  <input id="workflowNodeSearch" class="workflow-node-search" type="search" placeholder="搜索节点" aria-label="搜索并定位节点" />
-                  <select id="workflowLayoutScope" class="workflow-layout-scope" aria-label="自动布局范围"><option value="all">布局全部</option><option value="unplaced">仅未布局</option></select>
-                  <button type="button" class="workflow-icon-btn" id="workflowLocateStartBtn" aria-label="定位 Start" data-tooltip="定位 Start 节点">▷</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowLocateEndBtn" aria-label="定位 End" data-tooltip="定位 End 节点">▣</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowLocateIssueBtn" aria-label="定位异常" data-tooltip="定位未连接或校验异常节点">!</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowFitBtn" aria-label="适配全部" data-tooltip="让全部节点进入可视区">⊙</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowUndoLayoutBtn" aria-label="撤销布局" data-tooltip="恢复自动布局前的位置" disabled>↩</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowVersionBtn" aria-label="版本记录" data-tooltip="查看并恢复历史版本">↶</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowAutoLayoutBtn" aria-label="纵向自动布局" data-tooltip="按执行顺序从上到下整理节点">↕</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowHorizontalLayoutBtn" aria-label="横向自动布局" data-tooltip="按执行顺序从左到右整理节点">↔</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowTestRunBtn" aria-label="试运行工作流" data-tooltip="用测试输入真实执行节点与连线">▶</button>
-                  <button type="button" class="workflow-icon-btn" id="workflowValidateBtn" aria-label="验证流程" data-tooltip="验证结构、数据契约和 Prompt 放置">✓</button>
-                </div>
-              </div>
-              <div class="workflow-version-popover" id="workflowVersionPopover" hidden><div class="workflow-version-head"><div><strong id="workflowVersionTitle">版本记录</strong><span>每个流程独立保存版本</span></div><button type="button" id="workflowVersionClose" aria-label="关闭">×</button></div><div id="workflowVersionList"></div><p>恢复会立即形成一个新版本，原历史版本保持不变。</p></div>
-              <div class="workflow-canvas-scroller" id="workflowCanvasScroller">
-                <div class="workflow-board-stage" id="workflowBoardStage">
-                  <div class="workflow-board" id="workflowBoard"><svg id="workflowWires" aria-hidden="true"></svg><div id="workflowNodeLayer"></div><div class="workflow-connect-hint" id="workflowConnectHint"><strong>画布操作</strong><span>空白处按住左键拖动画布；点击输出端口连接节点。</span></div><div class="workflow-board-empty" id="workflowBoardEmpty"><strong>正在载入流程</strong><span>画布会显示当前实验 Revision 中的节点。</span></div></div>
-                </div>
-              </div>
-              <div class="workflow-canvas-overview" aria-label="画布导航">
-                <div class="workflow-zoom-controls" role="group" aria-label="画布缩放">
-                  <button type="button" id="workflowZoomOutBtn" aria-label="缩小画布" data-tooltip="缩小画布">−</button>
-                  <button type="button" id="workflowZoomResetBtn" aria-label="恢复 100% 缩放" data-tooltip="恢复 100% 缩放"><span id="workflowZoomLabel">100%</span></button>
-                  <button type="button" id="workflowZoomInBtn" aria-label="放大画布" data-tooltip="放大画布">＋</button>
-                </div>
-                <div class="workflow-minimap" id="workflowMinimap" aria-label="画布缩略图，点击可快速定位"></div>
-              </div>
-            </section>
-            <aside class="workflow-inspector" aria-label="节点配置">
-              <div class="workflow-inspector-head"><small id="workflowInspectorKind">NODE</small><strong id="workflowInspectorTitle">选择一个节点</strong><code id="workflowInspectorId">—</code></div>
-              <div class="workflow-inspector-tabs" role="tablist" aria-label="节点配置页签"><button type="button" data-workflow-panel="config" aria-selected="false">配置</button><button type="button" data-workflow-panel="contract" aria-selected="true">输入输出</button><button type="button" data-workflow-panel="body" aria-selected="false" id="workflowBodyTab">节点</button><button type="button" data-workflow-panel="failure" aria-selected="false">异常</button></div>
-              <div class="workflow-inspector-body" id="workflowInspectorBody"><div class="empty-state"><strong>尚未选择节点</strong></div></div>
-              <div class="workflow-inspector-foot"><button type="button" class="btn btn-sm" id="workflowDeleteNode">删除节点</button><button type="button" class="btn btn-primary btn-sm" id="workflowApplyNode">应用修改</button></div>
-            </aside>
-          </div>
-          <section class="workflow-function-page" id="workflowFunctionPage" hidden aria-labelledby="workflowFunctionTitle">
-            <header class="workflow-function-head">
-              <div><small>GLOBAL FUNCTION REGISTRY</small><h1 id="workflowFunctionTitle">Function 管理</h1><p>系统公共 Function 全局只读；自定义公共 Function 保存在数据库中，可由所有实验和代码节点复用。每项都展示完整源码。</p></div>
-              <div class="workflow-function-head-actions"><button type="button" class="btn btn-primary" id="workflowFunctionCreateBtn">＋ 新建自定义 Function</button><button type="button" class="btn" id="workflowFunctionBackBtn">返回流程设计</button></div>
-            </header>
-            <div class="workflow-function-summary"><strong id="workflowFunctionCount">正在读取注册表</strong><span>自定义公共 Function 的修改会对所有实验可见；节点内联 Function 仍只随所属流程版本保存。</span></div>
-            <div class="workflow-function-editor" id="workflowFunctionEditor" hidden></div>
-            <div class="workflow-function-grid" id="workflowFunctionGrid"></div>
-          </section>
-        </section>
+        <section class="page" id="page-experiment-brain"></section>
 
         <section class="page" id="page-world">
           <div class="page-heading">
@@ -2037,20 +1737,6 @@
     <button data-context-action="restore" hidden>↺ 恢复实验</button>
   </div>
 
-  <div class="modal-backdrop" id="workflowTrialModal" role="dialog" aria-modal="true" aria-labelledby="workflowTrialTitle">
-    <div class="modal wide workflow-trial-dialog">
-      <div class="modal-head"><div><h2 id="workflowTrialTitle">工作流试运行</h2><p>使用确定性 LLM 测试值，真实执行当前未保存画布的节点、端口与分支。</p></div><button class="close" id="workflowTrialClose" aria-label="关闭">×</button></div>
-      <div class="modal-body workflow-trial-body">
-        <div class="workflow-trial-inputs">
-          <div class="field"><label for="workflowTrialInputs">Start 输入（JSON）</label><textarea id="workflowTrialInputs" spellcheck="false"></textarea></div>
-          <div class="field"><label for="workflowTrialLlmOutputs">LLM 测试输出（可选 JSON，key 为 node_id 或 prompt_key）</label><textarea id="workflowTrialLlmOutputs" spellcheck="false">{}</textarea></div>
-        </div>
-        <div class="workflow-trial-result" id="workflowTrialResult"><p>点击“执行试运行”后，这里会显示每个节点的成功、跳过或失败状态。</p></div>
-      </div>
-      <div class="modal-foot"><button class="btn" id="workflowTrialCancel">关闭</button><button class="btn btn-primary" id="workflowTrialExecute">执行试运行</button></div>
-    </div>
-  </div>
-
   <div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal">
       <div class="modal-head"><div class="heading-line"><h2 id="modalTitle">发布版本并启动实验</h2><button type="button" class="help-tip below" aria-label="发布说明" data-tooltip="确认后生成只读 Revision，并在当前机器启动实验。">?</button></div><button class="close" id="closeModal" aria-label="关闭">×</button></div>
@@ -2111,9 +1797,9 @@
           <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="创建后会锁定所选版本；实验内修改不会影响来源资源。">?</button></div>
           <div class="creation-resource-grid">
             <div class="field">
-              <label for="newExperimentBrain">大脑模板</label>
-              <select class="control" id="newExperimentBrain"><option value="">正在加载已发布大脑…</option></select>
-              <small>复制 Prompt 与大脑编排，之后可在实验内独立编辑。</small>
+              <label>大脑 Skill</label>
+              <div class="control" style="height:auto;min-height:42px;padding:9px 11px"><strong>stanford-town-brain</strong></div>
+              <small>固定使用当前文件型大脑 Skill 集合；每次运行都会固化完整 Skill 快照。</small>
             </div>
             <div class="field">
               <label for="newExperimentMap">地图</label>
@@ -2131,7 +1817,7 @@
           <div class="section-title"><h3>确认实验草稿</h3><button type="button" class="help-tip" aria-label="实验草稿说明" data-tooltip="创建后直接进入实验概览；完成校验并发布后才能启动。">?</button></div>
           <div class="create-summary">
             <div class="create-summary-row"><span>实验名称</span><strong id="createSummaryName">未填写</strong></div>
-            <div class="create-summary-row"><span>大脑模板</span><strong id="createSummaryBrain">斯坦福小镇</strong></div>
+            <div class="create-summary-row"><span>大脑 Skill</span><strong id="createSummaryBrain">stanford-town-brain</strong></div>
             <div class="create-summary-row"><span>地图</span><strong id="createSummaryMap">the Ville</strong></div>
             <div class="create-summary-row"><span>人群</span><strong id="createSummaryCrowds">尚未选择</strong></div>
             <div class="create-summary-row"><span>Agent 导入</span><strong id="createSummaryAgents">按名称去重并自动放置</strong></div>
@@ -2163,7 +1849,7 @@
       <div class="modal-body">
         <input id="agentEditKey" type="hidden" />
         <div class="content-workspace" data-content-tabs="agent-editor">
-          <nav class="content-tabs" role="tablist" aria-label="Agent 定义内容"><button class="content-tab active" role="tab" aria-selected="true" data-content-tab="identity">身份</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="traits">特质与计划</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="space">初始位置与空间</button><button class="content-tab" id="agentCapabilityTab" role="tab" aria-selected="false" data-content-tab="capabilities">能力与工具</button></nav>
+          <nav class="content-tabs" role="tablist" aria-label="Agent 定义内容"><button class="content-tab active" role="tab" aria-selected="true" data-content-tab="identity">身份</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="traits">特质与计划</button><button class="content-tab" role="tab" aria-selected="false" data-content-tab="space">初始位置与空间</button></nav>
           <div class="content-tab-panel active" role="tabpanel" data-content-panel="identity">
             <div class="form-grid">
               <div class="field"><label for="agentEditName">显示名称</label><input class="control" id="agentEditName" /></div>
@@ -2188,7 +1874,7 @@
               <div class="field" style="grid-column:1/-1"><label for="agentEditCurrently">当前目标</label><textarea class="control" id="agentEditCurrently"></textarea></div>
             </div>
           </div>
-          <div class="content-tab-panel" role="tabpanel" data-content-panel="traits"><div class="form-grid"><div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div><div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div><div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div><div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div></div></div>
+          <div class="content-tab-panel" role="tabpanel" data-content-panel="traits"><div class="form-grid"><div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div><div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div><div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div><div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div><div class="field" style="grid-column:1/-1"><label for="agentEditGoals">长程目标（每行一条）</label><textarea class="control" id="agentEditGoals" rows="5" placeholder="按故事阶段填写目标；保存后运行时将依次参考这些目标"></textarea></div></div></div>
           <div class="content-tab-panel" role="tabpanel" data-content-panel="space">
             <div class="form-grid">
               <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
@@ -2215,33 +1901,6 @@
                   </div>
                 </section>
               </div>
-            </div>
-          </div>
-          <div class="content-tab-panel" role="tabpanel" data-content-panel="capabilities">
-            <div class="agent-capability-editor">
-              <div class="agent-capability-intro"><div><strong>Agent 始终是人</strong><p>汽车、自行车和门禁卡是 Agent 拥有或可使用的工具；能力包决定这个人会感知、决策和行动什么。</p></div><span class="chip blue">可复用装配</span></div>
-              <section class="agent-extension-section">
-                <header><div><h3>思考频率</h3><p>普通生活 Agent 可降低推理频率；交通运动由能力实例使用更短的执行间隔。</p></div></header>
-                <div class="field"><label for="agentReasoningInterval">Agent 推理间隔</label><div class="input-unit"><input class="control agent-extension-control" id="agentReasoningInterval" type="number" min="100" max="86400000" step="100" value="60000" /><span>毫秒</span></div></div>
-              </section>
-              <section class="agent-extension-section">
-                <header><div><h3>场景能力包</h3><p>给这个人装配发布后的能力组合，例如“行人过街行为”或“驾驶员跟车与避让”。</p></div></header>
-                <div class="agent-extension-choice-grid" id="agentCapabilityBundleChoices"><div class="empty-state"><span>正在加载能力包…</span></div></div>
-              </section>
-              <section class="agent-extension-section">
-                <header><div><h3>工具与授权关系</h3><p>选择 Agent 拥有、携带或可使用的工具。工具自身速度、外观与能力由工具 Revision 定义。</p></div></header>
-                <div class="agent-tool-grant-list" id="agentToolGrantList"><div class="empty-state"><span>正在加载工具资产…</span></div></div>
-              </section>
-              <section class="agent-extension-section">
-                <header><div><h3>出行方式选择</h3><p>启用后，Agent 可根据时间紧迫程度与可用工具，在步行、骑行和驾车间作出选择。</p></div><label class="agent-extension-switch"><input type="checkbox" id="agentMobilityEnabled" class="agent-extension-control" />启用决策</label></header>
-                <div class="form-grid" id="agentMobilityFields">
-                  <div class="field"><label for="agentMobilityDefaultMode">默认策略</label><select class="control agent-extension-control" id="agentMobilityDefaultMode"><option value="FASTEST_AVAILABLE">优先最快可用方式</option><option value="LOWEST_RISK">优先最低风险方式</option><option value="WALK">默认步行</option></select></div>
-                  <div class="field"><label for="agentMobilityDecision">决策能力</label><select class="control agent-extension-control" id="agentMobilityDecision"><option value="">请选择发布版本</option></select></div>
-                  <div class="field"><label for="agentMobilityUrgency">紧迫阈值</label><div class="input-unit"><input class="control agent-extension-control" id="agentMobilityUrgency" type="number" min="0" max="1440" value="15" /><span>分钟</span></div></div>
-                  <div class="field"><label for="agentMobilityInterval">重新决策间隔</label><div class="input-unit"><input class="control agent-extension-control" id="agentMobilityInterval" type="number" min="100" max="86400000" step="100" value="60000" /><span>毫秒</span></div></div>
-                </div>
-                <div class="agent-extension-validation" id="agentExtensionValidation"><span>配置会在 Agent 发布前检查工具、能力版本和交通方式约束。</span></div>
-              </section>
             </div>
           </div>
         </div>
@@ -2275,39 +1934,18 @@
 
   <div class="modal-backdrop" id="createMapModal" role="dialog" aria-modal="true" aria-labelledby="createMapTitle">
     <div class="modal">
-      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>可以从空白网格开始，也可以复制一个已发布版本。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
+      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>从空白网格、场景构建向导或已发布版本开始。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
       <div class="modal-body map-inline-form">
         <div class="field"><label for="newMapName">地图名称</label><input class="control" id="newMapName" placeholder="例如：海滨小镇" /></div>
-        <div class="field"><label for="newMapSource">起始版本</label><select class="control" id="newMapSource"><option value="">空白地图</option></select></div>
+        <div class="field"><label for="newMapKey">稳定键</label><input class="control" id="newMapKey" placeholder="例如：commute-home-office" /></div>
+        <div class="field full"><label for="newMapBlueprint">构建方式</label><select class="control" id="newMapBlueprint"><option value="">空白地图（自由绘制）</option></select><small id="newMapBlueprintHint">创建一个不继承斯坦福小镇的空白地图。</small></div>
+        <div class="field full"><label for="newMapSource">复制已发布版本（可选）</label><select class="control" id="newMapSource"><option value="">不复制</option></select><small>选择已发布版本后，将不再使用上面的构建向导。</small></div>
         <div class="field"><label for="newMapWidth">宽度</label><div class="input-unit"><input class="control" id="newMapWidth" type="number" min="4" max="240" value="48" /><span>Tile</span></div></div>
         <div class="field"><label for="newMapHeight">高度</label><div class="input-unit"><input class="control" id="newMapHeight" type="number" min="4" max="240" value="32" /><span>Tile</span></div></div>
         <div class="field"><label for="newMapTileSize">Tile 尺寸</label><div class="input-unit"><input class="control" id="newMapTileSize" type="number" min="8" max="128" value="32" /><span>px</span></div></div>
         <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" placeholder="这张地图适合哪些实验…"></textarea></div>
       </div>
       <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="createBrainModal" role="dialog" aria-modal="true" aria-labelledby="createBrainTitle">
-    <div class="modal">
-      <div class="modal-head"><div><h2 id="createBrainTitle">新建大脑</h2><p>基于已发布的大脑模板创作；系统基准模板不会被修改。</p></div><button class="close" id="closeCreateBrain" aria-label="关闭">×</button></div>
-      <div class="modal-body">
-        <div class="field"><label for="newBrainName">大脑名称</label><input class="control" id="newBrainName" placeholder="例如：社区经营者" /></div>
-        <div class="field"><label for="newBrainSource">起始模板</label><select class="control" id="newBrainSource"><option value="">斯坦福小镇基准模板</option></select></div>
-        <div class="field"><label for="newBrainDescription">用途说明</label><textarea class="control" id="newBrainDescription" placeholder="这个大脑适合哪些 Agent 与实验…"></textarea></div>
-      </div>
-      <div class="modal-foot"><button class="btn" id="cancelCreateBrain">取消</button><button class="btn btn-primary" id="confirmCreateBrain">创建并编辑</button></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="saveBrainTemplateModal" role="dialog" aria-modal="true" aria-labelledby="saveBrainTemplateTitle">
-    <div class="modal">
-      <div class="modal-head"><div><h2 id="saveBrainTemplateTitle">另存为大脑模板</h2><p>复制当前实验的大脑编排，保存为一个独立、可继续编辑的新模板。</p></div><button class="close" id="closeSaveBrainTemplate" aria-label="关闭">×</button></div>
-      <div class="modal-body">
-        <div class="field"><label for="savedBrainTemplateName">大脑名称</label><input class="control" id="savedBrainTemplateName" placeholder="例如：社区经营者大脑" /></div>
-        <div class="field"><label for="savedBrainTemplateDescription">用途说明</label><textarea class="control" id="savedBrainTemplateDescription" placeholder="这个大脑适合哪些 Agent 与实验…"></textarea></div>
-      </div>
-      <div class="modal-foot"><button class="btn" id="cancelSaveBrainTemplate">取消</button><button class="btn btn-primary" id="confirmSaveBrainTemplate">保存为模板</button></div>
     </div>
   </div>
 
@@ -2424,12 +2062,10 @@
   <script src="/static/console/replay-player.js?v=20260813b"></script>
   <script src="/static/console/modal-focus.js"></script>
   <script src="/static/console/spatial-asset-workspace.js?v=20260812a"></script>
-  <script src="/static/console/map-workspace.js?v=20260812a"></script>
-  <script src="/static/console/workflow-editor.js?v=20260812m"></script>
-  <script src="/static/console/brain-workspace.js?v=20260812c"></script>
+  <script src="/static/console/map-editor-v2.js?v=20260823c"></script>
+  <script src="/static/console/map-workspace.js?v=20260823b"></script>
   <script src="/static/console/crowd-workspace.js?v=20260812k"></script>
-  <script src="/static/console/capability-workspace.js?v=20260812a"></script>
-  <script src="/static/console/scenario-workspace.js?v=20260813a"></script>
-  <script src="/static/console/console-api.js?v=20260813c"></script>
+  <script src="/static/console/skill-workspace.js?v=20260823c"></script>
+  <script src="/static/console/console-api.js?v=20260823d"></script>
 </body>
 </html>

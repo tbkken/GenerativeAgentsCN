@@ -78,17 +78,25 @@ class SimulationRunner:
     def run(self, steps: int, *, stride_minutes: int) -> int:
         if steps < 1 or stride_minutes < 1:
             raise ValueError("steps and stride_minutes must be positive")
+        self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
         for offset in range(steps):
             if self.context.control.cancel_requested or self.context.control.pause_requested:
                 break
             step_no = self.completed_steps + 1
+            self._bind_agent_step(step_no)
             builder = StepResultBuilder(
                 run_id=self.context.run_id,
                 attempt_id=self.context.attempt_id,
                 step_no=step_no,
                 virtual_time=self.context.clock.get_date(),
             )
+            memory_stream = getattr(self.context, "memory_stream", None)
+            if memory_stream is not None:
+                memory_stream.begin_step(
+                    step_no,
+                    self.context.clock.get_date(),
+                )
             collector = StepResultCollector(
                 builder,
                 name_to_key=self.game.agent_keys_by_name,
@@ -97,11 +105,24 @@ class SimulationRunner:
                 agent = self.game.get_agent(agent_key)
                 from_coord = tuple(agent.coord)
                 outcome = self.game.agent_think(agent_key, status)
+                resolve_interaction = getattr(
+                    self.game, "resolve_game_object_interaction", None
+                )
+                if callable(resolve_interaction):
+                    outcome = resolve_interaction(
+                        agent_key,
+                        outcome,
+                        step_no=step_no,
+                    )
                 planned_path = tuple(
                     tuple(coord)
                     for coord in (outcome.get("plan", {}).get("path") or ())
                 )
-                movement_budget = self._movement_budget(stride_minutes)
+                movement_budget = (
+                    0
+                    if (outcome.get("plan") or {}).get("movement_directive") == "WAIT"
+                    else self._movement_budget(stride_minutes)
+                )
                 consumed = planned_path[:movement_budget]
                 remaining = planned_path[len(consumed) :]
                 executed_path = tuple()
@@ -137,6 +158,9 @@ class SimulationRunner:
                 # teleporting to its destination or recalculating a new path.
                 status["coord"] = tuple(agent.coord)
                 status["path"] = tuple(agent.path or ())
+            if memory_stream is not None:
+                for event in memory_stream.drain_result_events():
+                    collector.capture_event(event)
             result = collector.freeze()
             terminal_boundary = (
                 offset == steps - 1
@@ -151,6 +175,13 @@ class SimulationRunner:
             if not terminal_boundary:
                 self.context.clock.forward(stride_minutes)
         return self.completed_steps
+
+    def _bind_agent_step(self, step_no: int) -> None:
+        for agent_key in self.agent_status:
+            agent = self.game.get_agent(agent_key)
+            bind = getattr(agent, "begin_step", None)
+            if callable(bind):
+                bind(step_no)
 
     def _movement_budget(self, stride_minutes: int) -> int:
         profile = getattr(self.context, "algorithm", None)
@@ -167,6 +198,7 @@ def build_file_committer(context: SimulationContext, game: Game) -> FileStepComm
             state=game.snapshot_state(),
             conversation=game.conversation,
             storage_exporters=game.storage_exporters(),
+            runtime_storage_exporters=game.runtime_storage_exporters(),
         ),
     )
     return FileStepCommitter(

@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
 
+from sqlalchemy import func, select
+
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     Run,
@@ -14,6 +16,7 @@ from generative_agents.persistence.models import (
     RunModelTraceCursor,
     RunModelUsage,
     RunResultSummary,
+    RunStep,
 )
 
 from .context import RunPaths
@@ -45,6 +48,7 @@ class ModelTraceProjector:
             attempt = read_session.get(RunAttempt, attempt_id)
             if attempt is None or attempt.run_id != run_id:
                 raise ModelTraceProjectionError("model trace attempt does not own this run")
+            attempt_start_step = attempt.start_step
             current = read_session.get(RunModelTraceCursor, (run_id, attempt_id))
             byte_offset = current.byte_offset if current else 0
             last_event_seq = current.last_event_seq if current else 0
@@ -57,7 +61,33 @@ class ModelTraceProjector:
             raise FileNotFoundError(trace_path)
 
         records, next_offset = self._read_complete_records(trace_path, byte_offset)
+        # RunStep is the bounded source used by timeline and artifact reports.
+        # Recompute exact per-step totals from this attempt's complete trace so
+        # retrying projection cannot double-count and resumed attempts remain
+        # isolated from the steps committed by earlier attempts.
+        complete_records, _complete_offset = self._read_complete_records(trace_path, 0)
+        step_totals: dict[int, list[int]] = {}
+        for record in complete_records:
+            # Older Skill-brain calls did not attach a step number.  They were
+            # emitted while an attempt was preparing its first committed step,
+            # so the durable attempt boundary is the only safe attribution.
+            step_no = record.get("step_no") or attempt_start_step
+            if not isinstance(step_no, int) or isinstance(step_no, bool) or step_no < 1:
+                continue
+            totals = step_totals.setdefault(step_no, [0, 0])
+            if record.get("event_type") == "LOGICAL_END":
+                totals[0] += 1
+            elif (
+                record.get("event_type") == "PHYSICAL_ATTEMPT"
+                and (record.get("attempt_no") or 1) > 1
+            ):
+                totals[1] += 1
         if not records:
+            self._reconcile_step_totals(
+                run_id=run_id,
+                attempt_id=attempt_id,
+                step_totals=step_totals,
+            )
             return last_event_seq
         expected_sequence = last_event_seq
         for record in records:
@@ -98,12 +128,56 @@ class ModelTraceProjector:
             cursor.byte_offset = next_offset
             cursor.updated_at = datetime.now(timezone.utc)
             summary = session.get(RunResultSummary, run_id)
+            matched_step = False
+            for step_no, (step_calls, step_retries) in step_totals.items():
+                step = session.get(RunStep, (run_id, step_no))
+                if step is None or step.attempt_id != attempt_id:
+                    continue
+                step.model_logical_calls = step_calls
+                step.model_retry_count = step_retries
+                matched_step = True
             if summary is not None:
-                summary.model_call_count += logical_calls
-                summary.model_retry_count += retries
+                if matched_step:
+                    session.flush()
+                    self._synchronize_summary_from_steps(session, run_id, summary)
+                else:
+                    summary.model_call_count += logical_calls
+                    summary.model_retry_count += retries
                 summary.result_version += 1
                 summary.updated_at = datetime.now(timezone.utc)
             return expected_sequence
+
+    def _reconcile_step_totals(
+        self,
+        *,
+        run_id: str,
+        attempt_id: str,
+        step_totals: dict[int, list[int]],
+    ) -> None:
+        with self._database.session_factory.begin() as session:
+            matched_step = False
+            for step_no, (step_calls, step_retries) in step_totals.items():
+                step = session.get(RunStep, (run_id, step_no))
+                if step is None or step.attempt_id != attempt_id:
+                    continue
+                step.model_logical_calls = step_calls
+                step.model_retry_count = step_retries
+                matched_step = True
+            summary = session.get(RunResultSummary, run_id)
+            if matched_step and summary is not None:
+                session.flush()
+                self._synchronize_summary_from_steps(session, run_id, summary)
+
+    @staticmethod
+    def _synchronize_summary_from_steps(session, run_id: str, summary) -> None:
+        logical_calls, retries = session.execute(
+            select(
+                func.coalesce(func.sum(RunStep.model_logical_calls), 0),
+                func.coalesce(func.sum(RunStep.model_retry_count), 0),
+            ).where(RunStep.run_id == run_id)
+        ).one()
+        summary.model_call_count = int(logical_calls)
+        summary.model_retry_count = int(retries)
 
     @staticmethod
     def _read_complete_records(path: Path, offset: int) -> tuple[list[dict], int]:

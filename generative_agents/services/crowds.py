@@ -28,7 +28,6 @@ from generative_agents.persistence.models import (
 )
 
 from .errors import ServiceError, not_found
-from .tools import AgentExtensionService
 
 
 def _utc_now() -> datetime:
@@ -484,20 +483,6 @@ class CrowdService:
                 )
             definition = AgentTemplateDefinition.model_validate(revision.definition_json)
             _validate_agent_template_for_publish(definition)
-            extension_errors = AgentExtensionService.validate_for_publish(
-                session, revision
-            )
-            if extension_errors:
-                raise ServiceError(
-                    "AGENT_EXTENSION_VALIDATION_FAILED",
-                    "Agent 的能力或工具配置没有通过发布校验",
-                    status_code=422,
-                    details={
-                        "valid": False,
-                        "errors": extension_errors,
-                        "warnings": [],
-                    },
-                )
             normalized_name = normalize_agent_name(definition.name)
             conflict = session.scalar(
                 select(AgentTemplate.id).where(
@@ -559,13 +544,6 @@ class CrowdService:
             )
             session.add(draft)
             session.flush()
-            AgentExtensionService.copy_extension(
-                session,
-                source_revision_id=source.id,
-                target_revision_id=draft.id,
-                agent_id=agent.id,
-                now=now,
-            )
             agent.current_draft_revision_id = draft.id
             agent.status = "DRAFT"
             agent.row_version += 1

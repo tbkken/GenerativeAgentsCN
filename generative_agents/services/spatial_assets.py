@@ -13,24 +13,13 @@ from uuid import uuid4
 from sqlalchemy import func, or_, select, update
 from sqlalchemy.orm import Session
 
-from generative_agents.config.capabilities import (
-    CapabilityBundleContract,
-    CapabilityContract,
-)
 from generative_agents.config.hashing import canonical_json_bytes
-from generative_agents.config.spatial_assets import (
-    SpatialAssetContract,
-    SpatialCapabilityAttachment,
-)
+from generative_agents.config.spatial_assets import SpatialAssetContract
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
-    CapabilityBundleRevision,
-    CapabilityDefinition,
-    CapabilityRevision,
     SpatialAssetDefinition,
     SpatialAssetRevision,
 )
-from generative_agents.runtime.json_schema import validate_json_schema
 
 from .errors import ServiceError, not_found
 
@@ -74,6 +63,7 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
         tags: list[str] | None = None,
         initial_state: dict[str, Any] | None = None,
         state_variants: dict[str, dict[str, str]] | None = None,
+        skill_bindings: list[dict[str, Any]] | None = None,
     ) -> SpatialAssetContract:
         appearance: dict[str, Any] = {
             "mode": mode,
@@ -102,7 +92,7 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
                     "emits_presence_events": kind == "ZONE",
                 },
                 "initial_state": initial_state or {},
-                "capability_attachments": [],
+                "skill_bindings": skill_bindings or [],
             }
         )
 
@@ -152,6 +142,15 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
                 "vehicle-yellow": {"emoji": "🟡"},
                 "vehicle-red": {"emoji": "🔴"},
             },
+            skill_bindings=[
+                {
+                    "interaction_key": "query-pedestrian-signal",
+                    "skill_name": "traffic-signal-state",
+                    "description": "查询当前行人是否可以安全通过斑马线",
+                    "interaction_radius_m": 2.5,
+                    "default_request": "请告诉我当前行人信号，以及现在是否可以过马路。",
+                }
+            ],
         ),
         "zone-pedestrian-wait": contract(
             "行人等待区",
@@ -170,6 +169,32 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
             traversal=["CAR", "BICYCLE", "MOTORCYCLE"],
             tags=["stop-line"],
         ),
+        "object-vehicle-gate": contract(
+            "园区车辆门禁",
+            "OBJECT",
+            "EMOJI",
+            "🚧",
+            collision=True,
+            traversal=["CAR"],
+            tags=["vehicle-gate", "credential-checkpoint"],
+            initial_state={
+                "state": "closed",
+                "required_credential": "company.vehicle.enter",
+            },
+            state_variants={
+                "open": {"emoji": "✅"},
+                "closed": {"emoji": "🚧"},
+            },
+        ),
+        "zone-parking-slot": contract(
+            "停车位",
+            "ZONE",
+            "COLOR",
+            "#b7d8cc",
+            traversal=["CAR"],
+            tags=["parking-slot", "occupancy-sensing"],
+            initial_state={"occupied": False, "reserved_by": None},
+        ),
     }
 
 
@@ -180,62 +205,6 @@ class SpatialAssetService:
     def ensure_builtin_assets(self) -> None:
         with self.database.session_factory.begin() as session:
             contracts = _builtin_contracts()
-            presence_definition = session.scalar(
-                select(CapabilityDefinition).where(
-                    CapabilityDefinition.capability_key == "spatial-zone-presence"
-                )
-            )
-            if presence_definition and presence_definition.current_published_revision_id:
-                wait_zone = contracts["zone-pedestrian-wait"]
-                contracts["zone-pedestrian-wait"] = wait_zone.model_copy(
-                    update={
-                        "capability_attachments": [
-                            SpatialCapabilityAttachment(
-                                attachment_key="presence-sensor",
-                                capability_revision_id=(
-                                    presence_definition.current_published_revision_id
-                                ),
-                                parameters={
-                                    "entity_types": ["PEDESTRIAN"],
-                                    "debounce_ms": 200,
-                                },
-                                output_bindings={
-                                    "entered": "event:${target}:entered",
-                                    "left": "event:${target}:left",
-                                    "presence": "state:${target}:presence",
-                                },
-                            )
-                        ]
-                    }
-                )
-            signal_definition = session.scalar(
-                select(CapabilityDefinition).where(
-                    CapabilityDefinition.capability_key == "traffic-signal-cycle"
-                )
-            )
-            if signal_definition and signal_definition.current_published_revision_id:
-                traffic_light = contracts["object-traffic-light"]
-                contracts["object-traffic-light"] = traffic_light.model_copy(
-                    update={
-                        "capability_attachments": [
-                            SpatialCapabilityAttachment(
-                                attachment_key="signal-cycle",
-                                capability_revision_id=(
-                                    signal_definition.current_published_revision_id
-                                ),
-                                parameters={
-                                    "green_ms": 6_000,
-                                    "yellow_ms": 2_000,
-                                    "red_ms": 8_000,
-                                    "phase_offset_ms": 0,
-                                },
-                                output_bindings={
-                                    "signal_state": "state:${target}:signal"
-                                },
-                            )
-                        ]
-                    }
-                )
             for asset_key, contract in contracts.items():
                 existing = session.scalar(
                     select(SpatialAssetDefinition).where(
@@ -647,119 +616,7 @@ class SpatialAssetService:
     def _publish_errors(
         session: Session, contract: SpatialAssetContract
     ) -> list[dict[str, Any]]:
-        errors: list[dict[str, Any]] = []
-        expected_target = {
-            "TILE": "MAP_OBJECT",
-            "OBJECT": "MAP_OBJECT",
-            "MARKING": "MAP_OBJECT",
-            "ZONE": "ZONE",
-            "NETWORK": "WORLD",
-        }[contract.kind]
-        for index, attachment in enumerate(contract.capability_attachments):
-            schema: dict[str, Any] | None = None
-            input_keys: set[str] = set()
-            output_keys: set[str] = set()
-            required_inputs: set[str] = set()
-            if attachment.capability_revision_id:
-                revision = session.get(CapabilityRevision, attachment.capability_revision_id)
-                if revision is None or revision.state != "PUBLISHED":
-                    errors.append(
-                        {
-                            "code": "SPATIAL_CAPABILITY_UNAVAILABLE",
-                            "path": f"capability_attachments.{index}.capability_revision_id",
-                            "message": "空间资产必须引用已发布的能力版本",
-                        }
-                    )
-                    continue
-                capability = CapabilityContract.model_validate(revision.contract_json)
-                if expected_target not in capability.targets and "WORLD" not in capability.targets:
-                    errors.append(
-                        {
-                            "code": "SPATIAL_CAPABILITY_TARGET_MISMATCH",
-                            "path": f"capability_attachments.{index}",
-                            "message": f"该能力不能挂载到 {contract.kind}",
-                        }
-                    )
-                schema = capability.parameters_schema
-                input_keys = {item.key for item in capability.inputs}
-                output_keys = {item.key for item in capability.outputs}
-                required_inputs = {item.key for item in capability.inputs if item.required}
-            else:
-                revision = session.get(
-                    CapabilityBundleRevision, attachment.capability_bundle_revision_id
-                )
-                if revision is None or revision.state != "PUBLISHED":
-                    errors.append(
-                        {
-                            "code": "SPATIAL_CAPABILITY_BUNDLE_UNAVAILABLE",
-                            "path": f"capability_attachments.{index}.capability_bundle_revision_id",
-                            "message": "空间资产必须引用已发布的能力包版本",
-                        }
-                    )
-                    continue
-                bundle = CapabilityBundleContract.model_validate(
-                    revision.composition_json
-                )
-                if expected_target not in bundle.targets and "WORLD" not in bundle.targets:
-                    errors.append(
-                        {
-                            "code": "SPATIAL_CAPABILITY_BUNDLE_TARGET_MISMATCH",
-                            "path": f"capability_attachments.{index}",
-                            "message": f"该能力包不能挂载到 {contract.kind}",
-                        }
-                    )
-                schema = bundle.exposed_parameters_schema
-                input_keys = {item.key for item in bundle.exposed_inputs}
-                output_keys = {item.key for item in bundle.exposed_outputs}
-                required_inputs = {
-                    item.key for item in bundle.exposed_inputs if item.required
-                }
-            unknown_inputs = sorted(set(attachment.input_bindings) - input_keys)
-            unknown_outputs = sorted(set(attachment.output_bindings) - output_keys)
-            missing_inputs = sorted(required_inputs - set(attachment.input_bindings))
-            for code, path, values, label in (
-                (
-                    "SPATIAL_CAPABILITY_INPUT_UNKNOWN",
-                    "input_bindings",
-                    unknown_inputs,
-                    "未公开输入",
-                ),
-                (
-                    "SPATIAL_CAPABILITY_OUTPUT_UNKNOWN",
-                    "output_bindings",
-                    unknown_outputs,
-                    "未公开输出",
-                ),
-                (
-                    "SPATIAL_CAPABILITY_INPUT_REQUIRED",
-                    "input_bindings",
-                    missing_inputs,
-                    "缺少必填输入",
-                ),
-            ):
-                if values:
-                    errors.append(
-                        {
-                            "code": code,
-                            "path": f"capability_attachments.{index}.{path}",
-                            "message": f"{label}：{', '.join(values)}",
-                        }
-                    )
-            try:
-                validate_json_schema(
-                    attachment.parameters,
-                    schema,
-                    f"$.capability_attachments[{index}].parameters",
-                )
-            except ValueError as exc:
-                errors.append(
-                    {
-                        "code": "SPATIAL_CAPABILITY_PARAMETERS_INVALID",
-                        "path": f"capability_attachments.{index}.parameters",
-                        "message": str(exc),
-                    }
-                )
-        return errors
+        return []
 
     @staticmethod
     def _require_draft(

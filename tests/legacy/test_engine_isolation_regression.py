@@ -34,6 +34,7 @@ from generative_agents.runtime import (
 )
 from generative_agents.runtime.result_collector import StepResultCollector
 from generative_agents.runtime.replay_v2 import validate_replay_v2
+from generative_agents.skills import SkillRegistry
 from generative_agents.start import SimulationRunner, apply_checkpoint_state
 
 
@@ -390,10 +391,10 @@ def test_replay_artifact_uses_observed_frame_path(tmp_path):
         assets=[],
         materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
         dependency_versions={},
+        skill_bundle=SkillRegistry().snapshot(),
     )
     manifest = RunManifestStore(paths).materialize(document)
-    FrameStore(paths).write(
-        StepResult(
+    result = StepResult(
             run_id=run_id,
             attempt_id=attempt_id,
             step_no=1,
@@ -416,12 +417,36 @@ def test_replay_artifact_uses_observed_frame_path(tmp_path):
             domain_events=(),
             committed_model_usage=(),
         )
+    frame = FrameStore(paths).write(result)
+    from generative_agents.runtime.file_result_projector import FileResultProjector
+
+    FileResultProjector(paths).commit_step(
+        result,
+        frame=frame,
+        checkpoint_path=None,
+    )
+    # A crash can leave a durable frame that never reached the authoritative
+    # projection. Compression must not include that future/uncommitted fact.
+    FrameStore(paths).write(
+        StepResult(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            step_no=2,
+            virtual_time=datetime(2026, 1, 1, 0, 10, tzinfo=timezone.utc),
+            agents=(),
+            conversations=(),
+            memory_deltas=(),
+            schedule_revisions=(),
+            domain_events=(),
+            committed_model_usage=(),
+        )
     )
     artifact = build_replay(paths, manifest)
     replay = json.loads(artifact.path.read_text(encoding="utf-8"))
     assert validate_replay_v2(replay) == replay
     assert replay["schema_version"] == 2
     assert replay["source_kind"] == "RUN_FRAMES"
+    assert replay["source_step"] == 1
     agent = replay["steps"][0]["agents"][0]
     assert agent["path_source"] == "OBSERVED"
     assert {tuple(sample) for sample in agent["path"]} == {(1, 1), (2, 1)}

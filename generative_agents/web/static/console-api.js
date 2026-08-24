@@ -57,7 +57,6 @@
     pendingActivityExperimentIds: new Set(),
     forceGlobalRefresh: false,
     formDirty: false,
-    workflowDirty: false,
     resultGeneration: 0,
     resultRequestGeneration: 0,
     resultRefreshTimer: null,
@@ -121,8 +120,6 @@
     selectedConversationId: null,
     editingAgentKey: null,
     agentEditorContext: { ownerType: 'experiment' },
-    agentExtensionCatalog: { bundles: [], tools: [], decisions: [] },
-    agentExtensionRecord: null,
     currentExperimentName: '',
     currentExperimentStatus: '草稿',
     workspaceReadonly: false,
@@ -196,7 +193,7 @@
     const url = new URL(window.location.href);
     url.search = '';
     url.hash = '';
-    if (['maps', 'brains', 'crowds', 'capabilities'].includes(pageName)) {
+    if (['maps', 'brains', 'crowds', 'skills'].includes(pageName)) {
       url.searchParams.set('view', pageName);
       if (pageName === 'maps' && state.selectedMapId) url.searchParams.set('map_id', state.selectedMapId);
       if (pageName === 'brains' && state.selectedBrainId) url.searchParams.set('brain_id', state.selectedBrainId);
@@ -255,11 +252,25 @@
     setSidebarCollapsed(collapsed, { persist: false });
   }
 
+  function syncMapEditorTopbar() {
+    const active = state.workspacePage === 'maps' && Boolean(state.selectedMapId);
+    const crowdActive = state.workspacePage === 'crowds' && Boolean(state.selectedCrowdId);
+    document.body.classList.toggle('map-editor-mode', active);
+    document.body.classList.toggle('crowd-editor-mode', crowdActive);
+    $('defaultTopbarContext').hidden = active || crowdActive;
+    $('mapEditorTopbarContext').hidden = !active;
+    $('mapEditorActions').hidden = !active;
+    $('crowdEditorTopbarContext').hidden = !crowdActive;
+    $('crowdEditorTopbarActions').hidden = !crowdActive;
+    if (state.workspacePage === 'maps') $('hubActions').hidden = active;
+    if (state.workspacePage === 'crowds') $('hubActions').hidden = crowdActive;
+  }
+
   function goToPage(pageName) {
     const target = $(`page-${pageName}`);
     if (!target) throw new Error(`未知页面：${pageName}`);
-    const previousPage = state.workspacePage;
-    const isGlobal = ['experiments', 'maps', 'brains', 'crowds', 'capabilities'].includes(pageName);
+    const isGlobal = ['experiments', 'maps', 'brains', 'crowds', 'skills'].includes(pageName);
+    window.SkillWorkspace?.deactivateTopbar?.();
     state.workspacePage = pageName;
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
       item.classList.toggle('active', item.dataset.page === pageName);
@@ -268,20 +279,22 @@
       page.classList.toggle('active', page === target);
     });
     document.body.classList.toggle('hub-mode', isGlobal);
-    document.body.classList.toggle('workflow-mode', pageName === 'prompts');
     document.body.classList.toggle('brain-mode', pageName === 'brains');
     if (pageName !== 'brains') document.body.classList.remove('brain-editor-mode');
-    $('topbarTitle').textContent = pageName === 'maps' ? '地图中心' : pageName === 'brains' ? '大脑中心' : pageName === 'crowds' ? '人群中心' : pageName === 'capabilities' ? '能力中心' : isGlobal ? '实验中心' : state.currentExperimentName || '当前实验';
+    $('topbarTitle').textContent = pageName === 'maps' ? '地图中心' : pageName === 'brains' ? '大脑中心' : pageName === 'crowds' ? '人群中心' : pageName === 'skills' ? '技能中心' : isGlobal ? '实验中心' : state.currentExperimentName || '当前实验';
     $('statusPill').hidden = isGlobal;
     $('experimentHeaderMeta').hidden = isGlobal;
     $('backToHub').classList.toggle('visible', !isGlobal);
     $('hubActions').hidden = !isGlobal;
+    $('commuteDemoBtn').hidden = pageName !== 'experiments';
+    $('mapConfigurationDemoBtn').hidden = pageName !== 'maps';
     $('createExperimentBtn').hidden = pageName !== 'experiments';
     $('createMapBtn').hidden = pageName !== 'maps';
     $('createBrainBtn').hidden = pageName !== 'brains';
     $('createCrowdBtn').hidden = pageName !== 'crowds';
-    $('createCapabilityBtn').hidden = pageName !== 'capabilities';
+    $('createSkillBtn').hidden = pageName !== 'skills';
     $('experimentActions').hidden = isGlobal;
+    syncMapEditorTopbar();
     $('resultRunSelect').hidden = pageName !== 'results';
     $('resultHeaderActions').hidden = pageName !== 'results';
     if (pageName === 'results' && state.currentRun) renderRunActions(state.currentRun);
@@ -302,23 +315,16 @@
     }
     if (pageName === 'experiments') scheduleGlobalReconcile({ full: true });
     if (pageName === 'maps') window.MapWorkspace?.activate().catch(reportError);
-    if (pageName === 'brains') window.BrainWorkspace?.activate().catch(reportError);
+    if (pageName === 'brains') window.SkillWorkspace?.activate('brains').catch(reportError);
     if (pageName === 'crowds') window.CrowdWorkspace?.activate().catch(reportError);
-    if (pageName === 'capabilities') window.CapabilityWorkspace?.activate().catch(reportError);
-    if (pageName === 'scenario') window.ScenarioWorkspace?.activate().catch(reportError);
-    if (pageName === 'prompts') {
-      const activateExperimentWorkflow = async () => {
-        if (previousPage === 'brains') await window.BrainWorkspace?.restoreExperimentEditor();
-        await window.WorkflowEditor?.activate();
-      };
-      activateExperimentWorkflow().catch(reportError);
-    }
+    if (pageName === 'skills') window.SkillWorkspace?.activate('skills').catch(reportError);
+    if (pageName === 'experiment-brain') window.SkillWorkspace?.activate('experiment-brain').catch(reportError);
     syncWorkspaceUrl();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderDirtyState() {
-    state.dirty = Boolean(state.formDirty || state.workflowDirty);
+    state.dirty = Boolean(state.formDirty);
     $('unsaved').hidden = !state.dirty;
     if (state.dirty) $('unsaved').querySelector('span').textContent = '有未保存更改';
   }
@@ -331,7 +337,6 @@
 
   function clearDirty() {
     state.formDirty = false;
-    state.workflowDirty = false;
     renderDirtyState();
   }
 
@@ -455,9 +460,8 @@
     $('wizardBack').hidden = state.wizardStep === 1;
     $('wizardNext').textContent = state.wizardStep === 3 ? '创建实验' : '下一步';
     $('createSummaryName').textContent = $('newExperimentName').value.trim() || '未填写';
-    const brainOption = $('newExperimentBrain')?.selectedOptions?.[0];
     const mapOption = $('newExperimentMap')?.selectedOptions?.[0];
-    if ($('createSummaryBrain')) $('createSummaryBrain').textContent = brainOption?.textContent?.replace(/ · v\d+(?: · (?:默认|系统基准))?$/, '') || '未选择';
+    if ($('createSummaryBrain')) $('createSummaryBrain').textContent = 'stanford-town-brain · 文件型 Skill 集合';
     if ($('createSummaryMap')) $('createSummaryMap').textContent = mapOption?.textContent?.replace(/ · v\d+(?: · 默认)?$/, '') || '未选择';
     const crowdSummary = window.CrowdWorkspace?.getCreationSummary?.() || { names: [], crowdCount: 0, agentCount: 0, duplicateCount: 0 };
     if ($('createSummaryCrowds')) $('createSummaryCrowds').textContent = crowdSummary.names.length ? crowdSummary.names.join('、') : '未选择';
@@ -635,15 +639,10 @@
     ]);
     state.runEstimate = estimate;
     const scale = estimate.scale;
-    if (scale.execution_mode === 'CAPABILITY_COMPOSED') {
+    if (scale.execution_mode === 'SKILL_BRAIN') {
       $('modalAgentCount').textContent = scale.agents;
-      $('modalWorld').textContent = scale.world_name;
-      $('modalModels').textContent = estimate.estimate.model_calls.high
-        ? $('modalModels').textContent
-        : '无需模型调用';
-      $('modalScale').textContent = `${scale.agents} 角色 × ${scale.tool_instances} 工具 · ${formatDurationMs(scale.duration_ms)} · ${scale.base_tick_ms} ms tick · ${scale.steps} 个快照`;
-    } else {
-      $('modalScale').textContent = `${scale.agents} Agent × ${scale.steps} 步 · 虚拟时长 ${Math.round(scale.virtual_minutes / 60 * 10) / 10} 小时`;
+      $('modalModels').textContent = `${state.definition.models.chat.resolved_model || state.definition.models.chat.model} / ${scale.brain_skill}`;
+      $('modalScale').textContent = `${scale.agents} Agent x ${scale.steps} steps / SKILL Brain`;
     }
     $('modalCalls').textContent = formatRange(estimate.estimate.model_calls);
     $('modalTokens').textContent = formatRange(estimate.estimate.tokens);
@@ -771,7 +770,6 @@
 
   function cardTemplate(item) {
     const core = item.core_parameters || {};
-    const composed = core.execution_mode === 'CAPABILITY_COMPOSED';
     const run = item.latest_run;
     const completed = run?.completed_steps || 0;
     const requested = run?.requested_steps || core.max_steps || 0;
@@ -779,7 +777,7 @@
     const status = statusLabels[item.status] || item.status;
     const runTitle = run ? '最近运行' : '配置状态';
     const runCode = run?.run_id ? run.run_id.slice(0, 12) : `revision ${String(item.revision_no || 1).padStart(3, '0')}`;
-    const runValue = run ? `${completed} / ${requested} ${composed ? '快照' : '步'}` : item.status === 'DRAFT' ? '待发布' : '尚未运行';
+    const runValue = run ? `${completed} / ${requested} steps` : item.status === 'DRAFT' ? '待发布' : '尚未运行';
     const runDetail = run ? statusLabels[run.status] || run.status : '保存于独立实验草稿';
     const selected = state.selectedExperimentIds?.has(item.id) || false;
     const metadataTags = [item.owner ? `负责人：${item.owner}` : '未指定负责人', ...(item.tags || [])];
@@ -796,22 +794,14 @@
           </div>
           <div class="exp-tags"><span class="exp-tag">Revision ${String(item.revision_no || 1).padStart(3, '0')}</span><span class="exp-tag">${escapeHtml(core.world_name || '世界待配置')}</span>${metadataTags.map(tag => `<span class="exp-tag">${escapeHtml(tag)}</span>`).join('')}</div>
         </div>
-        <div class="experiment-params">${composed ? `
-          <div class="param-cell"><span>物理参与者</span><strong>${core.agent_count ?? 0} 个</strong></div>
-          <div class="param-cell"><span>工具实例</span><strong>${core.tool_count ?? 0} 个</strong></div>
-          <div class="param-cell"><span>模型调用</span><strong>${core.requires_models ? '能力图按需调用' : '无需模型'}</strong></div>
-          <div class="param-cell"><span>场景时长 / tick</span><strong>${formatDurationMs(core.duration_ms)} · ${core.base_tick_ms}ms</strong></div>
-          <div class="param-cell"><span>空间地图</span><strong>${escapeHtml(core.world_name || '待配置')}</strong></div>
-          <div class="param-cell"><span>Seed / Revision</span><strong><code>${core.random_seed ?? '未设置'} · rev ${String(item.revision_no || 1).padStart(3, '0')}</code></strong></div>
-        ` : `
-          <div class="param-cell"><span>Agent</span><strong>${core.agent_count ?? 0} 个</strong></div>
-          <div class="param-cell"><span>聊天模型</span><strong>${escapeHtml(core.chat_model || '待配置')}</strong></div>
-          <div class="param-cell"><span>Embedding</span><strong>${escapeHtml(core.embedding_model || '待配置')}</strong></div>
-          <div class="param-cell"><span>虚拟时间 / 步长</span><strong>${escapeHtml(formatTime(core.start_time))} · ${core.stride_minutes || '—'}m</strong></div>
-          <div class="param-cell"><span>世界</span><strong>${escapeHtml(core.world_name || '待配置')}</strong></div>
-          <div class="param-cell"><span>Seed / Revision</span><strong><code>${core.random_seed ?? '未设置'} · rev ${String(item.revision_no || 1).padStart(3, '0')}</code></strong></div>
-        `}</div>
-        <div class="experiment-run">
+        <div class="experiment-params">
+          <div class="param-cell"><span>Agent</span><strong>${core.agent_count ?? 0}</strong></div>
+          <div class="param-cell"><span>Brain Skill</span><strong>${escapeHtml(core.brain_skill || 'stanford-town-brain')}</strong></div>
+          <div class="param-cell"><span>Chat model</span><strong>${escapeHtml(core.chat_model || 'pending')}</strong></div>
+          <div class="param-cell"><span>Virtual time / stride</span><strong>${escapeHtml(formatTime(core.start_time))} / ${core.stride_minutes || '-'}m</strong></div>
+          <div class="param-cell"><span>World</span><strong>${escapeHtml(core.world_name || 'pending')}</strong></div>
+          <div class="param-cell"><span>Seed / Revision</span><strong><code>${core.random_seed ?? 'unset'} / rev ${String(item.revision_no || 1).padStart(3, '0')}</code></strong></div>
+        </div>        <div class="experiment-run">
           <div><div class="run-head"><span>${runTitle}</span><code>${escapeHtml(runCode)}</code></div><div class="run-value"><strong>${escapeHtml(runValue)}</strong><span>${escapeHtml(runDetail)}</span></div><div class="run-progress ${item.status === 'PAUSED' ? 'paused' : item.status === 'COMPLETED' ? 'completed' : ''}"><i style="width:${percent}%"></i></div></div>
           <div class="run-foot"><span>${updatedAtMarkup} · ${item.run_count || 0} 次运行</span><button class="run-cta ${run ? 'api-open-results' : 'api-open-experiment'}">${run ? '查看运行' : '继续配置'}</button></div>
         </div>
@@ -955,7 +945,7 @@
     $('navRunCount').textContent = experiment.run_count || 0;
     $('experimentOwnerMeta').textContent = experiment.owner || '未设置';
     $('experimentTagsMeta').textContent = experiment.tags?.length ? experiment.tags.join(' · ') : '未设置';
-    if (!['experiments', 'maps', 'brains', 'crowds', 'capabilities'].includes(state.workspacePage)) $('topbarTitle').textContent = experiment.name;
+    if (!['experiments', 'maps', 'brains', 'crowds', 'skills'].includes(state.workspacePage)) $('topbarTitle').textContent = experiment.name;
     applyStatusPill(state.currentExperimentStatus);
     setWorkspaceMode(state.currentExperimentStatus);
   }
@@ -1013,6 +1003,8 @@
   function fillDraft(definition) {
     state.definition = definition;
     const simulation = definition.simulation;
+    if ($('experimentNameDraft')) $('experimentNameDraft').value = definition.experiment?.name || state.experiment?.name || '';
+    if ($('experimentGoalDraft')) $('experimentGoalDraft').value = definition.experiment?.goal || state.experiment?.goal || '';
     $('startTime').value = simulation.start_time.slice(0, 16);
     $('stride').value = simulation.stride_minutes;
     $('seed').value = simulation.random_seed;
@@ -1025,16 +1017,72 @@
     fillBehaviorFields(definition.behavior, definition.results);
     fillWorldFields(definition.world);
     renderAgentDraft(definition.agents);
-    const workflowReadonly = executionLocksRevision() || !state.draft;
-    window.WorkflowEditor?.setContext({
-      experimentId: state.selectedExperimentId,
-      draft: workflowReadonly ? null : state.draft,
-      revision: state.revision,
-      readonly: workflowReadonly,
-    }).catch(reportError);
     $('statAgentCount').textContent = definition.agents.filter(item => item.enabled).length;
     $('navAgentCount').textContent = definition.agents.filter(item => item.enabled).length;
   }
+
+  async function saveExperimentMetadata() {
+    if (!state.selectedExperimentId || !state.experiment || !state.draft) {
+      throw new Error('请先打开可编辑的实验草稿');
+    }
+    const name = $('experimentNameDraft').value.trim();
+    const goal = $('experimentGoalDraft').value.trim();
+    if (!name) throw new Error('实验名称不能为空');
+    const updated = await api(`/experiments/${state.selectedExperimentId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        row_version: state.experiment.row_version,
+        name,
+        goal,
+        owner: state.experiment.owner || '',
+        tags: state.experiment.tags || [],
+      }),
+    });
+    state.experiment = updated;
+    state.currentExperimentName = updated.name;
+    $('topbarTitle').textContent = updated.name;
+    state.draft = await api(`/experiments/${state.selectedExperimentId}/draft`);
+    state.revision = state.draft;
+    state.definition = state.draft.definition;
+    fillDraft(state.definition);
+    fillDefinitionOverview(state.definition, state.revision);
+    clearDirty();
+    scheduleGlobalReconcile({ full: true });
+    showToast('实验名称、故事目标与当前 Draft 已同步。', '实验信息已保存');
+  }
+
+  function selectedExperimentBrainSkill() {
+    return state.draft?.definition?.engine?.brain_skill
+      || state.definition?.engine?.brain_skill
+      || 'stanford-town-brain';
+  }
+
+  async function applyExperimentBrainSkill(brainSkill) {
+    if (!state.selectedExperimentId || !state.draft) {
+      throw new Error('已发布版本只读，请先创建新修订');
+    }
+    const definition = structuredClone(state.draft.definition);
+    definition.engine.brain_skill = brainSkill;
+    const saved = await api(`/experiments/${state.selectedExperimentId}/draft`, {
+      method: 'PUT',
+      body: JSON.stringify({ lock_version: state.draft.lock_version, data: definition }),
+    });
+    state.draft = saved;
+    state.revision = saved;
+    state.definition = saved.definition;
+    fillDraft(saved.definition);
+    fillDefinitionOverview(saved.definition, saved);
+    clearDirty();
+    scheduleGlobalReconcile({ full: true });
+    showToast(`${brainSkill} 已连接到当前实验 Draft。`, '实验 Brain 已应用');
+    return { brain_skill: brainSkill };
+  }
+
+  window.ExperimentBrainBridge = {
+    selected: selectedExperimentBrainSkill,
+    apply: applyExperimentBrainSkill,
+    editable: () => Boolean(state.draft) && !state.workspaceReadonly,
+  };
 
   function fillWorldFields(world) {
     const definition = world.definition || {};
@@ -1066,35 +1114,25 @@
       lockVersion: state.draft?.lock_version || 0,
       editable: Boolean(state.draft) && !state.workspaceReadonly,
     }).catch(reportError);
-    window.BrainWorkspace?.setExperimentContext({
-      experimentId: state.selectedExperimentId,
-      name: state.experiment?.name,
-      revision: state.revision,
-      lockVersion: state.draft?.lock_version || 0,
-      editable: Boolean(state.draft) && !state.workspaceReadonly,
-    }).catch(reportError);
   }
 
   function fillDefinitionOverview(definition, revision) {
     if (!definition) return;
     const agents = definition.agents || [];
     const enabled = agents.filter(item => item.enabled).length;
-    const prompts = Object.keys(definition.prompts || {});
     const tiles = definition.world?.definition?.tiles || [];
     const revisionNo = revision?.revision_no || 0;
     const hash = revision?.definition_hash || '';
     $('overviewAgentLabel').textContent = '参与 Agent';
     $('overviewAgentUnit').textContent = '个角色';
-    $('overviewPromptLabel').textContent = 'Prompt 套件';
-    $('overviewPromptFoot').textContent = '随 Revision 独立保存';
+    $('overviewSkillLabel').textContent = 'SKILL 大脑';
+    $('overviewSkillFoot').textContent = '运行时从文件加载并随 Run 固化';
     $('overviewWorldUnit').textContent = 'tiles';
     $('overviewLatestUnit').textContent = '步';
     $('overviewDefinitionTitle').textContent = '实验定义';
     $('overviewDefinitionDescription').textContent = '配置虚拟时间、运行规模、记录粒度和随机复现边界。';
-    $('overviewLegacyDefinitionFields').hidden = false;
-    $('overviewComposedDefinitionFields').hidden = true;
-    $('overviewPromptCount').textContent = prompts.length;
-    $('overviewPromptMeta').textContent = `/ ${prompts.length} 已定义`;
+    $('overviewSkillCount').textContent = '已连接';
+    $('overviewSkillMeta').textContent = 'stanford-town-brain';
     $('overviewTileCount').textContent = tiles.length.toLocaleString('zh-CN');
     $('overviewWorldMeta').textContent = definition.world?.world_name || '世界待配置';
     $('overviewAgentMetaStatus').textContent = enabled ? `${enabled} 个已启用 Agent` : '阻断：至少启用 1 个 Agent';
@@ -1111,11 +1149,11 @@
     updateOptionalText('overviewChatCheck', `${definition.models.chat.provider} · ${definition.models.chat.resolved_model || definition.models.chat.model}`);
     updateOptionalText('overviewEmbeddingCheck', `${definition.models.embedding.provider} · ${definition.models.embedding.resolved_model || definition.models.embedding.model}`);
     updateOptionalText('overviewAgentCheck', `${enabled} / ${agents.length} 个角色已启用`);
-    updateOptionalText('overviewPromptCheck', `${prompts.length} 个 Prompt 已物化`);
+    updateOptionalText('overviewSkillCheck', 'stanford-town-brain · SKILL.md');
     updateOptionalText('overviewWorldCheck', `${definition.world?.world_name || '未命名'} · ${tiles.length} tiles`);
     $('overviewSnapshotHash').textContent = hash ? `sha256:${hash.slice(0, 12)}…` : '草稿尚未发布';
     $('overviewSnapshotAgents').textContent = `agents ×${agents.length}`;
-    $('overviewSnapshotPrompts').textContent = `prompts ×${prompts.length}`;
+    $('overviewSnapshotSkills').textContent = 'skill bundle · immutable';
     const errorCount = revision?.validation?.errors?.length || 0;
     $('overviewValidationCount').textContent = errorCount ? `${errorCount} 个阻塞项` : '6 / 6';
     $('overviewValidationCount').className = `chip ${errorCount ? 'amber' : 'teal'}`;
@@ -1129,44 +1167,17 @@
   function applyRunEstimateToOverview(estimate) {
     state.runEstimate = estimate;
     const scale = estimate?.scale || {};
-    if (scale.execution_mode !== 'CAPABILITY_COMPOSED') return;
-    const worldSize = Array.isArray(scale.world_size) ? scale.world_size : [];
-    $('overviewAgentLabel').textContent = '物理参与者';
-    $('overviewAgentUnit').textContent = '个角色';
-    $('statAgentCount').textContent = scale.agents;
-    $('navAgentCount').textContent = scale.agents;
-    $('overviewAgentMetaStatus').textContent = `${scale.agents} 个物理角色 · ${scale.tool_instances} 个工具`;
-    $('overviewPromptLabel').textContent = '能力调度';
-    $('overviewPromptCount').textContent = scale.capability_tasks;
-    $('overviewPromptMeta').textContent = '个任务';
-    $('overviewPromptFoot').textContent = `${scale.capability_executions} 次确定性执行 · ${estimate.estimate.model_calls.high} 次模型调用`;
-    $('overviewTileCount').textContent = worldSize.length >= 2
-      ? `${worldSize[1]}×${worldSize[0]}`
-      : scale.physical_ticks;
-    $('overviewWorldUnit').textContent = worldSize.length >= 2 ? '米制网格' : 'ticks';
-    $('overviewWorldMeta').textContent = `${scale.world_name} · ${formatDurationMs(scale.duration_ms)}`;
-    $('overviewLatestUnit').textContent = '快照';
-    $('overviewDefinitionTitle').textContent = '能力场景执行定义';
-    $('overviewDefinitionDescription').textContent = '这里只展示编译后的真实运行边界；角色、工具、地图与能力连接请在“场景装配”中配置。';
-    $('overviewLegacyDefinitionFields').hidden = true;
-    $('overviewComposedDefinitionFields').hidden = false;
-    $('overviewExecutionMode').textContent = 'CAPABILITY_COMPOSED · 多速率调度';
-    $('overviewDuration').textContent = formatDurationMs(scale.duration_ms);
-    $('overviewBaseTick').textContent = `${scale.base_tick_ms} ms · ${scale.physical_ticks} 个物理 tick`;
-    $('overviewSnapshotInterval').textContent = `${scale.snapshot_interval_ms} ms · ${scale.steps} 个结果快照`;
-    $('overviewCapabilitySchedule').textContent = `${scale.capability_tasks} 个任务 · ${scale.capability_executions} 次执行`;
-    $('overviewComposedSeed').textContent = state.definition?.simulation?.random_seed ?? '未设置';
-    const updateOptionalText = (id, value) => {
-      const element = $(id);
-      if (element) element.textContent = value;
-    };
-    updateOptionalText('overviewChatCheck', estimate.estimate.model_calls.high ? '由能力图按需调用' : '当前能力图不调用模型');
-    updateOptionalText('overviewEmbeddingCheck', estimate.estimate.model_calls.high ? '由能力图按需调用' : '当前能力图不调用 Embedding');
-    updateOptionalText('overviewAgentCheck', `${scale.agents} 个物理角色 · ${scale.tool_instances} 个工具实例`);
-    updateOptionalText('overviewPromptCheck', `${scale.capability_tasks} 个能力任务 · ${scale.capability_executions} 次执行`);
-    updateOptionalText('overviewWorldCheck', `${scale.world_name} · ${scale.physical_ticks} 个物理 tick`);
-    $('overviewSnapshotAgents').textContent = `actors ×${scale.agents} · tools ×${scale.tool_instances}`;
-    $('overviewSnapshotPrompts').textContent = `capability tasks ×${scale.capability_tasks}`;
+    if (scale.execution_mode !== 'SKILL_BRAIN') return;
+    $('overviewSkillLabel').textContent = 'SKILL 大脑';
+    $('overviewSkillCount').textContent = scale.brain_skill || 'stanford-town-brain';
+    $('overviewSkillMeta').textContent = '自然语言技能接力';
+    $('overviewSkillFoot').textContent = `${estimate.estimate.model_calls.low}–${estimate.estimate.model_calls.high} 次模型调用`;
+    $('overviewAgentMetaStatus').textContent = `${scale.agents} 个启用 Agent`;
+    $('overviewTileCount').textContent = scale.steps;
+    $('overviewWorldUnit').textContent = 'steps';
+    const skillCheck = $('overviewSkillCheck');
+    if (skillCheck) skillCheck.textContent = `${scale.brain_skill || 'stanford-town-brain'} · Qwen3.8 27B`;
+    $('overviewSnapshotSkills').textContent = 'skill bundle · immutable';
   }
 
   async function refreshRunEstimateOverview(experimentId = state.selectedExperimentId, revisionId = state.revision?.id) {
@@ -1311,7 +1322,7 @@
     $('chatSecret').placeholder = chat.secret_ref ? '已配置 · 输入新值可替换' : '未设置';
     $('resolvedChatModel').textContent = chat.resolved_model || '尚未解析';
     const contextWindow = Number(chat.context_window || 0);
-    $('chatServiceCapability').textContent = contextWindow
+    $('chatServiceStatus').textContent = contextWindow
       ? `服务上下文窗口 ${contextWindow.toLocaleString('zh-CN')} tokens · Revision 已锁定`
       : '服务上下文：发布启动时自动检测';
     const embedding = models.embedding;
@@ -1336,14 +1347,14 @@
     state.modelStatus = document;
     document.items.forEach(item => {
       const badge = $(`${item.purpose}ConnectionStatus`);
-      const capability = $(`${item.purpose}ServiceCapability`);
+      const serviceStatus = $(`${item.purpose}ServiceStatus`);
       badge.textContent = modelStatusLabels[item.status] || item.status;
       badge.className = `connection-status ${item.status.toLowerCase()}`;
       const checked = item.checked_at ? `${formatSystemTime(item.checked_at)} ${userTimeZone}` : '从未检测';
-      capability.textContent = item.status === 'ONLINE'
+      serviceStatus.textContent = item.status === 'ONLINE'
         ? `${item.resolved_model || '模型可用'} · ${item.latency_ms ?? '—'} ms · ${checked}`
         : `${item.reason_message || modelStatusLabels[item.status]} · ${item.suggestion || '请测试连接'}`;
-      capability.title = item.checked_at ? `${new Date(item.checked_at).toISOString()} · 显示时区 ${userTimeZone}` : '';
+      serviceStatus.title = item.checked_at ? `${new Date(item.checked_at).toISOString()} · 显示时区 ${userTimeZone}` : '';
     });
     const counts = document.counts || {};
     $('modelConnectionSummary').textContent = counts.ONLINE === 2
@@ -2306,7 +2317,7 @@
     await replayPlayer.loadRun(runId, { signal: replayAbortController.signal });
     if (runId !== state.selectedRunId || generation !== state.resultGeneration || replayAbortController.signal.aborted) return null;
     state.replayAgentDefinitions = replayPlayer.manifest.agents;
-    const composedReplay = replayPlayer.manifest.execution_mode === 'CAPABILITY_COMPOSED';
+    const composedReplay = false;
     const rosterTitle = $('replayAgentRosterTitle');
     const rosterHint = $('replayAgentRosterHint');
     const roster = $('replayAgentRoster');
@@ -2490,7 +2501,7 @@
     renderModelUsage();
     const activeJobs = (operations.artifact_jobs || []).filter(item => item.status !== 'SUCCEEDED');
     const jobRows = activeJobs.map(item => `<div class="artifact-result"><span class="artifact-result-icon">◌</span><div><strong>${escapeHtml(item.type)}</strong><span>${escapeHtml(item.status)} · ${Math.round((item.progress || 0) * 100)}%${item.error_summary ? ` · ${escapeHtml(item.error_summary)}` : ''}</span></div><span class="chip ${item.status === 'FAILED' ? 'amber' : 'teal'}">${escapeHtml(item.status)}</span></div>`).join('');
-    const artifactRows = operations.artifacts.map(item => `<div class="artifact-result"><span class="artifact-result-icon">▣</span><div><strong>${escapeHtml(item.logical_name)}</strong><span>${Math.ceil(item.size_bytes / 1024)} KB · ${escapeHtml(item.type)} · ${escapeHtml(item.sha256.slice(0, 12))}…</span></div><a class="artifact-action" href="/api/v1/runs/${state.selectedRunId}/artifacts/${item.artifact_id}/download">下载</a></div>`).join('');
+    const artifactRows = operations.artifacts.map(item => `<div class="artifact-result"><span class="artifact-result-icon">▣</span><div><strong>${escapeHtml(item.logical_name)}</strong><span>${Math.ceil(item.size_bytes / 1024)} KB · ${escapeHtml(item.type)} · ${escapeHtml(item.generator_version)} · ${escapeHtml(item.sha256.slice(0, 12))}…</span></div><a class="artifact-action" href="/api/v1/runs/${state.selectedRunId}/artifacts/${item.artifact_id}/download">下载</a></div>`).join('');
     $('artifactMeta').textContent = `${operations.artifacts.length} 个可用 · ${activeJobs.length} 个构建中或失败`;
     $('artifactRows').innerHTML = jobRows + artifactRows || '<div class="empty-state"><strong>暂无制品，可点击“下载全部”创建结果包</strong></div>';
   }
@@ -2857,10 +2868,6 @@
 
   async function saveDraft({ silent = false } = {}) {
     if (!state.draft) return;
-    if (window.WorkflowEditor?.isDirty()) {
-      state.draft = await window.WorkflowEditor.save({ silent: true });
-      state.definition = state.draft.definition;
-    }
     const requestedName = state.experiment.name;
     const definition = structuredClone(state.draft.definition);
     definition.experiment.name = requestedName;
@@ -2966,7 +2973,7 @@
       fillDraft(state.draft.definition);
       if (purpose === 'chat') {
         const contextWindow = result.service?.context_window;
-        $('chatServiceCapability').textContent = contextWindow
+        $('chatServiceStatus').textContent = contextWindow
           ? `服务上下文窗口 ${Number(contextWindow).toLocaleString('zh-CN')} tokens · 本次真实检测`
           : '服务未返回上下文窗口能力';
       }
@@ -3016,7 +3023,6 @@
         goal: $('newExperimentGoal').value.trim(),
         owner: $('newExperimentOwner').value.trim(),
         tags: $('newExperimentTag').value.split(/[,，]/).map(item => item.trim()).filter(Boolean),
-        brain_revision_id: $('newExperimentBrain').value || null,
         map_revision_id: $('newExperimentMap').value || null,
         crowd_revision_ids: window.CrowdWorkspace?.selectedCreateRevisionIds?.() || [],
       }),
@@ -3223,155 +3229,6 @@
     };
   }
 
-  function defaultAgentExtension() {
-    return {
-      schema_version: 'ga-agent-extension/v1',
-      capability_bundle_revision_ids: [],
-      tool_grants: [],
-      mobility_choice: {
-        enabled: false,
-        default_mode: 'WALK',
-        decision_capability_revision_id: null,
-        decision_bundle_revision_id: null,
-        urgency_threshold_minutes: 15,
-        decision_interval_ms: 60000,
-      },
-      reasoning_interval_ms: 60000,
-    };
-  }
-
-  function renderAgentExtensionValidation() {
-    const root = $('agentExtensionValidation');
-    const enabled = $('agentMobilityEnabled').checked;
-    const selectedVehicle = [...document.querySelectorAll('.agent-tool-grant')].some(row => {
-      const checked = row.querySelector('.agent-tool-enabled')?.checked;
-      return checked && ['CAR', 'BICYCLE', 'MOTORCYCLE'].includes(row.dataset.toolKind);
-    });
-    const hasDecision = Boolean($('agentMobilityDecision').value);
-    const warnings = [];
-    if (enabled && !selectedVehicle) warnings.push('启用出行决策前，请至少授权一种汽车、自行车或摩托车。');
-    if (enabled && !hasDecision) warnings.push('请选择一个已发布的出行决策能力或能力包。');
-    root.classList.toggle('warning', warnings.length > 0);
-    root.innerHTML = warnings.length
-      ? warnings.map(item => `<span>${escapeHtml(item)}</span>`).join('')
-      : '<span>配置完整；保存后仍会在发布阶段校验所有 Revision 引用。</span>';
-    $('agentMobilityFields').querySelectorAll('input,select').forEach(control => {
-      control.disabled = !enabled || state.agentEditorContext?.ownerType === 'public-readonly';
-    });
-  }
-
-  function renderAgentExtensionEditor(extensionRecord = null) {
-    const extension = structuredClone(extensionRecord?.extension || defaultAgentExtension());
-    state.agentExtensionRecord = extensionRecord;
-    const selectedBundles = new Set(extension.capability_bundle_revision_ids || []);
-    const bundleRoot = $('agentCapabilityBundleChoices');
-    bundleRoot.innerHTML = state.agentExtensionCatalog.bundles.length
-      ? state.agentExtensionCatalog.bundles.map(item => {
-        const revision = item.current_published;
-        const composition = item.active_composition || {};
-        return `<label class="agent-extension-choice"><input class="agent-extension-control agent-bundle-choice" type="checkbox" value="${escapeHtml(revision.id)}" ${selectedBundles.has(revision.id) ? 'checked' : ''} /><span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.bundle_key)} · ${(composition.instances || []).length} 个能力实例</small></span></label>`;
-      }).join('')
-      : '<div class="empty-state"><span>暂无已发布能力包；请先到能力中心完成组合与发布。</span></div>';
-
-    const grantByRevision = new Map((extension.tool_grants || []).map(grant => [grant.tool_revision_id, grant]));
-    const toolRoot = $('agentToolGrantList');
-    toolRoot.innerHTML = state.agentExtensionCatalog.tools.length
-      ? state.agentExtensionCatalog.tools.map(item => {
-        const revision = item.current_published;
-        const contract = item.active_contract || {};
-        const grant = grantByRevision.get(revision.id);
-        return `<div class="agent-tool-grant${grant ? ' enabled' : ''}" data-tool-revision-id="${escapeHtml(revision.id)}" data-tool-key="${escapeHtml(item.tool_key)}" data-tool-kind="${escapeHtml(contract.kind || item.tool_kind)}">
-          <span class="tool-emoji">${escapeHtml(contract.appearance?.emoji || '🧰')}</span>
-          <span class="tool-copy"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(contract.kind || item.tool_kind)} · ${escapeHtml(item.tool_key)}</small></span>
-          <label class="tool-enable"><input class="agent-extension-control agent-tool-enabled" type="checkbox" ${grant ? 'checked' : ''} />授权</label>
-          <select class="control agent-extension-control agent-tool-relation"><option value="OWNS" ${grant?.relation === 'OWNS' ? 'selected' : ''}>拥有</option><option value="CARRIES" ${grant?.relation === 'CARRIES' ? 'selected' : ''}>随身携带</option><option value="MAY_USE" ${grant?.relation === 'MAY_USE' ? 'selected' : ''}>可使用</option></select>
-          <input class="control agent-extension-control agent-tool-location" value="${escapeHtml(grant?.initial_location_ref || 'agent:self')}" placeholder="初始位置引用" />
-        </div>`;
-      }).join('')
-      : '<div class="empty-state"><span>暂无已发布工具资产。</span></div>';
-
-    const decisionSelect = $('agentMobilityDecision');
-    const currentDecision = extension.mobility_choice?.decision_capability_revision_id
-      ? `capability:${extension.mobility_choice.decision_capability_revision_id}`
-      : extension.mobility_choice?.decision_bundle_revision_id
-        ? `bundle:${extension.mobility_choice.decision_bundle_revision_id}` : '';
-    const decisionOptions = [
-      ...state.agentExtensionCatalog.decisions.map(item => ({
-        value: `capability:${item.current_published.id}`,
-        label: `${item.name} · 原子决策`,
-      })),
-      ...state.agentExtensionCatalog.bundles
-        .filter(item => (item.targets || []).some(target => ['AGENT', 'BRAIN'].includes(target)))
-        .map(item => ({ value: `bundle:${item.current_published.id}`, label: `${item.name} · 能力包` })),
-    ];
-    decisionSelect.innerHTML = '<option value="">请选择发布版本</option>' + decisionOptions.map(option => `<option value="${escapeHtml(option.value)}" ${option.value === currentDecision ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('');
-    $('agentReasoningInterval').value = extension.reasoning_interval_ms || 60000;
-    $('agentMobilityEnabled').checked = Boolean(extension.mobility_choice?.enabled);
-    $('agentMobilityDefaultMode').value = extension.mobility_choice?.default_mode || 'WALK';
-    $('agentMobilityUrgency').value = extension.mobility_choice?.urgency_threshold_minutes ?? 15;
-    $('agentMobilityInterval').value = extension.mobility_choice?.decision_interval_ms || 60000;
-    toolRoot.querySelectorAll('.agent-tool-enabled').forEach(control => control.addEventListener('change', () => {
-      control.closest('.agent-tool-grant').classList.toggle('enabled', control.checked);
-      renderAgentExtensionValidation();
-    }));
-    $('agentMobilityEnabled').onchange = renderAgentExtensionValidation;
-    decisionSelect.onchange = renderAgentExtensionValidation;
-    renderAgentExtensionValidation();
-  }
-
-  async function loadAgentExtensionEditor(extensionRecord = null) {
-    const [bundles, tools, decisions] = await Promise.all([
-      api('/capability-bundles?page=1&page_size=100'),
-      api('/tools?status=PUBLISHED&page=1&page_size=100'),
-      api('/capabilities?kind=DECISION&status=PUBLISHED&page=1&page_size=100'),
-    ]);
-    state.agentExtensionCatalog = {
-      bundles: bundles.items.filter(item => item.current_published),
-      tools: tools.items.filter(item => item.current_published),
-      decisions: decisions.items.filter(item => item.current_published),
-    };
-    renderAgentExtensionEditor(extensionRecord);
-  }
-
-  function readAgentExtensionEditor() {
-    const mobilityEnabled = $('agentMobilityEnabled').checked;
-    const decision = $('agentMobilityDecision').value;
-    const toolGrants = [...document.querySelectorAll('.agent-tool-grant')]
-      .filter(row => row.querySelector('.agent-tool-enabled').checked)
-      .map(row => {
-        const previous = (state.agentExtensionRecord?.extension?.tool_grants || [])
-          .find(grant => grant.tool_revision_id === row.dataset.toolRevisionId);
-        return {
-          grant_key: previous?.grant_key || row.dataset.toolKey,
-          tool_revision_id: row.dataset.toolRevisionId,
-          quantity: previous?.quantity || 1,
-          relation: row.querySelector('.agent-tool-relation').value,
-          initial_location_ref: row.querySelector('.agent-tool-location').value.trim() || 'agent:self',
-          available: previous?.available ?? true,
-          state_overrides: previous?.state_overrides || {},
-        };
-      });
-    if (mobilityEnabled && !decision) throw new Error('请为出行方式选择一个已发布的决策能力或能力包');
-    if (mobilityEnabled && !toolGrants.some(grant => {
-      const row = document.querySelector(`.agent-tool-grant[data-tool-revision-id="${CSS.escape(grant.tool_revision_id)}"]`);
-      return ['CAR', 'BICYCLE', 'MOTORCYCLE'].includes(row?.dataset.toolKind);
-    })) throw new Error('启用出行方式选择前，请至少给 Agent 授权一种交通工具');
-    return {
-      schema_version: 'ga-agent-extension/v1',
-      capability_bundle_revision_ids: [...document.querySelectorAll('.agent-bundle-choice:checked')].map(input => input.value),
-      tool_grants: toolGrants,
-      mobility_choice: {
-        enabled: mobilityEnabled,
-        default_mode: $('agentMobilityDefaultMode').value,
-        decision_capability_revision_id: mobilityEnabled && decision.startsWith('capability:') ? decision.slice('capability:'.length) : null,
-        decision_bundle_revision_id: mobilityEnabled && decision.startsWith('bundle:') ? decision.slice('bundle:'.length) : null,
-        urgency_threshold_minutes: Number($('agentMobilityUrgency').value),
-        decision_interval_ms: Number($('agentMobilityInterval').value),
-      },
-      reasoning_interval_ms: Number($('agentReasoningInterval').value),
-    };
-  }
-
   function setAgentEditorReadOnly(readonly) {
     const modal = $('agentEditorModal');
     modal.classList.toggle('agent-editor-readonly', readonly);
@@ -3389,10 +3246,8 @@
     });
     $('agentPortraitFile').disabled = readonly;
     $('agentSpriteFile').disabled = readonly;
-    modal.querySelectorAll('.agent-extension-control').forEach(control => { control.disabled = readonly; });
     $('saveAgentEditor').hidden = readonly;
     $('cancelAgentEditor').textContent = readonly ? '关闭' : '取消';
-    renderAgentExtensionValidation();
   }
 
   function fillSharedAgentEditor(agent, hasExisting = true) {
@@ -3407,6 +3262,7 @@
     $('agentEditLearned').value = agent.scratch.learned || '';
     $('agentEditLifestyle').value = agent.scratch.lifestyle || '';
     $('agentEditDailyPlan').value = agent.scratch.daily_plan || '';
+    $('agentEditGoals').value = (agent.goals || []).join('\n');
     renderSpatialEditor(agent.spatial || { address: {}, tree: {} });
     document.querySelector('[data-content-tab="space"]').hidden = false;
     setContentTab('agent-editor', 'identity', { sync: false });
@@ -3425,14 +3281,11 @@
       spatial: { address: {}, tree: {} },
     };
     state.agentEditorContext = { ownerType: 'experiment' };
-    state.agentExtensionRecord = null;
     state.editingAgentKey = existing?.agent_key || null;
     $('agentEditorTitle').textContent = existing ? `编辑 ${agent.name}` : '新增 Agent';
     $('agentEditorKeyMeta').textContent = `文件键：${agent.agent_key}`;
     $('agentEditorContextHelp').textContent = '保存到当前实验 Draft；文件键用于历史结果关联，创建后不可修改。';
     document.querySelector('[data-content-tab="space"]').hidden = false;
-    $('agentCapabilityTab').hidden = true;
-    document.querySelector('[data-content-panel="capabilities"]').hidden = true;
     $('saveAgentEditor').textContent = '保存 Agent';
     $('agentEditKey').value = agent.agent_key;
     $('agentEditName').value = agent.name; $('agentEditAge').value = agent.scratch.age;
@@ -3441,6 +3294,7 @@
     $('agentEditCurrently').value = agent.currently || ''; $('agentEditInnate').value = agent.scratch.innate || '';
     $('agentEditLearned').value = agent.scratch.learned || ''; $('agentEditLifestyle').value = agent.scratch.lifestyle || '';
     $('agentEditDailyPlan').value = agent.scratch.daily_plan || '';
+    $('agentEditGoals').value = (agent.goals || []).join('\n');
     renderSpatialEditor(agent.spatial || { address: {}, tree: {} });
     setAgentEditorReadOnly(false);
     setContentTab('agent-editor', 'identity', { sync: false });
@@ -3450,7 +3304,7 @@
     requestAnimationFrame(() => agentEditorInitialFocus.focus());
   }
 
-  async function openPublicAgentEditor({ agentDetail = null, agentDraft = null, extensionRecord = null } = {}) {
+  async function openPublicAgentEditor({ agentDetail = null, agentDraft = null } = {}) {
     const existing = agentDraft?.definition || null;
     const agent = existing || {
       agent_key: `agent-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
@@ -3470,7 +3324,6 @@
       ownerType: 'public',
       agentDetail,
       agentDraft,
-      extensionRecord,
       definition: structuredClone(agent),
     };
     state.editingAgentKey = existing ? agent.agent_key : null;
@@ -3478,15 +3331,12 @@
     $('agentEditorKeyMeta').textContent = `模板键：${agent.agent_key}`;
     $('agentEditorContextHelp').textContent = '保存为公共 Agent 模板；初始位置与空间会随模板 Revision 保存，加入实验后仍可独立调整。';
     fillSharedAgentEditor(agent, Boolean(existing));
-    $('agentCapabilityTab').hidden = false;
-    document.querySelector('[data-content-panel="capabilities"]').hidden = false;
-    await loadAgentExtensionEditor(extensionRecord);
     setAgentEditorReadOnly(false);
     $('saveAgentEditor').textContent = '保存并发布 Agent';
     openModal('agentEditorModal', 'agentEditName');
   }
 
-  async function openPublicAgentReadOnly({ agentDetail, agentRevision, extensionRecord = null } = {}) {
+  async function openPublicAgentReadOnly({ agentDetail, agentRevision } = {}) {
     const agent = agentRevision?.definition;
     if (!agent) throw new Error('无法读取 Agent Revision');
     releaseAgentImageObjectUrls();
@@ -3494,7 +3344,6 @@
       ownerType: 'public-readonly',
       agentDetail,
       agentRevision,
-      extensionRecord,
       definition: structuredClone(agent),
     };
     state.editingAgentKey = null;
@@ -3502,9 +3351,6 @@
     $('agentEditorKeyMeta').textContent = `模板键：${agent.agent_key} · Revision ${String(agentRevision.revision_no).padStart(3, '0')}`;
     $('agentEditorContextHelp').textContent = '当前人群锁定的 Agent Revision；以下字段全部只读。';
     fillSharedAgentEditor(agent);
-    $('agentCapabilityTab').hidden = false;
-    document.querySelector('[data-content-panel="capabilities"]').hidden = false;
-    await loadAgentExtensionEditor(extensionRecord);
     setAgentEditorReadOnly(true);
     openModal('agentEditorModal', 'closeAgentEditor');
   }
@@ -3518,8 +3364,6 @@
     setAgentEditorReadOnly(false);
     $('saveAgentEditor').textContent = '保存 Agent';
     document.querySelector('[data-content-tab="space"]').hidden = false;
-    $('agentCapabilityTab').hidden = true;
-    document.querySelector('[data-content-panel="capabilities"]').hidden = true;
     if (reopenManager) {
       window.CrowdWorkspace?.reopenAgentManager?.().catch(reportError);
     }
@@ -3549,7 +3393,7 @@
         sprite_asset: images.sprite,
         model_override: previous.model_override || null,
         tags: previous.tags || [],
-        goals: previous.goals || [],
+        goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),
         coord: [Number($('agentEditX').value), Number($('agentEditY').value)],
         currently: $('agentEditCurrently').value,
         scratch: {
@@ -3562,10 +3406,9 @@
         spatial,
       };
       if (!definition.name) throw new Error('请填写 Agent 名称');
-      const extension = readAgentExtensionEditor();
       const published = await window.CrowdWorkspace.saveSharedAgent({
         definition,
-        extension,
+
         agentDetail: context.agentDetail,
         agentDraft: context.agentDraft,
       });
@@ -3589,7 +3432,7 @@
       sprite_asset: images.sprite,
       model_override: previous?.model_override || null,
       tags: previous?.tags || [],
-      goals: previous?.goals || [],
+      goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),
       coord: [Number($('agentEditX').value), Number($('agentEditY').value)],
       currently: $('agentEditCurrently').value,
       scratch: {
@@ -3848,7 +3691,7 @@
   }
 
   function openWorkspacePage(pageName) {
-    if (['experiments', 'maps', 'brains', 'crowds', 'capabilities'].includes(pageName)) {
+    if (['experiments', 'maps', 'brains', 'crowds', 'skills'].includes(pageName)) {
       requestGlobalNavigation(pageName);
       return;
     }
@@ -3881,6 +3724,7 @@
   });
   window.addEventListener('map-workspace:selection', event => {
     state.selectedMapId = event.detail?.mapId || null;
+    syncMapEditorTopbar();
     if (state.workspacePage === 'maps') syncWorkspaceUrl();
   });
   window.addEventListener('map-workspace:experiment-draft', event => {
@@ -3893,31 +3737,6 @@
     fillDraft(draft.definition);
     fillDefinitionOverview(draft.definition, draft);
     refreshRunEstimateOverview(experimentId, draft.id).catch(reportError);
-    clearDirty();
-  });
-  window.addEventListener('brain-workspace:toast', event => {
-    showToast(event.detail?.message || '', event.detail?.title || '操作成功');
-  });
-  window.addEventListener('brain-workspace:error', event => {
-    reportError(event.detail?.error || new Error('大脑操作失败'));
-  });
-  window.addEventListener('brain-workspace:modal', event => {
-    const { action, id, focusId } = event.detail || {};
-    if (action === 'open') openModal(id, focusId || null);
-    else if (action === 'close') closeModal(id);
-  });
-  window.addEventListener('brain-workspace:selection', event => {
-    state.selectedBrainId = event.detail?.brainId || null;
-    if (state.workspacePage === 'brains') syncWorkspaceUrl();
-  });
-  window.addEventListener('brain-workspace:experiment-draft', event => {
-    const { experimentId, draft } = event.detail || {};
-    if (!draft || experimentId !== state.selectedExperimentId) return;
-    state.draft = draft;
-    state.revision = draft;
-    state.definition = draft.definition;
-    fillDraft(draft.definition);
-    fillDefinitionOverview(draft.definition, draft);
     clearDirty();
   });
   window.addEventListener('crowd-workspace:toast', event => {
@@ -3933,49 +3752,10 @@
   });
   window.addEventListener('crowd-workspace:selection', event => {
     state.selectedCrowdId = event.detail?.crowdId || null;
+    syncMapEditorTopbar();
     if (state.workspacePage === 'crowds') syncWorkspaceUrl();
   });
   window.addEventListener('crowd-workspace:create-selection', renderWizardStep);
-  window.addEventListener('capability-workspace:toast', event => {
-    showToast(event.detail?.message || '', event.detail?.title || '操作成功');
-  });
-  window.addEventListener('capability-workspace:error', event => {
-    reportError(event.detail?.error || new Error('能力资产操作失败'));
-  });
-  window.addEventListener('scenario-workspace:toast', event => {
-    showToast(event.detail?.message || '', event.detail?.title || '场景装配');
-  });
-  window.addEventListener('scenario-workspace:error', event => {
-    reportError(event.detail?.error || new Error('场景装配操作失败'));
-  });
-  window.addEventListener('scenario-workspace:experiment-draft', event => {
-    const { experimentId, draft } = event.detail || {};
-    if (!draft || experimentId !== state.selectedExperimentId) return;
-    state.draft = draft;
-    state.revision = draft;
-    state.definition = draft.definition;
-    fillDraft(draft.definition);
-    fillDefinitionOverview(draft.definition, draft);
-    clearDirty();
-  });
-  window.addEventListener('workflow-editor:dirty', event => {
-    state.workflowDirty = Boolean(event.detail?.dirty);
-    renderDirtyState();
-  });
-  window.addEventListener('workflow-editor:draft', event => {
-    const draft = event.detail?.draft;
-    if (!draft || draft.experiment_id !== state.selectedExperimentId) return;
-    state.draft = draft;
-    state.revision = draft;
-    state.definition = draft.definition;
-    fillDefinitionOverview(draft.definition, draft);
-  });
-  window.addEventListener('workflow-editor:toast', event => {
-    showToast(event.detail?.message || '', event.detail?.title || '操作成功');
-  });
-  window.addEventListener('workflow-editor:error', event => {
-    reportError(event.detail?.error || new Error('流程编排操作失败'));
-  });
   $('backToHub').addEventListener('click', () => requestGlobalNavigation('experiments'));
   document.querySelectorAll('[data-goto]').forEach(button => button.addEventListener('click', () => {
     openWorkspacePage(button.dataset.goto);
@@ -4066,7 +3846,6 @@
     $('newExperimentTag').value = '';
     try {
       await Promise.all([
-        window.BrainWorkspace?.prepareExperimentCreate(),
         window.MapWorkspace?.prepareExperimentCreate(),
         window.CrowdWorkspace?.prepareExperimentCreate(),
       ]);
@@ -4092,7 +3871,6 @@
   });
   $('discardAndLeave').addEventListener('click', () => {
     const destination = state.pendingGlobalPage;
-    window.WorkflowEditor?.discard();
     api(`/experiments/${state.selectedExperimentId}/draft`).then(draft => {
       state.draft = draft;
       state.revision = draft;
@@ -4312,6 +4090,9 @@
       loadRunHistory(state.selectedExperimentId, state.selectedRunId || state.latestRunId).catch(reportError);
     }
   }, true);
+  $('saveExperimentMetadata')?.addEventListener('click', () => {
+    saveExperimentMetadata().catch(reportError);
+  });
   $('publishBtn').addEventListener('click', event => {
     if (state.draft && !state.workspaceReadonly) {
       event.stopImmediatePropagation();
@@ -4787,11 +4568,6 @@
       $('newExperimentName').focus();
       return;
     }
-    if (state.wizardStep === 2 && !$('newExperimentBrain').value) {
-      showToast('请选择一个已发布的大脑模板。', '无法继续');
-      $('newExperimentBrain').focus();
-      return;
-    }
     if (state.wizardStep === 2 && !$('newExperimentMap').value) {
       showToast('请选择一个已发布的地图。', '无法继续');
       $('newExperimentMap').focus();
@@ -4809,7 +4585,6 @@
     }
     createExperiment().catch(reportError);
   }, true);
-  $('newExperimentBrain').addEventListener('change', renderWizardStep);
   $('newExperimentMap').addEventListener('change', renderWizardStep);
   $('confirmPublish').addEventListener('click', event => {
     if (!state.draft) return;
@@ -4922,7 +4697,7 @@
       applyListViewDocument(savedView.query);
     }
     await Promise.all([loadSavedViews(), loadExperiments()]);
-    if (!experimentId && ['maps', 'brains', 'crowds', 'capabilities'].includes(requestedView)) {
+    if (!experimentId && ['maps', 'brains', 'crowds', 'skills'].includes(requestedView)) {
       if (requestedView === 'maps') state.selectedMapId = params.get('map_id');
       if (requestedView === 'brains') state.selectedBrainId = params.get('brain_id');
       if (requestedView === 'crowds') state.selectedCrowdId = params.get('crowd_id');

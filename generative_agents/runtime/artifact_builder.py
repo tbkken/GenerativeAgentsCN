@@ -288,19 +288,72 @@ class ArtifactBuilder:
 
     def _report_document(self, run_id: str, *, source_step: int, partial: bool) -> str:
         summary = self._source_summary(run_id, source_step=source_step, partial=partial)
-        return "\n".join(
-            [
-                "# Run report",
-                "",
-                f"- Run: `{run_id}`",
-                f"- Source step: {source_step}",
-                f"- Scope: {'partial' if partial else 'final'}",
-                f"- Conversations: {summary['counts']['conversations']}",
-                f"- Memories: {summary['counts']['memories']}",
-                f"- Model calls: {summary['counts']['model_calls']}",
-                "",
-            ]
+        replay = self._replay_document(
+            run_id,
+            source_step=source_step,
+            partial=partial,
         )
+        lines = [
+            "# Run report",
+            "",
+            f"- Run: `{run_id}`",
+            f"- Source step: {source_step}",
+            f"- Scope: {'partial' if partial else 'final'}",
+            f"- Conversations: {summary['counts']['conversations']}",
+            f"- Memories: {summary['counts']['memories']}",
+            f"- Model calls: {summary['counts']['model_calls']}",
+            "",
+            "## Timeline",
+            "",
+        ]
+        cognitive_kinds = {
+            "EVENT_PERCEIVED",
+            "MEMORY_CREATED",
+            "MEMORY_ACCESSED",
+            "MEMORY_EXPIRED",
+            "MEMORY_EVICTED",
+            "REFLECTION_CREATED",
+            "SCHEDULE_REVISED",
+            "SKILL_EXECUTED",
+        }
+        for step in replay["steps"]:
+            lines.extend(
+                [
+                    f"### Step {step['step_no']} · {step['virtual_time']}",
+                    "",
+                ]
+            )
+            for agent in step["agents"]:
+                action = agent.get("action") or {}
+                lines.append(
+                    f"- **{agent['agent_key']}**: "
+                    f"{action.get('description') or 'idle'} @ "
+                    f"{' / '.join(agent.get('address') or ())}"
+                )
+            for conversation in step["conversations"]:
+                messages = " | ".join(
+                    f"{message['speaker_agent_key']}: {message['content']}"
+                    for message in conversation.get("messages", ())
+                )
+                lines.append(f"- **CONVERSATION**: {messages}")
+            for effect in step.get("effects", ()):
+                if effect.get("kind") not in cognitive_kinds:
+                    continue
+                payload = effect.get("payload") or {}
+                detail = (
+                    payload.get("description")
+                    or payload.get("output_text")
+                    or payload.get("event_type")
+                    or payload.get("memory_id")
+                    or ""
+                )
+                agents = ", ".join(effect.get("agent_keys") or ())
+                lines.append(
+                    f"- **{effect['kind']}**"
+                    f"{f' ({agents})' if agents else ''}: {detail}"
+                )
+            lines.append("")
+        return "\n".join(lines)
 
     def _memory_document(
         self,

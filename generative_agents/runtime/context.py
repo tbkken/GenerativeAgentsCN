@@ -4,18 +4,18 @@ from __future__ import annotations
 
 import logging
 import random
+import re
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable, Mapping, MutableMapping, Protocol
+from typing import Any, Mapping, Protocol
 from uuid import UUID
 
-from generative_agents.config import WorkflowDefinition
-from generative_agents.config.schema import REQUIRED_PROMPT_KEYS
+from generative_agents.config.schema import REQUIRED_ATOMIC_SKILLS
+from generative_agents.skills import SkillRegistry
 
 from .algorithm import AlgorithmProfile
-from .workflow_engine import LLMNodeHandler, WorkflowExecutionResult, WorkflowExecutor
 
 
 @dataclass(slots=True)
@@ -195,162 +195,96 @@ class RunPaths:
             path.mkdir(parents=True, exist_ok=True)
 
 
-class PromptRepository(Protocol):
+class SkillInstructionRepository(Protocol):
     def get(self, key: str) -> str: ...
+
+    def revision(self, key: str) -> str: ...
 
 
 class ModelRegistry(Protocol):
     def get(self, purpose: str) -> Any: ...
 
 
-@dataclass(frozen=True, slots=True)
-class MappingPromptRepository:
-    """Immutable prompt lookup materialized from a Revision snapshot."""
-
-    prompts: Mapping[str, str]
-
-    def get(self, key: str) -> str:
-        try:
-            return self.prompts[key]
-        except KeyError as exc:
-            raise KeyError(f"prompt is not present in run manifest: {key}") from exc
+class PassiveSkillExecutor(Protocol):
+    def run(
+        self,
+        skill_name: str,
+        input_text: str,
+        *,
+        context: Mapping[str, Any],
+    ) -> Any: ...
 
 
 @dataclass(frozen=True, slots=True)
-class WorkflowPromptRepository:
-    """Prompt lookup plus executable graph pinned by one immutable Run manifest."""
+class FileSkillInstructionRepository:
+    """Resolve every Agent prompt from its real file-backed ``SKILL.md``."""
 
-    prompts: Mapping[str, str]
-    workflows: Mapping[str, WorkflowDefinition]
-    function_sources: Mapping[str, str] = field(default_factory=dict)
-    trace_handler: Callable[[Mapping[str, Any]], None] | None = field(
-        default=None, repr=False, compare=False
-    )
-    _prompt_nodes: Mapping[str, tuple[str, str]] = field(init=False, repr=False)
-    _prompt_configs: Mapping[str, Mapping[str, Any]] = field(init=False, repr=False)
-    _executor: WorkflowExecutor = field(init=False, repr=False, compare=False)
+    registry: SkillRegistry
+    brain: str = "stanford-town-brain"
 
     def __post_init__(self) -> None:
-        placements: dict[str, tuple[str, str]] = {}
-        configs: dict[str, Mapping[str, Any]] = {}
-        for workflow_key, workflow in self.workflows.items():
-            for node in workflow.nodes:
-                if node.kind != "llm" or node.prompt_key is None:
-                    continue
-                if node.prompt_key in placements:
-                    raise ValueError(
-                        f"prompt is placed in multiple workflow nodes: {node.prompt_key}"
-                    )
-                placements[node.prompt_key] = (workflow_key, node.node_id)
-                configs[node.prompt_key] = node.config
-        missing = REQUIRED_PROMPT_KEYS - set(placements)
+        brain = self.registry.get(self.brain)
+        if brain.kind != "brain":
+            raise ValueError(f"Configured brain is not a brain Skill: {self.brain}")
+        missing = []
+        for key in REQUIRED_ATOMIC_SKILLS:
+            try:
+                self.registry.get(key)
+            except ValueError:
+                missing.append(key)
         if missing:
             raise ValueError(
-                "run manifest workflows do not place prompts: " + ", ".join(sorted(missing))
+                "brain Skill set is missing atomic Skills: " + ", ".join(sorted(missing))
             )
-        object.__setattr__(self, "_prompt_nodes", placements)
-        object.__setattr__(self, "_prompt_configs", configs)
-        object.__setattr__(
-            self,
-            "_executor",
-            WorkflowExecutor(
-                self.workflows,
-                function_sources=self.function_sources,
-                trace_handler=self.trace_handler,
-            ),
-        )
 
     def get(self, key: str) -> str:
-        if key not in self._prompt_nodes:
-            raise KeyError(f"prompt is not placed in a run workflow: {key}")
-        try:
-            return self.prompts[key]
-        except KeyError as exc:
-            raise KeyError(f"prompt is not present in run manifest: {key}") from exc
+        return self.registry.prompt(key)
 
-    def node_for_prompt(self, key: str) -> tuple[str, str]:
-        try:
-            return self._prompt_nodes[key]
-        except KeyError as exc:
-            raise KeyError(f"prompt is not placed in a run workflow: {key}") from exc
+    def revision(self, key: str) -> str:
+        return self.registry.get(str(key).replace("_", "-")).revision
 
-    def config_for_prompt(self, key: str) -> Mapping[str, Any]:
-        try:
-            return self._prompt_configs[key]
-        except KeyError as exc:
-            raise KeyError(f"prompt is not placed in a run workflow: {key}") from exc
 
-    def execution_mode_for_prompt(self, key: str) -> str:
-        workflow_key, _node_id = self.node_for_prompt(key)
-        return self.workflows[workflow_key].execution_mode
+@dataclass(frozen=True, slots=True)
+class SnapshotSkillInstructionRepository:
+    """Read prompt regions from the immutable Skill bundle in one Run manifest."""
 
-    def execute_prompt(
-        self,
-        key: str,
-        step_context: Mapping[str, Any],
-        *,
-        llm_handler: LLMNodeHandler,
-        state: MutableMapping[str, Any],
-        invocation_id: str | None = None,
-    ) -> WorkflowExecutionResult:
-        """Execute the complete selector-routed graph for one Agent Prompt call."""
+    skills: Mapping[str, Mapping[str, Any]]
+    brain: str = "stanford-town-brain"
 
-        workflow_key, _node_id = self.node_for_prompt(key)
-        workflow = self.workflows[workflow_key]
-        if workflow.execution_mode != "prompt_router":
-            raise RuntimeError(
-                f"workflow {workflow_key} is not a runnable Prompt router"
+    def __post_init__(self) -> None:
+        normalized = {str(key).replace("_", "-") for key in self.skills}
+        missing = {
+            key.replace("_", "-") for key in REQUIRED_ATOMIC_SKILLS
+        } - normalized
+        if self.brain not in normalized:
+            missing.add(self.brain)
+        if missing:
+            raise ValueError(
+                "run Skill bundle is incomplete: " + ", ".join(sorted(missing))
             )
-        return self._executor.execute(
-            workflow_key,
-            {"step_context": dict(step_context)},
-            llm_handler=llm_handler,
-            runtime_context=step_context,
-            state=state,
-            invocation_id=invocation_id,
+
+    def get(self, key: str) -> str:
+        name = str(key).replace("_", "-")
+        try:
+            markdown = str(self.skills[name]["markdown"])
+        except KeyError as exc:
+            raise KeyError(f"Skill is not present in run manifest: {name}") from exc
+        match = re.search(
+            r"<!--\s*PROMPT:START\s*-->\s*(.*?)\s*<!--\s*PROMPT:END\s*-->",
+            markdown,
+            re.DOTALL,
         )
+        if match:
+            return match.group(1).strip()
+        frontmatter_end = markdown.find("\n---", 4)
+        return markdown[frontmatter_end + 4 :].strip() if frontmatter_end >= 0 else markdown
 
-    def invoke_prompt_result(
-        self,
-        key: str,
-        value: Any,
-        *,
-        runtime_context: Mapping[str, Any],
-        state: MutableMapping[str, Any],
-        invocation_id: str | None = None,
-    ) -> Any:
-        """Pass a legacy Agent prompt result through its real graph hook."""
-
-        workflow_key, node_id = self.node_for_prompt(key)
-        return self._executor.execute_prompt_hook(
-            workflow_key,
-            node_id,
-            value,
-            runtime_context=runtime_context,
-            state=state,
-            invocation_id=invocation_id,
-        ).value
-
-    def execute_workflow(
-        self,
-        workflow_key: str,
-        inputs: Mapping[str, Any],
-        *,
-        llm_handler: LLMNodeHandler,
-        runtime_context: Mapping[str, Any] | None = None,
-        state: MutableMapping[str, Any] | None = None,
-        invocation_id: str | None = None,
-    ) -> WorkflowExecutionResult:
-        """Native entry point for scenario capabilities that do not use Agent hooks."""
-
-        return self._executor.execute(
-            workflow_key,
-            inputs,
-            llm_handler=llm_handler,
-            runtime_context=runtime_context,
-            state=state,
-            invocation_id=invocation_id,
-        )
+    def revision(self, key: str) -> str:
+        name = str(key).replace("_", "-")
+        try:
+            return str(self.skills[name]["revision"])
+        except KeyError as exc:
+            raise KeyError(f"Skill is not present in run manifest: {name}") from exc
 
 
 @dataclass(slots=True)
@@ -366,8 +300,11 @@ class SimulationContext:
     clock: SimulationClock
     random: random.Random
     paths: RunPaths
-    prompts: PromptRepository
+    skills: SkillInstructionRepository
     models: ModelRegistry
     control: RunControl
     logger: logging.LoggerAdapter
+    passive_skills: PassiveSkillExecutor | None = None
+    memory_stream: Any | None = None
+    skill_mcp: Any | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)

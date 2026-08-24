@@ -16,6 +16,7 @@ from generative_agents.persistence.models import (
     RunRelationshipEdge,
     RunResultSummary,
     RunStep,
+    RunStepEffect,
 )
 from generative_agents.runtime.context import RunPaths
 from generative_agents.runtime.frame_store import FrameStore
@@ -206,6 +207,7 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
         assert session.scalar(select(func.count()).select_from(RunStep)) == 1
         assert session.scalar(select(func.count()).select_from(RunConversation)) == 1
         assert session.scalar(select(func.count()).select_from(RunMessage)) == 2
+        assert session.scalar(select(func.count()).select_from(RunStepEffect)) == 3
         assert session.get(RunMemoryEvent, (run["run_id"], "a-agent", "memory-1")).state == "ACTIVE"
         edge = session.get(RunRelationshipEdge, (run["run_id"], "a-agent", "b-agent"))
         assert edge.conversation_count == 1
@@ -296,7 +298,7 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
                 run_id=run_id,
                 attempt_id=attempt_id,
                 call_id=call_id,
-                step_no=1,
+                step_no=None,
                 agent_key="a-agent",
                 purpose="chat",
                 prompt_key="generate_chat",
@@ -317,7 +319,7 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
             run_id=run_id,
             attempt_id=attempt_id,
             call_id=call_id,
-            step_no=1,
+            step_no=None,
             agent_key="a-agent",
             purpose="chat",
             prompt_key="generate_chat",
@@ -339,6 +341,26 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
                 capabilities_json={},
                 projection_version="ga-result-v1",
                 result_version=1,
+            )
+        )
+        session.add(
+            RunStep(
+                run_id=run["run_id"],
+                step_no=1,
+                attempt_id=claimed.attempt_id,
+                virtual_time=at,
+                frame_path="runs/test/frames/step-000001.json.gz",
+                frame_sha256="0" * 64,
+                action_count=0,
+                movement_count=0,
+                conversation_count=0,
+                message_count=0,
+                memory_created_count=0,
+                memory_accessed_count=0,
+                model_logical_calls=0,
+                model_retry_count=0,
+                active_agent_count=0,
+                checkpoint=False,
             )
         )
     projector = ModelTraceProjector(database, var_dir=var_dir)
@@ -363,6 +385,9 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
         summary = session.get(RunResultSummary, run["run_id"])
         assert summary.model_call_count == 1
         assert summary.model_retry_count == 1
+        step = session.get(RunStep, (run["run_id"], 1))
+        assert step.model_logical_calls == 1
+        assert step.model_retry_count == 1
         # Re-projecting from an unchanged cursor must not double-count.
         assert summary.result_version == 2
 

@@ -15,12 +15,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from generative_agents.config import ExperimentDefinition, validate_for_publish
-from generative_agents.config.scenarios import ExperimentCapabilityExtension
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     Experiment,
     ExperimentRevision,
-    ExperimentRevisionCapability,
     Run,
     RunAttempt,
     RunEvent,
@@ -91,18 +89,9 @@ def _run_shape(
     revision: ExperimentRevision,
     definition: ExperimentDefinition,
 ) -> tuple[int, int]:
-    """Return durable run steps and legacy stride for either execution mode."""
+    """Return the Skill-brain run steps and virtual-time stride."""
 
-    row = session.get(ExperimentRevisionCapability, revision.id)
-    if row is None:
-        return definition.simulation.max_steps, definition.simulation.stride_minutes
-    extension = ExperimentCapabilityExtension.model_validate(row.extension_json)
-    if extension.mode == "LEGACY_TOWN":
-        return definition.simulation.max_steps, definition.simulation.stride_minutes
-    requested_steps = (
-        extension.clock.duration_ms + extension.clock.snapshot_interval_ms - 1
-    ) // extension.clock.snapshot_interval_ms
-    return max(1, requested_steps), 1
+    return definition.simulation.max_steps, definition.simulation.stride_minutes
 
 
 class RunService:
@@ -130,20 +119,7 @@ class RunService:
 
         from .experiments import ExperimentService
 
-        requires_models = True
-        with self._database.session_factory() as session:
-            experiment = session.get(Experiment, experiment_id)
-            draft = session.get(
-                ExperimentRevision,
-                experiment.current_draft_revision_id if experiment else None,
-            )
-            if draft is not None:
-                from .scenarios import composed_scenario_requires_models_in_session
-
-                requires_models = composed_scenario_requires_models_in_session(
-                    session, draft
-                )
-        if self._model_probes is not None and requires_models:
+        if self._model_probes is not None:
             prepared = self._model_probes.resolve_for_publish(
                 experiment_id,
                 expected_lock_version=expected_lock_version,
@@ -257,16 +233,7 @@ class RunService:
                 requested_steps, stride_minutes = _run_shape(
                     session, revision, definition
                 )
-                extension_row = session.get(ExperimentRevisionCapability, revision.id)
-                is_composed = (
-                    extension_row is not None
-                    and extension_row.extension_json.get("mode")
-                    == "CAPABILITY_COMPOSED"
-                )
-                validation = validate_for_publish(
-                    definition,
-                    validate_legacy_agent_locations=not is_composed,
-                )
+                validation = validate_for_publish(definition)
                 if not validation.valid:
                     first = validation.errors[0]
                     raise ServiceError(
@@ -565,14 +532,10 @@ class RunService:
                     select(func.count()).select_from(RunQueue).where(RunQueue.id <= queue_id)
                 )
         revision = session.get(ExperimentRevision, run.revision_id)
-        capability_row = session.get(ExperimentRevisionCapability, run.revision_id)
-        capability_extension = (
-            ExperimentCapabilityExtension.model_validate(capability_row.extension_json)
-            if capability_row is not None
+        definition = (
+            ExperimentDefinition.model_validate(revision.definition_json)
+            if revision is not None
             else None
-        )
-        execution_mode = (
-            capability_extension.mode if capability_extension else "LEGACY_TOWN"
         )
         result_summary = session.get(RunResultSummary, run.id)
         return {
@@ -585,13 +548,11 @@ class RunService:
             "queue_position": queue_position,
             "slot_no": run.slot_no,
             "requested_steps": run.requested_steps,
-            "execution_mode": execution_mode,
-            "step_interval_ms": (
-                capability_extension.clock.snapshot_interval_ms
-                if capability_extension
-                and capability_extension.mode == "CAPABILITY_COMPOSED"
-                else None
+            "execution_mode": "SKILL_BRAIN",
+            "brain_skill": (
+                definition.engine.brain_skill if definition is not None else "stanford-town-brain"
             ),
+            "step_interval_ms": None,
             "stride_minutes": run.stride_minutes,
             "completed_steps": run.completed_steps,
             "recoverable_step": run.recoverable_step,

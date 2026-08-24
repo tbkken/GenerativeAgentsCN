@@ -15,7 +15,7 @@ from filelock import Timeout
 from sqlalchemy import select
 
 from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import REQUIRED_PROMPT_KEYS, make_blank_definition
+from generative_agents.config.schema import make_blank_definition
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import Run, RunEvent
 from generative_agents.modules import memory as memory_module
@@ -89,9 +89,6 @@ def _definition(key: str) -> ExperimentDefinition:
             },
         }
     ]
-    payload["prompts"] = {
-        key: {"content": f"Prompt {key}"} for key in REQUIRED_PROMPT_KEYS
-    }
     return ExperimentDefinition.model_validate(payload)
 
 
@@ -409,7 +406,7 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
         clock=clock,
         random=PoisonChoice(7),
         paths=RunPaths.under(tmp_path, run_id),
-        prompts={},
+        skills={},
         models=None,
         metadata={},
         logger=Logger(),

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Perception And Memory"
+  short_description: "Run the Perception And Memory agent skill"
+  default_prompt: "Use $perception-and-memory to handle the current agent context and return the result directly."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retrieve Plan"
+  short_description: "Run the Retrieve Plan agent skill"
+  default_prompt: "Use $retrieve-plan to handle the current agent context and return the result directly."

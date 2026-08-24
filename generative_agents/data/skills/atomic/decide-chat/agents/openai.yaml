@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decide Chat"
+  short_description: "Run the Decide Chat agent skill"
+  default_prompt: "Use $decide-chat to handle the current agent context and return the result directly."

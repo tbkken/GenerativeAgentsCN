@@ -1,4 +1,4 @@
-"""Versioned tools and Agent-owned tool/capability extension services."""
+"""Lifecycle management for versioned world tools."""
 
 from __future__ import annotations
 
@@ -10,26 +10,16 @@ from math import ceil
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from generative_agents.config.capabilities import (
-    CapabilityBundleContract,
-    CapabilityContract,
-)
 from generative_agents.config.hashing import canonical_json_bytes
-from generative_agents.config.tools import AgentCapabilityExtension, ToolContract
+from generative_agents.config.tools import ToolContract
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
-    AgentRevisionExtension,
-    AgentTemplate,
-    AgentTemplateRevision,
-    CapabilityBundleRevision,
-    CapabilityRevision,
     ToolDefinition,
     ToolRevision,
 )
-from generative_agents.runtime.json_schema import validate_json_schema
 
 from .errors import ServiceError, not_found
 
@@ -118,99 +108,6 @@ def _builtins() -> dict[str, ToolContract]:
         ),
     }
 
-
-def _attachment_errors(
-    session: Session, contract: ToolContract
-) -> list[dict[str, Any]]:
-    errors: list[dict[str, Any]] = []
-    for index, attachment in enumerate(contract.capability_attachments):
-        schema: dict[str, Any] | None = None
-        input_keys: set[str] = set()
-        output_keys: set[str] = set()
-        required_inputs: set[str] = set()
-        if attachment.capability_revision_id:
-            revision = session.get(CapabilityRevision, attachment.capability_revision_id)
-            if revision is None or revision.state != "PUBLISHED":
-                errors.append(
-                    {
-                        "code": "TOOL_CAPABILITY_UNAVAILABLE",
-                        "path": f"capability_attachments.{index}",
-                        "message": "工具必须引用已发布能力版本",
-                    }
-                )
-                continue
-            capability = CapabilityContract.model_validate(revision.contract_json)
-            if "TOOL" not in capability.targets and "WORLD" not in capability.targets:
-                errors.append(
-                    {
-                        "code": "TOOL_CAPABILITY_TARGET_MISMATCH",
-                        "path": f"capability_attachments.{index}",
-                        "message": "该能力不能挂载到工具",
-                    }
-                )
-            schema = capability.parameters_schema
-            input_keys = {item.key for item in capability.inputs}
-            output_keys = {item.key for item in capability.outputs}
-            required_inputs = {item.key for item in capability.inputs if item.required}
-        else:
-            revision = session.get(
-                CapabilityBundleRevision, attachment.capability_bundle_revision_id
-            )
-            if revision is None or revision.state != "PUBLISHED":
-                errors.append(
-                    {
-                        "code": "TOOL_CAPABILITY_BUNDLE_UNAVAILABLE",
-                        "path": f"capability_attachments.{index}",
-                        "message": "工具必须引用已发布能力包版本",
-                    }
-                )
-                continue
-            bundle = CapabilityBundleContract.model_validate(revision.composition_json)
-            if "TOOL" not in bundle.targets and "WORLD" not in bundle.targets:
-                errors.append(
-                    {
-                        "code": "TOOL_CAPABILITY_BUNDLE_TARGET_MISMATCH",
-                        "path": f"capability_attachments.{index}",
-                        "message": "该能力包不能挂载到工具",
-                    }
-                )
-            schema = bundle.exposed_parameters_schema
-            input_keys = {item.key for item in bundle.exposed_inputs}
-            output_keys = {item.key for item in bundle.exposed_outputs}
-            required_inputs = {
-                item.key for item in bundle.exposed_inputs if item.required
-            }
-        unknown_inputs = sorted(set(attachment.input_bindings) - input_keys)
-        unknown_outputs = sorted(set(attachment.output_bindings) - output_keys)
-        missing_inputs = sorted(required_inputs - set(attachment.input_bindings))
-        for code, path, values, label in (
-            ("TOOL_CAPABILITY_INPUT_UNKNOWN", "input_bindings", unknown_inputs, "未公开输入"),
-            ("TOOL_CAPABILITY_OUTPUT_UNKNOWN", "output_bindings", unknown_outputs, "未公开输出"),
-            ("TOOL_CAPABILITY_INPUT_REQUIRED", "input_bindings", missing_inputs, "缺少必填输入"),
-        ):
-            if values:
-                errors.append(
-                    {
-                        "code": code,
-                        "path": f"capability_attachments.{index}.{path}",
-                        "message": f"{label}：{', '.join(values)}",
-                    }
-                )
-        try:
-            validate_json_schema(
-                attachment.parameters,
-                schema,
-                f"$.capability_attachments[{index}].parameters",
-            )
-        except ValueError as exc:
-            errors.append(
-                {
-                    "code": "TOOL_CAPABILITY_PARAMETERS_INVALID",
-                    "path": f"capability_attachments.{index}.parameters",
-                    "message": str(exc),
-                }
-            )
-    return errors
 
 
 class ToolService:
@@ -469,14 +366,6 @@ class ToolService:
             if revision.id != draft_revision_id or revision.lock_version != expected_lock_version:
                 raise ServiceError("TOOL_REVISION_CONFLICT", "工具草稿已变化", status_code=409)
             contract = ToolContract.model_validate(revision.contract_json)
-            errors = _attachment_errors(session, contract)
-            if errors:
-                raise ServiceError(
-                    "TOOL_VALIDATION_FAILED",
-                    "工具没有通过发布校验",
-                    status_code=422,
-                    details={"valid": False, "errors": errors, "warnings": []},
-                )
             now = _now()
             revision.state = "PUBLISHED"
             revision.published_at = now
@@ -629,249 +518,5 @@ class ToolService:
         return result
 
 
-def validate_agent_extension_in_session(
-    session: Session, extension: AgentCapabilityExtension
-) -> list[dict[str, Any]]:
-    errors: list[dict[str, Any]] = []
-    for index, revision_id in enumerate(extension.capability_bundle_revision_ids):
-        revision = session.get(CapabilityBundleRevision, revision_id)
-        if revision is None or revision.state != "PUBLISHED":
-            errors.append(
-                {
-                    "code": "AGENT_CAPABILITY_BUNDLE_UNAVAILABLE",
-                    "path": f"capability_bundle_revision_ids.{index}",
-                    "message": "Agent 必须引用已发布能力包版本",
-                }
-            )
-            continue
-        bundle = CapabilityBundleContract.model_validate(revision.composition_json)
-        if not ({"AGENT", "BRAIN"} & set(bundle.targets)):
-            errors.append(
-                {
-                    "code": "AGENT_CAPABILITY_BUNDLE_TARGET_MISMATCH",
-                    "path": f"capability_bundle_revision_ids.{index}",
-                    "message": "能力包不能挂载到 Agent 或大脑",
-                }
-            )
-    for index, grant in enumerate(extension.tool_grants):
-        revision = session.get(ToolRevision, grant.tool_revision_id)
-        if revision is None or revision.state != "PUBLISHED":
-            errors.append(
-                {
-                    "code": "AGENT_TOOL_UNAVAILABLE",
-                    "path": f"tool_grants.{index}.tool_revision_id",
-                    "message": "Agent 工具必须引用已发布工具版本",
-                }
-            )
-    policy = extension.mobility_choice
-    if policy.enabled:
-        if policy.decision_capability_revision_id:
-            revision = session.get(
-                CapabilityRevision, policy.decision_capability_revision_id
-            )
-            if revision is None or revision.state != "PUBLISHED":
-                errors.append(
-                    {
-                        "code": "MOBILITY_DECISION_CAPABILITY_UNAVAILABLE",
-                        "path": "mobility_choice.decision_capability_revision_id",
-                        "message": "交通方式决策必须引用已发布能力版本",
-                    }
-                )
-            else:
-                capability = CapabilityContract.model_validate(revision.contract_json)
-                if capability.kind != "DECISION" or not (
-                    {"AGENT", "BRAIN"} & set(capability.targets)
-                ):
-                    errors.append(
-                        {
-                            "code": "MOBILITY_DECISION_CAPABILITY_INVALID",
-                            "path": "mobility_choice.decision_capability_revision_id",
-                            "message": "交通方式选择需要可挂载到 Agent/大脑的决策能力",
-                        }
-                    )
-        else:
-            revision = session.get(
-                CapabilityBundleRevision, policy.decision_bundle_revision_id
-            )
-            if revision is None or revision.state != "PUBLISHED":
-                errors.append(
-                    {
-                        "code": "MOBILITY_DECISION_BUNDLE_UNAVAILABLE",
-                        "path": "mobility_choice.decision_bundle_revision_id",
-                        "message": "交通方式决策必须引用已发布能力包版本",
-                    }
-                )
-        mobile_grants = 0
-        for grant in extension.tool_grants:
-            revision = session.get(ToolRevision, grant.tool_revision_id)
-            if revision and ToolContract.model_validate(revision.contract_json).mobility.mode != "NONE":
-                mobile_grants += 1
-        if mobile_grants == 0:
-            errors.append(
-                {
-                    "code": "MOBILITY_CHOICE_HAS_NO_VEHICLE",
-                    "path": "mobility_choice",
-                    "message": "启用交通方式选择前必须给 Agent 至少一种可移动工具",
-                }
-            )
-    return errors
 
-
-class AgentExtensionService:
-    def __init__(self, database: Database) -> None:
-        self.database = database
-
-    @staticmethod
-    def default_extension() -> AgentCapabilityExtension:
-        return AgentCapabilityExtension()
-
-    def get_extension(self, agent_id: str, revision_id: str) -> dict[str, Any]:
-        with self.database.session_factory() as session:
-            revision = session.get(AgentTemplateRevision, revision_id)
-            if revision is None or revision.agent_id != agent_id:
-                raise not_found("agent_template_revision", revision_id)
-            row = session.get(AgentRevisionExtension, revision_id)
-            extension = AgentCapabilityExtension.model_validate(
-                row.extension_json if row else self.default_extension()
-            )
-            return self._detail(revision, extension, row)
-
-    def get_draft_extension(self, agent_id: str) -> dict[str, Any]:
-        with self.database.session_factory() as session:
-            agent = session.get(AgentTemplate, agent_id)
-            if agent is None:
-                raise not_found("agent_template", agent_id)
-            if not agent.current_draft_revision_id:
-                raise ServiceError(
-                    "AGENT_DRAFT_UNAVAILABLE", "Agent 没有可编辑草稿", status_code=409
-                )
-            revision = session.get(
-                AgentTemplateRevision, agent.current_draft_revision_id
-            )
-            row = session.get(AgentRevisionExtension, revision.id)
-            extension = AgentCapabilityExtension.model_validate(
-                row.extension_json if row else self.default_extension()
-            )
-            return self._detail(revision, extension, row)
-
-    def update_draft_extension(
-        self,
-        agent_id: str,
-        *,
-        expected_lock_version: int,
-        extension: AgentCapabilityExtension | dict[str, Any],
-    ) -> dict[str, Any]:
-        model = AgentCapabilityExtension.model_validate(extension)
-        document = model.model_dump(mode="json", exclude_none=False)
-        now = _now()
-        with self.database.session_factory.begin() as session:
-            agent = session.get(AgentTemplate, agent_id)
-            if agent is None:
-                raise not_found("agent_template", agent_id)
-            revision = (
-                session.get(AgentTemplateRevision, agent.current_draft_revision_id)
-                if agent.current_draft_revision_id
-                else None
-            )
-            if revision is None or revision.state != "DRAFT":
-                raise ServiceError(
-                    "AGENT_DRAFT_UNAVAILABLE", "Agent 没有可编辑草稿", status_code=409
-                )
-            result = session.execute(
-                update(AgentTemplateRevision)
-                .where(
-                    AgentTemplateRevision.id == revision.id,
-                    AgentTemplateRevision.lock_version == expected_lock_version,
-                    AgentTemplateRevision.state == "DRAFT",
-                )
-                .values(
-                    lock_version=AgentTemplateRevision.lock_version + 1,
-                    updated_at=now,
-                )
-            )
-            if result.rowcount != 1:
-                raise ServiceError(
-                    "AGENT_REVISION_CONFLICT",
-                    "Agent 草稿已被其他请求修改",
-                    status_code=409,
-                )
-            row = session.get(AgentRevisionExtension, revision.id)
-            if row is None:
-                row = AgentRevisionExtension(
-                    revision_id=revision.id,
-                    agent_id=agent_id,
-                    schema_version=model.schema_version,
-                    extension_json=document,
-                    extension_hash=_digest(document),
-                    created_at=now,
-                    updated_at=now,
-                )
-                session.add(row)
-            else:
-                row.schema_version = model.schema_version
-                row.extension_json = document
-                row.extension_hash = _digest(document)
-                row.updated_at = now
-            session.flush()
-            refreshed = session.get(AgentTemplateRevision, revision.id)
-            return self._detail(refreshed, model, row)
-
-    @staticmethod
-    def validate_for_publish(
-        session: Session, revision: AgentTemplateRevision
-    ) -> list[dict[str, Any]]:
-        row = session.get(AgentRevisionExtension, revision.id)
-        if row is None:
-            return []
-        extension = AgentCapabilityExtension.model_validate(row.extension_json)
-        return validate_agent_extension_in_session(session, extension)
-
-    @staticmethod
-    def copy_extension(
-        session: Session,
-        *,
-        source_revision_id: str,
-        target_revision_id: str,
-        agent_id: str,
-        now: datetime,
-    ) -> None:
-        source = session.get(AgentRevisionExtension, source_revision_id)
-        if source is None:
-            return
-        session.add(
-            AgentRevisionExtension(
-                revision_id=target_revision_id,
-                agent_id=agent_id,
-                schema_version=source.schema_version,
-                extension_json=copy.deepcopy(source.extension_json),
-                extension_hash=source.extension_hash,
-                created_at=now,
-                updated_at=now,
-            )
-        )
-
-    @staticmethod
-    def _detail(
-        revision: AgentTemplateRevision,
-        extension: AgentCapabilityExtension,
-        row: AgentRevisionExtension | None,
-    ) -> dict[str, Any]:
-        document = extension.model_dump(mode="json", exclude_none=False)
-        return {
-            "agent_id": revision.agent_id,
-            "revision_id": revision.id,
-            "revision_state": revision.state,
-            "lock_version": revision.lock_version,
-            "schema_version": extension.schema_version,
-            "extension": document,
-            "extension_hash": row.extension_hash if row else _digest(document),
-            "readonly": revision.state == "PUBLISHED",
-            "is_default": row is None,
-        }
-
-
-__all__ = [
-    "AgentExtensionService",
-    "ToolService",
-    "validate_agent_extension_in_session",
-]
+__all__ = ["ToolService"]

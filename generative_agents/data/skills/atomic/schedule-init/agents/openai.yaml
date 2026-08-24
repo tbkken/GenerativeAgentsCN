@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schedule Init"
+  short_description: "Run the Schedule Init agent skill"
+  default_prompt: "Use $schedule-init to handle the current agent context and return the result directly."

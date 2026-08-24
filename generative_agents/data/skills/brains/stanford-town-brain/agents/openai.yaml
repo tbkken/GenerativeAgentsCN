@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stanford Town Brain"
+  short_description: "Run the Stanford Town Brain agent skill"
+  default_prompt: "Use $stanford-town-brain to handle the current agent context and return the result directly."

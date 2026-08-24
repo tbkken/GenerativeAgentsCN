@@ -1,0 +1,4 @@
+interface:
+  display_name: "Social Conversation"
+  short_description: "Run the Social Conversation agent skill"
+  default_prompt: "Use $social-conversation to handle the current agent context and return the result directly."
