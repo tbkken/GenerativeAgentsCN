@@ -18,7 +18,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import select
 
 from generative_agents.config import ExperimentDefinition, make_builtin_definition
-from generative_agents.config.schema import REQUIRED_PROMPT_KEYS, make_blank_definition
+from generative_agents.config.schema import make_blank_definition
 from generative_agents.modules import memory as memory_module
 from generative_agents.modules.config_adapter import ConfigAdapter
 from generative_agents.modules.game import Game
@@ -46,7 +46,6 @@ from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.sqlite_result_projector import SqliteResultProjector
 from generative_agents.services import ExperimentService
 from generative_agents.services.artifacts import ArtifactService
-from generative_agents.services.legacy_import import LegacyImportService
 from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
 from generative_agents.web import create_app
@@ -108,9 +107,6 @@ def _definition(key: str) -> ExperimentDefinition:
             },
         }
     ]
-    payload["prompts"] = {
-        key: {"content": f"Prompt {key}"} for key in REQUIRED_PROMPT_KEYS
-    }
     return ExperimentDefinition.model_validate(payload)
 
 
@@ -188,7 +184,7 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
         clock=SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc)),
         random=random.Random(7),
         paths=RunPaths.under(tmp_path, run_id),
-        prompts={},
+        skills={},
         models=None,
         metadata={},
         logger=Logger(),
@@ -625,6 +621,7 @@ def test_def_044_homepage_shell_and_images_are_packaged_runtime_assets(tmp_path)
 def test_def_041_to_043_legacy_artifacts_log_and_counts_are_consistent(
     database, tmp_path
 ):
+    pytest.skip("legacy import was intentionally removed by the Skill brain cutover")
     source = tmp_path / "legacy"
     checkpoint = source / "checkpoints" / "sample"
     compressed = source / "compressed" / "sample"

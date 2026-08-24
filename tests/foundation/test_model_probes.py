@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from generative_agents.config import ExperimentDefinition
 from generative_agents.services.catalog import SecretService
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.model_probes import ModelProbeService
@@ -42,11 +43,26 @@ class _FailingEmbeddingSession(_Session):
         return super().post(url, **kwargs)
 
 
+def _make_models_auto(service, created: dict, draft: dict) -> dict:
+    payload = draft["definition"]
+    payload["models"]["chat"]["model"] = "auto"
+    payload["models"]["chat"]["resolved_model"] = None
+    payload["models"]["chat"]["context_window"] = None
+    payload["models"]["embedding"]["model"] = "auto"
+    payload["models"]["embedding"]["resolved_model"] = None
+    return service.update_draft(
+        experiment_id=created["id"],
+        expected_lock_version=draft["lock_version"],
+        definition=ExperimentDefinition.model_validate(payload),
+    )
+
+
 def test_auto_model_probe_pins_resolved_model_into_the_same_draft(
     service, database, tmp_path
 ):
     created = service.create_experiment(name="Probe", source_type="BLANK")
     draft = service.get_draft(created["id"])
+    draft = _make_models_auto(service, created, draft)
     session = _Session()
     probes = ModelProbeService(
         database,
@@ -78,6 +94,7 @@ def test_publish_preflight_resolves_all_auto_models_with_one_draft_write(
 ):
     created = service.create_experiment(name="Auto publish", source_type="BLANK")
     draft = service.get_draft(created["id"])
+    draft = _make_models_auto(service, created, draft)
     session = _Session()
     probes = ModelProbeService(
         database,
@@ -112,6 +129,7 @@ def test_publish_preflight_does_not_partially_pin_models_on_probe_failure(
 ):
     created = service.create_experiment(name="Atomic auto publish", source_type="BLANK")
     draft = service.get_draft(created["id"])
+    draft = _make_models_auto(service, created, draft)
     probes = ModelProbeService(
         database,
         experiments=service,

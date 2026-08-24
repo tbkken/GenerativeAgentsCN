@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 
+import pytest
 from sqlalchemy import select
 
 from generative_agents.config import ExperimentDefinition
@@ -11,6 +12,8 @@ from generative_agents.runtime.artifact_builder import ArtifactBuilder
 from generative_agents.runtime.artifact_scheduler import ArtifactSchedulerRepository
 from generative_agents.runtime.replay_v2 import GENERATOR_VERSION, validate_replay_v2
 from generative_agents.services.artifacts import ArtifactService
+from generative_agents.services.errors import ServiceError
+from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
 
 
@@ -92,3 +95,30 @@ def test_persistent_artifact_job_builds_run_scoped_replay_and_deduplicates(
     repeated = artifacts.create_job(run["run_id"], job_type="BUILD_REPLAY")
     assert repeated["job_id"] == job["job_id"]
     assert artifacts.list_artifacts(run["run_id"])["items"][0]["artifact_id"] == artifact_id
+    operation_artifact = ResultQueryService(database).operations(run["run_id"])[
+        "artifacts"
+    ][0]
+    assert operation_artifact["generator_version"] == GENERATOR_VERSION
+    assert operation_artifact["source_step"] == 0
+    assert operation_artifact["partial"] is True
+
+
+def test_core_artifact_jobs_reject_parameters_that_do_not_affect_content(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _published(service, publishable_definition)
+    run = RunService(database, var_dir=tmp_path / "var").create_from_published(
+        experiment["id"], revision["id"]
+    )
+    artifacts = ArtifactService(database, var_dir=tmp_path / "var")
+
+    with pytest.raises(ServiceError) as caught:
+        artifacts.create_job(
+            run["run_id"],
+            job_type="BUILD_REPLAY",
+            parameters={"validation": "probe"},
+        )
+
+    assert caught.value.code == "INVALID_ARTIFACT_PARAMETERS"
+    assert caught.value.status_code == 422
+    assert caught.value.details == {"unknown_parameters": ["validation"]}

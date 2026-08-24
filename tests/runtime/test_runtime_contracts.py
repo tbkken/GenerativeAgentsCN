@@ -10,7 +10,7 @@ from uuid import uuid4
 import pytest
 
 from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunPaths, WorkflowPromptRepository
+from generative_agents.runtime.context import RunPaths, SnapshotSkillInstructionRepository
 from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from generative_agents.runtime.frame_store import FrameConflictError, FrameStore
 from generative_agents.runtime.results import (
@@ -22,7 +22,6 @@ from generative_agents.runtime.results import (
 from generative_agents.config import (
     canonical_json_bytes,
     definition_hash,
-    make_default_workflows,
 )
 from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
 from generative_agents.runtime.manifest import (
@@ -36,6 +35,7 @@ from generative_agents.runtime.model_trace import (
     ModelTraceStatus,
     ModelTraceWriter,
 )
+from generative_agents.skills import SkillRegistry
 
 
 def _builder(run_id, attempt_id, step_no=1):
@@ -126,17 +126,24 @@ def test_checkpoint_bundle_is_verified_and_latest_is_idempotent(tmp_path):
     result = builder.freeze()
     frame = store.write(result)
 
+    def export_runtime(target):
+        (target / "memory.sqlite").write_bytes(b"run-scoped-memory")
+
     writer = CheckpointBundleWriter(
         paths,
         lambda _: CheckpointSnapshot(
             state={"step": 1, "agents": {"agent": {"coord": [2, 0]}}},
             conversation={},
+            runtime_storage_exporters={"skill-memory": export_runtime},
         ),
     )
     checkpoint = writer.write(result, frame)
 
     assert checkpoint.name == "step-000001"
     assert writer.read_latest().path == checkpoint.resolve()
+    assert (
+        checkpoint / "runtime-storage/skill-memory/memory.sqlite"
+    ).read_bytes() == b"run-scoped-memory"
     assert writer.write(result, frame) == checkpoint
 
 
@@ -343,6 +350,7 @@ def test_run_manifest_is_verified_and_immutable(tmp_path):
     experiment_id = uuid4()
     revision_id = uuid4()
     definition = make_blank_definition(key="manifest-test", name="Manifest Test")
+    skills = SkillRegistry().snapshot()
     document = build_manifest_document(
         run_id=run_id,
         experiment_id=experiment_id,
@@ -353,6 +361,7 @@ def test_run_manifest_is_verified_and_immutable(tmp_path):
         assets=[],
         materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
         dependency_versions={"pydantic": "test"},
+        skill_bundle=skills,
     )
     store = RunManifestStore(RunPaths.under(tmp_path, run_id))
 
@@ -377,6 +386,7 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
     revision_id = uuid4()
     definition = make_blank_definition(key="resume-manifest", name="Resume Manifest")
     definition_digest = definition_hash(definition)
+    skills = SkillRegistry().snapshot()
     document = build_manifest_document(
         run_id=run_id,
         experiment_id=experiment_id,
@@ -387,6 +397,7 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
         assets=[],
         materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
         dependency_versions={"pydantic": "first-service-version"},
+        skill_bundle=skills,
     )
     store = RunManifestStore(RunPaths.under(tmp_path, run_id))
     store.materialize(document)
@@ -398,11 +409,26 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
         definition=definition,
         expected_definition_hash=definition_digest,
         assets=[],
+        skill_bundle=skills,
     )
 
     assert reused.document["code_build_id"] == "first-service-build"
     assert reused.document["materialized_at"] == "2026-01-01T00:00:00+00:00"
     assert reused.path.read_bytes() == before
+
+    changed_skills = dict(skills)
+    changed_skills["stanford-town-brain"] = {
+        **changed_skills["stanford-town-brain"],
+        "revision": "new-live-revision",
+    }
+    assert store.reuse_for_revision(
+        experiment_id=experiment_id,
+        revision_id=revision_id,
+        definition=definition,
+        expected_definition_hash=definition_digest,
+        assets=[],
+        skill_bundle=changed_skills,
+    ).path.read_bytes() == before
 
     changed_payload = definition.model_dump(mode="json", exclude_none=False)
     changed_payload["experiment"]["goal"] = "material definition changed"
@@ -414,61 +440,42 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
             definition=changed_definition,
             expected_definition_hash=definition_hash(changed_definition),
             assets=[],
+            skill_bundle=skills,
         )
 
 
-def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path):
+def test_run_manifest_pins_skill_bundle_and_runtime_instructions(tmp_path):
     import copy
     import hashlib
 
     run_id = uuid4()
     experiment_id = uuid4()
     revision_id = uuid4()
-    definition = make_blank_definition(key="workflow-manifest", name="Workflow Manifest")
-    workflows = make_default_workflows()
-    function_sources = {
-        "custom_normalize": (
-            "def main(inputs, context):\n"
-            "    return {'result': inputs.get('input')}\n"
-        )
-    }
+    definition = make_blank_definition(key="skill-manifest", name="Skill Manifest")
+    registry = SkillRegistry()
+    skills = registry.snapshot()
     document = build_manifest_document(
         run_id=run_id,
         experiment_id=experiment_id,
         revision_id=revision_id,
         definition=definition,
         expected_definition_hash=definition_hash(definition),
-        code_build_id="workflow-build",
+        code_build_id="skill-build",
         assets=[],
         materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
         dependency_versions={},
-        workflows=workflows,
-        workflow_functions=function_sources,
+        skill_bundle=skills,
     )
     store = RunManifestStore(RunPaths.under(tmp_path, run_id))
     verified = store.materialize(document)
-    assert set(verified.workflows) == set(workflows)
-    assert verified.workflow_functions == function_sources
-    repository = WorkflowPromptRepository(
-        {
-            **{key: value.content for key, value in definition.prompts.items()},
-            "unused_optional_prompt": "not placed and never executed",
-        },
-        verified.workflows,
-    )
-    assert repository.node_for_prompt("decide_chat") == (
-        "social",
-        "prompt_decide_chat",
-    )
-    assert repository.config_for_prompt("decide_chat")["retry_policy"] == {
-        "max_attempts": 3,
-        "retry_on_schema_error": True,
-    }
-    with pytest.raises(KeyError, match="not placed"):
-        repository.get("unused_optional_prompt")
+    assert verified.skill_bundle == skills
+    repository = SnapshotSkillInstructionRepository(verified.skill_bundle)
+    assert repository.get("decide_chat") == registry.prompt("decide-chat")
+    with pytest.raises(KeyError, match="not present"):
+        repository.get("missing-skill")
 
     tampered = copy.deepcopy(document)
-    tampered["workflows"]["social"]["title"] = "tampered"
+    tampered["skill_bundle"]["decide-chat"]["markdown"] += "\nTampered\n"
     unsigned = dict(tampered)
     unsigned.pop("manifest_hash")
     tampered["manifest_hash"] = hashlib.sha256(
@@ -482,22 +489,8 @@ def test_run_manifest_pins_workflow_bundle_and_runtime_prompt_placement(tmp_path
     tampered["manifest_hash"] = hashlib.sha256(
         canonical_json_bytes(unsigned)
     ).hexdigest()
-    with pytest.raises(ValueError, match="workflow_bundle_hash mismatch"):
+    with pytest.raises(ValueError, match="skill_bundle_hash mismatch"):
         tampered_store.materialize(tampered)
-
-    function_tampered = copy.deepcopy(document)
-    function_tampered["workflow_functions"]["custom_normalize"] += "# changed\n"
-    function_tampered_run_id = uuid4()
-    function_tampered["run_id"] = str(function_tampered_run_id)
-    unsigned = dict(function_tampered)
-    unsigned.pop("manifest_hash")
-    function_tampered["manifest_hash"] = hashlib.sha256(
-        canonical_json_bytes(unsigned)
-    ).hexdigest()
-    with pytest.raises(ValueError, match="workflow_function_bundle_hash mismatch"):
-        RunManifestStore(
-            RunPaths.under(tmp_path, function_tampered_run_id)
-        ).materialize(function_tampered)
 
 
 def test_model_trace_is_attempt_scoped_contiguous_and_redacted(tmp_path):

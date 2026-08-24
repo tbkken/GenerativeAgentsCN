@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from generative_agents.config import ExperimentDefinition
 from generative_agents.persistence.models import ExperimentRevision
 from generative_agents.services import ServiceError
+from generative_agents.skills import SkillRegistry
 
 
 def _create_publishable(service, definition: ExperimentDefinition):
@@ -49,11 +50,10 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
             "run_conversations",
             "run_messages",
                 "run_memory_events",
+                "run_step_effects",
                 "builtin_catalog_snapshots",
                 "world_maps",
                 "world_map_revisions",
-                "experiment_workflows",
-                "experiment_workflow_versions",
                 "model_probe_statuses",
                 "experiment_saved_views",
                 "experiment_comparison_groups",
@@ -67,7 +67,7 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-            ).scalar() == "0022_scenario_templates"
+                ).scalar() == "0024_step_effect_ledger"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):
@@ -93,7 +93,8 @@ def test_builtin_template_is_materialized_once_per_independent_draft(service):
 
     assert len(first_draft["definition"]["agents"]) == 25
     assert first_draft["definition"]["world"]["world_name"] == "the Ville"
-    assert first_draft["definition"]["prompts"]["base_desc"]["content"].strip()
+    assert "prompts" not in first_draft["definition"]
+    assert SkillRegistry().prompt("base-desc").strip()
     changed = ExperimentDefinition.model_validate(first_draft["definition"])
     changed.simulation.random_seed = 20260808
     service.update_draft(
@@ -156,6 +157,12 @@ def test_fork_published_revision_is_a_deep_independent_draft(
     service, database, publishable_definition
 ):
     created, draft = _create_publishable(service, publishable_definition)
+    with database.session_factory.begin() as session:
+        draft_row = session.get(ExperimentRevision, draft["id"])
+        draft_row.provenance_json = {
+            **(draft_row.provenance_json or {}),
+            "brain_revision_id": "brain-revision-fixture",
+        }
     published = service.publish_draft(
         experiment_id=created["id"],
         draft_revision_id=draft["id"],
@@ -165,6 +172,7 @@ def test_fork_published_revision_is_a_deep_independent_draft(
     assert fork["state"] == "DRAFT"
     assert fork["base_revision_id"] == published["id"]
     assert fork["definition_hash"] == published["definition_hash"]
+    assert fork["provenance"]["brain_revision_id"] == "brain-revision-fixture"
 
     changed = copy.deepcopy(fork["definition"])
     changed["simulation"]["random_seed"] += 1

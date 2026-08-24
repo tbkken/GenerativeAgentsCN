@@ -173,3 +173,12 @@ var/
 # Generated browser QA and filesystem capability fixtures
 tests/.browser-*/
 tests/.symlink-capability-probe-*/
+
+# Local runtime, QA, and account-export artifacts
+/tmp/
+/output/
+/docs/data-*-batch-*/
+/docs/data-*-batch-*.zip
+
+# Machine-specific local model launcher
+/start-claude.bat

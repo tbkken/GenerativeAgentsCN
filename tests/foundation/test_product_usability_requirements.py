@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from generative_agents.config import make_builtin_definition, make_default_workflows
 from generative_agents.web.app import create_app
 
 
@@ -74,13 +72,12 @@ def test_crowd_based_creation_metadata_filters_views_and_lifecycle(database_url)
         assert restored.status_code == 200
 
 
-def test_resource_first_creation_selects_brain_map_and_multiple_crowds(database_url):
+def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        brain = next(
-            item for item in client.get("/api/v1/brains?page_size=100").json()["items"]
-            if item["is_builtin"]
-        )
+        brain = client.get("/api/v1/skills/stanford-town-brain")
+        assert brain.status_code == 200
+        assert brain.json()["kind"] == "brain"
         public_map = next(
             item for item in client.get("/api/v1/maps?page_size=100").json()["items"]
             if item["map_key"] == "the-ville"
@@ -94,7 +91,6 @@ def test_resource_first_creation_selects_brain_map_and_multiple_crowds(database_
             json={
                 "name": "资源优先创建",
                 "goal": "验证创建入口组合大脑、地图和一个或多个人群",
-                "brain_revision_id": brain["current_published"]["id"],
                 "map_revision_id": public_map["current_published"]["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },
@@ -105,7 +101,7 @@ def test_resource_first_creation_selects_brain_map_and_multiple_crowds(database_
         ).json()
         assert len(draft["definition"]["agents"]) == 25
         assert draft["definition"]["world"]["map_revision_id"] == public_map["current_published"]["id"]
-        assert draft["provenance"]["brain_revision_id"] == brain["current_published"]["id"]
+        assert "brain_revision_id" not in draft["provenance"]
         assert draft["provenance"]["world_map_revision_id"] == public_map["current_published"]["id"]
         assert draft["provenance"]["crowd_revision_ids"] == [crowd["current_published"]["id"]]
 
@@ -173,6 +169,8 @@ def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
 
         estimate = client.get(f"/api/v1/experiments/{second['id']}/run-estimate").json()
         assert estimate["scale"] == {
+            "execution_mode": "SKILL_BRAIN",
+            "brain_skill": "stanford-town-brain",
             "agents": 25,
             "steps": 1000,
             "virtual_minutes": 10000,
@@ -192,20 +190,6 @@ def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
         statuses = client.get(f"/api/v1/experiments/{second['id']}/draft/models/status").json()
         assert statuses["counts"]["UNTESTED"] == 2
         assert statuses["publish_ready"] is False
-
-
-def test_bundled_prompts_use_declared_canonical_input_paths():
-    definition = make_builtin_definition(key="canonical-prompt", name="Canonical Prompt")
-    workflows = make_default_workflows()
-    variable = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\}")
-    for workflow in workflows.values():
-        for node in workflow.nodes:
-            if node.kind != "llm":
-                continue
-            roots = {port.name for port in node.inputs}
-            content = definition.prompts[node.prompt_key].content
-            assert "${" not in content
-            assert {path.split(".", 1)[0] for path in variable.findall(content)} <= roots
 
 
 def test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables():

@@ -31,7 +31,7 @@ from sqlalchemy import insert, select
 
 from generative_agents import compress
 from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import REQUIRED_PROMPT_KEYS, make_blank_definition
+from generative_agents.config.schema import make_blank_definition
 from generative_agents.modules.storage.index import LlamaIndex
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import (
@@ -89,8 +89,8 @@ from generative_agents.services.byte_windows import file_identity, read_utf8_win
 from generative_agents.services.checkpoints import CheckpointService
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.logs import LogService
-from generative_agents.services.legacy_import import LegacyImportService
 from generative_agents.services.runs import RunService
+from generative_agents.skills import SkillRegistry
 from generative_agents.web import create_app
 
 
@@ -189,9 +189,6 @@ def _definition(key: str) -> ExperimentDefinition:
             },
         }
     ]
-    payload["prompts"] = {
-        key: {"content": f"Prompt {key}"} for key in REQUIRED_PROMPT_KEYS
-    }
     return ExperimentDefinition.model_validate(payload)
 
 
@@ -3694,6 +3691,8 @@ def test_def_060_real_legacy_movement_adapter_preserves_state_time_and_conversat
 ):
     """ROL-ART-001/RPL-003 validates the shipped compressed fixture semantically."""
 
+    pytest.skip("legacy movement import was intentionally removed by the Skill brain cutover")
+
     source_root = ROOT / "generative_agents" / "results"
     movement_path = source_root / "compressed" / "example" / "movement.json"
     original_hash = hashlib.sha256(movement_path.read_bytes()).hexdigest()
@@ -3872,7 +3871,7 @@ def test_def_069_cross_web_restart_resume_reuses_the_original_run_manifest(
         assets=before["assets"],
         materialized_at=second_time,
         dependency_versions=before["dependency_versions"],
-        workflows=before.get("workflows"),
+        skill_bundle=before["skill_bundle"],
     )
     assert {
         key for key in before if before[key] != rebuilt[key]
@@ -3928,7 +3927,7 @@ def test_def_069_cross_web_restart_resume_reuses_the_original_run_manifest(
         assets=before["assets"],
         materialized_at=first_time,
         dependency_versions=before["dependency_versions"],
-        workflows=before.get("workflows"),
+        skill_bundle=before["skill_bundle"],
     )
     with pytest.raises(ManifestConflictError):
         manifest_store.materialize(incompatible)
@@ -4069,7 +4068,7 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
                     "definition_hash": "definition-hash",
                 },
                 manifest_hash="manifest-hash",
-                workflows={},
+                skill_bundle=SkillRegistry().snapshot(),
             )
 
     class FakeMasterKeyStore:

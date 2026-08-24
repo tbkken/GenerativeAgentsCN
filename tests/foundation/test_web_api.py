@@ -39,7 +39,7 @@ class _AutoModelSession:
 
     def get(self, url, **kwargs):
         self.calls.append(("GET", url))
-        model_id = "test-chat" if ":5001/" in url else "test-embedding"
+        model_id = "test-embedding" if ":5002/" in url else "test-chat"
         return _ModelResponse(
             {"data": [{"id": model_id, "max_model_len": 40_000}]}
         )
@@ -104,6 +104,16 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
             json={"name": "Auto model run", "source": {"type": "BUILTIN_DEFAULT"}},
         ).json()
         draft = client.get(f"/api/v1/experiments/{created['id']}/draft").json()
+        models = draft["definition"]["models"]
+        models["chat"]["model"] = "auto"
+        models["chat"]["resolved_model"] = None
+        models["chat"]["context_window"] = None
+        forced_auto = client.patch(
+            f"/api/v1/experiments/{created['id']}/draft/models",
+            json={"lock_version": draft["lock_version"], "data": models},
+        )
+        assert forced_auto.status_code == 200, forced_auto.text
+        draft = forced_auto.json()
 
         response = client.post(
             f"/api/v1/experiments/{created['id']}/actions/publish-and-run",
@@ -174,17 +184,20 @@ def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_ur
         ).json()
         assert patched["definition"]["agents"][0]["currently"] == "isolated"
 
-        prompt = client.put(
+        removed_prompt_route = client.put(
             f"/api/v1/experiments/{created['id']}/draft/prompts/base_desc",
             json={"lock_version": patched["lock_version"], "data": {"content": "独立正文"}},
-        ).json()
-        assert prompt["definition"]["prompts"]["base_desc"]["content"] == "独立正文"
+        )
+        assert removed_prompt_route.status_code == 404
+        base_desc = client.get("/api/v1/skills/base-desc")
+        assert base_desc.status_code == 200
+        assert base_desc.json()["kind"] == "atomic"
 
-        world = prompt["definition"]["world"]
+        world = patched["definition"]["world"]
         world["world_name"] = "Owned world"
         saved_world = client.put(
             f"/api/v1/experiments/{created['id']}/draft/world",
-            json={"lock_version": prompt["lock_version"], "data": world},
+            json={"lock_version": patched["lock_version"], "data": world},
         )
         assert saved_world.status_code == 200
         assert saved_world.json()["definition"]["world"]["world_name"] == "Owned world"

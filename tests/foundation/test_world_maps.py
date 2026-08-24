@@ -200,3 +200,43 @@ def test_map_publish_rejects_runtime_invalid_tiles(database_url):
         assert response.json()["error"]["code"] == "MAP_VALIDATION_FAILED"
         errors = response.json()["error"]["details"]["errors"]
         assert errors[0]["code"] == "WORLD_TILE_OUT_OF_BOUNDS"
+
+
+def test_map_publish_accepts_address_using_every_declared_level(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        created = client.post("/api/v1/maps", json={"name": "Four-level map"}).json()
+        draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
+        world = draft["world"]
+        world["definition"] = {
+            "world": "four-level-map",
+            "size": [1, 1],
+            "tile_size": 32,
+            "tile_address_keys": ["world", "sector", "arena", "game_object"],
+            "tiles": [
+                {
+                    "coord": [0, 0],
+                    "collision": False,
+                    "address": [
+                        "four-level-map",
+                        "sector",
+                        "arena",
+                        "game-object",
+                    ],
+                }
+            ],
+        }
+        updated = client.put(
+            f"/api/v1/maps/{created['id']}/draft",
+            json={"lock_version": draft["lock_version"], "world": world},
+        ).json()
+
+        response = client.post(
+            f"/api/v1/maps/{created['id']}/draft/publish",
+            json={
+                "draft_revision_id": updated["id"],
+                "lock_version": updated["lock_version"],
+            },
+        )
+
+        assert response.status_code == 200, response.text
