@@ -4,6 +4,14 @@ from __future__ import annotations
 
 
 def _phase(context: dict) -> str:
+    """执行`phase`的内部处理，供当前模块或类复用。
+
+    参数:
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`dict`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     state = dict(context.get("object_state") or {})
     explicit = str(state.get("pedestrian_signal") or "").strip().upper()
     if explicit in {"RED", "GREEN"}:
@@ -19,6 +27,15 @@ def _phase(context: dict) -> str:
 
 
 def run(input_text: str, context: dict) -> str:
+    """执行当前组件负责的完整流程，并返回本次执行结果。
+
+    参数:
+        input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`dict`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     del input_text
     if _phase(context) == "RED":
         return "当前为行人红灯，车辆仍在通行，请在路边等待，不要进入斑马线。"

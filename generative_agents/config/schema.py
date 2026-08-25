@@ -20,7 +20,9 @@ from pydantic import (
 
 Key = Annotated[str, StringConstraints(pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")]
 SecretRef = Annotated[str, StringConstraints(min_length=1, max_length=64)]
-ModelName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=512)]
+ModelName = Annotated[
+    str, StringConstraints(strip_whitespace=True, min_length=1, max_length=512)
+]
 
 
 class StrictModel(BaseModel):
@@ -28,6 +30,14 @@ class StrictModel(BaseModel):
 
 
 def _normalize_v1_url(value: AnyHttpUrl | str) -> str:
+    """规范化`v1``url`。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`AnyHttpUrl | str`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     parsed = urlsplit(str(value).rstrip("/"))
     path = parsed.path.rstrip("/")
     if not path.endswith("/v1"):
@@ -37,13 +47,28 @@ def _normalize_v1_url(value: AnyHttpUrl | str) -> str:
 
 class ExperimentMetadata(StrictModel):
     key: Key
-    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+    ]
     goal: Annotated[str, StringConstraints(max_length=10_000)] = ""
-    timezone: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)] = "Asia/Shanghai"
+    timezone: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)
+    ] = "Asia/Shanghai"
 
     @field_validator("timezone")
     @classmethod
     def timezone_must_exist(cls, value: str) -> str:
+        """执行 `ExperimentMetadata` 的`timezone``must``exist`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         try:
             ZoneInfo(value)
         except ZoneInfoNotFoundError as exc:
@@ -69,12 +94,31 @@ class SimulationConfig(StrictModel):
     @field_validator("start_time")
     @classmethod
     def require_aware_datetime(cls, value: datetime) -> datetime:
+        """执行 `SimulationConfig` 的`require``aware``datetime`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`datetime`。
+
+        返回:
+            返回 `datetime` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("start_time must include a UTC offset")
         return value
 
     @model_validator(mode="after")
     def checkpoint_within_run(self) -> "SimulationConfig":
+        """执行 `SimulationConfig` 的检查点`within`运行操作。
+
+        返回:
+            返回 `'SimulationConfig'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if self.checkpoint_interval_steps > self.max_steps:
             raise ValueError("checkpoint_interval_steps must not exceed max_steps")
         return self
@@ -106,6 +150,14 @@ class ChatVLLMConfig(ChatTransport):
     @field_validator("base_url")
     @classmethod
     def normalize_url(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        """规范化`url`。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`AnyHttpUrl`。
+
+        返回:
+            返回 `AnyHttpUrl` 类型的处理结果。
+        """
         return AnyHttpUrl(_normalize_v1_url(value))
 
 
@@ -117,6 +169,17 @@ class ChatOpenAIConfig(ChatTransport):
     @field_validator("model")
     @classmethod
     def no_auto(cls, value: str) -> str:
+        """执行 `ChatOpenAIConfig` 的`no``auto`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.casefold() == "auto":
             raise ValueError("openai chat requires an explicit model")
         return value
@@ -124,6 +187,14 @@ class ChatOpenAIConfig(ChatTransport):
     @field_validator("base_url")
     @classmethod
     def normalize_url(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        """规范化`url`。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`AnyHttpUrl`。
+
+        返回:
+            返回 `AnyHttpUrl` 类型的处理结果。
+        """
         return AnyHttpUrl(_normalize_v1_url(value))
 
 
@@ -135,6 +206,17 @@ class ChatOllamaConfig(ChatTransport):
     @field_validator("model")
     @classmethod
     def no_auto(cls, value: str) -> str:
+        """执行 `ChatOllamaConfig` 的`no``auto`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.casefold() == "auto":
             raise ValueError("ollama chat requires an explicit model")
         return value
@@ -163,6 +245,14 @@ class EmbeddingOpenAICompatibleConfig(EmbeddingTransport):
     @field_validator("base_url")
     @classmethod
     def normalize_url(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        """规范化`url`。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`AnyHttpUrl`。
+
+        返回:
+            返回 `AnyHttpUrl` 类型的处理结果。
+        """
         return AnyHttpUrl(_normalize_v1_url(value))
 
 
@@ -174,6 +264,17 @@ class EmbeddingOpenAIConfig(EmbeddingTransport):
     @field_validator("model")
     @classmethod
     def no_auto(cls, value: str) -> str:
+        """执行 `EmbeddingOpenAIConfig` 的`no``auto`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.casefold() == "auto":
             raise ValueError("openai embedding requires an explicit model")
         return value
@@ -181,6 +282,14 @@ class EmbeddingOpenAIConfig(EmbeddingTransport):
     @field_validator("base_url")
     @classmethod
     def normalize_url(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        """规范化`url`。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`AnyHttpUrl`。
+
+        返回:
+            返回 `AnyHttpUrl` 类型的处理结果。
+        """
         return AnyHttpUrl(_normalize_v1_url(value))
 
 
@@ -192,6 +301,17 @@ class EmbeddingOllamaConfig(EmbeddingTransport):
     @field_validator("model")
     @classmethod
     def no_auto(cls, value: str) -> str:
+        """执行 `EmbeddingOllamaConfig` 的`no``auto`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.casefold() == "auto":
             raise ValueError("ollama embedding requires an explicit model")
         return value
@@ -203,6 +323,17 @@ class EmbeddingHuggingFaceConfig(EmbeddingTransport):
     @field_validator("model")
     @classmethod
     def no_auto(cls, value: str) -> str:
+        """执行 `EmbeddingHuggingFaceConfig` 的`no``auto`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value.casefold() == "auto":
             raise ValueError("hugging_face embedding requires an explicit model")
         return value
@@ -261,14 +392,35 @@ class MemoryConfig(StrictModel):
     @field_validator("max_memories_per_type")
     @classmethod
     def unlimited_or_positive(cls, value: int) -> int:
+        """执行 `MemoryConfig` 的`unlimited``or``positive`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`int`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if value != -1 and value <= 0:
             raise ValueError("max_memories_per_type must be -1 or a positive integer")
         return value
 
     @model_validator(mode="after")
     def at_least_one_weight(self) -> "MemoryConfig":
+        """执行 `MemoryConfig` 的`at``least``one``weight`操作。
+
+        返回:
+            返回 `'MemoryConfig'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if self.recency_weight + self.relevance_weight + self.importance_weight <= 0:
-            raise ValueError("at least one memory score weight must be greater than zero")
+            raise ValueError(
+                "at least one memory score weight must be greater than zero"
+            )
         return self
 
 
@@ -289,6 +441,17 @@ class AssetReference(StrictModel):
     @field_validator("logical_path")
     @classmethod
     def safe_relative_path(cls, value: str) -> str:
+        """执行 `AssetReference` 的`safe``relative`路径操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         normalized = value.replace("\\", "/")
         if normalized.startswith("/") or ".." in normalized.split("/"):
             raise ValueError("logical_path must be a safe relative path")
@@ -305,6 +468,17 @@ class WorldOverlayConfig(StrictModel):
     @field_validator("removed_asset_paths")
     @classmethod
     def safe_removed_paths(cls, values: list[str]) -> list[str]:
+        """执行 `WorldOverlayConfig` 的`safe``removed``paths`操作。
+
+        参数:
+            values: 需要规范化、校验、拼接或批量处理的值集合。 类型：`list[str]`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         normalized: list[str] = []
         for value in values:
             path = value.replace("\\", "/")
@@ -318,18 +492,28 @@ class WorldOverlayConfig(StrictModel):
 
 class WorldConfig(StrictModel):
     world_key: Key
-    world_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    world_name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+    ]
     definition: dict[str, Any] = Field(default_factory=dict)
     assets: list[AssetReference] = Field(default_factory=list)
     map_id: str | None = None
     map_revision_id: str | None = None
-    map_revision_hash: Annotated[
-        str, StringConstraints(pattern=r"^[0-9a-f]{64}$")
-    ] | None = None
+    map_revision_hash: (
+        Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")] | None
+    ) = None
     overlay: WorldOverlayConfig = Field(default_factory=WorldOverlayConfig)
 
     @model_validator(mode="after")
     def validate_map_reference(self) -> "WorldConfig":
+        """校验地图`reference`。
+
+        返回:
+            返回 `'WorldConfig'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         reference = (self.map_id, self.map_revision_id, self.map_revision_hash)
         if any(reference) and not all(reference):
             raise ValueError(
@@ -362,7 +546,9 @@ class AgentTemplateDefinition(StrictModel):
 
     agent_key: Key
     enabled: bool = True
-    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+    ]
     portrait_asset: str | None = None
     sprite_asset: str | None = None
     model_override: str | None = None
@@ -377,7 +563,9 @@ class AgentTemplateDefinition(StrictModel):
 class AgentDefinition(StrictModel):
     agent_key: Key
     enabled: bool = True
-    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
+    ]
     portrait_asset: str | None = None
     sprite_asset: str | None = None
     model_override: str | None = None
@@ -402,7 +590,18 @@ class ExperimentDefinition(StrictModel):
 
     @model_validator(mode="after")
     def validate_internal_relations(self) -> "ExperimentDefinition":
-        if self.results.agent_step_projection_interval_steps > self.simulation.max_steps:
+        """校验`internal``relations`。
+
+        返回:
+            返回 `'ExperimentDefinition'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
+        if (
+            self.results.agent_step_projection_interval_steps
+            > self.simulation.max_steps
+        ):
             raise ValueError(
                 "agent_step_projection_interval_steps must not exceed max_steps"
             )
@@ -424,8 +623,19 @@ REQUIRED_ATOMIC_SKILLS = frozenset(
 )
 
 
-def make_blank_definition(*, key: str, name: str, goal: str = "") -> ExperimentDefinition:
-    """Create an explicit draft starter; publishing still requires real catalog data."""
+def make_blank_definition(
+    *, key: str, name: str, goal: str = ""
+) -> ExperimentDefinition:
+    """执行 的`make``blank`仿真定义操作。
+
+    参数:
+        key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+        name: 目标对象的人类可读名称。 类型：`str`。
+        goal: 路径搜索、计划或推理任务需要达到的目标。 类型：`str`。 默认值：`''`。
+
+    返回:
+        返回 `ExperimentDefinition` 类型的处理结果。
+    """
 
     return ExperimentDefinition.model_validate(
         {

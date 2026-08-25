@@ -1,4 +1,4 @@
-"""Transactional run creation, history pagination, and control state changes."""
+"""以事务方式创建运行、分页查询历史并处理运行控制状态迁移。"""
 
 from __future__ import annotations
 
@@ -26,7 +26,21 @@ from generative_agents.persistence.models import (
     RunResultSummary,
 )
 from generative_agents.runtime.context import RunPaths
-from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
+from generative_agents.runtime.checkpoint import (
+    CheckpointBundleWriter,
+    CheckpointSnapshot,
+)
+from generative_agents.status import (
+    AttemptStopReason,
+    ExperimentStatus,
+    OPEN_RUN_STATUSES,
+    RESUMABLE_RUN_STATUSES,
+    RevisionState,
+    RunAttemptStatus,
+    RunQueueReason,
+    RunStatus,
+    SLOT_OWNING_RUN_STATUSES,
+)
 
 from .errors import ServiceError, not_found
 
@@ -34,27 +48,27 @@ if TYPE_CHECKING:
     from .model_probes import ModelProbeService
 
 
-OPEN_RUN_STATUSES = frozenset(
-    {
-        "QUEUED",
-        "STARTING",
-        "RUNNING",
-        "PAUSE_REQUESTED",
-        "PAUSED",
-        "CANCEL_REQUESTED",
-    }
-)
-OCCUPYING_RUN_STATUSES = frozenset(
-    {"STARTING", "RUNNING", "PAUSE_REQUESTED", "CANCEL_REQUESTED"}
-)
+OCCUPYING_RUN_STATUSES = SLOT_OWNING_RUN_STATUSES
 
 
 def _utc_now() -> datetime:
+    """执行`utc``now`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回 `datetime` 类型的处理结果。
+    """
     return datetime.now(timezone.utc)
 
 
 def _iso_utc(value: datetime) -> str:
-    """Serialize persisted instants without losing SQLite's implicit UTC zone."""
+    """执行`iso``utc`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`datetime`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
 
     if value.tzinfo is None:
         value = value.replace(tzinfo=timezone.utc)
@@ -64,6 +78,15 @@ def _iso_utc(value: datetime) -> str:
 
 
 def _encode_cursor(created_at: datetime, run_id: str) -> str:
+    """执行`encode``cursor`的内部处理，供当前模块或类复用。
+
+    参数:
+        created_at: `created`对应的时间点。 类型：`datetime`。
+        run_id: 仿真运行的唯一标识。 类型：`str`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     payload = json.dumps(
         {"created_at": created_at.isoformat(), "id": run_id},
         separators=(",", ":"),
@@ -72,6 +95,17 @@ def _encode_cursor(created_at: datetime, run_id: str) -> str:
 
 
 def _decode_cursor(value: str) -> tuple[datetime, str]:
+    """执行`decode``cursor`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`str`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+
+    异常:
+        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+    """
     try:
         padded = value + "=" * (-len(value) % 4)
         payload = json.loads(base64.urlsafe_b64decode(padded).decode("utf-8"))
@@ -89,7 +123,16 @@ def _run_shape(
     revision: ExperimentRevision,
     definition: ExperimentDefinition,
 ) -> tuple[int, int]:
-    """Return the Skill-brain run steps and virtual-time stride."""
+    """执行运行`shape`的内部处理，供当前模块或类复用。
+
+    参数:
+        session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+        revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`ExperimentRevision`。
+        definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`ExperimentDefinition`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
 
     return definition.simulation.max_steps, definition.simulation.stride_minutes
 
@@ -103,6 +146,17 @@ class RunService:
         now: Callable[[], datetime] = _utc_now,
         model_probes: ModelProbeService | None = None,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+            now: 本次操作采用的基准时间；传入后可保证事务内时间判断一致。 类型：`Callable[[], datetime]`。 默认值：`_utc_now`。
+            model_probes: 传入当前算法的模型`probes`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`ModelProbeService | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._now = now
@@ -115,7 +169,19 @@ class RunService:
         draft_revision_id: str,
         expected_lock_version: int,
     ) -> dict[str, Any]:
-        """Publish the draft and enqueue its first Run in one transaction."""
+        """发布`and`运行。
+
+        参数:
+            experiment_id: 实验记录的唯一标识。 类型：`str`。
+            draft_revision_id: 当前正在编辑且受乐观锁保护的草稿修订版本标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         from .experiments import ExperimentService
 
@@ -151,7 +217,9 @@ class RunService:
                     expected_lock_version=expected_lock_version,
                 )
                 experiment = session.get(Experiment, experiment_id)
-                definition = ExperimentDefinition.model_validate(revision.definition_json)
+                definition = ExperimentDefinition.model_validate(
+                    revision.definition_json
+                )
                 requested_steps, stride_minutes = _run_shape(
                     session, revision, definition
                 )
@@ -160,7 +228,7 @@ class RunService:
                     id=run_id,
                     experiment_id=experiment_id,
                     revision_id=revision.id,
-                    status="QUEUED",
+                    status=RunStatus.QUEUED.value,
                     queued_at=now,
                     start_step=0,
                     requested_steps=requested_steps,
@@ -173,17 +241,26 @@ class RunService:
                 )
                 session.add(run)
                 session.flush()
-                session.add(RunQueue(run_id=run_id, reason="NEW", enqueued_at=now))
+                session.add(
+                    RunQueue(
+                        run_id=run_id,
+                        reason=RunQueueReason.NEW.value,
+                        enqueued_at=now,
+                    )
+                )
                 session.add(
                     RunEvent(
                         run_id=run_id,
                         event_type="queue",
-                        payload_json={"status": "QUEUED", "reason": "NEW"},
+                        payload_json={
+                            "status": RunStatus.QUEUED.value,
+                            "reason": RunQueueReason.NEW.value,
+                        },
                         created_at=now,
                     )
                 )
                 experiment.latest_run_id = run_id
-                experiment.status = "QUEUED"
+                experiment.status = ExperimentStatus.QUEUED.value
                 experiment.row_version += 1
                 experiment.updated_at = now
         except IntegrityError as exc:
@@ -199,9 +276,23 @@ class RunService:
         experiment_id: str,
         revision_id: str,
         *,
-        reason: str = "NEW",
+        reason: RunQueueReason | str = RunQueueReason.NEW,
     ) -> dict[str, Any]:
+        """从已发布的实验修订版本创建一条新的仿真运行。
+
+        参数:
+            experiment_id: 实验记录的唯一标识。 类型：`str`。
+            revision_id: 实验修订版本的唯一标识。 类型：`str`。
+            reason: 进入队列的原因。允许值：`NEW`（新运行）、`RESUME`（恢复）、`RETRY`（重试）。 类型：`RunQueueReason | str`。 默认值：`RunQueueReason.NEW`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         now = self._now()
+        queue_reason = RunQueueReason(reason)
         try:
             with self._database.session_factory.begin() as session:
                 experiment = session.get(Experiment, experiment_id)
@@ -210,7 +301,7 @@ class RunService:
                 revision = session.get(ExperimentRevision, revision_id)
                 if revision is None or revision.experiment_id != experiment_id:
                     raise not_found("revision", revision_id)
-                if revision.state != "PUBLISHED":
+                if revision.state != RevisionState.PUBLISHED:
                     raise ServiceError(
                         "REVISION_NOT_PUBLISHED",
                         "只能从已发布版本创建运行",
@@ -229,7 +320,9 @@ class RunService:
                         status_code=409,
                         details={"run_id": existing},
                     )
-                definition = ExperimentDefinition.model_validate(revision.definition_json)
+                definition = ExperimentDefinition.model_validate(
+                    revision.definition_json
+                )
                 requested_steps, stride_minutes = _run_shape(
                     session, revision, definition
                 )
@@ -255,7 +348,7 @@ class RunService:
                     id=run_id,
                     experiment_id=experiment_id,
                     revision_id=revision_id,
-                    status="QUEUED",
+                    status=RunStatus.QUEUED.value,
                     queued_at=now,
                     start_step=0,
                     requested_steps=requested_steps,
@@ -269,18 +362,21 @@ class RunService:
                 session.add(run)
                 session.flush()
                 session.add(
-                    RunQueue(run_id=run_id, reason=reason, enqueued_at=now)
+                    RunQueue(run_id=run_id, reason=queue_reason.value, enqueued_at=now)
                 )
                 session.add(
                     RunEvent(
                         run_id=run_id,
                         event_type="queue",
-                        payload_json={"status": "QUEUED", "reason": reason},
+                        payload_json={
+                            "status": RunStatus.QUEUED.value,
+                            "reason": queue_reason.value,
+                        },
                         created_at=now,
                     )
                 )
                 experiment.latest_run_id = run_id
-                experiment.status = "QUEUED"
+                experiment.status = ExperimentStatus.QUEUED.value
                 experiment.row_version += 1
                 experiment.updated_at = now
         except IntegrityError as exc:
@@ -292,6 +388,14 @@ class RunService:
         return self.get_run(run_id)
 
     def get_run(self, run_id: str) -> dict[str, Any]:
+        """获取运行。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = session.get(Run, run_id)
             if run is None:
@@ -305,8 +409,23 @@ class RunService:
         cursor: str | None = None,
         limit: int = 50,
     ) -> dict[str, Any]:
+        """查询`runs`。
+
+        参数:
+            experiment_id: 实验记录的唯一标识。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`str | None`。 默认值：`None`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`50`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if limit < 1 or limit > 100:
-            raise ServiceError("INVALID_LIMIT", "limit 必须在 1 到 100 之间", status_code=422)
+            raise ServiceError(
+                "INVALID_LIMIT", "limit 必须在 1 到 100 之间", status_code=422
+            )
         with self._database.session_factory() as session:
             if session.get(Experiment, experiment_id) is None:
                 raise not_found("experiment", experiment_id)
@@ -321,7 +440,9 @@ class RunService:
                 )
             rows = list(
                 session.scalars(
-                    statement.order_by(Run.created_at.desc(), Run.id.desc()).limit(limit + 1)
+                    statement.order_by(Run.created_at.desc(), Run.id.desc()).limit(
+                        limit + 1
+                    )
                 )
             )
             has_more = len(rows) > limit
@@ -337,50 +458,70 @@ class RunService:
             }
 
     def pause(self, run_id: str) -> dict[str, Any]:
+        """执行 `RunService` 的`pause`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         now = self._now()
         with self._database.session_factory.begin() as session:
             run = self._require_run(session, run_id)
-            if run.status == "PAUSE_REQUESTED":
+            if run.status == RunStatus.PAUSE_REQUESTED:
                 return self._run_detail(session, run)
-            if run.status != "RUNNING":
+            if run.status != RunStatus.RUNNING:
                 self._invalid_transition(run, "pause")
-            run.status = "PAUSE_REQUESTED"
+            run.status = RunStatus.PAUSE_REQUESTED.value
             run.heartbeat_at = now
             self._append_state_event(session, run, now)
         return self.get_run(run_id)
 
     def cancel(self, run_id: str, *, force: bool = False) -> dict[str, Any]:
+        """执行 `RunService` 的`cancel`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            force: 是否忽略可安全绕过的短路条件并强制执行；不会绕过所有权或完整性校验。 类型：`bool`。 默认值：`False`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         now = self._now()
         with self._database.session_factory.begin() as session:
             run = self._require_run(session, run_id)
-            if run.status == "CANCELLED":
+            if run.status == RunStatus.CANCELLED:
                 return self._run_detail(session, run)
-            if run.status == "QUEUED":
+            if run.status == RunStatus.QUEUED:
                 session.execute(delete(RunQueue).where(RunQueue.run_id == run.id))
                 self._finish_without_worker(session, run, now)
-            elif run.status == "PAUSED":
+            elif run.status == RunStatus.PAUSED:
                 self._finish_without_worker(session, run, now)
-            elif run.status == "STARTING":
+            elif run.status == RunStatus.STARTING:
                 if run.current_attempt_id:
                     attempt = session.get(RunAttempt, run.current_attempt_id)
                     if attempt is not None:
-                        attempt.status = "ENDED"
+                        attempt.status = RunAttemptStatus.ENDED.value
                         attempt.ended_at = now
                         attempt.end_step = run.completed_steps
-                        attempt.stop_reason = "FORCE_CANCELLED" if force else "CANCELLED"
+                        attempt.stop_reason = (
+                            AttemptStopReason.FORCE_CANCELLED.value
+                            if force
+                            else AttemptStopReason.CANCELLED.value
+                        )
                 self._finish_without_worker(session, run, now)
-            elif run.status in {"RUNNING", "PAUSE_REQUESTED"}:
-                run.status = "CANCEL_REQUESTED"
+            elif run.status in {RunStatus.RUNNING, RunStatus.PAUSE_REQUESTED}:
+                run.status = RunStatus.CANCEL_REQUESTED.value
                 self._append_state_event(
                     session,
                     run,
                     now,
                     extra={"force": force, "supervisor_action_required": force},
                 )
-            elif run.status == "CANCEL_REQUESTED":
+            elif run.status == RunStatus.CANCEL_REQUESTED:
                 if force:
-                    # A later force request is an escalation, not an idempotent
-                    # repeat of the earlier cooperative cancellation.
+                    # 后续强制请求属于取消升级，不是对先前协作式取消的幂等重复。
                     self._append_state_event(
                         session,
                         run,
@@ -392,9 +533,16 @@ class RunService:
         return self.get_run(run_id)
 
     def resume_paused(self, run_id: str) -> dict[str, Any]:
-        # Serialize the complete recovery decision.  The rewinder itself takes
-        # worker.lock then artifact.lock; recovery.lock is always acquired
-        # outside that established order and is never acquired by workers.
+        # 整个恢复决策必须串行化。回退器内部依次获取 worker.lock、artifact.lock；
+        # recovery.lock 始终在该顺序之外先获取，且工作进程绝不会获取它，避免锁顺序反转。
+        """恢复`paused`。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             self._require_run(session, run_id)
         paths = RunPaths.under(self._var_dir, UUID(run_id))
@@ -403,11 +551,22 @@ class RunService:
             return self._resume_locked(run_id)
 
     def _resume_locked(self, run_id: str) -> dict[str, Any]:
+        """恢复`locked`。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self._database.session_factory() as session:
             current = self._require_run(session, run_id)
             current_status = current.status
             recoverable_step = current.recoverable_step
-        if current_status not in {"PAUSED", "FAILED", "INTERRUPTED"}:
+        if current_status not in RESUMABLE_RUN_STATUSES:
             with self._database.session_factory() as session:
                 self._invalid_transition(self._require_run(session, run_id), "resume")
         if recoverable_step < 1:
@@ -436,7 +595,7 @@ class RunService:
                     "reason": type(exc).__name__,
                 },
             ) from exc
-        if current_status in {"FAILED", "INTERRUPTED"}:
+        if current_status in {RunStatus.FAILED, RunStatus.INTERRUPTED}:
             from generative_agents.runtime.recovery import RunProjectionRewinder
 
             RunProjectionRewinder(self._database, var_dir=self._var_dir).rewind(
@@ -445,7 +604,7 @@ class RunService:
         now = self._now()
         with self._database.session_factory.begin() as session:
             run = self._require_run(session, run_id)
-            if run.status not in {"PAUSED", "FAILED", "INTERRUPTED"}:
+            if run.status not in RESUMABLE_RUN_STATUSES:
                 self._invalid_transition(run, "resume")
             if run.status != current_status or run.recoverable_step != recoverable_step:
                 raise ServiceError(
@@ -454,24 +613,37 @@ class RunService:
                     status_code=409,
                     details={"run_id": run.id, "status": run.status},
                 )
-            reason = "RESUME" if run.status == "PAUSED" else "RETRY"
-            run.status = "QUEUED"
+            reason = (
+                RunQueueReason.RESUME
+                if run.status == RunStatus.PAUSED
+                else RunQueueReason.RETRY
+            )
+            run.status = RunStatus.QUEUED.value
             run.queued_at = now
             run.finished_at = None
             run.error_code = None
             run.error_message = None
             run.resume_count += 1
-            session.add(RunQueue(run_id=run.id, reason=reason, enqueued_at=now))
+            session.add(RunQueue(run_id=run.id, reason=reason.value, enqueued_at=now))
             self._append_state_event(session, run, now)
             experiment = session.get(Experiment, run.experiment_id)
             if experiment is not None:
-                experiment.status = "QUEUED"
+                experiment.status = ExperimentStatus.QUEUED.value
                 experiment.updated_at = now
                 experiment.row_version += 1
         return self.get_run(run_id)
 
     @staticmethod
     def _require_run(session: Session, run_id: str) -> Run:
+        """执行`require`运行的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回 `Run` 类型的处理结果。
+        """
         run = session.get(Run, run_id)
         if run is None:
             raise not_found("run", run_id)
@@ -479,6 +651,18 @@ class RunService:
 
     @staticmethod
     def _invalid_transition(run: Run, action: str) -> None:
+        """执行`invalid``transition`的内部处理，供当前模块或类复用。
+
+        参数:
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            action: 智能体当前选择或已经执行的行为记录。 类型：`str`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         raise ServiceError(
             "INVALID_RUN_TRANSITION",
             f"运行状态 {run.status} 不能执行 {action}",
@@ -487,7 +671,17 @@ class RunService:
         )
 
     def _finish_without_worker(self, session: Session, run: Run, now: datetime) -> None:
-        run.status = "CANCELLED"
+        """执行`finish``without`工作进程的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            now: 本次操作采用的基准时间；传入后可保证事务内时间判断一致。 类型：`datetime`。
+
+        返回:
+            无返回值。
+        """
+        run.status = RunStatus.CANCELLED.value
         run.slot_no = None
         run.current_attempt_id = None
         run.pid = None
@@ -497,7 +691,11 @@ class RunService:
         self._append_state_event(session, run, now)
         experiment = session.get(Experiment, run.experiment_id)
         if experiment is not None:
-            experiment.status = "DRAFT" if experiment.current_draft_revision_id else "CANCELLED"
+            experiment.status = (
+                ExperimentStatus.DRAFT.value
+                if experiment.current_draft_revision_id
+                else ExperimentStatus.CANCELLED.value
+            )
             experiment.updated_at = now
             experiment.row_version += 1
 
@@ -509,6 +707,17 @@ class RunService:
         *,
         extra: dict[str, Any] | None = None,
     ) -> None:
+        """执行`append`状态事件的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            now: 本次操作采用的基准时间；传入后可保证事务内时间判断一致。 类型：`datetime`。
+            extra: 传入当前算法的`extra`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict[str, Any] | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         payload = {"status": run.status}
         payload.update(extra or {})
         session.add(
@@ -522,14 +731,25 @@ class RunService:
 
     @staticmethod
     def _run_detail(session: Session, run: Run) -> dict[str, Any]:
+        """执行运行`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         queue_position = None
-        if run.status == "QUEUED":
+        if run.status == RunStatus.QUEUED:
             queue_id = session.scalar(
                 select(RunQueue.id).where(RunQueue.run_id == run.id)
             )
             if queue_id is not None:
                 queue_position = session.scalar(
-                    select(func.count()).select_from(RunQueue).where(RunQueue.id <= queue_id)
+                    select(func.count())
+                    .select_from(RunQueue)
+                    .where(RunQueue.id <= queue_id)
                 )
         revision = session.get(ExperimentRevision, run.revision_id)
         definition = (
@@ -550,7 +770,9 @@ class RunService:
             "requested_steps": run.requested_steps,
             "execution_mode": "SKILL_BRAIN",
             "brain_skill": (
-                definition.engine.brain_skill if definition is not None else "stanford-town-brain"
+                definition.engine.brain_skill
+                if definition is not None
+                else "stanford-town-brain"
             ),
             "step_interval_ms": None,
             "stride_minutes": run.stride_minutes,
@@ -561,6 +783,6 @@ class RunService:
             "created_at": _iso_utc(run.created_at),
             "started_at": _iso_utc(run.started_at) if run.started_at else None,
             "finished_at": _iso_utc(run.finished_at) if run.finished_at else None,
-            "recoverable": run.status in {"PAUSED", "FAILED", "INTERRUPTED"}
+            "recoverable": run.status in RESUMABLE_RUN_STATUSES
             and run.recoverable_step > 0,
         }

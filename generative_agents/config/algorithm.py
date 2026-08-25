@@ -20,6 +20,11 @@ class AlgorithmProfile:
     default_event_poignancy: int
 
     def as_dict(self) -> dict[str, int]:
+        """执行 `AlgorithmProfile` 的`as``dict`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return asdict(self)
 
 
@@ -43,7 +48,17 @@ ALGORITHM_PROFILES: Mapping[str, AlgorithmProfile] = MappingProxyType(
 
 
 def get_algorithm_profile(version: str) -> AlgorithmProfile:
-    """Return a supported immutable profile or fail closed."""
+    """获取`algorithm``profile`。
+
+    参数:
+        version: 当前数据、协议或生成器使用的版本号。 类型：`str`。
+
+    返回:
+        返回 `AlgorithmProfile` 类型的处理结果。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
 
     try:
         return ALGORITHM_PROFILES[version]

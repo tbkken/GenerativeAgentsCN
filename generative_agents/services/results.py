@@ -28,15 +28,32 @@ from generative_agents.persistence.models import (
     RunScheduleRevision,
     RunStep,
 )
+from generative_agents.status import MemoryState, ResultCompleteness
 
 from .errors import ServiceError, not_found
 
 
 class ResultQueryService:
     def __init__(self, database: Database):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
 
     def summary(self, run_id: str) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的摘要操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             names = self._agent_names(session, run)
@@ -45,7 +62,7 @@ class ResultQueryService:
                 return {
                     "run_id": run_id,
                     "run_status": run.status,
-                    "result_state": "EMPTY",
+                    "result_state": ResultCompleteness.EMPTY.value,
                     "available_step": 0,
                     "requested_steps": run.requested_steps,
                     "result_version": 0,
@@ -81,7 +98,9 @@ class ResultQueryService:
                 "result_state": value.result_state,
                 "available_step": value.available_step,
                 "requested_steps": run.requested_steps,
-                "virtual_time": value.virtual_time.isoformat() if value.virtual_time else None,
+                "virtual_time": value.virtual_time.isoformat()
+                if value.virtual_time
+                else None,
                 "result_version": value.result_version,
                 "projection_version": value.projection_version,
                 "capabilities": value.capabilities_json,
@@ -119,6 +138,17 @@ class ResultQueryService:
         to_step: int | None = None,
         limit: int = 200,
     ) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的`timeline`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            from_step: 读取回放或结果窗口的起始步骤编号。 类型：`int`。 默认值：`1`。
+            to_step: 读取、回退或导出的结束步骤编号。 类型：`int | None`。 默认值：`None`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`200`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         self._validate_limit(limit, maximum=500)
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
@@ -193,6 +223,15 @@ class ResultQueryService:
             }
 
     def agents(self, run_id: str, *, limit: int = 100) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的智能体集合操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`100`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         self._validate_limit(limit, maximum=500)
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
@@ -261,10 +300,14 @@ class ResultQueryService:
                             latest.activity_kind if latest is not None else "OTHER"
                         ),
                         "latest_action": (
-                            latest.action_text if latest is not None else row.currently_text
+                            latest.action_text
+                            if latest is not None
+                            else row.currently_text
                         ),
                         "latest_virtual_time": (
-                            latest.virtual_time.isoformat() if latest is not None else None
+                            latest.virtual_time.isoformat()
+                            if latest is not None
+                            else None
                         ),
                     }
                 )
@@ -274,7 +317,19 @@ class ResultQueryService:
                 "items": items,
             }
 
-    def agent(self, run_id: str, agent_key: str, *, step_limit: int = 200) -> dict[str, Any]:
+    def agent(
+        self, run_id: str, agent_key: str, *, step_limit: int = 200
+    ) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的智能体操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            step_limit: 传入当前算法的仿真步`limit`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。 默认值：`200`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             names = self._agent_names(session, run)
@@ -300,7 +355,7 @@ class ResultQueryService:
                     RunScheduleRevision.agent_key == agent_key,
                 )
                 .order_by(RunScheduleRevision.revision_no.desc())
-                    .limit(1)
+                .limit(1)
             )
             schedule_revisions = list(
                 session.scalars(
@@ -465,6 +520,18 @@ class ResultQueryService:
         offset: int = 0,
         limit: int = 50,
     ) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的`conversations`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str | None`。 默认值：`None`。
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
+            offset: 从结果集或字节流起点跳过的数量。 类型：`int`。 默认值：`0`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`50`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         self._validate_limit(limit, maximum=100)
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
@@ -501,6 +568,15 @@ class ResultQueryService:
             }
 
     def conversation(self, run_id: str, conversation_id: str) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的`conversation`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            conversation_id: `conversation`的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             names = self._agent_names(session, run)
@@ -540,11 +616,28 @@ class ResultQueryService:
         *,
         agent_key: str | None = None,
         memory_type: str | None = None,
-        state: str | None = None,
+        state: MemoryState | str | None = None,
         query: str | None = None,
         offset: int = 0,
         limit: int = 50,
     ) -> dict[str, Any]:
+        """分页查询运行过程中形成的智能体记忆。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str | None`。 默认值：`None`。
+            memory_type: 记忆类型筛选值；为空时包含事件、思考等全部类型。 类型：`str | None`。 默认值：`None`。
+            state: 记忆状态筛选值。允许值：`ACTIVE`、`EXPIRED`、`EVICTED`。 类型：`MemoryState | str | None`。 默认值：`None`。
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
+            offset: 从结果集或字节流起点跳过的数量。 类型：`int`。 默认值：`0`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`50`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         self._validate_limit(limit, maximum=100)
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
@@ -555,7 +648,15 @@ class ResultQueryService:
             if memory_type:
                 statement = statement.where(RunMemoryEvent.memory_type == memory_type)
             if state:
-                statement = statement.where(RunMemoryEvent.state == state)
+                try:
+                    normalized_state = MemoryState(state).value
+                except ValueError as exc:
+                    raise ServiceError(
+                        "INVALID_MEMORY_STATE",
+                        "记忆状态筛选值无效",
+                        status_code=422,
+                    ) from exc
+                statement = statement.where(RunMemoryEvent.state == normalized_state)
             if query:
                 statement = statement.where(RunMemoryEvent.description.contains(query))
             rows = list(
@@ -577,6 +678,14 @@ class ResultQueryService:
             }
 
     def operations(self, run_id: str) -> dict[str, Any]:
+        """执行 `ResultQueryService` 的`operations`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             attempts = list(
@@ -619,7 +728,9 @@ class ResultQueryService:
                         "end_step": item.end_step,
                         "stop_reason": item.stop_reason,
                         "started_at": item.started_at.isoformat(),
-                        "ended_at": item.ended_at.isoformat() if item.ended_at else None,
+                        "ended_at": item.ended_at.isoformat()
+                        if item.ended_at
+                        else None,
                     }
                     for item in attempts
                 ],
@@ -667,6 +778,15 @@ class ResultQueryService:
 
     @staticmethod
     def _run(session, run_id: str) -> Run:
+        """执行运行的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回 `Run` 类型的处理结果。
+        """
         value = session.get(Run, run_id)
         if value is None:
             raise not_found("run", run_id)
@@ -674,11 +794,29 @@ class ResultQueryService:
 
     @staticmethod
     def _available_step(session, run_id: str) -> int:
+        """执行`available`仿真步的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
         value = session.get(RunResultSummary, run_id)
         return value.available_step if value else 0
 
     @staticmethod
     def _agent_names(session, run: Run) -> dict[str, str]:
+        """执行智能体`names`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         revision = session.get(ExperimentRevision, run.revision_id)
         if revision is None:
             return {}
@@ -690,6 +828,15 @@ class ResultQueryService:
 
     @staticmethod
     def _agent_definitions(session, run: Run) -> dict[str, dict[str, Any]]:
+        """执行智能体`definitions`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         revision = session.get(ExperimentRevision, run.revision_id)
         if revision is None:
             return {}
@@ -701,6 +848,15 @@ class ResultQueryService:
 
     @staticmethod
     def _agent_metadata(definition: dict[str, Any] | None, display_name: str) -> dict:
+        """执行智能体`metadata`的内部处理，供当前模块或类复用。
+
+        参数:
+            definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`dict[str, Any] | None`。
+            display_name: 传入当前算法的`display``name`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         definition = definition or {}
         scratch = definition.get("scratch") or {}
         portrait_asset = definition.get("portrait_asset")
@@ -724,6 +880,18 @@ class ResultQueryService:
 
     @staticmethod
     def _validate_limit(limit: int, *, maximum: int) -> None:
+        """校验`limit`。
+
+        参数:
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。
+            maximum: 当前校验允许的最大数量或数值上限。 类型：`int`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if limit < 1 or limit > maximum:
             raise ServiceError(
                 "INVALID_LIMIT", f"limit 必须在 1 到 {maximum} 之间", status_code=422
@@ -731,6 +899,14 @@ class ResultQueryService:
 
     @staticmethod
     def _step(row: RunStep) -> dict:
+        """执行仿真步的内部处理，供当前模块或类复用。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunStep`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "step_no": row.step_no,
             "virtual_time": row.virtual_time.isoformat(),
@@ -746,6 +922,15 @@ class ResultQueryService:
 
     @staticmethod
     def _event(row: RunDomainEvent, names: dict[str, str] | None = None) -> dict:
+        """执行事件的内部处理，供当前模块或类复用。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunDomainEvent`。
+            names: 用于显示、匹配或反向解析的名称映射或集合。 类型：`dict[str, str] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         names = names or {}
         return {
             "event_id": row.id,
@@ -767,6 +952,15 @@ class ResultQueryService:
 
     @staticmethod
     def _agent(row: RunAgentSummary, names: dict[str, str] | None = None) -> dict:
+        """执行智能体的内部处理，供当前模块或类复用。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunAgentSummary`。
+            names: 用于显示、匹配或反向解析的名称映射或集合。 类型：`dict[str, str] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         names = names or {}
         return {
             "agent_key": row.agent_key,
@@ -792,6 +986,15 @@ class ResultQueryService:
     def _conversation(
         row: RunConversation, names: dict[str, str] | None = None
     ) -> dict:
+        """执行`conversation`的内部处理，供当前模块或类复用。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunConversation`。
+            names: 用于显示、匹配或反向解析的名称映射或集合。 类型：`dict[str, str] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         names = names or {}
         return {
             "conversation_id": row.id,
@@ -812,6 +1015,15 @@ class ResultQueryService:
 
     @staticmethod
     def _memory(row: RunMemoryEvent, names: dict[str, str] | None = None) -> dict:
+        """执行记忆的内部处理，供当前模块或类复用。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunMemoryEvent`。
+            names: 用于显示、匹配或反向解析的名称映射或集合。 类型：`dict[str, str] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         names = names or {}
         return {
             "memory_id": row.memory_node_id,
@@ -830,6 +1042,14 @@ class ResultQueryService:
 
     @staticmethod
     def _agent_state_changes(rows: list[RunAgentStep]) -> list[dict[str, Any]]:
+        """执行智能体状态`changes`的内部处理，供当前模块或类复用。
+
+        参数:
+            rows: 传入当前算法的`rows`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[RunAgentStep]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         changes: list[dict[str, Any]] = []
         previous: RunAgentStep | None = None
         for row in rows:
@@ -875,6 +1095,11 @@ class ResultQueryService:
 
     @staticmethod
     def _empty_capabilities() -> dict:
+        """执行`empty``capabilities`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             key: {"state": "UNAVAILABLE", "reason": "NO_COMMITTED_STEPS"}
             for key in (
@@ -889,6 +1114,11 @@ class ResultQueryService:
 
     @staticmethod
     def _zero_counts() -> dict:
+        """执行`zero``counts`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "actions": 0,
             "conversations": 0,

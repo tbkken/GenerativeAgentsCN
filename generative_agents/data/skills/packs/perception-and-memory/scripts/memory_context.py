@@ -10,7 +10,15 @@ from generative_agents.skills.mcp import MemoryStream
 
 
 def append_memory(input_text: str, context: Mapping[str, Any]) -> str:
-    """Persist one natural-language memory and return a handoff sentence."""
+    """执行 的`append`记忆操作。
+
+    参数:
+        input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
 
     store = _store(context)
     item = store.append(
@@ -23,7 +31,15 @@ def append_memory(input_text: str, context: Mapping[str, Any]) -> str:
 
 
 def recall_memories(input_text: str, context: Mapping[str, Any]) -> str:
-    """Return matching memories as readable text for the next Skill."""
+    """执行 的`recall``memories`操作。
+
+    参数:
+        input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
 
     items = _store(context).search(
         agent_key=str(context["agent_key"]),
@@ -40,6 +56,14 @@ def recall_memories(input_text: str, context: Mapping[str, Any]) -> str:
 
 
 def _store(context: Mapping[str, Any]) -> MemoryStream:
+    """执行`store`的内部处理，供当前模块或类复用。
+
+    参数:
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     path = Path(str(context.get("memory_database") or "var/skill-memory.db"))
     store = MemoryStream(
         path,

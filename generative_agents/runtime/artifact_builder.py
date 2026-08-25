@@ -1,4 +1,4 @@
-"""Build immutable derived artifacts from committed run facts."""
+"""只根据已提交运行事实构建不可变派生产物。"""
 
 from __future__ import annotations
 
@@ -29,24 +29,55 @@ from generative_agents.persistence.models import (
     RunArtifact,
 )
 from generative_agents.services.replay_frames import VerifiedRunFrameReader
+from generative_agents.status import (
+    ArtifactJobStatus,
+    ArtifactJobType,
+    ArtifactSourceKind,
+    ArtifactState,
+    ArtifactType,
+    MemorySnapshotState,
+    ResultCompleteness,
+    RunStatus,
+)
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from .context import RunPaths
 from .replay_v2 import GENERATOR_VERSION, build_replay_v2
 from .artifact_contract import REPORT_GENERATOR_VERSION
 
 
-
-
 class ArtifactBuilder:
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._frames = VerifiedRunFrameReader(self._var_dir)
 
     def build(self, job_id: str) -> str:
+        """执行 `ArtifactBuilder` 的`build`操作。
+
+        参数:
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+
+        说明:
+            构建任务受 worker_token 保护；临时文件完成校验后才能原子发布，失败时不得覆盖最近一次可用产物。
+        """
         with self._database.session_factory() as session:
             job = session.get(ArtifactJob, job_id)
-            if job is None or job.status != "RUNNING":
+            if job is None or job.status != ArtifactJobStatus.RUNNING:
                 raise RuntimeError("artifact job is not owned in RUNNING state")
             run_id = job.run_id
             job_type = job.job_type
@@ -56,9 +87,8 @@ class ArtifactBuilder:
             generator_version = job.generator_version
         paths = RunPaths.under(self._var_dir, UUID(run_id))
         paths.ensure()
-        # Keep Windows paths comfortably below MAX_PATH even when pytest or an
-        # operator chooses a long var_dir.  The DB job UUID remains the public
-        # identity; this deterministic digest is only the opaque storage key.
+        # 即使 pytest 或运维人员配置了很长的 var_dir，也要让 Windows 路径明显低于 MAX_PATH。
+        # 数据库任务 UUID 仍是公开身份；此确定性摘要只作为不透明存储键。
         storage_key = hashlib.sha256(job_id.encode("ascii")).hexdigest()[:16]
         export_dir = paths.artifacts / "exports" / storage_key
         export_dir.mkdir(parents=True, exist_ok=True)
@@ -79,7 +109,7 @@ class ArtifactBuilder:
             relative = target.relative_to(self._var_dir).as_posix()
             with self._database.session_factory.begin() as session:
                 job = session.get(ArtifactJob, job_id)
-                if job is None or job.status != "RUNNING":
+                if job is None or job.status != ArtifactJobStatus.RUNNING:
                     raise RuntimeError("artifact job ownership changed during build")
                 artifact = session.scalar(
                     select(RunArtifact).where(
@@ -99,11 +129,11 @@ class ArtifactBuilder:
                         relative_path=relative,
                         size_bytes=target.stat().st_size,
                         sha256=digest,
-                        source_kind="DERIVED",
+                        source_kind=ArtifactSourceKind.DERIVED.value,
                         generator_version=generator_version,
                         source_step=source_step,
                         partial=partial,
-                        state="READY",
+                        state=ArtifactState.READY.value,
                         created_at=now,
                     )
                     session.add(artifact)
@@ -114,8 +144,10 @@ class ArtifactBuilder:
                         or artifact.size_bytes != target.stat().st_size
                         or artifact.relative_path != relative
                     ):
-                        raise RuntimeError("immutable artifact identity already has different content")
-                job.status = "SUCCEEDED"
+                        raise RuntimeError(
+                            "immutable artifact identity already has different content"
+                        )
+                job.status = ArtifactJobStatus.SUCCEEDED.value
                 job.progress = 1
                 job.artifact_id = artifact.id
                 job.finished_at = now
@@ -140,12 +172,21 @@ class ArtifactBuilder:
                 return artifact.id
 
     def fail(self, job_id: str, exc: Exception) -> None:
+        """执行 `ArtifactBuilder` 的`fail`操作。
+
+        参数:
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+            exc: 上游捕获的异常对象，用于分类、脱敏或转换错误信息。 类型：`Exception`。
+
+        返回:
+            无返回值。
+        """
         now = datetime.now(timezone.utc)
         with self._database.session_factory.begin() as session:
             job = session.get(ArtifactJob, job_id)
-            if job is None or job.status != "RUNNING":
+            if job is None or job.status != ArtifactJobStatus.RUNNING:
                 return
-            job.status = "FAILED"
+            job.status = ArtifactJobStatus.FAILED.value
             job.error_summary = f"{type(exc).__name__}: {exc}"[:2000]
             job.finished_at = now
             job.worker_pid = None
@@ -172,18 +213,36 @@ class ArtifactBuilder:
         export_dir,
         paths,
     ):
-        if job_type == "BUILD_REPLAY":
+        """构建`file`。
+
+        参数:
+            job_id: 后台产物任务的唯一标识。
+            run_id: 仿真运行的唯一标识。
+            job_type: 产物任务类型。允许值：`BUILD_REPLAY`（构建回放）、`RESULT_BUNDLE`（结果包）、`FILTERED_MEMORIES`（筛选记忆）、`FILTERED_CONVERSATIONS`（筛选会话）、`CHECKPOINT_BUNDLE`（检查点包）、`BUILD_REPORT`（运行报告）。
+            parameters: 产物任务或模型调用的结构化参数；允许字段随任务类型变化。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。
+            generator_version: 产物生成器协议版本，用于幂等判断和兼容性校验。
+            export_dir: `export`使用的根目录路径。
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。
+
+        返回:
+            返回函数计算得到的结果。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
+        job_type = ArtifactJobType(job_type)
+        if job_type == ArtifactJobType.BUILD_REPLAY:
             if generator_version != GENERATOR_VERSION:
                 raise RuntimeError("unsupported replay generator version")
             target = export_dir / f"replay-step-{source_step:06d}.v2.json"
             self._atomic_json(
                 target,
-                self._replay_document(
-                    run_id, source_step=source_step, partial=partial
-                ),
+                self._replay_document(run_id, source_step=source_step, partial=partial),
             )
-            return target, "REPLAY", "application/json"
-        if job_type == "BUILD_REPORT":
+            return target, ArtifactType.REPLAY.value, "application/json"
+        if job_type == ArtifactJobType.BUILD_REPORT:
             if generator_version != REPORT_GENERATOR_VERSION:
                 raise RuntimeError("unsupported report generator version")
             target = export_dir / f"report-step-{source_step:06d}.md"
@@ -191,8 +250,8 @@ class ArtifactBuilder:
                 target,
                 self._report_document(run_id, source_step=source_step, partial=partial),
             )
-            return target, "REPORT", "text/markdown"
-        if job_type == "FILTERED_MEMORIES":
+            return target, ArtifactType.REPORT.value, "text/markdown"
+        if job_type == ArtifactJobType.FILTERED_MEMORIES:
             target = export_dir / f"memories-step-{source_step:06d}.json"
             self._atomic_json(
                 target,
@@ -200,8 +259,8 @@ class ArtifactBuilder:
                     run_id, parameters, source_step=source_step, partial=partial
                 ),
             )
-            return target, "MEMORY_EXPORT", "application/json"
-        if job_type == "FILTERED_CONVERSATIONS":
+            return target, ArtifactType.MEMORY_EXPORT.value, "application/json"
+        if job_type == ArtifactJobType.FILTERED_CONVERSATIONS:
             target = export_dir / f"conversations-step-{source_step:06d}.json"
             self._atomic_json(
                 target,
@@ -209,12 +268,12 @@ class ArtifactBuilder:
                     run_id, parameters, source_step=source_step, partial=partial
                 ),
             )
-            return target, "CONVERSATION_EXPORT", "application/json"
-        if job_type == "CHECKPOINT_BUNDLE":
+            return target, ArtifactType.CONVERSATION_EXPORT.value, "application/json"
+        if job_type == ArtifactJobType.CHECKPOINT_BUNDLE:
             target = export_dir / f"checkpoint-step-{source_step:06d}.zip"
             self._checkpoint_bundle(target, paths, parameters)
-            return target, "CHECKPOINT_BUNDLE", "application/zip"
-        if job_type == "RESULT_BUNDLE":
+            return target, ArtifactType.CHECKPOINT_BUNDLE.value, "application/zip"
+        if job_type == ArtifactJobType.RESULT_BUNDLE:
             target = export_dir / f"results-step-{source_step:06d}.zip"
             self._result_bundle(
                 target,
@@ -223,7 +282,7 @@ class ArtifactBuilder:
                 source_step=source_step,
                 partial=partial,
             )
-            return target, "RESULT_BUNDLE", "application/zip"
+            return target, ArtifactType.RESULT_BUNDLE.value, "application/zip"
         raise RuntimeError(f"unsupported artifact job type: {job_type}")
 
     def _replay_document(
@@ -233,6 +292,19 @@ class ArtifactBuilder:
         source_step: int | None = None,
         partial: bool | None = None,
     ) -> dict:
+        """执行`replay``document`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int | None`。 默认值：`None`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         with self._database.session_factory() as session:
             run = session.get(Run, run_id)
             if run is None:
@@ -269,7 +341,7 @@ class ArtifactBuilder:
             revision_id = revision.id
             definition_hash = revision.definition_hash
             is_partial = (
-                run.status != "COMPLETED" or locked_step < run.requested_steps
+                run.status != RunStatus.COMPLETED or locked_step < run.requested_steps
                 if partial is None
                 else partial
             )
@@ -287,6 +359,16 @@ class ArtifactBuilder:
         )
 
     def _report_document(self, run_id: str, *, source_step: int, partial: bool) -> str:
+        """执行`report``document`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         summary = self._source_summary(run_id, source_step=source_step, partial=partial)
         replay = self._replay_document(
             run_id,
@@ -363,6 +445,17 @@ class ArtifactBuilder:
         source_step: int,
         partial: bool,
     ) -> dict:
+        """执行记忆`document`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            parameters: 产物任务或模型调用的结构化参数；允许字段随任务类型变化。 类型：`dict`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             statement = select(RunMemoryEvent).where(
                 RunMemoryEvent.run_id == run_id,
@@ -396,7 +489,11 @@ class ArtifactBuilder:
             removed_at_source = (
                 row.removed_step is not None and row.removed_step <= source_step
             )
-            effective_state = "REMOVED" if removed_at_source else "ACTIVE"
+            effective_state = (
+                MemorySnapshotState.REMOVED.value
+                if removed_at_source
+                else MemorySnapshotState.ACTIVE.value
+            )
             if state_filter and state_filter != effective_state:
                 continue
             items.append(
@@ -435,6 +532,17 @@ class ArtifactBuilder:
         source_step: int,
         partial: bool,
     ) -> dict:
+        """执行`conversation``document`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            parameters: 产物任务或模型调用的结构化参数；允许字段随任务类型变化。 类型：`dict`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             conversations = list(
                 session.scalars(
@@ -475,7 +583,11 @@ class ArtifactBuilder:
                 continue
             conversation_messages = by_conversation[row.id]
             haystack = " ".join(
-                [row.summary or "", *participants, *(item["content"] for item in conversation_messages)]
+                [
+                    row.summary or "",
+                    *participants,
+                    *(item["content"] for item in conversation_messages),
+                ]
             ).casefold()
             if query and query not in haystack:
                 continue
@@ -487,8 +599,12 @@ class ArtifactBuilder:
                     "participants": participants,
                     "location": row.location,
                     "end_step": min(row.end_step, source_step),
-                    "ended_at": row.ended_at.isoformat() if row.end_step <= source_step else None,
-                    "duration_minutes": row.duration_minutes if row.end_step <= source_step else None,
+                    "ended_at": row.ended_at.isoformat()
+                    if row.end_step <= source_step
+                    else None,
+                    "duration_minutes": row.duration_minutes
+                    if row.end_step <= source_step
+                    else None,
                     "summary": row.summary if row.end_step <= source_step else None,
                     "partial_at_source": row.end_step > source_step,
                     "messages": conversation_messages,
@@ -506,6 +622,19 @@ class ArtifactBuilder:
     def _checkpoint_bundle(
         self, target: Path, paths: RunPaths, parameters: dict
     ) -> None:
+        """执行检查点`bundle`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            parameters: 产物任务或模型调用的结构化参数；允许字段随任务类型变化。 类型：`dict`。
+
+        返回:
+            无返回值。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         reader = CheckpointBundleWriter(
             paths, lambda _: CheckpointSnapshot(state={}, conversation={})
         )
@@ -525,6 +654,18 @@ class ArtifactBuilder:
         source_step: int,
         partial: bool,
     ) -> None:
+        """执行结果`bundle`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool`。
+
+        返回:
+            无返回值。
+        """
         summary = self._source_summary(run_id, source_step=source_step, partial=partial)
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.parent / f".{target.name}-{uuid4()}.tmp"
@@ -548,6 +689,15 @@ class ArtifactBuilder:
 
     @staticmethod
     def _atomic_json(target: Path, document: dict) -> None:
+        """执行`atomic``json`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+            document: 待校验、转换或持久化的结构化文档。 类型：`dict`。
+
+        返回:
+            无返回值。
+        """
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.parent / f".{target.name}-{uuid4()}.tmp"
         try:
@@ -561,6 +711,15 @@ class ArtifactBuilder:
 
     @staticmethod
     def _atomic_text(target: Path, content: str) -> None:
+        """执行`atomic``text`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+            content: 待解析、写入、哈希或发送给下游组件的正文内容。 类型：`str`。
+
+        返回:
+            无返回值。
+        """
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.parent / f".{target.name}-{uuid4()}.tmp"
         try:
@@ -574,6 +733,16 @@ class ArtifactBuilder:
 
     @staticmethod
     def _atomic_zip_tree(target: Path, root: Path, *, prefix: str) -> None:
+        """执行`atomic``zip``tree`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+            root: 受控存储区域的根目录；派生路径不得逃逸该目录。 类型：`Path`。
+            prefix: 生成稳定键、日志名或路径名时使用的前缀。 类型：`str`。
+
+        返回:
+            无返回值。
+        """
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.parent / f".{target.name}-{uuid4()}.tmp"
         try:
@@ -582,22 +751,46 @@ class ArtifactBuilder:
             ) as archive:
                 for path in sorted(root.rglob("*")):
                     if path.is_file() and not path.is_symlink():
-                        archive.write(path, f"{prefix}/{path.relative_to(root).as_posix()}")
+                        archive.write(
+                            path, f"{prefix}/{path.relative_to(root).as_posix()}"
+                        )
             os.replace(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
 
     @staticmethod
     def _available_step(session, run_id: str) -> int:
+        """执行`available`仿真步的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if session.get(Run, run_id) is None:
             raise RuntimeError("artifact run does not exist")
         summary = session.get(RunResultSummary, run_id)
         return summary.available_step if summary else 0
 
-    def _source_summary(
-        self, run_id: str, *, source_step: int, partial: bool
-    ) -> dict:
-        """Build a summary solely from facts committed at the frozen boundary."""
+    def _source_summary(self, run_id: str, *, source_step: int, partial: bool) -> dict:
+        """执行`source`摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            source_step: 生成产物、回放或恢复时采用的源仿真步编号。 类型：`int`。
+            partial: 结果是否只覆盖当前已提交边界而尚未达到请求的最终步骤。 类型：`bool`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
 
         with self._database.session_factory() as session:
             run = session.get(Run, run_id)
@@ -619,7 +812,11 @@ class ArtifactBuilder:
         return {
             "run_id": run_id,
             "run_status": run.status,
-            "result_state": "PARTIAL" if partial else "COMPLETE",
+            "result_state": (
+                ResultCompleteness.PARTIAL.value
+                if partial
+                else ResultCompleteness.COMPLETE.value
+            ),
             "available_step": source_step,
             "source_step": source_step,
             "requested_steps": run.requested_steps,
@@ -637,6 +834,14 @@ class ArtifactBuilder:
 
     @staticmethod
     def _sha256(path: Path) -> str:
+        """执行`sha256`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         digest = hashlib.sha256()
         with path.open("rb") as handle:
             for block in iter(lambda: handle.read(1024 * 1024), b""):

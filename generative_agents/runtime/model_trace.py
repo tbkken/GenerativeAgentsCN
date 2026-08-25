@@ -36,7 +36,15 @@ _SECRET_PATTERNS = (
 
 
 def redact_text(value: str | None, *, maximum_length: int | None = None) -> str | None:
-    """Redact credential-shaped text without implicitly truncating stored facts."""
+    """执行 的`redact``text`操作。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`str | None`。
+        maximum_length: 日志、错误或模型文本允许保留的最大字符数。 类型：`int | None`。 默认值：`None`。
+
+    返回:
+        返回处理后的文本或稳定标识。 没有可用结果时返回 `None`。
+    """
 
     if value is None:
         return None
@@ -50,7 +58,14 @@ def redact_text(value: str | None, *, maximum_length: int | None = None) -> str 
 
 
 def redact_error(value: str | None) -> str | None:
-    """Return a bounded, redacted diagnostic suitable for DB/UI error fields."""
+    """执行 的`redact``error`操作。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`str | None`。
+
+    返回:
+        返回处理后的文本或稳定标识。 没有可用结果时返回 `None`。
+    """
 
     return redact_text(value, maximum_length=2000)
 
@@ -80,6 +95,14 @@ class ModelTraceEvent:
     payload: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
+        """完成数据类初始化后的规范化与不变量校验。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if self.started_at.tzinfo is None or self.ended_at.tzinfo is None:
             raise ValueError("trace timestamps must be timezone-aware")
         if self.ended_at < self.started_at:
@@ -105,6 +128,21 @@ class ModelTraceWriter:
         attempt_no: int,
         capture_payloads: bool,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            run_id: 仿真运行的唯一标识。 类型：`UUID`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`UUID`。
+            attempt_no: 同一运行内从 1 开始递增的执行尝试序号。 类型：`int`。
+            capture_payloads: 是否在模型轨迹中保存经脱敏的请求与响应载荷。 类型：`bool`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if paths.run_id != run_id:
             raise ValueError("trace writer run_id does not own these paths")
         if attempt_no < 1:
@@ -119,13 +157,31 @@ class ModelTraceWriter:
 
     @property
     def run_id(self) -> UUID:
+        """执行 `ModelTraceWriter` 的运行`id`操作。
+
+        返回:
+            返回 `UUID` 类型的处理结果。
+        """
         return self._run_id
 
     @property
     def attempt_id(self) -> UUID:
+        """执行 `ModelTraceWriter` 的执行尝试`id`操作。
+
+        返回:
+            返回 `UUID` 类型的处理结果。
+        """
         return self._attempt_id
 
     def _read_last_sequence(self) -> int:
+        """读取`last``sequence`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if not self.path.exists():
             return 0
         content = self.path.read_bytes()
@@ -145,18 +201,32 @@ class ModelTraceWriter:
         return last
 
     def append(self, event: ModelTraceEvent) -> int:
+        """执行 `ModelTraceWriter` 的`append`操作。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。 类型：`ModelTraceEvent`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if event.run_id != self._run_id or event.attempt_id != self._attempt_id:
             raise ValueError("trace event belongs to another run or attempt")
         with self._lock:
             sequence = self._event_seq + 1
             record = self._to_record(event, sequence)
-            encoded = json.dumps(
-                record,
-                ensure_ascii=False,
-                sort_keys=True,
-                separators=(",", ":"),
-                allow_nan=False,
-            ).encode("utf-8") + b"\n"
+            encoded = (
+                json.dumps(
+                    record,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    allow_nan=False,
+                ).encode("utf-8")
+                + b"\n"
+            )
             with self.path.open("ab") as file_handle:
                 file_handle.write(encoded)
                 file_handle.flush()
@@ -165,6 +235,15 @@ class ModelTraceWriter:
             return sequence
 
     def _to_record(self, event: ModelTraceEvent, sequence: int) -> dict[str, Any]:
+        """执行`to``record`的内部处理，供当前模块或类复用。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。 类型：`ModelTraceEvent`。
+            sequence: 同一父记录内从 1 开始递增的稳定顺序号。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         record = asdict(event)
         for key in ("event_type", "status"):
             record[key] = record[key].value

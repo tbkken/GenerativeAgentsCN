@@ -30,6 +30,14 @@ class ToolMobility(StrictModel):
 
     @model_validator(mode="after")
     def validate_motion(self) -> "ToolMobility":
+        """校验`motion`。
+
+        返回:
+            返回 `'ToolMobility'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         motion_limits = (
             self.max_speed_mps,
             self.max_acceleration_mps2,
@@ -57,6 +65,14 @@ class ToolContract(StrictModel):
 
     @model_validator(mode="after")
     def validate_relations(self) -> "ToolContract":
+        """校验`relations`。
+
+        返回:
+            返回 `'ToolContract'` 类型的处理结果。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if len(self.tags) != len(set(self.tags)):
             raise ValueError("tool tags must be unique")
         if len(self.interfaces) != len(set(self.interfaces)):

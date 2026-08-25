@@ -12,9 +12,13 @@ from sqlalchemy import select
 
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import Run, RunStep
-from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
+from generative_agents.runtime.checkpoint import (
+    CheckpointBundleWriter,
+    CheckpointSnapshot,
+)
 from generative_agents.runtime.context import RunPaths
 from generative_agents.runtime.model_trace import redact_error
+from generative_agents.status import RESUMABLE_RUN_STATUSES
 
 from .byte_windows import read_utf8_window
 from .errors import ServiceError, not_found
@@ -22,7 +26,6 @@ from .run_storage import RunStorageBoundary
 
 
 _CHECKPOINT_NAME = re.compile(r"^step-([0-9]{6})$")
-_RESUMABLE_RUN_STATES = frozenset({"PAUSED", "FAILED", "INTERRUPTED"})
 _PREVIEW_FILES = {
     "bundle": "bundle.json",
     "state": "state.json",
@@ -32,10 +35,27 @@ _PREVIEW_FILES = {
 
 class CheckpointService:
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._boundary = RunStorageBoundary(var_dir)
 
     def list_checkpoints(self, run_id: str) -> dict[str, Any]:
+        """查询检查点集合。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         run, paths, database_markers = self._context(run_id)
         reader = self._reader(paths)
         with reader.access():
@@ -69,6 +89,15 @@ class CheckpointService:
         }
 
     def detail(self, run_id: str, step_no: int) -> dict[str, Any]:
+        """执行 `CheckpointService` 的`detail`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         run, paths, database_markers = self._context(run_id)
         reader = self._reader(paths)
         with reader.access():
@@ -89,6 +118,21 @@ class CheckpointService:
         *,
         reader: CheckpointBundleWriter,
     ) -> dict[str, Any]:
+        """执行`detail``locked`的内部处理，供当前模块或类复用。
+
+        参数:
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            database_markers: 传入当前算法的`database``markers`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict[int, RunStep]`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            reader: 提供受控读取或反序列化能力的组件。 类型：`CheckpointBundleWriter`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         item = self._item(
             run,
             paths,
@@ -122,7 +166,9 @@ class CheckpointService:
             agents = {}
         agent_items = [
             self._agent_summary(str(agent_key), value)
-            for agent_key, value in sorted(agents.items(), key=lambda pair: str(pair[0]))
+            for agent_key, value in sorted(
+                agents.items(), key=lambda pair: str(pair[0])
+            )
         ]
         conversation_items = self._conversation_items(conversation)
         files = [self._file_summary(entry) for entry in bundle.get("files", [])]
@@ -164,6 +210,22 @@ class CheckpointService:
         limit_bytes: int = 32_768,
         file_id: str | None = None,
     ) -> dict[str, Any]:
+        """执行 `CheckpointService` 的`preview`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            section: 需要读取或修改的草稿配置区域名称。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。 默认值：`32768`。
+            file_id: `file`的唯一标识。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if section not in _PREVIEW_FILES:
             raise ServiceError(
                 "CHECKPOINT_PREVIEW_SECTION_INVALID",
@@ -201,6 +263,18 @@ class CheckpointService:
         }
 
     def validate_for_export(self, run_id: str, step_no: int) -> dict[str, Any]:
+        """校验`for``export`。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         detail = self.detail(run_id, step_no)
         if not detail["validated"]:
             raise ServiceError(
@@ -209,6 +283,14 @@ class CheckpointService:
         return detail
 
     def _context(self, run_id: str) -> tuple[Run, RunPaths, dict[int, RunStep]]:
+        """执行运行上下文的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回目标文件或目录路径。
+        """
         try:
             parsed_run_id = UUID(run_id)
         except ValueError as exc:
@@ -241,6 +323,19 @@ class CheckpointService:
         physical_path: Path | None,
         reader: CheckpointBundleWriter,
     ) -> dict[str, Any]:
+        """执行`item`的内部处理，供当前模块或类复用。
+
+        参数:
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            database_marker: 传入当前算法的`database``marker`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunStep | None`。
+            physical_path: `physical`对应的文件系统路径。 类型：`Path | None`。
+            reader: 提供受控读取或反序列化能力的组件。 类型：`CheckpointBundleWriter`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         base = {
             "step_no": step_no,
             "database_marker": database_marker is not None,
@@ -301,9 +396,7 @@ class CheckpointService:
             {
                 "validated": True,
                 "status": (
-                    "RECOVERABLE"
-                    if step_no == run.recoverable_step
-                    else "RETAINED"
+                    "RECOVERABLE" if step_no == run.recoverable_step else "RETAINED"
                 ),
                 "attempt_id": bundle.get("attempt_id"),
                 "virtual_time": bundle.get("virtual_time"),
@@ -315,7 +408,7 @@ class CheckpointService:
                 "file_count": len(files) + 1,
                 "resumable": (
                     step_no == run.recoverable_step
-                    and run.status in _RESUMABLE_RUN_STATES
+                    and run.status in RESUMABLE_RUN_STATUSES
                 ),
                 "validation": {"code": "VALID", "reason": None},
             }
@@ -324,17 +417,42 @@ class CheckpointService:
 
     @staticmethod
     def _reader(paths: RunPaths) -> CheckpointBundleWriter:
+        """执行`reader`的内部处理，供当前模块或类复用。
+
+        参数:
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
         return CheckpointBundleWriter(
             paths, lambda _: CheckpointSnapshot(state={}, conversation={})
         )
 
     @staticmethod
     def _read_json(path: Path) -> Any:
+        """读取`json`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            返回 `Any` 类型的处理结果。
+        """
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
 
     @classmethod
     def _agent_summary(cls, agent_key: str, value: Any) -> dict[str, Any]:
+        """执行智能体摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            value: 当前操作使用的`value`。 类型：`Any`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         state = value if isinstance(value, dict) else {}
         action = state.get("action") if isinstance(state.get("action"), dict) else {}
         schedule = state.get("schedule") or state.get("daily_schedule") or []
@@ -354,6 +472,14 @@ class CheckpointService:
 
     @classmethod
     def _conversation_items(cls, value: Any) -> list[Any]:
+        """执行`conversation``items`的内部处理，供当前模块或类复用。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`Any`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         if isinstance(value, list):
             items = value
         elif isinstance(value, dict):
@@ -365,6 +491,14 @@ class CheckpointService:
 
     @staticmethod
     def _file_summary(value: Any) -> dict[str, Any]:
+        """执行`file`摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`Any`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         item = value if isinstance(value, dict) else {}
         return {
             "path": str(item.get("path", "")),
@@ -374,6 +508,14 @@ class CheckpointService:
 
     @staticmethod
     def _storage_summary(files: list[dict[str, Any]]) -> dict[str, Any]:
+        """执行存储摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            files: 传入当前算法的`files`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[dict[str, Any]]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         groups: dict[tuple[str, str], dict[str, Any]] = {}
         for item in files:
             parts = Path(item["path"]).parts
@@ -395,13 +537,25 @@ class CheckpointService:
 
     @classmethod
     def _safe_value(cls, value: Any, *, depth: int = 0) -> Any:
+        """执行`safe``value`的内部处理，供当前模块或类复用。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`Any`。
+            depth: 树遍历、递归展开或引用解析允许到达的最大层级。 类型：`int`。 默认值：`0`。
+
+        返回:
+            返回 `Any` 类型的处理结果。
+        """
         if depth > 4:
             return "[TRUNCATED]"
         if isinstance(value, dict):
             output = {}
             for key, item in list(value.items())[:100]:
                 folded = str(key).casefold()
-                if any(token in folded for token in ("embedding", "vector", "api_key", "secret", "token")):
+                if any(
+                    token in folded
+                    for token in ("embedding", "vector", "api_key", "secret", "token")
+                ):
                     continue
                 output[str(key)] = cls._safe_value(item, depth=depth + 1)
             return output
@@ -415,5 +569,14 @@ class CheckpointService:
 
     @staticmethod
     def _validation_reason(exc: Exception, run_root: Path) -> str:
+        """执行`validation``reason`的内部处理，供当前模块或类复用。
+
+        参数:
+            exc: 上游捕获的异常对象，用于分类、脱敏或转换错误信息。 类型：`Exception`。
+            run_root: 运行使用的根目录路径。 类型：`Path`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         message = str(exc).replace(str(run_root), "[run]")
         return redact_error(f"{type(exc).__name__}: {message}")[:1_000]

@@ -15,6 +15,7 @@ from generative_agents.persistence.models import (
     RunStep,
 )
 from generative_agents.runtime.replay_v2 import build_replay_v2, validate_replay_v2
+from generative_agents.status import ResultCompleteness
 
 from .errors import ServiceError, not_found
 from .replay_frames import VerifiedRunFrameReader
@@ -24,11 +25,28 @@ class ReplayService:
     """Expose one validated Replay V2 contract without loading an entire Run."""
 
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._frames = VerifiedRunFrameReader(self._var_dir)
 
     def manifest(self, run_id: str) -> dict[str, Any]:
+        """执行 `ReplayService` 的运行清单操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         context = self._context(run_id)
         for row in context["rows"]:
             self._frames.read(context["run"], row, materialize=False)
@@ -47,6 +65,19 @@ class ReplayService:
     def steps(
         self, run_id: str, *, from_step: int = 1, limit: int = 100
     ) -> dict[str, Any]:
+        """执行 `ReplayService` 的`steps`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            from_step: 读取回放或结果窗口的起始步骤编号。 类型：`int`。 默认值：`1`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`100`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if from_step < 1:
             raise ServiceError(
                 "INVALID_REPLAY_FROM_STEP", "from_step 必须大于零", status_code=422
@@ -67,7 +98,9 @@ class ReplayService:
             summary = session.get(RunResultSummary, run_id)
             available = summary.available_step if summary else 0
             result_version = summary.result_version if summary else 0
-            partial = summary is None or summary.result_state != "COMPLETE"
+            partial = (
+                summary is None or summary.result_state != ResultCompleteness.COMPLETE
+            )
             rows = list(
                 session.scalars(
                     select(RunStep)
@@ -138,6 +171,17 @@ class ReplayService:
         }
 
     def _context(self, run_id: str) -> dict[str, Any]:
+        """执行运行上下文的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self._database.session_factory() as session:
             run = session.get(Run, run_id)
             if run is None:
@@ -171,7 +215,10 @@ class ReplayService:
                 "rows": rows,
                 "revision_id": revision.id,
                 "definition_hash": revision.definition_hash,
-                "definition": ExperimentDefinition.model_validate(revision.definition_json),
+                "definition": ExperimentDefinition.model_validate(
+                    revision.definition_json
+                ),
                 "available_step": available_step,
-                "partial": summary is None or summary.result_state != "COMPLETE",
+                "partial": summary is None
+                or summary.result_state != ResultCompleteness.COMPLETE,
             }

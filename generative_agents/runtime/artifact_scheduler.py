@@ -17,9 +17,15 @@ from sqlalchemy import select
 
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import ArtifactJob, RunEvent
+from generative_agents.status import ArtifactJobStatus
 
 
 def _now() -> datetime:
+    """执行`now`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回 `datetime` 类型的处理结果。
+    """
     return datetime.now(timezone.utc)
 
 
@@ -33,20 +39,35 @@ class ClaimedArtifactJob:
 
 class ArtifactSchedulerRepository:
     def __init__(self, database: Database):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
 
     def claim_next(self) -> ClaimedArtifactJob | None:
+        """认领`next`。
+
+        返回:
+            返回 `ClaimedArtifactJob | None` 类型的处理结果。 没有可用结果时返回 `None`。
+        """
         session = self._database.session_factory()
         try:
             session.connection().exec_driver_sql("BEGIN IMMEDIATE")
             if session.scalar(
-                select(ArtifactJob.id).where(ArtifactJob.status == "RUNNING").limit(1)
+                select(ArtifactJob.id)
+                .where(ArtifactJob.status == ArtifactJobStatus.RUNNING)
+                .limit(1)
             ):
                 session.commit()
                 return None
             job = session.scalar(
                 select(ArtifactJob)
-                .where(ArtifactJob.status == "QUEUED")
+                .where(ArtifactJob.status == ArtifactJobStatus.QUEUED)
                 .order_by(ArtifactJob.created_at, ArtifactJob.id)
                 .limit(1)
             )
@@ -54,16 +75,14 @@ class ArtifactSchedulerRepository:
                 session.commit()
                 return None
             now = _now()
-            job.status = "RUNNING"
+            job.status = ArtifactJobStatus.RUNNING.value
             job.attempt_no += 1
             job.started_at = now
             job.finished_at = None
             job.heartbeat_at = now
             job.progress = 0
             job.error_summary = None
-            job.log_path = (
-                f"runs/{job.run_id}/logs/artifact-{job.id}.console.log"
-            )
+            job.log_path = f"runs/{job.run_id}/logs/artifact-{job.id}.console.log"
             session.add(
                 RunEvent(
                     run_id=job.run_id,
@@ -88,12 +107,24 @@ class ArtifactSchedulerRepository:
         finally:
             session.close()
 
-    def register(self, claimed: ClaimedArtifactJob, *, pid: int, create_time: float) -> bool:
+    def register(
+        self, claimed: ClaimedArtifactJob, *, pid: int, create_time: float
+    ) -> bool:
+        """执行 `ArtifactSchedulerRepository` 的`register`操作。
+
+        参数:
+            claimed: 调度器已经认领且绑定槽位与执行尝试的运行信息。 类型：`ClaimedArtifactJob`。
+            pid: 操作系统进程标识；必须与记录的进程创建时间共同校验。 类型：`int`。
+            create_time: `create`对应的时间点。 类型：`float`。
+
+        返回:
+            条件成立时返回 `True`，否则返回 `False`。
+        """
         with self._database.session_factory.begin() as session:
             job = session.get(ArtifactJob, claimed.job_id)
             if (
                 job is None
-                or job.status != "RUNNING"
+                or job.status != ArtifactJobStatus.RUNNING
                 or job.attempt_no != claimed.attempt_no
                 or job.worker_pid is not None
             ):
@@ -104,16 +135,25 @@ class ArtifactSchedulerRepository:
             return True
 
     def process_exited(self, claimed: ClaimedArtifactJob, exit_code: int) -> None:
+        """执行 `ArtifactSchedulerRepository` 的`process``exited`操作。
+
+        参数:
+            claimed: 调度器已经认领且绑定槽位与执行尝试的运行信息。 类型：`ClaimedArtifactJob`。
+            exit_code: 工作进程退出码；`0` 表示正常结束，非零值表示异常退出。 类型：`int`。
+
+        返回:
+            无返回值。
+        """
         now = _now()
         with self._database.session_factory.begin() as session:
             job = session.get(ArtifactJob, claimed.job_id)
             if (
                 job is None
-                or job.status != "RUNNING"
+                or job.status != ArtifactJobStatus.RUNNING
                 or job.attempt_no != claimed.attempt_no
             ):
                 return
-            job.status = "FAILED"
+            job.status = ArtifactJobStatus.FAILED.value
             job.finished_at = now
             job.worker_pid = None
             job.pid_create_time = None
@@ -128,23 +168,38 @@ class ArtifactSchedulerRepository:
             )
 
     def spawn_failed(self, claimed: ClaimedArtifactJob, message: str) -> None:
+        """执行 `ArtifactSchedulerRepository` 的`spawn``failed`操作。
+
+        参数:
+            claimed: 调度器已经认领且绑定槽位与执行尝试的运行信息。 类型：`ClaimedArtifactJob`。
+            message: 待发送、校验、脱敏或写入会话的消息文本或对象。 类型：`str`。
+
+        返回:
+            无返回值。
+        """
         now = _now()
         with self._database.session_factory.begin() as session:
             job = session.get(ArtifactJob, claimed.job_id)
-            if job is None or job.status != "RUNNING":
+            if job is None or job.status != ArtifactJobStatus.RUNNING:
                 return
-            job.status = "QUEUED" if job.attempt_no < 3 else "FAILED"
+            job.status = (
+                ArtifactJobStatus.QUEUED.value
+                if job.attempt_no < 3
+                else ArtifactJobStatus.FAILED.value
+            )
             job.worker_pid = None
             job.pid_create_time = None
             job.heartbeat_at = now
             job.error_summary = message[:2000]
-            if job.status == "FAILED":
+            if job.status == ArtifactJobStatus.FAILED:
                 job.finished_at = now
             session.add(
                 RunEvent(
                     run_id=job.run_id,
                     event_type=(
-                        "artifact_retry" if job.status == "QUEUED" else "artifact_error"
+                        "artifact_retry"
+                        if job.status == ArtifactJobStatus.QUEUED
+                        else "artifact_error"
                     ),
                     payload_json={
                         "job_id": job.id,
@@ -158,39 +213,59 @@ class ArtifactSchedulerRepository:
             )
 
     def reconcile(self, *, startup_timeout_seconds: int = 60) -> tuple[str, ...]:
+        """对照数据库租约与本地进程状态，修复中断后遗留的不一致状态。
+
+        参数:
+            startup_timeout_seconds: 工作进程从认领到完成注册允许的最长秒数。 类型：`int`。 默认值：`60`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         repaired: list[str] = []
         now = _now()
         with self._database.session_factory.begin() as session:
             jobs = list(
-                session.scalars(select(ArtifactJob).where(ArtifactJob.status == "RUNNING"))
+                session.scalars(
+                    select(ArtifactJob).where(
+                        ArtifactJob.status == ArtifactJobStatus.RUNNING
+                    )
+                )
             )
             for job in jobs:
                 alive = False
                 if job.worker_pid is not None and job.pid_create_time is not None:
                     try:
                         process = psutil.Process(job.worker_pid)
-                        alive = process.is_running() and abs(
-                            process.create_time() - job.pid_create_time
-                        ) < 0.01
+                        alive = (
+                            process.is_running()
+                            and abs(process.create_time() - job.pid_create_time) < 0.01
+                        )
                     except (psutil.Error, OSError):
                         alive = False
                 heartbeat = job.heartbeat_at or job.started_at or job.created_at
                 if heartbeat.tzinfo is None:
                     heartbeat = heartbeat.replace(tzinfo=timezone.utc)
-                if alive or heartbeat + timedelta(seconds=startup_timeout_seconds) >= now:
+                if (
+                    alive
+                    or heartbeat + timedelta(seconds=startup_timeout_seconds) >= now
+                ):
                     continue
-                job.status = "QUEUED" if job.attempt_no < 3 else "FAILED"
+                job.status = (
+                    ArtifactJobStatus.QUEUED.value
+                    if job.attempt_no < 3
+                    else ArtifactJobStatus.FAILED.value
+                )
                 job.worker_pid = None
                 job.pid_create_time = None
                 job.error_summary = "artifact worker disappeared"
-                if job.status == "FAILED":
+                if job.status == ArtifactJobStatus.FAILED:
                     job.finished_at = now
                 session.add(
                     RunEvent(
                         run_id=job.run_id,
                         event_type=(
                             "artifact_retry"
-                            if job.status == "QUEUED"
+                            if job.status == ArtifactJobStatus.QUEUED
                             else "artifact_error"
                         ),
                         payload_json={
@@ -216,6 +291,17 @@ class ArtifactProcessScheduler:
         poll_interval_seconds: float = 1.0,
         process_factory: Callable[..., subprocess.Popen] = subprocess.Popen,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+            poll_interval_seconds: 后台循环两次检查之间的等待秒数。 类型：`float`。 默认值：`1.0`。
+            process_factory: 创建隔离工作进程的工厂；测试可注入替代实现。 类型：`Callable[..., subprocess.Popen]`。 默认值：`subprocess.Popen`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._repository = ArtifactSchedulerRepository(database)
@@ -227,6 +313,11 @@ class ArtifactProcessScheduler:
         self._lock = FileLock(str(self._var_dir / "artifact-scheduler.lock"), timeout=0)
 
     def start(self) -> None:
+        """执行 `ArtifactProcessScheduler` 的`start`操作。
+
+        返回:
+            无返回值。
+        """
         self._lock.acquire()
         self._repository.reconcile()
         self._stop.clear()
@@ -236,6 +327,14 @@ class ArtifactProcessScheduler:
         self._thread.start()
 
     def stop(self, *, timeout: float = 5) -> None:
+        """执行 `ArtifactProcessScheduler` 的`stop`操作。
+
+        参数:
+            timeout: 等待操作的最长秒数；超时后按调用协议返回或抛出异常。 类型：`float`。 默认值：`5`。
+
+        返回:
+            无返回值。
+        """
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=timeout)
@@ -249,6 +348,14 @@ class ArtifactProcessScheduler:
             self._lock.release()
 
     def tick(self) -> None:
+        """执行一次调度循环，推进可运行任务并回收已结束进程。
+
+        返回:
+            无返回值。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if self._child is not None:
             claimed, process, log_handle = self._child
             exit_code = process.poll()
@@ -263,7 +370,9 @@ class ArtifactProcessScheduler:
             return
         relative_log = Path(claimed.log_path)
         if relative_log.is_absolute() or ".." in relative_log.parts:
-            self._repository.spawn_failed(claimed, "invalid database-owned artifact log path")
+            self._repository.spawn_failed(
+                claimed, "invalid database-owned artifact log path"
+            )
             return
         log_path = (self._var_dir / relative_log).resolve()
         run_root = (self._var_dir / "runs" / claimed.run_id).resolve()
@@ -307,6 +416,11 @@ class ArtifactProcessScheduler:
             self._repository.spawn_failed(claimed, f"{type(exc).__name__}: {exc}")
 
     def _loop(self) -> None:
+        """执行`loop`的内部处理，供当前模块或类复用。
+
+        返回:
+            无返回值。
+        """
         while not self._stop.is_set():
             try:
                 self.tick()

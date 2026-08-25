@@ -21,7 +21,15 @@ class AgentSpatialIssue:
 
 
 def spatial_path_exists(tree: Mapping[str, Any], path: Sequence[str]) -> bool:
-    """Return whether ``path`` resolves to a node or leaf in a spatial tree."""
+    """执行 的空间数据路径`exists`操作。
+
+    参数:
+        tree: 需要遍历、校验或转换的层级树结构。 类型：`Mapping[str, Any]`。
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Sequence[str]`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
+    """
 
     node: Any = tree
     for index, segment in enumerate(path):
@@ -37,6 +45,14 @@ def spatial_path_exists(tree: Mapping[str, Any], path: Sequence[str]) -> bool:
 
 
 def _valid_path(value: Any) -> bool:
+    """执行`valid`路径的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`Any`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
+    """
     return (
         isinstance(value, list)
         and bool(value)
@@ -49,7 +65,15 @@ def build_map_address_index(
     world_roots: Iterable[str],
     tiles: Iterable[Mapping[str, Any]],
 ) -> set[tuple[str, ...]]:
-    """Index every accessible map-address prefix once for fast Agent checks."""
+    """构建地图`address``index`。
+
+    参数:
+        world_roots: 允许技能或地图地址解析使用的世界根节点集合。 类型：`Iterable[str]`。
+        tiles: 组成世界地图的格子定义集合。 类型：`Iterable[Mapping[str, Any]]`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
 
     roots = {root for root in world_roots if root}
     index: set[tuple[str, ...]] = set()
@@ -73,6 +97,16 @@ def _map_contains_path(
     world_roots: set[str],
     address_index: set[tuple[str, ...]],
 ) -> bool:
+    """执行地图`contains`路径的内部处理，供当前模块或类复用。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Sequence[str]`。
+        world_roots: 允许技能或地图地址解析使用的世界根节点集合。 类型：`set[str]`。
+        address_index: 空间地址到地图坐标或节点的反向索引。 类型：`set[tuple[str, ...]]`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
+    """
     candidate = list(path)
     if candidate and candidate[0] in world_roots:
         candidate = candidate[1:]
@@ -82,6 +116,15 @@ def _map_contains_path(
 
 
 def _iter_leaf_paths(tree: Mapping[str, Any], prefix: tuple[str, ...] = ()):
+    """执行`iter``leaf``paths`的内部处理，供当前模块或类复用。
+
+    参数:
+        tree: 需要遍历、校验或转换的层级树结构。 类型：`Mapping[str, Any]`。
+        prefix: 生成稳定键、日志名或路径名时使用的前缀。 类型：`tuple[str, ...]`。
+
+    返回:
+        无返回值。
+    """
     for segment, value in tree.items():
         path = (*prefix, segment)
         if isinstance(value, Mapping):
@@ -100,7 +143,18 @@ def validate_agent_spatial(
     world_tiles: Iterable[Mapping[str, Any]] | None = None,
     world_address_index: set[tuple[str, ...]] | None = None,
 ) -> list[AgentSpatialIssue]:
-    """Validate structural rules and, when supplied, selected-map compatibility."""
+    """校验智能体空间数据。
+
+    参数:
+        address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 类型：`Mapping[str, Any]`。
+        tree: 需要遍历、校验或转换的层级树结构。 类型：`Mapping[str, Any]`。
+        world_roots: 允许技能或地图地址解析使用的世界根节点集合。 类型：`Iterable[str] | None`。 默认值：`None`。
+        world_tiles: 世界地图中按坐标组织的格子集合。 类型：`Iterable[Mapping[str, Any]] | None`。 默认值：`None`。
+        world_address_index: 世界层级地址到坐标集合的索引。 类型：`set[tuple[str, ...]] | None`。 默认值：`None`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
 
     issues: list[AgentSpatialIssue] = []
     living = address.get("living_area")

@@ -30,6 +30,16 @@ class AssetService:
         var_dir: str | Path,
         max_bytes: int = 50 * 1024 * 1024,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+            max_bytes: `bytes`允许的最大值。 类型：`int`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self.store = AssetStore(var_dir, max_bytes=max_bytes)
 
@@ -40,6 +50,19 @@ class AssetService:
         logical_name: str,
         media_type: str | None,
     ) -> dict:
+        """执行 `AssetService` 的`upload`操作。
+
+        参数:
+            stream: 包含待导入资源内容的二进制输入流。 类型：`BinaryIO`。
+            logical_name: 产物或资源在业务层使用的稳定逻辑名称。 类型：`str`。
+            media_type: `media`的类型判别值。 类型：`str | None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         try:
             blob = self.store.put_stream(
                 stream,
@@ -75,6 +98,14 @@ class AssetService:
         return result
 
     def get(self, asset_id: str) -> dict:
+        """执行 `AssetService` 的`get`操作。
+
+        参数:
+            asset_id: 资源的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             asset = session.get(Asset, asset_id)
             if asset is None:
@@ -85,15 +116,31 @@ class AssetService:
         self,
         images: dict[str, tuple[BinaryIO, str]],
     ) -> dict[str, dict]:
-        """Validate and persist Agent images as database BLOBs, never filesystem files."""
+        """执行 `AssetService` 的`upload``database``images`操作。
+
+        参数:
+            images: 传入当前算法的`images`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict[str, tuple[BinaryIO, str]]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         prepared: dict[str, tuple[bytes, str, str, int, int]] = {}
         for kind, (stream, logical_name) in images.items():
             if kind not in {"portrait", "sprite"}:
-                raise ServiceError("INVALID_AGENT_IMAGE_KIND", "Agent 图片类型不受支持", status_code=422)
+                raise ServiceError(
+                    "INVALID_AGENT_IMAGE_KIND",
+                    "Agent 图片类型不受支持",
+                    status_code=422,
+                )
             data = stream.read(self._AGENT_IMAGE_MAX_BYTES + 1)
             if len(data) > self._AGENT_IMAGE_MAX_BYTES:
-                raise ServiceError("AGENT_IMAGE_TOO_LARGE", "Agent 图片不能超过 2 MB", status_code=422)
+                raise ServiceError(
+                    "AGENT_IMAGE_TOO_LARGE", "Agent 图片不能超过 2 MB", status_code=422
+                )
             width, height = self._validate_agent_png(data, kind=kind)
             prepared[kind] = (
                 data,
@@ -104,7 +151,9 @@ class AssetService:
             )
 
         if not prepared:
-            raise ServiceError("AGENT_IMAGE_REQUIRED", "请至少选择一张 Agent 图片", status_code=422)
+            raise ServiceError(
+                "AGENT_IMAGE_REQUIRED", "请至少选择一张 Agent 图片", status_code=422
+            )
 
         result: dict[str, dict] = {}
         with self._database.session_factory.begin() as session:
@@ -139,6 +188,17 @@ class AssetService:
         return result
 
     def database_image_content(self, asset_id: str) -> tuple[Asset, bytes]:
+        """执行 `AssetService` 的`database``image``content`操作。
+
+        参数:
+            asset_id: 资源的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self._database.session_factory() as session:
             asset = session.get(Asset, asset_id)
             if asset is None:
@@ -154,6 +214,14 @@ class AssetService:
         return asset, content
 
     def content(self, asset_id: str) -> tuple[Asset, Path]:
+        """执行 `AssetService` 的`content`操作。
+
+        参数:
+            asset_id: 资源的唯一标识。 类型：`str`。
+
+        返回:
+            返回目标文件或目录路径。
+        """
         with self._database.session_factory() as session:
             asset = session.get(Asset, asset_id)
             if asset is None:
@@ -164,11 +232,31 @@ class AssetService:
 
     @classmethod
     def _validate_agent_png(cls, data: bytes, *, kind: str) -> tuple[int, int]:
-        if len(data) < 24 or not data.startswith(cls._PNG_SIGNATURE) or data[12:16] != b"IHDR":
-            raise ServiceError("INVALID_AGENT_IMAGE", "Agent 图片必须是有效 PNG", status_code=422)
+        """校验智能体`png`。
+
+        参数:
+            data: 待编码、解码、校验或持久化的原始数据。 类型：`bytes`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
+        if (
+            len(data) < 24
+            or not data.startswith(cls._PNG_SIGNATURE)
+            or data[12:16] != b"IHDR"
+        ):
+            raise ServiceError(
+                "INVALID_AGENT_IMAGE", "Agent 图片必须是有效 PNG", status_code=422
+            )
         width, height = struct.unpack(">II", data[16:24])
         if width < 1 or height < 1 or width > 4096 or height > 4096:
-            raise ServiceError("INVALID_AGENT_IMAGE_SIZE", "Agent 图片尺寸无效", status_code=422)
+            raise ServiceError(
+                "INVALID_AGENT_IMAGE_SIZE", "Agent 图片尺寸无效", status_code=422
+            )
         if kind == "portrait" and (width != height or width < 32):
             raise ServiceError(
                 "INVALID_AGENT_PORTRAIT_SIZE",
@@ -185,6 +273,15 @@ class AssetService:
 
     @staticmethod
     def _detail(asset: Asset, *, deduplicated: bool | None = None) -> dict:
+        """执行`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            asset: 当前读取、校验或返回的资源持久化记录。 类型：`Asset`。
+            deduplicated: 传入当前算法的`deduplicated`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`bool | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         result = {
             "asset_id": asset.id,
             "sha256": asset.sha256,
@@ -202,6 +299,15 @@ class SecretService:
     ALLOWED_KINDS = frozenset({"OPENAI_API_KEY", "GENERIC_TOKEN"})
 
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._cipher = SecretCipher(MasterKeyStore(var_dir).load_or_create())
 
@@ -212,8 +318,23 @@ class SecretService:
         value: str,
         supersedes_id: str | None = None,
     ) -> dict:
+        """执行 `SecretService` 的`create`操作。
+
+        参数:
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
+            value: 当前操作使用的`value`。 类型：`str`。
+            supersedes_id: `supersedes`的唯一标识。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if kind not in self.ALLOWED_KINDS:
-            raise ServiceError("INVALID_SECRET_KIND", "密钥类型不受支持", status_code=422)
+            raise ServiceError(
+                "INVALID_SECRET_KIND", "密钥类型不受支持", status_code=422
+            )
         encrypted = self._cipher.encrypt(value)
         now = datetime.now(timezone.utc)
         with self._database.session_factory.begin() as session:
@@ -239,6 +360,14 @@ class SecretService:
             return self._detail(secret)
 
     def get(self, secret_id: str) -> dict:
+        """执行 `SecretService` 的`get`操作。
+
+        参数:
+            secret_id: 密钥的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             secret = session.get(Secret, secret_id)
             if secret is None:
@@ -246,7 +375,14 @@ class SecretService:
             return self._detail(secret)
 
     def resolve_plaintext(self, secret_id: str) -> str:
-        """Internal worker-only resolution; API responses must never call this."""
+        """解析`plaintext`。
+
+        参数:
+            secret_id: 密钥的唯一标识。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
 
         with self._database.session_factory() as session:
             secret = session.get(Secret, secret_id)
@@ -257,6 +393,14 @@ class SecretService:
 
     @staticmethod
     def _detail(secret: Secret) -> dict:
+        """执行`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            secret: 当前创建、轮换、解析或返回的密钥记录。 类型：`Secret`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "secret_id": secret.id,
             "kind": secret.kind,

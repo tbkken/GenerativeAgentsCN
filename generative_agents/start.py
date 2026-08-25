@@ -1,7 +1,7 @@
-"""Run-scoped simulation loop and import-safe CLI adapter.
+"""运行级仿真循环与可安全导入的命令行适配器。
 
-The Web worker constructs dependencies from a verified Run manifest. This
-module deliberately has no bootstrap catalog or display-name path fallback.
+Web 工作进程只根据已验证的运行清单构建依赖。本模块不读取启动目录，也不根据展示名
+回退查找路径，从而保证同一运行始终使用发布时冻结的输入。
 """
 
 from __future__ import annotations
@@ -17,7 +17,10 @@ from uuid import UUID
 
 from generative_agents.modules.game import Game
 from generative_agents.modules.config_adapter import ConfigAdapter
-from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
+from generative_agents.runtime.checkpoint import (
+    CheckpointBundleWriter,
+    CheckpointSnapshot,
+)
 from generative_agents.runtime.commit import FileStepCommitter
 from generative_agents.runtime.context import RunPaths, SimulationContext
 from generative_agents.runtime.frame_store import FrameStore
@@ -28,11 +31,32 @@ from generative_agents.runtime.results import StepResultBuilder
 
 
 class StepCommitter(Protocol):
-    def commit(self, result, *, force_checkpoint: bool): ...
+    def commit(self, result, *, force_checkpoint: bool):
+        """按照持久化顺序提交当前仿真步，并返回提交凭据。
+
+        参数:
+            result: 当前仿真步或上游组件产生的结构化结果。
+            force_checkpoint: 是否无视常规间隔，为当前步骤强制生成检查点。 类型：`bool`。
+
+        返回:
+            无返回值。
+        """
+        ...
 
 
 def apply_checkpoint_state(config: dict, state: Mapping) -> dict:
-    """Overlay verified mutable Agent state without changing Revision input."""
+    """把检查点中的动态状态覆盖到已发布配置副本。
+
+    参数:
+        config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。 类型：`dict`。
+        state: 检查点保存的动态状态映射，必须包含与已发布配置一致的智能体键集合。 类型：`Mapping`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
     restored = copy.deepcopy(config)
     checkpoint_agents = state.get("agents")
     if not isinstance(checkpoint_agents, Mapping):
@@ -40,11 +64,18 @@ def apply_checkpoint_state(config: dict, state: Mapping) -> dict:
     configured_keys = set(restored.get("agents", {}))
     checkpoint_keys = set(checkpoint_agents)
     if checkpoint_keys != configured_keys:
-        raise ValueError(
-            "checkpoint agent keys do not match the published Revision"
-        )
+        raise ValueError("checkpoint agent keys do not match the published Revision")
 
     def overlay(target: dict, source: Mapping) -> None:
+        """执行 的`overlay`操作。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`dict`。
+            source: 当前操作使用的`source`。 类型：`Mapping`。
+
+        返回:
+            无返回值。
+        """
         for key, value in source.items():
             if isinstance(value, Mapping) and isinstance(target.get(key), dict):
                 overlay(target[key], value)
@@ -68,6 +99,14 @@ class SimulationRunner:
     agent_status: dict = field(init=False)
 
     def __post_init__(self) -> None:
+        """完成数据类初始化后的规范化与不变量校验。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if self.checkpoint_interval_steps < 1:
             raise ValueError("checkpoint_interval_steps must be positive")
         self.agent_status = {
@@ -76,12 +115,30 @@ class SimulationRunner:
         }
 
     def run(self, steps: int, *, stride_minutes: int) -> int:
+        """执行当前组件负责的完整流程，并返回本次执行结果。
+
+        参数:
+            steps: 本次调用需要推进的仿真步数量，必须为非负整数。 类型：`int`。
+            stride_minutes: 每个仿真步推进的虚拟分钟数。 类型：`int`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+
+        说明:
+            每一步严格遵循“推进世界—捕获结果—写帧—可选检查点—更新投影”的顺序；控制请求只在安全边界生效。
+        """
         if steps < 1 or stride_minutes < 1:
             raise ValueError("steps and stride_minutes must be positive")
         self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
         for offset in range(steps):
-            if self.context.control.cancel_requested or self.context.control.pause_requested:
+            if (
+                self.context.control.cancel_requested
+                or self.context.control.pause_requested
+            ):
                 break
             step_no = self.completed_steps + 1
             self._bind_agent_step(step_no)
@@ -131,17 +188,13 @@ class SimulationRunner:
                     if callable(move):
                         move(tuple(consumed[-1]), remaining)
                     else:
-                        # Lightweight domain adapters used by importers/tests
-                        # may expose only coord/path state.
+                        # 导入器和测试使用的轻量领域适配器，可能只暴露坐标与路径状态。
                         agent.coord = tuple(consumed[-1])
                         agent.path = list(remaining)
-                    # A committed path is an interval fact.  Include both the
-                    # observed origin and every consumed waypoint so
-                    # from_coord -> path -> to_coord is self-consistent.
+                    # 已提交路径描述的是一个移动区间，必须同时包含观测起点和所有已消费路点，
+                    # 这样 from_coord -> path -> to_coord 才能形成自洽的事实链。
                     observed_waypoints = (
-                        consumed[1:]
-                        if consumed[0] == from_coord
-                        else consumed
+                        consumed[1:] if consumed[0] == from_coord else consumed
                     )
                     executed_path = (from_coord, *observed_waypoints)
                 collector.capture_agent(
@@ -153,9 +206,8 @@ class SimulationRunner:
                     planned_path=planned_path,
                     remaining_path=remaining,
                 )
-                # Agent.path is part of Game.snapshot_state, so an interrupted
-                # Run resumes with the exact unconsumed route rather than
-                # teleporting to its destination or recalculating a new path.
+                # Agent.path 属于 Game.snapshot_state。运行中断后必须恢复尚未消费的原路径，
+                # 不能直接跳到终点，也不能重新寻路，否则恢复前后的轨迹会分叉。
                 status["coord"] = tuple(agent.coord)
                 status["path"] = tuple(agent.path or ())
             if memory_stream is not None:
@@ -177,6 +229,14 @@ class SimulationRunner:
         return self.completed_steps
 
     def _bind_agent_step(self, step_no: int) -> None:
+        """执行`bind`智能体仿真步的内部处理，供当前模块或类复用。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+
+        返回:
+            无返回值。
+        """
         for agent_key in self.agent_status:
             agent = self.game.get_agent(agent_key)
             bind = getattr(agent, "begin_step", None)
@@ -184,14 +244,29 @@ class SimulationRunner:
                 bind(step_no)
 
     def _movement_budget(self, stride_minutes: int) -> int:
+        """执行`movement``budget`的内部处理，供当前模块或类复用。
+
+        参数:
+            stride_minutes: 每个仿真步推进的虚拟分钟数。 类型：`int`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
         profile = getattr(self.context, "algorithm", None)
-        tiles_per_minute = int(
-            getattr(profile, "movement_tiles_per_minute", 4)
-        )
+        tiles_per_minute = int(getattr(profile, "movement_tiles_per_minute", 4))
         return max(1, stride_minutes * max(1, tiles_per_minute))
 
 
 def build_file_committer(context: SimulationContext, game: Game) -> FileStepCommitter:
+    """构建`file``committer`。
+
+    参数:
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`SimulationContext`。
+        game: 当前运行私有的仿真世界聚合。 类型：`Game`。
+
+    返回:
+        返回 `FileStepCommitter` 类型的处理结果。
+    """
     checkpoint = CheckpointBundleWriter(
         context.paths,
         lambda _result: CheckpointSnapshot(
@@ -217,7 +292,19 @@ def build_runner(
     checkpoint_conversation: Mapping | None = None,
     storage_root: str | Path | None = None,
 ) -> SimulationRunner:
-    """Build the old domain engine from only a verified Revision and Run context."""
+    """构建`runner`。
+
+    参数:
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`SimulationContext`。
+        definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。
+        embedding_api_key: 调用嵌入模型服务使用的 API 密钥；为空时由运行配置解析。 类型：`str`。 默认值：`''`。
+        checkpoint_state: 从检查点读取的动态世界状态；为空表示从发布配置开始运行。 类型：`Mapping | None`。 默认值：`None`。
+        checkpoint_conversation: 检查点保存的对话上下文；为空表示没有待恢复对话。 类型：`Mapping | None`。 默认值：`None`。
+        storage_root: 存储使用的根目录路径。 类型：`str | Path | None`。 默认值：`None`。
+
+    返回:
+        返回 `SimulationRunner` 类型的处理结果。
+    """
 
     config = ConfigAdapter().game_config(
         definition, embedding_api_key=embedding_api_key
@@ -242,6 +329,11 @@ def build_runner(
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """构建`parser`。
+
+    返回:
+        返回 `argparse.ArgumentParser` 类型的处理结果。
+    """
     parser = argparse.ArgumentParser(description="run one isolated experiment worker")
     parser.add_argument("--data-root", required=True)
     parser.add_argument("--run-id", type=UUID, required=True)
@@ -257,6 +349,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _load_factory(path: str):
+    """加载`factory`。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+
+    返回:
+        返回函数计算得到的结果。
+
+    异常:
+        TypeError: 当参数类型不符合接口约定时抛出。
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
     module_name, separator, attribute = path.partition(":")
     if not separator or not module_name or not attribute:
         raise ValueError("runner factory must use module:function syntax")
@@ -267,6 +371,17 @@ def _load_factory(path: str):
 
 
 def main(argv=None) -> int:
+    """解析启动参数并执行当前模块的主流程。
+
+    参数:
+        argv: 命令行参数序列；为 `None` 时读取当前进程的命令行。 默认值：`None`。
+
+    返回:
+        返回计算得到的整数值或版本号。
+
+    异常:
+        TypeError: 当参数类型不符合接口约定时抛出。
+    """
     args = build_parser().parse_args(argv)
     paths = RunPaths.under(args.data_root, args.run_id)
     manifest = RunManifestStore(paths).load_verified()

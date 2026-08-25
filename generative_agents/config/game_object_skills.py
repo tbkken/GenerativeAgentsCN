@@ -50,6 +50,17 @@ class GameObjectSkillBinding(StrictModel):
 def validate_unique_skill_bindings(
     bindings: list[GameObjectSkillBinding],
 ) -> list[GameObjectSkillBinding]:
+    """校验`unique`技能`bindings`。
+
+    参数:
+        bindings: 技能、提示词或空间对象之间的声明式绑定集合。 类型：`list[GameObjectSkillBinding]`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
     keys = [item.interaction_key for item in bindings]
     if len(keys) != len(set(keys)):
         raise ValueError("Game Object interaction_key values must be unique")

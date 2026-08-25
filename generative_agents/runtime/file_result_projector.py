@@ -16,6 +16,14 @@ class FileResultProjector:
     """Atomically persist the visible boundary when SQLite projection is not attached."""
 
     def __init__(self, paths: RunPaths):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+
+        返回:
+            无返回值。
+        """
         self._paths = paths
         self._path = paths.root / "projection.json"
         paths.ensure()
@@ -27,6 +35,19 @@ class FileResultProjector:
         frame: StoredFrame,
         checkpoint_path: Path | None,
     ) -> int:
+        """原子提交单步查询投影，并返回更新后的结果版本号。
+
+        参数:
+            result: 当前仿真步或上游组件产生的结构化结果。 类型：`StepResult`。
+            frame: 当前仿真步已经落盘且内容不可变的帧记录。 类型：`StoredFrame`。
+            checkpoint_path: 当前步骤对应的检查点目录；未生成检查点时为 `None`。 类型：`Path | None`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         current = self.read()
         available_step = current.get("available_step", 0)
         if result.step_no <= available_step:
@@ -75,6 +96,14 @@ class FileResultProjector:
         return document["result_version"]
 
     def read(self) -> dict:
+        """执行 `FileResultProjector` 的`read`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if not self._path.exists():
             return {
                 "run_id": str(self._paths.run_id),

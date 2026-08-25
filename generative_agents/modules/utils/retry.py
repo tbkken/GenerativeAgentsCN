@@ -9,10 +9,22 @@ from typing import Protocol
 
 class RetryControl(Protocol):
     @property
-    def pause_requested(self) -> bool: ...
+    def pause_requested(self) -> bool:
+        """暂停`requested`。
+
+        返回:
+            条件成立时返回 `True`，否则返回 `False`。
+        """
+        ...
 
     @property
-    def cancel_requested(self) -> bool: ...
+    def cancel_requested(self) -> bool:
+        """取消`requested`。
+
+        返回:
+            条件成立时返回 `True`，否则返回 `False`。
+        """
+        ...
 
 
 def interruptible_wait(
@@ -22,10 +34,16 @@ def interruptible_wait(
     sleep: Callable[[float], None] = time.sleep,
     quantum_seconds: float = 0.1,
 ) -> bool:
-    """Wait for a retry without hiding a Run control request.
+    """等待重试间隔，同时及时响应暂停或取消信号。
 
-    Returns ``False`` as soon as pause/cancel is requested. The injected sleep
-    function keeps the behavior deterministic and fast in unit tests.
+    参数:
+        seconds: 超时、等待或租约计算使用的秒数。 类型：`float`。
+        control: 运行控制器，用于在安全边界检测暂停、取消或终止请求。 类型：`RetryControl | None`。 默认值：`None`。
+        sleep: 是否允许重试过程实际等待；测试可关闭等待。 类型：`Callable[[float], None]`。 默认值：`time.sleep`。
+        quantum_seconds: `quantum`采用的秒数。 类型：`float`。 默认值：`0.1`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
     """
 
     remaining = max(0.0, float(seconds))
@@ -39,6 +57,5 @@ def interruptible_wait(
         sleep(interval)
         remaining -= interval
     return not (
-        control is not None
-        and (control.pause_requested or control.cancel_requested)
+        control is not None and (control.pause_requested or control.cancel_requested)
     )

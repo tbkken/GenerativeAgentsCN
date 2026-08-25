@@ -1,4 +1,4 @@
-"""Simulation game assembled entirely from one Run context and manifest snapshot."""
+"""完全由单次运行上下文与清单快照装配的仿真世界。"""
 
 from __future__ import annotations
 
@@ -9,20 +9,29 @@ from typing import Mapping
 
 from generative_agents.modules import utils
 from generative_agents.modules.agent import Agent
-from generative_agents.modules.game_object_interaction import GameObjectInteractionSystem
+from generative_agents.modules.game_object_interaction import (
+    GameObjectInteractionSystem,
+)
 from generative_agents.modules.maze import Maze
 from generative_agents.runtime.context import SimulationContext
 
 
 def _as_tuple_tree(value):
-    """Restore tuple-shaped state after a JSON checkpoint round-trip."""
+    """执行`as``tuple``tree`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。
+
+    返回:
+        返回函数计算得到的结果。
+    """
     if isinstance(value, list):
         return tuple(_as_tuple_tree(item) for item in value)
     return value
 
 
 class Game:
-    """A run-local aggregate; no process registry or bootstrap file reads."""
+    """运行私有的世界聚合；不读取进程注册表或启动配置文件。"""
 
     def __init__(
         self,
@@ -31,6 +40,20 @@ class Game:
         *,
         context: SimulationContext,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。 类型：`dict`。
+            conversation: 当前步骤的对话上下文或已经完成的会话记录。 类型：`dict`。
+            context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`SimulationContext`。
+
+        返回:
+            无返回值。
+
+        异常:
+            TypeError: 当参数类型不符合接口约定时抛出。
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         self.context = context
         self.name = str(context.run_id)
         self.record_interval = config.get(
@@ -39,10 +62,10 @@ class Game:
         self.logger = context.logger
         maze_definition = config.get("maze") or config.get("world")
         if not isinstance(maze_definition, dict):
-            raise ValueError("run manifest must contain an inline maze/world definition")
-        self.maze = Maze(
-            copy.deepcopy(maze_definition), self.logger, context.random
-        )
+            raise ValueError(
+                "run manifest must contain an inline maze/world definition"
+            )
+        self.maze = Maze(copy.deepcopy(maze_definition), self.logger, context.random)
         self.game_object_interactions = GameObjectInteractionSystem(
             maze_definition,
             skill_executor=getattr(context, "passive_skills", None),
@@ -53,9 +76,7 @@ class Game:
         agents_by_name: dict[str, Agent] = {}
         agent_keys_by_name: dict[str, str] = {}
         agent_base = copy.deepcopy(config.get("agent_base", {}))
-        storage_root = Path(
-            config.get("storage_root", context.paths.root / "storage")
-        )
+        storage_root = Path(config.get("storage_root", context.paths.root / "storage"))
         agents = config.get("agents", {})
         if not isinstance(agents, dict):
             raise TypeError("runtime agent configuration must be keyed by agent_key")
@@ -100,25 +121,45 @@ class Game:
             agents_by_name[agent_name] = agent
             agent_keys_by_name[agent_name] = agent_key
 
-        # The runtime/persistence identity is the immutable agent_key, while the
-        # legacy cognition domain expresses people in Event.subject by display
-        # name.  Keep those namespaces explicit instead of mixing aliases into
-        # one dict (which would duplicate agents during iteration and snapshot).
+        # 运行时与持久化层使用不可变 agent_key；旧认知模型的 Event.subject 使用展示名。
+        # 两套命名空间必须显式分离，不能把别名混入同一字典，否则迭代和快照会重复智能体。
         self.agents_by_name: Mapping[str, Agent] = MappingProxyType(agents_by_name)
         self.agent_keys_by_name: Mapping[str, str] = MappingProxyType(
             agent_keys_by_name
         )
 
     def get_agent(self, agent_key: str) -> Agent:
+        """获取智能体。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+
+        返回:
+            返回 `Agent` 类型的处理结果。
+        """
         return self.agents[agent_key]
 
     def agent_think(self, agent_key: str, status: dict) -> dict:
+        """执行一次智能体认知循环，产出计划、可观测上下文与副作用。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            status: 当前仿真步的世界状态映射，包含时间、位置和可观察对象等认知输入。 类型：`dict`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        说明:
+            该方法是单个智能体认知链路的边界：读取同一步世界快照，收集副作用，统一交给游戏循环提交。
+        """
         agent = self.get_agent(agent_key)
         plan = agent.think(status, self.agents_by_name)
         info = {
             "currently": agent.scratch.currently,
             "associate": agent.associate.abstract(),
-            "concepts": {concept.node_id: concept.abstract() for concept in agent.concepts},
+            "concepts": {
+                concept.node_id: concept.abstract() for concept in agent.concepts
+            },
             "chats": [
                 {"name": "self" if name == agent.name else name, "chat": chat}
                 for name, chat in agent.chats
@@ -140,6 +181,11 @@ class Game:
         return {"plan": plan, "info": info, "events": agent.drain_result_events()}
 
     def reset_game(self) -> None:
+        """执行 `Game` 的`reset`仿真世界操作。
+
+        返回:
+            无返回值。
+        """
         for agent_key, agent in self.agents.items():
             agent.reset()
             self.logger.info(
@@ -149,7 +195,16 @@ class Game:
     def resolve_game_object_interaction(
         self, agent_key: str, outcome: dict, *, step_no: int
     ) -> dict:
-        """Resolve at most one Agent-selected passive object request this step."""
+        """解析仿真世界对象`interaction`。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            outcome: 当前步骤或交互实际产生的结构化结果。 类型：`dict`。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
 
         agent = self.get_agent(agent_key)
         plan = outcome.get("plan") or {}
@@ -178,6 +233,11 @@ class Game:
         return outcome
 
     def snapshot_state(self) -> dict:
+        """执行 `Game` 的快照状态操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "agents": {
                 agent_key: {
@@ -188,26 +248,45 @@ class Game:
                 for agent_key, agent in self.agents.items()
             },
             "virtual_time": self.context.clock.get_date().isoformat(),
-            # random.Random state contains only JSON-safe scalar/tuple values.
-            # Checkpoint serialization turns tuples into lists; restore_runtime_state
-            # converts the shape back before calling setstate().
+            # random.Random 状态只包含可写入 JSON 的标量和元组；检查点序列化会把元组变成列表，
+            # 因此调用 setstate() 前必须恢复原有嵌套形状。
             "rng_state": self.context.random.getstate(),
         }
 
     def restore_runtime_state(self, snapshot: dict) -> None:
-        """Restore run-local deterministic state from a verified checkpoint."""
+        """执行 `Game` 的`restore``runtime`状态操作。
+
+        参数:
+            snapshot: 从检查点读取或准备写入检查点的运行时快照。 类型：`dict`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         rng_state = snapshot.get("rng_state")
         if rng_state is None:
             raise ValueError("checkpoint is missing rng_state")
         self.context.random.setstate(_as_tuple_tree(rng_state))
 
     def storage_exporters(self):
+        """执行 `Game` 的存储`exporters`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return {
             agent_key: agent.associate.export_storage
             for agent_key, agent in self.agents.items()
         }
 
     def runtime_storage_exporters(self):
+        """执行 `Game` 的`runtime`存储`exporters`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         memory_stream = getattr(self.context, "memory_stream", None)
         if memory_stream is None:
             return {}
@@ -215,4 +294,14 @@ class Game:
 
 
 def create_game(config, conversation, *, context: SimulationContext) -> Game:
+    """创建仿真世界。
+
+    参数:
+        config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。
+        conversation: 当前步骤的对话上下文或已经完成的会话记录。
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`SimulationContext`。
+
+    返回:
+        返回 `Game` 类型的处理结果。
+    """
     return Game(config, conversation, context=context)

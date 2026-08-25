@@ -1,4 +1,4 @@
-"""Translate actual legacy-domain outcomes into a complete StepResult ledger."""
+"""把旧领域模型的实际执行结果转换为完整步骤结果账本。"""
 
 from __future__ import annotations
 
@@ -25,9 +25,18 @@ from .results import (
 
 
 class StepResultCollector:
-    """Single-step adapter; facts are captured where the domain produced them."""
+    """单步结果适配器；在领域事实产生的位置立即捕获事实。"""
 
     def __init__(self, builder: StepResultBuilder, *, name_to_key: Mapping[str, str]):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            builder: 当前步骤唯一的可变结果收集器，冻结后生成不可变步骤结果。 类型：`StepResultBuilder`。
+            name_to_key: 用于稳定定位`name``to`的键。 类型：`Mapping[str, str]`。
+
+        返回:
+            无返回值。
+        """
         self.builder = builder
         self._name_to_key = dict(name_to_key)
         self._sequences = {
@@ -49,25 +58,33 @@ class StepResultCollector:
         planned_path=None,
         remaining_path=None,
     ) -> None:
+        """执行 `StepResultCollector` 的`capture`智能体操作。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            agent: 参与当前操作的智能体实例。
+            from_coord: 智能体开始当前移动区间时的观测坐标。
+            outcome: 当前步骤或交互实际产生的结构化结果。 类型：`Mapping`。
+            executed_path: `executed`对应的文件系统路径。 默认值：`None`。
+            planned_path: `planned`对应的文件系统路径。 默认值：`None`。
+            remaining_path: `remaining`对应的文件系统路径。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         plan = outcome.get("plan") or {}
         info = outcome.get("info") or {}
         planned_path = tuple(
             tuple(coord)
-            for coord in (
-                plan.get("path") if planned_path is None else planned_path
-            )
+            for coord in (plan.get("path") if planned_path is None else planned_path)
             or ()
         )
         observed_path = tuple(
             tuple(coord)
-            for coord in (
-                planned_path if executed_path is None else executed_path
-            )
+            for coord in (planned_path if executed_path is None else executed_path)
             or ()
         )
-        remaining_path = tuple(
-            tuple(coord) for coord in (remaining_path or ())
-        )
+        remaining_path = tuple(tuple(coord) for coord in (remaining_path or ()))
         to_coord = tuple(agent.coord)
         event = agent.get_event()
         description = event.get_describe() if event else ""
@@ -76,7 +93,9 @@ class StepResultCollector:
             activity = ActivityKind.MOVING
         elif predicate in {"对话", "chat", "聊天"}:
             activity = ActivityKind.CHAT
-        elif any(word in description.casefold() for word in ("sleep", "rest", "睡", "休息")):
+        elif any(
+            word in description.casefold() for word in ("sleep", "rest", "睡", "休息")
+        ):
             activity = ActivityKind.REST
         else:
             activity = ActivityKind.OTHER
@@ -127,13 +146,25 @@ class StepResultCollector:
             self._add_domain_event(
                 "MOVED",
                 (agent_key,),
-                {"from_coord": tuple(from_coord), "to_coord": to_coord, "path": observed_path},
+                {
+                    "from_coord": tuple(from_coord),
+                    "to_coord": to_coord,
+                    "path": observed_path,
+                },
             )
         for raw_event in outcome.get("events") or ():
             self._capture_event(raw_event)
 
     @staticmethod
     def _event_payload(event) -> dict | None:
+        """执行事件载荷的内部处理，供当前模块或类复用。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
+        """
         if event is None:
             return None
         serializer = getattr(event, "to_dict", None)
@@ -156,12 +187,20 @@ class StepResultCollector:
         planned_path=None,
         remaining_path=(),
     ) -> dict:
-        """Keep the human-readable decision facts without duplicating full memory storage."""
+        """执行`decision`运行上下文的内部处理，供当前模块或类复用。
+
+        参数:
+            plan: 智能体当前计划或等待执行的计划片段。 类型：`Mapping`。
+            info: 当前事件、步骤或调用的结构化附加信息。 类型：`Mapping`。
+            planned_path: `planned`对应的文件系统路径。 默认值：`None`。
+            remaining_path: `remaining`对应的文件系统路径。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
 
         if planned_path is None:
-            planned_path = tuple(
-                tuple(coord) for coord in (plan.get("path") or ())
-            )
+            planned_path = tuple(tuple(coord) for coord in (plan.get("path") or ()))
 
         perceptions = []
         for node_id, abstract in list((info.get("concepts") or {}).items())[:20]:
@@ -187,6 +226,17 @@ class StepResultCollector:
         }
 
     def _capture_event(self, event: Mapping) -> None:
+        """执行`capture`事件的内部处理，供当前模块或类复用。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。 类型：`Mapping`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         kind = event.get("kind")
         if kind == "conversation":
             self._sequences["conversation"] += 1
@@ -227,13 +277,18 @@ class StepResultCollector:
             self._add_domain_event(
                 "CONVERSATION",
                 record.participant_agent_keys,
-                {"conversation_id": str(conversation_id), "message_count": len(messages)},
+                {
+                    "conversation_id": str(conversation_id),
+                    "message_count": len(messages),
+                },
             )
         elif kind == "memory":
             self._sequences["memory"] += 1
             sequence = self._sequences["memory"]
             try:
-                delta_kind = MemoryDeltaKind(event.get("memory_kind", "CREATED"))
+                delta_kind = MemoryDeltaKind(
+                    event.get("memory_kind", MemoryDeltaKind.CREATED.value)
+                )
             except ValueError as exc:
                 raise ValueError(
                     f"unsupported memory delta kind: {event.get('memory_kind')!r}"
@@ -262,9 +317,15 @@ class StepResultCollector:
                     subject=semantic_event.get("subject"),
                     predicate=semantic_event.get("predicate"),
                     object=semantic_event.get("object"),
-                    address=tuple(semantic_event.get("address") or event.get("address") or ()),
-                    created_at=(datetime.fromisoformat(created_at) if created_at else None),
-                    expires_at=(datetime.fromisoformat(expires_at) if expires_at else None),
+                    address=tuple(
+                        semantic_event.get("address") or event.get("address") or ()
+                    ),
+                    created_at=(
+                        datetime.fromisoformat(created_at) if created_at else None
+                    ),
+                    expires_at=(
+                        datetime.fromisoformat(expires_at) if expires_at else None
+                    ),
                     evidence_memory_ids=tuple(event.get("evidence_memory_ids") or ()),
                 )
             )
@@ -286,7 +347,10 @@ class StepResultCollector:
             self.builder.add_schedule_revision(
                 ScheduleRevisionRecord(
                     revision_id=deterministic_record_id(
-                        self.builder.run_id, self.builder.step_no, "schedule", str(sequence)
+                        self.builder.run_id,
+                        self.builder.step_no,
+                        "schedule",
+                        str(sequence),
                     ),
                     sequence=sequence,
                     agent_key=event["agent_key"],
@@ -369,11 +433,28 @@ class StepResultCollector:
             )
 
     def capture_event(self, event: Mapping) -> None:
-        """Capture a side effect emitted by a run-scoped Skill service."""
+        """执行 `StepResultCollector` 的`capture`事件操作。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。 类型：`Mapping`。
+
+        返回:
+            无返回值。
+        """
 
         self._capture_event(event)
 
     def _add_domain_event(self, event_type: str, agent_keys, payload) -> None:
+        """执行`add``domain`事件的内部处理，供当前模块或类复用。
+
+        参数:
+            event_type: 模型轨迹事件类型筛选值；为空时不按事件类型过滤。 类型：`str`。
+            agent_keys: 需要查询、关联或提交结果的智能体稳定键集合。
+            payload: 待处理的结构化载荷；必需字段由当前操作的输入协议定义。
+
+        返回:
+            无返回值。
+        """
         self._sequences["domain"] += 1
         sequence = self._sequences["domain"]
         self.builder.add_domain_event(
@@ -399,6 +480,20 @@ class StepResultCollector:
         skill_name: str | None = None,
         skill_revision: str | None = None,
     ) -> None:
+        """执行`add``effect`的内部处理，供当前模块或类复用。
+
+        参数:
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`StepEffectKind`。
+            agent_keys: 需要查询、关联或提交结果的智能体稳定键集合。
+            payload: 待处理的结构化载荷；必需字段由当前操作的输入协议定义。
+            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+            source_effect_id: `source``effect`的唯一标识。 类型：`UUID | None`。 默认值：`None`。
+            skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。 类型：`str | None`。 默认值：`None`。
+            skill_revision: 当前运行固定使用的技能修订标识。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         self._sequences["effect"] += 1
         self.builder.add_effect(
             StepEffectRecord(
@@ -419,4 +514,9 @@ class StepResultCollector:
         )
 
     def freeze(self) -> StepResult:
+        """将可变运行态冻结为不可变的步骤结果。
+
+        返回:
+            返回 `StepResult` 类型的处理结果。
+        """
         return self.builder.freeze()

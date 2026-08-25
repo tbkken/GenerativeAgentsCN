@@ -16,8 +16,19 @@ class ConfigAdapter:
         *,
         embedding_api_key: str = "",
     ) -> dict:
+        """执行 `ConfigAdapter` 的仿真世界配置操作。
+
+        参数:
+            definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`ExperimentDefinition`。
+            embedding_api_key: 调用嵌入模型服务使用的 API 密钥；为空时由运行配置解析。 类型：`str`。 默认值：`''`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         behavior = definition.behavior
-        embedding = definition.models.embedding.model_dump(mode="json", exclude_none=False)
+        embedding = definition.models.embedding.model_dump(
+            mode="json", exclude_none=False
+        )
         embedding_config = {
             "provider": embedding["provider"],
             "model": embedding.get("resolved_model") or embedding["model"],

@@ -25,15 +25,36 @@ class GameObjectAffordance:
 
     @property
     def selection_key(self) -> str:
+        """执行 `GameObjectAffordance` 的`selection``key`操作。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         return f"{self.object_key}/{self.interaction_key}"
 
     def distance_to(self, coord: tuple[int, int]) -> float:
+        """执行 `GameObjectAffordance` 的`distance``to`操作。
+
+        参数:
+            coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。 类型：`tuple[int, int]`。
+
+        返回:
+            返回计算得到的浮点数值。
+        """
         x, y, width, height = self.bounds
         nearest_x = min(max(float(coord[0]), x), x + max(0.0, width - 1.0))
         nearest_y = min(max(float(coord[1]), y), y + max(0.0, height - 1.0))
         return math.dist((float(coord[0]), float(coord[1])), (nearest_x, nearest_y))
 
     def as_agent_context(self, coord: tuple[int, int]) -> dict[str, Any]:
+        """执行 `GameObjectAffordance` 的`as`智能体运行上下文操作。
+
+        参数:
+            coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。 类型：`tuple[int, int]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "selection_key": self.selection_key,
             "object_key": self.object_key,
@@ -50,15 +71,38 @@ class GameObjectInteractionSystem:
     """Expose nearby affordances and invoke one only after Agent selection."""
 
     def __init__(self, world: Mapping[str, Any], *, skill_executor, clock) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`Mapping[str, Any]`。
+            skill_executor: 执行运行私有技能调用的适配器。
+            clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。
+
+        返回:
+            无返回值。
+        """
         self._executor = skill_executor
         self._clock = clock
         self._affordances = tuple(self._from_world(world))
 
     @property
     def affordances(self) -> tuple[GameObjectAffordance, ...]:
+        """执行 `GameObjectInteractionSystem` 的`affordances`操作。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         return self._affordances
 
     def nearby(self, coord: tuple[int, int]) -> list[GameObjectAffordance]:
+        """执行 `GameObjectInteractionSystem` 的`nearby`操作。
+
+        参数:
+            coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。 类型：`tuple[int, int]`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         return sorted(
             (
                 item
@@ -73,7 +117,16 @@ class GameObjectInteractionSystem:
         )
 
     def interact(self, agent, planned_path, *, step_no: int) -> dict[str, Any] | None:
-        """Ask the Agent to choose; proximity alone never runs an object Skill."""
+        """执行 `GameObjectInteractionSystem` 的`interact`操作。
+
+        参数:
+            agent: 参与当前操作的智能体实例。
+            planned_path: `planned`对应的文件系统路径。
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
+        """
 
         nearby = self.nearby(tuple(agent.coord))
         if not nearby or self._executor is None:
@@ -137,11 +190,27 @@ class GameObjectInteractionSystem:
 
     @staticmethod
     def _from_world(world: Mapping[str, Any]):
+        """执行`from`世界的内部处理，供当前模块或类复用。
+
+        参数:
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`Mapping[str, Any]`。
+
+        返回:
+            无返回值。
+        """
         yield from GameObjectInteractionSystem._from_editor_v2(world)
         yield from GameObjectInteractionSystem._from_spatial_scene(world)
 
     @staticmethod
     def _from_editor_v2(world: Mapping[str, Any]):
+        """执行`from``editor``v2`的内部处理，供当前模块或类复用。
+
+        参数:
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`Mapping[str, Any]`。
+
+        返回:
+            无返回值。
+        """
         editor = world.get("editor_v2")
         if not isinstance(editor, Mapping):
             return
@@ -152,6 +221,14 @@ class GameObjectInteractionSystem:
         }
 
         def address(node: Mapping[str, Any]) -> tuple[str, ...]:
+            """执行 `GameObjectInteractionSystem` 的`address`操作。
+
+            参数:
+                node: 当前遍历、校验或转换的树节点。 类型：`Mapping[str, Any]`。
+
+            返回:
+                返回按接口约定组织的结果集合。
+            """
             parts: list[str] = []
             current: Mapping[str, Any] | None = node
             seen: set[str] = set()
@@ -196,6 +273,14 @@ class GameObjectInteractionSystem:
 
     @staticmethod
     def _from_spatial_scene(world: Mapping[str, Any]):
+        """执行`from`空间数据`scene`的内部处理，供当前模块或类复用。
+
+        参数:
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`Mapping[str, Any]`。
+
+        返回:
+            无返回值。
+        """
         scene = world.get("spatial_scene")
         if not isinstance(scene, Mapping):
             return
@@ -219,7 +304,9 @@ class GameObjectInteractionSystem:
                     continue
                 yield GameObjectAffordance(
                     object_key=str(placement.get("instance_key") or revision_id),
-                    object_name=str(contract.get("name") or placement.get("instance_key")),
+                    object_name=str(
+                        contract.get("name") or placement.get("instance_key")
+                    ),
                     interaction_key=str(binding.get("interaction_key") or ""),
                     skill_name=str(binding.get("skill_name") or ""),
                     skill_revision=None,

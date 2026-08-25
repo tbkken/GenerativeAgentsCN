@@ -17,7 +17,10 @@ from pydantic import ValidationError
 from generative_agents.config import canonical_json_bytes, make_builtin_definition
 from generative_agents.config.map_editor import MapEditorDocumentV2
 from generative_agents.config.schema import WorldConfig, WorldOverlayConfig
-from generative_agents.config.spatial_assets import SpatialAssetContract, SpatialSceneExtension
+from generative_agents.config.spatial_assets import (
+    SpatialAssetContract,
+    SpatialSceneExtension,
+)
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     ExperimentRevision,
@@ -27,21 +30,43 @@ from generative_agents.persistence.models import (
     WorldMapRevision,
 )
 from generative_agents.skills import SkillRegistry, SkillRegistryError
+from generative_agents.status import RevisionState
 
 from .errors import ServiceError, not_found
 
 
 def _utc_now() -> datetime:
+    """执行`utc``now`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回 `datetime` 类型的处理结果。
+    """
     return datetime.now(timezone.utc)
 
 
 def _make_key(name: str) -> str:
+    """执行`make``key`的内部处理，供当前模块或类复用。
+
+    参数:
+        name: 目标对象的人类可读名称。 类型：`str`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     ascii_key = re.sub(r"[^a-z0-9]+", "-", name.casefold()).strip("-")
     return f"{(ascii_key[:48].strip('-') or 'map')}-{uuid4().hex[:8]}"
 
 
 def _merge_patch(document: Any, patch: Any) -> Any:
-    """Apply RFC-7396 style merge semantics without mutating either input."""
+    """执行`merge``patch`的内部处理，供当前模块或类复用。
+
+    参数:
+        document: 待校验、转换或持久化的结构化文档。 类型：`Any`。
+        patch: 传入当前算法的`patch`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`Any`。
+
+    返回:
+        返回 `Any` 类型的处理结果。
+    """
 
     if not isinstance(patch, dict):
         return copy.deepcopy(patch)
@@ -55,7 +80,17 @@ def _merge_patch(document: Any, patch: Any) -> Any:
 
 
 def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
-    payload = WorldConfig.model_validate(world).model_dump(mode="json", exclude_none=False)
+    """规范化`public`世界。
+
+    参数:
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig | dict[str, Any]`。
+
+    返回:
+        返回 `WorldConfig` 类型的处理结果。
+    """
+    payload = WorldConfig.model_validate(world).model_dump(
+        mode="json", exclude_none=False
+    )
     payload.update(
         {
             "map_id": None,
@@ -68,6 +103,14 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
 
 
 def world_hash(world: WorldConfig | dict[str, Any]) -> str:
+    """执行 的世界哈希值操作。
+
+    参数:
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig | dict[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     normalized = normalize_public_world(world)
     return hashlib.sha256(
         canonical_json_bytes(normalized.model_dump(mode="json", exclude_none=False))
@@ -75,17 +118,16 @@ def world_hash(world: WorldConfig | dict[str, Any]) -> str:
 
 
 def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
-    """Compile the authoring hierarchy into the Tile addresses used by ``Maze``.
+    """把编辑器层级结构编译成仿真地图使用的运行时地址。
 
-    The map workspace edits ``definition.editor_v2.hierarchy_nodes`` while the
-    simulation indexes ``definition.tiles[*].address``.  Keeping those two
-    representations disconnected makes a published tree look correct in the
-    editor but leaves Agents navigating the previous addresses.  Publication
-    is the contract boundary where the immutable runtime grid is rebuilt.
+    参数:
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
 
-    Sibling bounds may overlap (for example a narrow crossing Arena on top of
-    a road Arena).  The smallest containing child is the most specific spatial
-    definition and therefore wins; ``sort_order`` and ``id`` make ties stable.
+    返回:
+        返回 `WorldConfig` 类型的处理结果。
+
+    说明:
+        编译过程同时建立地址、标题、父子关系和坐标索引；任何一项失败都应拒绝整张地图，避免把部分可用的空间树交给运行时。
     """
 
     raw_document = world.definition.get("editor_v2")
@@ -100,6 +142,16 @@ def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
             children_by_parent.setdefault(node.parent_id, []).append(node)
 
     def contains(node: Any, x: int, y: int) -> bool:
+        """执行 的`contains`操作。
+
+        参数:
+            node: 当前遍历、校验或转换的树节点。 类型：`Any`。
+            x: 空间坐标的水平分量。 类型：`int`。
+            y: 空间坐标的垂直分量。 类型：`int`。
+
+        返回:
+            条件成立时返回 `True`，否则返回 `False`。
+        """
         bounds = node.bounds
         return (
             bounds.x <= x < bounds.x + bounds.width
@@ -163,19 +215,59 @@ MAP_BLUEPRINTS: tuple[dict[str, Any], ...] = (
         "steps": [
             {"step": 1, "key": "zones", "name": "住宅区与公司园区", "tool": "区域"},
             {"step": 2, "key": "road", "name": "双向六车道主路", "tool": "道路"},
-            {"step": 3, "key": "intersection-a", "name": "三车道路口 A", "tool": "模块"},
-            {"step": 4, "key": "intersection-b", "name": "复制三车道路口 B", "tool": "模块"},
-            {"step": 5, "key": "pedestrian-network", "name": "人行道与步行网络", "tool": "人行"},
-            {"step": 6, "key": "signals", "name": "8 个信号灯与等待区", "tool": "信号灯"},
-            {"step": 7, "key": "facilities", "name": "车辆门禁与 P01–P03", "tool": "设施"},
-            {"step": 8, "key": "semantics", "name": "空间语义与导航校验", "tool": "语义"},
+            {
+                "step": 3,
+                "key": "intersection-a",
+                "name": "三车道路口 A",
+                "tool": "模块",
+            },
+            {
+                "step": 4,
+                "key": "intersection-b",
+                "name": "复制三车道路口 B",
+                "tool": "模块",
+            },
+            {
+                "step": 5,
+                "key": "pedestrian-network",
+                "name": "人行道与步行网络",
+                "tool": "人行",
+            },
+            {
+                "step": 6,
+                "key": "signals",
+                "name": "8 个信号灯与等待区",
+                "tool": "信号灯",
+            },
+            {
+                "step": 7,
+                "key": "facilities",
+                "name": "车辆门禁与 P01–P03",
+                "tool": "设施",
+            },
+            {
+                "step": 8,
+                "key": "semantics",
+                "name": "空间语义与导航校验",
+                "tool": "语义",
+            },
         ],
     },
 )
 
 
 def _map_blueprint(key: str) -> dict[str, Any] | None:
-    return next((copy.deepcopy(item) for item in MAP_BLUEPRINTS if item["key"] == key), None)
+    """执行地图`blueprint`的内部处理，供当前模块或类复用。
+
+    参数:
+        key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
+    """
+    return next(
+        (copy.deepcopy(item) for item in MAP_BLUEPRINTS if item["key"] == key), None
+    )
 
 
 def _commute_blueprint_world(
@@ -185,7 +277,20 @@ def _commute_blueprint_world(
     stable_key: str,
     step: int,
 ) -> WorldConfig:
-    """Materialize one deterministic step of the approved commute-map build guide."""
+    """执行`commute``blueprint`世界的内部处理，供当前模块或类复用。
+
+    参数:
+        session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+        name: 目标对象的人类可读名称。 类型：`str`。
+        stable_key: 用于稳定定位`stable`的键。 类型：`str`。
+        step: 当前处理、查询或恢复的仿真步记录或编号。 类型：`int`。
+
+    返回:
+        返回 `WorldConfig` 类型的处理结果。
+
+    异常:
+        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+    """
 
     blueprint = _map_blueprint("two-day-commute")
     assert blueprint is not None
@@ -221,7 +326,7 @@ def _commute_blueprint_world(
         if asset.current_published_revision_id
     }
     if set(revisions) != required_asset_keys or any(
-        revision is None or revision.state != "PUBLISHED"
+        revision is None or revision.state != RevisionState.PUBLISHED.value
         for revision in revisions.values()
     ):
         raise ServiceError(
@@ -246,7 +351,12 @@ def _commute_blueprint_world(
     palette = [
         {"id": "ground", "name": "基础地面", "color": "#c9d9bd", "collision": False},
         {"id": "home-zone", "name": "住宅区", "color": "#dbe8ce", "collision": False},
-        {"id": "office-zone", "name": "公司园区", "color": "#c9ded7", "collision": False},
+        {
+            "id": "office-zone",
+            "name": "公司园区",
+            "color": "#c9ded7",
+            "collision": False,
+        },
         {"id": "building", "name": "建筑", "color": "#f0e4cf", "collision": True},
         {"id": "road", "name": "六车道道路", "color": "#53605d", "collision": False},
         {"id": "sidewalk", "name": "人行道", "color": "#d5ddd7", "collision": False},
@@ -254,14 +364,9 @@ def _commute_blueprint_world(
         {"id": "parking", "name": "停车区域", "color": "#b7d8cc", "collision": False},
     ]
     cells: dict[str, dict[str, str]] = {
-        f"{x},{y}": {"kind": "ground"}
-        for y in range(height)
-        for x in range(width)
+        f"{x},{y}": {"kind": "ground"} for y in range(height) for x in range(width)
     }
-    tiles = {
-        tuple(tile["coord"]): tile
-        for tile in definition["tiles"]
-    }
+    tiles = {tuple(tile["coord"]): tile for tile in definition["tiles"]}
 
     def paint(
         x1: int,
@@ -273,6 +378,20 @@ def _commute_blueprint_world(
         address: list[str] | None = None,
         collision: bool | None = None,
     ) -> None:
+        """执行 的`paint`操作。
+
+        参数:
+            x1: 传入当前算法的`x1`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+            y1: 传入当前算法的`y1`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+            x2: 传入当前算法的`x2`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+            y2: 传入当前算法的`y2`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
+            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 类型：`list[str] | None`。 默认值：`None`。
+            collision: 路径或移动过程中检测到的碰撞信息。 类型：`bool | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         for y in range(max(0, y1), min(height - 1, y2) + 1):
             for x in range(max(0, x1), min(width - 1, x2) + 1):
                 cells[f"{x},{y}"] = {"kind": kind}
@@ -301,6 +420,19 @@ def _commute_blueprint_world(
         rotation: float = 0,
         state: dict[str, Any] | None = None,
     ) -> None:
+        """向地图蓝图添加一个空间资源实例及其初始状态覆盖。
+
+        参数:
+            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+            asset_key: 用于稳定定位资源的键。 类型：`str`。
+            x: 空间坐标的水平分量。 类型：`float`。
+            y: 空间坐标的垂直分量。 类型：`float`。
+            rotation: 空间资源实例相对于默认方向的旋转角度。 类型：`float`。 默认值：`0`。
+            state: 空间资源实例的初始状态覆盖映射；为空时使用资源定义中的默认状态。 类型：`dict[str, Any] | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         placements.append(
             {
                 "instance_key": key,
@@ -313,11 +445,55 @@ def _commute_blueprint_world(
         )
 
     def intersection(key: str, cx: int) -> None:
-        paint(cx - 3, 0, cx + 2, height - 1, "road", address=["城市道路", f"三车道路口 {key}"])
-        paint(cx - 3, 21, cx + 2, 23, "crosswalk", address=["城市道路", f"三车道路口 {key}", "北侧斑马线"])
-        paint(cx - 3, 32, cx + 2, 34, "crosswalk", address=["城市道路", f"三车道路口 {key}", "南侧斑马线"])
-        paint(cx - 6, 25, cx - 4, 30, "crosswalk", address=["城市道路", f"三车道路口 {key}", "西侧斑马线"])
-        paint(cx + 3, 25, cx + 5, 30, "crosswalk", address=["城市道路", f"三车道路口 {key}", "东侧斑马线"])
+        """执行 的`intersection`操作。
+
+        参数:
+            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+            cx: 传入当前算法的`cx`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+
+        返回:
+            无返回值。
+        """
+        paint(
+            cx - 3,
+            0,
+            cx + 2,
+            height - 1,
+            "road",
+            address=["城市道路", f"三车道路口 {key}"],
+        )
+        paint(
+            cx - 3,
+            21,
+            cx + 2,
+            23,
+            "crosswalk",
+            address=["城市道路", f"三车道路口 {key}", "北侧斑马线"],
+        )
+        paint(
+            cx - 3,
+            32,
+            cx + 2,
+            34,
+            "crosswalk",
+            address=["城市道路", f"三车道路口 {key}", "南侧斑马线"],
+        )
+        paint(
+            cx - 6,
+            25,
+            cx - 4,
+            30,
+            "crosswalk",
+            address=["城市道路", f"三车道路口 {key}", "西侧斑马线"],
+        )
+        paint(
+            cx + 3,
+            25,
+            cx + 5,
+            30,
+            "crosswalk",
+            address=["城市道路", f"三车道路口 {key}", "东侧斑马线"],
+        )
         module_instances.append(
             {
                 "instance_key": f"intersection-{key.casefold()}",
@@ -333,13 +509,24 @@ def _commute_blueprint_world(
                 "center": [cx, 28],
                 "lanes_per_direction": 3,
                 "lane_width_m": 1.0,
-                "crosswalk_keys": [f"{key.casefold()}-{side}" for side in ("north", "east", "south", "west")],
+                "crosswalk_keys": [
+                    f"{key.casefold()}-{side}"
+                    for side in ("north", "east", "south", "west")
+                ],
             }
         )
 
     if step >= 1:
         paint(3, 37, 18, 52, "home-zone", address=["住宅区", "林晨住宅"])
-        paint(7, 41, 15, 49, "building", address=["住宅区", "林晨住宅", "住宅建筑"], collision=True)
+        paint(
+            7,
+            41,
+            15,
+            49,
+            "building",
+            address=["住宅区", "林晨住宅", "住宅建筑"],
+            collision=True,
+        )
         paint(76, 2, 92, 17, "office-zone", address=["公司园区"])
         paint(80, 4, 90, 11, "building", address=["公司园区", "办公楼"], collision=True)
     if step >= 2:
@@ -357,7 +544,13 @@ def _commute_blueprint_world(
             {
                 "network_key": "vehicle-commute",
                 "mode": "CAR",
-                "route": ["home.driveway", "intersection.a", "intersection.b", "office.gate", "parking.P03"],
+                "route": [
+                    "home.driveway",
+                    "intersection.a",
+                    "intersection.b",
+                    "office.gate",
+                    "parking.P03",
+                ],
                 "distance_km": 1.8,
             },
             {
@@ -384,11 +577,16 @@ def _commute_blueprint_world(
                     x,
                     y,
                     rotation,
-                    {"state": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED", "phase": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED"},
+                    {
+                        "state": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED",
+                        "phase": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED",
+                    },
                 )
             for side, x, y in (
-                ("north", cx, 20), ("east", cx + 7, 28),
-                ("south", cx, 36), ("west", cx - 7, 28),
+                ("north", cx, 20),
+                ("east", cx + 7, 28),
+                ("south", cx, 36),
+                ("west", cx - 7, 28),
             ):
                 placement(f"{key}-wait-{side}", "zone-pedestrian-wait", x, y)
     if step >= 7:
@@ -414,7 +612,16 @@ def _commute_blueprint_world(
         definition["commute_semantics"] = {
             "home": "sector.home",
             "office": "sector.office",
-            "intersection_waiting_zones": ["a-wait-north", "a-wait-east", "a-wait-south", "a-wait-west", "b-wait-north", "b-wait-east", "b-wait-south", "b-wait-west"],
+            "intersection_waiting_zones": [
+                "a-wait-north",
+                "a-wait-east",
+                "a-wait-south",
+                "a-wait-west",
+                "b-wait-north",
+                "b-wait-east",
+                "b-wait-south",
+                "b-wait-west",
+            ],
             "gate_credential": "company.vehicle.enter",
             "parking_slots": ["P01", "P02", "P03"],
         }
@@ -471,7 +678,18 @@ def _commute_blueprint_world(
 def _blank_public_world(
     *, name: str, stable_key: str, width: int, height: int, tile_size: int
 ) -> WorldConfig:
-    """Create a complete editable grid instead of a dimensionless placeholder."""
+    """执行`blank``public`世界的内部处理，供当前模块或类复用。
+
+    参数:
+        name: 目标对象的人类可读名称。 类型：`str`。
+        stable_key: 用于稳定定位`stable`的键。 类型：`str`。
+        width: 地图、图像或矩形区域的宽度。 类型：`int`。
+        height: 地图、图像或矩形区域的高度。 类型：`int`。
+        tile_size: `tile`的数量或容量。 类型：`int`。
+
+    返回:
+        返回 `WorldConfig` 类型的处理结果。
+    """
 
     tiles = [
         {
@@ -508,7 +726,14 @@ def _blank_public_world(
 
 
 def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
-    """Validate the subset consumed directly by ``Maze`` before publication."""
+    """校验世界仿真定义。
+
+    参数:
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
 
     definition = world.definition
     errors: list[dict[str, str]] = []
@@ -549,7 +774,9 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
         not isinstance(address_keys, list)
         or not address_keys
         or address_keys[0] != "world"
-        or any(not isinstance(value, str) or not value.strip() for value in address_keys)
+        or any(
+            not isinstance(value, str) or not value.strip() for value in address_keys
+        )
     ):
         errors.append(
             {
@@ -657,7 +884,15 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
 def _validate_spatial_scene(
     session: Session, world: WorldConfig
 ) -> list[dict[str, str]]:
-    """Validate the opt-in spatial extension without changing legacy map hashes."""
+    """校验空间数据`scene`。
+
+    参数:
+        session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
 
     raw_scene = world.definition.get("spatial_scene")
     if raw_scene is None:
@@ -688,7 +923,7 @@ def _validate_spatial_scene(
     for palette_key, revision_id in scene.palette_refs.items():
         revision = session.get(SpatialAssetRevision, revision_id)
         kind = (revision.contract_json or {}).get("kind") if revision else None
-        if revision is None or revision.state != "PUBLISHED":
+        if revision is None or revision.state != RevisionState.PUBLISHED.value:
             errors.append(
                 {
                     "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
@@ -713,7 +948,8 @@ def _validate_spatial_scene(
         key
         for key in tile_keys
         if key not in scene.palette_refs
-        and key not in {
+        and key
+        not in {
             item.get("key")
             for item in definition.get("palette", [])
             if isinstance(item, dict)
@@ -728,8 +964,10 @@ def _validate_spatial_scene(
             }
         )
     for index, placement in enumerate(scene.placements):
-        revision = session.get(SpatialAssetRevision, placement.spatial_asset_revision_id)
-        if revision is None or revision.state != "PUBLISHED":
+        revision = session.get(
+            SpatialAssetRevision, placement.spatial_asset_revision_id
+        )
+        if revision is None or revision.state != RevisionState.PUBLISHED.value:
             errors.append(
                 {
                     "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
@@ -770,6 +1008,15 @@ def _validate_spatial_scene(
 
 
 def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, str]]:
+    """校验`passive`技能`bindings`。
+
+    参数:
+        bindings: 技能、提示词或空间对象之间的声明式绑定集合。
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
     errors: list[dict[str, str]] = []
     registry = SkillRegistry()
     for index, binding in enumerate(bindings):
@@ -800,6 +1047,14 @@ def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, s
 
 
 def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
+    """校验地图`editor``v2`。
+
+    参数:
+        world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
     raw_document = world.definition.get("editor_v2")
     if raw_document is None:
         return []
@@ -827,17 +1082,36 @@ def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
 
 class WorldMapService:
     def __init__(self, database: Database) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+
+        返回:
+            无返回值。
+        """
         self.database = database
 
     @staticmethod
     def list_blueprints() -> list[dict[str, Any]]:
+        """查询`blueprints`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return [copy.deepcopy(item) for item in MAP_BLUEPRINTS]
 
     def ensure_builtin_map(self) -> dict[str, Any]:
-        """Register the bundled town once and keep its first public revision immutable."""
+        """确保`builtin`地图。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
 
         with self.database.session_factory.begin() as session:
-            existing = session.scalar(select(WorldMap).where(WorldMap.map_key == "the-ville"))
+            existing = session.scalar(
+                select(WorldMap).where(WorldMap.map_key == "the-ville")
+            )
             if existing is not None:
                 return self._map_detail(session, existing)
             now = _utc_now()
@@ -847,7 +1121,7 @@ class WorldMapService:
                 map_key="the-ville",
                 name="the Ville 标准小镇",
                 description="内置公共地图，可被多个实验引用并在实验内独立微调。",
-                status="DRAFT",
+                status=RevisionState.DRAFT.value,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
@@ -866,7 +1140,7 @@ class WorldMapService:
                 id=str(uuid4()),
                 map_id=map_id,
                 revision_no=1,
-                state="PUBLISHED",
+                state=RevisionState.PUBLISHED.value,
                 schema_version=1,
                 world_json=payload,
                 world_hash=digest,
@@ -882,7 +1156,7 @@ class WorldMapService:
                 id=str(uuid4()),
                 map_id=map_id,
                 revision_no=2,
-                state="DRAFT",
+                state=RevisionState.DRAFT.value,
                 base_revision_id=published.id,
                 schema_version=1,
                 world_json=copy.deepcopy(payload),
@@ -899,11 +1173,20 @@ class WorldMapService:
             return self._map_detail(session, public_map)
 
     def ensure_intersection_map(self) -> dict[str, Any]:
-        """Seed a reusable four-way, three-lane-per-direction test intersection."""
+        """确保`intersection`地图。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
 
         with self.database.session_factory.begin() as session:
             existing = session.scalar(
-                select(WorldMap).where(WorldMap.map_key == "standard-3lane-intersection")
+                select(WorldMap).where(
+                    WorldMap.map_key == "standard-3lane-intersection"
+                )
             )
             asset_keys = {
                 "tile-ground",
@@ -935,14 +1218,9 @@ class WorldMapService:
 
             size = 48
             road_min, road_max = 15, 32
-            crosswalk_bands = (
-                lambda x, y: (
-                    road_min <= x <= road_max and y in {12, 13, 14, 33, 34, 35}
-                )
-                or (
-                    road_min <= y <= road_max and x in {12, 13, 14, 33, 34, 35}
-                )
-            )
+            crosswalk_bands = lambda x, y: (
+                road_min <= x <= road_max and y in {12, 13, 14, 33, 34, 35}
+            ) or (road_min <= y <= road_max and x in {12, 13, 14, 33, 34, 35})
             tiles: list[dict[str, Any]] = []
             for y in range(size):
                 for x in range(size):
@@ -971,6 +1249,19 @@ class WorldMapService:
                 rotation: float = 0,
                 state: dict[str, Any] | None = None,
             ) -> dict[str, Any]:
+                """向地图蓝图添加一个空间资源实例及其初始状态覆盖。
+
+                参数:
+                    key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+                    asset_key: 用于稳定定位资源的键。 类型：`str`。
+                    x: 空间坐标的水平分量。 类型：`float`。
+                    y: 空间坐标的垂直分量。 类型：`float`。
+                    rotation: 空间资源实例相对于默认方向的旋转角度。 类型：`float`。 默认值：`0`。
+                    state: 空间资源实例的初始状态覆盖映射；为空时使用资源定义中的默认状态。 类型：`dict[str, Any] | None`。 默认值：`None`。
+
+                返回:
+                    返回以字段名或业务键组织的结构化映射。
+                """
                 return {
                     "instance_key": key,
                     "spatial_asset_revision_id": revisions[asset_key].id,
@@ -1044,28 +1335,68 @@ class WorldMapService:
                             "crosswalks": [
                                 {
                                     "crosswalk_key": "north",
-                                    "bounds_m": {"x": 15, "y": 12, "width": 18, "height": 3},
+                                    "bounds_m": {
+                                        "x": 15,
+                                        "y": 12,
+                                        "width": 18,
+                                        "height": 3,
+                                    },
                                 },
                                 {
                                     "crosswalk_key": "east",
-                                    "bounds_m": {"x": 33, "y": 15, "width": 3, "height": 18},
+                                    "bounds_m": {
+                                        "x": 33,
+                                        "y": 15,
+                                        "width": 3,
+                                        "height": 18,
+                                    },
                                 },
                                 {
                                     "crosswalk_key": "south",
-                                    "bounds_m": {"x": 15, "y": 33, "width": 18, "height": 3},
+                                    "bounds_m": {
+                                        "x": 15,
+                                        "y": 33,
+                                        "width": 18,
+                                        "height": 3,
+                                    },
                                 },
                                 {
                                     "crosswalk_key": "west",
-                                    "bounds_m": {"x": 12, "y": 15, "width": 3, "height": 18},
+                                    "bounds_m": {
+                                        "x": 12,
+                                        "y": 15,
+                                        "width": 3,
+                                        "height": 18,
+                                    },
                                 },
                             ],
                         },
                         "tiles": tiles,
                         "palette": [
-                            {"key": "ground", "label": "基础地面", "color": "#c9d9bd", "collision": False},
-                            {"key": "road", "label": "六车道道路", "color": "#53605d", "collision": False},
-                            {"key": "sidewalk", "label": "人行道", "color": "#d5ddd7", "collision": False},
-                            {"key": "crosswalk", "label": "斑马线", "color": "#f7faf8", "collision": False},
+                            {
+                                "key": "ground",
+                                "label": "基础地面",
+                                "color": "#c9d9bd",
+                                "collision": False,
+                            },
+                            {
+                                "key": "road",
+                                "label": "六车道道路",
+                                "color": "#53605d",
+                                "collision": False,
+                            },
+                            {
+                                "key": "sidewalk",
+                                "label": "人行道",
+                                "color": "#d5ddd7",
+                                "collision": False,
+                            },
+                            {
+                                "key": "crosswalk",
+                                "label": "斑马线",
+                                "color": "#f7faf8",
+                                "collision": False,
+                            },
                         ],
                         "spatial_scene": {
                             "meters_per_tile": 1.0,
@@ -1080,13 +1411,35 @@ class WorldMapService:
                         "editor": {
                             "schema_version": 1,
                             "palette": [
-                                {"id": "ground", "name": "基础地面", "color": "#c9d9bd", "collision": False},
-                                {"id": "road", "name": "六车道道路", "color": "#53605d", "collision": False},
-                                {"id": "sidewalk", "name": "人行道", "color": "#d5ddd7", "collision": False},
-                                {"id": "crosswalk", "name": "斑马线", "color": "#f7faf8", "collision": False},
+                                {
+                                    "id": "ground",
+                                    "name": "基础地面",
+                                    "color": "#c9d9bd",
+                                    "collision": False,
+                                },
+                                {
+                                    "id": "road",
+                                    "name": "六车道道路",
+                                    "color": "#53605d",
+                                    "collision": False,
+                                },
+                                {
+                                    "id": "sidewalk",
+                                    "name": "人行道",
+                                    "color": "#d5ddd7",
+                                    "collision": False,
+                                },
+                                {
+                                    "id": "crosswalk",
+                                    "name": "斑马线",
+                                    "color": "#f7faf8",
+                                    "collision": False,
+                                },
                             ],
                             "cells": {
-                                f"{item['coord'][0]},{item['coord'][1]}": {"kind": item["tile"]}
+                                f"{item['coord'][0]},{item['coord'][1]}": {
+                                    "kind": item["tile"]
+                                }
                                 for item in tiles
                             },
                             "spatial_assets": {
@@ -1123,19 +1476,22 @@ class WorldMapService:
                 )
                 if current is not None and current.world_hash == expected_hash:
                     return self._map_detail(session, existing)
-                revision_no = int(
-                    session.scalar(
-                        select(func.max(WorldMapRevision.revision_no)).where(
-                            WorldMapRevision.map_id == existing.id
+                revision_no = (
+                    int(
+                        session.scalar(
+                            select(func.max(WorldMapRevision.revision_no)).where(
+                                WorldMapRevision.map_id == existing.id
+                            )
                         )
+                        or 0
                     )
-                    or 0
-                ) + 1
+                    + 1
+                )
                 published = WorldMapRevision(
                     id=str(uuid4()),
                     map_id=existing.id,
                     revision_no=revision_no,
-                    state="PUBLISHED",
+                    state=RevisionState.PUBLISHED.value,
                     base_revision_id=current.id if current else None,
                     schema_version=1,
                     world_json=payload,
@@ -1157,7 +1513,7 @@ class WorldMapService:
                 map_key="standard-3lane-intersection",
                 name="标准四向三车道路口",
                 description="48m × 48m、每个方向三车道、四条人行横道与可感知交通设施的复用地图。",
-                status="PUBLISHED",
+                status=RevisionState.PUBLISHED.value,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
@@ -1168,7 +1524,7 @@ class WorldMapService:
                 id=str(uuid4()),
                 map_id=public_map.id,
                 revision_no=1,
-                state="PUBLISHED",
+                state=RevisionState.PUBLISHED.value,
                 schema_version=1,
                 world_json=payload,
                 world_hash=expected_hash,
@@ -1184,7 +1540,14 @@ class WorldMapService:
             return self._map_detail(session, public_map)
 
     def default_revision_id(self) -> str:
-        """Return the published revision used by resource-first experiment creation."""
+        """执行 `WorldMapService` 的`default`修订版本`id`操作。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         with self.database.session_factory() as session:
             public_map = session.scalar(
@@ -1210,6 +1573,24 @@ class WorldMapService:
         height: int = 32,
         tile_size: int = 32,
     ) -> dict[str, Any]:
+        """创建地图。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str`。 默认值：`''`。
+            source_revision_id: `source`修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
+            blueprint_key: 用于稳定定位`blueprint`的键。 类型：`str | None`。 默认值：`None`。
+            map_key: 用于稳定定位地图的键。 类型：`str | None`。 默认值：`None`。
+            width: 地图、图像或矩形区域的宽度。 类型：`int`。 默认值：`48`。
+            height: 地图、图像或矩形区域的高度。 类型：`int`。 默认值：`32`。
+            tile_size: `tile`的数量或容量。 类型：`int`。 默认值：`32`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         name = name.strip()
         if not name:
             raise ServiceError("INVALID_MAP_NAME", "地图名称不能为空", status_code=422)
@@ -1240,14 +1621,19 @@ class WorldMapService:
                 status_code=404,
             )
         with self.database.session_factory.begin() as session:
-            if session.scalar(select(WorldMap.id).where(WorldMap.map_key == stable_key)):
+            if session.scalar(
+                select(WorldMap.id).where(WorldMap.map_key == stable_key)
+            ):
                 raise ServiceError(
                     "MAP_KEY_CONFLICT", "地图稳定键已被使用", status_code=409
                 )
             base_revision: WorldMapRevision | None = None
             if source_revision_id:
                 base_revision = session.get(WorldMapRevision, source_revision_id)
-                if base_revision is None or base_revision.state != "PUBLISHED":
+                if (
+                    base_revision is None
+                    or base_revision.state != RevisionState.PUBLISHED.value
+                ):
                     raise not_found("map_revision", source_revision_id)
                 world = normalize_public_world(base_revision.world_json)
             elif blueprint is not None:
@@ -1275,7 +1661,7 @@ class WorldMapService:
                 map_key=stable_key,
                 name=name,
                 description=description,
-                status="DRAFT",
+                status=RevisionState.DRAFT.value,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
@@ -1286,7 +1672,7 @@ class WorldMapService:
                 id=str(uuid4()),
                 map_id=public_map.id,
                 revision_no=1,
-                state="DRAFT",
+                state=RevisionState.DRAFT.value,
                 base_revision_id=base_revision.id if base_revision else None,
                 schema_version=1,
                 world_json=world.model_dump(mode="json", exclude_none=False),
@@ -1308,7 +1694,19 @@ class WorldMapService:
         expected_lock_version: int,
         step: int,
     ) -> dict[str, Any]:
-        """Apply exactly the next persisted build-guide step to a map Draft."""
+        """应用`blueprint`仿真步。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+            step: 当前处理、查询或恢复的仿真步记录或编号。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         now = _utc_now()
         with self.database.session_factory.begin() as session:
@@ -1354,7 +1752,7 @@ class WorldMapService:
                 update(WorldMapRevision)
                 .where(
                     WorldMapRevision.id == revision.id,
-                    WorldMapRevision.state == "DRAFT",
+                    WorldMapRevision.state == RevisionState.DRAFT.value,
                     WorldMapRevision.lock_version == expected_lock_version,
                 )
                 .values(
@@ -1382,32 +1780,62 @@ class WorldMapService:
         self,
         *,
         query: str | None = None,
-        status: str | None = None,
+        status: RevisionState | str | None = None,
         page: int = 1,
         page_size: int = 5,
     ) -> dict[str, Any]:
+        """查询`maps`。
+
+        参数:
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
+            status: 目录对象状态筛选值。允许值：`DRAFT`（草稿）或 `PUBLISHED`（已发布）。 类型：`RevisionState | str | None`。 默认值：`None`。
+            page: 从 1 开始的分页页码。 类型：`int`。 默认值：`1`。
+            page_size: 每页最多返回的记录数量。 类型：`int`。 默认值：`5`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if page < 1 or page_size < 1 or page_size > 100:
-            raise ServiceError("INVALID_PAGINATION", "地图分页参数无效", status_code=422)
-        normalized_status = status.upper() if status else None
-        if normalized_status not in {None, "DRAFT", "PUBLISHED"}:
-            raise ServiceError("INVALID_MAP_STATUS", "地图状态筛选无效", status_code=422)
+            raise ServiceError(
+                "INVALID_PAGINATION", "地图分页参数无效", status_code=422
+            )
+        try:
+            normalized_status = (
+                RevisionState(str(status).upper()).value if status else None
+            )
+        except ValueError as exc:
+            raise ServiceError(
+                "INVALID_MAP_STATUS", "地图状态筛选无效", status_code=422
+            ) from exc
         with self.database.session_factory() as session:
             statement = select(WorldMap)
             count_statement = select(func.count()).select_from(WorldMap)
-            status_count_statement = select(WorldMap.status, func.count()).group_by(WorldMap.status)
+            status_count_statement = select(WorldMap.status, func.count()).group_by(
+                WorldMap.status
+            )
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
-                predicate = or_(WorldMap.name.ilike(pattern), WorldMap.map_key.ilike(pattern))
+                predicate = or_(
+                    WorldMap.name.ilike(pattern), WorldMap.map_key.ilike(pattern)
+                )
                 statement = statement.where(predicate)
                 count_statement = count_statement.where(predicate)
                 status_count_statement = status_count_statement.where(predicate)
-            status_counts = {"DRAFT": 0, "PUBLISHED": 0}
+            status_counts = {
+                RevisionState.DRAFT.value: 0,
+                RevisionState.PUBLISHED.value: 0,
+            }
             for item_status, item_count in session.execute(status_count_statement):
                 status_counts[item_status] = int(item_count)
             status_counts["ALL"] = sum(status_counts.values())
             if normalized_status:
                 statement = statement.where(WorldMap.status == normalized_status)
-                count_statement = count_statement.where(WorldMap.status == normalized_status)
+                count_statement = count_statement.where(
+                    WorldMap.status == normalized_status
+                )
             total = int(session.scalar(count_statement) or 0)
             rows = list(
                 session.scalars(
@@ -1426,6 +1854,14 @@ class WorldMapService:
             }
 
     def get_map(self, map_id: str) -> dict[str, Any]:
+        """获取地图。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
@@ -1433,11 +1869,28 @@ class WorldMapService:
             return self._map_detail(session, public_map)
 
     def get_draft(self, map_id: str) -> dict[str, Any]:
+        """获取`draft`。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             public_map, revision = self._require_draft(session, map_id)
             return self._revision_detail(revision, public_map)
 
     def get_revision(self, map_id: str, revision_id: str) -> dict[str, Any]:
+        """获取修订版本。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+            revision_id: 实验修订版本的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             public_map = session.get(WorldMap, map_id)
             revision = session.get(WorldMapRevision, revision_id)
@@ -1454,6 +1907,19 @@ class WorldMapService:
         expected_lock_version: int,
         world: WorldConfig | dict[str, Any],
     ) -> dict[str, Any]:
+        """更新`draft`。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig | dict[str, Any]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         normalized = normalize_public_world(world)
         digest = world_hash(normalized)
         now = _utc_now()
@@ -1463,7 +1929,7 @@ class WorldMapService:
                 update(WorldMapRevision)
                 .where(
                     WorldMapRevision.id == revision.id,
-                    WorldMapRevision.state == "DRAFT",
+                    WorldMapRevision.state == RevisionState.DRAFT.value,
                     WorldMapRevision.lock_version == expected_lock_version,
                 )
                 .values(
@@ -1492,7 +1958,9 @@ class WorldMapService:
             public_map.updated_at = now
             public_map.row_version += 1
             session.flush()
-            return self._revision_detail(session.get(WorldMapRevision, revision.id), public_map)
+            return self._revision_detail(
+                session.get(WorldMapRevision, revision.id), public_map
+            )
 
     def publish_draft(
         self,
@@ -1501,9 +1969,25 @@ class WorldMapService:
         draft_revision_id: str,
         expected_lock_version: int,
     ) -> dict[str, Any]:
+        """发布`draft`。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+            draft_revision_id: 当前正在编辑且受乐观锁保护的草稿修订版本标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self.database.session_factory.begin() as session:
             public_map, revision = self._require_draft(session, map_id)
-            if revision.id != draft_revision_id or revision.lock_version != expected_lock_version:
+            if (
+                revision.id != draft_revision_id
+                or revision.lock_version != expected_lock_version
+            ):
                 raise ServiceError(
                     "MAP_REVISION_CONFLICT",
                     "地图草稿已变化，请重新载入",
@@ -1517,7 +2001,11 @@ class WorldMapService:
             errors.extend(_validate_spatial_scene(session, world))
             errors.extend(editor_errors)
             if errors:
-                revision.validation_json = {"valid": False, "errors": errors, "warnings": []}
+                revision.validation_json = {
+                    "valid": False,
+                    "errors": errors,
+                    "warnings": [],
+                }
                 raise ServiceError(
                     "MAP_VALIDATION_FAILED",
                     "地图未通过发布校验",
@@ -1528,41 +2016,62 @@ class WorldMapService:
             revision.world_json = world.model_dump(mode="json", exclude_none=False)
             revision.world_hash = world_hash(world)
             revision.validation_json = {"valid": True, "errors": [], "warnings": []}
-            revision.state = "PUBLISHED"
+            revision.state = RevisionState.PUBLISHED.value
             revision.published_at = now
             revision.updated_at = now
             public_map.current_draft_revision_id = None
             public_map.current_published_revision_id = revision.id
-            public_map.status = "PUBLISHED"
+            public_map.status = RevisionState.PUBLISHED.value
             public_map.row_version += 1
             public_map.updated_at = now
             session.flush()
             return self._revision_detail(revision, public_map)
 
     def fork_revision(self, map_id: str, revision_id: str) -> dict[str, Any]:
+        """执行 `WorldMapService` 的`fork`修订版本操作。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+            revision_id: 实验修订版本的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self.database.session_factory.begin() as session:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
                 raise not_found("map", map_id)
             if public_map.current_draft_revision_id:
-                raise ServiceError("MAP_DRAFT_EXISTS", "该地图已有编辑中的草稿", status_code=409)
-            source = session.get(WorldMapRevision, revision_id)
-            if source is None or source.map_id != map_id or source.state != "PUBLISHED":
-                raise not_found("map_revision", revision_id)
-            number = int(
-                session.scalar(
-                    select(func.max(WorldMapRevision.revision_no)).where(
-                        WorldMapRevision.map_id == map_id
-                    )
+                raise ServiceError(
+                    "MAP_DRAFT_EXISTS", "该地图已有编辑中的草稿", status_code=409
                 )
-                or 0
-            ) + 1
+            source = session.get(WorldMapRevision, revision_id)
+            if (
+                source is None
+                or source.map_id != map_id
+                or source.state != RevisionState.PUBLISHED.value
+            ):
+                raise not_found("map_revision", revision_id)
+            number = (
+                int(
+                    session.scalar(
+                        select(func.max(WorldMapRevision.revision_no)).where(
+                            WorldMapRevision.map_id == map_id
+                        )
+                    )
+                    or 0
+                )
+                + 1
+            )
             now = _utc_now()
             draft = WorldMapRevision(
                 id=str(uuid4()),
                 map_id=map_id,
                 revision_no=number,
-                state="DRAFT",
+                state=RevisionState.DRAFT.value,
                 base_revision_id=source.id,
                 schema_version=source.schema_version,
                 world_json=copy.deepcopy(source.world_json),
@@ -1575,12 +2084,20 @@ class WorldMapService:
             session.add(draft)
             session.flush()
             public_map.current_draft_revision_id = draft.id
-            public_map.status = "DRAFT"
+            public_map.status = RevisionState.DRAFT.value
             public_map.row_version += 1
             public_map.updated_at = now
             return self._revision_detail(draft, public_map)
 
     def list_revisions(self, map_id: str) -> list[dict[str, Any]]:
+        """查询`revisions`。
+
+        参数:
+            map_id: 地图的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
@@ -1592,7 +2109,10 @@ class WorldMapService:
                     .order_by(WorldMapRevision.revision_no.desc())
                 )
             )
-            return [self._revision_detail(item, public_map, include_world=False) for item in revisions]
+            return [
+                self._revision_detail(item, public_map, include_world=False)
+                for item in revisions
+            ]
 
     def select_for_experiment(
         self,
@@ -1601,9 +2121,19 @@ class WorldMapService:
         expected_lock_version: int,
         map_revision_id: str,
     ) -> dict[str, Any]:
+        """执行 `WorldMapService` 的`select``for`实验操作。
+
+        参数:
+            experiment_id: 实验记录的唯一标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+            map_revision_id: 地图修订版本的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             revision = session.get(WorldMapRevision, map_revision_id)
-            if revision is None or revision.state != "PUBLISHED":
+            if revision is None or revision.state != RevisionState.PUBLISHED.value:
                 raise not_found("map_revision", map_revision_id)
             world = self.materialize_world(revision, WorldOverlayConfig())
         from .experiments import ExperimentService
@@ -1622,6 +2152,19 @@ class WorldMapService:
         expected_lock_version: int,
         overlay: WorldOverlayConfig | dict[str, Any],
     ) -> dict[str, Any]:
+        """更新实验`overlay`。
+
+        参数:
+            experiment_id: 实验记录的唯一标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+            overlay: 叠加到已发布基础世界上的实验私有修改。 类型：`WorldOverlayConfig | dict[str, Any]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         from .experiments import ExperimentService
 
         experiment_service = ExperimentService(self.database)
@@ -1635,13 +2178,15 @@ class WorldMapService:
             )
         with self.database.session_factory() as session:
             revision = session.get(WorldMapRevision, current.map_revision_id)
-            if revision is None or revision.state != "PUBLISHED":
+            if revision is None or revision.state != RevisionState.PUBLISHED.value:
                 raise ServiceError(
                     "MAP_REVISION_UNAVAILABLE",
                     "实验引用的公共地图版本不可用",
                     status_code=409,
                 )
-            world = self.materialize_world(revision, WorldOverlayConfig.model_validate(overlay))
+            world = self.materialize_world(
+                revision, WorldOverlayConfig.model_validate(overlay)
+            )
         return experiment_service.patch_draft_section(
             experiment_id=experiment_id,
             section="world",
@@ -1652,12 +2197,24 @@ class WorldMapService:
     def materialize_for_publish_in_session(
         self, session: Session, world: WorldConfig
     ) -> WorldConfig:
+        """执行 `WorldMapService` 的`materialize``for``publish``in``session`操作。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
+
+        返回:
+            返回 `WorldConfig` 类型的处理结果。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if not world.map_revision_id:
             return world
         revision = session.get(WorldMapRevision, world.map_revision_id)
         if (
             revision is None
-            or revision.state != "PUBLISHED"
+            or revision.state != RevisionState.PUBLISHED.value
             or revision.map_id != world.map_id
             or revision.world_hash != world.map_revision_hash
         ):
@@ -1672,6 +2229,15 @@ class WorldMapService:
     def materialize_world(
         revision: WorldMapRevision, overlay: WorldOverlayConfig
     ) -> WorldConfig:
+        """执行 `WorldMapService` 的`materialize`世界操作。
+
+        参数:
+            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision`。
+            overlay: 叠加到已发布基础世界上的实验私有修改。 类型：`WorldOverlayConfig`。
+
+        返回:
+            返回 `WorldConfig` 类型的处理结果。
+        """
         base = normalize_public_world(revision.world_json)
         definition = _merge_patch(base.definition, overlay.definition_patch)
         assets = {item.logical_path: item for item in base.assets}
@@ -1693,6 +2259,18 @@ class WorldMapService:
     def _require_draft(
         self, session: Session, map_id: str
     ) -> tuple[WorldMap, WorldMapRevision]:
+        """执行`require``draft`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            map_id: 地图的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         public_map = session.get(WorldMap, map_id)
         if public_map is None:
             raise not_found("map", map_id)
@@ -1701,11 +2279,26 @@ class WorldMapService:
             if public_map.current_draft_revision_id
             else None
         )
-        if revision is None or revision.map_id != map_id or revision.state != "DRAFT":
-            raise ServiceError("MAP_DRAFT_UNAVAILABLE", "地图没有可编辑草稿", status_code=409)
+        if (
+            revision is None
+            or revision.map_id != map_id
+            or revision.state != RevisionState.DRAFT.value
+        ):
+            raise ServiceError(
+                "MAP_DRAFT_UNAVAILABLE", "地图没有可编辑草稿", status_code=409
+            )
         return public_map, revision
 
     def _usage_experiment_ids(self, session: Session, map_id: str) -> set[str]:
+        """执行`usage`实验`ids`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            map_id: 地图的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         result: set[str] = set()
         revisions = session.execute(
             select(ExperimentRevision.experiment_id, ExperimentRevision.definition_json)
@@ -1716,6 +2309,15 @@ class WorldMapService:
         return result
 
     def _map_detail(self, session: Session, public_map: WorldMap) -> dict[str, Any]:
+        """执行地图`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            public_map: 传入当前算法的`public``map`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`WorldMap`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         draft = (
             session.get(WorldMapRevision, public_map.current_draft_revision_id)
             if public_map.current_draft_revision_id
@@ -1741,13 +2343,23 @@ class WorldMapService:
             "current_published": self._revision_summary(published),
             "usage_count": len(self._usage_experiment_ids(session, public_map.id)),
             "dimensions": size if isinstance(size, list) else None,
-            "tile_size": definition.get("tile_size") if isinstance(definition, dict) else None,
+            "tile_size": definition.get("tile_size")
+            if isinstance(definition, dict)
+            else None,
             "updated_at": public_map.updated_at.isoformat(),
             "created_at": public_map.created_at.isoformat(),
         }
 
     @staticmethod
     def _revision_summary(revision: WorldMapRevision | None) -> dict[str, Any] | None:
+        """执行修订版本摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision | None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
+        """
         if revision is None:
             return None
         return {
@@ -1757,7 +2369,9 @@ class WorldMapService:
             "world_hash": revision.world_hash,
             "lock_version": revision.lock_version,
             "updated_at": revision.updated_at.isoformat(),
-            "published_at": revision.published_at.isoformat() if revision.published_at else None,
+            "published_at": revision.published_at.isoformat()
+            if revision.published_at
+            else None,
         }
 
     def _revision_detail(
@@ -1767,6 +2381,16 @@ class WorldMapService:
         *,
         include_world: bool = True,
     ) -> dict[str, Any]:
+        """执行修订版本`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision`。
+            public_map: 传入当前算法的`public``map`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`WorldMap`。
+            include_world: 是否启用世界相关处理。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         result = self._revision_summary(revision) or {}
         result.update(
             {

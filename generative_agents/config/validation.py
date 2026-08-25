@@ -30,15 +30,36 @@ class ValidationReport(StrictModel):
 
     @property
     def valid(self) -> bool:
+        """执行 `ValidationReport` 的`valid`操作。
+
+        返回:
+            条件成立时返回 `True`，否则返回 `False`。
+        """
         return not self.errors
 
 
 def _is_loopback(url: str) -> bool:
+    """判断是否`loopback`。
+
+    参数:
+        url: 需要校验、规范化或访问的资源地址。 类型：`str`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
+    """
     host = (urlsplit(url).hostname or "").casefold()
     return host in {"127.0.0.1", "localhost", "::1"}
 
 
 def _fix_target(path: str) -> tuple[str, str | None]:
+    """执行`fix``target`的内部处理，供当前模块或类复用。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+
+    返回:
+        返回按接口约定组织的结果集合。 没有可用结果时返回 `None`。
+    """
     if path.startswith("agents"):
         return "agents", "agentSearch"
     if path.startswith("world"):
@@ -51,6 +72,17 @@ def _fix_target(path: str) -> tuple[str, str | None]:
 
 
 def _issue(code: str, path: str, message: str, severity: Literal["ERROR", "WARNING"]):
+    """执行`issue`的内部处理，供当前模块或类复用。
+
+    参数:
+        code: 稳定错误码、状态码或调用方可识别的协议代码。 类型：`str`。
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+        message: 待发送、校验、脱敏或写入会话的消息文本或对象。 类型：`str`。
+        severity: 配置校验问题的严重级别。 类型：`Literal['ERROR', 'WARNING']`。
+
+    返回:
+        返回函数计算得到的结果。
+    """
     fix_page, fix_control = _fix_target(path)
     return ValidationIssue(
         code=code,
@@ -68,14 +100,25 @@ def validate_for_publish(
     existing_secret_refs: set[str] | None = None,
     validate_legacy_agent_locations: bool = True,
 ) -> ValidationReport:
-    """Perform deterministic publication checks; network checks live in model adapters."""
+    """校验`for``publish`。
+
+    参数:
+        definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`ExperimentDefinition`。
+        existing_secret_refs: 修改前已经存在的密钥引用集合，用于识别新增或失效引用。 类型：`set[str] | None`。 默认值：`None`。
+        validate_legacy_agent_locations: 是否对旧版智能体地址执行兼容性校验。 类型：`bool`。 默认值：`True`。
+
+    返回:
+        返回 `ValidationReport` 类型的处理结果。
+    """
 
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
     get_algorithm_profile(definition.engine.algorithm_version)
 
     if not any(agent.enabled for agent in definition.agents):
-        errors.append(_issue("NO_ENABLED_AGENT", "agents", "至少需要一个启用的 Agent", "ERROR"))
+        errors.append(
+            _issue("NO_ENABLED_AGENT", "agents", "至少需要一个启用的 Agent", "ERROR")
+        )
     enabled_agent_names = [agent.name for agent in definition.agents if agent.enabled]
     duplicate_agent_names = sorted(
         name for name, count in Counter(enabled_agent_names).items() if count > 1
@@ -90,10 +133,11 @@ def validate_for_publish(
             )
         )
 
-
     world = definition.world.definition
     if not world:
-        errors.append(_issue("WORLD_EMPTY", "world.definition", "世界定义不能为空", "ERROR"))
+        errors.append(
+            _issue("WORLD_EMPTY", "world.definition", "世界定义不能为空", "ERROR")
+        )
     else:
         size = world.get("size") if isinstance(world, dict) else None
         tiles = world.get("tiles") if isinstance(world, dict) else None
@@ -169,9 +213,7 @@ def validate_for_publish(
             )
             for spatial_issue in spatial_issues:
                 suffix = (
-                    f".address.{spatial_issue.purpose}"
-                    if spatial_issue.purpose
-                    else ""
+                    f".address.{spatial_issue.purpose}" if spatial_issue.purpose else ""
                 )
                 errors.append(
                     _issue(
@@ -206,7 +248,11 @@ def validate_for_publish(
                 )
             )
         secret_ref = getattr(model, "secret_ref", None)
-        if secret_ref and existing_secret_refs is not None and secret_ref not in existing_secret_refs:
+        if (
+            secret_ref
+            and existing_secret_refs is not None
+            and secret_ref not in existing_secret_refs
+        ):
             errors.append(
                 _issue(
                     "SECRET_NOT_FOUND",

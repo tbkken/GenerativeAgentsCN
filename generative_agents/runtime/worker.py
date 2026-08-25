@@ -1,4 +1,4 @@
-"""Entry point for one isolated experiment worker process."""
+"""单个隔离实验工作进程的入口与生命周期管理。"""
 
 from __future__ import annotations
 
@@ -19,7 +19,12 @@ from generative_agents.config import get_algorithm_profile
 from generative_agents.persistence import create_database
 from generative_agents.persistence.models import Run
 from generative_agents.security import MasterKeyStore, SecretCipher
-from generative_agents.skills import MemoryStream, SkillMCPServer, SnapshotPassiveSkillRuntime
+from generative_agents.skills import (
+    MemoryStream,
+    SkillMCPServer,
+    SnapshotPassiveSkillRuntime,
+)
+from generative_agents.status import RunStatus
 
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from .commit import FileStepCommitter
@@ -42,20 +47,41 @@ if TYPE_CHECKING:
 
 
 class ModelFactoryRegistry:
-    """Create one traced chat model per Agent without global SDK settings."""
+    """为每个智能体创建带调用轨迹的模型，且不修改 SDK 全局配置。"""
 
     def __init__(self, config: dict, recorder: ModelTraceWriter, *, control, logger):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。 类型：`dict`。
+            recorder: 接收模型调用、步骤副作用或诊断事件的记录器。 类型：`ModelTraceWriter`。
+            control: 运行控制器，用于在安全边界检测暂停、取消或终止请求。
+            logger: 记录运行诊断信息的日志器。
+
+        返回:
+            无返回值。
+        """
         self._config = config
         self._recorder = recorder
         self._control = control
         self._logger = logger
 
     def get(self, purpose: str):
+        """执行 `ModelFactoryRegistry` 的`get`操作。
+
+        参数:
+            purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str`。
+
+        返回:
+            返回函数计算得到的结果。
+
+        异常:
+            KeyError: 当必需的键或映射项不存在时抛出。
+        """
         if purpose != "chat":
             raise KeyError(f"unsupported model purpose: {purpose}")
-        # This import pulls in the model SDK stack and is intentionally delayed
-        # until the worker heartbeat thread is already running. On CPU-only
-        # Windows hosts importing LlamaIndex/OpenAI can take tens of seconds.
+        # 该导入会加载模型 SDK 栈，因此故意延迟到心跳线程启动之后。
+        # 在仅 CPU 的 Windows 主机上，导入 LlamaIndex/OpenAI 可能耗时数十秒。
         from generative_agents.modules.model.llm_model import create_llm_model
 
         return create_llm_model(
@@ -67,6 +93,11 @@ class ModelFactoryRegistry:
 
 
 def _parser() -> argparse.ArgumentParser:
+    """执行`parser`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回 `argparse.ArgumentParser` 类型的处理结果。
+    """
     parser = argparse.ArgumentParser(description="run one experiment attempt")
     parser.add_argument("--database-url", required=True)
     parser.add_argument("--var-dir", required=True)
@@ -77,6 +108,20 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _secret_value(definition, purpose: str, cipher: SecretCipher, database) -> str:
+    """执行密钥`value`的内部处理，供当前模块或类复用。
+
+    参数:
+        definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。
+        purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str`。
+        cipher: 负责密钥加密和解密的密码组件。 类型：`SecretCipher`。
+        database: 持久化数据库访问对象或会话工厂。
+
+    返回:
+        返回处理后的文本或稳定标识。
+
+    异常:
+        RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+    """
     model = getattr(definition.models, purpose)
     secret_id = model.secret_ref
     if not secret_id:
@@ -92,6 +137,15 @@ def _secret_value(definition, purpose: str, cipher: SecretCipher, database) -> s
 
 
 def _logger(run_id: UUID, level: str) -> logging.LoggerAdapter:
+    """执行`logger`的内部处理，供当前模块或类复用。
+
+    参数:
+        run_id: 仿真运行的唯一标识。 类型：`UUID`。
+        level: 日志级别、树层级或重要性等级。 类型：`str`。
+
+    返回:
+        返回 `logging.LoggerAdapter` 类型的处理结果。
+    """
     logger = logging.getLogger(f"generative_agents.worker.{run_id}")
     logger.handlers.clear()
     handler = logging.StreamHandler()
@@ -112,6 +166,18 @@ def _install_sqlite_committer(
     checkpoint_retention: int,
     trace_writer: ModelTraceWriter,
 ) -> None:
+    """执行`install``sqlite``committer`的内部处理，供当前模块或类复用。
+
+    参数:
+        runner: 负责按步骤推进仿真世界并提交结果的运行器。
+        database: 持久化数据库访问对象或会话工厂。
+        var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`Path`。
+        checkpoint_retention: 每个运行最多保留的检查点数量；超出部分按策略清理。 类型：`int`。
+        trace_writer: 把模型物理调用与逻辑调用事实追加到轨迹文件的写入器。 类型：`ModelTraceWriter`。
+
+    返回:
+        无返回值。
+    """
     checkpoint = CheckpointBundleWriter(
         runner.context.paths,
         lambda _result: CheckpointSnapshot(
@@ -130,6 +196,16 @@ def _install_sqlite_committer(
         """Project the durable frame first, then every complete trace record."""
 
         def commit_step(self, result, *, frame, checkpoint_path):
+            """原子提交单步查询投影，并返回更新后的结果版本号。
+
+            参数:
+                result: 当前仿真步或上游组件产生的结构化结果。
+                frame: 当前仿真步已经落盘且内容不可变的帧记录。
+                checkpoint_path: 当前步骤对应的检查点目录；未生成检查点时为 `None`。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             version = result_projection.commit_step(
                 result,
                 frame=frame,
@@ -150,6 +226,17 @@ def _install_sqlite_committer(
 
 
 def main(argv=None) -> int:
+    """解析启动参数并执行当前模块的主流程。
+
+    参数:
+        argv: 命令行参数序列；为 `None` 时读取当前进程的命令行。 默认值：`None`。
+
+    返回:
+        返回计算得到的整数值或版本号。
+
+    异常:
+        RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+    """
     args = _parser().parse_args(argv)
     var_dir = Path(args.var_dir).resolve()
     database = create_database(args.database_url)
@@ -162,7 +249,13 @@ def main(argv=None) -> int:
     stop_monitor = threading.Event()
     monitor = threading.Thread(
         target=_control_monitor,
-        args=(repository, str(args.run_id), str(args.attempt_id), control, stop_monitor),
+        args=(
+            repository,
+            str(args.run_id),
+            str(args.attempt_id),
+            control,
+            stop_monitor,
+        ),
         name="run-control-monitor",
         daemon=True,
     )
@@ -172,8 +265,7 @@ def main(argv=None) -> int:
     logger = _logger(args.run_id, "INFO")
     recorder: ModelTraceWriter | None = None
     try:
-        # Start renewing durable ownership before importing the legacy engine.
-        # Those imports can exceed the normal heartbeat deadline on Windows.
+        # 导入旧仿真引擎前先续租持久化所有权；这些导入在 Windows 上可能超过常规心跳期限。
         if repository.heartbeat(str(args.run_id), str(args.attempt_id)) is None:
             raise RuntimeError("worker does not own the current Run attempt")
         monitor.start()
@@ -194,15 +286,19 @@ def main(argv=None) -> int:
         embedding_key = _secret_value(definition, "embedding", cipher, database)
         skills = SnapshotSkillInstructionRepository(
             manifest.skill_bundle,
-            brain=str(manifest.document.get("brain_skill") or definition.engine.brain_skill),
+            brain=str(
+                manifest.document.get("brain_skill") or definition.engine.brain_skill
+            ),
         )
-        checkpoint_state, checkpoint_conversation, attempt_storage = _prepare_attempt_state(
-            database,
-            paths,
-            run_id=str(args.run_id),
-            attempt_id=str(args.attempt_id),
-            start_step=args.start_step,
-            stride_minutes=definition.simulation.stride_minutes,
+        checkpoint_state, checkpoint_conversation, attempt_storage = (
+            _prepare_attempt_state(
+                database,
+                paths,
+                run_id=str(args.run_id),
+                attempt_id=str(args.attempt_id),
+                start_step=args.start_step,
+                stride_minutes=definition.simulation.stride_minutes,
+            )
         )
         start_time = (
             datetime.fromisoformat(checkpoint_state["virtual_time"])
@@ -249,8 +345,7 @@ def main(argv=None) -> int:
                 "brain_skill": skills.brain,
             },
         )
-        # Keep the expensive world engine import behind the active heartbeat.
-        # Its cognitive calls are now resolved from the selected file-backed brain.
+        # 昂贵的世界引擎导入必须放在有效心跳之后；认知调用从当前运行选定的文件化大脑解析。
         from generative_agents.start import build_runner
 
         runner = build_runner(
@@ -291,7 +386,9 @@ def main(argv=None) -> int:
                 ModelTraceProjector(database, var_dir=var_dir).project(
                     run_id=str(args.run_id),
                     attempt_id=str(args.attempt_id),
-                    relative_path=recorder.path.resolve().relative_to(var_dir).as_posix(),
+                    relative_path=recorder.path.resolve()
+                    .relative_to(var_dir)
+                    .as_posix(),
                 )
             except Exception:
                 exit_code = 1
@@ -312,6 +409,18 @@ def main(argv=None) -> int:
 
 
 def _attempt_no(database, attempt_id: str) -> int:
+    """执行执行尝试`no`的内部处理，供当前模块或类复用。
+
+    参数:
+        database: 持久化数据库访问对象或会话工厂。
+        attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+
+    返回:
+        返回计算得到的整数值或版本号。
+
+    异常:
+        RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+    """
     from generative_agents.persistence.models import RunAttempt
 
     with database.session_factory() as session:
@@ -330,7 +439,23 @@ def _prepare_attempt_state(
     start_step: int,
     stride_minutes: int,
 ) -> tuple[dict | None, dict | None, Path]:
-    """Copy a verified checkpoint into a fresh, attempt-owned writable store."""
+    """执行`prepare`执行尝试状态的内部处理，供当前模块或类复用。
+
+    参数:
+        database: 持久化数据库访问对象或会话工厂。
+        paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+        run_id: 仿真运行的唯一标识。 类型：`str`。
+        attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+        start_step: 读取、导出或处理范围的起始仿真步编号。 类型：`int`。
+        stride_minutes: 每个仿真步推进的虚拟分钟数。 类型：`int`。
+
+    返回:
+        返回目标文件或目录路径。 没有可用结果时返回 `None`。
+
+    异常:
+        RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
 
     if start_step < 1:
         raise ValueError("start_step must be positive")
@@ -359,7 +484,9 @@ def _prepare_attempt_state(
             expected_step,
             orphan_root=paths.orphaned / f"attempt-{attempt_id}" / "checkpoints",
         )
-        bundle = json.loads((checkpoint.path / "bundle.json").read_text(encoding="utf-8"))
+        bundle = json.loads(
+            (checkpoint.path / "bundle.json").read_text(encoding="utf-8")
+        )
         storage_root.mkdir(parents=True, exist_ok=False)
         state = json.loads((checkpoint.path / "state.json").read_text(encoding="utf-8"))
         conversation = json.loads(
@@ -394,14 +521,29 @@ def _control_monitor(
     control: RunControl,
     stop: threading.Event,
 ) -> None:
+    """续租工作进程所有权，并把持久化控制状态转换为本地控制信号。
+
+    参数:
+        repository: 传入当前算法的`repository`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`LocalRunSchedulerRepository`。
+        run_id: 仿真运行的唯一标识。 类型：`str`。
+        attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+        control: 运行控制器，用于在安全边界检测暂停、取消或终止请求。 类型：`RunControl`。
+        stop: 用于通知后台监控线程退出的线程事件。 类型：`threading.Event`。
+
+    返回:
+        无返回值。
+
+    说明:
+        监控线程只设置进程内控制信号，不直接提交仿真结果；最后一个可见步骤仍由提交器按固定顺序发布。
+    """
     while not stop.wait(0.5):
         status = repository.heartbeat(run_id, attempt_id)
         if status is None:
             control.request_cancel()
             return
-        if status == "PAUSE_REQUESTED":
+        if status == RunStatus.PAUSE_REQUESTED:
             control.request_pause()
-        elif status == "CANCEL_REQUESTED":
+        elif status == RunStatus.CANCEL_REQUESTED:
             control.request_cancel()
 
 

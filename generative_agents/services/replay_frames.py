@@ -34,9 +34,32 @@ class VerifiedRunFrameReader:
     _MAX_RESULTS = 512
 
     def __init__(self, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._boundary = RunStorageBoundary(var_dir)
 
-    def read(self, run: Run, row: RunStep, *, materialize: bool = True) -> StepResult | None:
+    def read(
+        self, run: Run, row: RunStep, *, materialize: bool = True
+    ) -> StepResult | None:
+        """执行 `VerifiedRunFrameReader` 的`read`操作。
+
+        参数:
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunStep`。
+            materialize: 是否读取并返回完整内容；关闭时只验证元数据和归属。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            返回 `StepResult | None` 类型的处理结果。 没有可用结果时返回 `None`。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         try:
             with self._boundary.open_owned_binary(
                 run, row.frame_path, area="frames"
@@ -65,6 +88,22 @@ class VerifiedRunFrameReader:
         opened_stat,
         materialize: bool,
     ) -> StepResult | None:
+        """读取`opened`。
+
+        参数:
+            row: 从数据库查询得到、待转换为服务响应的记录。 类型：`RunStep`。
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            handle: 已经打开并由调用方负责生命周期的二进制文件句柄。
+            opened_stat: 传入当前算法的`opened``stat`；其结构与有效范围由类型注解和调用协议共同限定。
+            materialize: 是否读取并返回完整内容；关闭时只验证元数据和归属。 类型：`bool`。
+
+        返回:
+            返回 `StepResult | None` 类型的处理结果。 没有可用结果时返回 `None`。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if not stat.S_ISREG(opened_stat.st_mode):
             raise self._boundary._integrity_error()
         identity = (

@@ -39,6 +39,18 @@ class AssetBlob:
 
 class AssetStore:
     def __init__(self, var_dir: str | Path, *, max_bytes: int = 50 * 1024 * 1024):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+            max_bytes: `bytes`允许的最大值。 类型：`int`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if max_bytes < 1:
             raise ValueError("max_bytes must be positive")
         self.root = Path(var_dir).resolve() / "assets"
@@ -56,6 +68,19 @@ class AssetStore:
         logical_name: str,
         declared_media_type: str | None = None,
     ) -> AssetBlob:
+        """执行 `AssetStore` 的`put``stream`操作。
+
+        参数:
+            stream: 包含待导入资源内容的二进制输入流。 类型：`BinaryIO`。
+            logical_name: 产物或资源在业务层使用的稳定逻辑名称。 类型：`str`。
+            declared_media_type: 调用方声明的媒体类型；为空时根据内容进行受控推断。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            AssetValidationError: 当底层操作报告该异常条件时抛出。
+        """
         safe_name = self._safe_logical_name(logical_name)
         temporary = self.temporary_root / f"upload-{uuid4()}.tmp"
         digest = hashlib.sha256()
@@ -116,7 +141,22 @@ class AssetStore:
         finally:
             temporary.unlink(missing_ok=True)
 
-    def resolve(self, relative_path: str, *, expected_sha256: str | None = None) -> Path:
+    def resolve(
+        self, relative_path: str, *, expected_sha256: str | None = None
+    ) -> Path:
+        """执行 `AssetStore` 的`resolve`操作。
+
+        参数:
+            relative_path: `relative`对应的文件系统路径。 类型：`str`。
+            expected_sha256: 调用方或清单声明的 SHA-256，用于验证读取内容的完整性。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回目标文件或目录路径。
+
+        异常:
+            AssetValidationError: 当底层操作报告该异常条件时抛出。
+            FileNotFoundError: 当所需文件或目录不存在时抛出。
+        """
         relative = Path(relative_path)
         if relative.is_absolute() or ".." in relative.parts:
             raise AssetValidationError("asset path must be a controlled relative path")
@@ -131,6 +171,17 @@ class AssetStore:
 
     @staticmethod
     def _safe_logical_name(value: str) -> str:
+        """执行`safe``logical``name`的内部处理，供当前模块或类复用。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            AssetValidationError: 当底层操作报告该异常条件时抛出。
+        """
         normalized = unicodedata.normalize("NFC", value).replace("\\", "/")
         name = normalized.rsplit("/", 1)[-1].strip()
         if not name or name in {".", ".."} or any(ord(char) < 32 for char in name):
@@ -139,6 +190,18 @@ class AssetStore:
 
     @staticmethod
     def _detect_media_type(path: Path, prefix: bytes) -> str:
+        """执行`detect``media``type`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            prefix: 生成稳定键、日志名或路径名时使用的前缀。 类型：`bytes`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            AssetValidationError: 当底层操作报告该异常条件时抛出。
+        """
         if prefix.startswith(b"\x89PNG\r\n\x1a\n"):
             return "image/png"
         if prefix.startswith(b"\xff\xd8\xff"):
@@ -150,15 +213,34 @@ class AssetStore:
                 json.load(file_handle)
             return "application/json"
         except (UnicodeDecodeError, json.JSONDecodeError):
-            raise AssetValidationError("unsupported or malformed asset content") from None
+            raise AssetValidationError(
+                "unsupported or malformed asset content"
+            ) from None
 
     @staticmethod
     def _verify_file(path: Path, expected_sha256: str, expected_size: int) -> None:
+        """验证`file`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            expected_sha256: 调用方或清单声明的 SHA-256，用于验证读取内容的完整性。 类型：`str`。
+            expected_size: `expected`的数量或容量。 类型：`int`。
+
+        返回:
+            无返回值。
+
+        异常:
+            AssetValidationError: 当底层操作报告该异常条件时抛出。
+        """
         if path.stat().st_size != expected_size:
-            raise AssetValidationError("existing asset size does not match its content key")
+            raise AssetValidationError(
+                "existing asset size does not match its content key"
+            )
         digest = hashlib.sha256()
         with path.open("rb") as file_handle:
             for block in iter(lambda: file_handle.read(1024 * 1024), b""):
                 digest.update(block)
         if digest.hexdigest() != expected_sha256:
-            raise AssetValidationError("existing asset hash does not match its content key")
+            raise AssetValidationError(
+                "existing asset hash does not match its content key"
+            )

@@ -17,20 +17,34 @@ _PROMPT_VARIABLE = re.compile(
 _DIRECT_INPUT_ROOTS: dict[str, frozenset[str]] = {
     "retrieve_currently": frozenset({"context", "plan", "thought"}),
     "schedule_init": frozenset({"context", "base_desc", "wake_up"}),
-    "schedule_daily": frozenset(
-        {"context", "base_desc", "wake_up", "daily_schedule"}
-    ),
+    "schedule_daily": frozenset({"context", "base_desc", "wake_up", "daily_schedule"}),
     "schedule_decompose": frozenset({"context", "plan"}),
 }
 
 
 def prompt_input_roots(prompt_key: str) -> frozenset[str]:
-    """Return the explicit input roots owned by one bundled LLM node."""
+    """执行 的提示词`input``roots`操作。
+
+    参数:
+        prompt_key: 用于稳定定位提示词的键。 类型：`str`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
 
     return _DIRECT_INPUT_ROOTS.get(prompt_key, frozenset({"context"}))
 
 
 def _canonical_path(path: str, *, input_roots: frozenset[str]) -> str:
+    """执行`canonical`路径的内部处理，供当前模块或类复用。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+        input_roots: 允许解析输入文件的受控根目录集合。 类型：`frozenset[str]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     if path == "context":
         return "context.background"
     root = path.split(".", 1)[0]
@@ -44,7 +58,15 @@ def _canonical_path(path: str, *, input_roots: frozenset[str]) -> str:
 
 
 def canonicalize_prompt_content(content: str, *, prompt_key: str) -> str:
-    """Use only explicit LLM-node input roots and property paths."""
+    """执行 的`canonicalize`提示词`content`操作。
+
+    参数:
+        content: 待解析、写入、哈希或发送给下游组件的正文内容。 类型：`str`。
+        prompt_key: 用于稳定定位提示词的键。 类型：`str`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
 
     roots = prompt_input_roots(prompt_key)
     return _PROMPT_VARIABLE.sub(
@@ -56,7 +78,14 @@ def canonicalize_prompt_content(content: str, *, prompt_key: str) -> str:
 def canonicalize_prompt_payload(
     prompts: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Return a deep-enough copy with every known Prompt body canonicalized."""
+    """执行 的`canonicalize`提示词载荷操作。
+
+    参数:
+        prompts: 当前修订版本声明的提示词配置集合。 类型：`Mapping[str, Any]`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
 
     result: dict[str, Any] = {}
     for prompt_key, value in prompts.items():

@@ -1,4 +1,4 @@
-"""Idempotently project complete StepResult frames into SQLite query tables."""
+"""把完整步骤结果幂等投影到 SQLite 查询表。"""
 
 from __future__ import annotations
 
@@ -28,6 +28,11 @@ from generative_agents.persistence.models import (
     RunStep,
     RunStepEffect,
 )
+from generative_agents.status import (
+    MemoryState,
+    ResultCompleteness,
+    WORKER_OWNED_RUN_STATUSES,
+)
 
 from .frame_store import StoredFrame
 from .results import ActivityKind, MemoryDeltaKind, StepResult
@@ -38,7 +43,7 @@ class ResultProjectionError(RuntimeError):
 
 
 class SqliteResultProjector:
-    """The final short transaction in the frame/checkpoint/projection chain."""
+    """帧、检查点、查询投影提交链中的最后一个短事务。"""
 
     def __init__(
         self,
@@ -47,6 +52,16 @@ class SqliteResultProjector:
         var_dir: str | Path,
         projection_version: str = "ga-result-v1",
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+            projection_version: 查询投影协议版本，用于识别需要重建的不兼容结果。 类型：`str`。 默认值：`'ga-result-v1'`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self.projection_version = projection_version
@@ -59,6 +74,23 @@ class SqliteResultProjector:
         checkpoint_path: Path | None,
         allow_reconcile: bool = False,
     ) -> int:
+        """原子提交单步查询投影，并返回更新后的结果版本号。
+
+        参数:
+            result: 当前仿真步或上游组件产生的结构化结果。 类型：`StepResult`。
+            frame: 当前仿真步已经落盘且内容不可变的帧记录。 类型：`StoredFrame`。
+            checkpoint_path: 当前步骤对应的检查点目录；未生成检查点时为 `None`。 类型：`Path | None`。
+            allow_reconcile: 是否启用或满足`allow``reconcile`条件。 类型：`bool`。 默认值：`False`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ResultProjectionError: 当底层操作报告该异常条件时抛出。
+
+        说明:
+            数据库事务最后才推进 available_step。读端因此不会看到只有帧文件、尚无完整查询投影的半提交步骤。
+        """
         now = datetime.now(timezone.utc)
         frame_path = frame.path.resolve()
         if not frame_path.is_relative_to(self._var_dir):
@@ -70,15 +102,17 @@ class SqliteResultProjector:
                 raise ResultProjectionError("run does not exist")
             if not allow_reconcile and (
                 run.current_attempt_id != str(result.attempt_id)
-                or run.status not in {"RUNNING", "PAUSE_REQUESTED", "CANCEL_REQUESTED"}
+                or run.status not in WORKER_OWNED_RUN_STATUSES
             ):
-                raise ResultProjectionError("stale attempt cannot project a result step")
+                raise ResultProjectionError(
+                    "stale attempt cannot project a result step"
+                )
             summary = session.get(RunResultSummary, run.id)
             if summary is None:
                 summary = RunResultSummary(
                     run_id=run.id,
                     available_step=0,
-                    result_state="EMPTY",
+                    result_state=ResultCompleteness.EMPTY.value,
                     capabilities_json=self._default_capabilities(),
                     projection_version=self.projection_version,
                     result_version=0,
@@ -154,11 +188,15 @@ class SqliteResultProjector:
                         sequence_no=effect.sequence,
                         virtual_time=result.virtual_time,
                         effect_type=effect.kind.value,
-                        primary_agent_key=(effect.agent_keys[0] if effect.agent_keys else None),
+                        primary_agent_key=(
+                            effect.agent_keys[0] if effect.agent_keys else None
+                        ),
                         agent_keys_json=list(effect.agent_keys),
                         payload_json=dict(wire.get("payload") or {}),
                         source_effect_id=(
-                            str(effect.source_effect_id) if effect.source_effect_id else None
+                            str(effect.source_effect_id)
+                            if effect.source_effect_id
+                            else None
                         ),
                         skill_name=effect.skill_name,
                         skill_revision=effect.skill_revision,
@@ -171,13 +209,14 @@ class SqliteResultProjector:
                 for key in conversation.participant_agent_keys
             }
             forced_agent_keys.update(delta.agent_key for delta in result.memory_deltas)
-            forced_agent_keys.update(item.agent_key for item in result.schedule_revisions)
+            forced_agent_keys.update(
+                item.agent_key for item in result.schedule_revisions
+            )
             forced_agent_keys.update(
                 key for event in result.domain_events for key in event.agent_keys
             )
             project_all_agents = (
-                result.step_no
-                % definition.results.agent_step_projection_interval_steps
+                result.step_no % definition.results.agent_step_projection_interval_steps
                 == 0
                 or result.step_no >= run.requested_steps
             )
@@ -238,7 +277,9 @@ class SqliteResultProjector:
                         step_no=result.step_no,
                         virtual_time=result.virtual_time,
                         event_type=event.event_type,
-                        primary_agent_key=(event.agent_keys[0] if event.agent_keys else None),
+                        primary_agent_key=(
+                            event.agent_keys[0] if event.agent_keys else None
+                        ),
                         title=str(payload.get("title") or event.event_type),
                         detail=payload.get("detail"),
                         location=payload.get("location"),
@@ -266,7 +307,9 @@ class SqliteResultProjector:
             summary.model_call_count += logical_calls
             summary.model_retry_count += retries
             summary.result_state = (
-                "COMPLETE" if result.step_no >= run.requested_steps else "PARTIAL"
+                ResultCompleteness.COMPLETE.value
+                if result.step_no >= run.requested_steps
+                else ResultCompleteness.PARTIAL.value
             )
             summary.projection_version = self.projection_version
             summary.result_version += 1
@@ -298,6 +341,17 @@ class SqliteResultProjector:
 
     @staticmethod
     def _get_agent_summary(session, run_id, agent_key, agent) -> RunAgentSummary:
+        """获取智能体摘要。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。
+            agent: 参与当前操作的智能体实例。
+
+        返回:
+            返回 `RunAgentSummary` 类型的处理结果。
+        """
         value = session.get(RunAgentSummary, (run_id, agent_key))
         if value is None:
             value = RunAgentSummary(
@@ -323,10 +377,26 @@ class SqliteResultProjector:
 
     @staticmethod
     def _conversation(session, run, result, conversation) -> None:
+        """执行`conversation`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。
+            result: 当前仿真步或上游组件产生的结构化结果。
+            conversation: 当前步骤的对话上下文或已经完成的会话记录。
+
+        返回:
+            无返回值。
+
+        异常:
+            ResultProjectionError: 当底层操作报告该异常条件时抛出。
+        """
         initiator, responder = conversation.participant_agent_keys
         participants = tuple(sorted((initiator, responder)))
         if participants[0] == participants[1]:
-            raise ResultProjectionError("conversation requires two distinct participants")
+            raise ResultProjectionError(
+                "conversation requires two distinct participants"
+            )
         session.add(
             RunConversation(
                 id=str(conversation.conversation_id),
@@ -393,9 +463,21 @@ class SqliteResultProjector:
 
     @staticmethod
     def _memory(session, run_id, result, delta) -> None:
-        memory = session.get(
-            RunMemoryEvent, (run_id, delta.agent_key, delta.memory_id)
-        )
+        """执行记忆的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。
+            result: 当前仿真步或上游组件产生的结构化结果。
+            delta: 当前步骤产生的一条增量事实。
+
+        返回:
+            无返回值。
+
+        异常:
+            ResultProjectionError: 当底层操作报告该异常条件时抛出。
+        """
+        memory = session.get(RunMemoryEvent, (run_id, delta.agent_key, delta.memory_id))
         if delta.kind == MemoryDeltaKind.CREATED:
             if memory is None:
                 session.add(
@@ -405,7 +487,7 @@ class SqliteResultProjector:
                         memory_node_id=delta.memory_id,
                         memory_type=delta.memory_type,
                         origin="RUN",
-                        state="ACTIVE",
+                        state=MemoryState.ACTIVE.value,
                         description=delta.description,
                         poignancy=delta.poignancy,
                         created_step=result.step_no,
@@ -429,13 +511,26 @@ class SqliteResultProjector:
             memory.last_accessed_at = result.virtual_time
         else:
             memory.state = (
-                "EXPIRED" if delta.kind == MemoryDeltaKind.EXPIRED else "EVICTED"
+                MemoryState.EXPIRED.value
+                if delta.kind == MemoryDeltaKind.EXPIRED
+                else MemoryState.EVICTED.value
             )
             memory.removed_step = result.step_no
             memory.removed_at = result.virtual_time
 
     @staticmethod
     def _schedule(session, run_id, result, record) -> None:
+        """执行日程的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。
+            result: 当前仿真步或上游组件产生的结构化结果。
+            record: 当前读取、校验、投影或序列化的持久化记录。
+
+        返回:
+            无返回值。
+        """
         existing = session.scalar(
             select(RunScheduleRevision).where(
                 RunScheduleRevision.run_id == run_id,
@@ -462,7 +557,9 @@ class SqliteResultProjector:
             effective_step=result.step_no,
             effective_at=result.virtual_time,
             reason=record.reason,
-            source_event_id=(str(record.source_event_id) if record.source_event_id else None),
+            source_event_id=(
+                str(record.source_event_id) if record.source_event_id else None
+            ),
             content_hash=record.content_hash,
             items_json=[dict(item) for item in record.schedule],
         )
@@ -473,6 +570,11 @@ class SqliteResultProjector:
 
     @staticmethod
     def _default_capabilities() -> dict:
+        """执行`default``capabilities`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             key: {"state": "AVAILABLE", "reason": None}
             for key in (

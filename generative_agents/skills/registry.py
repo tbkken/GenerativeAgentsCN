@@ -14,7 +14,9 @@ from typing import Iterable, Literal
 SkillKind = Literal["atomic", "pack", "brain"]
 _KINDS: tuple[SkillKind, ...] = ("atomic", "pack", "brain")
 _NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-_FRONTMATTER = re.compile(r"\A---\s*\r?\n(?P<header>.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL)
+_FRONTMATTER = re.compile(
+    r"\A---\s*\r?\n(?P<header>.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL
+)
 _PROMPT = re.compile(
     r"<!--\s*PROMPT:START\s*-->\s*(?P<prompt>.*?)\s*<!--\s*PROMPT:END\s*-->",
     re.DOTALL,
@@ -42,6 +44,11 @@ class SkillDocument:
     example_input: str = ""
 
     def summary(self) -> dict[str, object]:
+        """执行 `SkillDocument` 的摘要操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "name": self.name,
             "description": self.description,
@@ -55,6 +62,11 @@ class SkillDocument:
         }
 
     def detail(self) -> dict[str, object]:
+        """执行 `SkillDocument` 的`detail`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {**self.summary(), "markdown": self.markdown}
 
 
@@ -67,6 +79,15 @@ class SkillRegistry:
         *,
         history_root: str | Path | None = None,
     ) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            root: 受控存储区域的根目录；派生路径不得逃逸该目录。 类型：`str | Path | None`。 默认值：`None`。
+            history_root: `history`使用的根目录路径。 类型：`str | Path | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         package_root = Path(__file__).resolve().parents[1]
         self.root = Path(root or package_root / "data" / "skills").resolve()
         self.history_root = Path(
@@ -75,6 +96,17 @@ class SkillRegistry:
 
     @staticmethod
     def normalize_name(name: str) -> str:
+        """规范化`name`。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         normalized = str(name).strip().casefold().replace("_", "-")
         if not _NAME.fullmatch(normalized) or len(normalized) > 64:
             raise SkillRegistryError(
@@ -82,12 +114,27 @@ class SkillRegistry:
             )
         return normalized
 
-    def list(self, *, kind: SkillKind | None = None, query: str = "") -> list[SkillDocument]:
+    def list(
+        self, *, kind: SkillKind | None = None, query: str = ""
+    ) -> list[SkillDocument]:
+        """执行 `SkillRegistry` 的`list`操作。
+
+        参数:
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`SkillKind | None`。 默认值：`None`。
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str`。 默认值：`''`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
         kinds = (kind,) if kind else _KINDS
         needle = query.strip().casefold()
         documents: list[SkillDocument] = []
         for current_kind in kinds:
-            kind_root = self.root / f"{current_kind}s" if current_kind != "atomic" else self.root / "atomic"
+            kind_root = (
+                self.root / f"{current_kind}s"
+                if current_kind != "atomic"
+                else self.root / "atomic"
+            )
             if not kind_root.exists():
                 continue
             for skill_file in sorted(kind_root.glob("*/SKILL.md")):
@@ -98,6 +145,17 @@ class SkillRegistry:
         return sorted(documents, key=lambda item: (item.kind, item.name))
 
     def get(self, name: str) -> SkillDocument:
+        """执行 `SkillRegistry` 的`get`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+
+        返回:
+            返回 `SkillDocument` 类型的处理结果。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         normalized = self.normalize_name(name)
         for kind in _KINDS:
             path = self._skill_path(normalized, kind) / "SKILL.md"
@@ -112,6 +170,19 @@ class SkillRegistry:
         description: str,
         kind: SkillKind = "atomic",
     ) -> SkillDocument:
+        """执行 `SkillRegistry` 的`create`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`SkillKind`。 默认值：`'atomic'`。
+
+        返回:
+            返回 `SkillDocument` 类型的处理结果。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         normalized = self.normalize_name(name)
         if kind not in _KINDS:
             raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
@@ -145,6 +216,18 @@ class SkillRegistry:
         return self.get(normalized)
 
     def save(self, name: str, markdown: str) -> SkillDocument:
+        """执行 `SkillRegistry` 的`save`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            markdown: 待校验、转换或输出的 Markdown 文本。 类型：`str`。
+
+        返回:
+            返回 `SkillDocument` 类型的处理结果。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         current = self.get(name)
         parsed = self._parse(markdown, current.path, current.kind)
         if parsed.name != current.name:
@@ -156,6 +239,14 @@ class SkillRegistry:
         return self.get(name)
 
     def history(self, name: str) -> list[dict[str, str]]:
+        """执行 `SkillRegistry` 的`history`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         current = self.get(name)
         items = [
             {
@@ -178,6 +269,14 @@ class SkillRegistry:
         return items
 
     def dependencies(self, name: str) -> dict[str, object]:
+        """执行 `SkillRegistry` 的`dependencies`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         document = self.get(name)
         children = []
         for child_name in document.children:
@@ -196,7 +295,14 @@ class SkillRegistry:
         self,
         roots: Iterable[str] | None = None,
     ) -> dict[str, dict[str, object]]:
-        """Return an immutable dependency closure for a Run manifest."""
+        """执行 `SkillRegistry` 的快照操作。
+
+        参数:
+            roots: 传入当前算法的`roots`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`Iterable[str] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
 
         if roots is None:
             documents = self.list()
@@ -210,7 +316,9 @@ class SkillRegistry:
                 document = self.get(name)
                 selected[name] = document
                 pending.extend(document.children)
-            documents = sorted(selected.values(), key=lambda item: (item.kind, item.name))
+            documents = sorted(
+                selected.values(), key=lambda item: (item.kind, item.name)
+            )
         return {
             document.name: {
                 "kind": document.kind,
@@ -228,10 +336,30 @@ class SkillRegistry:
         }
 
     def prompt(self, key: str) -> str:
+        """执行 `SkillRegistry` 的提示词操作。
+
+        参数:
+            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         document = self.get(key)
         return document.prompt_template or document.body
 
     def _skill_path(self, name: str, kind: SkillKind) -> Path:
+        """执行技能路径的内部处理，供当前模块或类复用。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`SkillKind`。
+
+        返回:
+            返回目标文件或目录路径。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         folder = "atomic" if kind == "atomic" else f"{kind}s"
         path = (self.root / folder / name).resolve()
         try:
@@ -241,9 +369,31 @@ class SkillRegistry:
         return path
 
     def _read(self, path: Path, kind: SkillKind) -> SkillDocument:
+        """执行`read`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`SkillKind`。
+
+        返回:
+            返回 `SkillDocument` 类型的处理结果。
+        """
         return self._parse(path.read_text(encoding="utf-8-sig"), path, kind)
 
     def _parse(self, markdown: str, path: Path, kind: SkillKind) -> SkillDocument:
+        """执行`parse`的内部处理，供当前模块或类复用。
+
+        参数:
+            markdown: 待校验、转换或输出的 Markdown 文本。 类型：`str`。
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`SkillKind`。
+
+        返回:
+            返回 `SkillDocument` 类型的处理结果。
+
+        异常:
+            SkillRegistryError: 当底层操作报告该异常条件时抛出。
+        """
         match = _FRONTMATTER.match(markdown)
         if not match:
             raise SkillRegistryError(f"SKILL.md has no valid YAML frontmatter: {path}")
@@ -253,22 +403,30 @@ class SkillRegistry:
                 continue
             key, separator, raw_value = raw_line.partition(":")
             if not separator:
-                raise SkillRegistryError(f"Invalid frontmatter line in {path}: {raw_line}")
+                raise SkillRegistryError(
+                    f"Invalid frontmatter line in {path}: {raw_line}"
+                )
             key = key.strip()
             if key not in {"name", "description", "example_input"}:
-                raise SkillRegistryError(f"Unsupported frontmatter field in {path}: {key}")
+                raise SkillRegistryError(
+                    f"Unsupported frontmatter field in {path}: {key}"
+                )
             value = raw_value.strip()
             if value.startswith('"') and value.endswith('"'):
                 try:
                     value = json.loads(value)
                 except json.JSONDecodeError as exc:
-                    raise SkillRegistryError(f"Invalid quoted frontmatter value in {path}") from exc
+                    raise SkillRegistryError(
+                        f"Invalid quoted frontmatter value in {path}"
+                    ) from exc
             fields[key] = value
         if not {"name", "description"} <= set(fields):
             raise SkillRegistryError(f"SKILL.md requires name and description: {path}")
         name = self.normalize_name(fields["name"])
         if path.parent.name != name:
-            raise SkillRegistryError(f"Skill folder and frontmatter name differ: {path}")
+            raise SkillRegistryError(
+                f"Skill folder and frontmatter name differ: {path}"
+            )
         description = fields["description"].strip()
         if not description:
             raise SkillRegistryError(f"Skill description is empty: {path}")
@@ -276,17 +434,23 @@ class SkillRegistry:
         body = markdown[match.end() :].strip()
         prompt_match = _PROMPT.search(body)
         prompt_template = prompt_match.group("prompt").strip() if prompt_match else ""
-        children = tuple(dict.fromkeys(
-            child for child in _SKILL_REFERENCE.findall(body) if child != name
-        ))
+        children = tuple(
+            dict.fromkeys(
+                child for child in _SKILL_REFERENCE.findall(body) if child != name
+            )
+        )
         scripts_root = path.parent / "scripts"
-        scripts = tuple(
-            item.relative_to(path.parent).as_posix()
-            for item in sorted(scripts_root.rglob("*"))
-            if item.is_file()
-            and "__pycache__" not in item.parts
-            and item.suffix.casefold() != ".pyc"
-        ) if scripts_root.exists() else ()
+        scripts = (
+            tuple(
+                item.relative_to(path.parent).as_posix()
+                for item in sorted(scripts_root.rglob("*"))
+                if item.is_file()
+                and "__pycache__" not in item.parts
+                and item.suffix.casefold() != ".pyc"
+            )
+            if scripts_root.exists()
+            else ()
+        )
         digest_builder = hashlib.sha256(markdown.encode("utf-8"))
         for relative_path in scripts:
             digest_builder.update(b"\x00")
@@ -311,6 +475,14 @@ class SkillRegistry:
         )
 
     def _snapshot(self, document: SkillDocument) -> None:
+        """执行快照的内部处理，供当前模块或类复用。
+
+        参数:
+            document: 待校验、转换或持久化的结构化文档。 类型：`SkillDocument`。
+
+        返回:
+            无返回值。
+        """
         target_dir = self.history_root / document.name
         target_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(UTC).strftime("%Y%m%dT%H_%M_%S.%fZ")

@@ -22,11 +22,27 @@ class Utf8Window:
 
 
 def file_identity(path: Path) -> tuple[str, int, int]:
+    """执行 的`file``identity`操作。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
     file_stat = path.stat()
     return file_identity_from_stat(file_stat)
 
 
 def file_identity_from_stat(file_stat: os.stat_result) -> tuple[str, int, int]:
+    """执行 的`file``identity``from``stat`操作。
+
+    参数:
+        file_stat: 目标文件的 `stat` 元数据，用于构造稳定文件身份。 类型：`os.stat_result`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
     identity = hashlib.sha256(
         # Device + inode remains stable while an open log is appended.  ctime
         # is deliberately excluded because Linux updates it on every append.
@@ -36,6 +52,14 @@ def file_identity_from_stat(file_stat: os.stat_result) -> tuple[str, int, int]:
 
 
 def _is_continuation(value: int) -> bool:
+    """判断是否`continuation`。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`int`。
+
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
+    """
     return value & 0b1100_0000 == 0b1000_0000
 
 
@@ -48,12 +72,24 @@ def read_utf8_bytes(
     tail: bool = False,
     encoding_code: str = "TEXT_ENCODING_INVALID",
 ) -> Utf8Window:
-    """Read a UTF-8 window without replacing or silently skipping bytes.
+    """按字节窗口读取 UTF-8 文本，并保证不会返回残缺字符。
 
-    A client cursor must already be a code-point boundary.  Tail mode is the
-    only mode allowed to calculate a start cursor and advance past continuation
-    bytes.  A page that cannot fit its next complete character is rejected, so
-    every successful non-EOF page makes byte-cursor progress.
+    参数:
+        value: 当前操作使用的`value`。 类型：`bytes`。
+        cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。
+        limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。
+        file_id: `file`的唯一标识。 类型：`str | None`。 默认值：`None`。
+        tail: 是否从日志或轨迹文件末尾向前读取最新窗口。 类型：`bool`。 默认值：`False`。
+        encoding_code: 文本编码探测或解码失败时返回的稳定诊断码。 类型：`str`。 默认值：`'TEXT_ENCODING_INVALID'`。
+
+    返回:
+        返回 `Utf8Window` 类型的处理结果。
+
+    异常:
+        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+
+    说明:
+        起止偏移是字节位置而不是字符位置。函数会把边界收缩到合法 UTF-8 字符边界，既不使用替换字符，也不静默跳过损坏字节。
     """
 
     size = len(value)
@@ -128,10 +164,27 @@ def read_utf8_window(
     rotated_code: str = "TEXT_CONTENT_ROTATED",
     encoding_code: str = "TEXT_ENCODING_INVALID",
 ) -> Utf8Window:
+    """读取`utf8``window`。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+        cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。
+        limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。
+        tail: 是否从日志或轨迹文件末尾向前读取最新窗口。 类型：`bool`。 默认值：`False`。
+        expected_file_id: `expected``file`的唯一标识。 类型：`str | None`。 默认值：`None`。
+        missing_code: 传入当前算法的`missing``code`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`str`。 默认值：`'TEXT_CONTENT_MISSING'`。
+        truncated_code: 内容被截断时返回给调用方的稳定错误码。 类型：`str`。 默认值：`'TEXT_CONTENT_TRUNCATED'`。
+        rotated_code: 传入当前算法的`rotated``code`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`str`。 默认值：`'TEXT_CONTENT_ROTATED'`。
+        encoding_code: 文本编码探测或解码失败时返回的稳定诊断码。 类型：`str`。 默认值：`'TEXT_ENCODING_INVALID'`。
+
+    返回:
+        返回 `Utf8Window` 类型的处理结果。
+
+    异常:
+        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+    """
     if cursor < 0:
-        raise ServiceError(
-            "INVALID_BYTE_CURSOR", "字节游标不能为负数", status_code=422
-        )
+        raise ServiceError("INVALID_BYTE_CURSOR", "字节游标不能为负数", status_code=422)
     if limit_bytes < 1 or limit_bytes > 262_144:
         raise ServiceError(
             "INVALID_BYTE_LIMIT",
@@ -223,12 +276,28 @@ def read_utf8_handle(
     truncated_code: str = "TEXT_CONTENT_TRUNCATED",
     encoding_code: str = "TEXT_ENCODING_INVALID",
 ) -> Utf8Window:
-    """Read a bounded immutable-text window from an already verified handle."""
+    """从已打开文件的字节窗口读取完整 UTF-8 字符。
+
+    参数:
+        handle: 已经打开并由调用方负责生命周期的二进制文件句柄。 类型：`BinaryIO`。
+        cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。
+        limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。
+        file_stat: 目标文件的 `stat` 元数据，用于构造稳定文件身份。 类型：`os.stat_result | None`。 默认值：`None`。
+        truncated_code: 内容被截断时返回给调用方的稳定错误码。 类型：`str`。 默认值：`'TEXT_CONTENT_TRUNCATED'`。
+        encoding_code: 文本编码探测或解码失败时返回的稳定诊断码。 类型：`str`。 默认值：`'TEXT_ENCODING_INVALID'`。
+
+    返回:
+        返回 `Utf8Window` 类型的处理结果。
+
+    异常:
+        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+
+    说明:
+        调用方必须传入二进制文件对象；窗口边界按 UTF-8 编码修正，返回的偏移仍以字节计。
+    """
 
     if cursor < 0:
-        raise ServiceError(
-            "INVALID_BYTE_CURSOR", "字节游标不能为负数", status_code=422
-        )
+        raise ServiceError("INVALID_BYTE_CURSOR", "字节游标不能为负数", status_code=422)
     if limit_bytes < 1 or limit_bytes > 262_144:
         raise ServiceError(
             "INVALID_BYTE_LIMIT",
@@ -258,7 +327,11 @@ def read_utf8_handle(
     raw = handle.read(limit_bytes + 3)
     target_length = min(limit_bytes, len(raw), size - cursor)
     consumed = target_length
-    while consumed < len(raw) and consumed < size - cursor and _is_continuation(raw[consumed]):
+    while (
+        consumed < len(raw)
+        and consumed < size - cursor
+        and _is_continuation(raw[consumed])
+    ):
         consumed += 1
     selected = raw[:consumed]
     try:

@@ -6,6 +6,15 @@ from typing import Any
 
 
 def _positive_int(value: Any, default: int) -> int:
+    """执行`positive``int`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`Any`。
+        default: 传入当前算法的`default`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+
+    返回:
+        返回计算得到的整数值或版本号。
+    """
     try:
         return max(1, int(value))
     except (TypeError, ValueError):
@@ -13,6 +22,14 @@ def _positive_int(value: Any, default: int) -> int:
 
 
 def _phase(context: dict[str, Any]) -> tuple[str, int]:
+    """执行`phase`的内部处理，供当前模块或类复用。
+
+    参数:
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`dict[str, Any]`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+    """
     state = dict(context.get("object_state") or {})
     explicit = str(state.get("pedestrian_signal") or "").strip().upper()
     if explicit in {"RED", "GREEN", "FLASHING"}:
@@ -35,6 +52,15 @@ def _phase(context: dict[str, Any]) -> tuple[str, int]:
 
 
 def run(input_text: str, context: dict[str, Any]) -> str:
+    """执行当前组件负责的完整流程，并返回本次执行结果。
+
+    参数:
+        input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
+        context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`dict[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     del input_text
     state = dict(context.get("object_state") or {})
     crossing = str(state.get("crossing_name") or "当前人行横道")

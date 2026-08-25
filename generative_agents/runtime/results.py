@@ -1,4 +1,4 @@
-"""Immutable, complete result envelope for one committed simulation step."""
+"""单个已提交仿真步使用的完整、不可变结果信封。"""
 
 from __future__ import annotations
 
@@ -8,6 +8,8 @@ from enum import StrEnum
 from typing import Any, Iterable, Mapping
 from uuid import UUID, uuid5
 
+from generative_agents.status import MemoryDeltaKind
+
 
 class ActivityKind(StrEnum):
     REST = "REST"
@@ -16,15 +18,8 @@ class ActivityKind(StrEnum):
     OTHER = "OTHER"
 
 
-class MemoryDeltaKind(StrEnum):
-    CREATED = "CREATED"
-    ACCESSED = "ACCESSED"
-    EXPIRED = "EXPIRED"
-    EVICTED = "EVICTED"
-
-
 class StepEffectKind(StrEnum):
-    """Canonical facts produced while executing one simulation step."""
+    """单个仿真步执行过程中产生的规范事实类型。"""
 
     ACTION_SELECTED = "ACTION_SELECTED"
     EVENT_PERCEIVED = "EVENT_PERCEIVED"
@@ -122,11 +117,10 @@ class DomainEventRecord:
 
 @dataclass(frozen=True, slots=True)
 class StepEffectRecord:
-    """One immutable cognitive or world-side effect in the step ledger.
+    """步骤账本中的一条不可变认知或世界副作用。
 
-    Specialized memory, schedule, and domain records remain query projections;
-    this record is the shared causal history used by checkpoints, replay, and
-    future Skill-driven execution.
+    记忆、日程和领域记录仍属于专用查询投影；本记录是检查点、回放以及未来技能驱动执行
+    共同依赖的因果历史。
     """
 
     effect_id: UUID
@@ -155,7 +149,20 @@ class ModelUsageDelta:
 
 
 def deterministic_record_id(run_id: UUID, step_no: int, kind: str, key: str) -> UUID:
-    """Create a replay-stable ID scoped by run and step."""
+    """执行 的`deterministic``record``id`操作。
+
+    参数:
+        run_id: 仿真运行的唯一标识。 类型：`UUID`。
+        step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+        kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
+        key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
+
+    返回:
+        返回 `UUID` 类型的处理结果。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
 
     if step_no < 1:
         raise ValueError("step_no must be greater than zero")
@@ -163,6 +170,14 @@ def deterministic_record_id(run_id: UUID, step_no: int, kind: str, key: str) -> 
 
 
 def _wire_value(value: Any) -> Any:
+    """执行`wire``value`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`Any`。
+
+    返回:
+        返回 `Any` 类型的处理结果。
+    """
     if isinstance(value, UUID):
         return str(value)
     if isinstance(value, datetime):
@@ -193,6 +208,14 @@ class StepResult:
     effects: tuple[StepEffectRecord, ...] = ()
 
     def __post_init__(self) -> None:
+        """完成数据类初始化后的规范化与不变量校验。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if self.step_no < 1:
             raise ValueError("step_no must be greater than zero")
         if self.virtual_time.tzinfo is None:
@@ -204,7 +227,11 @@ class StepResult:
             object.__setattr__(self, "effects", self._project_effects())
 
     def _project_effects(self) -> tuple[StepEffectRecord, ...]:
-        """Build the canonical ledger for callers still supplying typed views."""
+        """执行`project``effects`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回按接口约定组织的结果集合。
+        """
 
         effects: list[StepEffectRecord] = []
         memory_effects = {
@@ -237,7 +264,10 @@ class StepResult:
                     source_effect_id=item.source_event_id,
                 )
             )
-            if item.kind == MemoryDeltaKind.CREATED and item.memory_type.upper() == "THOUGHT":
+            if (
+                item.kind == MemoryDeltaKind.CREATED
+                and item.memory_type.upper() == "THOUGHT"
+            ):
                 effects.append(
                     StepEffectRecord(
                         effect_id=deterministic_record_id(
@@ -279,17 +309,44 @@ class StepResult:
                 )
             )
         return tuple(
-            sorted(effects, key=lambda value: (value.sequence, value.kind.value, str(value.effect_id)))
+            sorted(
+                effects,
+                key=lambda value: (
+                    value.sequence,
+                    value.kind.value,
+                    str(value.effect_id),
+                ),
+            )
         )
 
     def to_dict(self) -> dict[str, Any]:
+        """执行 `StepResult` 的`to``dict`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return _wire_value(self)
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "StepResult":
-        """Rehydrate a verified frame for deterministic projection rebuilds."""
+        """执行 `StepResult` 的`from``dict`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`Mapping[str, Any]`。
+
+        返回:
+            返回 `'StepResult'` 类型的处理结果。
+        """
 
         def optional_uuid(item):
+            """执行 `StepResult` 的`optional``uuid`操作。
+
+            参数:
+                item: 当前操作使用的`item`。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             return UUID(item) if item else None
 
         return cls(
@@ -419,7 +476,7 @@ class StepResult:
 
 @dataclass(slots=True)
 class StepResultBuilder:
-    """The only mutable collector inside a simulation step."""
+    """单个仿真步内部唯一允许变更的结果收集器。"""
 
     run_id: UUID
     attempt_id: UUID
@@ -435,36 +492,120 @@ class StepResultBuilder:
     _frozen: bool = False
 
     def _append(self, target: list[Any], value: Any) -> None:
+        """执行`append`的内部处理，供当前模块或类复用。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`list[Any]`。
+            value: 当前操作使用的`value`。 类型：`Any`。
+
+        返回:
+            无返回值。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if self._frozen:
             raise RuntimeError("StepResultBuilder is already frozen")
         target.append(value)
 
     def add_agent(self, value: AgentStepResult) -> None:
+        """执行 `StepResultBuilder` 的`add`智能体操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`AgentStepResult`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._agents, value)
 
     def add_conversation(self, value: ConversationRecord) -> None:
+        """执行 `StepResultBuilder` 的`add``conversation`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`ConversationRecord`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._conversations, value)
 
     def add_memory_delta(self, value: MemoryDelta) -> None:
+        """执行 `StepResultBuilder` 的`add`记忆`delta`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`MemoryDelta`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._memory_deltas, value)
 
     def add_schedule_revision(self, value: ScheduleRevisionRecord) -> None:
+        """执行 `StepResultBuilder` 的`add`日程修订版本操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`ScheduleRevisionRecord`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._schedule_revisions, value)
 
     def add_domain_event(self, value: DomainEventRecord) -> None:
+        """执行 `StepResultBuilder` 的`add``domain`事件操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`DomainEventRecord`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._domain_events, value)
 
     def add_model_usage(self, value: ModelUsageDelta) -> None:
+        """执行 `StepResultBuilder` 的`add`模型`usage`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`ModelUsageDelta`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._model_usage, value)
 
     def add_effect(self, value: StepEffectRecord) -> None:
+        """执行 `StepResultBuilder` 的`add``effect`操作。
+
+        参数:
+            value: 当前操作使用的`value`。 类型：`StepEffectRecord`。
+
+        返回:
+            无返回值。
+        """
         self._append(self._effects, value)
 
     def extend_model_usage(self, values: Iterable[ModelUsageDelta]) -> None:
+        """执行 `StepResultBuilder` 的`extend`模型`usage`操作。
+
+        参数:
+            values: 需要规范化、校验、拼接或批量处理的值集合。 类型：`Iterable[ModelUsageDelta]`。
+
+        返回:
+            无返回值。
+        """
         for value in values:
             self.add_model_usage(value)
 
     def freeze(self) -> StepResult:
+        """将可变运行态冻结为不可变的步骤结果。
+
+        返回:
+            返回 `StepResult` 类型的处理结果。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if self._frozen:
             raise RuntimeError("StepResultBuilder is already frozen")
         self._frozen = True
@@ -475,10 +616,15 @@ class StepResultBuilder:
             virtual_time=self.virtual_time,
             agents=tuple(sorted(self._agents, key=lambda value: value.agent_key)),
             conversations=tuple(
-                sorted(self._conversations, key=lambda value: str(value.conversation_id))
+                sorted(
+                    self._conversations, key=lambda value: str(value.conversation_id)
+                )
             ),
             memory_deltas=tuple(
-                sorted(self._memory_deltas, key=lambda value: (value.sequence, str(value.event_id)))
+                sorted(
+                    self._memory_deltas,
+                    key=lambda value: (value.sequence, str(value.event_id)),
+                )
             ),
             schedule_revisions=tuple(
                 sorted(
@@ -487,7 +633,10 @@ class StepResultBuilder:
                 )
             ),
             domain_events=tuple(
-                sorted(self._domain_events, key=lambda value: (value.sequence, str(value.event_id)))
+                sorted(
+                    self._domain_events,
+                    key=lambda value: (value.sequence, str(value.event_id)),
+                )
             ),
             committed_model_usage=tuple(
                 sorted(self._model_usage, key=lambda value: str(value.logical_call_id))
@@ -502,7 +651,11 @@ class StepResultBuilder:
             effects=tuple(
                 sorted(
                     effects.values(),
-                    key=lambda value: (value.sequence, value.kind.value, str(value.effect_id)),
+                    key=lambda value: (
+                        value.sequence,
+                        value.kind.value,
+                        str(value.effect_id),
+                    ),
                 )
             ),
         )

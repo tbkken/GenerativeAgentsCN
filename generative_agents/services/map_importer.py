@@ -28,11 +28,7 @@ from generative_agents.config.map_editor import (
 
 
 VILLAGE_ROOT = (
-    Path(__file__).resolve().parents[1]
-    / "frontend"
-    / "static"
-    / "assets"
-    / "village"
+    Path(__file__).resolve().parents[1] / "frontend" / "static" / "assets" / "village"
 )
 TILEMAP_PATH = VILLAGE_ROOT / "tilemap" / "tilemap.json"
 MAZE_PATH = VILLAGE_ROOT / "maze.json"
@@ -57,15 +53,44 @@ VISUAL_LEVELS = {
 
 
 def _load_json(path: Path) -> dict[str, Any]:
+    """加载`json`。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _stable_id(prefix: str, *parts: object) -> str:
+    """执行`stable``id`的内部处理，供当前模块或类复用。
+
+    参数:
+        prefix: 生成稳定键、日志名或路径名时使用的前缀。 类型：`str`。
+        *parts: 传给底层调用的额外位置参数，顺序和含义与被调用接口保持一致。 类型：`object`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     body = "\x1f".join(str(part) for part in parts)
     return f"{prefix}-{hashlib.sha256(body.encode('utf-8')).hexdigest()[:20]}"
 
 
 def _source_for_gid(tilesets: list[dict[str, Any]], gid: int) -> dict[str, Any]:
+    """执行`source``for``gid`的内部处理，供当前模块或类复用。
+
+    参数:
+        tilesets: 传入当前算法的`tilesets`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[dict[str, Any]]`。
+        gid: 传入当前算法的`gid`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
     candidates = [item for item in tilesets if int(item["firstgid"]) <= gid]
     if not candidates:
         raise ValueError(f"gid {gid} does not belong to a tileset")
@@ -77,6 +102,14 @@ def _source_for_gid(tilesets: list[dict[str, Any]], gid: int) -> dict[str, Any]:
 
 
 def _transform(raw_gid: int) -> str:
+    """执行`transform`的内部处理，供当前模块或类复用。
+
+    参数:
+        raw_gid: 传入当前算法的`raw``gid`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     suffix = ""
     if raw_gid & FLIP_H:
         suffix += "H"
@@ -88,6 +121,14 @@ def _transform(raw_gid: int) -> str:
 
 
 def _bounds(coords: Iterable[tuple[int, int]]) -> GridRect:
+    """执行`bounds`的内部处理，供当前模块或类复用。
+
+    参数:
+        coords: 传入当前算法的`coords`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`Iterable[tuple[int, int]]`。
+
+    返回:
+        返回 `GridRect` 类型的处理结果。
+    """
     points = list(coords)
     if not points:
         return GridRect(x=0, y=0, width=1, height=1)
@@ -102,12 +143,31 @@ def _bounds(coords: Iterable[tuple[int, int]]) -> GridRect:
 
 
 def _node_id(kind: str, address: tuple[str, ...]) -> str:
+    """执行`node``id`的内部处理，供当前模块或类复用。
+
+    参数:
+        kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
+        address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 类型：`tuple[str, ...]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     return _stable_id(kind.casefold(), *address)
 
 
 def _build_hierarchy(
     maze: dict[str, Any], width: int, height: int
 ) -> tuple[list[HierarchyNode], dict[tuple[str, ...], list[tuple[int, int]]]]:
+    """构建`hierarchy`。
+
+    参数:
+        maze: 提供格子、地址、可通行性与寻路能力的地图实例。 类型：`dict[str, Any]`。
+        width: 地图、图像或矩形区域的宽度。 类型：`int`。
+        height: 地图、图像或矩形区域的高度。 类型：`int`。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
     address_coords: dict[tuple[str, ...], list[tuple[int, int]]] = defaultdict(list)
     for tile in maze.get("tiles", []):
         address = tuple(str(item) for item in tile.get("address", []) if item)
@@ -131,8 +191,10 @@ def _build_hierarchy(
     kind_for_depth = {1: "SECTOR", 2: "ARENA", 3: "GAME_OBJECT"}
     for address in sorted(address_coords, key=lambda value: (len(value), value)):
         kind = kind_for_depth[len(address)]
-        parent_id = root_id if len(address) == 1 else _node_id(
-            kind_for_depth[len(address) - 1], address[:-1]
+        parent_id = (
+            root_id
+            if len(address) == 1
+            else _node_id(kind_for_depth[len(address) - 1], address[:-1])
         )
         rect = _bounds(address_coords[address])
         mask = sorted(
@@ -163,18 +225,29 @@ def _component_recipes(
     width: int,
     height: int,
 ) -> list[RenderRecipe]:
-    """Build reusable, editable leaf recipes from connected GO-layer pixels.
+    """从连通的对象图层像素生成可复用、可编辑的叶节点配方。
 
-    Recipes are an authoring convenience; the imported layer data remains the
-    lossless source of truth.  A component is assigned only when it is inside a
-    leaf's exact semantic mask, avoiding invented fifth-level identities.
+    参数:
+        visual_layers: 传入当前算法的`visual``layers`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[VisualLayer]`。
+        hierarchy_nodes: 传入当前算法的`hierarchy``nodes`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[HierarchyNode]`。
+        slice_for_gid: 传入当前算法的`slice``for``gid`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict[int, str]`。
+        width: 地图、图像或矩形区域的宽度。 类型：`int`。
+        height: 地图、图像或矩形区域的高度。 类型：`int`。
+
+    返回:
+        返回按接口约定组织的结果集合。
+
+    说明:
+        同一连通分量只生成一个配方；坐标归一化相对于分量左上角，确保配方可在其他位置复用。
     """
 
     go_nodes = [item for item in hierarchy_nodes if item.kind == "GAME_OBJECT"]
     node_by_cell: dict[tuple[int, int], HierarchyNode] = {}
     for node in go_nodes:
         for offset in node.extensions.get("mask", []):
-            node_by_cell[(node.bounds.x + int(offset[0]), node.bounds.y + int(offset[1]))] = node
+            node_by_cell[
+                (node.bounds.x + int(offset[0]), node.bounds.y + int(offset[1]))
+            ] = node
 
     assigned: dict[str, list[tuple[int, int, int, int]]] = defaultdict(list)
     for layer in visual_layers:
@@ -197,9 +270,7 @@ def _component_recipes(
             continue
         min_x = min(item[0] for item in entries)
         min_y = min(item[1] for item in entries)
-        normalized = sorted(
-            (x - min_x, y - min_y, z, raw) for x, y, z, raw in entries
-        )
+        normalized = sorted((x - min_x, y - min_y, z, raw) for x, y, z, raw in entries)
         fingerprint = hashlib.sha256(
             json.dumps(normalized, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
@@ -234,13 +305,19 @@ def _component_recipes(
 
 @lru_cache(maxsize=1)
 def import_ville_editor_document() -> MapEditorDocumentV2:
+    """执行 的`import``ville``editor``document`操作。
+
+    返回:
+        返回 `MapEditorDocumentV2` 类型的处理结果。
+    """
     tilemap = _load_json(TILEMAP_PATH)
     maze = _load_json(MAZE_PATH)
     width, height = int(tilemap["width"]), int(tilemap["height"])
     visual_json = [
         item
         for item in tilemap["layers"]
-        if item.get("type") == "tilelayer" and item.get("name", "").strip() in VISUAL_LEVELS
+        if item.get("type") == "tilelayer"
+        and item.get("name", "").strip() in VISUAL_LEVELS
     ]
     used_gids = sorted(
         {
@@ -275,7 +352,8 @@ def import_ville_editor_document() -> MapEditorDocumentV2:
                 tile_width=int(item["tilewidth"]),
                 tile_height=int(item["tileheight"]),
                 columns=int(item["columns"]),
-                rows=(int(item["tilecount"]) + int(item["columns"]) - 1) // int(item["columns"]),
+                rows=(int(item["tilecount"]) + int(item["columns"]) - 1)
+                // int(item["columns"]),
                 tile_count=int(item["tilecount"]),
                 margin=int(item.get("margin") or 0),
                 spacing=int(item.get("spacing") or 0),
@@ -291,7 +369,10 @@ def import_ville_editor_document() -> MapEditorDocumentV2:
         columns = int(tileset["columns"])
         column, row = local % columns, local // columns
         tile_width, tile_height = int(tileset["tilewidth"]), int(tileset["tileheight"])
-        spacing, margin = int(tileset.get("spacing") or 0), int(tileset.get("margin") or 0)
+        spacing, margin = (
+            int(tileset.get("spacing") or 0),
+            int(tileset.get("margin") or 0),
+        )
         slice_id = _stable_id("slice", tileset["name"], local)
         slice_for_gid[gid] = slice_id
         slices.append(
@@ -336,7 +417,11 @@ def import_ville_editor_document() -> MapEditorDocumentV2:
         height=height,
     )
     collisions = sorted(
-        [list(map(int, tile["coord"])) for tile in maze.get("tiles", []) if tile.get("collision")],
+        [
+            list(map(int, tile["coord"]))
+            for tile in maze.get("tiles", [])
+            if tile.get("collision")
+        ],
         key=lambda point: (point[1], point[0]),
     )
     document = MapEditorDocumentV2(
@@ -364,7 +449,11 @@ def import_ville_editor_document() -> MapEditorDocumentV2:
 
 
 def fresh_ville_editor_document() -> MapEditorDocumentV2:
-    """Return an independent document safe for request-local mutation."""
+    """执行 的`fresh``ville``editor``document`操作。
+
+    返回:
+        返回 `MapEditorDocumentV2` 类型的处理结果。
+    """
 
     return MapEditorDocumentV2.model_validate(
         import_ville_editor_document().model_dump(mode="json")

@@ -28,12 +28,42 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+from generative_agents.status import (
+    ACTIVE_ARTIFACT_JOB_STATUSES,
+    ArtifactJobStatus,
+    ArtifactJobType,
+    ArtifactSourceKind,
+    ArtifactState,
+    ExperimentStatus,
+    ModelProbeState,
+    RevisionState,
+    ResultCompleteness,
+    RunAttemptStatus,
+    RunQueueReason,
+    RunStatus,
+    OPEN_RUN_STATUSES,
+    SLOT_OWNING_RUN_STATUSES,
+    WORKER_OWNED_RUN_STATUSES,
+    sql_enum_values,
+    sql_values,
+)
+
 
 def utc_now() -> datetime:
+    """执行 的`utc``now`操作。
+
+    返回:
+        返回 `datetime` 类型的处理结果。
+    """
     return datetime.now(timezone.utc)
 
 
 def uuid_str() -> str:
+    """执行 的`uuid``str`操作。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     return str(uuid4())
 
 
@@ -47,7 +77,9 @@ class BuiltinCatalogSnapshot(Base):
     __tablename__ = "builtin_catalog_snapshots"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
-    source_fingerprint: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    source_fingerprint: Mapped[str] = mapped_column(
+        String(64), nullable=False, unique=True
+    )
     definition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     source_manifest_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
@@ -67,9 +99,15 @@ class WorldMap(Base):
     map_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
-    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
+    current_draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
+    current_published_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
@@ -79,7 +117,9 @@ class WorldMap(Base):
     )
 
     __table_args__ = (
-        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_world_maps_status"),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(RevisionState)})", name="ck_world_maps_status"
+        ),
         CheckConstraint("row_version >= 1", name="ck_world_maps_row_version"),
         Index("ix_world_maps_updated_at", "updated_at", "id"),
     )
@@ -95,9 +135,13 @@ class WorldMapRevision(Base):
         String(36), ForeignKey("world_maps.id", ondelete="RESTRICT"), nullable=False
     )
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("world_map_revisions.id", ondelete="RESTRICT"), nullable=True
+        String(36),
+        ForeignKey("world_map_revisions.id", ondelete="RESTRICT"),
+        nullable=True,
     )
     schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     world_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
@@ -110,13 +154,16 @@ class WorldMapRevision(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
     )
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         UniqueConstraint("map_id", "revision_no", name="uq_world_map_revision_number"),
         CheckConstraint("revision_no >= 1", name="ck_world_map_revision_number"),
         CheckConstraint(
-            "state IN ('DRAFT','PUBLISHED')", name="ck_world_map_revision_state"
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_world_map_revision_state",
         ),
         CheckConstraint("schema_version >= 1", name="ck_world_map_revision_schema"),
         CheckConstraint("lock_version >= 1", name="ck_world_map_revision_lock"),
@@ -124,7 +171,7 @@ class WorldMapRevision(Base):
             "uq_world_map_one_draft",
             "map_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
         Index("ix_world_map_revisions_map", "map_id", "revision_no"),
     )
@@ -140,10 +187,16 @@ class SpatialAssetDefinition(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     asset_kind: Mapped[str] = mapped_column(String(24), nullable=False)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
-    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
+    current_published_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
@@ -158,9 +211,12 @@ class SpatialAssetDefinition(Base):
             name="ck_spatial_asset_definitions_kind",
         ),
         CheckConstraint(
-            "status IN ('DRAFT','PUBLISHED')", name="ck_spatial_asset_definitions_status"
+            f"status IN ({sql_enum_values(RevisionState)})",
+            name="ck_spatial_asset_definitions_status",
         ),
-        CheckConstraint("row_version >= 1", name="ck_spatial_asset_definitions_version"),
+        CheckConstraint(
+            "row_version >= 1", name="ck_spatial_asset_definitions_version"
+        ),
         Index("ix_spatial_asset_definitions_updated", "updated_at", "id"),
     )
 
@@ -177,9 +233,13 @@ class SpatialAssetRevision(Base):
         nullable=False,
     )
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("spatial_asset_revisions.id", ondelete="RESTRICT"), nullable=True
+        String(36),
+        ForeignKey("spatial_asset_revisions.id", ondelete="RESTRICT"),
+        nullable=True,
     )
     schema_version: Mapped[str] = mapped_column(
         String(40), nullable=False, default="ga-spatial-asset/v1"
@@ -194,7 +254,9 @@ class SpatialAssetRevision(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
     )
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         UniqueConstraint(
@@ -202,18 +264,17 @@ class SpatialAssetRevision(Base):
         ),
         CheckConstraint("revision_no >= 1", name="ck_spatial_asset_revision_number"),
         CheckConstraint(
-            "state IN ('DRAFT','PUBLISHED')", name="ck_spatial_asset_revision_state"
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_spatial_asset_revision_state",
         ),
         CheckConstraint("lock_version >= 1", name="ck_spatial_asset_revision_lock"),
         Index(
             "uq_spatial_asset_one_draft",
             "spatial_asset_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
-        Index(
-            "ix_spatial_asset_revisions_asset", "spatial_asset_id", "revision_no"
-        ),
+        Index("ix_spatial_asset_revisions_asset", "spatial_asset_id", "revision_no"),
     )
 
 
@@ -227,20 +288,33 @@ class ToolDefinition(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     tool_kind: Mapped[str] = mapped_column(String(24), nullable=False)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
-    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
+    current_published_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
 
     __table_args__ = (
         CheckConstraint(
             "tool_kind IN ('CAR','BICYCLE','MOTORCYCLE','ACCESS_CARD','DEVICE','OTHER')",
             name="ck_tool_definitions_kind",
         ),
-        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_tool_definitions_status"),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(RevisionState)})",
+            name="ck_tool_definitions_status",
+        ),
         CheckConstraint("row_version >= 1", name="ck_tool_definitions_version"),
         Index("ix_tool_definitions_updated", "updated_at", "id"),
     )
@@ -253,32 +327,47 @@ class ToolRevision(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     tool_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("tool_definitions.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("tool_definitions.id", ondelete="RESTRICT"),
+        nullable=False,
     )
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
         String(36), ForeignKey("tool_revisions.id", ondelete="RESTRICT"), nullable=True
     )
-    schema_version: Mapped[str] = mapped_column(String(40), nullable=False, default="ga-tool/v1")
+    schema_version: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="ga-tool/v1"
+    )
     contract_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     contract_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         UniqueConstraint("tool_id", "revision_no", name="uq_tool_revision_number"),
         CheckConstraint("revision_no >= 1", name="ck_tool_revision_number"),
-        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_tool_revision_state"),
+        CheckConstraint(
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_tool_revision_state",
+        ),
         CheckConstraint("lock_version >= 1", name="ck_tool_revision_lock"),
         Index(
             "uq_tool_one_draft",
             "tool_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
         Index("ix_tool_revisions_tool", "tool_id", "revision_no"),
     )
@@ -292,12 +381,20 @@ class AgentTemplate(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     agent_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
-    normalized_name: Mapped[str] = mapped_column(String(240), nullable=False, unique=True)
+    normalized_name: Mapped[str] = mapped_column(
+        String(240), nullable=False, unique=True
+    )
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
-    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
+    current_published_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
@@ -307,7 +404,10 @@ class AgentTemplate(Base):
     )
 
     __table_args__ = (
-        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_agent_templates_status"),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(RevisionState)})",
+            name="ck_agent_templates_status",
+        ),
         CheckConstraint("row_version >= 1", name="ck_agent_templates_row_version"),
         Index("ix_agent_templates_updated_at", "updated_at", "id"),
     )
@@ -320,34 +420,53 @@ class AgentTemplateRevision(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     agent_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("agent_templates.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("agent_templates.id", ondelete="RESTRICT"),
+        nullable=False,
     )
 
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"), nullable=True
+        String(36),
+        ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"),
+        nullable=True,
     )
     schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     definition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
-        UniqueConstraint("agent_id", "revision_no", name="uq_agent_template_revision_number"),
+        UniqueConstraint(
+            "agent_id", "revision_no", name="uq_agent_template_revision_number"
+        ),
         CheckConstraint("revision_no >= 1", name="ck_agent_template_revision_number"),
-        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_agent_template_revision_state"),
-        CheckConstraint("schema_version >= 1", name="ck_agent_template_revision_schema"),
+        CheckConstraint(
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_agent_template_revision_state",
+        ),
+        CheckConstraint(
+            "schema_version >= 1", name="ck_agent_template_revision_schema"
+        ),
         CheckConstraint("lock_version >= 1", name="ck_agent_template_revision_lock"),
         Index(
             "uq_agent_template_one_draft",
             "agent_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
         Index("ix_agent_template_revisions_agent", "agent_id", "revision_no"),
     )
@@ -362,16 +481,29 @@ class CrowdTemplate(Base):
     crowd_key: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
-    current_draft_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
-    current_published_revision_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    current_draft_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
+    current_published_revision_id: Mapped[str | None] = mapped_column(
+        String(36), nullable=True
+    )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
 
     __table_args__ = (
-        CheckConstraint("status IN ('DRAFT','PUBLISHED')", name="ck_crowd_templates_status"),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(RevisionState)})",
+            name="ck_crowd_templates_status",
+        ),
         CheckConstraint("row_version >= 1", name="ck_crowd_templates_row_version"),
         Index("ix_crowd_templates_updated_at", "updated_at", "id"),
     )
@@ -384,30 +516,43 @@ class CrowdRevision(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     crowd_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("crowd_templates.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("crowd_templates.id", ondelete="RESTRICT"),
+        nullable=False,
     )
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
         String(36), ForeignKey("crowd_revisions.id", ondelete="RESTRICT"), nullable=True
     )
     membership_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         UniqueConstraint("crowd_id", "revision_no", name="uq_crowd_revision_number"),
         CheckConstraint("revision_no >= 1", name="ck_crowd_revision_number"),
-        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_crowd_revision_state"),
+        CheckConstraint(
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_crowd_revision_state",
+        ),
         CheckConstraint("lock_version >= 1", name="ck_crowd_revision_lock"),
         Index(
             "uq_crowd_one_draft",
             "crowd_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
         Index("ix_crowd_revisions_crowd", "crowd_id", "revision_no"),
     )
@@ -420,23 +565,35 @@ class CrowdRevisionMember(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     crowd_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("crowd_templates.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("crowd_templates.id", ondelete="RESTRICT"),
+        nullable=False,
     )
     crowd_revision_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("crowd_revisions.id", ondelete="CASCADE"), nullable=False
     )
     agent_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("agent_templates.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("agent_templates.id", ondelete="RESTRICT"),
+        nullable=False,
     )
     agent_revision_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("agent_template_revisions.id", ondelete="RESTRICT"),
+        nullable=False,
     )
     position: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
 
     __table_args__ = (
-        UniqueConstraint("crowd_revision_id", "agent_id", name="uq_crowd_revision_agent"),
-        UniqueConstraint("crowd_revision_id", "position", name="uq_crowd_revision_position"),
+        UniqueConstraint(
+            "crowd_revision_id", "agent_id", name="uq_crowd_revision_agent"
+        ),
+        UniqueConstraint(
+            "crowd_revision_id", "position", name="uq_crowd_revision_position"
+        ),
         CheckConstraint("position >= 0", name="ck_crowd_revision_member_position"),
         Index("ix_crowd_revision_members_revision", "crowd_revision_id", "position"),
     )
@@ -455,7 +612,9 @@ class Experiment(Base):
     archived_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
-    status: Mapped[str] = mapped_column(String(24), nullable=False, default="DRAFT")
+    status: Mapped[str] = mapped_column(
+        String(24), nullable=False, default=ExperimentStatus.DRAFT.value
+    )
     current_draft_revision_id: Mapped[str | None] = mapped_column(
         String(36),
         ForeignKey(
@@ -479,7 +638,10 @@ class Experiment(Base):
     latest_run_id: Mapped[str | None] = mapped_column(
         String(36),
         ForeignKey(
-            "runs.id", ondelete="SET NULL", use_alter=True, name="fk_experiments_latest_run"
+            "runs.id",
+            ondelete="SET NULL",
+            use_alter=True,
+            name="fk_experiments_latest_run",
         ),
         nullable=True,
     )
@@ -493,7 +655,7 @@ class Experiment(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "status IN ('DRAFT','QUEUED','RUNNING','PAUSED','COMPLETED','CANCELLED','FAILED')",
+            f"status IN ({sql_enum_values(ExperimentStatus)})",
             name="ck_experiments_status",
         ),
         CheckConstraint("row_version >= 1", name="ck_experiments_row_version"),
@@ -513,29 +675,45 @@ class ModelProbeStatus(Base):
         String(36), ForeignKey("experiments.id", ondelete="CASCADE"), nullable=False
     )
     draft_revision_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("experiment_revisions.id", ondelete="CASCADE"), nullable=True
+        String(36),
+        ForeignKey("experiment_revisions.id", ondelete="CASCADE"),
+        nullable=True,
     )
     purpose: Mapped[str] = mapped_column(String(16), nullable=False)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="UNTESTED")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=ModelProbeState.UNTESTED.value
+    )
     latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     resolved_model: Mapped[str | None] = mapped_column(String(512), nullable=True)
     configuration_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     reason_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
     reason_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     http_status: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    service_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
-    checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    last_failure_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    service_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    checked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_success_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_failure_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
     )
 
     __table_args__ = (
-        UniqueConstraint("experiment_id", "purpose", name="uq_model_probe_experiment_purpose"),
-        CheckConstraint("purpose IN ('chat','embedding')", name="ck_model_probe_purpose"),
+        UniqueConstraint(
+            "experiment_id", "purpose", name="uq_model_probe_experiment_purpose"
+        ),
         CheckConstraint(
-            "status IN ('UNTESTED','CHECKING','ONLINE','OFFLINE','STALE')",
+            "purpose IN ('chat','embedding')", name="ck_model_probe_purpose"
+        ),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(ModelProbeState)})",
             name="ck_model_probe_status",
         ),
         Index("ix_model_probe_status_checked", "status", "checked_at"),
@@ -549,8 +727,12 @@ class ExperimentSavedView(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
-    share_key: Mapped[str] = mapped_column(String(36), nullable=False, unique=True, default=uuid_str)
-    query_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    share_key: Mapped[str] = mapped_column(
+        String(36), nullable=False, unique=True, default=uuid_str
+    )
+    query_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -566,7 +748,9 @@ class ExperimentComparisonGroup(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
-    experiment_ids_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    experiment_ids_json: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -583,16 +767,22 @@ class ExperimentRevision(Base):
         String(36), ForeignKey("experiments.id", ondelete="RESTRICT"), nullable=False
     )
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    state: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RevisionState.DRAFT.value
+    )
     base_revision_id: Mapped[str | None] = mapped_column(
-        String(36), ForeignKey("experiment_revisions.id", ondelete="RESTRICT"), nullable=True
+        String(36),
+        ForeignKey("experiment_revisions.id", ondelete="RESTRICT"),
+        nullable=True,
     )
     schema_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     definition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     validation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     validated_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    provenance_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    provenance_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     snapshot_complete: Mapped[bool] = mapped_column(nullable=False, default=False)
     lock_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(
@@ -601,19 +791,24 @@ class ExperimentRevision(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
     )
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    published_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         UniqueConstraint("experiment_id", "revision_no", name="uq_revision_number"),
         CheckConstraint("revision_no >= 1", name="ck_revision_number"),
-        CheckConstraint("state IN ('DRAFT','PUBLISHED')", name="ck_revision_state"),
+        CheckConstraint(
+            f"state IN ({sql_enum_values(RevisionState)})",
+            name="ck_revision_state",
+        ),
         CheckConstraint("schema_version >= 1", name="ck_revision_schema_version"),
         CheckConstraint("lock_version >= 1", name="ck_revision_lock_version"),
         Index(
             "uq_revision_one_draft_per_experiment",
             "experiment_id",
             unique=True,
-            sqlite_where=text("state = 'DRAFT'"),
+            sqlite_where=text(f"state = '{RevisionState.DRAFT.value}'"),
         ),
         Index("ix_revisions_experiment", "experiment_id", "revision_no"),
     )
@@ -627,21 +822,31 @@ class Run(Base):
         String(36), ForeignKey("experiments.id", ondelete="RESTRICT"), nullable=False
     )
     revision_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("experiment_revisions.id", ondelete="RESTRICT"), nullable=False
+        String(36),
+        ForeignKey("experiment_revisions.id", ondelete="RESTRICT"),
+        nullable=False,
     )
-    status: Mapped[str] = mapped_column(String(32), nullable=False, default="QUEUED")
+    status: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=RunStatus.QUEUED.value
+    )
     slot_no: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    queued_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    queued_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     start_step: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     requested_steps: Mapped[int] = mapped_column(Integer, nullable=False)
     completed_steps: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     recoverable_step: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     stride_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
-    virtual_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    virtual_time: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     current_attempt_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
     pid_create_time: Mapped[float | None] = mapped_column(Float, nullable=True)
-    heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    heartbeat_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     run_dir: Mapped[str] = mapped_column(Text, nullable=False)
     error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -649,8 +854,12 @@ class Run(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         CheckConstraint("slot_no IS NULL OR slot_no > 0", name="ck_runs_positive_slot"),
@@ -661,21 +870,20 @@ class Run(Base):
         CheckConstraint("stride_minutes >= 1", name="ck_runs_stride_minutes"),
         CheckConstraint("resume_count >= 0", name="ck_runs_resume_count"),
         CheckConstraint(
-            "status IN ('QUEUED','STARTING','RUNNING','PAUSE_REQUESTED','PAUSED',"
-            "'CANCEL_REQUESTED','CANCELLED','COMPLETED','FAILED','INTERRUPTED')",
+            f"status IN ({sql_enum_values(RunStatus)})",
             name="ck_runs_status",
         ),
         CheckConstraint(
-            "((status IN ('STARTING','RUNNING','PAUSE_REQUESTED','CANCEL_REQUESTED')) "
+            f"((status IN ({sql_values(SLOT_OWNING_RUN_STATUSES)})) "
             "AND slot_no IS NOT NULL AND current_attempt_id IS NOT NULL) OR "
-            "((status NOT IN ('STARTING','RUNNING','PAUSE_REQUESTED','CANCEL_REQUESTED')) "
+            f"((status NOT IN ({sql_values(SLOT_OWNING_RUN_STATUSES)})) "
             "AND slot_no IS NULL AND current_attempt_id IS NULL)",
             name="ck_runs_slot_attempt_by_status",
         ),
         CheckConstraint(
-            "(status IN ('RUNNING','PAUSE_REQUESTED','CANCEL_REQUESTED') "
+            f"(status IN ({sql_values(WORKER_OWNED_RUN_STATUSES)}) "
             "AND pid IS NOT NULL AND pid_create_time IS NOT NULL) OR "
-            "(status NOT IN ('RUNNING','PAUSE_REQUESTED','CANCEL_REQUESTED'))",
+            f"(status NOT IN ({sql_values(WORKER_OWNED_RUN_STATUSES)}))",
             name="ck_runs_pid_by_status",
         ),
         Index(
@@ -688,9 +896,7 @@ class Run(Base):
             "uq_runs_one_open_per_experiment",
             "experiment_id",
             unique=True,
-            sqlite_where=text(
-                "status IN ('QUEUED','STARTING','RUNNING','PAUSE_REQUESTED','PAUSED','CANCEL_REQUESTED')"
-            ),
+            sqlite_where=text(f"status IN ({sql_values(OPEN_RUN_STATUSES)})"),
         ),
         Index("ix_runs_experiment_created", "experiment_id", "created_at"),
         Index("ix_runs_status_queued", "status", "queued_at"),
@@ -700,13 +906,19 @@ class Run(Base):
 class RunQueue(Base):
     __tablename__ = "run_queue"
     __table_args__ = (
-        CheckConstraint("reason IN ('NEW','RESUME','RETRY')", name="ck_run_queue_reason"),
+        CheckConstraint(
+            f"reason IN ({sql_enum_values(RunQueueReason)})",
+            name="ck_run_queue_reason",
+        ),
         {"sqlite_autoincrement": True},
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     run_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False, unique=True
+        String(36),
+        ForeignKey("runs.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
     )
     reason: Mapped[str] = mapped_column(String(16), nullable=False)
     enqueued_at: Mapped[datetime] = mapped_column(
@@ -723,7 +935,9 @@ class RunAttempt(Base):
     )
     attempt_no: Mapped[int] = mapped_column(Integer, nullable=False)
     slot_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="SPAWNING")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=RunAttemptStatus.SPAWNING.value
+    )
     pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
     pid_create_time: Mapped[float | None] = mapped_column(Float, nullable=True)
     log_path: Mapped[str] = mapped_column(Text, nullable=False)
@@ -732,7 +946,9 @@ class RunAttempt(Base):
     started_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
-    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    ended_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     exit_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
     stop_reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
@@ -743,8 +959,13 @@ class RunAttempt(Base):
         CheckConstraint("attempt_no >= 1", name="ck_run_attempt_number"),
         CheckConstraint("slot_no >= 1", name="ck_run_attempt_slot"),
         CheckConstraint("start_step >= 1", name="ck_run_attempt_start_step"),
-        CheckConstraint("end_step IS NULL OR end_step >= 0", name="ck_run_attempt_end_step"),
-        CheckConstraint("status IN ('SPAWNING','RUNNING','ENDED')", name="ck_run_attempt_status"),
+        CheckConstraint(
+            "end_step IS NULL OR end_step >= 0", name="ck_run_attempt_end_step"
+        ),
+        CheckConstraint(
+            f"status IN ({sql_enum_values(RunAttemptStatus)})",
+            name="ck_run_attempt_status",
+        ),
         Index("ix_run_attempts_run", "run_id", "attempt_no"),
     )
 
@@ -757,7 +978,9 @@ class RunEvent(Base):
         String(36), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False
     )
     event_type: Mapped[str] = mapped_column(String(32), nullable=False)
-    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -782,10 +1005,14 @@ class Secret(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
-    rewrapped_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    rewrapped_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
-        CheckConstraint("kind IN ('OPENAI_API_KEY','GENERIC_TOKEN')", name="ck_secrets_kind"),
+        CheckConstraint(
+            "kind IN ('OPENAI_API_KEY','GENERIC_TOKEN')", name="ck_secrets_kind"
+        ),
     )
 
 
@@ -843,9 +1070,13 @@ class RunArtifact(Base):
         ),
         CheckConstraint("size_bytes >= 0", name="ck_run_artifact_size"),
         CheckConstraint("source_step >= 0", name="ck_run_artifact_source_step"),
-        CheckConstraint("source_kind IN ('RAW','DERIVED')", name="ck_run_artifact_source"),
         CheckConstraint(
-            "state IN ('BUILDING','READY','FAILED','STALE')", name="ck_run_artifact_state"
+            f"source_kind IN ({sql_enum_values(ArtifactSourceKind)})",
+            name="ck_run_artifact_source",
+        ),
+        CheckConstraint(
+            f"state IN ({sql_enum_values(ArtifactState)})",
+            name="ck_run_artifact_state",
         ),
         Index("ix_run_artifacts_run", "run_id", "state"),
     )
@@ -859,14 +1090,18 @@ class ArtifactJob(Base):
         String(36), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False
     )
     job_type: Mapped[str] = mapped_column(String(48), nullable=False)
-    parameters_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    parameters_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     parameters_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     source_step: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     generator_version: Mapped[str] = mapped_column(
         String(64), nullable=False, default="legacy-v1"
     )
     partial: Mapped[bool] = mapped_column(nullable=False, default=True)
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="QUEUED")
+    status: Mapped[str] = mapped_column(
+        String(16), nullable=False, default=ArtifactJobStatus.QUEUED.value
+    )
     attempt_no: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     worker_pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
     pid_create_time: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -874,7 +1109,9 @@ class ArtifactJob(Base):
     # created before the observability migration intentionally keep this NULL:
     # deriving a path later would claim that a log exists when it may not.
     log_path: Mapped[str | None] = mapped_column(Text, nullable=True)
-    heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    heartbeat_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     artifact_id: Mapped[str | None] = mapped_column(
         String(36), ForeignKey("run_artifacts.id", ondelete="SET NULL"), nullable=True
     )
@@ -883,22 +1120,27 @@ class ArtifactJob(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
-    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     __table_args__ = (
         CheckConstraint(
-            "job_type IN ('BUILD_REPLAY','RESULT_BUNDLE','FILTERED_MEMORIES',"
-            "'FILTERED_CONVERSATIONS','CHECKPOINT_BUNDLE','BUILD_REPORT')",
+            f"job_type IN ({sql_enum_values(ArtifactJobType)})",
             name="ck_artifact_jobs_type",
         ),
         CheckConstraint(
-            "status IN ('QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED')",
+            f"status IN ({sql_enum_values(ArtifactJobStatus)})",
             name="ck_artifact_jobs_status",
         ),
         CheckConstraint("attempt_no >= 0", name="ck_artifact_jobs_attempt"),
         CheckConstraint("source_step >= 0", name="ck_artifact_jobs_source_step"),
-        CheckConstraint("progress >= 0 AND progress <= 1", name="ck_artifact_jobs_progress"),
+        CheckConstraint(
+            "progress >= 0 AND progress <= 1", name="ck_artifact_jobs_progress"
+        ),
         Index(
             "uq_artifact_jobs_one_active",
             "run_id",
@@ -907,7 +1149,9 @@ class ArtifactJob(Base):
             "source_step",
             "generator_version",
             unique=True,
-            sqlite_where=text("status IN ('QUEUED','RUNNING')"),
+            sqlite_where=text(
+                f"status IN ({sql_values(ACTIVE_ARTIFACT_JOB_STATUSES)})"
+            ),
         ),
         Index("ix_artifact_jobs_status_created", "status", "created_at"),
         Index("ix_artifact_jobs_run", "run_id", "created_at"),
@@ -923,23 +1167,33 @@ class RunResultSummary(Base):
     available_step: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     virtual_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     action_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    conversation_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    conversation_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     message_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     memory_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     model_call_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    model_retry_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    result_state: Mapped[str] = mapped_column(String(24), nullable=False, default="EMPTY")
-    capabilities_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    model_retry_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
+    result_state: Mapped[str] = mapped_column(
+        String(24), nullable=False, default=ResultCompleteness.EMPTY.value
+    )
+    capabilities_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     projection_version: Mapped[str] = mapped_column(String(32), nullable=False)
     result_version: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     last_frame_sha256: Mapped[str | None] = mapped_column(String(64))
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
 
     __table_args__ = (
         CheckConstraint("available_step >= 0", name="ck_result_summary_available_step"),
         CheckConstraint("result_version >= 0", name="ck_result_summary_version"),
         CheckConstraint(
-            "result_state IN ('EMPTY','PARTIAL','COMPLETE','CORRUPTED')",
+            f"result_state IN ({sql_enum_values(ResultCompleteness)})",
             name="ck_result_summary_state",
         ),
     )
@@ -953,7 +1207,9 @@ class RunStep(Base):
     )
     step_no: Mapped[int] = mapped_column(Integer, primary_key=True)
     attempt_id: Mapped[str] = mapped_column(String(36), nullable=False)
-    virtual_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    virtual_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     frame_path: Mapped[str] = mapped_column(Text, nullable=False)
     frame_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     action_count: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -966,7 +1222,9 @@ class RunStep(Base):
     model_retry_count: Mapped[int] = mapped_column(Integer, nullable=False)
     active_agent_count: Mapped[int] = mapped_column(Integer, nullable=False)
     checkpoint: Mapped[bool] = mapped_column(nullable=False, default=False)
-    committed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    committed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
 
     __table_args__ = (
         CheckConstraint("step_no >= 1", name="ck_run_steps_step"),
@@ -980,7 +1238,9 @@ class RunAgentStep(Base):
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     step_no: Mapped[int] = mapped_column(Integer, primary_key=True)
     agent_key: Mapped[str] = mapped_column(String(80), primary_key=True)
-    virtual_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    virtual_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     x: Mapped[int] = mapped_column(Integer, nullable=False)
     y: Mapped[int] = mapped_column(Integer, nullable=False)
     address: Mapped[str] = mapped_column(Text, nullable=False)
@@ -989,14 +1249,18 @@ class RunAgentStep(Base):
     activity_kind: Mapped[str] = mapped_column(String(16), nullable=False)
     currently_text: Mapped[str | None] = mapped_column(Text)
     schedule_item_id: Mapped[str | None] = mapped_column(String(120))
-    path_source: Mapped[str] = mapped_column(String(16), nullable=False, default="OBSERVED")
+    path_source: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="OBSERVED"
+    )
     decision_context_json: Mapped[dict[str, Any]] = mapped_column(
         JSON, nullable=False, default=dict
     )
 
     __table_args__ = (
         ForeignKeyConstraint(
-            ["run_id", "step_no"], ["run_steps.run_id", "run_steps.step_no"], ondelete="CASCADE"
+            ["run_id", "step_no"],
+            ["run_steps.run_id", "run_steps.step_no"],
+            ondelete="CASCADE",
         ),
         Index("ix_agent_steps_run_step", "run_id", "step_no"),
         Index("ix_agent_steps_run_agent_step", "run_id", "agent_key", "step_no"),
@@ -1017,9 +1281,13 @@ class RunAgentSummary(Base):
     currently_text: Mapped[str | None] = mapped_column(Text)
     action_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     movement_steps: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    conversation_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    conversation_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     message_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    memory_created_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    memory_created_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     rest_minutes: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     chat_minutes: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     moving_minutes: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
@@ -1036,11 +1304,17 @@ class RunRelationshipEdge(Base):
     )
     agent_a: Mapped[str] = mapped_column(String(80), primary_key=True)
     agent_b: Mapped[str] = mapped_column(String(80), primary_key=True)
-    conversation_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    conversation_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     message_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     duration_minutes: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    first_conversation_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    last_conversation_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    first_conversation_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    last_conversation_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
 
     __table_args__ = (
         CheckConstraint("agent_a < agent_b", name="ck_relationship_agent_order"),
@@ -1057,15 +1331,21 @@ class RunScheduleRevision(Base):
     agent_key: Mapped[str] = mapped_column(String(80), nullable=False)
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
     effective_step: Mapped[int] = mapped_column(Integer, nullable=False)
-    effective_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    effective_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     source_event_id: Mapped[str | None] = mapped_column(String(36))
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     items_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False)
 
     __table_args__ = (
-        UniqueConstraint("run_id", "agent_key", "revision_no", name="uq_schedule_revision_no"),
-        UniqueConstraint("run_id", "agent_key", "content_hash", name="uq_schedule_content"),
+        UniqueConstraint(
+            "run_id", "agent_key", "revision_no", name="uq_schedule_revision_no"
+        ),
+        UniqueConstraint(
+            "run_id", "agent_key", "content_hash", name="uq_schedule_content"
+        ),
         Index("ix_schedule_run_agent_step", "run_id", "agent_key", "effective_step"),
     )
 
@@ -1078,7 +1358,9 @@ class RunDomainEvent(Base):
         String(36), ForeignKey("runs.id", ondelete="CASCADE"), nullable=False
     )
     step_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    virtual_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    virtual_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     event_type: Mapped[str] = mapped_column(String(48), nullable=False)
     primary_agent_key: Mapped[str | None] = mapped_column(String(80))
     title: Mapped[str] = mapped_column(Text, nullable=False)
@@ -1087,7 +1369,9 @@ class RunDomainEvent(Base):
     importance_score: Mapped[float] = mapped_column(Float, nullable=False, default=0)
     source_type: Mapped[str | None] = mapped_column(String(32))
     source_id: Mapped[str | None] = mapped_column(String(36))
-    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
 
     __table_args__ = (Index("ix_domain_events_run_step", "run_id", "step_no"),)
 
@@ -1097,11 +1381,15 @@ class RunDomainEventAgent(Base):
 
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     event_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("run_domain_events.id", ondelete="CASCADE"), primary_key=True
+        String(36),
+        ForeignKey("run_domain_events.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     agent_key: Mapped[str] = mapped_column(String(80), primary_key=True)
 
-    __table_args__ = (Index("ix_domain_event_agents_lookup", "run_id", "agent_key", "event_id"),)
+    __table_args__ = (
+        Index("ix_domain_event_agents_lookup", "run_id", "agent_key", "event_id"),
+    )
 
 
 class RunConversation(Base):
@@ -1113,7 +1401,9 @@ class RunConversation(Base):
     )
     start_step: Mapped[int] = mapped_column(Integer, nullable=False)
     end_step: Mapped[int] = mapped_column(Integer, nullable=False)
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     ended_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     duration_minutes: Mapped[int | None] = mapped_column(Integer)
     duration_source: Mapped[str] = mapped_column(String(16), nullable=False)
@@ -1132,11 +1422,15 @@ class RunConversationParticipant(Base):
 
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     conversation_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("run_conversations.id", ondelete="CASCADE"), primary_key=True
+        String(36),
+        ForeignKey("run_conversations.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     agent_key: Mapped[str] = mapped_column(String(80), primary_key=True)
 
-    __table_args__ = (Index("ix_conversation_participants_agent", "run_id", "agent_key"),)
+    __table_args__ = (
+        Index("ix_conversation_participants_agent", "run_id", "agent_key"),
+    )
 
 
 class RunMessage(Base):
@@ -1145,17 +1439,23 @@ class RunMessage(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     run_id: Mapped[str] = mapped_column(String(36), nullable=False)
     conversation_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("run_conversations.id", ondelete="CASCADE"), nullable=False
+        String(36),
+        ForeignKey("run_conversations.id", ondelete="CASCADE"),
+        nullable=False,
     )
     sequence_no: Mapped[int] = mapped_column(Integer, nullable=False)
     speaker_agent_key: Mapped[str] = mapped_column(String(80), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    observed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     source_step: Mapped[int] = mapped_column(Integer, nullable=False)
 
     __table_args__ = (
         UniqueConstraint("conversation_id", "sequence_no", name="uq_message_sequence"),
-        Index("ix_messages_run_speaker_time", "run_id", "speaker_agent_key", "observed_at"),
+        Index(
+            "ix_messages_run_speaker_time", "run_id", "speaker_agent_key", "observed_at"
+        ),
     )
 
 
@@ -1179,10 +1479,14 @@ class RunMemoryEvent(Base):
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     removed_step: Mapped[int | None] = mapped_column(Integer)
     removed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    evidence_node_ids_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    evidence_node_ids_json: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
 
     __table_args__ = (
-        Index("ix_memory_events_run_agent_created", "run_id", "agent_key", "created_step"),
+        Index(
+            "ix_memory_events_run_agent_created", "run_id", "agent_key", "created_step"
+        ),
         Index("ix_memory_events_run_state", "run_id", "state"),
     )
 
@@ -1196,11 +1500,17 @@ class RunStepEffect(Base):
     effect_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     step_no: Mapped[int] = mapped_column(Integer, nullable=False)
     sequence_no: Mapped[int] = mapped_column(Integer, nullable=False)
-    virtual_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    virtual_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     effect_type: Mapped[str] = mapped_column(String(40), nullable=False)
     primary_agent_key: Mapped[str | None] = mapped_column(String(80))
-    agent_keys_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
-    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    agent_keys_json: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    payload_json: Mapped[dict[str, Any]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     source_effect_id: Mapped[str | None] = mapped_column(String(36))
     skill_name: Mapped[str | None] = mapped_column(String(80))
     skill_revision: Mapped[str | None] = mapped_column(String(64))
@@ -1226,14 +1536,22 @@ class RunModelUsage(Base):
     purpose: Mapped[str] = mapped_column(String(80), primary_key=True)
     provider: Mapped[str] = mapped_column(String(32), primary_key=True)
     resolved_model: Mapped[str] = mapped_column(String(255), primary_key=True)
-    logical_call_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    successful_call_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    logical_call_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
+    successful_call_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     fallback_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    physical_attempt_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+    physical_attempt_count: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0
+    )
     retry_count: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     input_tokens: Mapped[int | None] = mapped_column(BigInteger)
     output_tokens: Mapped[int | None] = mapped_column(BigInteger)
-    latency_buckets_json: Mapped[dict[str, int]] = mapped_column(JSON, nullable=False, default=dict)
+    latency_buckets_json: Mapped[dict[str, int]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
     max_latency_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     updated_step: Mapped[int | None] = mapped_column(Integer)
 
@@ -1248,4 +1566,6 @@ class RunModelTraceCursor(Base):
     relative_path: Mapped[str] = mapped_column(Text, nullable=False)
     last_event_seq: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
     byte_offset: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )

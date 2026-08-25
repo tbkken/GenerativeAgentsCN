@@ -15,6 +15,21 @@ class Action:
         duration=0,
         clock=None,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。
+            obj_event: 世界对象因当前行为产生的状态事件。 默认值：`None`。
+            start: 处理区间的起始位置或起始时间。 默认值：`None`。
+            duration: 行为、对话或日程项占用的虚拟时间长度。 默认值：`0`。
+            clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。 默认值：`None`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         self.event = event
         self.obj_event = obj_event
         if clock is None and start is None:
@@ -25,6 +40,11 @@ class Action:
         self.end = self.start + datetime.timedelta(minutes=self.duration)
 
     def abstract(self):
+        """执行 `Action` 的`abstract`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         status = "{} [{}~{}]".format(
             "已完成" if self.finished() else "进行中",
             self.start.strftime("%Y%m%d-%H:%M"),
@@ -36,9 +56,22 @@ class Action:
         return info
 
     def __str__(self):
+        """执行`str`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return utils.dump_dict(self.abstract())
 
     def finished(self):
+        """执行 `Action` 的`finished`操作。
+
+        返回:
+            返回函数计算得到的结果。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if not self.duration:
             return True
         if not self.event.address:
@@ -48,6 +81,11 @@ class Action:
         return self._clock.get_date() > self.end
 
     def to_dict(self):
+        """执行 `Action` 的`to``dict`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return {
             "event": self.event.to_dict(),
             "obj_event": self.obj_event.to_dict() if self.obj_event else None,
@@ -57,6 +95,15 @@ class Action:
 
     @classmethod
     def from_dict(cls, config, *, clock):
+        """执行 `Action` 的`from``dict`操作。
+
+        参数:
+            config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。
+            clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         values = dict(config)
         values["event"] = Event.from_dict(values["event"])
         if values.get("obj_event"):

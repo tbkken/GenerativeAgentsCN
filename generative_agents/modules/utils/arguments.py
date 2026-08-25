@@ -7,19 +7,17 @@ from typing import Any
 
 
 def load_dict(str_dict: str, flavor: str = "json") -> dict:
-    """Load the string/file to dict.
+    """加载`dict`。
 
-    Parameters
-    ----------
-    str_dict: string
-        The file_path or string object.
-    flavor: str
-        The flavor for load.
+    参数:
+        str_dict: 传入当前算法的`str``dict`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`str`。
+        flavor: 底层组件或模型实现的变体标识。 类型：`str`。 默认值：`'json'`。
 
-    Returns
-    -------
-    dict_obj: dict
-        The loaded dict.
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+
+    异常:
+        Exception: 当底层操作报告该异常条件时抛出。
     """
 
     if not str_dict:
@@ -38,21 +36,15 @@ def load_dict(str_dict: str, flavor: str = "json") -> dict:
 
 
 def save_dict(dict_obj: Any, path: str, indent: int = 2) -> str:
-    """Save dict object
+    """保存`dict`。
 
-    Parameters
-    ----------
-    dict_obj:
-        The object that can be load as dict.
-    path: str
-        The output path.
-    indent: int
-        The indent
+    参数:
+        dict_obj: 待复制、比较、映射或序列化的字典对象。 类型：`Any`。
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
+        indent: 序列化或渲染文本时使用的缩进空格数。 类型：`int`。 默认值：`2`。
 
-    Returns
-    -------
-    path: str
-        The output path.
+    返回:
+        返回处理后的文本或稳定标识。
     """
 
     with open(path, "w") as f:
@@ -61,31 +53,25 @@ def save_dict(dict_obj: Any, path: str, indent: int = 2) -> str:
 
 
 def update_dict(src_dict: dict, new_dict: dict, soft_update: bool = False) -> dict:
-    """Update src_dict with new_dict.
+    """更新`dict`。
 
-    Parameters
-    ----------
-    src_dict: dict
-        The source dict.
-    new_dict: dict
-        The new dict.
-    soft_update: bool
-        Whether to update the source dict, False to force update.
+    参数:
+        src_dict: 传入当前算法的`src``dict`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict`。
+        new_dict: 传入当前算法的`new``dict`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict`。
+        soft_update: 传入当前算法的`soft``update`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`bool`。 默认值：`False`。
 
-    Returns
-    -------
-    dict_obj: dict
-        The updated dict.
+    返回:
+        返回以字段名或业务键组织的结构化映射。
     """
 
     if not src_dict:
         return new_dict
     if not new_dict:
         return src_dict
-    assert isinstance(src_dict, dict) and isinstance(
-        new_dict, dict
-    ), "update_dict only support dict, get src {} and new {}".format(
-        type(src_dict), type(new_dict)
+    assert isinstance(src_dict, dict) and isinstance(new_dict, dict), (
+        "update_dict only support dict, get src {} and new {}".format(
+            type(src_dict), type(new_dict)
+        )
     )
     for k, v in new_dict.items():
         if not src_dict.get(k):
@@ -99,19 +85,14 @@ def update_dict(src_dict: dict, new_dict: dict, soft_update: bool = False) -> di
 
 
 def dump_dict(dict_obj: dict, flavor: str = "table:2") -> str:
-    """Dump the config to string.
+    """执行 的`dump``dict`操作。
 
-    Parameters
-    ----------
-    src_dict: dict
-        The source dict.
-    flavor: str
-        The flavor for dumps.
+    参数:
+        dict_obj: 待复制、比较、映射或序列化的字典对象。 类型：`dict`。
+        flavor: 底层组件或模型实现的变体标识。 类型：`str`。 默认值：`'table:2'`。
 
-    Returns
-    -------
-    str_dict: string
-        The dumped string.
+    返回:
+        返回处理后的文本或稳定标识。
     """
 
     if not dict_obj:
@@ -119,6 +100,15 @@ def dump_dict(dict_obj: dict, flavor: str = "table:2") -> str:
     if flavor.startswith("table:"):
 
         def _get_lines(value, indent=0):
+            """获取`lines`。
+
+            参数:
+                value: 当前操作使用的`value`。
+                indent: 序列化或渲染文本时使用的缩进空格数。 默认值：`0`。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             max_size = int(flavor.split(":")[1]) - indent - 2
             lines = []
             for k, v in value.items():
@@ -164,19 +154,14 @@ def dump_dict(dict_obj: dict, flavor: str = "table:2") -> str:
 
 
 def dict_equal(dict_a: dict, dict_b: dict) -> bool:
-    """Check if two dicts are the same.
+    """执行 的`dict``equal`操作。
 
-    Parameters
-    ----------
-    dict_a: dict
-        The A dict.
-    dict_b: dict
-        The B dict.
+    参数:
+        dict_a: 传入当前算法的`dict``a`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict`。
+        dict_b: 传入当前算法的`dict``b`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`dict`。
 
-    Returns
-    -------
-    equal: bool
-        Whether two dicts are the same.
+    返回:
+        条件成立时返回 `True`，否则返回 `False`。
     """
 
     if not isinstance(dict_a, dict) or not isinstance(dict_b, dict):
@@ -194,17 +179,13 @@ def dict_equal(dict_a: dict, dict_b: dict) -> bool:
 
 
 def copy_dict(dict_obj: dict) -> dict:
-    """Deepcopy dict object
+    """复制`dict`。
 
-    Parameters
-    ----------
-    dict_obj: dict
-        The source dict.
+    参数:
+        dict_obj: 待复制、比较、映射或序列化的字典对象。 类型：`dict`。
 
-    Returns
-    -------
-    dict_obj: dict
-        The copied dict.
+    返回:
+        返回以字段名或业务键组织的结构化映射。
     """
 
     if not dict_obj:
@@ -224,19 +205,14 @@ def copy_dict(dict_obj: dict) -> dict:
 
 
 def map_dict(dict_obj: dict, mapper: callable) -> dict:
-    """Apply mapper to dict object
+    """执行 的地图`dict`操作。
 
-    Parameters
-    ----------
-    dict_obj: dict
-        The source dict.
-    mapper: callable
-        The mapper function.
+    参数:
+        dict_obj: 待复制、比较、映射或序列化的字典对象。 类型：`dict`。
+        mapper: 传入当前算法的`mapper`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`callable`。
 
-    Returns
-    -------
-    new_dict: dict
-        The mapped dict.
+    返回:
+        返回以字段名或业务键组织的结构化映射。
     """
 
     if not dict_obj:

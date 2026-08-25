@@ -20,6 +20,7 @@ from generative_agents.persistence.models import (
 )
 
 from .context import RunPaths
+from .model_trace import ModelTraceStatus
 
 
 class ModelTraceProjectionError(RuntimeError):
@@ -28,6 +29,15 @@ class ModelTraceProjectionError(RuntimeError):
 
 class ModelTraceProjector:
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
 
@@ -38,16 +48,34 @@ class ModelTraceProjector:
         attempt_id: str,
         relative_path: str,
     ) -> int:
+        """执行 `ModelTraceProjector` 的`project`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            relative_path: `relative`对应的文件系统路径。 类型：`str`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            FileNotFoundError: 当所需文件或目录不存在时抛出。
+            ModelTraceProjectionError: 当底层操作报告该异常条件时抛出。
+        """
         paths = RunPaths.under(self._var_dir, UUID(run_id))
         trace_path = (self._var_dir / relative_path).resolve()
         if not trace_path.is_relative_to(paths.traces.resolve()):
-            raise ModelTraceProjectionError("model trace path is outside the run trace directory")
+            raise ModelTraceProjectionError(
+                "model trace path is outside the run trace directory"
+            )
         with self._database.session_factory() as read_session:
             if read_session.get(Run, run_id) is None:
                 raise ModelTraceProjectionError("run does not exist")
             attempt = read_session.get(RunAttempt, attempt_id)
             if attempt is None or attempt.run_id != run_id:
-                raise ModelTraceProjectionError("model trace attempt does not own this run")
+                raise ModelTraceProjectionError(
+                    "model trace attempt does not own this run"
+                )
             attempt_start_step = attempt.start_step
             current = read_session.get(RunModelTraceCursor, (run_id, attempt_id))
             byte_offset = current.byte_offset if current else 0
@@ -94,7 +122,9 @@ class ModelTraceProjector:
             if record.get("run_id") != run_id or record.get("attempt_id") != attempt_id:
                 raise ModelTraceProjectionError("model trace record scope mismatch")
             if record.get("event_seq") != expected_sequence + 1:
-                raise ModelTraceProjectionError("model trace event sequence is not contiguous")
+                raise ModelTraceProjectionError(
+                    "model trace event sequence is not contiguous"
+                )
             expected_sequence += 1
 
         with self._database.session_factory.begin() as session:
@@ -110,9 +140,14 @@ class ModelTraceProjector:
                 )
                 session.add(cursor)
                 session.flush()
-            if cursor.last_event_seq != last_event_seq or cursor.byte_offset != byte_offset:
+            if (
+                cursor.last_event_seq != last_event_seq
+                or cursor.byte_offset != byte_offset
+            ):
                 # Another projector won the race. Re-read from its boundary.
-                raise ModelTraceProjectionError("model trace cursor changed concurrently")
+                raise ModelTraceProjectionError(
+                    "model trace cursor changed concurrently"
+                )
             logical_calls = 0
             retries = 0
             for record in records:
@@ -154,6 +189,16 @@ class ModelTraceProjector:
         attempt_id: str,
         step_totals: dict[int, list[int]],
     ) -> None:
+        """执行`reconcile`仿真步`totals`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            step_totals: 按仿真步汇总的模型调用次数与令牌用量。 类型：`dict[int, list[int]]`。
+
+        返回:
+            无返回值。
+        """
         with self._database.session_factory.begin() as session:
             matched_step = False
             for step_no, (step_calls, step_retries) in step_totals.items():
@@ -170,6 +215,16 @@ class ModelTraceProjector:
 
     @staticmethod
     def _synchronize_summary_from_steps(session, run_id: str, summary) -> None:
+        """执行`synchronize`摘要`from``steps`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            summary: 当前运行、步骤或模型调用的聚合摘要。
+
+        返回:
+            无返回值。
+        """
         logical_calls, retries = session.execute(
             select(
                 func.coalesce(func.sum(RunStep.model_logical_calls), 0),
@@ -181,6 +236,18 @@ class ModelTraceProjector:
 
     @staticmethod
     def _read_complete_records(path: Path, offset: int) -> tuple[list[dict], int]:
+        """读取`complete``records`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            offset: 从结果集或字节流起点跳过的数量。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ModelTraceProjectionError: 当底层操作报告该异常条件时抛出。
+        """
         records: list[dict] = []
         consumed = 0
         with path.open("rb") as file_handle:
@@ -191,13 +258,28 @@ class ModelTraceProjector:
                 try:
                     record = json.loads(raw_line)
                 except json.JSONDecodeError as exc:
-                    raise ModelTraceProjectionError("invalid complete JSONL record") from exc
+                    raise ModelTraceProjectionError(
+                        "invalid complete JSONL record"
+                    ) from exc
                 records.append(record)
                 consumed += len(raw_line)
         return records, offset + consumed
 
     @staticmethod
     def _apply_record(session, run_id: str, record: dict) -> None:
+        """应用`record`。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            record: 当前读取、校验、投影或序列化的持久化记录。 类型：`dict`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ModelTraceProjectionError: 当底层操作报告该异常条件时抛出。
+        """
         key = (
             run_id,
             str(record.get("purpose") or "unknown"),
@@ -248,16 +330,26 @@ class ModelTraceProjector:
             )
         elif event_type == "LOGICAL_END":
             usage.logical_call_count += 1
-            if record.get("status") == "SUCCEEDED":
+            if record.get("status") == ModelTraceStatus.SUCCEEDED:
                 usage.successful_call_count += 1
             elif record.get("status") == "FALLBACK":
                 usage.fallback_count += 1
         else:
-            raise ModelTraceProjectionError(f"unknown model trace event type: {event_type}")
+            raise ModelTraceProjectionError(
+                f"unknown model trace event type: {event_type}"
+            )
         usage.updated_step = record.get("step_no") or usage.updated_step
 
     @staticmethod
     def _latency_bucket(latency_ms: int) -> str:
+        """执行`latency``bucket`的内部处理，供当前模块或类复用。
+
+        参数:
+            latency_ms: 模型探测或调用从开始到结束的耗时毫秒数。 类型：`int`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         if latency_ms < 100:
             return "lt_100"
         if latency_ms < 500:
@@ -270,6 +362,15 @@ class ModelTraceProjector:
 
     @staticmethod
     def _add_nullable(current: int | None, increment: int | None) -> int | None:
+        """执行`add``nullable`的内部处理，供当前模块或类复用。
+
+        参数:
+            current: 更新前的当前值，用于计算增量或状态迁移。 类型：`int | None`。
+            increment: 需要累加到当前计数或用量上的增量。 类型：`int | None`。
+
+        返回:
+            返回计算得到的整数值或版本号。 没有可用结果时返回 `None`。
+        """
         if increment is None:
             return current
         return (current or 0) + int(increment)

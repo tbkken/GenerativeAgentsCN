@@ -1,4 +1,4 @@
-"""Small MCP surface for persistent services shared by Skills."""
+"""供技能共享持久化服务使用的精简 MCP 接口。"""
 
 from __future__ import annotations
 
@@ -10,9 +10,11 @@ from pathlib import Path
 from typing import Any, Callable, Iterator
 from uuid import NAMESPACE_URL, UUID, uuid5
 
+from generative_agents.status import MemoryDeltaKind, MemoryState
+
 
 class MemoryStream:
-    """Run-owned memory state backed by the same checkpoint boundary as a Run."""
+    """运行私有的记忆状态，与运行本身共享同一个检查点边界。"""
 
     def __init__(
         self,
@@ -22,6 +24,17 @@ class MemoryStream:
         attempt_id: str | UUID = "skill-workspace",
         clock: Callable[[], datetime] | None = None,
     ) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database_path: `database`对应的文件系统路径。 类型：`str | Path`。
+            run_id: 仿真运行的唯一标识。 类型：`str | UUID`。 默认值：`'skill-workspace'`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str | UUID`。 默认值：`'skill-workspace'`。
+            clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。 类型：`Callable[[], datetime] | None`。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         self.database_path = Path(database_path).resolve()
         self.run_id = str(run_id)
         self.attempt_id = str(attempt_id)
@@ -64,6 +77,18 @@ class MemoryStream:
             )
 
     def begin_step(self, step_no: int, virtual_time: datetime) -> None:
+        """执行 `MemoryStream` 的`begin`仿真步操作。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            virtual_time: `virtual`对应的时间点。 类型：`datetime`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if step_no < 1:
             raise ValueError("step_no must be positive")
         if virtual_time.tzinfo is None:
@@ -72,6 +97,14 @@ class MemoryStream:
         self._virtual_time = virtual_time
 
     def _scope(self) -> tuple[int, datetime]:
+        """执行`scope`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
+        """
         if self._step_no < 1 and self.run_id == "skill-workspace":
             current = self._clock()
             if current.tzinfo is None:
@@ -97,6 +130,28 @@ class MemoryStream:
         evidence_memory_ids: list[str] | tuple[str, ...] = (),
         emit_event: bool = True,
     ) -> dict[str, Any]:
+        """执行 `MemoryStream` 的`append`操作。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            content: 待解析、写入、哈希或发送给下游组件的正文内容。 类型：`str`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。 默认值：`'event'`。
+            poignancy: 记忆重要性评分，通常取 1 到 10。 类型：`int`。 默认值：`1`。
+            memory_id: 记忆的唯一标识。 类型：`str | None`。 默认值：`None`。
+            expires_at: `expires`对应的时间点。 类型：`datetime | None`。 默认值：`None`。
+            subject: 事件三元组中的主体，通常是智能体或世界对象标识。 类型：`str | None`。 默认值：`None`。
+            predicate: 事件三元组中描述主体与宾语关系的谓词。 类型：`str | None`。 默认值：`None`。
+            object: 事件三元组中的宾语或当前交互对象。 类型：`str | None`。 默认值：`None`。
+            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 类型：`list[str] | tuple[str, ...]`。
+            evidence_memory_ids: 需要批量处理的`evidence`记忆唯一标识集合。 类型：`list[str] | tuple[str, ...]`。
+            emit_event: 是否把本次状态变化同时写入步骤领域事件流。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         import json
 
         content = content.strip()
@@ -118,7 +173,7 @@ class MemoryStream:
             "content": content,
             "kind": kind.strip() or "event",
             "poignancy": int(poignancy),
-            "state": "ACTIVE",
+            "state": MemoryState.ACTIVE.value,
             "created_step": step_no,
             "created_at": virtual_time.isoformat(),
             "expires_at": expires_at.isoformat() if expires_at else None,
@@ -165,7 +220,7 @@ class MemoryStream:
             self._pending_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": "CREATED",
+                    "memory_kind": MemoryDeltaKind.CREATED.value,
                     "agent_key": item["agent_key"],
                     "memory_id": item["id"],
                     "memory_type": item["kind"].upper(),
@@ -193,6 +248,17 @@ class MemoryStream:
         limit: int = 8,
         emit_event: bool = True,
     ) -> list[dict[str, Any]]:
+        """执行 `MemoryStream` 的`search`操作。
+
+        参数:
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str`。 默认值：`''`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`8`。
+            emit_event: 是否把本次状态变化同时写入步骤领域事件流。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         import json
 
         step_no, virtual_time = self._scope()
@@ -206,10 +272,10 @@ class MemoryStream:
                        expires_at, subject, predicate, object_value,
                        address_json, evidence_json
                 FROM run_memories
-                WHERE run_id = ? AND agent_key = ? AND state = 'ACTIVE'
+                WHERE run_id = ? AND agent_key = ? AND state = ?
                 ORDER BY created_at DESC, id DESC LIMIT 500
                 """,
-                (self.run_id, agent_key.strip()),
+                (self.run_id, agent_key.strip(), MemoryState.ACTIVE.value),
             ).fetchall()
         items = []
         for row in rows:
@@ -228,7 +294,8 @@ class MemoryStream:
                 reverse=True,
             )
             items = [
-                item for item in items
+                item
+                for item in items
                 if any(term in str(item["content"]).casefold() for term in terms)
             ]
         selected = items[:limit]
@@ -238,10 +305,16 @@ class MemoryStream:
                     """
                     UPDATE run_memories
                     SET last_accessed_step = ?, last_accessed_at = ?
-                    WHERE run_id = ? AND id = ? AND state = 'ACTIVE'
+                    WHERE run_id = ? AND id = ? AND state = ?
                     """,
                     (
-                        (step_no, virtual_time.isoformat(), self.run_id, item["id"])
+                        (
+                            step_no,
+                            virtual_time.isoformat(),
+                            self.run_id,
+                            item["id"],
+                            MemoryState.ACTIVE.value,
+                        )
                         for item in selected
                     ),
                 )
@@ -250,7 +323,7 @@ class MemoryStream:
                     self._pending_events.append(
                         {
                             "kind": "memory",
-                            "memory_kind": "ACCESSED",
+                            "memory_kind": MemoryDeltaKind.ACCESSED.value,
                             "agent_key": item["agent_key"],
                             "memory_id": item["id"],
                             "memory_type": item["kind"].upper(),
@@ -259,25 +332,55 @@ class MemoryStream:
                     )
         return selected
 
-    def remove(self, memory_id: str, *, state: str, emit_event: bool = True) -> None:
-        if state not in {"EXPIRED", "EVICTED"}:
+    def remove(
+        self,
+        memory_id: str,
+        *,
+        state: MemoryState | str,
+        emit_event: bool = True,
+    ) -> None:
+        """把目标记录迁移到指定移除状态，并按需生成领域事件。
+
+        参数:
+            memory_id: 记忆的唯一标识。 类型：`str`。
+            state: 记忆移除状态。允许值：`EXPIRED`（自然过期）或 `EVICTED`（容量淘汰）。 类型：`MemoryState | str`。
+            emit_event: 是否把本次状态变化同时写入步骤领域事件流。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
+        try:
+            memory_state = MemoryState(state)
+        except ValueError as exc:
+            raise ValueError("memory state must be EXPIRED or EVICTED") from exc
+        if memory_state not in {MemoryState.EXPIRED, MemoryState.EVICTED}:
             raise ValueError("memory state must be EXPIRED or EVICTED")
         step_no, virtual_time = self._scope()
         with self._connect() as connection:
             existing = connection.execute(
                 """
                 SELECT agent_key, kind, content FROM run_memories
-                WHERE run_id = ? AND id = ? AND state = 'ACTIVE'
+                WHERE run_id = ? AND id = ? AND state = ?
                 """,
-                (self.run_id, memory_id),
+                (self.run_id, memory_id, MemoryState.ACTIVE.value),
             ).fetchone()
             cursor = connection.execute(
                 """
                 UPDATE run_memories
                 SET state = ?, removed_step = ?, removed_at = ?
-                WHERE run_id = ? AND id = ? AND state = 'ACTIVE'
+                WHERE run_id = ? AND id = ? AND state = ?
                 """,
-                (state, step_no, virtual_time.isoformat(), self.run_id, memory_id),
+                (
+                    memory_state.value,
+                    step_no,
+                    virtual_time.isoformat(),
+                    self.run_id,
+                    memory_id,
+                    MemoryState.ACTIVE.value,
+                ),
             )
         if cursor.rowcount == 0:
             raise ValueError(f"active memory does not exist: {memory_id}")
@@ -285,7 +388,7 @@ class MemoryStream:
             self._pending_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": state,
+                    "memory_kind": memory_state.value,
                     "agent_key": existing[0],
                     "memory_id": memory_id,
                     "memory_type": existing[1].upper(),
@@ -294,22 +397,40 @@ class MemoryStream:
             )
 
     def access(self, memory_id: str, *, emit_event: bool = True) -> None:
+        """更新记忆的最近访问步骤与时间，并按需生成访问事件。
+
+        参数:
+            memory_id: 记忆的唯一标识。 类型：`str`。
+            emit_event: 是否把本次状态变化同时写入步骤领域事件流。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         step_no, virtual_time = self._scope()
         with self._connect() as connection:
             existing = connection.execute(
                 """
                 SELECT agent_key, kind, content FROM run_memories
-                WHERE run_id = ? AND id = ? AND state = 'ACTIVE'
+                WHERE run_id = ? AND id = ? AND state = ?
                 """,
-                (self.run_id, memory_id),
+                (self.run_id, memory_id, MemoryState.ACTIVE.value),
             ).fetchone()
             cursor = connection.execute(
                 """
                 UPDATE run_memories
                 SET last_accessed_step = ?, last_accessed_at = ?
-                WHERE run_id = ? AND id = ? AND state = 'ACTIVE'
+                WHERE run_id = ? AND id = ? AND state = ?
                 """,
-                (step_no, virtual_time.isoformat(), self.run_id, memory_id),
+                (
+                    step_no,
+                    virtual_time.isoformat(),
+                    self.run_id,
+                    memory_id,
+                    MemoryState.ACTIVE.value,
+                ),
             )
         if cursor.rowcount == 0:
             raise ValueError(f"active memory does not exist: {memory_id}")
@@ -317,7 +438,7 @@ class MemoryStream:
             self._pending_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": "ACCESSED",
+                    "memory_kind": MemoryDeltaKind.ACCESSED.value,
                     "agent_key": existing[0],
                     "memory_id": memory_id,
                     "memory_type": existing[1].upper(),
@@ -326,10 +447,23 @@ class MemoryStream:
             )
 
     def drain_result_events(self) -> tuple[dict[str, Any], ...]:
+        """执行 `MemoryStream` 的`drain`结果`events`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         events, self._pending_events = tuple(self._pending_events), []
         return events
 
     def export_storage(self, target: Path) -> None:
+        """执行 `MemoryStream` 的`export`存储操作。
+
+        参数:
+            target: 当前操作使用的`target`。 类型：`Path`。
+
+        返回:
+            无返回值。
+        """
         target.mkdir(parents=True, exist_ok=True)
         destination = target / "memory.sqlite"
         with self._connect() as source:
@@ -345,6 +479,15 @@ class MemoryStream:
                 output.close()
 
     def _next_sequence(self, step_no: int, agent_key: str) -> int:
+        """执行`next``sequence`的内部处理，供当前模块或类复用。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
         with self._connect() as connection:
             value = connection.execute(
                 """
@@ -356,6 +499,11 @@ class MemoryStream:
         return int(value) + 1
 
     def _namespace(self) -> UUID:
+        """执行`namespace`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回 `UUID` 类型的处理结果。
+        """
         try:
             return UUID(self.run_id)
         except ValueError:
@@ -363,6 +511,14 @@ class MemoryStream:
 
     @staticmethod
     def _public_item(item: dict[str, Any]) -> dict[str, Any]:
+        """执行`public``item`的内部处理，供当前模块或类复用。
+
+        参数:
+            item: 当前操作使用的`item`。 类型：`dict[str, Any]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         import json
 
         return {
@@ -382,6 +538,11 @@ class MemoryStream:
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
+        """执行`connect`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回可按需迭代的结果序列。
+        """
         connection = sqlite3.connect(self.database_path, timeout=30)
         try:
             yield connection
@@ -398,12 +559,28 @@ class MemoryStream:
 
 
 class SkillMCPServer:
-    """Handle the MCP JSON-RPC methods needed by local Skill clients."""
+    """处理本地技能客户端所需的 MCP JSON-RPC 方法。"""
 
     def __init__(self, memory: MemoryStream) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            memory: 当前读取、更新或转换的记忆记录。 类型：`MemoryStream`。
+
+        返回:
+            无返回值。
+        """
         self.memory = memory
 
     def handle(self, request: dict[str, Any]) -> dict[str, Any]:
+        """执行 `SkillMCPServer` 的`handle`操作。
+
+        参数:
+            request: 待执行、记录或发送到外部模型的请求对象。 类型：`dict[str, Any]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         request_id = request.get("id")
         method = request.get("method")
         try:
@@ -411,7 +588,10 @@ class SkillMCPServer:
                 result = {
                     "protocolVersion": "2025-06-18",
                     "capabilities": {"tools": {"listChanged": False}},
-                    "serverInfo": {"name": "generative-agents-skills", "version": "1.0.0"},
+                    "serverInfo": {
+                        "name": "generative-agents-skills",
+                        "version": "1.0.0",
+                    },
                 }
             elif method == "notifications/initialized":
                 result = {}
@@ -419,7 +599,9 @@ class SkillMCPServer:
                 result = {"tools": self.tools()}
             elif method == "tools/call":
                 params = request.get("params") or {}
-                result = self.call(str(params.get("name") or ""), dict(params.get("arguments") or {}))
+                result = self.call(
+                    str(params.get("name") or ""), dict(params.get("arguments") or {})
+                )
             else:
                 return self._error(request_id, -32601, f"Method not found: {method}")
             return {"jsonrpc": "2.0", "id": request_id, "result": result}
@@ -428,6 +610,11 @@ class SkillMCPServer:
 
     @staticmethod
     def tools() -> list[dict[str, Any]]:
+        """执行 `SkillMCPServer` 的`tools`操作。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return [
             {
                 "name": "memory-stream-append",
@@ -459,6 +646,18 @@ class SkillMCPServer:
         ]
 
     def call(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+        """执行 `SkillMCPServer` 的`call`操作。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            arguments: 传给底层调用的额外位置参数，顺序和含义与被调用接口保持一致。 类型：`dict[str, Any]`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if name == "memory-stream-append":
             value = self.memory.append(**arguments)
             text = f"已写入 {value['agent_key']} 的记忆流：{value['content']}"
@@ -481,6 +680,16 @@ class SkillMCPServer:
 
     @staticmethod
     def _error(request_id: Any, code: int, message: str) -> dict[str, Any]:
+        """执行`error`的内部处理，供当前模块或类复用。
+
+        参数:
+            request_id: `request`的唯一标识。 类型：`Any`。
+            code: 稳定错误码、状态码或调用方可识别的协议代码。 类型：`int`。
+            message: 待发送、校验、脱敏或写入会话的消息文本或对象。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "jsonrpc": "2.0",
             "id": request_id,

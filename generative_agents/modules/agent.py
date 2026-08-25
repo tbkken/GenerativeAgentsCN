@@ -1,4 +1,4 @@
-"""generative_agents.agent"""
+"""智能体认知、记忆、计划、交互与移动决策。"""
 
 import os
 import math
@@ -10,10 +10,22 @@ import json
 from generative_agents.modules import memory, prompt, utils
 from generative_agents.modules.model.llm_model import create_llm_model
 from generative_agents.modules.memory.associate import Concept
+from generative_agents.status import MemoryDeltaKind, MemoryState
 
 
 def estimate_chat_duration(chats, chars_per_minute=240):
-    """ga-cn-v1: a non-empty chat occupies at least one virtual minute."""
+    """执行 的`estimate``chat``duration`操作。
+
+    参数:
+        chats: 按时间顺序排列的对话消息或说话人—内容二元组。
+        chars_per_minute: 估算对话时长时采用的每分钟字符数，必须为正数。 默认值：`240`。
+
+    返回:
+        返回函数计算得到的结果。
+
+    异常:
+        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+    """
     if chars_per_minute <= 0:
         raise ValueError("chars_per_minute must be positive")
     return max(
@@ -26,13 +38,21 @@ _INVALID_CHAT_MARKERS = ("填坑", "待补充", "占位", "todo", "placeholder")
 
 
 class AgentSpatialConfigurationError(RuntimeError):
-    """A published legacy Agent cannot resolve a required runtime address."""
+    """已发布的旧版智能体无法解析必需运行时地址。"""
 
     code = "AGENT_SPATIAL_CONFIGURATION_INVALID"
 
 
 def valid_chat_message(message, previous=()):
-    """Reject empty, placeholder and exact-repeat turns before persistence."""
+    """执行 的`valid``chat``message`操作。
+
+    参数:
+        message: 待发送、校验、脱敏或写入会话的消息文本或对象。
+        previous: 用于去重或连续性判断的前序消息、状态或记录集合。
+
+    返回:
+        返回函数计算得到的结果。
+    """
 
     if not isinstance(message, str):
         return False
@@ -70,9 +90,26 @@ class Agent:
         algorithm=None,
         memory_stream=None,
     ):
-        # Runtime-only collaborators such as RunControl contain thread locks and
-        # must retain identity. Copy the serializable definition first, then put
-        # those injected references back into the per-Agent embedding config.
+        # RunControl 等仅运行时协作者含有线程锁，必须保持对象身份。
+        # 先复制可序列化定义，再把注入依赖放回每个智能体的嵌入配置。
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            config: 当前组件使用的结构化配置；字段约束由对应配置模型定义。
+            maze: 提供格子、地址、可通行性与寻路能力的地图实例。
+            conversation: 当前步骤的对话上下文或已经完成的会话记录。
+            logger: 记录运行诊断信息的日志器。
+            clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。
+            random_source: 运行私有的伪随机数生成器，用于保证快照恢复后的确定性。
+            skills: 当前智能体可调用的技能指令仓库或执行器集合。
+            models: 按用途组织的运行私有模型注册表；为空时按配置创建。 默认值：`None`。
+            model_trace: 模型调用轨迹写入器；为空时不记录物理调用明细。 默认值：`None`。
+            algorithm: 当前运行选定的算法配置；为空时使用系统默认算法参数。 默认值：`None`。
+            memory_stream: 运行私有的持久化记忆流；为空时只使用进程内关联记忆。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         embedding = config.get("associate", {}).get("embedding", {})
         runtime_embedding = {
             key: embedding[key]
@@ -89,9 +126,7 @@ class Agent:
         serializable_associate["embedding"] = serializable_embedding
         serializable_config["associate"] = serializable_associate
         agent_config = copy.deepcopy(serializable_config)
-        agent_config.get("associate", {}).get("embedding", {}).update(
-            runtime_embedding
-        )
+        agent_config.get("associate", {}).get("embedding", {}).update(runtime_embedding)
         self.name = agent_config["name"]
         self.agent_key = agent_config.get("agent_key", self.name)
         self.maze = maze
@@ -112,7 +147,7 @@ class Agent:
         }
         self._result_events = []
 
-        # agent config
+        # 智能体配置
         self.percept_config = agent_config["percept"]
         self.think_config = agent_config["think"]
         chat_config = agent_config.get("chat", {})
@@ -135,7 +170,7 @@ class Agent:
             ).items()
         }
 
-        # memory
+        # 记忆组件
         self.spatial = memory.Spatial(
             **agent_config["spatial"], random_source=random_source
         )
@@ -147,7 +182,7 @@ class Agent:
         )
         self.concepts, self.chats = [], agent_config.get("chats", [])
 
-        # prompt
+        # 提示词与模型调用
         self.scratch = prompt.Scratch(
             self.name,
             agent_config["currently"],
@@ -157,20 +192,19 @@ class Agent:
             skills=skills,
         )
 
-        # status
+        # 当前状态
         status = {"poignancy": 0}
         self.status = utils.update_dict(status, agent_config.get("status", {}))
         self.plan = agent_config.get("plan", {})
 
-        # record
+        # 运行记录
         self.last_record = self._clock.daily_duration()
 
-        # action and events
+        # 行为与事件
         if "action" in agent_config:
             self.action = memory.Action.from_dict(agent_config["action"], clock=clock)
-            # A verified checkpoint carries the exact observed coordinate.  The
-            # address may cover many tiles, so re-choosing one would silently
-            # fork the resumed trajectory before RNG state is restored.
+            # 已验证检查点保存的是准确观测坐标。一个地址可能覆盖多个格子，若重新选格子，
+            # 会在随机数状态恢复前悄悄造成恢复轨迹分叉。
             if "coord" in agent_config:
                 initial_coord = tuple(agent_config["coord"])
             else:
@@ -186,13 +220,18 @@ class Agent:
                 clock=clock,
             )
 
-        # update maze
+        # 把智能体最新事件同步到地图。
         self.coord, self.path = None, None
         self.move(initial_coord, agent_config.get("path"))
         if self.coord is None:
             self.coord = initial_coord
 
     def abstract(self):
+        """执行 `Agent` 的`abstract`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         des = {
             "name": self.name,
             "currently": self.scratch.currently,
@@ -214,9 +253,19 @@ class Agent:
         return des
 
     def __str__(self):
+        """执行`str`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return utils.dump_dict(self.abstract())
 
     def reset(self):
+        """执行 `Agent` 的`reset`操作。
+
+        返回:
+            无返回值。
+        """
         if not self._llm:
             if self._models is not None:
                 self._llm = self._models.get("chat")
@@ -226,14 +275,35 @@ class Agent:
                 )
 
     def begin_step(self, step_no):
+        """执行 `Agent` 的`begin`仿真步操作。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if not isinstance(step_no, int) or isinstance(step_no, bool) or step_no < 1:
             raise ValueError("step_no must be a positive integer")
         self._current_step_no = step_no
 
     def completion(self, func_hint, *args, **kwargs):
-        assert hasattr(
-            self.scratch, "prompt_" + func_hint
-        ), "Can not find func prompt_{} from scratch".format(func_hint)
+        """执行 `Agent` 的`completion`操作。
+
+        参数:
+            func_hint: 提示模型或执行器选择目标能力的函数语义提示。
+            *args: 传给底层调用的额外位置参数，顺序和含义与被调用接口保持一致。
+            **kwargs: 传给底层调用的额外关键字参数，键名和含义与被调用接口保持一致。
+
+        返回:
+            返回函数计算得到的结果。
+        """
+        assert hasattr(self.scratch, "prompt_" + func_hint), (
+            "Can not find func prompt_{} from scratch".format(func_hint)
+        )
         func = getattr(self.scratch, "prompt_" + func_hint)
         res = func(*args, **kwargs)._asdict()
         title, msg = "{}.{}".format(self.name, func_hint), {}
@@ -252,7 +322,9 @@ class Agent:
         self.logger.debug(utils.block_msg(title, msg))
         revision_resolver = getattr(self._skills, "revision", None)
         skill_revision = (
-            revision_resolver(func_hint) if callable(revision_resolver) else "unversioned"
+            revision_resolver(func_hint)
+            if callable(revision_resolver)
+            else "unversioned"
         )
         self._result_events.append(
             {
@@ -267,10 +339,24 @@ class Agent:
         return output
 
     def think(self, status, agents_by_name):
+        """综合感知、记忆、计划与反思结果，生成智能体下一步行为。
+
+        参数:
+            status: 当前仿真步的世界状态映射，包含时间、位置和可观察对象等认知输入。
+            agents_by_name: 以智能体展示名为键的运行实例映射，用于解析交互对象。
+
+        返回:
+            返回函数计算得到的结果。
+
+        说明:
+            认知阶段的调用顺序会影响记忆与计划结果；调整感知、反思、计划的先后关系会改变仿真语义。
+        """
         events = self.move(status["coord"], status.get("path"))
         plan, _ = self.make_schedule()
 
-        if (plan["describe"] == "sleeping" or "睡" in plan["describe"]) and self.is_awake():
+        if (
+            plan["describe"] == "sleeping" or "睡" in plan["describe"]
+        ) and self.is_awake():
             self.logger.info("{} is going to sleep...".format(self.name))
             address = self._required_spatial_address("睡觉")
             self.action = memory.Action(
@@ -309,6 +395,17 @@ class Agent:
         return self.plan
 
     def _required_spatial_address(self, hint):
+        """执行`required`空间数据`address`的内部处理，供当前模块或类复用。
+
+        参数:
+            hint: 帮助模型、解析器或选择器缩小候选范围的提示信息。
+
+        返回:
+            返回函数计算得到的结果。
+
+        异常:
+            AgentSpatialConfigurationError: 当底层操作报告该异常条件时抛出。
+        """
         address = self.spatial.find_address(hint, as_list=True)
         if not address:
             raise AgentSpatialConfigurationError(
@@ -324,9 +421,26 @@ class Agent:
         return address
 
     def move(self, coord, path=None):
+        """执行 `Agent` 的`move`操作。
+
+        参数:
+            coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 默认值：`None`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         events = {}
 
         def _update_tile(coord):
+            """更新`tile`。
+
+            参数:
+                coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             tile = self.maze.tile_at(coord)
             if not self.action:
                 return {}
@@ -342,9 +456,7 @@ class Agent:
             tile.remove_events(subject=self.name)
             if tile.has_address("game_object"):
                 addr = tile.get_address("game_object")
-                self.maze.update_obj(
-                    self.coord, memory.Event(addr[-1], address=addr)
-                )
+                self.maze.update_obj(self.coord, memory.Event(addr[-1], address=addr))
             events.update({e: self.coord for e in tile.get_events()})
         if not path:
             events.update(_update_tile(coord))
@@ -354,9 +466,14 @@ class Agent:
         return events
 
     def make_schedule(self):
+        """为指定时间范围生成并规范化智能体日程。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if not self.schedule.scheduled():
             self.logger.info("{} is making schedule...".format(self.name))
-            # update currently
+            # 更新面向展示的当前活动摘要。
             if self.associate.index.nodes_num > 0:
                 self.associate.cleanup_index()
                 focus = [
@@ -373,11 +490,11 @@ class Agent:
                     self.scratch.currently = self.completion(
                         "retrieve_currently", plan, thought
                     )
-            # make init schedule
+            # 生成首次运行使用的日程。
             self.schedule.create = self._clock.get_date()
             wake_up = self.completion("wake_up")
             init_schedule = self.completion("schedule_init", wake_up)
-            # make daily schedule
+            # 生成当天完整日程。
             hours = [f"{i}:00" for i in range(24)]
             # seed = [(h, "sleeping") for h in hours[:wake_up]]
             seed = [(h, "睡觉") for h in hours[:wake_up]]
@@ -392,6 +509,14 @@ class Agent:
                     break
 
             def _to_duration(date_str):
+                """执行`to``duration`的内部处理，供当前模块或类复用。
+
+                参数:
+                    date_str: 需要解析为仿真日期或时间的文本。
+
+                返回:
+                    返回函数计算得到的结果。
+                """
                 return utils.daily_duration(utils.to_date(date_str, "%H:%M"))
 
             schedule = {_to_duration(k): v for k, v in schedule.items()}
@@ -415,7 +540,7 @@ class Agent:
                 event,
                 expire=self.schedule.create + datetime.timedelta(days=30),
             )
-        # decompose current plan
+        # 把当前粗粒度计划分解成可执行时间片。
         plan, _ = self.schedule.current_plan()
         if self.schedule.decompose(plan):
             decompose_schedule = self.completion(
@@ -444,13 +569,23 @@ class Agent:
         local_interruption=False,
         reason="ACTION_REVISED",
     ):
+        """执行 `Agent` 的`revise`日程操作。
+
+        参数:
+            event: 当前感知、处理或写入结果账本的领域事件。
+            start: 处理区间的起始位置或起始时间。
+            duration: 行为、对话或日程项占用的虚拟时间长度。
+            local_interruption: 是否只在当前日程片段内处理突发事件，不重排整日计划。 默认值：`False`。
+            reason: 触发当前操作的原因文本或协议枚举值，用于审计和状态迁移。 默认值：`'ACTION_REVISED'`。
+
+        返回:
+            无返回值。
+        """
         self.action = memory.Action(
             event, start=start, duration=duration, clock=self._clock
         )
         if local_interruption:
-            self.schedule.insert_interruption(
-                event.get_describe(), start, duration
-            )
+            self.schedule.insert_interruption(event.get_describe(), start, duration)
         else:
             plan, _ = self.schedule.current_plan()
             if len(plan["decompose"]) > 0:
@@ -477,13 +612,18 @@ class Agent:
         )
 
     def percept(self):
+        """感知智能体周边环境，并把新事件写入短期记忆。
+
+        返回:
+            无返回值。
+        """
         scope = self.maze.get_scope(self.coord, self.percept_config)
-        # add spatial memory
+        # 更新空间记忆。
         for tile in scope:
             if tile.has_address("game_object"):
                 self.spatial.add_leaf(tile.address)
         events, arena = {}, self.get_tile().get_address("arena")
-        # gather events in scope
+        # 收集感知范围内的事件。
         for tile in scope:
             if not tile.events or tile.get_address("arena") != arena:
                 continue
@@ -492,7 +632,7 @@ class Agent:
                 if dist < events.get(event, float("inf")):
                     events[event] = dist
         events = list(sorted(events.keys(), key=lambda k: events[k]))
-        # get concepts
+        # 把事件解析为可写入记忆的概念。
         self.concepts, valid_num = [], 0
         for idx, event in enumerate(events[: self.percept_config["att_bandwidth"]]):
             recent_nodes = (
@@ -520,6 +660,14 @@ class Agent:
         )
 
     def make_plan(self, agents_by_name):
+        """依据当前日程与环境状态生成下一阶段行动计划。
+
+        参数:
+            agents_by_name: 以智能体展示名为键的运行实例映射，用于解析交互对象。
+
+        返回:
+            无返回值。
+        """
         if self._reaction(agents_by_name):
             return
         if self.path:
@@ -528,7 +676,15 @@ class Agent:
             self.action = self._determine_action()
 
     def choose_game_object_interaction(self, interactions, planned_path):
-        """Explicitly select one nearby affordance, or decline with ``NONE``."""
+        """执行 `Agent` 的`choose`仿真世界对象`interaction`操作。
+
+        参数:
+            interactions: 当前智能体可以观察或参与的对象交互候选集合。
+            planned_path: `planned`对应的文件系统路径。
+
+        返回:
+            返回函数计算得到的结果。
+        """
 
         if not interactions:
             return "NONE"
@@ -552,7 +708,21 @@ class Agent:
         response,
         address,
     ):
-        """Store a passive object response, then let the Agent decide movement."""
+        """执行 `Agent` 的`receive`仿真世界对象`observation`操作。
+
+        参数:
+            object_key: 用于稳定定位对象的键。
+            object_name: 智能体准备交互的世界对象名称。
+            interaction_key: 用于稳定定位`interaction`的键。
+            skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。
+            skill_revision: 当前运行固定使用的技能修订标识。
+            request: 待执行、记录或发送到外部模型的请求对象。
+            response: 模型、HTTP 接口或下游组件返回的原始响应，尚待校验或转换。
+            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。
+
+        返回:
+            返回函数计算得到的结果。
+        """
 
         description = f"{object_name}回应{self.name}：{response}"
         event = memory.Event(
@@ -591,24 +761,43 @@ class Agent:
         )
         return directive
 
-    # create action && object events
+        # 同时生成智能体行为事件和对象状态事件。
+
     def make_event(self, subject, describe, address):
         # emoji = self.completion("describe_emoji", describe)
         # return self.completion(
         #     "describe_event", subject, subject + describe, address, emoji
         # )
 
-        e_describe = describe.replace("(", "").replace(")", "").replace("<", "").replace(">", "")
+        """执行 `Agent` 的`make`事件操作。
+
+        参数:
+            subject: 事件三元组中的主体，通常是智能体或世界对象标识。
+            describe: 事件、行为或记忆的人类可读描述文本。
+            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。
+
+        返回:
+            返回函数计算得到的结果。
+        """
+        e_describe = (
+            describe.replace("(", "").replace(")", "").replace("<", "").replace(">", "")
+        )
         if e_describe.startswith(subject + "此时"):
-            e_describe = e_describe[len(subject + "此时"):]
+            e_describe = e_describe[len(subject + "此时") :]
         if e_describe.startswith(subject):
-            e_describe = e_describe[len(subject):]
+            e_describe = e_describe[len(subject) :]
         event = memory.Event(
             subject, "此时", e_describe, describe=describe, address=address
         )
         return event
 
     def reflect(self):
+        """根据近期记忆的重要性生成更高层次的反思记忆。
+
+        返回:
+            无返回值。
+        """
+
         def _add_thought(thought, evidence=None):
             # event = self.completion(
             #     "describe_event",
@@ -616,6 +805,15 @@ class Agent:
             #     thought,
             #     address=self.get_tile().get_address(),
             # )
+            """执行`add``thought`的内部处理，供当前模块或类复用。
+
+            参数:
+                thought: 智能体生成并准备写入记忆的思考内容。
+                evidence: 支持当前反思或记忆结论的证据节点集合。 默认值：`None`。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             event = self.make_event(self.name, thought, self.get_tile().get_address())
             return self._add_concept("thought", event, filling=evidence)
 
@@ -635,14 +833,14 @@ class Agent:
         nodes = sorted(nodes, key=lambda n: n.access, reverse=True)[
             : self.associate.max_importance
         ]
-        # summary thought
+        # 汇总近期思考。
         focus = self.completion("reflect_focus", nodes, 3)
         retrieved = self.associate.retrieve_focus(focus, reduce_all=False)
         for r_nodes in retrieved.values():
             thoughts = self.completion("reflect_insights", r_nodes, 5)
             for thought, evidence in thoughts:
                 _add_thought(thought, evidence)
-        # summary chats
+        # 汇总近期对话。
         if self.chats:
             recorded, evidence = set(), []
             for name, _ in self.chats:
@@ -660,6 +858,14 @@ class Agent:
         self.chats = []
 
     def find_path(self, agents_by_name):
+        """在地图可通行区域内搜索从起点到终点的移动路径。
+
+        参数:
+            agents_by_name: 以智能体展示名为键的运行实例映射，用于解析交互对象。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         address = self.get_event().address
         if self.path:
             return self.path
@@ -674,8 +880,16 @@ class Agent:
         if tuple(self.coord) in target_tiles:
             return []
 
-        # filter tile with self event
+        # 过滤仅由智能体自身产生的格子事件。
         def _ignore_target(t_coord):
+            """执行`ignore``target`的内部处理，供当前模块或类复用。
+
+            参数:
+                t_coord: 路径搜索或移动判断使用的目标坐标。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             if list(t_coord) == list(self.coord):
                 return True
             events = self.maze.tile_at(t_coord).get_events()
@@ -693,6 +907,11 @@ class Agent:
         return pathes[target][1:]
 
     def _determine_action(self):
+        """执行`determine``action`的内部处理，供当前模块或类复用。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         self.logger.info("{} is determining action...".format(self.name))
         plan, de_plan = self.schedule.current_plan()
         describes = [plan["describe"], de_plan["describe"]]
@@ -734,14 +953,39 @@ class Agent:
         )
 
     def _reaction(self, agents_by_name=None, ignore_words=None):
+        """执行`reaction`的内部处理，供当前模块或类复用。
+
+        参数:
+            agents_by_name: 以智能体展示名为键的运行实例映射，用于解析交互对象。 默认值：`None`。
+            ignore_words: 比较或检索文本时需要忽略的词集合。 默认值：`None`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         focus = None
         agents_by_name = agents_by_name or {}
         ignore_words = ignore_words or ["空闲"]
 
         def _focus(concept):
+            """执行`focus`的内部处理，供当前模块或类复用。
+
+            参数:
+                concept: 从事件或记忆中抽取的认知概念节点。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             return concept.event.subject in agents_by_name
 
         def _ignore(concept):
+            """执行`ignore`的内部处理，供当前模块或类复用。
+
+            参数:
+                concept: 从事件或记忆中抽取的认知概念节点。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             return any(i in concept.describe for i in ignore_words)
 
         if agents_by_name:
@@ -764,8 +1008,29 @@ class Agent:
         return False
 
     def _skip_react(self, other):
+        """执行`skip``react`的内部处理，供当前模块或类复用。
+
+        参数:
+            other: 当前操作使用的`other`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
+
         def _skip(event):
-            if not event.address or "sleeping" in event.get_describe(False) or "睡觉" in event.get_describe(False):
+            """执行`skip`的内部处理，供当前模块或类复用。
+
+            参数:
+                event: 当前感知、处理或写入结果账本的领域事件。
+
+            返回:
+                返回函数计算得到的结果。
+            """
+            if (
+                not event.address
+                or "sleeping" in event.get_describe(False)
+                or "睡觉" in event.get_describe(False)
+            ):
                 return True
             if event.predicate == "待开始":
                 return True
@@ -778,14 +1043,28 @@ class Agent:
         return False
 
     def _chat_with(self, other, focus):
-        if len(self.schedule.daily_schedule) < 1 or len(other.schedule.daily_schedule) < 1:
-            # initializing
+        """执行`chat``with`的内部处理，供当前模块或类复用。
+
+        参数:
+            other: 当前操作使用的`other`。
+            focus: 当前反思、检索或对话需要重点关注的主题。
+
+        返回:
+            返回函数计算得到的结果。
+        """
+        if (
+            len(self.schedule.daily_schedule) < 1
+            or len(other.schedule.daily_schedule) < 1
+        ):
+            # 初始化对话状态。
             return False
         if self._skip_react(other):
             return False
         if self.path or other.path:
             return False
-        if self.get_event().fit(predicate="对话") or other.get_event().fit(predicate="对话"):
+        if self.get_event().fit(predicate="对话") or other.get_event().fit(
+            predicate="对话"
+        ):
             return False
 
         self.last_chat_at = getattr(self, "last_chat_at", {})
@@ -814,6 +1093,16 @@ class Agent:
         ]
 
         def generate_valid_turn(speaker, listener, relation):
+            """执行 `Agent` 的`generate``valid``turn`操作。
+
+            参数:
+                speaker: 对话中生成当前消息的智能体。
+                listener: 对话中接收当前消息的智能体。
+                relation: 两个智能体之间的关系描述或关系边记录。
+
+            返回:
+                返回函数计算得到的结果。
+            """
             for attempt in range(2):
                 text = speaker.completion(
                     "generate_chat", speaker, listener, relation, chats
@@ -842,9 +1131,7 @@ class Agent:
                         break
                 chats.append((self.name, text))
                 # 话题结束检测独立于复读检测开关。
-                end = self.completion(
-                    "decide_chat_terminate", self, other, chats
-                )
+                end = self.completion("decide_chat_terminate", self, other, chats)
                 if end:
                     break
             else:
@@ -855,18 +1142,14 @@ class Agent:
                 break
             if i > 0 and self.repeat_detection_enabled:
                 # 对于响应对话的Agent，从第2轮开始，检查是否出现“复读”现象
-                end = self.completion(
-                    "generate_chat_check_repeat", other, chats, text
-                )
+                end = self.completion("generate_chat_check_repeat", other, chats, text)
                 if end:
                     break
 
             chats.append((other.name, text))
 
             # 对于响应对话的Agent，从第1轮开始，检查话题是否结束
-            end = other.completion(
-                "decide_chat_terminate", other, self, chats
-            )
+            end = other.completion("decide_chat_terminate", other, self, chats)
             if end:
                 break
 
@@ -881,7 +1164,11 @@ class Agent:
         key = self._clock.get_date("%Y%m%d-%H:%M")
         if key not in self.conversation.keys():
             self.conversation[key] = []
-        self.conversation[key].append({f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats})
+        self.conversation[key].append(
+            {
+                f"{self.name} -> {other.name} @ {'，'.join(self.get_event().address)}": chats
+            }
+        )
 
         self.logger.info(
             "{} and {} has chats\n  {}".format(
@@ -893,8 +1180,7 @@ class Agent:
         chat_summary = self.completion("summarize_chats", chats)
         if not valid_chat_message(chat_summary):
             chat_summary = "；".join(
-                "{}：{}".format(speaker, content)
-                for speaker, content in chats
+                "{}：{}".format(speaker, content) for speaker, content in chats
             )
         chars_per_minute = (
             self._algorithm.chat_chars_per_minute if self._algorithm else 240
@@ -914,13 +1200,20 @@ class Agent:
         )
         self.last_chat_at[other.agent_key] = start
         other.last_chat_at[self.agent_key] = start
-        self.schedule_chat(
-            chats, chat_summary, start, duration, other
-        )
+        self.schedule_chat(chats, chat_summary, start, duration, other)
         other.schedule_chat(chats, chat_summary, start, duration, self)
         return True
 
     def _wait_other(self, other, focus):
+        """执行`wait``other`的内部处理，供当前模块或类复用。
+
+        参数:
+            other: 当前操作使用的`other`。
+            focus: 当前反思、检索或对话需要重点关注的主题。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if self._skip_react(other):
             return False
         if not self.path:
@@ -945,6 +1238,19 @@ class Agent:
         self.revise_schedule(event, start, duration)
 
     def schedule_chat(self, chats, chats_summary, start, duration, other, address=None):
+        """执行 `Agent` 的日程`chat`操作。
+
+        参数:
+            chats: 按时间顺序排列的对话消息或说话人—内容二元组。
+            chats_summary: 对既有对话内容的压缩摘要，用于后续认知提示词。
+            start: 处理区间的起始位置或起始时间。
+            duration: 行为、对话或日程项占用的虚拟时间长度。
+            other: 当前操作使用的`other`。
+            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 默认值：`None`。
+
+        返回:
+            无返回值。
+        """
         self.chats.extend(chats)
         event = memory.Event(
             self.name,
@@ -970,6 +1276,18 @@ class Agent:
         expire=None,
         filling=None,
     ):
+        """执行`add``concept`的内部处理，供当前模块或类复用。
+
+        参数:
+            e_type: 写入关联记忆时使用的事件或记忆类型。
+            event: 当前感知、处理或写入结果账本的领域事件。
+            create: 记忆、事件或记录的创建时间；为空时使用当前仿真时间。 默认值：`None`。
+            expire: 记忆的过期时间；为空时按记忆策略计算或表示不过期。 默认值：`None`。
+            filling: 写入记忆节点的补充结构化内容。 默认值：`None`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if event.fit(None, "is", "idle"):
             poignancy = 1
         elif event.fit(None, "此时", "空闲"):
@@ -1011,7 +1329,7 @@ class Agent:
         self._result_events.append(
             {
                 "kind": "memory",
-                "memory_kind": "CREATED",
+                "memory_kind": MemoryDeltaKind.CREATED.value,
                 "agent_key": self.agent_key,
                 "memory_id": canonical_memory_id,
                 "index_node_id": concept.node_id,
@@ -1028,12 +1346,14 @@ class Agent:
             canonical_memory_id = self._memory_id_map.pop(memory_id, memory_id)
             if self._memory_stream is not None:
                 self._memory_stream.remove(
-                    canonical_memory_id, state="EVICTED", emit_event=False
+                    canonical_memory_id,
+                    state=MemoryState.EVICTED,
+                    emit_event=False,
                 )
             self._result_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": "EVICTED",
+                    "memory_kind": MemoryDeltaKind.EVICTED.value,
                     "agent_key": self.agent_key,
                     "memory_id": canonical_memory_id,
                     "index_node_id": memory_id,
@@ -1043,6 +1363,11 @@ class Agent:
         return concept
 
     def drain_result_events(self):
+        """执行 `Agent` 的`drain`结果`events`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         lifecycle_reader = getattr(self.associate, "drain_lifecycle_events", None)
         lifecycle = (
             lifecycle_reader()
@@ -1056,7 +1381,7 @@ class Agent:
             self._result_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": "ACCESSED",
+                    "memory_kind": MemoryDeltaKind.ACCESSED.value,
                     "agent_key": self.agent_key,
                     "memory_id": canonical_memory_id,
                     "index_node_id": memory_id,
@@ -1067,12 +1392,14 @@ class Agent:
             canonical_memory_id = self._memory_id_map.pop(memory_id, memory_id)
             if self._memory_stream is not None:
                 self._memory_stream.remove(
-                    canonical_memory_id, state="EXPIRED", emit_event=False
+                    canonical_memory_id,
+                    state=MemoryState.EXPIRED,
+                    emit_event=False,
                 )
             self._result_events.append(
                 {
                     "kind": "memory",
-                    "memory_kind": "EXPIRED",
+                    "memory_kind": MemoryDeltaKind.EXPIRED.value,
                     "agent_key": self.agent_key,
                     "memory_id": canonical_memory_id,
                     "index_node_id": memory_id,
@@ -1083,12 +1410,30 @@ class Agent:
         return events
 
     def get_tile(self):
+        """获取`tile`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return self.maze.tile_at(self.coord)
 
     def get_event(self, as_act=True):
+        """获取事件。
+
+        参数:
+            as_act: 是否把事件转换为智能体行为事件；否则保留原始事件语义。 默认值：`True`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         return self.action.event if as_act else self.action.obj_event
 
     def is_awake(self):
+        """判断是否`awake`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if not self.action:
             return True
         if self.get_event().fit(self.name, "is", "sleeping"):
@@ -1098,11 +1443,24 @@ class Agent:
         return True
 
     def llm_available(self):
+        """执行 `Agent` 的`llm``available`操作。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if not self._llm:
             return False
         return self._llm.is_available()
 
     def to_dict(self, with_action=True):
+        """执行 `Agent` 的`to``dict`操作。
+
+        参数:
+            with_action: 返回事件时是否同时附带智能体当前行为。 默认值：`True`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         info = {
             "status": self.status,
             "schedule": self.schedule.to_dict(),

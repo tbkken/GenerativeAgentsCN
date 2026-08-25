@@ -20,24 +20,51 @@ from generative_agents.persistence.models import (
     ToolDefinition,
     ToolRevision,
 )
+from generative_agents.status import RevisionState
 
 from .errors import ServiceError, not_found
 
 
 def _now() -> datetime:
+    """执行`now`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回 `datetime` 类型的处理结果。
+    """
     return datetime.now(timezone.utc)
 
 
 def _digest(document: dict[str, Any]) -> str:
+    """执行`digest`的内部处理，供当前模块或类复用。
+
+    参数:
+        document: 待校验、转换或持久化的结构化文档。 类型：`dict[str, Any]`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     return hashlib.sha256(canonical_json_bytes(document)).hexdigest()
 
 
 def _generated_key(name: str) -> str:
+    """执行`generated``key`的内部处理，供当前模块或类复用。
+
+    参数:
+        name: 目标对象的人类可读名称。 类型：`str`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     base = re.sub(r"[^a-z0-9]+", "-", name.casefold()).strip("-")[:48]
     return f"{base or 'tool'}-{uuid4().hex[:8]}"
 
 
 def _builtins() -> dict[str, ToolContract]:
+    """执行`builtins`的内部处理，供当前模块或类复用。
+
+    返回:
+        返回以字段名或业务键组织的结构化映射。
+    """
     return {
         "generic-car": ToolContract.model_validate(
             {
@@ -109,12 +136,24 @@ def _builtins() -> dict[str, ToolContract]:
     }
 
 
-
 class ToolService:
     def __init__(self, database: Database) -> None:
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+
+        返回:
+            无返回值。
+        """
         self.database = database
 
     def ensure_builtin_tools(self) -> None:
+        """确保`builtin``tools`。
+
+        返回:
+            无返回值。
+        """
         with self.database.session_factory.begin() as session:
             for tool_key, contract in _builtins().items():
                 if session.scalar(
@@ -129,7 +168,7 @@ class ToolService:
                     name=contract.name,
                     description=contract.summary,
                     tool_kind=contract.kind,
-                    status="PUBLISHED",
+                    status=RevisionState.PUBLISHED.value,
                     is_builtin=True,
                     row_version=1,
                     created_at=now,
@@ -141,7 +180,7 @@ class ToolService:
                     id=str(uuid4()),
                     tool_id=tool.id,
                     revision_no=1,
-                    state="PUBLISHED",
+                    state=RevisionState.PUBLISHED.value,
                     schema_version=contract.schema_version,
                     contract_json=document,
                     contract_hash=_digest(document),
@@ -165,6 +204,22 @@ class ToolService:
         source_revision_id: str | None = None,
         contract: ToolContract | dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        """创建工具。
+
+        参数:
+            name: 目标对象的人类可读名称。 类型：`str`。
+            description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str`。 默认值：`''`。
+            tool_key: 用于稳定定位工具的键。 类型：`str | None`。 默认值：`None`。
+            tool_kind: 工具的类型判别值。 类型：`str`。 默认值：`'OTHER'`。
+            source_revision_id: `source`修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
+            contract: 已经通过结构校验的领域协议对象。 类型：`ToolContract | dict[str, Any] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         name = name.strip()
         if not name:
             raise ServiceError("INVALID_TOOL_NAME", "工具名称不能为空", status_code=422)
@@ -173,11 +228,13 @@ class ToolService:
             if session.scalar(
                 select(ToolDefinition.id).where(ToolDefinition.tool_key == stable_key)
             ):
-                raise ServiceError("TOOL_KEY_CONFLICT", "工具稳定键已被使用", status_code=409)
+                raise ServiceError(
+                    "TOOL_KEY_CONFLICT", "工具稳定键已被使用", status_code=409
+                )
             source = None
             if source_revision_id:
                 source = session.get(ToolRevision, source_revision_id)
-                if source is None or source.state != "PUBLISHED":
+                if source is None or source.state != RevisionState.PUBLISHED.value:
                     raise not_found("tool_revision", source_revision_id)
                 model = ToolContract.model_validate(source.contract_json)
             elif contract is not None:
@@ -226,7 +283,7 @@ class ToolService:
                 name=name,
                 description=description.strip()[:10_000],
                 tool_kind=model.kind,
-                status="DRAFT",
+                status=RevisionState.DRAFT.value,
                 is_builtin=False,
                 row_version=1,
                 created_at=now,
@@ -238,7 +295,7 @@ class ToolService:
                 id=str(uuid4()),
                 tool_id=tool.id,
                 revision_no=1,
-                state="DRAFT",
+                state=RevisionState.DRAFT.value,
                 base_revision_id=source.id if source else None,
                 schema_version=model.schema_version,
                 contract_json=document,
@@ -257,26 +314,47 @@ class ToolService:
         self,
         *,
         query: str | None = None,
-        status: str | None = None,
+        status: RevisionState | str | None = None,
         kind: str | None = None,
         page: int = 1,
         page_size: int = 50,
     ) -> dict[str, Any]:
+        """查询`tools`。
+
+        参数:
+            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
+            status: 目录对象状态筛选值。允许值：`DRAFT`（草稿）或 `PUBLISHED`（已发布）。 类型：`RevisionState | str | None`。 默认值：`None`。
+            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str | None`。 默认值：`None`。
+            page: 从 1 开始的分页页码。 类型：`int`。 默认值：`1`。
+            page_size: 每页最多返回的记录数量。 类型：`int`。 默认值：`50`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if page < 1 or not 1 <= page_size <= 100:
-            raise ServiceError("INVALID_PAGINATION", "工具分页参数无效", status_code=422)
+            raise ServiceError(
+                "INVALID_PAGINATION", "工具分页参数无效", status_code=422
+            )
         statement = select(ToolDefinition)
         count_statement = select(func.count()).select_from(ToolDefinition)
         if query and query.strip():
             pattern = f"%{query.strip()}%"
             predicate = or_(
-                ToolDefinition.name.ilike(pattern), ToolDefinition.tool_key.ilike(pattern)
+                ToolDefinition.name.ilike(pattern),
+                ToolDefinition.tool_key.ilike(pattern),
             )
             statement = statement.where(predicate)
             count_statement = count_statement.where(predicate)
         if status:
-            normalized = status.upper()
-            if normalized not in {"DRAFT", "PUBLISHED"}:
-                raise ServiceError("INVALID_TOOL_STATUS", "工具状态筛选无效", status_code=422)
+            try:
+                normalized = RevisionState(str(status).upper()).value
+            except ValueError as exc:
+                raise ServiceError(
+                    "INVALID_TOOL_STATUS", "工具状态筛选无效", status_code=422
+                ) from exc
             statement = statement.where(ToolDefinition.status == normalized)
             count_statement = count_statement.where(ToolDefinition.status == normalized)
         if kind:
@@ -289,7 +367,9 @@ class ToolService:
                 "DEVICE",
                 "OTHER",
             }:
-                raise ServiceError("INVALID_TOOL_KIND", "工具类型筛选无效", status_code=422)
+                raise ServiceError(
+                    "INVALID_TOOL_KIND", "工具类型筛选无效", status_code=422
+                )
             statement = statement.where(ToolDefinition.tool_kind == normalized_kind)
             count_statement = count_statement.where(
                 ToolDefinition.tool_kind == normalized_kind
@@ -299,7 +379,8 @@ class ToolService:
             rows = list(
                 session.scalars(
                     statement.order_by(
-                        ToolDefinition.is_builtin.desc(), ToolDefinition.updated_at.desc()
+                        ToolDefinition.is_builtin.desc(),
+                        ToolDefinition.updated_at.desc(),
                     )
                     .offset((page - 1) * page_size)
                     .limit(page_size)
@@ -314,6 +395,14 @@ class ToolService:
             }
 
     def get_tool(self, tool_id: str) -> dict[str, Any]:
+        """获取工具。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             tool = session.get(ToolDefinition, tool_id)
             if tool is None:
@@ -321,6 +410,14 @@ class ToolService:
             return self._detail(session, tool)
 
     def get_draft(self, tool_id: str) -> dict[str, Any]:
+        """获取`draft`。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             tool, revision = self._require_draft(session, tool_id)
             return self._revision_detail(revision, tool)
@@ -334,12 +431,29 @@ class ToolService:
         name: str | None = None,
         description: str | None = None,
     ) -> dict[str, Any]:
+        """更新`draft`。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+            contract: 已经通过结构校验的领域协议对象。 类型：`ToolContract | dict[str, Any]`。
+            name: 目标对象的人类可读名称。 类型：`str | None`。 默认值：`None`。
+            description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         model = ToolContract.model_validate(contract)
         document = model.model_dump(mode="json", exclude_none=False)
         with self.database.session_factory.begin() as session:
             tool, revision = self._require_draft(session, tool_id)
             if revision.lock_version != expected_lock_version:
-                raise ServiceError("TOOL_REVISION_CONFLICT", "工具草稿已变化", status_code=409)
+                raise ServiceError(
+                    "TOOL_REVISION_CONFLICT", "工具草稿已变化", status_code=409
+                )
             revision.contract_json = document
             revision.contract_hash = _digest(document)
             revision.validation_json = None
@@ -357,28 +471,54 @@ class ToolService:
     def publish_draft(
         self, tool_id: str, *, draft_revision_id: str, expected_lock_version: int
     ) -> dict[str, Any]:
+        """发布`draft`。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+            draft_revision_id: 当前正在编辑且受乐观锁保护的草稿修订版本标识。 类型：`str`。
+            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self.database.session_factory.begin() as session:
             tool, revision = self._require_draft(session, tool_id)
             if tool.is_builtin:
                 raise ServiceError(
                     "BUILTIN_TOOL_IMMUTABLE", "系统内置工具不可修改", status_code=409
                 )
-            if revision.id != draft_revision_id or revision.lock_version != expected_lock_version:
-                raise ServiceError("TOOL_REVISION_CONFLICT", "工具草稿已变化", status_code=409)
+            if (
+                revision.id != draft_revision_id
+                or revision.lock_version != expected_lock_version
+            ):
+                raise ServiceError(
+                    "TOOL_REVISION_CONFLICT", "工具草稿已变化", status_code=409
+                )
             contract = ToolContract.model_validate(revision.contract_json)
             now = _now()
-            revision.state = "PUBLISHED"
+            revision.state = RevisionState.PUBLISHED.value
             revision.published_at = now
             revision.updated_at = now
             revision.validation_json = {"valid": True, "errors": [], "warnings": []}
             tool.current_draft_revision_id = None
             tool.current_published_revision_id = revision.id
-            tool.status = "PUBLISHED"
+            tool.status = RevisionState.PUBLISHED.value
             tool.row_version += 1
             tool.updated_at = now
             return self._revision_detail(revision, tool)
 
     def list_revisions(self, tool_id: str) -> list[dict[str, Any]]:
+        """查询`revisions`。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             tool = session.get(ToolDefinition, tool_id)
             if tool is None:
@@ -390,9 +530,21 @@ class ToolService:
                     .order_by(ToolRevision.revision_no.desc())
                 )
             )
-            return [self._revision_detail(item, tool, include_contract=False) for item in rows]
+            return [
+                self._revision_detail(item, tool, include_contract=False)
+                for item in rows
+            ]
 
     def get_revision(self, tool_id: str, revision_id: str) -> dict[str, Any]:
+        """获取修订版本。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+            revision_id: 实验修订版本的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self.database.session_factory() as session:
             tool = session.get(ToolDefinition, tool_id)
             revision = session.get(ToolRevision, revision_id)
@@ -403,33 +555,56 @@ class ToolService:
             return self._revision_detail(revision, tool)
 
     def fork_revision(self, tool_id: str, revision_id: str) -> dict[str, Any]:
+        """执行 `ToolService` 的`fork`修订版本操作。
+
+        参数:
+            tool_id: 工具的唯一标识。 类型：`str`。
+            revision_id: 实验修订版本的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self.database.session_factory.begin() as session:
             tool = session.get(ToolDefinition, tool_id)
             if tool is None:
                 raise not_found("tool", tool_id)
             if tool.is_builtin:
                 raise ServiceError(
-                    "BUILTIN_TOOL_IMMUTABLE", "请基于系统工具创建自定义工具", status_code=409
+                    "BUILTIN_TOOL_IMMUTABLE",
+                    "请基于系统工具创建自定义工具",
+                    status_code=409,
                 )
             if tool.current_draft_revision_id:
-                raise ServiceError("TOOL_DRAFT_EXISTS", "工具已有编辑中的草稿", status_code=409)
-            source = session.get(ToolRevision, revision_id)
-            if source is None or source.tool_id != tool_id or source.state != "PUBLISHED":
-                raise not_found("tool_revision", revision_id)
-            number = int(
-                session.scalar(
-                    select(func.max(ToolRevision.revision_no)).where(
-                        ToolRevision.tool_id == tool_id
-                    )
+                raise ServiceError(
+                    "TOOL_DRAFT_EXISTS", "工具已有编辑中的草稿", status_code=409
                 )
-                or 0
-            ) + 1
+            source = session.get(ToolRevision, revision_id)
+            if (
+                source is None
+                or source.tool_id != tool_id
+                or source.state != RevisionState.PUBLISHED.value
+            ):
+                raise not_found("tool_revision", revision_id)
+            number = (
+                int(
+                    session.scalar(
+                        select(func.max(ToolRevision.revision_no)).where(
+                            ToolRevision.tool_id == tool_id
+                        )
+                    )
+                    or 0
+                )
+                + 1
+            )
             now = _now()
             draft = ToolRevision(
                 id=str(uuid4()),
                 tool_id=tool_id,
                 revision_no=number,
-                state="DRAFT",
+                state=RevisionState.DRAFT.value,
                 base_revision_id=source.id,
                 schema_version=source.schema_version,
                 contract_json=copy.deepcopy(source.contract_json),
@@ -442,7 +617,7 @@ class ToolService:
             session.add(draft)
             session.flush()
             tool.current_draft_revision_id = draft.id
-            tool.status = "DRAFT"
+            tool.status = RevisionState.DRAFT.value
             tool.row_version += 1
             tool.updated_at = now
             return self._revision_detail(draft, tool)
@@ -451,6 +626,18 @@ class ToolService:
     def _require_draft(
         session: Session, tool_id: str
     ) -> tuple[ToolDefinition, ToolRevision]:
+        """执行`require``draft`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            tool_id: 工具的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         tool = session.get(ToolDefinition, tool_id)
         if tool is None:
             raise not_found("tool", tool_id)
@@ -459,12 +646,22 @@ class ToolService:
             if tool.current_draft_revision_id
             else None
         )
-        if revision is None or revision.state != "DRAFT":
-            raise ServiceError("TOOL_DRAFT_UNAVAILABLE", "工具没有可编辑草稿", status_code=409)
+        if revision is None or revision.state != RevisionState.DRAFT.value:
+            raise ServiceError(
+                "TOOL_DRAFT_UNAVAILABLE", "工具没有可编辑草稿", status_code=409
+            )
         return tool, revision
 
     @staticmethod
     def _summary(revision: ToolRevision | None) -> dict[str, Any] | None:
+        """执行摘要的内部处理，供当前模块或类复用。
+
+        参数:
+            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`ToolRevision | None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
+        """
         if revision is None:
             return None
         return {
@@ -475,12 +672,31 @@ class ToolService:
             "contract_hash": revision.contract_hash,
             "lock_version": revision.lock_version,
             "updated_at": revision.updated_at.isoformat(),
-            "published_at": revision.published_at.isoformat() if revision.published_at else None,
+            "published_at": revision.published_at.isoformat()
+            if revision.published_at
+            else None,
         }
 
     def _detail(self, session: Session, tool: ToolDefinition) -> dict[str, Any]:
-        draft = session.get(ToolRevision, tool.current_draft_revision_id) if tool.current_draft_revision_id else None
-        published = session.get(ToolRevision, tool.current_published_revision_id) if tool.current_published_revision_id else None
+        """执行`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
+            tool: 当前读取、发布或物化的工具定义或工具记录。 类型：`ToolDefinition`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
+        draft = (
+            session.get(ToolRevision, tool.current_draft_revision_id)
+            if tool.current_draft_revision_id
+            else None
+        )
+        published = (
+            session.get(ToolRevision, tool.current_published_revision_id)
+            if tool.current_published_revision_id
+            else None
+        )
         active = draft or published
         return {
             "id": tool.id,
@@ -499,8 +715,22 @@ class ToolService:
         }
 
     def _revision_detail(
-        self, revision: ToolRevision, tool: ToolDefinition, *, include_contract: bool = True
+        self,
+        revision: ToolRevision,
+        tool: ToolDefinition,
+        *,
+        include_contract: bool = True,
     ) -> dict[str, Any]:
+        """执行修订版本`detail`的内部处理，供当前模块或类复用。
+
+        参数:
+            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`ToolRevision`。
+            tool: 当前读取、发布或物化的工具定义或工具记录。 类型：`ToolDefinition`。
+            include_contract: 是否在响应中包含完整协议定义；关闭时只返回摘要字段。 类型：`bool`。 默认值：`True`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         result = self._summary(revision) or {}
         result.update(
             {
@@ -510,13 +740,12 @@ class ToolService:
                 "tool_kind": tool.tool_kind,
                 "base_revision_id": revision.base_revision_id,
                 "validation": revision.validation_json,
-                "readonly": revision.state == "PUBLISHED",
+                "readonly": revision.state == RevisionState.PUBLISHED.value,
             }
         )
         if include_contract:
             result["contract"] = copy.deepcopy(revision.contract_json)
         return result
-
 
 
 __all__ = ["ToolService"]

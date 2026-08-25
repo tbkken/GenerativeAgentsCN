@@ -1,4 +1,4 @@
-"""Persistent artifact jobs and run-scoped controlled downloads."""
+"""持久化产物任务与限定在单次运行目录内的受控下载。"""
 
 from __future__ import annotations
 
@@ -25,21 +25,18 @@ from generative_agents.persistence.models import (
     RunResultSummary,
 )
 from generative_agents.runtime.artifact_contract import GENERATOR_VERSIONS
+from generative_agents.status import (
+    ACTIVE_ARTIFACT_JOB_STATUSES,
+    ArtifactJobStatus,
+    ArtifactJobType,
+    ArtifactScope,
+    ArtifactState,
+    ResultCompleteness,
+)
 
 from .errors import ServiceError, not_found
 from .run_storage import RunStorageBoundary
 
-
-ALLOWED_JOB_TYPES = frozenset(
-    {
-        "BUILD_REPLAY",
-        "BUILD_REPORT",
-        "RESULT_BUNDLE",
-        "FILTERED_MEMORIES",
-        "FILTERED_CONVERSATIONS",
-        "CHECKPOINT_BUNDLE",
-    }
-)
 
 _CORE_ARTIFACT_PARAMETERS = frozenset({"source_step"})
 
@@ -50,19 +47,51 @@ class ArtifactService:
     _MAX_VERIFIED_CONTENT = 2_048
 
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._var_dir = Path(var_dir).resolve()
         self._boundary = RunStorageBoundary(self._var_dir)
 
     def create_job(
-        self, run_id: str, *, job_type: str, parameters: dict[str, Any] | None = None
+        self,
+        run_id: str,
+        *,
+        job_type: ArtifactJobType | str,
+        parameters: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        if job_type not in ALLOWED_JOB_TYPES:
+        """创建任务。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            job_type: 产物任务类型。允许值：`BUILD_REPLAY`（构建回放）、`RESULT_BUNDLE`（结果包）、`FILTERED_MEMORIES`（筛选记忆）、`FILTERED_CONVERSATIONS`（筛选会话）、`CHECKPOINT_BUNDLE`（检查点包）、`BUILD_REPORT`（运行报告）。 类型：`ArtifactJobType | str`。
+            parameters: 产物任务或模型调用的结构化参数；允许字段随任务类型变化。 类型：`dict[str, Any] | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
+        try:
+            normalized_job_type = ArtifactJobType(job_type)
+        except ValueError as exc:
             raise ServiceError(
                 "INVALID_ARTIFACT_JOB_TYPE", "不支持的制品任务类型", status_code=422
-            )
+            ) from exc
+        job_type = normalized_job_type.value
         requested_parameters = dict(parameters or {})
-        if job_type in {"BUILD_REPLAY", "BUILD_REPORT"}:
+        if normalized_job_type in {
+            ArtifactJobType.BUILD_REPLAY,
+            ArtifactJobType.BUILD_REPORT,
+        }:
             unknown_parameters = sorted(
                 set(requested_parameters) - _CORE_ARTIFACT_PARAMETERS
             )
@@ -73,11 +102,12 @@ class ArtifactService:
                     status_code=422,
                     details={"unknown_parameters": unknown_parameters},
                 )
-        if job_type == "CHECKPOINT_BUNDLE":
-            # Keep one authoritative validation path even for callers that use
-            # the generic job service directly instead of the dedicated API.
+        if normalized_job_type == ArtifactJobType.CHECKPOINT_BUNDLE:
+            # 即使调用方绕过专用 API 直接使用通用任务服务，也必须复用同一条权威校验路径。
             checkpoint_step = requested_parameters.get("checkpoint_step")
-            if not isinstance(checkpoint_step, int) or isinstance(checkpoint_step, bool):
+            if not isinstance(checkpoint_step, int) or isinstance(
+                checkpoint_step, bool
+            ):
                 raise ServiceError(
                     "INVALID_ARTIFACT_SOURCE_STEP",
                     "checkpoint_step 必须选择一个检查点",
@@ -102,20 +132,30 @@ class ArtifactService:
                 if run is None:
                     raise not_found("run", run_id)
                 summary = session.get(RunResultSummary, run_id)
-                available_step = summary.available_step if summary else run.completed_steps
+                available_step = (
+                    summary.available_step if summary else run.completed_steps
+                )
                 requested_source = requested_parameters.pop("source_step", None)
-                if requested_source is None and job_type == "CHECKPOINT_BUNDLE":
+                if (
+                    requested_source is None
+                    and normalized_job_type == ArtifactJobType.CHECKPOINT_BUNDLE
+                ):
                     requested_source = requested_parameters.get("checkpoint_step")
-                source_step = available_step if requested_source is None else requested_source
+                source_step = (
+                    available_step if requested_source is None else requested_source
+                )
                 invalid_source = (
                     not isinstance(source_step, int)
                     or isinstance(source_step, bool)
                     or source_step < 0
                     or (
-                        job_type != "CHECKPOINT_BUNDLE"
+                        normalized_job_type != ArtifactJobType.CHECKPOINT_BUNDLE
                         and source_step > available_step
                     )
-                    or (job_type == "CHECKPOINT_BUNDLE" and source_step < 1)
+                    or (
+                        normalized_job_type == ArtifactJobType.CHECKPOINT_BUNDLE
+                        and source_step < 1
+                    )
                 )
                 if invalid_source:
                     raise ServiceError(
@@ -126,12 +166,11 @@ class ArtifactService:
                     )
                 generator_version = GENERATOR_VERSIONS[job_type]
                 requested_parameters.pop("generator_version", None)
-                # The projection summary is the authority for result scope.
-                # Run.status may be committed slightly later than its final
-                # projection and must not relabel an already complete boundary.
+                # 查询投影摘要是结果范围的事实来源。Run.status 可能晚于最终投影提交，
+                # 不能把已经完整的结果边界重新标记为部分结果。
                 partial = not (
                     summary is not None
-                    and summary.result_state == "COMPLETE"
+                    and summary.result_state == ResultCompleteness.COMPLETE
                     and source_step == summary.available_step
                 )
                 parameters = {
@@ -150,7 +189,12 @@ class ArtifactService:
                         ArtifactJob.parameters_hash == parameters_hash,
                         ArtifactJob.source_step == source_step,
                         ArtifactJob.generator_version == generator_version,
-                        ArtifactJob.status.in_({"QUEUED", "RUNNING", "SUCCEEDED"}),
+                        ArtifactJob.status.in_(
+                            {
+                                *ACTIVE_ARTIFACT_JOB_STATUSES,
+                                ArtifactJobStatus.SUCCEEDED,
+                            }
+                        ),
                     )
                     .order_by(ArtifactJob.created_at.desc())
                     .limit(1)
@@ -166,7 +210,7 @@ class ArtifactService:
                     source_step=source_step,
                     generator_version=generator_version,
                     partial=partial,
-                    status="QUEUED",
+                    status=ArtifactJobStatus.QUEUED.value,
                     attempt_no=0,
                     progress=0,
                     created_at=now,
@@ -197,7 +241,7 @@ class ArtifactService:
                         ArtifactJob.parameters_hash == parameters_hash,
                         ArtifactJob.source_step == source_step,
                         ArtifactJob.generator_version == generator_version,
-                        ArtifactJob.status.in_({"QUEUED", "RUNNING"}),
+                        ArtifactJob.status.in_(ACTIVE_ARTIFACT_JOB_STATUSES),
                     )
                     .order_by(ArtifactJob.created_at.desc())
                     .limit(1)
@@ -207,6 +251,14 @@ class ArtifactService:
                 return self._job(existing)
 
     def get_job(self, job_id: str) -> dict[str, Any]:
+        """获取任务。
+
+        参数:
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             job = session.get(ArtifactJob, job_id)
             if job is None:
@@ -214,6 +266,14 @@ class ArtifactService:
             return self._job(job)
 
     def list_artifacts(self, run_id: str) -> dict[str, Any]:
+        """查询产物集合。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             if session.get(Run, run_id) is None:
                 raise not_found("run", run_id)
@@ -227,6 +287,15 @@ class ArtifactService:
             return {"run_id": run_id, "items": [self._artifact(row) for row in rows]}
 
     def get_artifact(self, run_id: str, artifact_id: str) -> dict[str, Any]:
+        """获取产物。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            artifact_id: 产物的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             artifact = session.get(RunArtifact, artifact_id)
             if artifact is None or artifact.run_id != run_id:
@@ -234,19 +303,39 @@ class ArtifactService:
             return self._artifact(artifact)
 
     def content(self, run_id: str, artifact_id: str) -> tuple[RunArtifact, Path]:
+        """执行 `ArtifactService` 的`content`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            artifact_id: 产物的唯一标识。 类型：`str`。
+
+        返回:
+            返回目标文件或目录路径。
+        """
         with self.open_content(run_id, artifact_id) as (artifact, path, _handle):
             return artifact, path
 
     @contextmanager
     def open_content(self, run_id: str, artifact_id: str) -> Iterator[tuple]:
-        """Yield a verified artifact and the exact descriptor that was hashed."""
+        """打开`content`。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            artifact_id: 产物的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         with self._database.session_factory() as session:
             artifact = session.get(RunArtifact, artifact_id)
             run = session.get(Run, run_id)
             if artifact is None or run is None or artifact.run_id != run_id:
                 raise not_found("artifact", artifact_id)
-            if artifact.state != "READY":
+            if artifact.state != ArtifactState.READY:
                 raise ServiceError(
                     "ARTIFACT_NOT_READY", "制品尚未生成完成", status_code=409
                 )
@@ -283,10 +372,8 @@ class ArtifactService:
                 for block in iter(lambda: handle.read(1024 * 1024), b""):
                     digest.update(block)
                 digest_value = digest.hexdigest()
-            # All newly built artifacts have an authoritative digest.  A zero
-            # digest is retained as an explicit legacy/unverified sentinel for
-            # pre-contract imports; size ownership is still enforced for those
-            # rows and they are never emitted by ArtifactBuilder.
+            # 新构建产物都必须有权威摘要。全零摘要仅作为旧版未验证导入的显式哨兵；
+            # 这些记录仍校验文件大小与归属，而且 ArtifactBuilder 永远不会生成它们。
             digest_mismatch = artifact.sha256 != "0" * 64 and not hmac.compare_digest(
                 digest_value, artifact.sha256
             )
@@ -309,6 +396,14 @@ class ArtifactService:
 
     @staticmethod
     def _job(job: ArtifactJob) -> dict[str, Any]:
+        """执行任务的内部处理，供当前模块或类复用。
+
+        参数:
+            job: 当前读取、更新或序列化的后台产物任务记录。 类型：`ArtifactJob`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "job_id": job.id,
             "run_id": job.run_id,
@@ -332,6 +427,14 @@ class ArtifactService:
 
     @staticmethod
     def _artifact(artifact: RunArtifact) -> dict[str, Any]:
+        """执行产物的内部处理，供当前模块或类复用。
+
+        参数:
+            artifact: 传入当前算法的产物；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunArtifact`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         return {
             "artifact_id": artifact.id,
             "run_id": artifact.run_id,
@@ -344,7 +447,11 @@ class ArtifactService:
             "generator_version": artifact.generator_version,
             "source_step": artifact.source_step,
             "partial": artifact.partial,
-            "scope": "PARTIAL" if artifact.partial else "FINAL",
+            "scope": (
+                ArtifactScope.PARTIAL.value
+                if artifact.partial
+                else ArtifactScope.FINAL.value
+            ),
             "state": artifact.state,
             "created_at": artifact.created_at.isoformat(),
             "error_summary": artifact.error_summary,

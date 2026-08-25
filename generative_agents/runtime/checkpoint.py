@@ -1,4 +1,4 @@
-"""Immutable checkpoint bundle writer and validator."""
+"""不可变检查点包的写入、校验、读取与保留管理。"""
 
 from __future__ import annotations
 
@@ -30,6 +30,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _canonical_json(value: Any) -> bytes:
+    """执行`canonical``json`的内部处理，供当前模块或类复用。
+
+    参数:
+        value: 当前操作使用的`value`。 类型：`Any`。
+
+    返回:
+        返回 `bytes` 类型的处理结果。
+    """
     return json.dumps(
         value,
         ensure_ascii=False,
@@ -40,6 +48,14 @@ def _canonical_json(value: Any) -> bytes:
 
 
 def _sha256(path: Path) -> str:
+    """执行`sha256`的内部处理，供当前模块或类复用。
+
+    参数:
+        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+    返回:
+        返回处理后的文本或稳定标识。
+    """
     digest = hashlib.sha256()
     with path.open("rb") as file_handle:
         for block in iter(lambda: file_handle.read(1024 * 1024), b""):
@@ -52,7 +68,9 @@ class CheckpointSnapshot:
     state: Mapping[str, Any]
     conversation: Mapping[str, Any]
     storage_exporters: Mapping[str, StorageExporter] = field(default_factory=dict)
-    runtime_storage_exporters: Mapping[str, StorageExporter] = field(default_factory=dict)
+    runtime_storage_exporters: Mapping[str, StorageExporter] = field(
+        default_factory=dict
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,7 +85,7 @@ class CheckpointConflictError(RuntimeError):
 
 
 class CheckpointBundleWriter:
-    """Write a checkpoint as a verified directory and atomically advance LATEST."""
+    """把检查点写入已验证目录，并原子推进 `LATEST` 指针。"""
 
     BUNDLE_SCHEMA_VERSION = 1
 
@@ -78,29 +96,57 @@ class CheckpointBundleWriter:
         *,
         retention: int = 2,
     ):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            paths: 传入当前算法的`paths`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`RunPaths`。
+            snapshot_provider: 在安全步骤边界生成当前运行快照的回调。 类型：`Callable[[StepResult], CheckpointSnapshot]`。
+            retention: 需要保留的最新检查点、日志或记录数量。 类型：`int`。 默认值：`2`。
+
+        返回:
+            无返回值。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if retention < 2:
             raise ValueError("checkpoint retention must be at least two")
         self._paths = paths
         self._snapshot_provider = snapshot_provider
         self._retention = retention
         self._paths.ensure()
-        # Correctness is preferable to timing out a durable Step while a large
-        # checkpoint preview/export is still consuming the previous bundle.
+        # 正确性优先于等待时限：大型检查点预览或导出仍在读取旧包时，
+        # 不能因为抢锁超时而把一个本可持久化的仿真步判为失败。
         self._checkpoint_lock = FileLock(str(self._paths.checkpoint_lock), timeout=-1)
 
     @contextmanager
     def access(self):
-        """Serialize readers, publishers and retention across processes.
+        """串行化检查点的读取、发布与保留清理，避免跨进程竞争。
 
-        Callers that need to validate and then consume several checkpoint files
-        must keep this context open for the complete operation.  The lock is
-        re-entrant for this writer, so calling ``validate`` inside it is safe.
+        返回:
+            无返回值。
+
+        说明:
+            文件锁覆盖检查点目录的读取、临时写入、原子发布和过期清理，不能缩小到单次文件写操作。
         """
 
         with self._checkpoint_lock:
             yield
 
     def write(self, result: StepResult, frame: StoredFrame) -> Path:
+        """执行 `CheckpointBundleWriter` 的`write`操作。
+
+        参数:
+            result: 当前仿真步或上游组件产生的结构化结果。 类型：`StepResult`。
+            frame: 当前仿真步已经落盘且内容不可变的帧记录。 类型：`StoredFrame`。
+
+        返回:
+            返回目标文件或目录路径。
+
+        异常:
+            CheckpointConflictError: 当底层操作报告该异常条件时抛出。
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         with self.access():
             if result.run_id != self._paths.run_id:
                 raise ValueError("result run_id does not own this checkpoint writer")
@@ -117,7 +163,9 @@ class CheckpointBundleWriter:
             )
             temporary.mkdir(parents=False, exist_ok=False)
             try:
-                self._write_bytes(temporary / "state.json", _canonical_json(snapshot.state))
+                self._write_bytes(
+                    temporary / "state.json", _canonical_json(snapshot.state)
+                )
                 self._write_bytes(
                     temporary / "conversation.json",
                     _canonical_json(snapshot.conversation),
@@ -128,7 +176,9 @@ class CheckpointBundleWriter:
                 storage_root = temporary / "storage"
                 for agent_key, exporter in sorted(snapshot.storage_exporters.items()):
                     if not _SAFE_AGENT_KEY.fullmatch(agent_key):
-                        raise ValueError(f"unsafe agent_key for storage path: {agent_key!r}")
+                        raise ValueError(
+                            f"unsafe agent_key for storage path: {agent_key!r}"
+                        )
                     destination = storage_root / agent_key / "associate"
                     destination.mkdir(parents=True, exist_ok=False)
                     exporter(destination)
@@ -138,9 +188,7 @@ class CheckpointBundleWriter:
                     snapshot.runtime_storage_exporters.items()
                 ):
                     if not _SAFE_AGENT_KEY.fullmatch(storage_key):
-                        raise ValueError(
-                            f"unsafe runtime storage key: {storage_key!r}"
-                        )
+                        raise ValueError(f"unsafe runtime storage key: {storage_key!r}")
                     destination = runtime_storage_root / storage_key
                     destination.mkdir(parents=True, exist_ok=False)
                     exporter(destination)
@@ -148,7 +196,9 @@ class CheckpointBundleWriter:
                 files = []
                 for file_path in sorted(temporary.rglob("*")):
                     if file_path.is_symlink():
-                        raise ValueError(f"checkpoint exporter created a symlink: {file_path}")
+                        raise ValueError(
+                            f"checkpoint exporter created a symlink: {file_path}"
+                        )
                     if not file_path.is_file():
                         continue
                     self._fsync_file(file_path)
@@ -176,7 +226,9 @@ class CheckpointBundleWriter:
                 self._fsync_directory(target.parent)
                 validated = self.validate(target)
                 if validated.bundle_sha256 != bundle_sha256:
-                    raise CheckpointConflictError("checkpoint changed during materialization")
+                    raise CheckpointConflictError(
+                        "checkpoint changed during materialization"
+                    )
                 self._advance_latest(target.name, bundle_sha256)
                 self._prune_old()
                 return target
@@ -185,10 +237,29 @@ class CheckpointBundleWriter:
                     shutil.rmtree(temporary)
 
     def validate(self, path: Path) -> StoredCheckpoint:
+        """执行 `CheckpointBundleWriter` 的`validate`操作。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
         with self.access():
             return self._validate_locked(path)
 
     def _validate_locked(self, path: Path) -> StoredCheckpoint:
+        """校验`locked`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         resolved = path.resolve()
         checkpoint_root = self._paths.checkpoints.resolve()
         if resolved.parent != checkpoint_root:
@@ -219,7 +290,10 @@ class CheckpointBundleWriter:
             file_path = resolved / relative
             if not file_path.is_file() or file_path.is_symlink():
                 raise ValueError(f"missing or unsafe checkpoint member: {relative}")
-            if file_path.stat().st_size != item["size"] or _sha256(file_path) != item["sha256"]:
+            if (
+                file_path.stat().st_size != item["size"]
+                or _sha256(file_path) != item["sha256"]
+            ):
                 raise ValueError(f"checkpoint member hash mismatch: {relative}")
             if normalized == "frame.json.gz":
                 frame_item = item
@@ -248,9 +322,8 @@ class CheckpointBundleWriter:
             raise ValueError(f"checkpoint frame semantics do not match bundle: {path}")
         with (resolved / "state.json").open("r", encoding="utf-8") as handle:
             state = json.load(handle)
-        if (
-            "virtual_time" in state
-            and state.get("virtual_time") != bundle.get("virtual_time")
+        if "virtual_time" in state and state.get("virtual_time") != bundle.get(
+            "virtual_time"
         ):
             raise ValueError(f"checkpoint state time does not match bundle: {path}")
         return StoredCheckpoint(
@@ -265,7 +338,15 @@ class CheckpointBundleWriter:
         *,
         orphan_root: Path,
     ) -> StoredCheckpoint:
-        """Select the DB-authorized boundary and quarantine newer bundles."""
+        """执行 `CheckpointBundleWriter` 的`select``for``recovery`操作。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            orphan_root: `orphan`使用的根目录路径。 类型：`Path`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+        """
 
         with self.access():
             return self._select_for_recovery_locked(step_no, orphan_root=orphan_root)
@@ -276,6 +357,18 @@ class CheckpointBundleWriter:
         *,
         orphan_root: Path,
     ) -> StoredCheckpoint:
+        """执行`select``for``recovery``locked`的内部处理，供当前模块或类复用。
+
+        参数:
+            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
+            orphan_root: `orphan`使用的根目录路径。 类型：`Path`。
+
+        返回:
+            返回计算得到的整数值或版本号。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         if step_no < 1:
             raise ValueError("recovery checkpoint step must be positive")
         checkpoint_root = self._paths.checkpoints.resolve()
@@ -302,10 +395,23 @@ class CheckpointBundleWriter:
         return selected
 
     def read_latest(self) -> StoredCheckpoint | None:
+        """读取`latest`。
+
+        返回:
+            返回计算得到的整数值或版本号。 没有可用结果时返回 `None`。
+        """
         with self.access():
             return self._read_latest_locked()
 
     def _read_latest_locked(self) -> StoredCheckpoint | None:
+        """读取`latest``locked`。
+
+        返回:
+            返回计算得到的整数值或版本号。 没有可用结果时返回 `None`。
+
+        异常:
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         latest = self._paths.checkpoints / "LATEST"
         if latest.exists():
             try:
@@ -323,8 +429,8 @@ class CheckpointBundleWriter:
             except (OSError, ValueError, KeyError, json.JSONDecodeError):
                 pass
 
-        # The pointer is only an optimization. After a crash, recover the newest
-        # fully verified immutable bundle rather than trusting a damaged LATEST.
+        # LATEST 指针只是查询优化。崩溃恢复时应选择最新且完整通过校验的不可变包，
+        # 不能直接信任可能损坏的 LATEST。
         candidates = sorted(
             (
                 path
@@ -344,18 +450,26 @@ class CheckpointBundleWriter:
         return None
 
     def _prune_old(self) -> None:
+        """执行`prune``old`的内部处理，供当前模块或类复用。
+
+        返回:
+            无返回值。
+        """
         try:
             self._prune_old_locked()
         except OSError as exc:
-            # Retention is maintenance after the new bundle and LATEST are
-            # durable.  An indexer/antivirus/ACL problem must not turn a valid
-            # simulation Step into WORKER_ERROR; a later write retries it.
+            # 保留清理发生在新包与 LATEST 均持久化之后，只属于维护操作。
+            # 索引器、防病毒软件或 ACL 问题不能把有效仿真步变成 WORKER_ERROR；后续写入会重试清理。
             self._defer_prune(self._paths.checkpoints, exc)
 
     def _prune_old_locked(self) -> None:
-        # A previous process may have published the tombstone and then exited
-        # while an antivirus/indexer still held one of its files.  Retry those
-        # private directories first; they are never visible as checkpoints.
+        # 旧进程可能已发布删除墓碑后退出，但文件仍被防病毒软件或索引器占用。
+        # 优先重试这些私有目录；它们从不会作为可用检查点对外暴露。
+        """执行`prune``old``locked`的内部处理，供当前模块或类复用。
+
+        返回:
+            无返回值。
+        """
         for tombstone in list(self._paths.checkpoints.iterdir()):
             if tombstone.is_dir() and _PRUNE_TOMBSTONE.fullmatch(tombstone.name):
                 self._delete_tombstone(tombstone)
@@ -375,9 +489,8 @@ class CheckpointBundleWriter:
                 continue
             tombstone = root / f".prune-{candidate.name}-{uuid4()}.tmp"
             try:
-                # Never recursively delete a published bundle.  Renaming first
-                # means a sharing violation leaves the complete bundle intact,
-                # rather than the half-deleted state from the original incident.
+                # 绝不直接递归删除已发布检查点。先重命名可确保发生共享冲突时完整包仍在，
+                # 不会重现只删除一半的损坏状态。
                 os.replace(candidate, tombstone)
             except OSError as exc:
                 self._defer_prune(candidate, exc)
@@ -385,6 +498,14 @@ class CheckpointBundleWriter:
             self._delete_tombstone(tombstone)
 
     def _delete_tombstone(self, tombstone: Path) -> None:
+        """删除`tombstone`。
+
+        参数:
+            tombstone: 已从公开检查点命名空间移出的待清理私有目录。 类型：`Path`。
+
+        返回:
+            无返回值。
+        """
         for delay in (0.0, 0.05, 0.15, 0.30):
             if delay:
                 time.sleep(delay)
@@ -398,6 +519,15 @@ class CheckpointBundleWriter:
         self._defer_prune(tombstone, last_error)
 
     def _defer_prune(self, path: Path, exc: OSError) -> None:
+        """执行`defer``prune`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            exc: 上游捕获的异常对象，用于分类、脱敏或转换错误信息。 类型：`OSError`。
+
+        返回:
+            无返回值。
+        """
         _LOGGER.warning(
             "checkpoint retention deferred for run=%s path=%s error=%s",
             self._paths.run_id,
@@ -406,6 +536,15 @@ class CheckpointBundleWriter:
         )
 
     def _advance_latest(self, checkpoint: str, bundle_sha256: str) -> None:
+        """执行`advance``latest`的内部处理，供当前模块或类复用。
+
+        参数:
+            checkpoint: 当前运行已验证的检查点记录或快照。 类型：`str`。
+            bundle_sha256: `bundle`的内容摘要，用于完整性和幂等校验。 类型：`str`。
+
+        返回:
+            无返回值。
+        """
         latest = self._paths.checkpoints / "LATEST"
         temporary = self._paths.checkpoints / f".LATEST-{uuid4()}.tmp"
         try:
@@ -422,6 +561,15 @@ class CheckpointBundleWriter:
 
     @staticmethod
     def _write_bytes(path: Path, content: bytes) -> None:
+        """写入`bytes`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            content: 待解析、写入、哈希或发送给下游组件的正文内容。 类型：`bytes`。
+
+        返回:
+            无返回值。
+        """
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("xb") as file_handle:
             file_handle.write(content)
@@ -430,12 +578,28 @@ class CheckpointBundleWriter:
 
     @staticmethod
     def _fsync_file(path: Path) -> None:
-        # Windows requires a writable file descriptor for fsync().
+        # Windows 要求使用可写文件描述符调用 fsync()。
+        """执行`fsync``file`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            无返回值。
+        """
         with path.open("r+b") as file_handle:
             os.fsync(file_handle.fileno())
 
     @classmethod
     def _fsync_directory_tree(cls, root: Path) -> None:
+        """执行`fsync``directory``tree`的内部处理，供当前模块或类复用。
+
+        参数:
+            root: 受控存储区域的根目录；派生路径不得逃逸该目录。 类型：`Path`。
+
+        返回:
+            无返回值。
+        """
         if os.name == "nt":
             return
         for directory in sorted(
@@ -448,6 +612,14 @@ class CheckpointBundleWriter:
 
     @staticmethod
     def _fsync_directory(path: Path) -> None:
+        """执行`fsync``directory`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+
+        返回:
+            无返回值。
+        """
         if os.name == "nt":
             return
         descriptor = os.open(path, os.O_RDONLY)

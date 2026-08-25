@@ -18,7 +18,12 @@ from generative_agents.persistence.models import (
     RunAttempt,
     RunModelTraceCursor,
 )
-from generative_agents.runtime.model_trace import redact_error, redact_text
+from generative_agents.runtime.model_trace import (
+    ModelTraceStatus,
+    redact_error,
+    redact_text,
+)
+from generative_agents.status import ArtifactJobStatus, RunAttemptStatus
 
 from .byte_windows import file_identity, read_utf8_bytes, read_utf8_window
 from .errors import ServiceError, not_found
@@ -33,10 +38,27 @@ _SENSITIVE_KEYS = frozenset(
 
 class LogService:
     def __init__(self, database: Database, *, var_dir: str | Path):
+        """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
+
+        参数:
+            database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
+            var_dir: 运行时可变数据根目录，用于保存数据库、帧、检查点和产物。 类型：`str | Path`。
+
+        返回:
+            无返回值。
+        """
         self._database = database
         self._boundary = RunStorageBoundary(var_dir)
 
     def list_attempts(self, run_id: str) -> dict[str, Any]:
+        """查询`attempts`。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             rows = list(
@@ -61,6 +83,19 @@ class LogService:
         tail: bool = False,
         file_id: str | None = None,
     ) -> dict[str, Any]:
+        """读取执行尝试日志。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。 默认值：`65536`。
+            tail: 是否从日志或轨迹文件末尾向前读取最新窗口。 类型：`bool`。 默认值：`False`。
+            file_id: `file`的唯一标识。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         run, attempt, path = self._attempt_target(run_id, attempt_id)
         window = read_utf8_window(
             path,
@@ -74,7 +109,10 @@ class LogService:
             encoding_code="ATTEMPT_LOG_ENCODING_INVALID",
         )
         fragments = self._record_window(
-            path, window, terminal=attempt.status == "ENDED", discard_leading=tail
+            path,
+            window,
+            terminal=attempt.status == RunAttemptStatus.ENDED,
+            discard_leading=tail,
         )
         return {
             "run_id": run.id,
@@ -89,10 +127,24 @@ class LogService:
             "size_bytes": window.size_bytes,
             "file_id": window.file_id,
             "eof": window.eof,
-            "terminal": attempt.status == "ENDED",
+            "terminal": attempt.status == RunAttemptStatus.ENDED,
         }
 
-    def attempt_log_content(self, run_id: str, attempt_id: str) -> tuple[RunAttempt, Path]:
+    def attempt_log_content(
+        self, run_id: str, attempt_id: str
+    ) -> tuple[RunAttempt, Path]:
+        """执行 `LogService` 的执行尝试日志`content`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+
+        返回:
+            返回目标文件或目录路径。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         _run, attempt, path = self._attempt_target(run_id, attempt_id)
         if not path.is_file() or path.is_symlink():
             raise ServiceError(
@@ -110,6 +162,19 @@ class LogService:
         tail: bool = False,
         file_id: str | None = None,
     ) -> dict[str, Any]:
+        """读取产物日志。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。 默认值：`65536`。
+            tail: 是否从日志或轨迹文件末尾向前读取最新窗口。 类型：`bool`。 默认值：`False`。
+            file_id: `file`的唯一标识。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         run, job, path = self._artifact_target(run_id, job_id)
         window = read_utf8_window(
             path,
@@ -122,7 +187,11 @@ class LogService:
             rotated_code="ARTIFACT_LOG_ROTATED",
             encoding_code="ARTIFACT_LOG_ENCODING_INVALID",
         )
-        terminal = job.status in {"SUCCEEDED", "FAILED", "CANCELLED"}
+        terminal = job.status in {
+            ArtifactJobStatus.SUCCEEDED,
+            ArtifactJobStatus.FAILED,
+            ArtifactJobStatus.CANCELLED,
+        }
         fragments = self._record_window(
             path, window, terminal=terminal, discard_leading=tail
         )
@@ -141,7 +210,21 @@ class LogService:
             "terminal": terminal,
         }
 
-    def artifact_log_content(self, run_id: str, job_id: str) -> tuple[ArtifactJob, Path]:
+    def artifact_log_content(
+        self, run_id: str, job_id: str
+    ) -> tuple[ArtifactJob, Path]:
+        """执行 `LogService` 的产物日志`content`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+
+        返回:
+            返回目标文件或目录路径。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         _run, job, path = self._artifact_target(run_id, job_id)
         if not path.is_file() or path.is_symlink():
             raise ServiceError(
@@ -157,11 +240,38 @@ class LogService:
         cursor: int = 0,
         limit: int = 100,
         purpose: str | None = None,
-        status: str | None = None,
+        status: ModelTraceStatus | str | None = None,
         event_type: str | None = None,
     ) -> dict[str, Any]:
+        """分页读取指定执行尝试的模型调用轨迹，并按条件筛选。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`100`。
+            purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str | None`。 默认值：`None`。
+            status: 模型调用状态筛选值。允许值：`SUCCEEDED`、`FAILED`、`FALLBACK`。 类型：`ModelTraceStatus | str | None`。 默认值：`None`。
+            event_type: 模型轨迹事件类型筛选值；为空时不按事件类型过滤。 类型：`str | None`。 默认值：`None`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if limit < 1 or limit > 200:
-            raise ServiceError("INVALID_LIMIT", "limit 必须在 1 到 200 之间", status_code=422)
+            raise ServiceError(
+                "INVALID_LIMIT", "limit 必须在 1 到 200 之间", status_code=422
+            )
+        try:
+            normalized_status = ModelTraceStatus(status).value if status else None
+        except ValueError as exc:
+            raise ServiceError(
+                "INVALID_MODEL_TRACE_STATUS",
+                "模型调用状态筛选值无效",
+                status_code=422,
+            ) from exc
         run, attempt, trace, path = self._trace_target(run_id, attempt_id)
         if trace is None:
             return {
@@ -174,7 +284,9 @@ class LogService:
                 "available": False,
             }
         if not path.is_file() or path.is_symlink():
-            raise ServiceError("MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410)
+            raise ServiceError(
+                "MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410
+            )
         size = path.stat().st_size
         if cursor < 0 or cursor > size:
             raise ServiceError(
@@ -218,7 +330,10 @@ class LogService:
                     raise ServiceError(
                         "MODEL_TRACE_INVALID", "模型追踪记录无效", status_code=422
                     ) from exc
-                if record.get("run_id") != run_id or record.get("attempt_id") != attempt_id:
+                if (
+                    record.get("run_id") != run_id
+                    or record.get("attempt_id") != attempt_id
+                ):
                     raise ServiceError(
                         "MODEL_TRACE_OWNERSHIP_INVALID",
                         "模型追踪归属无效",
@@ -226,7 +341,7 @@ class LogService:
                     )
                 if purpose and record.get("purpose") != purpose:
                     continue
-                if status and record.get("status") != status:
+                if normalized_status and record.get("status") != normalized_status:
                     continue
                 if event_type and record.get("event_type") != event_type:
                     continue
@@ -262,11 +377,30 @@ class LogService:
         cursor: int = 0,
         limit_bytes: int = 16_384,
     ) -> dict[str, Any]:
+        """执行 `LogService` 的模型模型调用轨迹载荷操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            event_seq: 模型轨迹文件内从 1 开始递增的事件序号。 类型：`int`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。 默认值：`16384`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         if event_seq < 1:
-            raise ServiceError("INVALID_TRACE_EVENT", "event_seq 必须为正数", status_code=422)
+            raise ServiceError(
+                "INVALID_TRACE_EVENT", "event_seq 必须为正数", status_code=422
+            )
         _run, _attempt, trace, path = self._trace_target(run_id, attempt_id)
         if trace is None or not path.is_file() or path.is_symlink():
-            raise ServiceError("MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410)
+            raise ServiceError(
+                "MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410
+            )
         record = None
         with path.open("rb") as handle:
             for raw in handle:
@@ -289,14 +423,21 @@ class LogService:
             )
         if "payload" not in record:
             raise ServiceError(
-                "MODEL_TRACE_PAYLOAD_UNAVAILABLE", "该调用没有保存 payload", status_code=404
+                "MODEL_TRACE_PAYLOAD_UNAVAILABLE",
+                "该调用没有保存 payload",
+                status_code=404,
             )
         encoded = json.dumps(
-            self._redact(record["payload"]), ensure_ascii=False, sort_keys=True, indent=2
+            self._redact(record["payload"]),
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=2,
         ).encode("utf-8")
         if limit_bytes > 65_536:
             raise ServiceError(
-                "INVALID_TRACE_PREVIEW_WINDOW", "模型 payload 预览窗口无效", status_code=422
+                "INVALID_TRACE_PREVIEW_WINDOW",
+                "模型 payload 预览窗口无效",
+                status_code=422,
             )
         window = read_utf8_bytes(
             encoded,
@@ -325,10 +466,26 @@ class LogService:
         cursor: int = 0,
         limit_bytes: int = 16_384,
     ) -> dict[str, Any]:
+        """执行 `LogService` 的模型调用轨迹`detail`操作。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            trace_id: 模型调用轨迹的唯一标识。 类型：`str`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
+            limit_bytes: 本次最多读取或返回的字节数；UTF-8 边界修正后可能略少。 类型：`int`。 默认值：`16384`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         attempt_id, event_seq = self._decode_trace_id(trace_id)
         _run, _attempt, trace, path = self._trace_target(run_id, attempt_id)
         if trace is None or path is None or not path.is_file() or path.is_symlink():
-            raise ServiceError("MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410)
+            raise ServiceError(
+                "MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410
+            )
         record = None
         with path.open("rb") as handle:
             for raw in handle:
@@ -349,7 +506,9 @@ class LogService:
             raise ServiceError(
                 "MODEL_TRACE_OWNERSHIP_INVALID", "模型调用追踪归属无效", status_code=500
             )
-        metadata = self._redact({key: value for key, value in record.items() if key != "payload"})
+        metadata = self._redact(
+            {key: value for key, value in record.items() if key != "payload"}
+        )
         if "payload" not in record:
             return {
                 "run_id": run_id,
@@ -383,11 +542,32 @@ class LogService:
 
     @staticmethod
     def _trace_id(attempt_id: str, event_seq: int) -> str:
+        """执行模型调用轨迹`id`的内部处理，供当前模块或类复用。
+
+        参数:
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+            event_seq: 模型轨迹文件内从 1 开始递增的事件序号。 类型：`int`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+        """
         raw = f"{attempt_id}:{event_seq}".encode("ascii")
         return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
 
     @staticmethod
     def _decode_trace_id(trace_id: str) -> tuple[str, int]:
+        """执行`decode`模型调用轨迹`id`的内部处理，供当前模块或类复用。
+
+        参数:
+            trace_id: 模型调用轨迹的唯一标识。 类型：`str`。
+
+        返回:
+            返回按接口约定组织的结果集合。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+        """
         try:
             raw = base64.urlsafe_b64decode(trace_id + "=" * (-len(trace_id) % 4))
             attempt_id, sequence = raw.decode("ascii").rsplit(":", 1)
@@ -401,6 +581,15 @@ class LogService:
         return attempt_id, event_seq
 
     def _attempt_target(self, run_id: str, attempt_id: str):
+        """执行执行尝试`target`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             attempt = session.get(RunAttempt, attempt_id)
@@ -412,6 +601,18 @@ class LogService:
         return run, attempt, path
 
     def _artifact_target(self, run_id: str, job_id: str):
+        """执行产物`target`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            job_id: 后台产物任务的唯一标识。 类型：`str`。
+
+        返回:
+            返回函数计算得到的结果。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             job = session.get(ArtifactJob, job_id)
@@ -429,6 +630,15 @@ class LogService:
         return run, job, path
 
     def _trace_target(self, run_id: str, attempt_id: str):
+        """执行模型调用轨迹`target`的内部处理，供当前模块或类复用。
+
+        参数:
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+            attempt_id: 执行尝试的唯一标识，用于区分同一运行的重试或恢复批次。 类型：`str`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         with self._database.session_factory() as session:
             run = self._run(session, run_id)
             attempt = session.get(RunAttempt, attempt_id)
@@ -447,6 +657,15 @@ class LogService:
         return run, attempt, trace, path
 
     def _attempt_metadata(self, run: Run, attempt: RunAttempt) -> dict[str, Any]:
+        """执行执行尝试`metadata`的内部处理，供当前模块或类复用。
+
+        参数:
+            run: 当前读取、控制、投影或生成产物的仿真运行记录。 类型：`Run`。
+            attempt: 当前运行的执行尝试记录。 类型：`RunAttempt`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         path = self._boundary.owned_file(run, attempt.log_path, area="logs")
         exists = path.is_file() and not path.is_symlink()
         identity = size = modified = None
@@ -469,12 +688,20 @@ class LogService:
                 "size_bytes": size or 0,
                 "file_id": identity,
                 "modified_at_ns": modified,
-                "terminal": attempt.status == "ENDED",
+                "terminal": attempt.status == RunAttemptStatus.ENDED,
             },
         }
 
     @staticmethod
     def _records(content: str) -> list[dict[str, Any]]:
+        """执行`records`的内部处理，供当前模块或类复用。
+
+        参数:
+            content: 待解析、写入、哈希或发送给下游组件的正文内容。 类型：`str`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         records = []
         for line in content.splitlines():
             if not line:
@@ -501,9 +728,15 @@ class LogService:
                 continue
             records.append(
                 {
-                    "timestamp": value.get("timestamp") or value.get("time") or value.get("created_at"),
-                    "level": str(value.get("level") or value.get("levelname") or "INFO").upper(),
-                    "message": redact_error(str(value.get("message") or value.get("event") or value)),
+                    "timestamp": value.get("timestamp")
+                    or value.get("time")
+                    or value.get("created_at"),
+                    "level": str(
+                        value.get("level") or value.get("levelname") or "INFO"
+                    ).upper(),
+                    "message": redact_error(
+                        str(value.get("message") or value.get("event") or value)
+                    ),
                     "event": value.get("event"),
                 }
             )
@@ -513,13 +746,26 @@ class LogService:
     def _record_window(
         cls, path: Path, window, *, terminal: bool, discard_leading: bool
     ) -> dict[str, Any]:
+        """记录`window`。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            window: 传入当前算法的`window`；其结构与有效范围由类型注解和调用协议共同限定。
+            terminal: 传入当前算法的`terminal`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`bool`。
+            discard_leading: 传入当前算法的`discard``leading`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`bool`。
+
+        返回:
+            返回以字段名或业务键组织的结构化映射。
+        """
         starts_mid_line = False
         if window.start_cursor > 0:
             with path.open("rb") as handle:
                 handle.seek(window.start_cursor - 1)
                 starts_mid_line = handle.read(1) != b"\n"
-        ends_mid_line = bool(window.content) and not window.content.endswith("\n") and not (
-            window.eof and terminal
+        ends_mid_line = (
+            bool(window.content)
+            and not window.content.endswith("\n")
+            and not (window.eof and terminal)
         )
         complete = window.content
         if starts_mid_line:
@@ -542,7 +788,19 @@ class LogService:
 
     @staticmethod
     def _line_prefix(path: Path, cursor: int, *, maximum: int = 1_048_576) -> str:
-        """Read only the current logical line prefix, never the whole log."""
+        """执行`line``prefix`的内部处理，供当前模块或类复用。
+
+        参数:
+            path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`Path`。
+            cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。
+            maximum: 当前校验允许的最大数量或数值上限。 类型：`int`。 默认值：`1048576`。
+
+        返回:
+            返回处理后的文本或稳定标识。
+
+        异常:
+            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
+        """
 
         start = cursor
         collected = b""
@@ -574,9 +832,19 @@ class LogService:
 
     @classmethod
     def _redact(cls, value):
+        """执行`redact`的内部处理，供当前模块或类复用。
+
+        参数:
+            value: 当前操作使用的`value`。
+
+        返回:
+            返回函数计算得到的结果。
+        """
         if isinstance(value, dict):
             return {
-                key: "[REDACTED]" if key.casefold() in _SENSITIVE_KEYS else cls._redact(item)
+                key: "[REDACTED]"
+                if key.casefold() in _SENSITIVE_KEYS
+                else cls._redact(item)
                 for key, item in value.items()
             }
         if isinstance(value, list):
@@ -590,6 +858,15 @@ class LogService:
 
     @staticmethod
     def _run(session, run_id: str) -> Run:
+        """执行运行的内部处理，供当前模块或类复用。
+
+        参数:
+            session: 当前数据库会话；事务提交与回滚由调用边界约定。
+            run_id: 仿真运行的唯一标识。 类型：`str`。
+
+        返回:
+            返回 `Run` 类型的处理结果。
+        """
         run = session.get(Run, run_id)
         if run is None:
             raise not_found("run", run_id)
