@@ -34,6 +34,8 @@ _PREVIEW_FILES = {
 
 
 class CheckpointService:
+    """列出、校验、预览和导出属于指定 Run 的检查点。"""
+
     def __init__(self, database: Database, *, var_dir: str | Path):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

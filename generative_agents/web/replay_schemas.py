@@ -8,6 +8,8 @@ from generative_agents.config.schema import StrictModel
 
 
 class ReplayManifestResponse(StrictModel):
+    """回放器启动所需的 Run、地图、智能体和可用步骤清单。"""
+
     schema_version: Literal[2]
     generator_version: str
     source_kind: str
@@ -27,6 +29,8 @@ class ReplayManifestResponse(StrictModel):
 
 
 class ReplayStepsResponse(StrictModel):
+    """按步骤窗口分页返回的 Replay V2 帧集合。"""
+
     run_id: str
     source_step: int
     available_step: int

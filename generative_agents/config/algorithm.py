@@ -7,6 +7,8 @@ from typing import Mapping
 
 @dataclass(frozen=True, slots=True)
 class AlgorithmProfile:
+    """一次 Run 固定使用的算法常量集合，用版本号保证可重复执行。"""
+
     sentence_chunk_size: int
     sentence_chunk_overlap: int
     llama_num_output: int

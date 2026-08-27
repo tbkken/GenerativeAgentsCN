@@ -1,3 +1,7 @@
+/**
+ * 空间资产工作区：管理可复用 Tile、对象、区域、标线和网络的草稿/发布版本。
+ * manager.dirty 只表示本地表单变化；服务端返回的新 Revision 才是保存成功的依据。
+ */
 (function () {
   'use strict';
 

@@ -1,3 +1,4 @@
+/** 两日通勤产品演示的步骤控制器；只驱动演示 DOM，不参与正式实验运行。 */
 (() => {
   const stage = document.getElementById('commuteDemoStage');
   const topTitle = document.getElementById('commuteTopTitle');

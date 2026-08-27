@@ -20,6 +20,8 @@ from .errors import ServiceError, not_found
 
 
 class AssetService:
+    """处理资产上传、去重、查询和受控内容下载。"""
+
     _PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
     _AGENT_IMAGE_MAX_BYTES = 2 * 1024 * 1024
 
@@ -296,6 +298,8 @@ class AssetService:
 
 
 class SecretService:
+    """创建和替换加密凭据，只向 API 暴露元数据而不返回明文。"""
+
     ALLOWED_KINDS = frozenset({"OPENAI_API_KEY", "GENERIC_TOKEN"})
 
     def __init__(self, database: Database, *, var_dir: str | Path):

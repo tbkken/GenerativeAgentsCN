@@ -1,3 +1,9 @@
+/**
+ * 公共地图工作区：负责目录、草稿、自动保存、本地恢复、发布和 MapEditorV2 挂载。
+ *
+ * GridEditor 是轻量兼容编辑器；manager 是页面级状态机。服务器草稿始终带 lock_version，
+ * localStorage 只保存尚未同步的恢复副本，不能覆盖服务端已经更新的权威 Revision。
+ */
 (() => {
   'use strict';
 
@@ -12,6 +18,7 @@
   const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 
   async function request(path, options = {}) {
+    // 地图端点统一使用 /api/v1 前缀和业务错误信封。
     const response = await fetch(`${API}${path}`, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,
@@ -792,6 +799,7 @@
     },
 
     persistLocalRecovery() {
+      // 恢复副本绑定 mapId、draftId 和基础 lockVersion，不能跨草稿自动套用。
       if (!this.publicEditor?.changed || this.draft?.state !== 'DRAFT') return;
       const key = this.recoveryKey();
       if (!key) return;
@@ -819,6 +827,7 @@
     },
 
     restoreLocalRecovery(mapId, draft) {
+      // 只有服务器仍处于同一乐观锁版本时才自动恢复，冲突内容保留但不覆盖。
       const key = this.recoveryKey(mapId, draft?.id);
       if (!key || draft?.state !== 'DRAFT') return false;
       let recovery;
@@ -1097,6 +1106,7 @@
     },
 
     async savePublic({ manual = false } = {}) {
+      // 同一时间只允许一个保存 Promise；保存期间发生的新编辑会在响应后再次排队。
       if (!this.draft || this.draft.state !== 'DRAFT') return this.draft;
       clearTimeout(this.autoSaveTimer);
       this.autoSaveTimer = null;
@@ -1126,6 +1136,7 @@
         });
         if (this.selectedMapId !== mapId || this.draft?.id !== draftId) return saved;
         this.draft = saved;
+        // 仅确认请求发出时的 editorRevision；更晚发生的编辑仍保持 changed=true。
         this.publicEditor.acceptSavedWorld(saved.world, editorRevision);
         const revisionIndex = this.revisions.findIndex(item => item.id === saved.id);
         if (revisionIndex >= 0) this.revisions[revisionIndex] = saved;

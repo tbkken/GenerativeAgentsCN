@@ -1,8 +1,8 @@
-"""Strict authoring contracts for the versioned map editor.
+"""版本化地图编辑器使用的严格创作模型。
 
-The simulation still consumes ``WorldConfig.definition.tiles``.  These models
-describe the richer authoring document used to deterministically compile that
-runtime grid and its render manifest.
+浏览器编辑的是包含素材、图层和空间层级的 ``MapEditorDocumentV2``；仿真仍只消费
+``WorldConfig.definition.tiles``。发布时，服务层会把前者确定性地编译为后者，因此
+编辑器能力可以演进，而运行时始终面对稳定、简单的 Tile 网格。
 """
 
 from __future__ import annotations
@@ -36,6 +36,7 @@ RecipeTransform = Literal[
 
 
 class GridRect(StrictModel):
+    """以 Tile 为单位的矩形区域，用于裁剪素材或界定空间节点。"""
     x: int = Field(ge=0)
     y: int = Field(ge=0)
     width: int = Field(ge=1)
@@ -43,6 +44,7 @@ class GridRect(StrictModel):
 
 
 class MaterialSource(StrictModel):
+    """一张可供地图编辑器取样的原始图片、上传资源或生成色块。"""
     id: Identifier
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
@@ -96,6 +98,7 @@ class MaterialSource(StrictModel):
 
 
 class MaterialSlice(StrictModel):
+    """从素材源裁出的可复用 Tile 或多格 Stamp。"""
     id: Identifier
     source_id: Identifier
     name: Annotated[
@@ -129,6 +132,7 @@ class MaterialSlice(StrictModel):
 
 
 class TileOverridePart(StrictModel):
+    """Stamp 内某个相对位置的像素/Tile 覆盖片段。"""
     placement_id: Identifier
     anchor_index: int = Field(ge=0)
     column: int = Field(ge=0)
@@ -208,6 +212,7 @@ class MaterialCanvas(StrictModel):
 
 
 class RecipeEntry(StrictModel):
+    """渲染配方中的一个素材切片及其变换方式。"""
     slice_id: Identifier
     x: int
     y: int
@@ -217,6 +222,7 @@ class RecipeEntry(StrictModel):
 
 
 class RenderRecipe(StrictModel):
+    """把多个切片按顺序合成为一个逻辑地图素材的配方。"""
     id: Identifier
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
@@ -231,6 +237,7 @@ class RenderRecipe(StrictModel):
 
 
 class LayerCellOverride(StrictModel):
+    """某图层单个网格位置上的直接素材覆盖。"""
     index: int = Field(ge=0)
     slice_id: Identifier | None = None
     transform: RecipeTransform = "NONE"
@@ -238,6 +245,7 @@ class LayerCellOverride(StrictModel):
 
 
 class LayerRecipePlacement(StrictModel):
+    """在指定坐标放置一个多格渲染配方。"""
     id: Identifier
     recipe_id: Identifier
     x: int = Field(ge=0)
@@ -246,6 +254,7 @@ class LayerRecipePlacement(StrictModel):
 
 
 class VisualLayer(StrictModel):
+    """可排序的视觉图层，保存网格覆盖和配方放置。"""
     id: Identifier
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
@@ -285,6 +294,7 @@ class VisualLayer(StrictModel):
 
 
 class HierarchyNode(StrictModel):
+    """世界、区域、场所或游戏对象组成的空间语义树节点。"""
     id: Identifier
     kind: HierarchyNodeKind
     parent_id: Identifier | None = None
@@ -333,6 +343,7 @@ class HierarchyNode(StrictModel):
 
 
 class MapEditorDocumentV2(StrictModel):
+    """地图编辑器 V2 的完整草稿文档，也是发布编译的唯一输入。"""
     schema_version: Literal["ga-map-editor/v2"] = "ga-map-editor/v2"
     root_node_id: Identifier
     material_sources: list[MaterialSource] = Field(

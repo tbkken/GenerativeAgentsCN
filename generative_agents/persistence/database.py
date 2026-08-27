@@ -14,6 +14,8 @@ from sqlalchemy.pool import NullPool
 
 @dataclass(slots=True)
 class Database:
+    """数据库 Engine、Session 工厂和生命周期的轻量聚合对象。"""
+
     engine: Engine
     session_factory: sessionmaker[Session]
 

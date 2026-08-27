@@ -60,6 +60,8 @@ def request_json(
     path: str,
     payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    """调用本地 Web API，并在失败时保留方法、路径和响应正文。"""
+
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = Request(
         f"{API}{path}",
@@ -76,6 +78,8 @@ def request_json(
 
 
 def _crop_layer(raw: list[int], source_width: int) -> list[int]:
+    """从 Ville 原始图层裁出本演示使用的固定矩形 Tile 数据。"""
+
     return [
         int(raw[(CROP_Y + y) * source_width + CROP_X + x])
         for y in range(HEIGHT)
@@ -84,6 +88,8 @@ def _crop_layer(raw: list[int], source_width: int) -> list[int]:
 
 
 def _inside_crossing(x: int, y: int) -> bool:
+    """判断坐标是否位于东西两条斑马线之一。"""
+
     return ROAD_Y1 <= y <= ROAD_Y2 and (
         WEST_CROSSING_X1 <= x <= WEST_CROSSING_X2
         or EAST_CROSSING_X1 <= x <= EAST_CROSSING_X2
@@ -91,6 +97,8 @@ def _inside_crossing(x: int, y: int) -> bool:
 
 
 def _runtime_address(x: int, y: int) -> list[str]:
+    """把裁剪后坐标映射为运行时四层空间语义地址。"""
+
     if WEST_CROSSING_X1 <= x <= WEST_CROSSING_X2 and 13 <= y <= 24:
         address = [WORLD_NAME, "中央大道", "西侧人行横道"]
         if y < ROAD_Y1:
@@ -113,6 +121,8 @@ def _runtime_address(x: int, y: int) -> list[str]:
 
 
 def _skill_binding() -> list[dict[str, Any]]:
+    """构造信号灯对象公开给行人的主动查询 Skill 绑定。"""
+
     return [
         {
             "interaction_key": "query-crosswalk-signal",
@@ -134,6 +144,8 @@ def _signal_node(
     material_slice_id: str,
     offset_steps: int,
 ) -> HierarchyNode:
+    """创建带独立相位偏移和查询 Skill 的交通信号灯层级节点。"""
+
     return HierarchyNode(
         id=node_id,
         kind="GAME_OBJECT",
@@ -158,6 +170,8 @@ def _signal_node(
 
 
 def build_world(current_world: dict[str, Any]) -> dict[str, Any]:
+    """把当前地图草稿重建为可运行、可编辑的双斑马线演示世界。"""
+
     current_editor = current_world["definition"]["editor_v2"]
     uploaded_sources = [
         copy.deepcopy(item)
@@ -495,6 +509,8 @@ def build_world(current_world: dict[str, Any]) -> dict[str, Any]:
 
 
 def update_map_metadata() -> None:
+    """直接修正演示地图的展示名称和用途说明，不改变 Revision 内容。"""
+
     database_path = ROOT / "var" / "generative-agents.db"
     with sqlite3.connect(database_path) as connection:
         connection.execute(
@@ -509,6 +525,8 @@ def update_map_metadata() -> None:
 
 
 def replace_map_draft() -> dict[str, Any]:
+    """读取当前地图草稿、生成新世界并用乐观锁完整替换。"""
+
     draft = request_json("GET", f"/maps/{MAP_ID}/draft")
     world = build_world(draft["world"])
     saved = request_json(
@@ -521,6 +539,8 @@ def replace_map_draft() -> dict[str, Any]:
 
 
 def publish_map() -> dict[str, Any]:
+    """发布当前地图草稿并返回不可变 Revision。"""
+
     draft = request_json("GET", f"/maps/{MAP_ID}/draft")
     return request_json(
         "POST",
@@ -530,6 +550,8 @@ def publish_map() -> dict[str, Any]:
 
 
 def create_experiment(map_revision_id: str) -> dict[str, Any]:
+    """创建或复用演示实验，并绑定指定的已发布地图 Revision。"""
+
     catalog = request_json(
         "GET", f"/experiments?q={quote(EXPERIMENT_NAME)}&archived=all&page_size=50"
     )
@@ -651,6 +673,8 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
 
 
 def launch_experiment(experiment_id: str) -> dict[str, Any]:
+    """发布指定实验草稿并创建一次演示 Run。"""
+
     draft = request_json("GET", f"/experiments/{experiment_id}/draft")
     return request_json(
         "POST",
@@ -660,6 +684,8 @@ def launch_experiment(experiment_id: str) -> dict[str, Any]:
 
 
 def main() -> None:
+    """按参数重建地图、实验，并可选择立即启动运行。"""
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--map-only", action="store_true", help="save the redesigned map draft only")
     parser.add_argument("--launch", action="store_true", help="publish the experiment and queue its run")

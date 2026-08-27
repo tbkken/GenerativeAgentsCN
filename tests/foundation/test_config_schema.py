@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_config_schema`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import copy
@@ -11,6 +12,7 @@ from generative_agents.config.schema import ExperimentDefinition, make_blank_def
 
 
 def test_canonical_hash_normalizes_key_order_unicode_and_newlines():
+    """回归验证 ``test_canonical_hash_normalizes_key_order_unicode_and_newlines`` 所描述的业务结果、故障边界和隔离约束。"""
     first = {"b": "e\u0301\r\nline", "a": {"x": 1}}
     second = {"a": {"x": 1}, "b": "é\nline"}
     assert canonical_json_bytes(first) == canonical_json_bytes(second)
@@ -18,6 +20,7 @@ def test_canonical_hash_normalizes_key_order_unicode_and_newlines():
 
 
 def test_algorithm_profile_is_the_fixed_ga_cn_v1_contract():
+    """回归验证 ``test_algorithm_profile_is_the_fixed_ga_cn_v1_contract`` 所描述的业务结果、故障边界和隔离约束。"""
     assert get_algorithm_profile("ga-cn-v1").as_dict() == {
         "sentence_chunk_size": 512,
         "sentence_chunk_overlap": 64,
@@ -45,6 +48,7 @@ def test_algorithm_profile_is_the_fixed_ga_cn_v1_contract():
     ],
 )
 def test_schema_rejects_result_changing_boundary_values(path, value):
+    """回归验证 ``test_schema_rejects_result_changing_boundary_values`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = make_blank_definition(key="schema-boundary", name="Boundary").model_dump(
         mode="json", exclude_none=False
     )
@@ -57,6 +61,7 @@ def test_schema_rejects_result_changing_boundary_values(path, value):
 
 
 def test_schema_forbids_unknown_fields_and_naive_time():
+    """回归验证 ``test_schema_forbids_unknown_fields_and_naive_time`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = make_blank_definition(key="strict-schema", name="Strict").model_dump(
         mode="json", exclude_none=False
     )
@@ -86,6 +91,7 @@ def test_schema_forbids_unknown_fields_and_naive_time():
     ],
 )
 def test_chat_provider_union_rejects_auto_where_unsupported(provider_payload):
+    """回归验证 ``test_chat_provider_union_rejects_auto_where_unsupported`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = make_blank_definition(key="provider-check", name="Provider").model_dump(
         mode="json", exclude_none=False
     )
@@ -95,6 +101,7 @@ def test_chat_provider_union_rejects_auto_where_unsupported(provider_payload):
 
 
 def test_cross_field_constraints_reject_projection_larger_than_run():
+    """回归验证 ``test_cross_field_constraints_reject_projection_larger_than_run`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = make_blank_definition(key="cross-field", name="Cross").model_dump(
         mode="json", exclude_none=False
     )
@@ -105,6 +112,7 @@ def test_cross_field_constraints_reject_projection_larger_than_run():
 
 
 def test_publication_validation_keeps_incomplete_blank_draft_editable():
+    """回归验证 ``test_publication_validation_keeps_incomplete_blank_draft_editable`` 所描述的业务结果、故障边界和隔离约束。"""
     draft = make_blank_definition(key="editable-draft", name="Editable")
     report = validate_for_publish(draft)
     assert not report.valid
@@ -116,6 +124,7 @@ def test_publication_validation_keeps_incomplete_blank_draft_editable():
 
 
 def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
+    """回归验证 ``test_definition_hash_changes_with_algorithm_or_seed`` 所描述的业务结果、故障边界和隔离约束。"""
     original = definition_hash(publishable_definition)
     payload = copy.deepcopy(
         publishable_definition.model_dump(mode="json", exclude_none=False)
@@ -127,6 +136,7 @@ def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
 def test_publication_rejects_duplicate_enabled_agent_display_names(
     publishable_definition,
 ):
+    """回归验证 ``test_publication_rejects_duplicate_enabled_agent_display_names`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = copy.deepcopy(
         publishable_definition.model_dump(mode="json", exclude_none=False)
     )
@@ -150,6 +160,7 @@ def test_publication_rejects_duplicate_enabled_agent_display_names(
 def test_publication_rejects_agent_without_spatial_configuration(
     publishable_definition,
 ):
+    """回归验证 ``test_publication_rejects_agent_without_spatial_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = copy.deepcopy(
         publishable_definition.model_dump(mode="json", exclude_none=False)
     )
@@ -167,6 +178,7 @@ def test_publication_rejects_agent_without_spatial_configuration(
 def test_publication_rejects_agent_address_missing_from_selected_map(
     publishable_definition,
 ):
+    """回归验证 ``test_publication_rejects_agent_address_missing_from_selected_map`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = copy.deepcopy(
         publishable_definition.model_dump(mode="json", exclude_none=False)
     )
@@ -188,6 +200,7 @@ def test_publication_rejects_agent_address_missing_from_selected_map(
 def test_publication_names_incompatible_spatial_tree_path(
     publishable_definition,
 ):
+    """回归验证 ``test_publication_names_incompatible_spatial_tree_path`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = copy.deepcopy(
         publishable_definition.model_dump(mode="json", exclude_none=False)
     )

@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_console_state_sync_audit`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import shutil
@@ -10,6 +11,7 @@ CONSOLE = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
 
 
 def test_same_run_refresh_and_activity_backlog_cannot_regress_authoritative_facts():
+    """回归验证 ``test_same_run_refresh_and_activity_backlog_cannot_regress_authoritative_facts`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the executable state-sync contract"
     program = r"""
@@ -105,6 +107,7 @@ function resolveBatch(batch, status, marker) {
 
 
 def test_result_actions_capture_run_ownership_before_network_wait():
+    """回归验证 ``test_result_actions_capture_run_ownership_before_network_wait`` 所描述的业务结果、故障边界和隔离约束。"""
     source = CONSOLE.read_text(encoding="utf-8")
     assert "const runId = state.selectedRunId;" in source
     assert "const experimentId = state.selectedExperimentId;" in source

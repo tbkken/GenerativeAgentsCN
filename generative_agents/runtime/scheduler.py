@@ -48,6 +48,8 @@ def _utc_now() -> datetime:
 
 @dataclass(frozen=True, slots=True)
 class ClaimedRun:
+    """已由当前 Supervisor 租用的队列项及其新 Attempt 身份。"""
+
     run_id: str
     experiment_id: str
     revision_id: str
@@ -60,6 +62,8 @@ class ClaimedRun:
 
 @dataclass(frozen=True, slots=True)
 class ReconcileReport:
+    """一次生命周期对账中修复、终止或释放的 Run 数量摘要。"""
+
     interrupted_run_ids: tuple[str, ...]
     failed_start_run_ids: tuple[str, ...]
     repaired_queue_run_ids: tuple[str, ...]

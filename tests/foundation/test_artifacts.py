@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_artifacts`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import json
@@ -18,6 +19,7 @@ from generative_agents.services.runs import RunService
 
 
 def _published(service, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_published`` 辅助步骤，减少重复的场景搭建代码。"""
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -42,6 +44,7 @@ def _published(service, definition: ExperimentDefinition):
 def test_persistent_artifact_job_builds_run_scoped_replay_and_deduplicates(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_persistent_artifact_job_builds_run_scoped_replay_and_deduplicates`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _published(service, publishable_definition)
     var_dir = tmp_path / "var"
     run = RunService(database, var_dir=var_dir).create_from_published(
@@ -106,6 +109,7 @@ def test_persistent_artifact_job_builds_run_scoped_replay_and_deduplicates(
 def test_core_artifact_jobs_reject_parameters_that_do_not_affect_content(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_core_artifact_jobs_reject_parameters_that_do_not_affect_content`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _published(service, publishable_definition)
     run = RunService(database, var_dir=tmp_path / "var").create_from_published(
         experiment["id"], revision["id"]

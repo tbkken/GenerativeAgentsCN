@@ -15,6 +15,7 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     # SKILL.md files are now the only source of agent behavior. These tables
     # belonged to the retired typed capability/workflow implementation.
     retired_tables = (
@@ -85,4 +86,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     raise RuntimeError("The SKILL brain cutover is intentionally irreversible")

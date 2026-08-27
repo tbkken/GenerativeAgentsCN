@@ -1,3 +1,4 @@
+"""架构红线测试：覆盖 ``test_adversarial_failure_boundaries`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import json
@@ -46,6 +47,7 @@ from generative_agents.start import SimulationRunner
 
 
 def _definition(key: str) -> ExperimentDefinition:
+    """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     definition = make_blank_definition(key=key, name=f"Experiment {key}")
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["models"]["chat"]["resolved_model"] = "Qwen/test-chat"
@@ -94,6 +96,7 @@ def _definition(key: str) -> ExperimentDefinition:
 
 @pytest.fixture
 def database(tmp_path: Path):
+    """为本测试模块封装 ``database`` 辅助步骤，减少重复的场景搭建代码。"""
     database_url = "sqlite:///" + (tmp_path / "adversarial.db").as_posix()
     upgrade_database(database_url)
     value = create_database(database_url)
@@ -102,6 +105,7 @@ def database(tmp_path: Path):
 
 
 def _publish(service: ExperimentService, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -124,6 +128,7 @@ def _publish(service: ExperimentService, definition: ExperimentDefinition):
 
 
 def _queue_run(database, tmp_path: Path, key: str):
+    """为本测试模块封装 ``_queue_run`` 辅助步骤，减少重复的场景搭建代码。"""
     experiment, revision = _publish(ExperimentService(database), _definition(key))
     runs = RunService(database, var_dir=tmp_path / "var")
     run = runs.create_from_published(experiment["id"], revision["id"])
@@ -131,6 +136,7 @@ def _queue_run(database, tmp_path: Path, key: str):
 
 
 def _step(run_id: UUID, attempt_id: UUID, step_no: int, *, memory=None):
+    """为本测试模块封装 ``_step`` 辅助步骤，减少重复的场景搭建代码。"""
     builder = StepResultBuilder(
         run_id=run_id,
         attempt_id=attempt_id,
@@ -155,10 +161,13 @@ def _step(run_id: UUID, attempt_id: UUID, step_no: int, *, memory=None):
 
 
 def _checkpoint_writer(paths: RunPaths, *, retention: int = 3):
+    """为本测试模块封装 ``_checkpoint_writer`` 辅助步骤，减少重复的场景搭建代码。"""
     def snapshot(result):
+        """为本测试模块封装 ``snapshot`` 辅助步骤，减少重复的场景搭建代码。"""
         rng = random.Random(100 + result.step_no)
 
         def export_storage(target: Path):
+            """为本测试模块封装 ``export_storage`` 辅助步骤，减少重复的场景搭建代码。"""
             (target / "marker.txt").write_text(
                 f"checkpoint-{result.step_no}", encoding="utf-8"
             )
@@ -265,6 +274,7 @@ def test_supervisor_requires_exclusive_scheduler_leader_lock():
 
 
 def test_second_supervisor_cannot_start_for_same_var_dir(database, tmp_path: Path):
+    """回归验证 ``test_second_supervisor_cannot_start_for_same_var_dir`` 所描述的业务结果、故障边界和隔离约束。"""
     first = LocalProcessSupervisor(database, var_dir=tmp_path / "var")
     second = LocalProcessSupervisor(database, var_dir=tmp_path / "var")
     first.start()
@@ -331,30 +341,40 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
     """An action address is not an identity: resume must retain observed coord."""
 
     class FakeAssociate:
+        """测试替身 ``FakeAssociate``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, path, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.last_evicted = ()
             marker = Path(path) / "marker.txt"
             self.loaded_marker = marker.read_text(encoding="utf-8")
 
         def to_dict(self):
+            """为本测试模块封装 ``to_dict`` 辅助步骤，减少重复的场景搭建代码。"""
             return {"memory": {"event": [], "thought": [], "chat": []}}
 
     class Logger:
+        """为 ``Logger`` 相关场景组织共享测试状态、输入或断言。"""
         def info(self, *_args, **_kwargs):
+            """为本测试模块封装 ``info`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         debug = info
         warning = info
 
     class PoisonChoice(random.Random):
+        """为 ``PoisonChoice`` 相关场景组织共享测试状态、输入或断言。"""
         def choice(self, _sequence):  # pragma: no cover - called only on regression
+            """为本测试模块封装 ``choice`` 辅助步骤，减少重复的场景搭建代码。"""
             raise AssertionError("resume re-selected a tile from the action address")
 
     class Committer:
+        """为 ``Committer`` 相关场景组织共享测试状态、输入或断言。"""
         def __init__(self):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.results = []
 
         def commit(self, result, *, force_checkpoint):
+            """为本测试模块封装 ``commit`` 辅助步骤，减少重复的场景搭建代码。"""
             self.results.append(result)
 
     monkeypatch.setattr(memory_module, "Associate", FakeAssociate)

@@ -21,6 +21,8 @@ ToolKind = Literal[
 
 
 class ToolMobility(StrictModel):
+    """工具携带、停放和移动时需要遵守的空间规则。"""
+
     mode: Literal["NONE", "ROAD", "BICYCLE_NETWORK", "PEDESTRIAN_NETWORK"] = "NONE"
     max_speed_mps: float = Field(default=0, ge=0, le=200)
     max_acceleration_mps2: float = Field(default=0, ge=0, le=100)
@@ -51,6 +53,8 @@ class ToolMobility(StrictModel):
 
 
 class ToolContract(StrictModel):
+    """智能体可拥有或控制的版本化工具及其状态、能力和移动契约。"""
+
     schema_version: Literal["ga-tool/v1"] = "ga-tool/v1"
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)

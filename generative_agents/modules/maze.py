@@ -23,6 +23,8 @@ _ADDRESS_LEVEL_ALIASES = {
 
 
 class Tile:
+    """仿真地图中的一个网格，保存碰撞、语义地址和当前事件。"""
+
     def __init__(
         self,
         coord,
@@ -227,6 +229,8 @@ class Tile:
 
 
 class Maze:
+    """运行时地图索引，负责坐标查询、寻路、邻域和语义地址解析。"""
+
     def __init__(self, config, logger, random_source):
         # define tiles
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。

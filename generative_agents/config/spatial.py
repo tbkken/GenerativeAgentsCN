@@ -13,6 +13,8 @@ from typing import Any, Iterable, Mapping, Sequence
 
 @dataclass(frozen=True)
 class AgentSpatialIssue:
+    """智能体空间配置中的一个可定位校验问题。"""
+
     code: str
     message: str
     purpose: str | None = None

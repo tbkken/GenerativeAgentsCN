@@ -1,4 +1,4 @@
-"""Reusable public map lifecycle and experiment-owned map overlays."""
+"""可复用公共地图的生命周期，以及实验私有地图覆盖层。"""
 
 from __future__ import annotations
 
@@ -1081,6 +1081,8 @@ def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
 
 
 class WorldMapService:
+    """管理地图草稿、发布版本、实验引用和编辑器文档编译。"""
+
     def __init__(self, database: Database) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

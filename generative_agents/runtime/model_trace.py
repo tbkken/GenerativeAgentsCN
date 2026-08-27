@@ -18,11 +18,15 @@ from .context import RunPaths
 
 
 class ModelTraceEventType(StrEnum):
+    """模型追踪流中的逻辑调用、物理尝试和结果事件类型。"""
+
     PHYSICAL_ATTEMPT = "PHYSICAL_ATTEMPT"
     LOGICAL_END = "LOGICAL_END"
 
 
 class ModelTraceStatus(StrEnum):
+    """一次模型调用尝试的成功或失败状态。"""
+
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     FALLBACK = "FALLBACK"
@@ -72,6 +76,8 @@ def redact_error(value: str | None) -> str | None:
 
 @dataclass(frozen=True, slots=True)
 class ModelTraceEvent:
+    """追加到 Attempt 追踪文件的一条不可变模型调用事件。"""
+
     event_type: ModelTraceEventType
     run_id: UUID
     attempt_id: UUID

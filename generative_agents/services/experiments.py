@@ -1,4 +1,4 @@
-"""Experiment draft, validation and immutable publication service."""
+"""实验草稿、发布校验和不可变 Revision 的事务服务。"""
 
 from __future__ import annotations
 

@@ -1,3 +1,4 @@
+"""运行时回归测试：覆盖 ``test_runtime_contracts`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import os
@@ -39,6 +40,7 @@ from generative_agents.skills import SkillRegistry
 
 
 def _builder(run_id, attempt_id, step_no=1):
+    """为本测试模块封装 ``_builder`` 辅助步骤，减少重复的场景搭建代码。"""
     return StepResultBuilder(
         run_id=run_id,
         attempt_id=attempt_id,
@@ -48,6 +50,7 @@ def _builder(run_id, attempt_id, step_no=1):
 
 
 def _agent(key: str, x: int) -> AgentStepResult:
+    """为本测试模块封装 ``_agent`` 辅助步骤，减少重复的场景搭建代码。"""
     return AgentStepResult(
         agent_key=key,
         from_coord=(x, 0),
@@ -60,6 +63,7 @@ def _agent(key: str, x: int) -> AgentStepResult:
 
 
 def test_algorithm_profile_is_versioned_and_fixed():
+    """回归验证 ``test_algorithm_profile_is_versioned_and_fixed`` 所描述的业务结果、故障边界和隔离约束。"""
     profile = get_algorithm_profile("ga-cn-v1")
     assert profile.sentence_chunk_size == 512
     assert profile.chat_chars_per_minute == 240
@@ -68,6 +72,7 @@ def test_algorithm_profile_is_versioned_and_fixed():
 
 
 def test_builder_stably_sorts_and_rejects_writes_after_freeze():
+    """回归验证 ``test_builder_stably_sorts_and_rejects_writes_after_freeze`` 所描述的业务结果、故障边界和隔离约束。"""
     builder = _builder(uuid4(), uuid4())
     builder.add_agent(_agent("z-agent", 2))
     builder.add_agent(_agent("a-agent", 1))
@@ -80,6 +85,7 @@ def test_builder_stably_sorts_and_rejects_writes_after_freeze():
 
 
 def test_frame_store_is_idempotent_and_rejects_cross_run_or_rewrite(tmp_path):
+    """回归验证 ``test_frame_store_is_idempotent_and_rejects_cross_run_or_rewrite`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
     store = FrameStore(paths)
@@ -107,6 +113,7 @@ def test_frame_store_is_idempotent_and_rejects_cross_run_or_rewrite(tmp_path):
 
 
 def test_result_rejects_naive_virtual_time():
+    """回归验证 ``test_result_rejects_naive_virtual_time`` 所描述的业务结果、故障边界和隔离约束。"""
     builder = StepResultBuilder(
         run_id=uuid4(),
         attempt_id=uuid4(),
@@ -118,6 +125,7 @@ def test_result_rejects_naive_virtual_time():
 
 
 def test_checkpoint_bundle_is_verified_and_latest_is_idempotent(tmp_path):
+    """回归验证 ``test_checkpoint_bundle_is_verified_and_latest_is_idempotent`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
     store = FrameStore(paths)
@@ -127,6 +135,7 @@ def test_checkpoint_bundle_is_verified_and_latest_is_idempotent(tmp_path):
     frame = store.write(result)
 
     def export_runtime(target):
+        """为本测试模块封装 ``export_runtime`` 辅助步骤，减少重复的场景搭建代码。"""
         (target / "memory.sqlite").write_bytes(b"run-scoped-memory")
 
     writer = CheckpointBundleWriter(
@@ -148,6 +157,7 @@ def test_checkpoint_bundle_is_verified_and_latest_is_idempotent(tmp_path):
 
 
 def test_checkpoint_rejects_unsafe_agent_storage_key(tmp_path):
+    """回归验证 ``test_checkpoint_rejects_unsafe_agent_storage_key`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
     result = _builder(run_id, uuid4()).freeze()
@@ -165,6 +175,7 @@ def test_checkpoint_rejects_unsafe_agent_storage_key(tmp_path):
 
 
 def test_checkpoint_recovers_by_scanning_and_retains_only_configured_bundles(tmp_path):
+    """回归验证 ``test_checkpoint_recovers_by_scanning_and_retains_only_configured_bundles`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
@@ -195,13 +206,16 @@ def test_checkpoint_recovers_by_scanning_and_retains_only_configured_bundles(tmp
 def test_checkpoint_prune_defers_sharing_violation_without_partial_deletion(
     tmp_path, monkeypatch
 ):
+    """回归验证 ``test_checkpoint_prune_defers_sharing_violation_without_partial_deletion`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
     store = FrameStore(paths)
 
     def snapshot(result):
+        """为本测试模块封装 ``snapshot`` 辅助步骤，减少重复的场景搭建代码。"""
         def export(target):
+            """为本测试模块封装 ``export`` 辅助步骤，减少重复的场景搭建代码。"""
             (target / "index_store.json").write_text(
                 f'{{"step":{result.step_no}}}', encoding="utf-8"
             )
@@ -221,6 +235,7 @@ def test_checkpoint_prune_defers_sharing_violation_without_partial_deletion(
     block_oldest = True
 
     def replace_with_sharing_violation(source, destination):
+        """为本测试模块封装 ``replace_with_sharing_violation`` 辅助步骤，减少重复的场景搭建代码。"""
         if block_oldest and Path(source).name == "step-000001":
             error = PermissionError("checkpoint member is in use")
             error.winerror = 32
@@ -246,6 +261,7 @@ def test_checkpoint_prune_defers_sharing_violation_without_partial_deletion(
 
 
 def test_checkpoint_access_lock_serializes_reader_and_retention(tmp_path):
+    """回归验证 ``test_checkpoint_access_lock_serializes_reader_and_retention`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)
@@ -269,12 +285,14 @@ def test_checkpoint_access_lock_serializes_reader_and_retention(tmp_path):
     write_finished = threading.Event()
 
     def hold_validated_bundle():
+        """为本测试模块封装 ``hold_validated_bundle`` 辅助步骤，减少重复的场景搭建代码。"""
         with reader.access():
             reader.validate(paths.checkpoints / "step-000001")
             reader_ready.set()
             assert release_reader.wait(timeout=5)
 
     def publish_next_step():
+        """为本测试模块封装 ``publish_next_step`` 辅助步骤，减少重复的场景搭建代码。"""
         result = _builder(run_id, attempt_id, step_no=3).freeze()
         writer.write(result, store.write(result))
         write_finished.set()
@@ -307,7 +325,9 @@ def test_checkpoint_retention_survives_a_live_member_file_handle(tmp_path):
     store = FrameStore(paths)
 
     def snapshot(result):
+        """为本测试模块封装 ``snapshot`` 辅助步骤，减少重复的场景搭建代码。"""
         def export(target):
+            """为本测试模块封装 ``export`` 辅助步骤，减少重复的场景搭建代码。"""
             (target / "index_store.json").write_text("{}", encoding="utf-8")
 
         return CheckpointSnapshot(
@@ -344,6 +364,7 @@ def test_checkpoint_retention_survives_a_live_member_file_handle(tmp_path):
 
 
 def test_run_manifest_is_verified_and_immutable(tmp_path):
+    """回归验证 ``test_run_manifest_is_verified_and_immutable`` 所描述的业务结果、故障边界和隔离约束。"""
     import hashlib
 
     run_id = uuid4()
@@ -381,6 +402,7 @@ def test_run_manifest_is_verified_and_immutable(tmp_path):
 
 
 def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp_path):
+    """回归验证 ``test_run_manifest_resume_reuses_provenance_but_rejects_definition_change`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     experiment_id = uuid4()
     revision_id = uuid4()
@@ -445,6 +467,7 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
 
 
 def test_run_manifest_pins_skill_bundle_and_runtime_instructions(tmp_path):
+    """回归验证 ``test_run_manifest_pins_skill_bundle_and_runtime_instructions`` 所描述的业务结果、故障边界和隔离约束。"""
     import copy
     import hashlib
 
@@ -494,6 +517,7 @@ def test_run_manifest_pins_skill_bundle_and_runtime_instructions(tmp_path):
 
 
 def test_model_trace_is_attempt_scoped_contiguous_and_redacted(tmp_path):
+    """回归验证 ``test_model_trace_is_attempt_scoped_contiguous_and_redacted`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     paths = RunPaths.under(tmp_path, run_id)

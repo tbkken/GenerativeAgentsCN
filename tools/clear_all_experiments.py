@@ -19,6 +19,8 @@ RUNS_DIR = (VAR_DIR / "runs").resolve()
 
 
 def _assert_safe_targets() -> None:
+    """确认数据库和 Run 目录都位于预期 var 目录后才允许清理。"""
+
     if DATABASE.parent != VAR_DIR or DATABASE.name != "generative-agents.db":
         raise RuntimeError(f"unsafe database target: {DATABASE}")
     if not DATABASE.is_file():
@@ -28,6 +30,8 @@ def _assert_safe_targets() -> None:
 
 
 def _clear_database() -> dict[str, int]:
+    """按外键依赖顺序清空实验相关表，并返回各表原记录数。"""
+
     connection = sqlite3.connect(DATABASE)
     connection.execute("PRAGMA foreign_keys=ON")
     before = {
@@ -77,6 +81,8 @@ def _clear_database() -> dict[str, int]:
 
 
 def _clear_run_directories() -> int:
+    """删除 runs 目录下已确认安全的直接子目录并返回数量。"""
+
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     children = [child.resolve() for child in RUNS_DIR.iterdir()]
     for child in children:
@@ -91,6 +97,8 @@ def _clear_run_directories() -> int:
 
 
 def main() -> None:
+    """执行安全检查、数据库清理和 Run 目录清理，并打印摘要。"""
+
     _assert_safe_targets()
     before = _clear_database()
     deleted_paths = _clear_run_directories()

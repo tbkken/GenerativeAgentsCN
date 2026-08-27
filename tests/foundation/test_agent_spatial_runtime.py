@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_agent_spatial_runtime`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import logging
@@ -11,6 +12,7 @@ from generative_agents.modules.maze import Maze, MazeAddressNotFoundError
 
 
 def _agent_with_address(address):
+    """为本测试模块封装 ``_agent_with_address`` 辅助步骤，减少重复的场景搭建代码。"""
     agent = Agent.__new__(Agent)
     agent.name = "Runtime Agent"
     agent.spatial = SimpleNamespace(
@@ -23,6 +25,7 @@ def _agent_with_address(address):
 
 
 def test_required_spatial_address_rejects_legacy_empty_configuration():
+    """回归验证 ``test_required_spatial_address_rejects_legacy_empty_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
     agent = _agent_with_address([])
 
     with pytest.raises(AgentSpatialConfigurationError) as caught:
@@ -33,6 +36,7 @@ def test_required_spatial_address_rejects_legacy_empty_configuration():
 
 
 def test_required_spatial_address_rejects_address_from_another_map():
+    """回归验证 ``test_required_spatial_address_rejects_address_from_another_map`` 所描述的业务结果、故障边界和隔离约束。"""
     agent = _agent_with_address(["test", "other", "bedroom", "bed"])
 
     with pytest.raises(AgentSpatialConfigurationError, match="当前地图"):
@@ -40,6 +44,7 @@ def test_required_spatial_address_rejects_address_from_another_map():
 
 
 def test_maze_never_falls_back_to_an_unrelated_random_address():
+    """回归验证 ``test_maze_never_falls_back_to_an_unrelated_random_address`` 所描述的业务结果、故障边界和隔离约束。"""
     maze = Maze(
         {
             "world": "test",
@@ -65,6 +70,7 @@ def test_maze_never_falls_back_to_an_unrelated_random_address():
 
 
 def test_system_map_object_level_is_available_to_legacy_game_object_runtime():
+    """回归验证 ``test_system_map_object_level_is_available_to_legacy_game_object_runtime`` 所描述的业务结果、故障边界和隔离约束。"""
     maze = Maze(
         {
             "world": "system-map",
@@ -107,6 +113,7 @@ def test_system_map_object_level_is_available_to_legacy_game_object_runtime():
 
 
 def test_editor_partial_address_does_not_duplicate_world_root():
+    """回归验证 ``test_editor_partial_address_does_not_duplicate_world_root`` 所描述的业务结果、故障边界和隔离约束。"""
     maze = Maze(
         {
             "world": "system-map",

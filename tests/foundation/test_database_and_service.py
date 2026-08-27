@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_database_and_service`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import copy
@@ -14,6 +15,7 @@ from generative_agents.skills import SkillRegistry
 
 
 def _create_publishable(service, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_create_publishable`` 辅助步骤，减少重复的场景搭建代码。"""
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -31,6 +33,7 @@ def _create_publishable(service, definition: ExperimentDefinition):
 
 
 def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
+    """回归验证 ``test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas`` 所描述的业务结果、故障边界和隔离约束。"""
     with database.engine.connect() as connection:
         tables = set(inspect(connection).get_table_names())
         assert {
@@ -71,6 +74,7 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):
+    """回归验证 ``test_create_and_list_experiments_isolated_and_paginated`` 所描述的业务结果、故障边界和隔离约束。"""
     first = service.create_experiment(name="Alpha", goal="memory", source_type="BLANK")
     second = service.create_experiment(name="Beta", goal="social", source_type="BLANK")
     assert first["id"] != second["id"]
@@ -86,6 +90,7 @@ def test_create_and_list_experiments_isolated_and_paginated(service):
 
 
 def test_builtin_template_is_materialized_once_per_independent_draft(service):
+    """回归验证 ``test_builtin_template_is_materialized_once_per_independent_draft`` 所描述的业务结果、故障边界和隔离约束。"""
     first = service.create_experiment(name="标准实验 A", source_type="BUILTIN_DEFAULT")
     second = service.create_experiment(name="标准实验 B", source_type="BUILTIN_DEFAULT")
     first_draft = service.get_draft(first["id"])
@@ -109,6 +114,7 @@ def test_builtin_template_is_materialized_once_per_independent_draft(service):
 
 
 def test_stale_draft_save_returns_revision_conflict(service):
+    """回归验证 ``test_stale_draft_save_returns_revision_conflict`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(name="Conflict", source_type="BLANK")
     draft = service.get_draft(created["id"])
     definition = ExperimentDefinition.model_validate(draft["definition"])
@@ -131,6 +137,7 @@ def test_stale_draft_save_returns_revision_conflict(service):
 def test_published_revision_is_immutable_at_database_layer(
     service, database, publishable_definition
 ):
+    """回归验证 ``test_published_revision_is_immutable_at_database_layer`` 所描述的业务结果、故障边界和隔离约束。"""
     created, draft = _create_publishable(service, publishable_definition)
     published = service.publish_draft(
         experiment_id=created["id"],
@@ -156,6 +163,7 @@ def test_published_revision_is_immutable_at_database_layer(
 def test_fork_published_revision_is_a_deep_independent_draft(
     service, database, publishable_definition
 ):
+    """回归验证 ``test_fork_published_revision_is_a_deep_independent_draft`` 所描述的业务结果、故障边界和隔离约束。"""
     created, draft = _create_publishable(service, publishable_definition)
     with database.session_factory.begin() as session:
         draft_row = session.get(ExperimentRevision, draft["id"])
@@ -187,6 +195,7 @@ def test_fork_published_revision_is_a_deep_independent_draft(
 
 
 def test_database_allows_only_one_draft_per_experiment(service, database):
+    """回归验证 ``test_database_allows_only_one_draft_per_experiment`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(name="One draft", source_type="BLANK")
     current = service.get_draft(created["id"])
     duplicate = ExperimentRevision(
@@ -207,6 +216,7 @@ def test_database_allows_only_one_draft_per_experiment(service, database):
 
 
 def test_publish_rejects_auto_model_without_resolved_identity(service):
+    """回归验证 ``test_publish_rejects_auto_model_without_resolved_identity`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(name="Unresolved", source_type="BLANK")
     draft = service.get_draft(created["id"])
     with pytest.raises(ServiceError) as exc:

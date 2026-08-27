@@ -17,6 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.drop_index("uq_artifact_jobs_one_active", table_name="artifact_jobs")
     with op.batch_alter_table("artifact_jobs", recreate="always") as batch:
         batch.add_column(
@@ -80,6 +81,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     with op.batch_alter_table("run_artifacts", recreate="always") as batch:
         batch.drop_constraint("ck_run_artifact_source_step", type_="check")
         batch.drop_constraint("uq_run_artifact_identity", type_="unique")

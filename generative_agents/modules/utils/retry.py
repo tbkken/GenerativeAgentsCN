@@ -8,6 +8,8 @@ from typing import Protocol
 
 
 class RetryControl(Protocol):
+    """模型重试期间可查询的暂停、取消和可中断等待协议。"""
+
     @property
     def pause_requested(self) -> bool:
         """暂停`requested`。

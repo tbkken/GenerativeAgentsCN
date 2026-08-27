@@ -13,6 +13,7 @@ PROTOTYPE = (REPO_ROOT / "docs" / "experiment-console.html").read_text(encoding=
 
 
 def test_def_018_published_revision_can_be_run_again_without_new_draft() -> None:
+    """回归验证 ``test_def_018_published_revision_can_be_run_again_without_new_draft`` 所描述的业务结果、故障边界和隔离约束。"""
     accepted_contracts = (
         "POST | `/experiments/{id}/revisions/{revision_id}/runs`",
         "POST | `/revisions/{revision_id}/runs`",
@@ -24,6 +25,7 @@ def test_def_018_published_revision_can_be_run_again_without_new_draft() -> None
 
 
 def test_def_020_paused_run_can_be_cancelled_without_resuming_a_worker() -> None:
+    """回归验证 ``test_def_020_paused_run_can_be_cancelled_without_resuming_a_worker`` 所描述的业务结果、故障边界和隔离约束。"""
     assert "PAUSED --> CANCELLED" in DESIGN, (
         "DEF-020 state machine has no PAUSED -> CANCELLED transition"
     )
@@ -32,6 +34,7 @@ def test_def_020_paused_run_can_be_cancelled_without_resuming_a_worker() -> None
 
 
 def test_def_021_terminal_failure_states_are_discoverable_from_status_tabs() -> None:
+    """回归验证 ``test_def_021_terminal_failure_states_are_discoverable_from_status_tabs`` 所描述的业务结果、故障边界和隔离约束。"""
     status_tabs = PROTOTYPE[PROTOTYPE.index('aria-label="实验状态筛选"') : PROTOTYPE.index("</div>", PROTOTYPE.index('aria-label="实验状态筛选"'))]
     assert "失败" in status_tabs or "异常" in status_tabs, (
         "DEF-021 FAILED experiments have no status tab in the high-fidelity list interaction"
@@ -42,6 +45,7 @@ def test_def_021_terminal_failure_states_are_discoverable_from_status_tabs() -> 
 
 
 def test_def_022_result_run_selector_exposes_history_pagination() -> None:
+    """回归验证 ``test_def_022_result_run_selector_exposes_history_pagination`` 所描述的业务结果、故障边界和隔离约束。"""
     selector_start = PROTOTYPE.index('id="resultRunSelect"')
     result_area = PROTOTYPE[selector_start : PROTOTYPE.index('class="result-tabs"', selector_start)]
     pagination_cues = ("加载更多", "查看全部运行", "搜索运行", "run-history")
@@ -51,6 +55,7 @@ def test_def_022_result_run_selector_exposes_history_pagination() -> None:
 
 
 def test_def_023_world_assets_have_upload_and_content_delivery_apis() -> None:
+    """回归验证 ``test_def_023_world_assets_have_upload_and_content_delivery_apis`` 所描述的业务结果、故障边界和隔离约束。"""
     upload_contracts = ("POST | `/assets`", "POST | `/assets/upload`")
     read_contracts = (
         "GET | `/assets/{asset_id}`",

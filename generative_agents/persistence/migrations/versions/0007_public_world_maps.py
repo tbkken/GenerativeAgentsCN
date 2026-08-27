@@ -17,6 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.create_table(
         "world_maps",
         sa.Column("id", sa.String(36), primary_key=True),
@@ -82,6 +83,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_index("ix_world_map_revisions_map", table_name="world_map_revisions")
     op.drop_index("uq_world_map_one_draft", table_name="world_map_revisions")
     op.drop_table("world_map_revisions")

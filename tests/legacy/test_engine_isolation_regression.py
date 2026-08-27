@@ -1,3 +1,4 @@
+"""兼容性回归测试：覆盖 ``test_engine_isolation_regression`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import copy
@@ -39,7 +40,9 @@ from generative_agents.start import SimulationRunner, apply_checkpoint_state
 
 
 class _Logger:
+    """为 ``_Logger`` 相关场景组织共享测试状态、输入或断言。"""
     def info(self, *_args, **_kwargs):
+        """为本测试模块封装 ``info`` 辅助步骤，减少重复的场景搭建代码。"""
         pass
 
     debug = info
@@ -47,43 +50,56 @@ class _Logger:
 
 
 class _Event:
+    """为 ``_Event`` 相关场景组织共享测试状态、输入或断言。"""
     predicate = "moving"
     emoji = "🚶"
 
     def get_describe(self):
+        """为本测试模块封装 ``get_describe`` 辅助步骤，减少重复的场景搭建代码。"""
         return "walks to the cafe"
 
 
 class _Tile:
+    """为 ``_Tile`` 相关场景组织共享测试状态、输入或断言。"""
     def get_address(self):
+        """为本测试模块封装 ``get_address`` 辅助步骤，减少重复的场景搭建代码。"""
         return ["world", "cafe"]
 
 
 class _FakeAgent:
+    """测试替身 ``_FakeAgent``：记录调用并返回当前场景可控的结果。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.name = "Agent A"
         self.coord = (1, 1)
         self.path = []
 
     def get_event(self, as_act=True):
+        """为本测试模块封装 ``get_event`` 辅助步骤，减少重复的场景搭建代码。"""
         return _Event() if as_act else None
 
     def get_tile(self):
+        """为本测试模块封装 ``get_tile`` 辅助步骤，减少重复的场景搭建代码。"""
         return _Tile()
 
 
 class _FakeGame:
+    """测试替身 ``_FakeGame``：记录调用并返回当前场景可控的结果。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agents = {"agent-a": _FakeAgent()}
         self.agent_keys_by_name = {"Agent A": "agent-a"}
 
     def reset_game(self):
+        """为本测试模块封装 ``reset_game`` 辅助步骤，减少重复的场景搭建代码。"""
         pass
 
     def get_agent(self, key):
+        """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agents[key]
 
     def agent_think(self, key, _status):
+        """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         agent = self.agents[key]
         agent.coord = (2, 1)
         return {
@@ -94,14 +110,18 @@ class _FakeGame:
 
 
 class _Committer:
+    """为 ``_Committer`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.items = []
 
     def commit(self, result, *, force_checkpoint):
+        """为本测试模块封装 ``commit`` 辅助步骤，减少重复的场景搭建代码。"""
         self.items.append((result, force_checkpoint))
 
 
 def test_simulation_runner_commits_complete_observed_step_result(tmp_path):
+    """回归验证 ``test_simulation_runner_commits_complete_observed_step_result`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id, attempt_id = uuid4(), uuid4()
     context = SimpleNamespace(
         run_id=run_id,
@@ -122,6 +142,7 @@ def test_simulation_runner_commits_complete_observed_step_result(tmp_path):
 
 
 def test_clock_and_rng_are_run_local_when_interleaved():
+    """回归验证 ``test_clock_and_rng_are_run_local_when_interleaved`` 所描述的业务结果、故障边界和隔离约束。"""
     a_clock = SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc))
     b_clock = SimulationClock(datetime(2030, 1, 1, tzinfo=timezone.utc))
     a_rng, b_rng = random.Random(1), random.Random(2)
@@ -136,6 +157,7 @@ def test_clock_and_rng_are_run_local_when_interleaved():
 
 
 def test_game_checkpoint_round_trip_restores_run_local_rng_state():
+    """回归验证 ``test_game_checkpoint_round_trip_restores_run_local_rng_state`` 所描述的业务结果、故障边界和隔离约束。"""
     game = Game.__new__(Game)
     game.context = SimpleNamespace(random=random.Random(42))
     game.agents = {}
@@ -150,6 +172,7 @@ def test_game_checkpoint_round_trip_restores_run_local_rng_state():
 
 
 def test_checkpoint_state_overlay_is_isolated_and_requires_same_agents():
+    """回归验证 ``test_checkpoint_state_overlay_is_isolated_and_requires_same_agents`` 所描述的业务结果、故障边界和隔离约束。"""
     config = {
         "agents": {
             "agent-a": {
@@ -185,6 +208,7 @@ def test_checkpoint_state_overlay_is_isolated_and_requires_same_agents():
 
 
 def test_memory_eviction_is_preserved_as_a_result_delta():
+    """回归验证 ``test_memory_eviction_is_preserved_as_a_result_delta`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id, attempt_id = uuid4(), uuid4()
     collector = StepResultCollector(
         StepResultBuilder(
@@ -209,6 +233,7 @@ def test_memory_eviction_is_preserved_as_a_result_delta():
 
 
 def test_agent_decision_context_keeps_product_facts_without_full_memory_storage():
+    """回归验证 ``test_agent_decision_context_keeps_product_facts_without_full_memory_storage`` 所描述的业务结果、故障边界和隔离约束。"""
     context = StepResultCollector._decision_context(
         {"path": [(1, 2), (2, 2)]},
         {
@@ -236,6 +261,7 @@ def test_agent_decision_context_keeps_product_facts_without_full_memory_storage(
 
 
 def test_maze_action_and_config_adapter_do_not_mutate_revision_inputs():
+    """回归验证 ``test_maze_action_and_config_adapter_do_not_mutate_revision_inputs`` 所描述的业务结果、故障边界和隔离约束。"""
     publishable_definition = make_blank_definition(
         key="adapter-test", name="Adapter test"
     )
@@ -269,11 +295,14 @@ def test_maze_action_and_config_adapter_do_not_mutate_revision_inputs():
 
 
 class _RetryingLLM(LLMModel):
+    """为 ``_RetryingLLM`` 相关场景组织共享测试状态、输入或断言。"""
     def setup(self, _config):
+        """构造当前测试场景所需的 ``setup`` 数据、文件或受控对象。"""
         self.calls = 0
         return None
 
     def _completion(self, _prompt, _return_type, **_kwargs):
+        """为本测试模块封装 ``_completion`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls += 1
         if self.calls == 1:
             raise RuntimeError("temporary failure")
@@ -286,6 +315,7 @@ class _RetryingLLM(LLMModel):
 
 
 def test_llm_trace_records_each_physical_attempt_and_one_logical_end(tmp_path):
+    """回归验证 ``test_llm_trace_records_each_physical_attempt_and_one_logical_end`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id, attempt_id = uuid4(), uuid4()
     writer = ModelTraceWriter(
         RunPaths.under(tmp_path, run_id),
@@ -321,16 +351,21 @@ def test_llm_trace_records_each_physical_attempt_and_one_logical_end(tmp_path):
 
 
 def test_vector_indexes_receive_embedding_instances_without_global_settings(monkeypatch):
+    """回归验证 ``test_vector_indexes_receive_embedding_instances_without_global_settings`` 所描述的业务结果、故障边界和隔离约束。"""
     from generative_agents.modules.storage import index as index_module
 
     created = []
 
     class FakeEmbedding:
+        """测试替身 ``FakeEmbedding``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, model_name):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.model_name = model_name
 
     class FakeIndex:
+        """测试替身 ``FakeIndex``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, nodes, **kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             created.append((nodes, kwargs))
             self.docstore = SimpleNamespace(docs={})
 
@@ -351,6 +386,7 @@ def test_vector_indexes_receive_embedding_instances_without_global_settings(monk
 
 
 def test_legacy_naive_checkpoint_index_dates_are_interpreted_as_simulation_utc():
+    """回归验证 ``test_legacy_naive_checkpoint_index_dates_are_interpreted_as_simulation_utc`` 所描述的业务结果、故障边界和隔离约束。"""
     from generative_agents.modules.storage import index as index_module
 
     removed = []
@@ -373,6 +409,7 @@ def test_legacy_naive_checkpoint_index_dates_are_interpreted_as_simulation_utc()
 
 
 def test_replay_artifact_uses_observed_frame_path(tmp_path):
+    """回归验证 ``test_replay_artifact_uses_observed_frame_path`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id, attempt_id, experiment_id, revision_id = (
         uuid4(),
         uuid4(),

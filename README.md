@@ -8,6 +8,8 @@
 
 Generative Agents的原始代码工程化程度较低，难以持续维护或拓展功能，且时隔两年，中文LLM的能力早已胜任此类任务。因此，我们对原项目进行了重构+深度汉化，旨在为中文用户提供一个利于维护的基础版本，以便后续实验或尝试更多玩法。
 
+如果你准备阅读或修改源码，建议先看[中文代码导览](docs/code-guide-cn.md)。它按“实验、运行、智能体、Skill、地图和回放”梳理了核心调用链与推荐阅读顺序。
+
 [wounderland](https://github.com/Archermmt/wounderland)项目是原[Generative Agents](https://github.com/joonspk-research/generative_agents)项目的重构版本，结构良好且代码质量远优于原版，因此本项目基于wounderland开发。
 
 更新：

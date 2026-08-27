@@ -65,6 +65,8 @@ def _sha256(path: Path) -> str:
 
 @dataclass(frozen=True, slots=True)
 class CheckpointSnapshot:
+    """调用方提供的可恢复运行状态及其附属存储导出器。"""
+
     state: Mapping[str, Any]
     conversation: Mapping[str, Any]
     storage_exporters: Mapping[str, StorageExporter] = field(default_factory=dict)
@@ -75,12 +77,16 @@ class CheckpointSnapshot:
 
 @dataclass(frozen=True, slots=True)
 class StoredCheckpoint:
+    """校验成功的磁盘检查点，包含路径、内容摘要和本次是否新建。"""
+
     path: Path
     bundle_sha256: str
     created: bool
 
 
 class CheckpointConflictError(RuntimeError):
+    """检查点已存在但内容不同，或其身份不属于当前 Run。"""
+
     pass
 
 

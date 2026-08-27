@@ -10,6 +10,8 @@ from generative_agents.config.schema import StrictModel
 
 
 class LogMetadataResponse(StrictModel):
+    """日志文件身份、大小、终态和截断状态。"""
+
     available: bool
     size_bytes: int = 0
     file_id: str | None = None
@@ -18,6 +20,8 @@ class LogMetadataResponse(StrictModel):
 
 
 class AttemptResponse(StrictModel):
+    """单个 Run Attempt 的生命周期与日志入口。"""
+
     attempt_id: str
     attempt_no: int
     status: str
@@ -33,12 +37,16 @@ class AttemptResponse(StrictModel):
 
 
 class AttemptListResponse(StrictModel):
+    """一个 Run 的全部 Attempt 响应集合。"""
+
     run_id: str
     default_attempt_id: str | None = None
     items: list[AttemptResponse]
 
 
 class LogRecordResponse(StrictModel):
+    """带字节范围和时间信息的一条完整日志记录。"""
+
     timestamp: str | None = None
     level: str
     message: str
@@ -46,6 +54,8 @@ class LogRecordResponse(StrictModel):
 
 
 class LogWindowResponse(StrictModel):
+    """UTF-8 安全日志窗口、游标和文件身份。"""
+
     run_id: str
     attempt_id: str | None = None
     attempt_no: int | None = None
@@ -63,6 +73,8 @@ class LogWindowResponse(StrictModel):
 
 
 class ModelTracePageResponse(StrictModel):
+    """模型追踪记录的稳定游标分页响应。"""
+
     run_id: str
     attempt_id: str
     attempt_no: int
@@ -73,6 +85,8 @@ class ModelTracePageResponse(StrictModel):
 
 
 class ModelTraceDetailResponse(StrictModel):
+    """单次逻辑模型调用的尝试、用量和可选脱敏负载。"""
+
     run_id: str
     attempt_id: str
     event_seq: int
@@ -88,11 +102,15 @@ class ModelTraceDetailResponse(StrictModel):
 
 
 class ValidationResponse(StrictModel):
+    """通用完整性校验结果和失败原因。"""
+
     code: str
     reason: str | None = None
 
 
 class CheckpointItemResponse(StrictModel):
+    """检查点列表项的步骤、状态、大小和校验信息。"""
+
     step_no: int
     database_marker: bool
     retained: bool
@@ -108,6 +126,8 @@ class CheckpointItemResponse(StrictModel):
 
 
 class CheckpointListResponse(StrictModel):
+    """Run 的保留、已裁剪和可恢复检查点集合。"""
+
     run_id: str
     run_status: str
     recoverable_step: int
@@ -116,6 +136,8 @@ class CheckpointListResponse(StrictModel):
 
 
 class CheckpointDetailResponse(CheckpointItemResponse):
+    """检查点列表信息及其内部成员摘要。"""
+
     run_id: str
     bundle: dict[str, Any]
     agent_state: dict[str, Any]
@@ -126,6 +148,8 @@ class CheckpointDetailResponse(CheckpointItemResponse):
 
 
 class CheckpointPreviewResponse(StrictModel):
+    """检查点某个文本成员的有界字节预览。"""
+
     run_id: str
     step_no: int
     section: str

@@ -20,12 +20,16 @@ class FrameConflictError(RuntimeError):
 
 @dataclass(frozen=True, slots=True)
 class StoredFrame:
+    """已经原子写入磁盘的步骤帧及其内容摘要。"""
+
     path: Path
     sha256: str
     created: bool
 
 
 class FrameStore:
+    """按 Run/步骤身份写入不可变帧，并拒绝同键不同内容的覆盖。"""
+
     SCHEMA_VERSION = 1
 
     def __init__(self, paths: RunPaths):

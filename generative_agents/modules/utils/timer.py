@@ -79,6 +79,8 @@ def daily_duration(date, mode="minute"):
 
 
 class Timer:
+    """旧领域层使用的运行私有虚拟时钟适配器。"""
+
     def __init__(self, start=None):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

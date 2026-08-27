@@ -42,6 +42,8 @@ _CORE_ARTIFACT_PARAMETERS = frozenset({"source_step"})
 
 
 class ArtifactService:
+    """查询产物任务与下载项，并校验其 Run 所有权和磁盘完整性。"""
+
     _integrity_lock = threading.RLock()
     _verified_content: OrderedDict[tuple, None] = OrderedDict()
     _MAX_VERIFIED_CONTENT = 2_048

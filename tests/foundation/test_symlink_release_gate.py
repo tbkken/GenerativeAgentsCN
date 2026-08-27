@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_symlink_release_gate`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import importlib.util
@@ -10,6 +11,7 @@ WORKFLOW = ROOT / ".github" / "workflows" / "native-symlink-release-gate.yml"
 
 
 def _gate_module():
+    """为本测试模块封装 ``_gate_module`` 辅助步骤，减少重复的场景搭建代码。"""
     spec = importlib.util.spec_from_file_location("symlink_release_gate", SCRIPT)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
@@ -18,6 +20,7 @@ def _gate_module():
 
 
 def test_release_gate_reuses_all_seven_native_symlink_redlines(tmp_path):
+    """回归验证 ``test_release_gate_reuses_all_seven_native_symlink_redlines`` 所描述的业务结果、故障边界和隔离约束。"""
     gate = _gate_module()
     nodes = gate.SYMLINK_TEST_NODES
 
@@ -38,6 +41,7 @@ def test_release_gate_reuses_all_seven_native_symlink_redlines(tmp_path):
 
 
 def test_release_workflow_is_strict_on_linux_and_windows():
+    """回归验证 ``test_release_workflow_is_strict_on_linux_and_windows`` 所描述的业务结果、故障边界和隔离约束。"""
     workflow = WORKFLOW.read_text(encoding="utf-8")
 
     assert "ubuntu-latest" in workflow

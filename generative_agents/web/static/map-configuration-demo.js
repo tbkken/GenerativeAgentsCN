@@ -1,3 +1,4 @@
+/** 地图配置演示的步骤状态机；用于产品讲解，不是正式 MapEditorV2 的数据来源。 */
 (() => {
   const stage = document.getElementById('mapDemoStage');
   const topTitle = document.getElementById('mapTopTitle');

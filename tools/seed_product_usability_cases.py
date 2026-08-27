@@ -173,6 +173,8 @@ CASES: list[dict[str, Any]] = [
 
 
 def api_request(method: str, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    """向本地产品 API 发送 JSON 请求，并把非成功响应转换为可读异常。"""
+
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(
         BASE_URL + path,
@@ -189,6 +191,8 @@ def api_request(method: str, path: str, payload: dict[str, Any] | None = None) -
 
 
 def seed() -> list[dict[str, Any]]:
+    """幂等创建产品易用性评审所需的实验样例并返回创建结果。"""
+
     existing = api_request("GET", "/experiments?page_size=50&sort=created_at")["items"]
     by_code = {
         case["code"]: next(

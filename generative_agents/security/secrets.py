@@ -14,6 +14,8 @@ from filelock import FileLock
 
 @dataclass(frozen=True, slots=True)
 class EncryptedSecret:
+    """可持久化的版本化密文、随机 nonce 和认证标签。"""
+
     encrypted_value: bytes
     fingerprint: str
 
@@ -87,6 +89,8 @@ class MasterKeyStore:
 
 
 class SecretCipher:
+    """使用本地主密钥加密、解密和轮换业务凭据。"""
+
     def __init__(self, key: bytes):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

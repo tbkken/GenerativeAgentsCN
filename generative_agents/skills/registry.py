@@ -1,4 +1,4 @@
-"""Discover and edit Agent Skills whose source of truth is ``SKILL.md``."""
+"""发现、校验、编辑并快照以 ``SKILL.md`` 为事实来源的 Agent Skill。"""
 
 from __future__ import annotations
 
@@ -30,6 +30,8 @@ class SkillRegistryError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class SkillDocument:
+    """一个已解析 Skill 的元数据、正文、依赖和磁盘来源。"""
+
     name: str
     description: str
     kind: SkillKind

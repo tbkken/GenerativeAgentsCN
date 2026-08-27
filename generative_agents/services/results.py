@@ -34,6 +34,8 @@ from .errors import ServiceError, not_found
 
 
 class ResultQueryService:
+    """为结果页分页查询步骤、智能体、对话、记忆和操作事实。"""
+
     def __init__(self, database: Database):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

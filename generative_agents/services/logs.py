@@ -37,6 +37,8 @@ _SENSITIVE_KEYS = frozenset(
 
 
 class LogService:
+    """按 Attempt/任务所有权安全读取、分页和跟随 UTF-8 日志。"""
+
     def __init__(self, database: Database, *, var_dir: str | Path):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

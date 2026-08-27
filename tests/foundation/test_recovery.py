@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_recovery`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
@@ -15,6 +16,7 @@ from generative_agents.services.runs import RunService
 
 
 def _run(service, database, definition: ExperimentDefinition, var_dir):
+    """为本测试模块封装 ``_run`` 辅助步骤，减少重复的场景搭建代码。"""
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -41,6 +43,7 @@ def _run(service, database, definition: ExperimentDefinition, var_dir):
 def test_interrupted_resume_rebuilds_views_at_checkpoint_and_quarantines_future_frame(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_interrupted_resume_rebuilds_views_at_checkpoint_and_quarantines_future_frame`` 所描述的业务结果、故障边界和隔离约束。"""
     var_dir = tmp_path / "var"
     created = _run(service, database, publishable_definition, var_dir)
     scheduler = LocalRunSchedulerRepository(database)

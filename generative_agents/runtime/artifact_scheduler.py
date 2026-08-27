@@ -31,6 +31,8 @@ def _now() -> datetime:
 
 @dataclass(frozen=True, slots=True)
 class ClaimedArtifactJob:
+    """已经被调度器租用、可交给构建子进程的产物任务快照。"""
+
     job_id: str
     run_id: str
     attempt_no: int
@@ -38,6 +40,8 @@ class ClaimedArtifactJob:
 
 
 class ArtifactSchedulerRepository:
+    """以数据库事务领取、续租并结束产物任务。"""
+
     def __init__(self, database: Database):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -283,6 +287,8 @@ class ArtifactSchedulerRepository:
 
 
 class ArtifactProcessScheduler:
+    """按并发上限启动和回收本地产物构建子进程。"""
+
     def __init__(
         self,
         database: Database,

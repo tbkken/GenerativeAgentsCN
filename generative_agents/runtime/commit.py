@@ -11,6 +11,8 @@ from .results import StepResult
 
 
 class CheckpointWriter(Protocol):
+    """提交器调用的检查点写入协议。"""
+
     def write(self, result: StepResult, frame: StoredFrame) -> Path:
         """执行 `CheckpointWriter` 的`write`操作。
 
@@ -25,6 +27,8 @@ class CheckpointWriter(Protocol):
 
 
 class StepProjection(Protocol):
+    """把已持久化 StepResult 投影到查询存储的协议。"""
+
     def commit_step(
         self,
         result: StepResult,
@@ -47,6 +51,8 @@ class StepProjection(Protocol):
 
 @dataclass(frozen=True, slots=True)
 class CommitReceipt:
+    """一次步骤提交产生的帧路径和可选检查点路径。"""
+
     step_no: int
     frame_path: Path
     frame_sha256: str

@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_run_service`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from dataclasses import replace
@@ -23,6 +24,7 @@ from generative_agents.runtime.supervisor import LocalProcessSupervisor
 
 
 def _publish(service, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -47,6 +49,7 @@ def _publish(service, definition: ExperimentDefinition):
 def test_published_revision_creates_uuid_scoped_fifo_run(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_published_revision_creates_uuid_scoped_fifo_run`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     runs = RunService(database, var_dir=tmp_path / "var")
 
@@ -69,6 +72,7 @@ def test_published_revision_creates_uuid_scoped_fifo_run(
 def test_run_creation_revalidates_legacy_published_revision(
     service, database, publishable_definition, tmp_path, monkeypatch
 ):
+    """回归验证 ``test_run_creation_revalidates_legacy_published_revision`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     legacy_payload = publishable_definition.model_dump(mode="json", exclude_none=False)
     legacy_payload["agents"][0]["spatial"] = {"address": {}, "tree": {}}
@@ -93,6 +97,7 @@ def test_run_creation_revalidates_legacy_published_revision(
 def test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     runs = RunService(database, var_dir=tmp_path / "var")
     created = runs.create_from_published(experiment["id"], revision["id"])
@@ -111,6 +116,7 @@ def test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip(
 def test_paused_run_cancels_without_new_attempt_or_slot(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_paused_run_cancels_without_new_attempt_or_slot`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     service_under_test = RunService(database, var_dir=tmp_path / "var")
     created = service_under_test.create_from_published(experiment["id"], revision["id"])
@@ -133,6 +139,7 @@ def test_paused_run_cancels_without_new_attempt_or_slot(
 def test_reconcile_finishes_force_cancel_without_promoting_recovery_boundary(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_reconcile_finishes_force_cancel_without_promoting_recovery_boundary`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     runs = RunService(database, var_dir=tmp_path / "var")
     created = runs.create_from_published(experiment["id"], revision["id"])
@@ -163,6 +170,7 @@ def test_reconcile_finishes_force_cancel_without_promoting_recovery_boundary(
 def test_run_history_uses_stable_cursor_and_can_reach_all_pages(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_run_history_uses_stable_cursor_and_can_reach_all_pages`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     service_under_test = RunService(database, var_dir=tmp_path / "var")
     created_ids = []
@@ -188,6 +196,7 @@ def test_run_history_uses_stable_cursor_and_can_reach_all_pages(
 def test_scheduler_claims_fifo_into_unique_slots_and_reconciles_dead_worker(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_scheduler_claims_fifo_into_unique_slots_and_reconciles_dead_worker`` 所描述的业务结果、故障边界和隔离约束。"""
     run_service = RunService(database, var_dir=tmp_path / "var")
     queued = []
     for index in range(3):
@@ -226,6 +235,7 @@ def test_scheduler_claims_fifo_into_unique_slots_and_reconciles_dead_worker(
 def test_stale_worker_registration_cannot_take_over_new_attempt(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_stale_worker_registration_cannot_take_over_new_attempt`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     run_service = RunService(database, var_dir=tmp_path / "var")
     run_service.create_from_published(experiment["id"], revision["id"])
@@ -252,6 +262,7 @@ def test_stale_worker_registration_cannot_take_over_new_attempt(
 def test_worker_finish_honors_pause_boundary_and_releases_slot(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_worker_finish_honors_pause_boundary_and_releases_slot`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     runs = RunService(database, var_dir=tmp_path / "var")
     created = runs.create_from_published(experiment["id"], revision["id"])
@@ -279,6 +290,7 @@ def test_worker_finish_honors_pause_boundary_and_releases_slot(
 def test_worker_finish_preserves_structured_runtime_error(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_worker_finish_preserves_structured_runtime_error`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     runs = RunService(database, var_dir=tmp_path / "var")
     created = runs.create_from_published(experiment["id"], revision["id"])
@@ -307,6 +319,7 @@ def test_worker_finish_preserves_structured_runtime_error(
 def test_supervisor_materializes_manifest_before_process_registration(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_supervisor_materializes_manifest_before_process_registration`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     var_dir = tmp_path / "var"
     created = RunService(database, var_dir=var_dir).create_from_published(
@@ -315,15 +328,19 @@ def test_supervisor_materializes_manifest_before_process_registration(
     commands = []
 
     class FakeProcess:
+        """测试替身 ``FakeProcess``：记录调用并返回当前场景可控的结果。"""
         pid = os.getpid()
 
         def poll(self):
+            """为本测试模块封装 ``poll`` 辅助步骤，减少重复的场景搭建代码。"""
             return None
 
         def kill(self):
+            """为本测试模块封装 ``kill`` 辅助步骤，减少重复的场景搭建代码。"""
             return None
 
     def process_factory(command, **_kwargs):
+        """为本测试模块封装 ``process_factory`` 辅助步骤，减少重复的场景搭建代码。"""
         commands.append(command)
         return FakeProcess()
 
@@ -349,6 +366,7 @@ def test_supervisor_materializes_manifest_before_process_registration(
 def test_supervisor_restart_reuses_manifest_for_resume_start_step(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_supervisor_restart_reuses_manifest_for_resume_start_step`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     var_dir = tmp_path / "var"
     created = RunService(database, var_dir=var_dir).create_from_published(

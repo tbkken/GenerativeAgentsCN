@@ -1,4 +1,8 @@
-"""Per-run runtime context and filesystem boundaries."""
+"""单次 Run 私有的运行上下文和文件系统边界。
+
+这里集中保存虚拟时钟、随机源、控制信号、目录、模型与 Skill 依赖，目的是让多个
+Run 可以在同一进程中交错执行而不共享可变全局状态。
+"""
 
 from __future__ import annotations
 
@@ -378,6 +382,8 @@ class RunPaths:
 
 
 class SkillInstructionRepository(Protocol):
+    """按稳定键读取本次运行已经固定版本的 Skill 指令。"""
+
     def get(self, key: str) -> str:
         """执行 `SkillInstructionRepository` 的`get`操作。
 
@@ -402,6 +408,8 @@ class SkillInstructionRepository(Protocol):
 
 
 class ModelRegistry(Protocol):
+    """按用途取得当前 Run 的模型实例，而不是读取进程级默认模型。"""
+
     def get(self, purpose: str) -> Any:
         """执行 `ModelRegistry` 的`get`操作。
 
@@ -415,6 +423,8 @@ class ModelRegistry(Protocol):
 
 
 class PassiveSkillExecutor(Protocol):
+    """执行由世界事件触发、无需智能体主动选择的被动 Skill。"""
+
     def run(
         self,
         skill_name: str,

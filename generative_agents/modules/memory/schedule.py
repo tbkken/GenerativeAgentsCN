@@ -6,6 +6,8 @@ from generative_agents.modules import utils
 
 
 class Schedule:
+    """按虚拟时间排列的日程项目，并支持局部拆解、修订和恢复。"""
+
     def __init__(
         self, create=None, daily_schedule=None, diversity=5, max_try=5, clock=None
     ):

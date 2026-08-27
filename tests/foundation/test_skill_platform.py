@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_skill_platform`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import json
@@ -22,17 +23,21 @@ from generative_agents.web.app import create_app
 
 
 class ScriptedSkillRuntime(SkillRuntime):
+    """为 ``ScriptedSkillRuntime`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self, *args, responses, **kwargs):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         super().__init__(*args, **kwargs)
         self.responses = deque(responses)
         self.requests = []
 
     def _complete(self, messages, *, tools=None):
+        """为本测试模块封装 ``_complete`` 辅助步骤，减少重复的场景搭建代码。"""
         self.requests.append({"messages": messages, "tools": tools or []})
         return self.responses.popleft()
 
 
 def test_file_backed_skill_catalog_and_brain_dependencies():
+    """回归验证 ``test_file_backed_skill_catalog_and_brain_dependencies`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
 
     documents = registry.list()
@@ -57,6 +62,7 @@ def test_file_backed_skill_catalog_and_brain_dependencies():
 
 
 def test_skill_pack_hands_child_result_back_as_plain_text():
+    """回归验证 ``test_skill_pack_hands_child_result_back_as_plain_text`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     runtime = ScriptedSkillRuntime(
         registry,
@@ -104,6 +110,7 @@ def test_skill_pack_hands_child_result_back_as_plain_text():
 
 
 def test_run_trace_records_the_prompts_sent_to_the_model():
+    """回归验证 ``test_run_trace_records_the_prompts_sent_to_the_model`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
@@ -116,6 +123,7 @@ def test_run_trace_records_the_prompts_sent_to_the_model():
 
 
 def test_run_trace_user_prompt_wraps_runtime_context():
+    """回归验证 ``test_run_trace_user_prompt_wraps_runtime_context`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
@@ -130,6 +138,7 @@ def test_run_trace_user_prompt_wraps_runtime_context():
 
 
 def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
+    """回归验证 ``test_skill_pack_can_call_mcp_and_continue_with_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     mcp = SkillMCPServer(MemoryStream(tmp_path / "memories.db"))
     runtime = ScriptedSkillRuntime(
@@ -168,6 +177,7 @@ def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
 
 
 def test_skill_pack_can_call_its_private_script(tmp_path):
+    """回归验证 ``test_skill_pack_can_call_its_private_script`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     runtime = ScriptedSkillRuntime(
         registry,
@@ -221,6 +231,7 @@ def test_skill_pack_can_call_its_private_script(tmp_path):
 
 
 def test_skill_api_starts_on_clean_database(tmp_path):
+    """回归验证 ``test_skill_api_starts_on_clean_database`` 所描述的业务结果、故障边界和隔离约束。"""
     database_path = tmp_path / "app.db"
     app = create_app(
         database_url=f"sqlite:///{database_path.as_posix()}",
@@ -250,6 +261,7 @@ def test_skill_api_starts_on_clean_database(tmp_path):
 
 
 def test_skill_cutover_upgrades_a_populated_legacy_database(tmp_path):
+    """回归验证 ``test_skill_cutover_upgrades_a_populated_legacy_database`` 所描述的业务结果、故障边界和隔离约束。"""
     database_path = tmp_path / "legacy-cutover.db"
     database_url = f"sqlite:///{database_path.as_posix()}"
     upgrade_database(database_url, "0022_scenario_templates")
@@ -344,6 +356,7 @@ def test_skill_cutover_upgrades_a_populated_legacy_database(tmp_path):
 
 
 def test_example_input_is_parsed_and_exposed(tmp_path):
+    """回归验证 ``test_example_input_is_parsed_and_exposed`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
     registry.create(name="base-desc", description="把角色事实整理成自然语言描述。")
 
@@ -364,6 +377,7 @@ def test_example_input_is_parsed_and_exposed(tmp_path):
 
 
 def test_unknown_frontmatter_field_is_rejected(tmp_path):
+    """回归验证 ``test_unknown_frontmatter_field_is_rejected`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
     registry.create(name="wake-up", description="推断角色起床的小时。")
 
@@ -382,6 +396,7 @@ def test_unknown_frontmatter_field_is_rejected(tmp_path):
 
 
 def test_builtin_skills_all_have_example_input():
+    """回归验证 ``test_builtin_skills_all_have_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry()
     documents = registry.list()
 
@@ -391,6 +406,7 @@ def test_builtin_skills_all_have_example_input():
 
 
 def test_save_preserves_existing_example_input(tmp_path):
+    """回归验证 ``test_save_preserves_existing_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
     registry.create(name="wake-up", description="推断角色起床的小时。")
 

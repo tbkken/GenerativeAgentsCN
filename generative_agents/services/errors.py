@@ -6,6 +6,8 @@ from typing import Any
 
 
 class ServiceError(Exception):
+    """可稳定映射为 HTTP 状态码、错误代码和详情的业务异常。"""
+
     def __init__(
         self,
         code: str,

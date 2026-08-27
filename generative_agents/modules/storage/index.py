@@ -60,6 +60,8 @@ def _discover_embedding_model(api_base, api_key, timeout):
 
 
 class LlamaIndex:
+    """为单个智能体封装向量索引，并把嵌入模型限制在实例范围内。"""
+
     def __init__(self, embedding_config, path=None, *, clock):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

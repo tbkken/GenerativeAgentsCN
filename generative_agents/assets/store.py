@@ -15,6 +15,8 @@ from filelock import FileLock
 
 
 class AssetValidationError(ValueError):
+    """上传资产的大小、类型、哈希或目标路径不满足安全约束。"""
+
     pass
 
 
@@ -28,6 +30,8 @@ _EXTENSIONS = {
 
 @dataclass(frozen=True, slots=True)
 class AssetBlob:
+    """已经落盘并按内容哈希寻址的不可变资产元数据。"""
+
     sha256: str
     logical_name: str
     media_type: str
@@ -38,6 +42,12 @@ class AssetBlob:
 
 
 class AssetStore:
+    """校验上传内容，并把相同字节去重保存到受控资源目录。
+
+    所有目标路径都由服务端根据摘要生成；调用方提供的文件名只用于展示，不能参与
+    磁盘路径解析，从而阻止目录穿越和跨资源覆盖。
+    """
+
     def __init__(self, var_dir: str | Path, *, max_bytes: int = 50 * 1024 * 1024):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

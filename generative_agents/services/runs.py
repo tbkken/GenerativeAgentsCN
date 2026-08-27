@@ -138,6 +138,8 @@ def _run_shape(
 
 
 class RunService:
+    """管理 Run 创建、排队、查询、暂停、取消和安全恢复的事务边界。"""
+
     def __init__(
         self,
         database: Database,

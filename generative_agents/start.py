@@ -31,6 +31,8 @@ from generative_agents.runtime.results import StepResultBuilder
 
 
 class StepCommitter(Protocol):
+    """单步提交协议；实现必须保持帧、检查点和投影的持久化顺序。"""
+
     def commit(self, result, *, force_checkpoint: bool):
         """按照持久化顺序提交当前仿真步，并返回提交凭据。
 
@@ -91,6 +93,13 @@ def apply_checkpoint_state(config: dict, state: Mapping) -> dict:
 
 @dataclass(slots=True)
 class SimulationRunner:
+    """运行一次隔离仿真的主循环，并只在完整步骤边界响应控制请求。
+
+    ``Game`` 负责计算世界变化，``StepResultBuilder`` 收集本步事实，``committer``
+    负责把事实持久化。Runner 不直接操作数据库，因此命令行运行和 Worker 运行可以
+    复用同一套推进逻辑。
+    """
+
     context: SimulationContext
     game: Game
     committer: StepCommitter
@@ -115,17 +124,17 @@ class SimulationRunner:
         }
 
     def run(self, steps: int, *, stride_minutes: int) -> int:
-        """执行当前组件负责的完整流程，并返回本次执行结果。
+        """从当前恢复边界向前执行若干完整仿真步。
 
         参数:
-            steps: 本次调用需要推进的仿真步数量，必须为非负整数。 类型：`int`。
-            stride_minutes: 每个仿真步推进的虚拟分钟数。 类型：`int`。
+            steps: 本次调用需要推进的仿真步数量，必须为正整数。
+            stride_minutes: 每个仿真步推进的虚拟分钟数，必须为正整数。
 
         返回:
-            返回计算得到的整数值或版本号。
+            返回当前 Run 已提交的最后步骤号。
 
         异常:
-            ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
+            ValueError: 步数或虚拟时间步长不是正数。
 
         说明:
             每一步严格遵循“推进世界—捕获结果—写帧—可选检查点—更新投影”的顺序；控制请求只在安全边界生效。
@@ -135,6 +144,7 @@ class SimulationRunner:
         self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
         for offset in range(steps):
+            # 暂停和取消只能在两步之间生效，绝不能留下“移动了一半但尚未提交”的状态。
             if (
                 self.context.control.cancel_requested
                 or self.context.control.pause_requested
@@ -142,6 +152,7 @@ class SimulationRunner:
                 break
             step_no = self.completed_steps + 1
             self._bind_agent_step(step_no)
+            # 本步所有可观察副作用先进入构建器，最后一次性冻结为 StepResult。
             builder = StepResultBuilder(
                 run_id=self.context.run_id,
                 attempt_id=self.context.attempt_id,
@@ -214,6 +225,7 @@ class SimulationRunner:
                 for event in memory_stream.drain_result_events():
                     collector.capture_event(event)
             result = collector.freeze()
+            # 普通间隔、最后一步或控制边界都可以产生检查点；提交器负责具体写入顺序。
             terminal_boundary = (
                 offset == steps - 1
                 or self.context.control.pause_requested
@@ -229,7 +241,7 @@ class SimulationRunner:
         return self.completed_steps
 
     def _bind_agent_step(self, step_no: int) -> None:
-        """执行`bind`智能体仿真步的内部处理，供当前模块或类复用。
+        """把当前步骤号绑定到所有智能体，供记忆和事件生成稳定序号。
 
         参数:
             step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
@@ -244,13 +256,13 @@ class SimulationRunner:
                 bind(step_no)
 
     def _movement_budget(self, stride_minutes: int) -> int:
-        """执行`movement``budget`的内部处理，供当前模块或类复用。
+        """根据算法配置计算本步最多可以消费多少个路径 Tile。
 
         参数:
             stride_minutes: 每个仿真步推进的虚拟分钟数。 类型：`int`。
 
         返回:
-            返回计算得到的整数值或版本号。
+            返回至少为 1 的 Tile 数量。
         """
         profile = getattr(self.context, "algorithm", None)
         tiles_per_minute = int(getattr(profile, "movement_tiles_per_minute", 4))
@@ -258,14 +270,14 @@ class SimulationRunner:
 
 
 def build_file_committer(context: SimulationContext, game: Game) -> FileStepCommitter:
-    """构建`file``committer`。
+    """构建只写运行目录的提交器，供独立命令行仿真使用。
 
     参数:
         context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`SimulationContext`。
         game: 当前运行私有的仿真世界聚合。 类型：`Game`。
 
     返回:
-        返回 `FileStepCommitter` 类型的处理结果。
+        返回按“帧—检查点—文件投影”顺序工作的提交器。
     """
     checkpoint = CheckpointBundleWriter(
         context.paths,

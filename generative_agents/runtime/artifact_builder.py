@@ -46,6 +46,12 @@ from .artifact_contract import REPORT_GENERATOR_VERSION
 
 
 class ArtifactBuilder:
+    """从已验证的 Run 文件和结果投影构建可下载产物。
+
+    构建过程冻结源 Attempt/步骤身份，先写临时文件，校验摘要后再发布数据库记录，
+    因而失败任务不会伪装成完整产物。
+    """
+
     def __init__(self, database: Database, *, var_dir: str | Path):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

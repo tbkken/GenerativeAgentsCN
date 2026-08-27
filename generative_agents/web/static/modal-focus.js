@@ -1,3 +1,4 @@
+/** 模态框键盘焦点循环的小型纯函数模块，同时兼容浏览器和 Node 测试。 */
 (function exposeModalFocus(root, factory) {
   'use strict';
   const api = factory();

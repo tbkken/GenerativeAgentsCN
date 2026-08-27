@@ -1,4 +1,8 @@
-"""Strict Pydantic v2 schema for isolated experiment definitions."""
+"""实验定义的严格 Pydantic 模型。
+
+本模块是“用户草稿”和“可执行运行清单”之间的第一道边界：未知字段会被拒绝，
+跨字段关系会在发布前校验，运行时因此不需要猜测缺失值或兼容任意输入。
+"""
 
 from __future__ import annotations
 
@@ -26,6 +30,8 @@ ModelName = Annotated[
 
 
 class StrictModel(BaseModel):
+    """所有配置模型的共同基类：禁止额外字段，并在赋值时持续校验。"""
+
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
@@ -46,6 +52,7 @@ def _normalize_v1_url(value: AnyHttpUrl | str) -> str:
 
 
 class ExperimentMetadata(StrictModel):
+    """实验的展示信息、所有者、标签和用于解释虚拟时间的时区。"""
     key: Key
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
@@ -77,11 +84,13 @@ class ExperimentMetadata(StrictModel):
 
 
 class EngineConfig(StrictModel):
+    """固定底层仿真算法版本，避免同一 Revision 被不同算法解释。"""
     algorithm_version: Literal["ga-cn-v1"] = "ga-cn-v1"
     brain_skill: Key = "stanford-town-brain"
 
 
 class SimulationConfig(StrictModel):
+    """控制虚拟起点、步数、步长、随机种子和检查点频率。"""
     start_time: datetime
     stride_minutes: int = Field(default=10, ge=1, le=1440)
     max_steps: int = Field(default=1000, ge=1, le=1_000_000)
@@ -125,12 +134,14 @@ class SimulationConfig(StrictModel):
 
 
 class ResultsConfig(StrictModel):
+    """声明运行结束后需要保留和生成的结果类型。"""
     agent_step_projection_interval_steps: int = Field(default=1, ge=1, le=100)
     replay_interpolation_frames: int = Field(default=60, ge=1, le=120)
     capture_model_payloads: bool = False
 
 
 class ChatTransport(StrictModel):
+    """所有聊天模型传输配置共享的超时、重试和输出限制。"""
     model: ModelName
     resolved_model: ModelName | None = None
     context_window: int | None = Field(default=None, ge=1, le=10_000_000)
@@ -143,6 +154,7 @@ class ChatTransport(StrictModel):
 
 
 class ChatVLLMConfig(ChatTransport):
+    """连接 vLLM 或其他本地 OpenAI 兼容聊天端点的配置。"""
     provider: Literal["vllm"]
     base_url: AnyHttpUrl
     secret_ref: SecretRef | None = None
@@ -162,6 +174,7 @@ class ChatVLLMConfig(ChatTransport):
 
 
 class ChatOpenAIConfig(ChatTransport):
+    """连接显式指定模型的 OpenAI 兼容聊天端点配置。"""
     provider: Literal["openai"]
     base_url: AnyHttpUrl = "https://api.openai.com/v1"
     secret_ref: SecretRef
@@ -199,6 +212,7 @@ class ChatOpenAIConfig(ChatTransport):
 
 
 class ChatOllamaConfig(ChatTransport):
+    """连接 Ollama 原生聊天接口的配置。"""
     provider: Literal["ollama"]
     base_url: AnyHttpUrl
     secret_ref: SecretRef | None = None
@@ -229,6 +243,7 @@ ChatModelConfig = Annotated[
 
 
 class EmbeddingTransport(StrictModel):
+    """所有向量模型传输方式共享的超时和批处理配置。"""
     model: ModelName
     resolved_model: ModelName | None = None
     timeout_seconds: int = Field(default=120, ge=1, le=1800)
@@ -238,6 +253,7 @@ class EmbeddingTransport(StrictModel):
 
 
 class EmbeddingOpenAICompatibleConfig(EmbeddingTransport):
+    """连接本地 OpenAI 兼容向量端点的配置。"""
     provider: Literal["openai_compatible"]
     base_url: AnyHttpUrl
     secret_ref: SecretRef | None = None
@@ -257,6 +273,7 @@ class EmbeddingOpenAICompatibleConfig(EmbeddingTransport):
 
 
 class EmbeddingOpenAIConfig(EmbeddingTransport):
+    """连接需要凭据引用的 OpenAI 兼容向量端点配置。"""
     provider: Literal["openai"]
     base_url: AnyHttpUrl = "https://api.openai.com/v1"
     secret_ref: SecretRef
@@ -294,6 +311,7 @@ class EmbeddingOpenAIConfig(EmbeddingTransport):
 
 
 class EmbeddingOllamaConfig(EmbeddingTransport):
+    """连接 Ollama 向量接口的配置。"""
     provider: Literal["ollama"]
     base_url: AnyHttpUrl
     secret_ref: SecretRef | None = None
@@ -318,6 +336,7 @@ class EmbeddingOllamaConfig(EmbeddingTransport):
 
 
 class EmbeddingHuggingFaceConfig(EmbeddingTransport):
+    """在本地进程中加载 Hugging Face 向量模型的配置。"""
     provider: Literal["hugging_face"]
 
     @field_validator("model")
@@ -351,28 +370,33 @@ EmbeddingModelConfig = Annotated[
 
 
 class ModelsConfig(StrictModel):
+    """把聊天模型与向量模型组合成一次实验使用的模型集合。"""
     chat: ChatModelConfig
     embedding: EmbeddingModelConfig
 
 
 class PerceptConfig(StrictModel):
+    """控制智能体每次感知的空间范围和事件数量。"""
     mode: Literal["box"] = "box"
     vision_radius: int = Field(default=8, ge=1, le=10_000)
     attention_bandwidth: int = Field(default=8, ge=1, le=1_000_000)
 
 
 class ScheduleConfig(StrictModel):
+    """控制日程拆解粒度和计划修订行为。"""
     max_try: int = Field(default=5, ge=1, le=100)
     diversity: int = Field(default=5, ge=1, le=100)
 
 
 class ThinkConfig(StrictModel):
+    """控制反思触发阈值及认知检索规模。"""
     poignancy_max: int = Field(default=150, ge=1, le=1_000_000)
     reflection_focus_count: int = Field(default=3, ge=1, le=20)
     reflection_insight_count: int = Field(default=5, ge=1, le=20)
 
 
 class ChatBehaviorConfig(StrictModel):
+    """控制对话持续时间、冷却时间和重复内容限制。"""
     max_iterations: int = Field(default=4, ge=1, le=100)
     stop_after_hour: int = Field(default=23, ge=0, le=23)
     cooldown_minutes: int = Field(default=60, ge=0, le=10_080)
@@ -380,6 +404,7 @@ class ChatBehaviorConfig(StrictModel):
 
 
 class MemoryConfig(StrictModel):
+    """控制记忆容量、检索权重和遗忘策略。"""
     retention: int = Field(default=8, ge=1, le=100_000)
     max_memories_per_type: int = -1
     reflection_memory_limit: int = Field(default=10, ge=1, le=100)
@@ -425,6 +450,7 @@ class MemoryConfig(StrictModel):
 
 
 class BehaviorConfig(StrictModel):
+    """汇总感知、日程、思考、对话和记忆等智能体行为参数。"""
     percept: PerceptConfig = Field(default_factory=PerceptConfig)
     schedule: ScheduleConfig = Field(default_factory=ScheduleConfig)
     think: ThinkConfig = Field(default_factory=ThinkConfig)
@@ -433,6 +459,7 @@ class BehaviorConfig(StrictModel):
 
 
 class AssetReference(StrictModel):
+    """引用已上传资产，并限制路径只能落在受控的相对目录中。"""
     logical_path: Annotated[str, StringConstraints(min_length=1, max_length=1024)]
     asset_hash: Annotated[str, StringConstraints(pattern=r"^sha256:[0-9a-f]{64}$")]
     media_type: Annotated[str, StringConstraints(min_length=1, max_length=120)]
@@ -491,6 +518,7 @@ class WorldOverlayConfig(StrictModel):
 
 
 class WorldConfig(StrictModel):
+    """运行世界的权威定义：地图身份、Tile、资源和编辑器扩展。"""
     world_key: Key
     world_name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
@@ -529,6 +557,7 @@ class WorldConfig(StrictModel):
 
 
 class AgentScratch(StrictModel):
+    """智能体在运行开始时使用的身份、当前状态与初始计划。"""
     age: int = Field(ge=0, le=200)
     innate: str = ""
     learned: str = ""
@@ -537,6 +566,7 @@ class AgentScratch(StrictModel):
 
 
 class AgentSpatial(StrictModel):
+    """智能体的出生坐标和必须属于当前地图的语义地址。"""
     address: dict[str, Any] = Field(default_factory=dict)
     tree: dict[str, Any] = Field(default_factory=dict)
 
@@ -561,6 +591,7 @@ class AgentTemplateDefinition(StrictModel):
 
 
 class AgentDefinition(StrictModel):
+    """单个智能体的完整发布配置，包含认知状态和空间状态。"""
     agent_key: Key
     enabled: bool = True
     name: Annotated[
@@ -578,6 +609,7 @@ class AgentDefinition(StrictModel):
 
 
 class ExperimentDefinition(StrictModel):
+    """一次实验 Revision 的完整、可哈希、可冻结定义。"""
     schema_version: Literal[1] = 1
     experiment: ExperimentMetadata
     engine: EngineConfig = Field(default_factory=EngineConfig)

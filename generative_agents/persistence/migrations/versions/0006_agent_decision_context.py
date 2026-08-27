@@ -17,6 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.add_column(
         "run_agent_steps",
         sa.Column(
@@ -29,4 +30,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_column("run_agent_steps", "decision_context_json")

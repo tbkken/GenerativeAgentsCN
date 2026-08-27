@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_web_api`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -11,7 +12,9 @@ from generative_agents.web import create_app
 
 
 def _test_png(width: int, height: int) -> bytes:
+    """为本测试模块封装 ``_test_png`` 辅助步骤，减少重复的场景搭建代码。"""
     def chunk(kind: bytes, payload: bytes) -> bytes:
+        """为本测试模块封装 ``chunk`` 辅助步骤，减少重复的场景搭建代码。"""
         return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload))
 
     rows = b"".join(b"\x00" + b"\x2c\x91\x76\xff" * width for _ in range(height))
@@ -24,20 +27,26 @@ def _test_png(width: int, height: int) -> bytes:
 
 
 class _ModelResponse:
+    """为 ``_ModelResponse`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self, body):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self._body = body
         self.status_code = 200
         self.ok = True
 
     def json(self):
+        """为本测试模块封装 ``json`` 辅助步骤，减少重复的场景搭建代码。"""
         return self._body
 
 
 class _AutoModelSession:
+    """为 ``_AutoModelSession`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls = []
 
     def get(self, url, **kwargs):
+        """为本测试模块封装 ``get`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls.append(("GET", url))
         model_id = "test-embedding" if ":5002/" in url else "test-chat"
         return _ModelResponse(
@@ -45,6 +54,7 @@ class _AutoModelSession:
         )
 
     def post(self, url, **kwargs):
+        """为本测试模块封装 ``post`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls.append(("POST", url))
         if url.endswith("/embeddings"):
             return _ModelResponse({"data": [{"embedding": [0.1, 0.2]}]})
@@ -52,6 +62,7 @@ class _AutoModelSession:
 
 
 def test_experiment_api_create_list_validate_and_conflict(database_url):
+    """回归验证 ``test_experiment_api_create_list_validate_and_conflict`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url)
     with TestClient(app) as client:
         created_response = client.post(
@@ -95,6 +106,7 @@ def test_experiment_api_create_list_validate_and_conflict(database_url):
 
 
 def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url):
+    """回归验证 ``test_publish_and_run_resolves_auto_models_without_manual_probe`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         session = _AutoModelSession()
@@ -140,6 +152,7 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
 
 
 def test_api_errors_have_uniform_envelope_and_request_id(database_url):
+    """回归验证 ``test_api_errors_have_uniform_envelope_and_request_id`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url)
     with TestClient(app) as client:
         response = client.get(
@@ -163,6 +176,7 @@ def test_api_errors_have_uniform_envelope_and_request_id(database_url):
 
 
 def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_url):
+    """回归验证 ``test_metadata_agent_prompt_and_world_draft_routes_are_optimistic`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         created = client.post(
@@ -204,6 +218,7 @@ def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_ur
 
 
 def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
+    """回归验证 ``test_duplicate_experiment_deep_copies_the_selected_definition`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         source = client.post(
@@ -231,6 +246,7 @@ def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
 
 
 def test_asset_and_secret_http_contracts_are_safe_and_idempotent(database_url):
+    """回归验证 ``test_asset_and_secret_http_contracts_are_safe_and_idempotent`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url)
     with TestClient(app) as client:
         payload = b'{"world":"http-test"}'
@@ -300,6 +316,7 @@ def test_asset_and_secret_http_contracts_are_safe_and_idempotent(database_url):
 
 
 def test_health_endpoint_checks_database_connectivity(database_url):
+    """回归验证 ``test_health_endpoint_checks_database_connectivity`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         response = client.get("/api/v1/health")
@@ -308,6 +325,7 @@ def test_health_endpoint_checks_database_connectivity(database_url):
 
 
 def test_global_event_cursor_exposes_run_activity_with_experiment_identity(database_url):
+    """回归验证 ``test_global_event_cursor_exposes_run_activity_with_experiment_identity`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         experiment = client.post(

@@ -1,4 +1,8 @@
-"""Natural-language Skill execution over an OpenAI-compatible chat endpoint."""
+"""通过 OpenAI 兼容聊天端点执行自然语言 Skill。
+
+Runtime 负责在模型调用、私有脚本、子 Skill 和 MCP 工具之间循环，直到得到最终文本；
+所有中间动作都会写入 trace，便于运行结果解释和故障排查。
+"""
 
 from __future__ import annotations
 
@@ -23,6 +27,8 @@ class SkillRuntimeError(RuntimeError):
 
 @dataclass(frozen=True, slots=True)
 class SkillRunResult:
+    """一次 Skill 执行的最终文本和完整步骤轨迹。"""
+
     skill: str
     output_text: str
     trace: tuple[dict[str, Any], ...]
@@ -89,7 +95,7 @@ class SkillRuntime:
         *,
         context: Mapping[str, Any] | None = None,
     ) -> SkillRunResult:
-        """执行当前组件负责的完整流程，并返回本次执行结果。
+        """执行指定 Skill，并返回最终文本和可审计轨迹。
 
         参数:
             skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。 类型：`str`。
@@ -97,7 +103,7 @@ class SkillRuntime:
             context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any] | None`。 默认值：`None`。
 
         返回:
-            返回 `SkillRunResult` 类型的处理结果。
+            包含规范化 Skill 名称、输出文本和每次脚本/子 Skill/MCP 调用的结果。
         """
         trace: list[dict[str, Any]] = []
         output = self._run(
@@ -122,14 +128,14 @@ class SkillRuntime:
         *,
         depth: int,
     ) -> str:
-        """执行运行的内部处理，供当前模块或类复用。
+        """递归执行一个已解析 Skill，直到得到最终自然语言文本。
 
         参数:
             document: 待校验、转换或持久化的结构化文档。 类型：`SkillDocument`。
             input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
             context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`dict[str, Any]`。
-            trace: 传入当前算法的`trace`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[dict[str, Any]]`。
-            depth: 树遍历、递归展开或引用解析允许到达的最大层级。 类型：`int`。
+            trace: 由整棵调用树共享的追加式审计事件列表。
+            depth: 当前子 Skill 深度，用于阻止循环依赖无限递归。
 
         返回:
             返回处理后的文本或稳定标识。
@@ -140,6 +146,7 @@ class SkillRuntime:
         if depth > self.max_hops:
             raise SkillRuntimeError("Skill call depth exceeded the configured limit")
         script_path = document.path.parent / "scripts" / "main.py"
+        # 带 main.py 的原子 Skill 是确定性快路径，不需要额外调用语言模型。
         if script_path.is_file():
             trace.append(
                 {
@@ -161,6 +168,7 @@ class SkillRuntime:
         children = [self.registry.get(name) for name in document.children]
         mcp_tools = self.mcp.tools() if self.mcp and "MCP" in document.markdown else []
         script_handlers = self._script_handlers(document)
+        # 没有任何可调用依赖的叶子 Skill，只需要一次普通聊天完成。
         if not children and not mcp_tools and not script_handlers:
             system_prompt = document.markdown
             trace.append(
@@ -265,6 +273,7 @@ class SkillRuntime:
                     },
                 }
             )
+        # 组合 Skill 采用受限工具循环；每轮模型只能调用当前文档显式允许的能力。
         for _ in range(self.max_hops):
             response = self._complete(messages, tools=tools)
             tool_calls = response.get("tool_calls") or []
@@ -296,6 +305,7 @@ class SkillRuntime:
                     ) from exc
                 tool_name = str(function.get("name") or "")
                 if tool_name == "call_skill":
+                    # 子 Skill 获得自然语言上下文，但仍共享本次运行的审计轨迹。
                     child_name = arguments.get("name")
                     child = allowed.get(child_name)
                     if child is None:
@@ -315,6 +325,7 @@ class SkillRuntime:
                         child, child_input, context, trace, depth=depth + 1
                     )
                 elif tool_name == "run_skill_script":
+                    # 私有函数来自当前 Skill 目录，不能按模型给出的任意路径加载代码。
                     handler_name = str(arguments.get("function") or "")
                     handler = script_handlers.get(handler_name)
                     if handler is None:
@@ -337,6 +348,7 @@ class SkillRuntime:
                         }
                     )
                 elif self.mcp and any(tool["name"] == tool_name for tool in mcp_tools):
+                    # MCP 工具也必须出现在当前 Skill 声明的允许列表中。
                     result = self.mcp.call(tool_name, arguments)
                     tool_output = "\n".join(
                         str(item.get("text") or "")

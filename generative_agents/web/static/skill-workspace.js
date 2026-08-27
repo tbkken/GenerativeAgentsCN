@@ -1,3 +1,8 @@
+/**
+ * Skill 工作区：浏览原子 Skill/包/Brain，编辑 SKILL.md，查看依赖并手动试运行。
+ * state.current 保存当前文档，state.dependencies 保存解析后的调用关系，state.run 保存
+ * 最近一次运行及 trace；切换目录时这些状态会被重新装载而不是隐式复用。
+ */
 (function () {
   'use strict';
 

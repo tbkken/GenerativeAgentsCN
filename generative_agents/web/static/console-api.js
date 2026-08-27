@@ -1,6 +1,14 @@
+/**
+ * 实验控制台的浏览器端总协调器。
+ *
+ * 推荐阅读顺序：先看 state 理解页面保存什么，再看 api() 的错误协议；随后按功能阅读
+ * loadExperiments()/openExperiment()、草稿编辑函数、loadResults() 和操作诊断函数。
+ * generation 字段用于丢弃过期异步响应，避免快速切换实验或 Run 时旧数据覆盖新页面。
+ */
 (() => {
   'use strict';
 
+  // 页面只有这一份可变状态；DOM 是 state 的投影，不作为服务器事实来源。
   const state = {
     page: 1,
     pageSize: 5,
@@ -665,6 +673,7 @@
   }
 
   async function api(path, options = {}) {
+    // 所有请求都通过统一错误信封，调用者无需分别解析 FastAPI/业务错误格式。
     const response = await fetch(`/api/v1${path}`, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       cache: 'no-store',
@@ -810,6 +819,7 @@
   }
 
   async function loadExperiments() {
+    // 每次查询获得新的 generation；较慢的旧请求返回后会被下方守卫直接忽略。
     const generation = ++state.experimentListGeneration;
     const requestState = {
       page: state.page, pageSize: state.pageSize, status: state.status, query: state.query,
@@ -892,6 +902,7 @@
   }
 
   async function openExperiment(id, targetPage = 'overview', preferredRunId = null) {
+    // 实验详情与草稿并行加载；运行中的实验会锁定到已发布 Revision，而非当前草稿。
     const generation = ++state.experimentOpenGeneration;
     const [experiment, draft] = await Promise.all([
       api(`/experiments/${id}`),
@@ -1582,6 +1593,7 @@
   }
 
   async function refreshRunHistoryList(experimentId, preferredRunId = state.selectedRunId) {
+    // 这里主动翻完稳定游标，保证 Run 下拉框不会只显示第一页。
     const generation = ++state.runHistoryGeneration;
     const items = [];
     const known = new Set();
@@ -1689,6 +1701,7 @@
   }
 
   async function loadResults(runId) {
+    // 切换 Run 时先拆除旧 SSE、日志流和 Phaser 实例，避免跨 Run DOM/网络所有权泄漏。
     const generation = ++state.resultGeneration;
     const experimentId = state.selectedExperimentId;
     teardownReplay();
@@ -2805,6 +2818,7 @@
   }
 
   async function refreshOperationFacts(runId, resultGeneration) {
+    // 检查点和 Attempt 属于同一操作快照；任一选择变化都会使本次并行结果失效。
     const factsGeneration = state.operationFactsGeneration = (state.operationFactsGeneration || 0) + 1;
     const checkpointGeneration = ++state.checkpointGeneration;
     const signal = state.operationsAbortController?.signal;

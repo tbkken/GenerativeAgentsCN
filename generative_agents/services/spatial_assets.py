@@ -254,6 +254,8 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
 
 
 class SpatialAssetService:
+    """管理空间资产草稿、发布 Revision、引用关系和删除约束。"""
+
     def __init__(self, database: Database) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

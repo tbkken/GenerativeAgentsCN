@@ -15,6 +15,7 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.create_table(
         "run_step_effects",
         sa.Column("run_id", sa.String(length=36), nullable=False),
@@ -52,6 +53,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_index("ix_step_effects_run_type", table_name="run_step_effects")
     op.drop_index("ix_step_effects_run_step", table_name="run_step_effects")
     op.drop_table("run_step_effects")

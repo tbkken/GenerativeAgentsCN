@@ -31,6 +31,8 @@ def enforce_memory_limit(memory, max_memory):
 
 
 class Concept:
+    """一条可检索的事件、想法或对话记忆及其重要度和时间信息。"""
+
     def __init__(
         self,
         describe,
@@ -169,6 +171,8 @@ class Concept:
 
 
 class AssociateRetriever(BaseRetriever):
+    """按相关性、时近性和重要度组合评分检索候选记忆。"""
+
     def __init__(self, config, clock, *args, **kwargs) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -249,6 +253,8 @@ class AssociateRetriever(BaseRetriever):
 
 
 class Associate:
+    """智能体长期联想记忆的写入、检索、反思和容量管理聚合。"""
+
     def __init__(
         self,
         path,

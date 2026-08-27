@@ -14,6 +14,8 @@ class PassiveSkillRuntimeError(RuntimeError):
 
 @dataclass(frozen=True, slots=True)
 class PassiveSkillResult:
+    """一次被动 Skill 的输出文本和规范化状态更新。"""
+
     skill: str
     revision: str
     output_text: str

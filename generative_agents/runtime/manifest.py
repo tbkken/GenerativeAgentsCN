@@ -1,4 +1,8 @@
-"""Materialize and verify the immutable manifest consumed by a run worker."""
+"""生成并校验 Worker 消费的不可变运行清单。
+
+清单冻结实验定义、Skill 快照、依赖版本和算法身份。Worker 启动或恢复时必须验证
+内容哈希，不能悄悄改读当前草稿或主机上的新版 Skill。
+"""
 
 from __future__ import annotations
 
@@ -27,11 +31,15 @@ MANIFEST_SCHEMA_VERSION = 2
 
 
 class ManifestConflictError(RuntimeError):
+    """磁盘清单与期望的 Revision、算法或内容哈希不一致。"""
+
     pass
 
 
 @dataclass(frozen=True, slots=True)
 class VerifiedRunManifest:
+    """已通过结构和哈希校验、可安全交给 Worker 的清单视图。"""
+
     path: Path
     manifest_hash: str
     document: Mapping[str, Any]
@@ -181,6 +189,8 @@ def build_manifest_document(
 
 
 class RunManifestStore:
+    """在 Run 私有目录中原子写入、复用和验证运行清单。"""
+
     def __init__(self, paths: RunPaths):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

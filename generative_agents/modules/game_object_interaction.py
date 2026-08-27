@@ -10,6 +10,8 @@ from typing import Any, Mapping
 
 @dataclass(frozen=True, slots=True)
 class GameObjectAffordance:
+    """智能体当前可以感知并主动选择的一项游戏对象交互机会。"""
+
     object_key: str
     object_name: str
     interaction_key: str

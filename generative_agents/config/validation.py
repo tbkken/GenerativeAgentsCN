@@ -15,6 +15,8 @@ from .spatial import build_map_address_index, validate_agent_spatial
 
 
 class ValidationIssue(StrictModel):
+    """发布校验发现的单个问题，包含级别、路径、代码和可读消息。"""
+
     code: str
     path: str
     message: str
@@ -24,6 +26,8 @@ class ValidationIssue(StrictModel):
 
 
 class ValidationReport(StrictModel):
+    """一次定义校验的完整问题集合，并提供是否允许发布的汇总判断。"""
+
     definition_hash: str
     errors: list[ValidationIssue] = Field(default_factory=list)
     warnings: list[ValidationIssue] = Field(default_factory=list)

@@ -1,4 +1,9 @@
-/* Formal Replay Bundle V2 player. Phaser is supplied by the package-local vendor asset. */
+/**
+ * 正式 Replay Bundle V2 播放器；Phaser 来自项目内置 vendor 资源。
+ *
+ * 播放器只消费服务端验证后的清单与步骤窗口，不读取实验草稿。每个实例拥有自己的
+ * Phaser Game、缓存窗口和选中智能体；切换 Run 时调用 destroy() 释放旧画布和监听器。
+ */
 (function replayModule(root, factory) {
   const exported = factory();
   if (typeof module === 'object' && module.exports) module.exports = exported;
@@ -23,8 +28,7 @@
   const DISPLAY_RENDER_RESOLUTION = Math.min(2, Math.max(1, Number(globalThis.devicePixelRatio || 1)));
   const TEXT_RENDER_RESOLUTION = Math.max(2, DISPLAY_RENDER_RESOLUTION);
   const REPLAY_FONT_FAMILY = '"Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif';
-  // Keep the two overlays visually independent: a long display name should
-  // sit above-left of the sprite instead of competing with the action emoji.
+  // 名称与动作气泡使用独立偏移，长名称不会和动作表情争夺同一位置。
   const AGENT_NAME_OFFSET = Object.freeze({ x: -18, y: -44 });
   const ACTION_BUBBLE_OFFSET = Object.freeze({ x: 38, y: -24 });
 

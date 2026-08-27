@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_game_object_skills`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -23,6 +24,7 @@ from tools.seed_pedestrian_crossing_skill_demo import build_agent, build_world
 
 
 def _world() -> dict:
+    """为本测试模块封装 ``_world`` 辅助步骤，减少重复的场景搭建代码。"""
     return {
         "editor_v2": {
             "hierarchy_nodes": [
@@ -74,36 +76,45 @@ def _world() -> dict:
 
 
 class _PassiveAgent:
+    """为 ``_PassiveAgent`` 相关场景组织共享测试状态、输入或断言。"""
     agent_key = "pedestrian"
     name = "林晓"
     coord = (4, 5)
 
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.selection = "NONE"
         self.observations = []
 
     def choose_game_object_interaction(self, options, _planned_path):
+        """为本测试模块封装 ``choose_game_object_interaction`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.selection
 
     def receive_game_object_observation(self, **observation):
+        """为本测试模块封装 ``receive_game_object_observation`` 辅助步骤，减少重复的场景搭建代码。"""
         self.observations.append(observation)
         return "WAIT" if "红灯" in observation["response"] else "CONTINUE"
 
     def get_event(self):
+        """为本测试模块封装 ``get_event`` 辅助步骤，减少重复的场景搭建代码。"""
         return Event(self.name, "正在", "前往马路北侧")
 
 
 class _CountingPassiveRuntime:
+    """为 ``_CountingPassiveRuntime`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.runtime = SnapshotPassiveSkillRuntime(SkillRegistry().snapshot())
         self.calls = 0
 
     def run(self, *args, **kwargs):
+        """为本测试模块封装 ``run`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls += 1
         return self.runtime.run(*args, **kwargs)
 
 
 def test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language():
+    """回归验证 ``test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
     runtime = SnapshotPassiveSkillRuntime(SkillRegistry().snapshot())
     context = {
         "object_state": {
@@ -138,6 +149,7 @@ def test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language()
 
 
 def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
+    """回归验证 ``test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(datetime(2026, 8, 22, 8, 0, tzinfo=timezone.utc))
     runtime = _CountingPassiveRuntime()
     system = GameObjectInteractionSystem(_world(), skill_executor=runtime, clock=clock)
@@ -162,14 +174,18 @@ def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
 
 
 class _Tile:
+    """为 ``_Tile`` 相关场景组织共享测试状态、输入或断言。"""
     def get_address(self):
+        """为本测试模块封装 ``get_address`` 辅助步骤，减少重复的场景搭建代码。"""
         return ["过街演示", "道路", "斑马线", "南侧候行区"]
 
 
 class _RunnerAgent:
+    """为 ``_RunnerAgent`` 相关场景组织共享测试状态、输入或断言。"""
     name = "林晓"
 
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.coord = (4, 5)
         self.path = []
         self._event = Event(
@@ -180,30 +196,38 @@ class _RunnerAgent:
         )
 
     def move(self, coord, path=None):
+        """为本测试模块封装 ``move`` 辅助步骤，减少重复的场景搭建代码。"""
         self.coord = tuple(coord)
         self.path = list(path or ())
 
     def get_event(self, as_act=True):
+        """为本测试模块封装 ``get_event`` 辅助步骤，减少重复的场景搭建代码。"""
         return self._event if as_act else None
 
     def get_tile(self):
+        """为本测试模块封装 ``get_tile`` 辅助步骤，减少重复的场景搭建代码。"""
         return _Tile()
 
 
 class _InteractiveRunnerGame:
+    """为 ``_InteractiveRunnerGame`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent = _RunnerAgent()
         self.agents = {"pedestrian": self.agent}
         self.agent_keys_by_name = {"林晓": "pedestrian"}
         self.route = [(4, 4), (4, 3), (4, 2), (4, 1)]
 
     def reset_game(self):
+        """为本测试模块封装 ``reset_game`` 辅助步骤，减少重复的场景搭建代码。"""
         pass
 
     def get_agent(self, _agent_key):
+        """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agent
 
     def agent_think(self, _agent_key, status):
+        """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent.move(status["coord"], status.get("path"))
         route = list(self.agent.path or self.route)
         return {
@@ -219,6 +243,7 @@ class _InteractiveRunnerGame:
         }
 
     def resolve_game_object_interaction(self, _agent_key, outcome, *, step_no):
+        """为本测试模块封装 ``resolve_game_object_interaction`` 辅助步骤，减少重复的场景搭建代码。"""
         decision = "WAIT" if step_no == 1 else "CONTINUE"
         response = "当前为行人红灯，请等待。" if decision == "WAIT" else "当前为行人绿灯，可以通行。"
         outcome["plan"]["movement_directive"] = decision
@@ -244,14 +269,18 @@ class _InteractiveRunnerGame:
 
 
 class _Committer:
+    """为 ``_Committer`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.results = []
 
     def commit(self, result, *, force_checkpoint):
+        """为本测试模块封装 ``commit`` 辅助步骤，减少重复的场景搭建代码。"""
         self.results.append(result)
 
 
 def test_runner_waits_on_red_then_crosses_on_green_and_records_the_exchange():
+    """回归验证 ``test_runner_waits_on_red_then_crosses_on_green_and_records_the_exchange`` 所描述的业务结果、故障边界和隔离约束。"""
     context = SimpleNamespace(
         run_id=uuid4(),
         attempt_id=uuid4(),
@@ -282,6 +311,7 @@ def test_runner_waits_on_red_then_crosses_on_green_and_records_the_exchange():
 
 
 def test_demo_resources_materialize_through_public_apis(database_url):
+    """回归验证 ``test_demo_resources_materialize_through_public_apis`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         public_map = client.post(
@@ -382,6 +412,7 @@ def test_demo_resources_materialize_through_public_apis(database_url):
 
 
 def test_demo_map_editor_metadata_is_accepted_by_runtime_maze():
+    """回归验证 ``test_demo_map_editor_metadata_is_accepted_by_runtime_maze`` 所描述的业务结果、故障边界和隔离约束。"""
     definition = build_world()["definition"]
 
     maze = Maze(definition, logging.getLogger("pedestrian-crossing-test"), random.Random(7))
@@ -391,6 +422,7 @@ def test_demo_map_editor_metadata_is_accepted_by_runtime_maze():
 
 
 def test_demo_map_and_signal_have_a_self_contained_replay_renderer():
+    """回归验证 ``test_demo_map_and_signal_have_a_self_contained_replay_renderer`` 所描述的业务结果、故障边界和隔离约束。"""
     payload = make_blank_definition(key="crossing-replay", name="过街回放").model_dump(
         mode="json"
     )

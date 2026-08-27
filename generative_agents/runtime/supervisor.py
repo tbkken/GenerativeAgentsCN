@@ -35,6 +35,8 @@ from .scheduler import ClaimedRun, LocalRunSchedulerRepository
 
 @dataclass(slots=True)
 class SupervisedChild:
+    """Supervisor 当前管理的 Worker 子进程及其 Run/Attempt 身份。"""
+
     claimed: ClaimedRun
     process: subprocess.Popen
     log_handle: object

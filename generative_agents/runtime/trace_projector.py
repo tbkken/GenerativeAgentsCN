@@ -24,10 +24,14 @@ from .model_trace import ModelTraceStatus
 
 
 class ModelTraceProjectionError(RuntimeError):
+    """模型追踪文件身份、游标或事件结构不满足投影契约。"""
+
     pass
 
 
 class ModelTraceProjector:
+    """按字节游标把 Attempt 模型追踪追加投影到数据库。"""
+
     def __init__(self, database: Database, *, var_dir: str | Path):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

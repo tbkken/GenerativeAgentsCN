@@ -1,3 +1,4 @@
+"""运行时回归测试：覆盖 ``test_step_effect_ledger`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import shutil
@@ -17,6 +18,7 @@ from generative_agents.skills import MemoryStream
 
 
 def test_step_result_persists_one_canonical_effect_ledger():
+    """回归验证 ``test_step_result_persists_one_canonical_effect_ledger`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
@@ -62,6 +64,7 @@ def test_step_result_persists_one_canonical_effect_ledger():
 
 
 def test_run_memory_is_attempt_recoverable_and_run_isolated(tmp_path):
+    """回归验证 ``test_run_memory_is_attempt_recoverable_and_run_isolated`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_one = uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
@@ -116,6 +119,7 @@ def test_run_memory_is_attempt_recoverable_and_run_isolated(tmp_path):
 
 
 def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
+    """回归验证 ``test_skill_memory_side_effects_join_the_step_ledger`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
     attempt_id = uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)

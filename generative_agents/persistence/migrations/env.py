@@ -14,6 +14,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+    """在不创建数据库连接的情况下生成并执行离线迁移脚本。"""
     context.configure(
         url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
@@ -26,6 +27,7 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    """创建数据库连接，并在事务中执行在线迁移。"""
     connectable = engine_from_config(
         config.get_section(config.config_ini_section) or {},
         prefix="sqlalchemy.",

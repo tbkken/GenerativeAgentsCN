@@ -54,6 +54,7 @@ from generative_agents.web import create_app
 
 
 def _definition(key: str) -> ExperimentDefinition:
+    """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     value = make_builtin_definition(
         key=key,
         name="回放浏览器验收实验",
@@ -69,6 +70,7 @@ def _definition(key: str) -> ExperimentDefinition:
 
 
 def _publish(database, var_dir: Path):
+    """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     service = ExperimentService(database)
     definition = _definition("browser-replay-qa")
     experiment = service.create_experiment(
@@ -93,6 +95,7 @@ def _publish(database, var_dir: Path):
 
 
 def _result(run_id: str, attempt_id: str, definition: ExperimentDefinition, step_no: int):
+    """为本测试模块封装 ``_result`` 辅助步骤，减少重复的场景搭建代码。"""
     first, second = definition.agents[:2]
     base_time = definition.simulation.start_time
     builder = StepResultBuilder(
@@ -201,6 +204,7 @@ def _result(run_id: str, attempt_id: str, definition: ExperimentDefinition, step
 
 
 def _create_run(database, var_dir: Path, experiment_id: str, revision_id: str, definition, steps: int):
+    """为本测试模块封装 ``_create_run`` 辅助步骤，减少重复的场景搭建代码。"""
     run = RunService(database, var_dir=var_dir).create_from_published(experiment_id, revision_id)
     scheduler = LocalRunSchedulerRepository(database, max_concurrent_runs=2)
     claimed = scheduler.claim_next()
@@ -226,6 +230,7 @@ def _create_run(database, var_dir: Path, experiment_id: str, revision_id: str, d
 
 
 def _seed(root: Path) -> dict:
+    """为本测试模块封装 ``_seed`` 辅助步骤，减少重复的场景搭建代码。"""
     root.mkdir(parents=True, exist_ok=True)
     database_path = root / "browser-observability.db"
     database_url = "sqlite:///" + database_path.as_posix()
@@ -290,6 +295,7 @@ def _augment_existing(root: Path) -> dict:
         frame = frame_store.write(result)
 
         def export_storage(destination: Path) -> None:
+            """为本测试模块封装 ``export_storage`` 辅助步骤，减少重复的场景搭建代码。"""
             (destination / "docstore.json").write_text(
                 json.dumps(
                     {
@@ -456,6 +462,7 @@ def _augment_existing(root: Path) -> dict:
 
 
 def main() -> None:
+    """为本测试模块封装 ``main`` 辅助步骤，减少重复的场景搭建代码。"""
     root = Path(os.environ["GA_BROWSER_QA_ROOT"]).resolve()
     port = int(os.environ.get("GA_BROWSER_QA_PORT", "8765"))
     metadata_path = root / "browser-fixture.json"

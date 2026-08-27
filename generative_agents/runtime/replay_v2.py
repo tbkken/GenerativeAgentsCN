@@ -54,6 +54,8 @@ class ReplayAssetSource(StrEnum):
 
 
 class ReplayAgentDefinition(StrictModel):
+    """回放清单中稳定的智能体身份、名称和视觉资源。"""
+
     agent_key: str
     display_name: str
     initial_coord: tuple[int, int]
@@ -64,6 +66,8 @@ class ReplayAgentDefinition(StrictModel):
 
 
 class ReplayAgentStep(StrictModel):
+    """某一步中一个智能体的位置、路径和动作显示信息。"""
+
     agent_key: str
     from_coord: tuple[int, int]
     coord: tuple[int, int]
@@ -77,6 +81,8 @@ class ReplayAgentStep(StrictModel):
 
 
 class ReplayStep(StrictModel):
+    """回放时间轴上的一个完整已提交步骤。"""
+
     step_no: int = Field(ge=1)
     virtual_time: str
     attempt_id: str
@@ -91,6 +97,8 @@ class ReplayStep(StrictModel):
 
 
 class ReplayBundleV2(StrictModel):
+    """包含地图、智能体和步骤窗口的正式回放 V2 数据包。"""
+
     schema_version: Literal[2] = 2
     generator_version: str
     source_kind: Literal["RUN_FRAMES", "RUN_PROJECTION"]

@@ -39,6 +39,8 @@ from .results import ActivityKind, MemoryDeltaKind, StepResult
 
 
 class ResultProjectionError(RuntimeError):
+    """StepResult 无法以幂等方式写入 SQLite 查询投影。"""
+
     pass
 
 

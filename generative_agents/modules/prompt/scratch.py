@@ -1,3 +1,9 @@
+"""把智能体认知任务转换为 Skill 提示、结构化响应和安全回退值。
+
+``Scratch`` 本身不决定智能体行为；它负责准备上下文、调用对应 Skill，并把模型输出
+约束为 Pydantic 响应。每个方法内部的小型响应类只描述该次调用允许返回的形状。
+"""
+
 import datetime
 import re
 from collections.abc import Mapping
@@ -16,6 +22,8 @@ _PATH_VARIABLE = re.compile(
 
 
 class Scratch:
+    """智能体的认知调用适配器，集中管理提示上下文、Skill 和回退策略。"""
+
     def __init__(self, name, currently, config, *, clock, random_source, skills):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -167,6 +175,8 @@ class Scratch:
         )
 
         class PoignancyEventResponse(BaseModel):
+            """事件情感强度的结构化模型响应。"""
+
             res: int = Field(description="事件的情感强度评分，整数，范围1到10")
 
         return Result(
@@ -192,6 +202,8 @@ class Scratch:
         )
 
         class PoignancyChatResponse(BaseModel):
+            """对话情感强度的结构化模型响应。"""
+
             res: int = Field(description="对话的情感强度评分，整数，范围1到10")
 
         return Result(
@@ -214,6 +226,8 @@ class Scratch:
         )
 
         class wakeupResponse(BaseModel):
+            """模型建议的起床小时。"""
+
             res: int = Field(description="起床时间，24小时制的小时数，整数，范围0到11")
 
         def _callback(response):
@@ -252,6 +266,8 @@ class Scratch:
         )
 
         class schedule_initResponse(BaseModel):
+            """用于构建粗粒度初始日程的活动列表。"""
+
             res: list[str] = Field(
                 description="按时间顺序排列的日程活动列表，每项为简短的活动描述"
             )
@@ -306,6 +322,8 @@ class Scratch:
         )
 
         class schedule_dailyResponse(BaseModel):
+            """以时间字符串为键的一日活动安排。"""
+
             res: dict[str, str] = Field(
                 description="24小时日程表，键为时间字符串如'8:00'，值为该时段的活动描述"
             )
@@ -390,6 +408,8 @@ class Scratch:
         )
 
         class schedule_decomposeResponse(BaseModel):
+            """把一个较长计划拆成活动和分钟数。"""
+
             res: List[Tuple[str, int]] = Field(
                 description="子任务列表，每项为 [活动描述, 时长分钟数] 的元组"
             )
@@ -474,6 +494,8 @@ class Scratch:
         )
 
         class schedule_reviseResponse(BaseModel):
+            """发生新事件后重新计算的完整时间段列表。"""
+
             res: List[Tuple[str, str, str]] = Field(
                 description="调整后的完整日程列表，每项为 [开始时间, 结束时间, 活动描述] 的元组，时间格式为 HH:MM"
             )
@@ -546,6 +568,8 @@ class Scratch:
         failsafe = self._rng.choice(sectors)
 
         class determine_sectorResponse(BaseModel):
+            """从允许的候选项中选择目标区域。"""
+
             res: str = Field(
                 description="从给定列表中选出的目标区域名称，必须与列表中的某项完全一致"
             )
@@ -599,6 +623,8 @@ class Scratch:
         failsafe = self._rng.choice(arenas)
 
         class determine_arenaResponse(BaseModel):
+            """从允许的候选项中选择目标场所。"""
+
             res: str = Field(
                 description="从给定列表中选出的目标场所名称，必须与列表中的某项完全一致"
             )
@@ -640,6 +666,8 @@ class Scratch:
         failsafe = self._rng.choice(objects)
 
         class determine_objectResponse(BaseModel):
+            """从允许的候选项中选择目标对象。"""
+
             res: str = Field(
                 description="从给定列表中选出的最相关对象名称，必须与列表中的某项完全一致"
             )
@@ -698,6 +726,8 @@ class Scratch:
         failsafe = selection_keys[0] if selection_keys and planned_path else "NONE"
 
         class DecideGameObjectInteractionResponse(BaseModel):
+            """选择一个游戏对象交互键，或明确返回不交互。"""
+
             res: str = Field(description="一个可用 selection_key，或 NONE")
 
         def _callback(response):
@@ -753,6 +783,8 @@ class Scratch:
             failsafe = "WAIT"
 
         class DecideGameObjectResponse(BaseModel):
+            """根据对象反馈决定等待还是继续移动。"""
+
             res: Literal["WAIT", "CONTINUE"] = Field(
                 description="Agent 基于外部信息作出的移动决策"
             )
@@ -800,6 +832,8 @@ class Scratch:
         )
 
         class describe_eventResponse(BaseModel):
+            """把自然语言动作规范化为主谓宾事件三元组。"""
+
             res: List[Tuple[str, str, str]] = Field(
                 description="动作的三元组列表，每项为 [主语, 谓语, 宾语]"
             )
@@ -850,6 +884,8 @@ class Scratch:
         )
 
         class DescribeObjectResponse(BaseModel):
+            """生成不重复对象名称的简短状态描述。"""
+
             res: str = Field(
                 description="物品的状态描述，不超过10个字的短句，不要包含物品名称"
             )
@@ -921,6 +957,8 @@ class Scratch:
         )
 
         class decide_chatResponse(BaseModel):
+            """判断当前情境是否适合主动发起对话。"""
+
             res: bool = Field(
                 description="是否主动发起对话，true 表示会主动对话，false 表示不会"
             )
@@ -965,6 +1003,8 @@ class Scratch:
         )
 
         class decide_chat_terminateResponse(BaseModel):
+            """判断一段正在进行的对话是否已经自然结束。"""
+
             res: bool = Field(
                 description="对话是否已告一段落，true 表示对话结束，false 表示对话仍在继续"
             )
@@ -1072,6 +1112,8 @@ class Scratch:
         )
 
         class decide_waitResponse(BaseModel):
+            """在等待其他智能体与继续当前行动之间作出选择。"""
+
             res: str = Field(
                 description="选择的选项，'A' 表示等待，'B' 表示继续当前行动"
             )
@@ -1115,6 +1157,8 @@ class Scratch:
         failsafe = agent.name + " 正在看着 " + other_name
 
         class summarize_relationResponse(BaseModel):
+            """用一句话概括两名智能体的关系。"""
+
             res: str = Field(description="一句话描述两人之间的关系，以第三人称表述")
 
         def _callback(response):
@@ -1181,6 +1225,8 @@ class Scratch:
         )
 
         class generate_chat(BaseModel):
+            """本轮对话中当前角色要说出的内容。"""
+
             res: str = Field(description="角色说出的对话内容，1到3句话")
 
         def _callback(response):
@@ -1218,6 +1264,8 @@ class Scratch:
         conversation = conversation or "[对话尚未开始]"
 
         class generate_chat_check_repeatResponse(BaseModel):
+            """判断候选发言是否与近期对话重复。"""
+
             res: bool = Field(
                 description="新对话内容是否与历史记录重复，true 表示重复，false 表示不重复"
             )
@@ -1266,6 +1314,8 @@ class Scratch:
         )
 
         class summarize_chatsResponse(BaseModel):
+            """把完整对话压缩为一句主题摘要。"""
+
             res: str = Field(description="对话内容的简短摘要，一句话概括对话主题")
 
         def _callback(response):
@@ -1307,6 +1357,8 @@ class Scratch:
         )
 
         class reflect_focusResponse(BaseModel):
+            """从近期记忆中提出值得深入反思的问题。"""
+
             res: List[str] = Field(description="需要深入思考的问题列表，每项为一个问题")
 
         def _callback(response):
@@ -1349,6 +1401,8 @@ class Scratch:
         )
 
         class reflect_insightsResponse(BaseModel):
+            """根据记忆节点生成洞察及其证据索引。"""
+
             res: List[Tuple[str, str]] = Field(
                 description="洞察列表，每项为 [洞察内容, 相关节点索引的逗号分隔字符串如'1,2,3'] 的元组"
             )
@@ -1398,6 +1452,8 @@ class Scratch:
         )
 
         class reflect_chat_planingResponse(BaseModel):
+            """提取对话对未来计划造成的影响。"""
+
             res: str = Field(
                 description="从对话中提取的对角色计划的影响或启发，一句话描述"
             )
@@ -1436,6 +1492,8 @@ class Scratch:
         )
 
         class reflect_chat_memoryResponse(BaseModel):
+            """提取对话中值得长期保存的事实。"""
+
             res: str = Field(description="从对话中提取的值得记忆的内容，一句话描述")
 
         def _callback(response):
@@ -1475,6 +1533,8 @@ class Scratch:
         )
 
         class retrieve_planResponse(BaseModel):
+            """从候选记忆中提炼与当前情境相关的计划。"""
+
             res: List[str] = Field(
                 description="从记忆中检索出的相关计划列表，每项为一条计划描述"
             )
@@ -1516,6 +1576,8 @@ class Scratch:
         )
 
         class retrieve_thoughtResponse(BaseModel):
+            """从候选记忆中提炼与当前情境相关的想法。"""
+
             res: str = Field(description="从记忆中检索出的相关思考内容，一句话总结")
 
         def _callback(response):
@@ -1559,6 +1621,8 @@ class Scratch:
         )
 
         class retrieve_currentlyResponse(BaseModel):
+            """综合既有计划和想法，更新角色的当前状态描述。"""
+
             res: str = Field(description="角色当前状态的更新描述，基于过去的计划和思考")
 
         def _callback(response):

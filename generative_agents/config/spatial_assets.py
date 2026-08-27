@@ -23,6 +23,8 @@ AppearanceMode = Literal["COLOR", "EMOJI", "IMAGE", "SPRITE"]
 
 
 class SpatialAppearanceVariant(StrictModel):
+    """空间资产在某个状态下使用的图片、裁剪区域和渲染参数。"""
+
     color: Annotated[str, StringConstraints(pattern=r"^#[0-9a-fA-F]{6}$")] | None = None
     emoji: (
         Annotated[
@@ -58,6 +60,8 @@ class SpatialAppearanceVariant(StrictModel):
 
 
 class SpatialAppearance(StrictModel):
+    """空间资产的默认外观及按状态切换的视觉变体。"""
+
     mode: AppearanceMode
     color: Annotated[str, StringConstraints(pattern=r"^#[0-9a-fA-F]{6}$")] | None = None
     emoji: (
@@ -106,6 +110,8 @@ class SpatialAppearance(StrictModel):
 
 
 class SpatialPhysics(StrictModel):
+    """空间资产的碰撞、占地和运动相关物理属性。"""
+
     collision: bool = False
     width_m: float = Field(default=1.0, gt=0, le=10_000)
     height_m: float = Field(default=1.0, gt=0, le=10_000)
@@ -137,6 +143,8 @@ class SpatialPhysics(StrictModel):
 
 
 class SpatialSemantics(StrictModel):
+    """供智能体感知、寻路和 Skill 使用的语义标签与公开状态。"""
+
     tags: list[StableKey] = Field(default_factory=list, max_length=100)
     address_role: Literal["NONE", "SECTOR", "ARENA", "OBJECT"] = "NONE"
     surface: Literal[
@@ -164,6 +172,8 @@ class SpatialSemantics(StrictModel):
 
 
 class SpatialAssetContract(StrictModel):
+    """可复用空间资产的完整版本化契约，组合外观、物理和语义。"""
+
     schema_version: Literal["ga-spatial-asset/v1"] = "ga-spatial-asset/v1"
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
@@ -213,6 +223,8 @@ class SpatialAssetContract(StrictModel):
 
 
 class SpatialPlacement(StrictModel):
+    """在具体地图坐标上实例化某个已发布空间资产。"""
+
     instance_key: StableKey
     spatial_asset_revision_id: str = Field(min_length=1, max_length=36)
     x_m: float
@@ -222,6 +234,8 @@ class SpatialPlacement(StrictModel):
 
 
 class SpatialSceneExtension(StrictModel):
+    """附加到 WorldConfig 的版本化空间场景和全部资产实例。"""
+
     schema_version: Literal["ga-spatial-scene/v1"] = "ga-spatial-scene/v1"
     meters_per_tile: float = Field(default=1.0, gt=0, le=1_000)
     palette_refs: dict[StableKey, str] = Field(default_factory=dict, max_length=1_000)

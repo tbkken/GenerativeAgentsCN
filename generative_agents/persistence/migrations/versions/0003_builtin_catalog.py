@@ -17,6 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.create_table(
         "builtin_catalog_snapshots",
         sa.Column("id", sa.String(36), primary_key=True),
@@ -34,5 +35,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_index("ix_builtin_catalog_created_at", table_name="builtin_catalog_snapshots")
     op.drop_table("builtin_catalog_snapshots")

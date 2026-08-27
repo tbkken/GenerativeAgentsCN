@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_console_runtime`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import hashlib
@@ -15,6 +16,7 @@ from generative_agents.web import create_app
 
 
 def _png_size(payload: bytes) -> tuple[int, int]:
+    """为本测试模块封装 ``_png_size`` 辅助步骤，减少重复的场景搭建代码。"""
     assert payload[:8] == b"\x89PNG\r\n\x1a\n"
     assert payload[12:16] == b"IHDR"
     return struct.unpack(">II", payload[16:24])
@@ -77,6 +79,7 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
 
 
 def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
+    """回归验证 ``test_map_editor_identity_and_publish_actions_share_the_global_topbar`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
     static = root / "generative_agents" / "web" / "static"
     shell = (static / "experiment-console.html").read_text(encoding="utf-8")
@@ -107,6 +110,7 @@ def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
 
 
 def test_crowd_editor_identity_and_publish_actions_share_the_global_topbar():
+    """回归验证 ``test_crowd_editor_identity_and_publish_actions_share_the_global_topbar`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
     static = root / "generative_agents" / "web" / "static"
     shell = (static / "experiment-console.html").read_text(encoding="utf-8")
@@ -139,6 +143,7 @@ def test_crowd_editor_identity_and_publish_actions_share_the_global_topbar():
 
 
 def test_console_ui_font_uses_sidebar_typography_as_the_global_baseline():
+    """回归验证 ``test_console_ui_font_uses_sidebar_typography_as_the_global_baseline`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
     static = root / "generative_agents" / "web" / "static"
     ux_style = (static / "console-ux.css").read_text(encoding="utf-8")
@@ -161,6 +166,7 @@ def test_console_ui_font_uses_sidebar_typography_as_the_global_baseline():
 def test_removed_prompt_workspace_was_a_self_contained_workflow_editor(
     database_url,
 ):
+    """回归验证 ``test_removed_prompt_workspace_was_a_self_contained_workflow_editor`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         shell = client.get("/").text
@@ -259,6 +265,7 @@ def test_removed_prompt_workspace_was_a_self_contained_workflow_editor(
 
 
 def test_skill_workspace_is_file_backed_and_self_contained(database_url):
+    """回归验证 ``test_skill_workspace_is_file_backed_and_self_contained`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         shell = client.get("/").text
@@ -302,6 +309,7 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
 
 
 def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab():
+    """回归验证 ``test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(
         encoding="utf-8"
@@ -337,6 +345,7 @@ def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab
 
 
 def test_dynamic_card_and_error_paths_are_owned_by_the_production_script():
+    """回归验证 ``test_dynamic_card_and_error_paths_are_owned_by_the_production_script`` 所描述的业务结果、故障边界和隔离约束。"""
     script = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -355,6 +364,7 @@ def test_dynamic_card_and_error_paths_are_owned_by_the_production_script():
 
 
 def test_modal_focus_runtime_traps_both_tab_directions_and_restores_focus():
+    """回归验证 ``test_modal_focus_runtime_traps_both_tab_directions_and_restores_focus`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the executable production JS contract"
     root = Path(__file__).parents[2]
@@ -396,6 +406,7 @@ if (JSON.stringify(outcomes) !== JSON.stringify({
 
 
 def test_console_owns_global_activity_reconciliation_and_resume_hooks():
+    """回归验证 ``test_console_owns_global_activity_reconciliation_and_resume_hooks`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -417,6 +428,7 @@ def test_console_owns_global_activity_reconciliation_and_resume_hooks():
 
 
 def test_selected_result_run_is_not_confused_with_the_experiment_latest_run():
+    """回归验证 ``test_selected_result_run_is_not_confused_with_the_experiment_latest_run`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -438,6 +450,7 @@ def test_selected_result_run_is_not_confused_with_the_experiment_latest_run():
 
 
 def test_console_url_tracks_the_selected_experiment_workspace_and_run():
+    """回归验证 ``test_console_url_tracks_the_selected_experiment_workspace_and_run`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -463,6 +476,7 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
 
 
 def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_tabs():
+    """回归验证 ``test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_tabs`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     shell = (
         root
@@ -524,6 +538,7 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
 
 
 def test_running_duration_uses_utc_instants_and_a_live_execution_label():
+    """回归验证 ``test_running_duration_uses_utc_instants_and_a_live_execution_label`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     shell = (
         root / "generative_agents" / "web" / "static" / "experiment-console.html"
@@ -559,6 +574,7 @@ if (formatDuration('2026-08-09T05:20:11+00:00', '2026-08-09T06:09:27+00:00') !==
 
 
 def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
+    """回归验证 ``test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -577,6 +593,7 @@ def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
 
 
 def test_recoverable_run_action_uses_resume_without_a_rerun_action():
+    """回归验证 ``test_recoverable_run_action_uses_resume_without_a_rerun_action`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the executable Run action contract"
     root = Path(__file__).parents[2]
@@ -735,6 +752,7 @@ if (running.pauseHidden || running.cancelHidden || !running.continueHidden) proc
 
 
 def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
+    """回归验证 ``test_console_reconciles_publish_actions_and_renders_artifact_job_states`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -763,6 +781,7 @@ def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
 
 
 def test_chat_output_limit_is_not_presented_as_the_model_context_window():
+    """回归验证 ``test_chat_output_limit_is_not_presented_as_the_model_context_window`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     shell = (
         root
@@ -783,6 +802,7 @@ def test_chat_output_limit_is_not_presented_as_the_model_context_window():
 
 
 def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():
+    """回归验证 ``test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
         / "generative_agents"
@@ -796,6 +816,7 @@ def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():
 
 
 def test_replay_agent_selection_is_revision_owned_and_executable():
+    """回归验证 ``test_replay_agent_selection_is_revision_owned_and_executable`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay selection contract"
     root = Path(__file__).parents[2]
@@ -849,6 +870,7 @@ if (JSON.stringify(circleEvents) !== JSON.stringify([[0,0xffd166,0],[0,0xffd166,
 
 
 def test_replay_playback_starts_at_step_one_and_restarts_after_the_end():
+    """回归验证 ``test_replay_playback_starts_at_step_one_and_restarts_after_the_end`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay transport contract"
     root = Path(__file__).parents[2]
@@ -904,6 +926,7 @@ const fetchImpl = async url => ({
 
 
 def test_running_replay_refetches_an_incomplete_cached_tail_after_growth():
+    """回归验证 ``test_running_replay_refetches_an_incomplete_cached_tail_after_growth`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay cache growth contract"
     root = Path(__file__).parents[2]
@@ -955,6 +978,7 @@ const fetchImpl = async url => ({
 
 
 def test_replay_phaser_canvas_stays_owned_by_the_result_map_container():
+    """回归验证 ``test_replay_phaser_canvas_stays_owned_by_the_result_map_container`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay canvas ownership contract"
     root = Path(__file__).parents[2]
@@ -1016,6 +1040,7 @@ instance._createGame(manifest, 1).then(() => {
 
 
 def test_replay_agent_name_and_action_emoji_use_separate_offsets():
+    """回归验证 ``test_replay_agent_name_and_action_emoji_use_separate_offsets`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay overlay layout contract"
     root = Path(__file__).parents[2]
@@ -1053,6 +1078,7 @@ if(JSON.stringify(positions)!==JSON.stringify(expected)){
 
 
 def test_replay_canvas_survives_running_completed_running_switches():
+    """回归验证 ``test_replay_canvas_survives_running_completed_running_switches`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay lifecycle contract"
     root = Path(__file__).parents[2]
@@ -1130,6 +1156,7 @@ async function open(runId,selectedKey,selectedRevision) {
 def test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_source(
     database_url,
 ):
+    """回归验证 ``test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_source`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     legacy_path = (
         root
@@ -1184,6 +1211,7 @@ def test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_sou
 def test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_corrected(
     database_url,
 ):
+    """回归验证 ``test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_corrected`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     legacy_path = (
         root

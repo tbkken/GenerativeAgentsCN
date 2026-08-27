@@ -19,6 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     with op.batch_alter_table("experiments") as batch:
         batch.add_column(sa.Column("owner", sa.String(length=120), nullable=False, server_default=""))
         batch.add_column(sa.Column("tags", sa.JSON(), nullable=False, server_default="[]"))
@@ -72,6 +73,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_table("experiment_comparison_groups")
     op.drop_table("experiment_saved_views")
     op.drop_index("ix_model_probe_status_checked", table_name="model_probe_statuses")

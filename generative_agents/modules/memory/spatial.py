@@ -4,6 +4,8 @@ from generative_agents.modules import utils
 
 
 class Spatial:
+    """智能体已经认识的世界—区域—场所—对象空间树。"""
+
     def __init__(self, tree, address=None, random_source=None):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

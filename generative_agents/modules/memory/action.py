@@ -7,6 +7,8 @@ from .event import Event
 
 
 class Action:
+    """智能体当前动作的描述、持续时间、目标地址和对象状态。"""
+
     def __init__(
         self,
         event,

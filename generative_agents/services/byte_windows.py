@@ -13,6 +13,8 @@ from .errors import ServiceError
 
 @dataclass(frozen=True, slots=True)
 class Utf8Window:
+    """按字节游标返回的 UTF-8 安全文本窗口及下一页位置。"""
+
     start_cursor: int
     next_cursor: int
     content: str

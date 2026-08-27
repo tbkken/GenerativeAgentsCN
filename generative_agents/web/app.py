@@ -1,4 +1,8 @@
-"""Minimal experiment-first REST application."""
+"""以实验为中心的 FastAPI 应用装配与 HTTP 路由。
+
+本文件只负责协议层：解析请求、调用服务、统一错误信封并返回响应。草稿、发布、运行、
+地图和结果的业务规则分别位于 ``services``；阅读某个端点时应继续跳到对应服务方法。
+"""
 
 from __future__ import annotations
 
@@ -89,6 +93,8 @@ request_id_var: ContextVar[str] = ContextVar("request_id", default="")
 
 
 class SourceRequest(StrictModel):
+    """带乐观锁源 Revision 的通用修改请求。"""
+
     type: Literal[
         "BUILTIN_DEFAULT",
         "BLANK",
@@ -98,6 +104,8 @@ class SourceRequest(StrictModel):
 
 
 class CreateExperimentRequest(StrictModel):
+    """创建实验草稿及其可选来源资源。"""
+
     name: str = Field(min_length=1, max_length=120)
     goal: str = Field(default="", max_length=10_000)
     owner: str = Field(default="", max_length=120)
@@ -108,11 +116,15 @@ class CreateExperimentRequest(StrictModel):
 
 
 class DraftUpdateRequest(StrictModel):
+    """替换或局部更新实验草稿文档。"""
+
     lock_version: int = Field(ge=1)
     data: dict[str, Any]
 
 
 class BatchAgentRequest(StrictModel):
+    """在一个草稿版本上批量修改多个智能体。"""
+
     lock_version: int = Field(ge=1)
     agent_keys: list[str] = Field(min_length=1, max_length=500)
     changes: dict[str, Any]
@@ -120,6 +132,8 @@ class BatchAgentRequest(StrictModel):
 
 
 class ExperimentMetadataRequest(StrictModel):
+    """更新实验名称、目标、标签等展示信息。"""
+
     row_version: int = Field(ge=1)
     name: str = Field(min_length=1, max_length=120)
     goal: str = Field(default="", max_length=10_000)
@@ -128,6 +142,8 @@ class ExperimentMetadataRequest(StrictModel):
 
 
 class DuplicateExperimentRequest(StrictModel):
+    """复制实验时指定新名称和复制来源。"""
+
     revision_id: str | None = None
     name: str | None = Field(default=None, min_length=1, max_length=120)
     goal: str | None = Field(default=None, max_length=10_000)
@@ -135,10 +151,14 @@ class DuplicateExperimentRequest(StrictModel):
 
 
 class ArchiveExperimentRequest(StrictModel):
+    """归档或恢复实验时携带的并发版本。"""
+
     row_version: int | None = Field(default=None, ge=1)
 
 
 class BatchExperimentRequest(StrictModel):
+    """对一组实验执行统一整理操作。"""
+
     experiment_ids: list[str] = Field(min_length=1, max_length=200)
     action: Literal["ARCHIVE", "RESTORE", "ADD_TAGS", "SET_OWNER"]
     owner: str | None = Field(default=None, max_length=120)
@@ -146,33 +166,47 @@ class BatchExperimentRequest(StrictModel):
 
 
 class CompareExperimentsRequest(StrictModel):
+    """指定需要并列比较的实验集合。"""
+
     experiment_ids: list[str] = Field(min_length=2, max_length=12)
 
 
 class ComparisonGroupRequest(CompareExperimentsRequest):
+    """把一组实验比较条件保存为可复用分组。"""
+
     name: str = Field(min_length=1, max_length=120)
 
 
 class SavedViewRequest(StrictModel):
+    """保存实验列表的筛选和排序条件。"""
+
     name: str = Field(min_length=1, max_length=120)
     query: dict[str, Any] = Field(default_factory=dict)
 
 
 class PublishAndRunRequest(StrictModel):
+    """发布当前草稿并立即创建 Run 的参数。"""
+
     draft_revision_id: str
     lock_version: int = Field(ge=1)
 
 
 class CancelRunRequest(StrictModel):
+    """取消 Run，并可选择请求强制终止 Worker。"""
+
     force: bool = False
 
 
 class SecretCreateRequest(StrictModel):
+    """创建或替换加密模型凭据。"""
+
     kind: Literal["OPENAI_API_KEY", "GENERIC_TOKEN"]
     value: str = Field(min_length=1, max_length=20_000)
 
 
 class ArtifactJobRequest(StrictModel):
+    """从某个 Run 生成回放、报告或导出物。"""
+
     job_type: Literal[
         "BUILD_REPLAY",
         "BUILD_REPORT",
@@ -185,10 +219,14 @@ class ArtifactJobRequest(StrictModel):
 
 
 class ModelProbeRequest(StrictModel):
+    """测试草稿中模型连接并解析自动模型身份。"""
+
     lock_version: int = Field(ge=1)
 
 
 class CreateMapRequest(StrictModel):
+    """创建公共地图草稿，可从空白或蓝图开始。"""
+
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     source_revision_id: str | None = None
@@ -200,47 +238,65 @@ class CreateMapRequest(StrictModel):
 
 
 class MapDraftUpdateRequest(StrictModel):
+    """保存地图草稿及其乐观锁版本。"""
+
     lock_version: int = Field(ge=1)
     world: dict[str, Any]
 
 
 class PublishMapRequest(StrictModel):
+    """校验并发布地图 Revision。"""
+
     draft_revision_id: str
     lock_version: int = Field(ge=1)
 
 
 class PublishRevisionRequest(StrictModel):
+    """发布通用版本化资源时携带的源 Revision。"""
+
     draft_revision_id: str
     lock_version: int = Field(ge=1)
 
 
 class MapBlueprintStepRequest(StrictModel):
+    """按教学蓝图应用某一步地图构建操作。"""
+
     lock_version: int = Field(ge=1)
 
 
 class ExperimentMapSelectionRequest(StrictModel):
+    """为实验草稿选择一个已发布公共地图 Revision。"""
+
     lock_version: int = Field(ge=1)
     map_revision_id: str
 
 
 class ExperimentMapOverlayRequest(StrictModel):
+    """保存仅属于当前实验的地图覆盖层。"""
+
     lock_version: int = Field(ge=1)
     overlay: dict[str, Any] = Field(default_factory=dict)
 
 
 class CreateAgentTemplateRequest(StrictModel):
+    """创建可复用智能体模板。"""
+
     definition: AgentTemplateDefinition
     description: str = Field(default="", max_length=10_000)
     agent_key: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")
 
 
 class UpdateAgentTemplateRequest(StrictModel):
+    """更新智能体模板草稿。"""
+
     lock_version: int = Field(ge=1)
     definition: AgentTemplateDefinition
     description: str | None = Field(default=None, max_length=10_000)
 
 
 class CreateCrowdRequest(StrictModel):
+    """创建由多个智能体模板组成的人群资源。"""
+
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     agent_revision_ids: list[str] = Field(default_factory=list, max_length=500)
@@ -249,6 +305,8 @@ class CreateCrowdRequest(StrictModel):
 
 
 class UpdateCrowdRequest(StrictModel):
+    """更新人群草稿及成员 Revision。"""
+
     lock_version: int = Field(ge=1)
     agent_revision_ids: list[str] = Field(max_length=500)
     name: str | None = Field(default=None, min_length=1, max_length=120)
@@ -256,6 +314,8 @@ class UpdateCrowdRequest(StrictModel):
 
 
 class CreateSpatialAssetRequest(StrictModel):
+    """创建可复用空间资产。"""
+
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     asset_key: str | None = Field(
@@ -267,6 +327,8 @@ class CreateSpatialAssetRequest(StrictModel):
 
 
 class UpdateSpatialAssetRequest(StrictModel):
+    """更新空间资产草稿。"""
+
     lock_version: int = Field(ge=1)
     contract: SpatialAssetContract
     name: str | None = Field(default=None, min_length=1, max_length=120)
@@ -274,6 +336,8 @@ class UpdateSpatialAssetRequest(StrictModel):
 
 
 class CreateToolRequest(StrictModel):
+    """创建智能体可拥有或控制的版本化工具。"""
+
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
     tool_key: str | None = Field(
@@ -287,6 +351,8 @@ class CreateToolRequest(StrictModel):
 
 
 class UpdateToolRequest(StrictModel):
+    """更新工具草稿及其公开参数。"""
+
     lock_version: int = Field(ge=1)
     contract: ToolContract
     name: str | None = Field(default=None, min_length=1, max_length=120)

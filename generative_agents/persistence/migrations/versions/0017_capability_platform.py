@@ -23,6 +23,7 @@ def _versioned_container(
     status_constraint: str,
     row_version_constraint: str,
 ) -> None:
+    """封装当前迁移中的 ``_versioned_container`` 共用建表或连接步骤。"""
     op.create_table(
         table,
         sa.Column("id", sa.String(36), primary_key=True),
@@ -42,6 +43,7 @@ def _versioned_container(
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     _versioned_container(
         "capability_definitions",
         key_column="capability_key",
@@ -175,6 +177,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_index(
         "ix_capability_bundle_revisions_bundle",
         table_name="capability_bundle_revisions",

@@ -1,4 +1,4 @@
-"""REST and MCP endpoints for the file-backed Skill platform."""
+"""文件型 Skill 平台的 REST 与 MCP 路由。"""
 
 from __future__ import annotations
 
@@ -17,20 +17,28 @@ from generative_agents.skills import (
 
 
 class RequestModel(BaseModel):
+    """Skill API 请求的严格基类，拒绝未声明字段。"""
+
     model_config = ConfigDict(extra="forbid")
 
 
 class CreateSkillRequest(RequestModel):
+    """创建新 Skill 所需的名称、类型和 Markdown。"""
+
     name: str = Field(min_length=1, max_length=64)
     description: str = Field(min_length=1, max_length=2_000)
     kind: Literal["atomic", "pack", "brain"] = "atomic"
 
 
 class SaveSkillRequest(RequestModel):
+    """保存已有 Skill 新版本的 Markdown 内容。"""
+
     markdown: str = Field(min_length=1, max_length=200_000)
 
 
 class RunSkillRequest(RequestModel):
+    """手动试运行 Skill 时提供的输入文本和运行上下文。"""
+
     input_text: str = Field(min_length=1, max_length=100_000)
     context: dict[str, Any] = Field(default_factory=dict)
 

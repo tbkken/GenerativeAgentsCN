@@ -68,6 +68,8 @@ def uuid_str() -> str:
 
 
 class Base(DeclarativeBase):
+    """所有 SQLAlchemy ORM 表模型共享的声明式基类。"""
+
     pass
 
 
@@ -600,6 +602,8 @@ class CrowdRevisionMember(Base):
 
 
 class Experiment(Base):
+    """实验聚合根，保存展示信息以及当前草稿/发布版本指针。"""
+
     __tablename__ = "experiments"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -760,6 +764,8 @@ class ExperimentComparisonGroup(Base):
 
 
 class ExperimentRevision(Base):
+    """实验定义的一次草稿或不可变发布快照，并带内容哈希和乐观锁。"""
+
     __tablename__ = "experiment_revisions"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -815,6 +821,8 @@ class ExperimentRevision(Base):
 
 
 class Run(Base):
+    """某个已发布实验 Revision 的一次执行及其权威生命周期状态。"""
+
     __tablename__ = "runs"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -904,6 +912,8 @@ class Run(Base):
 
 
 class RunQueue(Base):
+    """等待调度的 Run 队列记录，保存优先级、领取者和租约信息。"""
+
     __tablename__ = "run_queue"
     __table_args__ = (
         CheckConstraint(
@@ -927,6 +937,8 @@ class RunQueue(Base):
 
 
 class RunAttempt(Base):
+    """同一 Run 的一次 Worker 执行或恢复尝试。"""
+
     __tablename__ = "run_attempts"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -971,6 +983,8 @@ class RunAttempt(Base):
 
 
 class RunEvent(Base):
+    """供轮询和 SSE 消费的 Run 状态/进度追加事件。"""
+
     __tablename__ = "run_events"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -993,6 +1007,8 @@ class RunEvent(Base):
 
 
 class Secret(Base):
+    """经主密钥加密保存的模型或外部服务凭据。"""
+
     __tablename__ = "secrets"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -1017,6 +1033,8 @@ class Secret(Base):
 
 
 class Asset(Base):
+    """按内容摘要去重的上传资产元数据和受控存储位置。"""
+
     __tablename__ = "assets"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -1037,6 +1055,8 @@ class Asset(Base):
 
 
 class RunArtifact(Base):
+    """某个 Run 已完成的回放、报告、检查点包或其他导出物。"""
+
     __tablename__ = "run_artifacts"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -1083,6 +1103,8 @@ class RunArtifact(Base):
 
 
 class ArtifactJob(Base):
+    """异步产物构建任务及其输入快照、状态、日志和失败信息。"""
+
     __tablename__ = "artifact_jobs"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
@@ -1159,6 +1181,8 @@ class ArtifactJob(Base):
 
 
 class RunResultSummary(Base):
+    """Run 结果首页使用的聚合计数、可用步骤和模型用量摘要。"""
+
     __tablename__ = "run_result_summaries"
 
     run_id: Mapped[str] = mapped_column(
@@ -1200,6 +1224,8 @@ class RunResultSummary(Base):
 
 
 class RunStep(Base):
+    """已提交步骤的虚拟时间、Attempt 身份和完整性信息。"""
+
     __tablename__ = "run_steps"
 
     run_id: Mapped[str] = mapped_column(
@@ -1233,6 +1259,8 @@ class RunStep(Base):
 
 
 class RunAgentStep(Base):
+    """一个智能体在某个已提交步骤中的位置、动作和决策上下文。"""
+
     __tablename__ = "run_agent_steps"
 
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1269,6 +1297,8 @@ class RunAgentStep(Base):
 
 
 class RunAgentSummary(Base):
+    """按智能体聚合的最终位置、动作次数和对话/记忆统计。"""
+
     __tablename__ = "run_agent_summaries"
 
     run_id: Mapped[str] = mapped_column(
@@ -1297,6 +1327,8 @@ class RunAgentSummary(Base):
 
 
 class RunRelationshipEdge(Base):
+    """Run 内两名智能体之间由对话和共同事件投影出的关系边。"""
+
     __tablename__ = "run_relationship_edges"
 
     run_id: Mapped[str] = mapped_column(
@@ -1322,6 +1354,8 @@ class RunRelationshipEdge(Base):
 
 
 class RunScheduleRevision(Base):
+    """智能体日程在某一步发生的不可变修订记录。"""
+
     __tablename__ = "run_schedule_revisions"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1351,6 +1385,8 @@ class RunScheduleRevision(Base):
 
 
 class RunDomainEvent(Base):
+    """运行结果中的通用领域事件及其结构化负载。"""
+
     __tablename__ = "run_domain_events"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1377,6 +1413,8 @@ class RunDomainEvent(Base):
 
 
 class RunDomainEventAgent(Base):
+    """领域事件与参与智能体之间的多对多关联。"""
+
     __tablename__ = "run_domain_event_agents"
 
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1393,6 +1431,8 @@ class RunDomainEventAgent(Base):
 
 
 class RunConversation(Base):
+    """Run 中一段完整对话的地点、摘要、结束原因和持续时间。"""
+
     __tablename__ = "run_conversations"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1418,6 +1458,8 @@ class RunConversation(Base):
 
 
 class RunConversationParticipant(Base):
+    """对话与参与智能体的稳定顺序关联。"""
+
     __tablename__ = "run_conversation_participants"
 
     run_id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1434,6 +1476,8 @@ class RunConversationParticipant(Base):
 
 
 class RunMessage(Base):
+    """对话中按序号排列的一条说话人消息。"""
+
     __tablename__ = "run_messages"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -1460,6 +1504,8 @@ class RunMessage(Base):
 
 
 class RunMemoryEvent(Base):
+    """记忆新增、访问、过期或淘汰的步骤级投影。"""
+
     __tablename__ = "run_memory_events"
 
     run_id: Mapped[str] = mapped_column(
@@ -1528,6 +1574,8 @@ class RunStepEffect(Base):
 
 
 class RunModelUsage(Base):
+    """逻辑模型调用按步骤聚合的 Token、延迟和重试用量。"""
+
     __tablename__ = "run_model_usage"
 
     run_id: Mapped[str] = mapped_column(
@@ -1557,6 +1605,8 @@ class RunModelUsage(Base):
 
 
 class RunModelTraceCursor(Base):
+    """模型追踪文件已投影到数据库的字节位置和文件身份。"""
+
     __tablename__ = "run_model_trace_cursors"
 
     run_id: Mapped[str] = mapped_column(

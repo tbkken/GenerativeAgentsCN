@@ -75,6 +75,13 @@ def valid_chat_message(message, previous=()):
 
 
 class Agent:
+    """一个运行私有的生成式智能体。
+
+    该对象把长期记忆、短期 Scratch 状态、认知提示、空间位置和模型调用组合在一起。
+    ``think()`` 是每个仿真步的总入口；其余方法分别实现感知、计划、反应、对话、
+    反思和移动。Agent 只通过注入的时钟、随机源和 Skill 依赖工作，不读取全局运行状态。
+    """
+
     def __init__(
         self,
         config,

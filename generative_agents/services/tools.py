@@ -137,6 +137,8 @@ def _builtins() -> dict[str, ToolContract]:
 
 
 class ToolService:
+    """管理智能体工具草稿、发布 Revision、所有权与运行引用。"""
+
     def __init__(self, database: Database) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 

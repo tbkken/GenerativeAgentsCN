@@ -1,3 +1,4 @@
+"""架构红线测试：覆盖 ``test_def_046_global_runtime_reconciliation`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import asyncio
@@ -19,7 +20,9 @@ CONSOLE = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
 
 
 class _ConnectedRequest:
+    """为 ``_ConnectedRequest`` 相关场景组织共享测试状态、输入或断言。"""
     async def is_disconnected(self) -> bool:
+        """为本测试模块封装 ``is_disconnected`` 辅助步骤，减少重复的场景搭建代码。"""
         return False
 
 
@@ -30,6 +33,7 @@ async def _read_global_sse(
     last_event_id: str | None,
     activity_count: int,
 ) -> list[str]:
+    """为本测试模块封装 ``_read_global_sse`` 辅助步骤，减少重复的场景搭建代码。"""
     response = await endpoint(
         request=_ConnectedRequest(),
         after_id=after_id,
@@ -48,6 +52,7 @@ async def _read_global_sse(
 
 
 def _activity_items(chunks: list[str]) -> list[dict]:
+    """为本测试模块封装 ``_activity_items`` 辅助步骤，减少重复的场景搭建代码。"""
     items = []
     for chunk in chunks:
         if "event: activity" not in chunk:

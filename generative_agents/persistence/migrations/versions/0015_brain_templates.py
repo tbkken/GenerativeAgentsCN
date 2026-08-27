@@ -17,6 +17,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    """应用当前版本的数据库结构升级，按顺序创建或调整所需对象。"""
     op.create_table(
         "brain_templates",
         sa.Column("id", sa.String(36), primary_key=True),
@@ -73,6 +74,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """回滚当前版本的数据库结构升级，按依赖逆序移除所增对象。"""
     op.drop_index("ix_brain_workflows_brain_revision", table_name="brain_workflows")
     op.drop_table("brain_workflows")
     op.drop_index("ix_brain_revisions_brain", table_name="brain_revisions")

@@ -16,6 +16,8 @@ from generative_agents.modules.utils.retry import interruptible_wait
 
 
 class LLMModel:
+    """聊天模型适配器基类，统一结构化输出、重试和调用追踪。"""
+
     def __init__(self, config, *, recorder=None, control=None, logger=None, sleep=None):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -252,6 +254,8 @@ class LLMModel:
 
 
 class OpenAILLMModel(LLMModel):
+    """通过 OpenAI 兼容 Chat Completions 接口执行认知请求。"""
+
     def setup(self, config):
         """执行 `OpenAILLMModel` 的`setup`操作。
 
@@ -297,6 +301,8 @@ class OpenAILLMModel(LLMModel):
 
 
 class OllamaLLMModel(LLMModel):
+    """通过 Ollama 原生接口执行认知请求并复用统一响应校验。"""
+
     def setup(self, config):
         """执行 `OllamaLLMModel` 的`setup`操作。
 

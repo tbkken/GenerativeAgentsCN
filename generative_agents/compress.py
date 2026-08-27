@@ -24,6 +24,8 @@ _SAFE_ARTIFACT = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,127}$")
 
 @dataclass(frozen=True, slots=True)
 class BuiltArtifact:
+    """压缩任务生成的产物类型、文件路径和内容摘要。"""
+
     path: Path
     sha256: str
     size_bytes: int

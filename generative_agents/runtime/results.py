@@ -12,6 +12,8 @@ from generative_agents.status import MemoryDeltaKind
 
 
 class ActivityKind(StrEnum):
+    """单个智能体在一步结束时可记录的动作类别。"""
+
     REST = "REST"
     CHAT = "CHAT"
     MOVING = "MOVING"
@@ -35,6 +37,8 @@ class StepEffectKind(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class ActionSnapshot:
+    """智能体本步最终动作的文本、表情和可选对象状态。"""
+
     description: str
     emoji: str | None = None
     object_description: str | None = None
@@ -42,6 +46,8 @@ class ActionSnapshot:
 
 @dataclass(frozen=True, slots=True)
 class AgentStepResult:
+    """单个智能体在当前步骤的位置、剩余路径和动作结果。"""
+
     agent_key: str
     from_coord: tuple[int, int]
     to_coord: tuple[int, int]
@@ -57,6 +63,8 @@ class AgentStepResult:
 
 @dataclass(frozen=True, slots=True)
 class ConversationMessage:
+    """一次对话中带有稳定说话人键的单条消息。"""
+
     message_id: UUID
     sequence: int
     speaker_agent_key: str
@@ -65,6 +73,8 @@ class ConversationMessage:
 
 @dataclass(frozen=True, slots=True)
 class ConversationRecord:
+    """发生在本步的完整对话及参与者、地点和持续时间。"""
+
     conversation_id: UUID
     participant_agent_keys: tuple[str, str]
     location: tuple[str, ...]
@@ -77,6 +87,8 @@ class ConversationRecord:
 
 @dataclass(frozen=True, slots=True)
 class MemoryDelta:
+    """本步对某个智能体长期记忆执行的新增、访问或删除事实。"""
+
     event_id: UUID
     sequence: int
     agent_key: str
@@ -97,6 +109,8 @@ class MemoryDelta:
 
 @dataclass(frozen=True, slots=True)
 class ScheduleRevisionRecord:
+    """本步触发的日程变更及变更后的结构化内容。"""
+
     revision_id: UUID
     sequence: int
     agent_key: str
@@ -108,6 +122,8 @@ class ScheduleRevisionRecord:
 
 @dataclass(frozen=True, slots=True)
 class DomainEventRecord:
+    """需要持久化和回放的通用领域事件。"""
+
     event_id: UUID
     sequence: int
     event_type: str
@@ -136,6 +152,8 @@ class StepEffectRecord:
 
 @dataclass(frozen=True, slots=True)
 class ModelUsageDelta:
+    """一次逻辑模型调用的尝试次数、Token 与耗时增量。"""
+
     logical_call_id: UUID
     purpose: str
     provider: str
@@ -195,6 +213,8 @@ def _wire_value(value: Any) -> Any:
 
 @dataclass(frozen=True, slots=True)
 class StepResult:
+    """一个完整仿真步的不可变事实信封，是所有投影器的共同输入。"""
+
     run_id: UUID
     attempt_id: UUID
     step_no: int

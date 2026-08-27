@@ -1,3 +1,10 @@
+/**
+ * 地图编辑器 V2：在一个组件中维护世界层级、素材库、绘制画布和发布文档。
+ *
+ * 阅读方法：constructor/buildShell/bind 负责装配；loadDocument/normalize/reindex 负责模型；
+ * renderLeft/renderInspector/renderCanvas 负责视图；pointer* 负责输入；beginMapEdit 到
+ * redoMapEdit 负责可逆历史。getWorld() 是交给地图工作区保存的唯一输出边界。
+ */
 (function () {
   'use strict';
 
@@ -25,6 +32,7 @@
   }
 
   class MapEditorV2 {
+    // 一个实例只编辑一份 MapEditorDocumentV2；所有索引 Map 都可由 document 重建。
     constructor(root) {
       this.root = root;
       this.world = null;
@@ -268,6 +276,7 @@
     }
 
     async loadDocument() {
+      // 内置 Ville 文档和原子 Skill 目录并行加载，失败时不留下半初始化编辑器。
       try {
         const [response, skillResponse] = await Promise.all([
           fetch('/api/v1/map-editor/ville-document'),
@@ -632,6 +641,7 @@
     }
 
     renderLeft() {
+      // 左栏随 workspace 切换为空间树、素材树或图层树，并分别保存滚动位置。
       const title = this.root.querySelector('[data-left-title]');
       const count = this.root.querySelector('[data-left-count]');
       const tools = this.root.querySelector('[data-left-tools]');
@@ -1339,6 +1349,7 @@
     }
 
     renderCanvas() {
+      // 三种画布共享同一个 Canvas，但坐标系和绘制路径由当前 workspace 决定。
       if (!this.document || !this.context) return;
       const ctx = this.context;
       ctx.clearRect(0, 0, this.viewportWidth, this.viewportHeight);
@@ -1566,6 +1577,7 @@
     }
 
     pointerDown(event) {
+      // 输入先判定平移，再区分素材裁剪、世界节点移动和地图绘制，避免手势串扰。
       this.root.focus(); this.canvas.setPointerCapture(event.pointerId);
       const point = this.localPoint(event);
       const canvasEditing = this.isCanvasEditing();
@@ -1769,6 +1781,7 @@
     }
 
     beginMapEdit(label) {
+      // 一次按下—拖动—抬起合并成一个历史项，撤销时不会逐 Tile 回退。
       if (this.readonly || !this.isCanvasEditing()) return;
       this.activeMapEdit = { label, changes: new Map(), lastStamp: null };
     }

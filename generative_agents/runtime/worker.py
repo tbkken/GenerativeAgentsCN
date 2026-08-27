@@ -226,13 +226,13 @@ def _install_sqlite_committer(
 
 
 def main(argv=None) -> int:
-    """解析启动参数并执行当前模块的主流程。
+    """领取一个已注册 Attempt，装配隔离依赖并执行到终态或控制边界。
 
     参数:
         argv: 命令行参数序列；为 `None` 时读取当前进程的命令行。 默认值：`None`。
 
     返回:
-        返回计算得到的整数值或版本号。
+            成功返回 0；装配、执行或最终投影失败返回 1。
 
     异常:
         RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
@@ -270,6 +270,7 @@ def main(argv=None) -> int:
             raise RuntimeError("worker does not own the current Run attempt")
         monitor.start()
 
+        # 清单验证通过后才可解密凭据或创建模型，避免错误 Revision 消耗外部资源。
         manifest = RunManifestStore(paths).load_verified()
         definition = manifest.definition
         logger = _logger(args.run_id, definition.simulation.log_level)
@@ -290,6 +291,7 @@ def main(argv=None) -> int:
                 manifest.document.get("brain_skill") or definition.engine.brain_skill
             ),
         )
+        # 恢复数据属于当前 Attempt；未来步骤留下的文件会被隔离到 orphaned 目录。
         checkpoint_state, checkpoint_conversation, attempt_storage = (
             _prepare_attempt_state(
                 database,
@@ -316,6 +318,7 @@ def main(argv=None) -> int:
             attempt_id=args.attempt_id,
             clock=lambda: simulation_clock.get_date(),
         )
+        # 从这里开始，仿真只能通过 context 访问时间、随机数、路径、Skill 和模型。
         context = SimulationContext(
             run_id=args.run_id,
             experiment_id=UUID(manifest.document["experiment_id"]),
@@ -364,6 +367,7 @@ def main(argv=None) -> int:
             checkpoint_retention=definition.simulation.checkpoint_retention,
             trace_writer=recorder,
         )
+        # requested_steps 是 Run 的发布事实，不接受 Worker 命令行自行扩大执行范围。
         with database.session_factory() as session:
             run_record = session.get(Run, str(args.run_id))
             if run_record is None:
@@ -378,6 +382,7 @@ def main(argv=None) -> int:
         worker_error_message = str(exc) or exc.__class__.__name__
         logger.exception("worker attempt failed")
     finally:
+        # 无论仿真是否成功，都尽量投影最后的模型轨迹并释放调度器所有权。
         stop_monitor.set()
         if monitor.is_alive():
             monitor.join(timeout=2)

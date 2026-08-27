@@ -1,3 +1,4 @@
+/** 两日通勤演示共享的只读地图 Revision 和 Canvas 渲染器。 */
 (() => {
   const revision = Object.freeze({
     name: '住宅—公司两日通勤地图',

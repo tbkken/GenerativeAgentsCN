@@ -27,6 +27,8 @@ HEIGHT = 7
 
 
 def _materials() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """构造演示地图使用的生成色块素材源和对应 Tile 切片。"""
+
     colors = {
         "north": ("北侧人行区", "#DCEFE2"),
         "road": ("机动车道", "#626A73"),
@@ -68,6 +70,8 @@ def _materials() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
 
 
 def _hierarchy_nodes() -> list[dict[str, Any]]:
+    """构造世界、街区、场所和信号灯对象的四层地址树。"""
+
     def node(
         node_id: str,
         kind: str,
@@ -79,6 +83,8 @@ def _hierarchy_nodes() -> list[dict[str, Any]]:
         height: int,
         **extra: Any,
     ) -> dict[str, Any]:
+        """创建一个层级节点字典，并合并调用方提供的可选扩展字段。"""
+
         return {
             "id": node_id,
             "kind": kind,
@@ -231,6 +237,8 @@ def build_world() -> dict[str, Any]:
 
 
 def build_agent() -> dict[str, Any]:
+    """构造具备过街目标、Brain Skill 和出生位置的演示智能体。"""
+
     return {
         "agent_key": AGENT_KEY,
         "enabled": True,
@@ -273,6 +281,8 @@ def build_agent() -> dict[str, Any]:
 
 
 def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = None) -> Any:
+    """调用目标服务的 JSON API，并把错误正文包装成运行时异常。"""
+
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = Request(
         f"{base_url.rstrip('/')}/api/v1{path}",
@@ -289,15 +299,21 @@ def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = No
 
 
 def _find(items: list[dict[str, Any]], field: str, value: str) -> dict[str, Any] | None:
+    """在 API 列表结果中按字段精确查找第一条资源。"""
+
     return next((item for item in items if item.get(field) == value), None)
 
 
 def _published(resource: dict[str, Any]) -> dict[str, Any] | None:
+    """返回资源当前已发布 Revision；不存在时返回 ``None``。"""
+
     current = resource.get("current_published")
     return current if isinstance(current, dict) and current.get("id") else None
 
 
 def _ensure_map(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """幂等创建演示地图，保存并发布其运行世界。"""
+
     listing = _request(base_url, f"/maps?{urlencode({'page': 1, 'page_size': 100})}")
     public_map = _find(listing["items"], "map_key", MAP_KEY)
     if public_map is not None and _published(public_map):
@@ -333,6 +349,8 @@ def _ensure_map(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 def _ensure_agent(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """幂等创建演示智能体模板并确保存在已发布 Revision。"""
+
     listing = _request(base_url, "/agent-templates?page=1&page_size=500")
     agent = _find(listing["items"], "agent_key", AGENT_KEY)
     if agent is not None and _published(agent):
@@ -361,6 +379,8 @@ def _ensure_agent(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
 def _ensure_crowd(
     base_url: str, agent_revision_id: str
 ) -> tuple[dict[str, Any], dict[str, Any]]:
+    """幂等创建只包含指定智能体 Revision 的演示人群。"""
+
     listing = _request(base_url, "/crowds?page=1&page_size=100")
     crowd = _find(listing["items"], "crowd_key", CROWD_KEY)
     if crowd is not None and _published(crowd):
@@ -396,6 +416,8 @@ def _ensure_experiment(
     chat_model: str | None = None,
     chat_secret_ref: str | None = None,
 ) -> tuple[dict[str, Any], bool]:
+    """幂等创建实验，并把地图、人群和模型选项写入草稿。"""
+
     listing = _request(base_url, "/experiments?page=1&page_size=50&archived=all")
     experiment = _find(listing["items"], "name", EXPERIMENT_NAME)
     if experiment is not None:
@@ -459,6 +481,8 @@ def seed(
     chat_model: str | None = None,
     chat_secret_ref: str | None = None,
 ) -> dict[str, Any]:
+    """按依赖顺序准备整套行人过街演示资源，并可选启动 Run。"""
+
     public_map, map_revision = _ensure_map(base_url)
     agent, agent_revision = _ensure_agent(base_url)
     crowd, crowd_revision = _ensure_crowd(base_url, agent_revision["id"])
@@ -506,6 +530,8 @@ def seed(
 
 
 def main() -> int:
+    """解析服务地址和运行选项，执行演示数据播种。"""
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     parser.add_argument(

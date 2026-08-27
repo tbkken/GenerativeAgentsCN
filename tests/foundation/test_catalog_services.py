@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_catalog_services`` 对应的行为、故障边界和回归约束。"""
 from io import BytesIO
 import struct
 import zlib
@@ -9,7 +10,9 @@ from generative_agents.services.catalog import AssetService, SecretService
 
 
 def _png(width: int, height: int) -> bytes:
+    """为本测试模块封装 ``_png`` 辅助步骤，减少重复的场景搭建代码。"""
     def chunk(kind: bytes, payload: bytes) -> bytes:
+        """为本测试模块封装 ``chunk`` 辅助步骤，减少重复的场景搭建代码。"""
         return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload))
 
     rows = b"".join(b"\x00" + b"\x19\x8f\x77\xff" * width for _ in range(height))
@@ -22,6 +25,7 @@ def _png(width: int, height: int) -> bytes:
 
 
 def test_asset_registration_is_content_idempotent_without_exposing_path(database, tmp_path):
+    """回归验证 ``test_asset_registration_is_content_idempotent_without_exposing_path`` 所描述的业务结果、故障边界和隔离约束。"""
     service = AssetService(database, var_dir=tmp_path / "var")
     payload = b'{"world":"test"}'
 
@@ -41,6 +45,7 @@ def test_asset_registration_is_content_idempotent_without_exposing_path(database
 
 
 def test_asset_validation_is_a_client_error_not_an_unhandled_exception(database, tmp_path):
+    """回归验证 ``test_asset_validation_is_a_client_error_not_an_unhandled_exception`` 所描述的业务结果、故障边界和隔离约束。"""
     service = AssetService(database, var_dir=tmp_path / "var")
     with pytest.raises(ServiceError) as error:
         service.upload(
@@ -53,6 +58,7 @@ def test_asset_validation_is_a_client_error_not_an_unhandled_exception(database,
 
 
 def test_agent_images_are_validated_and_saved_as_database_blobs(database, tmp_path):
+    """回归验证 ``test_agent_images_are_validated_and_saved_as_database_blobs`` 所描述的业务结果、故障边界和隔离约束。"""
     var_dir = tmp_path / "var"
     service = AssetService(database, var_dir=var_dir)
     result = service.upload_database_images(
@@ -76,6 +82,7 @@ def test_agent_images_are_validated_and_saved_as_database_blobs(database, tmp_pa
 
 
 def test_secret_replacement_keeps_old_ciphertext_and_never_returns_plaintext(database, tmp_path):
+    """回归验证 ``test_secret_replacement_keeps_old_ciphertext_and_never_returns_plaintext`` 所描述的业务结果、故障边界和隔离约束。"""
     service = SecretService(database, var_dir=tmp_path / "var")
     first = service.create(kind="OPENAI_API_KEY", value="sk-first-value")
     replacement = service.create(

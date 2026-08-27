@@ -2,6 +2,8 @@
 
 
 class Event:
+    """发生在某个语义地址上的主语—谓语—宾语事件。"""
+
     def __init__(
         self,
         subject,
