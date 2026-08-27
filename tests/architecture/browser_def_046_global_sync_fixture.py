@@ -26,6 +26,7 @@ from generative_agents.web import create_app
 
 
 def _definition() -> ExperimentDefinition:
+    """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     definition = make_builtin_definition(
         key="def-046-browser-sync",
         name="DEF-046 全局状态同步验收",
@@ -41,6 +42,7 @@ def _definition() -> ExperimentDefinition:
 
 
 def _seed(root: Path) -> dict[str, str]:
+    """为本测试模块封装 ``_seed`` 辅助步骤，减少重复的场景搭建代码。"""
     root.mkdir(parents=True, exist_ok=True)
     var_dir = root / "var"
     database_path = root / "def-046-browser.db"
@@ -87,6 +89,7 @@ def _seed(root: Path) -> dict[str, str]:
 
 
 def _load_or_seed(root: Path) -> dict[str, str]:
+    """为本测试模块封装 ``_load_or_seed`` 辅助步骤，减少重复的场景搭建代码。"""
     metadata_path = root / "fixture.json"
     if metadata_path.is_file():
         return json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -94,6 +97,7 @@ def _load_or_seed(root: Path) -> dict[str, str]:
 
 
 def main() -> None:
+    """为本测试模块封装 ``main`` 辅助步骤，减少重复的场景搭建代码。"""
     root = Path(os.environ["GA_DEF046_QA_ROOT"]).resolve()
     port = int(os.environ.get("GA_DEF046_QA_PORT", "8766"))
     metadata = _load_or_seed(root)
@@ -111,6 +115,7 @@ def main() -> None:
 
     @app.get("/__qa__/metadata")
     def qa_metadata():
+        """为本测试模块封装 ``qa_metadata`` 辅助步骤，减少重复的场景搭建代码。"""
         return {
             **metadata,
             "run": RunService(database, var_dir=metadata["var_dir"]).get_run(
@@ -120,6 +125,7 @@ def main() -> None:
 
     @app.post("/__qa__/advance/{target}")
     def qa_advance(target: str):
+        """为本测试模块封装 ``qa_advance`` 辅助步骤，减少重复的场景搭建代码。"""
         target = target.upper()
         run_id = metadata["run_id"]
         current = RunService(database, var_dir=metadata["var_dir"]).get_run(run_id)

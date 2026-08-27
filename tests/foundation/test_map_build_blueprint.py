@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_map_build_blueprint`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
@@ -8,6 +9,7 @@ from generative_agents.web import create_app
 def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
     database_url,
 ):
+    """回归验证 ``test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         blueprints = client.get("/api/v1/map-blueprints")
@@ -119,6 +121,7 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
 
 
 def test_map_workspace_exposes_persisted_build_guide_controls():
+    """回归验证 ``test_map_workspace_exposes_persisted_build_guide_controls`` 所描述的业务结果、故障边界和隔离约束。"""
     from pathlib import Path
 
     static = Path(__file__).parents[2] / "generative_agents" / "web" / "static"

@@ -128,6 +128,7 @@ def _create_native_symlink_or_skip(
 
 @pytest.fixture
 def database(tmp_path: Path):
+    """为本测试模块封装 ``database`` 辅助步骤，减少重复的场景搭建代码。"""
     database_url = "sqlite:///" + (tmp_path / "observability.db").as_posix()
     upgrade_database(database_url)
     value = create_database(database_url)
@@ -137,6 +138,7 @@ def database(tmp_path: Path):
 
 @pytest.fixture
 def web_runtime(tmp_path: Path):
+    """为本测试模块封装 ``web_runtime`` 辅助步骤，减少重复的场景搭建代码。"""
     database_url = "sqlite:///" + (tmp_path / "web-observability.db").as_posix()
     var_dir = tmp_path / "var"
     app = create_app(
@@ -149,6 +151,7 @@ def web_runtime(tmp_path: Path):
 
 
 def _definition(key: str) -> ExperimentDefinition:
+    """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     definition = make_blank_definition(key=key, name=f"Experiment {key}")
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["models"]["chat"]["resolved_model"] = "Qwen/test-chat"
@@ -193,6 +196,7 @@ def _definition(key: str) -> ExperimentDefinition:
 
 
 def _publish_run(database, var_dir: Path, key: str):
+    """为本测试模块封装 ``_publish_run`` 辅助步骤，减少重复的场景搭建代码。"""
     experiments = ExperimentService(database)
     definition = _definition(key)
     experiment = experiments.create_experiment(
@@ -220,6 +224,7 @@ def _publish_run(database, var_dir: Path, key: str):
 
 
 def _claimed_run(database, var_dir: Path, key: str):
+    """为本测试模块封装 ``_claimed_run`` 辅助步骤，减少重复的场景搭建代码。"""
     experiment, revision, run = _publish_run(database, var_dir, key)
     claimed = LocalRunSchedulerRepository(database, max_concurrent_runs=8).claim_next()
     assert claimed is not None and claimed.run_id == run["run_id"]
@@ -227,6 +232,7 @@ def _claimed_run(database, var_dir: Path, key: str):
 
 
 def _step(run_id: str, attempt_id: str, step_no: int):
+    """为本测试模块封装 ``_step`` 辅助步骤，减少重复的场景搭建代码。"""
     builder = StepResultBuilder(
         run_id=UUID(run_id),
         attempt_id=UUID(attempt_id),
@@ -250,6 +256,7 @@ def _step(run_id: str, attempt_id: str, step_no: int):
 
 
 def _rich_step(run_id: str, attempt_id: str, step_no: int):
+    """为本测试模块封装 ``_rich_step`` 辅助步骤，减少重复的场景搭建代码。"""
     builder = StepResultBuilder(
         run_id=UUID(run_id),
         attempt_id=UUID(attempt_id),
@@ -413,6 +420,7 @@ def _assert_replay_v2(document: dict, *, run_id: str, source_step: int) -> None:
 
 
 def _write_checkpoint(paths: RunPaths, result, *, retention: int = 3):
+    """为本测试模块封装 ``_write_checkpoint`` 辅助步骤，减少重复的场景搭建代码。"""
     frame = FrameStore(paths).write(result)
     writer = CheckpointBundleWriter(
         paths,
@@ -437,6 +445,7 @@ def _project_replay_step(
     *,
     checkpoint: bool = False,
 ):
+    """为本测试模块封装 ``_project_replay_step`` 辅助步骤，减少重复的场景搭建代码。"""
     paths = RunPaths.under(var_dir, UUID(run_id))
     frame = FrameStore(paths).write(result)
     with database.session_factory.begin() as session:
@@ -687,6 +696,7 @@ def test_def_047_file_identity_does_not_depend_on_append_mutable_timestamps(
     real_stat = Path.stat
 
     def fake_stat(target, *args, **kwargs):
+        """为本测试模块封装 ``fake_stat`` 辅助步骤，减少重复的场景搭建代码。"""
         return next(stats) if target == path else real_stat(target, *args, **kwargs)
 
     monkeypatch.setattr(Path, "stat", fake_stat)
@@ -785,6 +795,7 @@ def test_def_047_attempt_sse_emits_heartbeat_then_closes_on_terminal(
     calls = 0
 
     async def controlled_sleep(_seconds: float):
+        """为本测试模块封装 ``controlled_sleep`` 辅助步骤，减少重复的场景搭建代码。"""
         nonlocal calls
         calls += 1
         if calls == 20:
@@ -968,6 +979,7 @@ def test_def_059_sse_drains_non_eof_backlog_without_per_page_sleep(
     sleep_calls: list[float] = []
 
     async def forbidden_backlog_sleep(seconds: float):
+        """为本测试模块封装 ``forbidden_backlog_sleep`` 辅助步骤，减少重复的场景搭建代码。"""
         sleep_calls.append(seconds)
         await asyncio.sleep(0)
 
@@ -1423,6 +1435,7 @@ def test_def_058_trace_append_after_eof_uses_the_previous_byte_cursor(web_runtim
     at = datetime(2026, 8, 9, tzinfo=timezone.utc)
 
     def append_trace(step_no: int) -> None:
+        """为本测试模块封装 ``append_trace`` 辅助步骤，减少重复的场景搭建代码。"""
         writer.append(
             ModelTraceEvent(
                 event_type=ModelTraceEventType.PHYSICAL_ATTEMPT,
@@ -1725,6 +1738,7 @@ def test_def_050_checkpoint_detail_is_bounded_structured_and_run_owned(
     frame = FrameStore(paths).write(result)
 
     def export_storage(destination: Path):
+        """为本测试模块封装 ``export_storage`` 辅助步骤，减少重复的场景搭建代码。"""
         (destination / "docstore.json").write_text(
             json.dumps({"embedding": [0.1] * 200, "safe": "metadata"}),
             encoding="utf-8",
@@ -2198,6 +2212,7 @@ def test_def_052_concurrent_finish_is_idempotent_for_automatic_artifacts(
         )
 
     def finish_once(_index: int):
+        """为本测试模块封装 ``finish_once`` 辅助步骤，减少重复的场景搭建代码。"""
         return LocalRunSchedulerRepository(database).finish_worker(
             run["run_id"], claimed.attempt_id, exit_code=0
         )
@@ -2660,6 +2675,7 @@ def test_def_066_phaser_canvas_and_normalized_tiles_are_package_owned(web_runtim
     )
 
     def png_size(path: Path) -> tuple[int, int]:
+        """为本测试模块封装 ``png_size`` 辅助步骤，减少重复的场景搭建代码。"""
         header = path.read_bytes()[:24]
         assert header[:8] == b"\x89PNG\r\n\x1a\n" and header[12:16] == b"IHDR"
         return tuple(__import__("struct").unpack(">II", header[16:24]))
@@ -2815,6 +2831,7 @@ def test_def_068_supervisor_child_chinese_stdout_is_explicit_utf8_and_byte_exact
     )
 
     def process_factory(_worker_command, **kwargs):
+        """为本测试模块封装 ``process_factory`` 辅助步骤，减少重复的场景搭建代码。"""
         captured["env"] = kwargs.get("env")
         return subprocess.Popen([sys.executable, "-c", child_code], **kwargs)
 
@@ -3775,20 +3792,26 @@ def test_def_055_log_byte_window_never_reads_the_entire_file(
     read_sizes: list[int] = []
 
     class GuardedReader:
+        """为 ``GuardedReader`` 相关场景组织共享测试状态、输入或断言。"""
         def __init__(self, handle):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self._handle = handle
 
         def __enter__(self):
+            """为本测试模块封装 ``__enter__`` 辅助步骤，减少重复的场景搭建代码。"""
             self._handle.__enter__()
             return self
 
         def __exit__(self, *args):
+            """为本测试模块封装 ``__exit__`` 辅助步骤，减少重复的场景搭建代码。"""
             return self._handle.__exit__(*args)
 
         def __getattr__(self, name):
+            """为本测试模块封装 ``__getattr__`` 辅助步骤，减少重复的场景搭建代码。"""
             return getattr(self._handle, name)
 
         def read(self, size=-1):
+            """为本测试模块封装 ``read`` 辅助步骤，减少重复的场景搭建代码。"""
             assert 0 <= size <= limit + 4, (
                 "byte-window reader attempted an unbounded or oversized physical read"
             )
@@ -3796,6 +3819,7 @@ def test_def_055_log_byte_window_never_reads_the_entire_file(
             return self._handle.read(size)
 
     def guarded_open(target, *args, **kwargs):
+        """为本测试模块封装 ``guarded_open`` 辅助步骤，减少重复的场景搭建代码。"""
         handle = real_open(target, *args, **kwargs)
         return GuardedReader(handle) if target == path else handle
 
@@ -3836,13 +3860,19 @@ def test_def_069_cross_web_restart_resume_reuses_the_original_run_manifest(
     second_time = first_time + timedelta(hours=1)
 
     class FirstWebClock(datetime):
+        """为 ``FirstWebClock`` 相关场景组织共享测试状态、输入或断言。"""
+
         @classmethod
         def now(cls, tz=None):
+            """为本测试模块封装 ``now`` 辅助步骤，减少重复的场景搭建代码。"""
             return first_time
 
     class RestartedWebClock(datetime):
+        """为 ``RestartedWebClock`` 相关场景组织共享测试状态、输入或断言。"""
+
         @classmethod
         def now(cls, tz=None):
+            """为本测试模块封装 ``now`` 辅助步骤，减少重复的场景搭建代码。"""
             return second_time
 
     monkeypatch.setattr(supervisor_module, "datetime", FirstWebClock)
@@ -3962,9 +3992,11 @@ def test_def_070_legacy_checkpoint_memory_dates_resume_with_an_aware_clock():
     removed: list[str] = []
 
     class LegacyCheckpointIndex:
+        """为 ``LegacyCheckpointIndex`` 相关场景组织共享测试状态、输入或断言。"""
         docstore = SimpleNamespace(docs=nodes)
 
         def delete_nodes(self, node_ids, *, delete_from_docstore=True):
+            """为本测试模块封装 ``delete_nodes`` 辅助步骤，减少重复的场景搭建代码。"""
             assert delete_from_docstore is True
             removed.extend(node_ids)
             for node_id in node_ids:
@@ -3999,21 +4031,29 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
     calls: list[tuple] = []
 
     class FakeParser:
+        """测试替身 ``FakeParser``：记录调用并返回当前场景可控的结果。"""
+
         @staticmethod
         def parse_args(_argv):
+            """为本测试模块封装 ``parse_args`` 辅助步骤，减少重复的场景搭建代码。"""
             return args
 
     class FakeDatabase:
+        """测试替身 ``FakeDatabase``：记录调用并返回当前场景可控的结果。"""
         engine = SimpleNamespace(url="sqlite:///unused.db")
 
         def close(self):
+            """为本测试模块封装 ``close`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("database-close",))
 
     class FakeRepository:
+        """测试替身 ``FakeRepository``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, _database):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def heartbeat(self, _run_id, _attempt_id):
+            """为本测试模块封装 ``heartbeat`` 辅助步骤，减少重复的场景搭建代码。"""
             return "RUNNING"
 
         def finish_worker(
@@ -4025,41 +4065,56 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
             error_code=None,
             error_message=None,
         ):
+            """为本测试模块封装 ``finish_worker`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("finish", exit_code, error_code, error_message))
             return True
 
     class FakeLock:
+        """测试替身 ``FakeLock``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def acquire(self):
+            """为本测试模块封装 ``acquire`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("lock-acquire",))
 
         def release(self):
+            """为本测试模块封装 ``release`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("lock-release",))
 
     class FakeThread:
+        """测试替身 ``FakeThread``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, *args, **kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.started = False
 
         def start(self):
+            """为本测试模块封装 ``start`` 辅助步骤，减少重复的场景搭建代码。"""
             self.started = True
 
         def is_alive(self):
+            """为本测试模块封装 ``is_alive`` 辅助步骤，减少重复的场景搭建代码。"""
             return self.started
 
         def join(self, timeout=None):
+            """为本测试模块封装 ``join`` 辅助步骤，减少重复的场景搭建代码。"""
             self.started = False
 
     class FakeLogger:
+        """测试替身 ``FakeLogger``：记录调用并返回当前场景可控的结果。"""
         def exception(self, message):
+            """为本测试模块封装 ``exception`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("exception", message))
 
     class FakeManifestStore:
+        """测试替身 ``FakeManifestStore``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, _paths):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def load_verified(self):
+            """为本测试模块封装 ``load_verified`` 辅助步骤，减少重复的场景搭建代码。"""
             return SimpleNamespace(
                 definition=_definition("zero-model-call"),
                 document={
@@ -4072,23 +4127,31 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
             )
 
     class FakeMasterKeyStore:
+        """测试替身 ``FakeMasterKeyStore``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, _var_dir):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         @staticmethod
         def load_or_create():
+            """为本测试模块封装 ``load_or_create`` 辅助步骤，减少重复的场景搭建代码。"""
             return b"test-master-key"
 
     class FakeTraceWriter:
+        """测试替身 ``FakeTraceWriter``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, paths, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.path = paths.traces / "model-calls-003.jsonl"
             assert not self.path.exists()
 
     class ForbiddenProjector:
+        """为 ``ForbiddenProjector`` 相关场景组织共享测试状态、输入或断言。"""
         def __init__(self, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def project(self, **_kwargs):
+            """为本测试模块封装 ``project`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("project-missing-trace",))
             raise AssertionError("a zero-call Attempt has no trace file to project")
 
@@ -4107,6 +4170,7 @@ def test_def_071_zero_model_call_failure_does_not_project_a_missing_trace_file(
     monkeypatch.setattr(worker, "ModelTraceProjector", ForbiddenProjector)
 
     def fail_before_first_model_call(*_args, **_kwargs):
+        """为本测试模块封装 ``fail_before_first_model_call`` 辅助步骤，减少重复的场景搭建代码。"""
         raise TypeError("primary legacy checkpoint datetime failure")
 
     monkeypatch.setattr(worker, "_prepare_attempt_state", fail_before_first_model_call)

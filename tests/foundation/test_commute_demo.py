@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_commute_demo`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
@@ -6,6 +7,7 @@ from generative_agents.web import create_app
 
 
 def test_two_day_commute_demo_uses_real_experiment_pages_and_cross_day_results(database_url):
+    """回归验证 ``test_two_day_commute_demo_uses_real_experiment_pages_and_cross_day_results`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
 
     with TestClient(app) as client:

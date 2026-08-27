@@ -30,6 +30,8 @@ SYMLINK_TEST_NODES = (
 
 
 class SymlinkCapabilityError(RuntimeError):
+    """当前平台无法创建发布门禁要求的真实文件或目录符号链接。"""
+
     pass
 
 
@@ -70,6 +72,8 @@ def verify_native_symlink_capability() -> None:
 
 
 def junit_counts(path: Path) -> tuple[int, int, int, int]:
+    """从 pytest JUnit XML 中汇总总数、失败、错误和跳过数量。"""
+
     root = ET.parse(path).getroot()
     suites = [root] if root.tag == "testsuite" else list(root.findall("testsuite"))
     return tuple(
@@ -79,6 +83,8 @@ def junit_counts(path: Path) -> tuple[int, int, int, int]:
 
 
 def run_gate() -> int:
+    """运行原生符号链接隔离测试，并验证测试数量和结果满足发布门禁。"""
+
     with tempfile.TemporaryDirectory(prefix="ga-symlink-junit-") as temporary:
         report = Path(temporary) / "native-symlink.xml"
         command = [
@@ -122,6 +128,8 @@ def run_gate() -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """解析命令行并执行符号链接安全发布门禁。"""
+
     parser = argparse.ArgumentParser(
         description="Run the seven native-symlink storage isolation release tests."
     )

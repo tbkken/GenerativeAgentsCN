@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_map_configuration_demo`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
@@ -6,6 +7,7 @@ from generative_agents.web import create_app
 
 
 def test_map_configuration_demo_reuses_console_ux_from_catalog_to_published_revision(database_url):
+    """回归验证 ``test_map_configuration_demo_reuses_console_ux_from_catalog_to_published_revision`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
 
     with TestClient(app) as client:

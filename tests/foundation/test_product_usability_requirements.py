@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_product_usability_requirements`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadata):
+    """为本测试模块封装 ``_create`` 辅助步骤，减少重复的场景搭建代码。"""
     source = {"type": source_type} if source_type == "BLANK" else None
     crowd_revision_ids = []
     if source is None:
@@ -35,6 +37,7 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
 
 
 def test_crowd_based_creation_metadata_filters_views_and_lifecycle(database_url):
+    """回归验证 ``test_crowd_based_creation_metadata_filters_views_and_lifecycle`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         first = _create(client, "人群实验 A")
@@ -73,6 +76,7 @@ def test_crowd_based_creation_metadata_filters_views_and_lifecycle(database_url)
 
 
 def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(database_url):
+    """回归验证 ``test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         brain = client.get("/api/v1/skills/stanford-town-brain")
@@ -111,6 +115,7 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
 
 
 def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_url):
+    """回归验证 ``test_blank_publish_is_blocked_and_blank_map_is_fully_initialized`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         blank = _create(client, "空白实验", "BLANK")
@@ -145,6 +150,7 @@ def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_ur
 
 
 def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
+    """回归验证 ``test_agent_batch_estimate_compare_and_persisted_model_state`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         first = _create(client, "Agent 批量 A")
@@ -193,6 +199,7 @@ def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
 
 
 def test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables():
+    """回归验证 ``test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables`` 所描述的业务结果、故障边界和隔离约束。"""
     html = (ROOT / "generative_agents/web/static/experiment-console.html").read_text(encoding="utf-8")
     source = (ROOT / "generative_agents/web/static/console-api.js").read_text(encoding="utf-8")
 

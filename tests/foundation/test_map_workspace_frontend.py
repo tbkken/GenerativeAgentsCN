@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_map_workspace_frontend`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import subprocess
@@ -14,17 +15,21 @@ STATIC = ROOT / "generative_agents" / "web" / "static"
 
 
 class _IdParser(HTMLParser):
+    """为 ``_IdParser`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self) -> None:
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         super().__init__()
         self.ids: list[str] = []
 
     def handle_starttag(self, _tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """为本测试模块封装 ``handle_starttag`` 辅助步骤，减少重复的场景搭建代码。"""
         values = dict(attrs)
         if values.get("id"):
             self.ids.append(values["id"] or "")
 
 
 def test_public_map_workspace_is_a_first_class_console_surface():
+    """回归验证 ``test_public_map_workspace_is_a_first_class_console_surface`` 所描述的业务结果、故障边界和隔离约束。"""
     shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
     parser = _IdParser()
     parser.feed(shell)
@@ -46,6 +51,7 @@ def test_public_map_workspace_is_a_first_class_console_surface():
 
 
 def test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay():
+    """回归验证 ``test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
 
     assert "class GridEditor" in source
@@ -71,6 +77,7 @@ def test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay():
 
 
 def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
+    """回归验证 ``test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy`` 所描述的业务结果、故障边界和隔离约束。"""
     shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
     workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
     editor = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
@@ -89,6 +96,7 @@ def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
 
 
 def test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas():
+    """回归验证 ``test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas`` 所描述的业务结果、故障边界和隔离约束。"""
     workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
 
     assert "map-editor-v2:request-edit" in workspace
@@ -99,6 +107,7 @@ def test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas():
 
 
 def test_packaged_map_workspace_assets_are_served(database_url):
+    """回归验证 ``test_packaged_map_workspace_assets_are_served`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         page = client.get("/?view=maps")

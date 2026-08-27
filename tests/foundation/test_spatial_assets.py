@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_spatial_assets`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -10,12 +11,14 @@ from generative_agents.web import create_app
 
 
 def _asset_by_key(client: TestClient, key: str) -> dict:
+    """为本测试模块封装 ``_asset_by_key`` 辅助步骤，减少重复的场景搭建代码。"""
     result = client.get(f"/api/v1/spatial-assets?q={key}&page_size=100")
     assert result.status_code == 200, result.text
     return next(item for item in result.json()["items"] if item["asset_key"] == key)
 
 
 def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database_url):
+    """回归验证 ``test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         response = client.get("/api/v1/spatial-assets?page_size=100")
@@ -59,6 +62,7 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
 
 
 def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(database_url):
+    """回归验证 ``test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         road = _asset_by_key(client, "tile-road-asphalt")
@@ -120,6 +124,7 @@ def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(dat
 
 
 def test_spatial_scene_contract_rejects_duplicate_placement_keys():
+    """回归验证 ``test_spatial_scene_contract_rejects_duplicate_placement_keys`` 所描述的业务结果、故障边界和隔离约束。"""
     placement = {
         "instance_key": "signal-one",
         "spatial_asset_revision_id": "00000000-0000-0000-0000-000000000001",
@@ -137,6 +142,7 @@ def test_spatial_scene_contract_rejects_duplicate_placement_keys():
 
 
 def test_map_workspace_exposes_spatial_asset_management_and_versioned_import():
+    """回归验证 ``test_map_workspace_exposes_spatial_asset_management_and_versioned_import`` 所描述的业务结果、故障边界和隔离约束。"""
     static = Path(__file__).parents[2] / "generative_agents" / "web" / "static"
     html = (static / "experiment-console.html").read_text(encoding="utf-8")
     map_javascript = (static / "map-workspace.js").read_text(encoding="utf-8")

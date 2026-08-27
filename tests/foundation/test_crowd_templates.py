@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_crowd_templates`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _agent_definition(name: str, key: str) -> dict:
+    """为本测试模块封装 ``_agent_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     return {
         "agent_key": key,
         "enabled": True,
@@ -45,6 +47,7 @@ def _agent_definition(name: str, key: str) -> dict:
 
 
 def _publish_agent(client: TestClient, name: str, key: str) -> tuple[dict, dict]:
+    """为本测试模块封装 ``_publish_agent`` 辅助步骤，减少重复的场景搭建代码。"""
     created = client.post(
         "/api/v1/agent-templates",
         json={"definition": _agent_definition(name, key), "description": "用户自定义 Agent"},
@@ -62,6 +65,7 @@ def _publish_agent(client: TestClient, name: str, key: str) -> tuple[dict, dict]
 def _publish_crowd(
     client: TestClient, name: str, key: str, agent_revision_ids: list[str]
 ) -> tuple[dict, dict]:
+    """为本测试模块封装 ``_publish_crowd`` 辅助步骤，减少重复的场景搭建代码。"""
     created = client.post(
         "/api/v1/crowds",
         json={
@@ -82,6 +86,7 @@ def _publish_crowd(
 
 
 def test_builtin_public_agents_and_crowd_are_seeded(database_url):
+    """回归验证 ``test_builtin_public_agents_and_crowd_are_seeded`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         agents = client.get("/api/v1/agent-templates?page_size=500").json()
@@ -103,6 +108,7 @@ def test_builtin_public_agents_and_crowd_are_seeded(database_url):
 
 
 def test_agent_name_is_globally_unique_after_normalization(database_url):
+    """回归验证 ``test_agent_name_is_globally_unique_after_normalization`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         _publish_agent(client, "社区观察员", "community-observer")
@@ -116,6 +122,7 @@ def test_agent_name_is_globally_unique_after_normalization(database_url):
 
 
 def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(database_url):
+    """回归验证 ``test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         system_agents = client.get("/api/v1/agent-templates?page_size=500").json()["items"]
@@ -171,6 +178,7 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
 
 
 def test_agent_template_publish_rejects_missing_spatial_configuration(database_url):
+    """回归验证 ``test_agent_template_publish_rejects_missing_spatial_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         definition = _agent_definition("缺少空间的 Agent", "missing-spatial")
@@ -192,6 +200,7 @@ def test_agent_template_publish_rejects_missing_spatial_configuration(database_u
 
 
 def test_crowd_workspace_and_create_flow_replace_presets():
+    """回归验证 ``test_crowd_workspace_and_create_flow_replace_presets`` 所描述的业务结果、故障边界和隔离约束。"""
     html = (ROOT / "generative_agents/web/static/experiment-console.html").read_text(encoding="utf-8")
     console_js = (ROOT / "generative_agents/web/static/console-api.js").read_text(encoding="utf-8")
     crowd_js = (ROOT / "generative_agents/web/static/crowd-workspace.js").read_text(encoding="utf-8")

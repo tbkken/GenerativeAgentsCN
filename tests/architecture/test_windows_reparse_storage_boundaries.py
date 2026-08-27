@@ -1,3 +1,4 @@
+"""架构红线测试：覆盖 ``test_windows_reparse_storage_boundaries`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import hashlib
@@ -68,6 +69,7 @@ def _artifact_junction_path(
     position: str,
     content: bytes,
 ) -> tuple[Path, Path, Path]:
+    """为本测试模块封装 ``_artifact_junction_path`` 辅助步骤，减少重复的场景搭建代码。"""
     run_root = var_dir / "runs" / run["run_id"]
     artifact_root = run_root / "artifacts"
     artifact_root.mkdir(parents=True, exist_ok=True)
@@ -177,6 +179,7 @@ def _replay_junction_path(
     position: str,
     content: bytes,
 ) -> tuple[Path, Path, Path]:
+    """为本测试模块封装 ``_replay_junction_path`` 辅助步骤，减少重复的场景搭建代码。"""
     run_root = var_dir / "runs" / run["run_id"]
     frames_root = stored_path.parent
 

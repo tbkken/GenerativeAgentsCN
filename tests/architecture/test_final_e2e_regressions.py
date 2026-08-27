@@ -1,3 +1,4 @@
+"""架构红线测试：覆盖 ``test_final_e2e_regressions`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 import inspect
@@ -59,6 +60,7 @@ CONSOLE_JS = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
 
 @pytest.fixture
 def database(tmp_path: Path):
+    """为本测试模块封装 ``database`` 辅助步骤，减少重复的场景搭建代码。"""
     url = "sqlite:///" + (tmp_path / "final-e2e.db").as_posix()
     upgrade_database(url)
     value = create_database(url)
@@ -67,6 +69,7 @@ def database(tmp_path: Path):
 
 
 def _definition(key: str) -> ExperimentDefinition:
+    """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     definition = make_blank_definition(key=key, name=f"Experiment {key}")
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["models"]["chat"]["resolved_model"] = "Qwen/test-chat"
@@ -111,6 +114,7 @@ def _definition(key: str) -> ExperimentDefinition:
 
 
 def _publish(database, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     service = ExperimentService(database)
     experiment = service.create_experiment(
         name=definition.experiment.name,
@@ -134,6 +138,7 @@ def _publish(database, definition: ExperimentDefinition):
 
 
 def _write_json(path: Path, value) -> None:
+    """为本测试模块封装 ``_write_json`` 辅助步骤，减少重复的场景搭建代码。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
 
@@ -158,15 +163,20 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
     captured = []
 
     class FakeAssociate:
+        """测试替身 ``FakeAssociate``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, _path, *_args, **kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             captured.append(kwargs)
             self.last_evicted = ()
 
         def to_dict(self):
+            """为本测试模块封装 ``to_dict`` 辅助步骤，减少重复的场景搭建代码。"""
             return {"memory": {"event": [], "thought": [], "chat": []}}
 
     class Logger:
+        """为 ``Logger`` 相关场景组织共享测试状态、输入或断言。"""
         def info(self, *_args, **_kwargs):
+            """为本测试模块封装 ``info`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         debug = info
@@ -199,29 +209,40 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
 
 
 def test_def_032_worker_projects_trace_after_each_committed_step(monkeypatch, tmp_path):
+    """回归验证 ``test_def_032_worker_projects_trace_after_each_committed_step`` 所描述的业务结果、故障边界和隔离约束。"""
     calls = []
 
     class FakeCheckpoint:
+        """测试替身 ``FakeCheckpoint``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
     class FakeResultProjector:
+        """测试替身 ``FakeResultProjector``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def commit_step(self, result, *, frame, checkpoint_path):
+            """为本测试模块封装 ``commit_step`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("result", result.step_no, frame, checkpoint_path))
             return 19
 
     class FakeTraceProjector:
+        """测试替身 ``FakeTraceProjector``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, *_args, **_kwargs):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             pass
 
         def project(self, **kwargs):
+            """为本测试模块封装 ``project`` 辅助步骤，减少重复的场景搭建代码。"""
             calls.append(("trace", kwargs))
 
     class FakeCommitter:
+        """测试替身 ``FakeCommitter``：记录调用并返回当前场景可控的结果。"""
         def __init__(self, _frames, projection, _checkpoint):
+            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
             self.projection = projection
 
     monkeypatch.setattr(worker, "CheckpointBundleWriter", FakeCheckpoint)
@@ -273,6 +294,7 @@ def test_def_032_zero_step_failure_still_projects_complete_model_traces():
 
 
 def test_def_033_artifact_replay_closes_over_observed_frame_path(database, tmp_path):
+    """回归验证 ``test_def_033_artifact_replay_closes_over_observed_frame_path`` 所描述的业务结果、故障边界和隔离约束。"""
     var_dir = tmp_path / "var"
     experiment, revision = _publish(database, _definition("artifact-frame"))
     runs = RunService(database, var_dir=var_dir)
@@ -320,6 +342,7 @@ def test_def_033_artifact_replay_closes_over_observed_frame_path(database, tmp_p
 
 
 def test_def_034_zero_step_timeline_has_the_same_collection_schema(database, tmp_path):
+    """回归验证 ``test_def_034_zero_step_timeline_has_the_same_collection_schema`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(database, _definition("zero-step"))
     run = RunService(database, var_dir=tmp_path / "var").create_from_published(
         experiment["id"], revision["id"]
@@ -338,6 +361,7 @@ def test_def_034_zero_step_timeline_has_the_same_collection_schema(database, tmp
 
 
 def test_def_035_sse_opens_after_current_state_and_history_cursor():
+    """回归验证 ``test_def_035_sse_opens_after_current_state_and_history_cursor`` 所描述的业务结果、故障边界和隔离约束。"""
     source = CONSOLE_JS.read_text(encoding="utf-8")
     function = source[source.index("async function loadResults"):source.index("function scheduleResultRefresh")]
     refresh = function.index("await refreshResultData")
@@ -348,6 +372,7 @@ def test_def_035_sse_opens_after_current_state_and_history_cursor():
 
 
 def test_def_035_sse_cursor_skips_an_event_backlog_larger_than_one_page():
+    """回归验证 ``test_def_035_sse_cursor_skips_an_event_backlog_larger_than_one_page`` 所描述的业务结果、故障边界和隔离约束。"""
     source = CONSOLE_JS.read_text(encoding="utf-8")
     function = source[
         source.index("async function loadResults") : source.index(
@@ -371,6 +396,7 @@ def test_def_035_sse_cursor_skips_an_event_backlog_larger_than_one_page():
 
 
 def test_def_036_agent_modal_has_scrollable_body_and_reachable_footer():
+    """回归验证 ``test_def_036_agent_modal_has_scrollable_body_and_reachable_footer`` 所描述的业务结果、故障边界和隔离约束。"""
     html = PROTOTYPE.read_text(encoding="utf-8")
     assert re.search(r"\.modal\s*\{[^}]*max-height:\s*calc\(100vh\s*-\s*40px\)", html)
     assert re.search(r"\.modal-body\s*\{[^}]*overflow-y:\s*auto", html)
@@ -379,6 +405,7 @@ def test_def_036_agent_modal_has_scrollable_body_and_reachable_footer():
 
 
 def test_def_036_agent_modal_traps_focus_and_restores_the_trigger():
+    """回归验证 ``test_def_036_agent_modal_traps_focus_and_restores_the_trigger`` 所描述的业务结果、故障边界和隔离约束。"""
     html = (
         ROOT / "generative_agents" / "web" / "static" / "experiment-console.html"
     ).read_text(encoding="utf-8")
@@ -459,6 +486,7 @@ if (JSON.stringify(actual) !== JSON.stringify(expected)) {
 
 
 def test_def_037_invalid_asset_upload_is_a_422_error_envelope(tmp_path):
+    """回归验证 ``test_def_037_invalid_asset_upload_is_a_422_error_envelope`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "asset-http.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
@@ -472,6 +500,7 @@ def test_def_037_invalid_asset_upload_is_a_422_error_envelope(tmp_path):
 
 
 def test_def_038_production_result_shell_contains_no_real_looking_demo_facts(tmp_path):
+    """回归验证 ``test_def_038_production_result_shell_contains_no_real_looking_demo_facts`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "shell.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
@@ -487,6 +516,7 @@ def test_def_038_production_result_shell_contains_no_real_looking_demo_facts(tmp
 
 
 def test_def_039_production_experiment_badges_are_not_hardcoded(tmp_path):
+    """回归验证 ``test_def_039_production_experiment_badges_are_not_hardcoded`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "badges.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
@@ -496,6 +526,7 @@ def test_def_039_production_experiment_badges_are_not_hardcoded(tmp_path):
 
 
 def test_def_040_production_shell_does_not_ship_prototype_event_listeners(tmp_path):
+    """回归验证 ``test_def_040_production_shell_does_not_ship_prototype_event_listeners`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "listeners.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
@@ -594,6 +625,7 @@ def test_def_045_every_static_id_selector_exists_in_the_neutral_shell():
 
 
 def test_def_044_homepage_shell_and_images_are_packaged_runtime_assets(tmp_path):
+    """回归验证 ``test_def_044_homepage_shell_and_images_are_packaged_runtime_assets`` 所描述的业务结果、故障边界和隔离约束。"""
     source = inspect.getsource(web_app_module.create_app)
     homepage = source[
         source.index("def experiment_console") : source.index(
@@ -621,6 +653,7 @@ def test_def_044_homepage_shell_and_images_are_packaged_runtime_assets(tmp_path)
 def test_def_041_to_043_legacy_artifacts_log_and_counts_are_consistent(
     database, tmp_path
 ):
+    """回归验证 ``test_def_041_to_043_legacy_artifacts_log_and_counts_are_consistent`` 所描述的业务结果、故障边界和隔离约束。"""
     pytest.skip("legacy import was intentionally removed by the Skill brain cutover")
     source = tmp_path / "legacy"
     checkpoint = source / "checkpoints" / "sample"
@@ -737,6 +770,7 @@ def test_def_041_to_043_legacy_artifacts_log_and_counts_are_consistent(
 
 
 def test_agent_crud_world_asset_and_published_revision_rerun_http(tmp_path):
+    """回归验证 ``test_agent_crud_world_asset_and_published_revision_rerun_http`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "crud-rerun.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:

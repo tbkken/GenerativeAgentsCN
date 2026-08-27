@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_world_maps`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
@@ -6,6 +7,7 @@ from generative_agents.web import create_app
 
 
 def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
+    """回归验证 ``test_map_catalog_supports_status_filters_and_five_item_pages`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         for index in range(6):
@@ -38,6 +40,7 @@ def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
 
 
 def test_map_workspace_populates_experiment_creation_selector():
+    """回归验证 ``test_map_workspace_populates_experiment_creation_selector`` 所描述的业务结果、故障边界和隔离约束。"""
     javascript = (
         __import__("pathlib").Path(__file__).parents[2]
         / "generative_agents"
@@ -51,6 +54,7 @@ def test_map_workspace_populates_experiment_creation_selector():
 
 
 def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
+    """回归验证 ``test_public_map_lifecycle_and_experiment_overlay_are_isolated`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         catalog = client.get("/api/v1/maps").json()
@@ -151,6 +155,7 @@ def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
 
 
 def test_map_draft_uses_optimistic_locking(database_url):
+    """回归验证 ``test_map_draft_uses_optimistic_locking`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         created = client.post("/api/v1/maps", json={"name": "并发地图"}).json()
@@ -169,6 +174,7 @@ def test_map_draft_uses_optimistic_locking(database_url):
 
 
 def test_map_publish_rejects_runtime_invalid_tiles(database_url):
+    """回归验证 ``test_map_publish_rejects_runtime_invalid_tiles`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         created = client.post("/api/v1/maps", json={"name": "无效地图"}).json()
@@ -203,6 +209,7 @@ def test_map_publish_rejects_runtime_invalid_tiles(database_url):
 
 
 def test_map_publish_accepts_address_using_every_declared_level(database_url):
+    """回归验证 ``test_map_publish_accepts_address_using_every_declared_level`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         created = client.post("/api/v1/maps", json={"name": "Four-level map"}).json()

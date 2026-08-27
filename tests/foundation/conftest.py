@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``conftest`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,11 +13,13 @@ from generative_agents.services import ExperimentService
 
 @pytest.fixture
 def database_url(tmp_path: Path) -> str:
+    """为本测试模块封装 ``database_url`` 辅助步骤，减少重复的场景搭建代码。"""
     return "sqlite:///" + (tmp_path / "experiments.db").as_posix()
 
 
 @pytest.fixture
 def database(database_url: str):
+    """为本测试模块封装 ``database`` 辅助步骤，减少重复的场景搭建代码。"""
     upgrade_database(database_url)
     value = create_database(database_url)
     yield value
@@ -25,11 +28,13 @@ def database(database_url: str):
 
 @pytest.fixture
 def service(database) -> ExperimentService:
+    """为本测试模块封装 ``service`` 辅助步骤，减少重复的场景搭建代码。"""
     return ExperimentService(database)
 
 
 @pytest.fixture
 def publishable_definition() -> ExperimentDefinition:
+    """为本测试模块封装 ``publishable_definition`` 辅助步骤，减少重复的场景搭建代码。"""
     definition = make_blank_definition(
         key="publishable-experiment", name="可发布实验", goal="验证发布不变量"
     )

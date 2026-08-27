@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_result_projection`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -49,6 +50,7 @@ from generative_agents.services.errors import ServiceError
 
 
 def _publish(service, definition: ExperimentDefinition):
+    """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
@@ -73,6 +75,7 @@ def _publish(service, definition: ExperimentDefinition):
 def test_complete_step_frame_projects_all_query_facts_idempotently(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_complete_step_frame_projects_all_query_facts_idempotently`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     var_dir = tmp_path / "var"
     run = RunService(database, var_dir=var_dir).create_from_published(
@@ -271,6 +274,7 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
 def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_model_trace_cursor_counts_failed_attempts_and_is_idempotent`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     var_dir = tmp_path / "var"
     run = RunService(database, var_dir=var_dir).create_from_published(
@@ -395,6 +399,7 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
 def test_model_trace_projection_accepts_an_attempt_with_no_trace_file(
     service, database, publishable_definition, tmp_path
 ):
+    """回归验证 ``test_model_trace_projection_accepts_an_attempt_with_no_trace_file`` 所描述的业务结果、故障边界和隔离约束。"""
     experiment, revision = _publish(service, publishable_definition)
     var_dir = tmp_path / "var"
     run = RunService(database, var_dir=var_dir).create_from_published(

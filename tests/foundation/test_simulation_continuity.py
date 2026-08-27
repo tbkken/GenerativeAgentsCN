@@ -1,3 +1,4 @@
+"""基础能力回归测试：覆盖 ``test_simulation_continuity`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
@@ -12,12 +13,16 @@ from generative_agents.start import SimulationRunner
 
 
 class _Tile:
+    """为 ``_Tile`` 相关场景组织共享测试状态、输入或断言。"""
     def get_address(self):
+        """为本测试模块封装 ``get_address`` 辅助步骤，减少重复的场景搭建代码。"""
         return ["world", "campus", "road", "tile"]
 
 
 class _MovingAgent:
+    """为 ``_MovingAgent`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.coord = (0, 0)
         self.path = []
         self._event = Event(
@@ -28,31 +33,39 @@ class _MovingAgent:
         )
 
     def move(self, coord, path=None):
+        """为本测试模块封装 ``move`` 辅助步骤，减少重复的场景搭建代码。"""
         self.coord = tuple(coord)
         self.path = list(path or ())
         return {}
 
     def get_event(self, as_act=True):
+        """为本测试模块封装 ``get_event`` 辅助步骤，减少重复的场景搭建代码。"""
         return self._event if as_act else None
 
     def get_tile(self):
+        """为本测试模块封装 ``get_tile`` 辅助步骤，减少重复的场景搭建代码。"""
         return _Tile()
 
 
 class _MovementGame:
+    """为 ``_MovementGame`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent = _MovingAgent()
         self.agents = {"resident-005": self.agent}
         self.agent_keys_by_name = {"Klaus": "resident-005"}
         self.initial_route = [(1, 0), (2, 0), (3, 0), (4, 0), (5, 0)]
 
     def reset_game(self):
+        """为本测试模块封装 ``reset_game`` 辅助步骤，减少重复的场景搭建代码。"""
         pass
 
     def get_agent(self, _agent_key):
+        """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agent
 
     def agent_think(self, _agent_key, status):
+        """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent.move(status["coord"], status.get("path"))
         route = list(self.agent.path or self.initial_route)
         return {
@@ -69,14 +82,18 @@ class _MovementGame:
 
 
 class _Committer:
+    """为 ``_Committer`` 相关场景组织共享测试状态、输入或断言。"""
     def __init__(self):
+        """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self.results = []
 
     def commit(self, result, *, force_checkpoint):
+        """为本测试模块封装 ``commit`` 辅助步骤，减少重复的场景搭建代码。"""
         self.results.append(result)
 
 
 def test_runner_consumes_route_by_budget_and_keeps_the_remainder_for_resume():
+    """回归验证 ``test_runner_consumes_route_by_budget_and_keeps_the_remainder_for_resume`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc))
     context = SimpleNamespace(
         run_id=uuid4(),
@@ -110,9 +127,11 @@ def test_runner_consumes_route_by_budget_and_keeps_the_remainder_for_resume():
 
 
 def test_chat_cooldown_uses_durable_pair_timestamp_not_semantic_retrieval():
+    """回归验证 ``test_chat_cooldown_uses_durable_pair_timestamp_not_semantic_retrieval`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(datetime(2026, 1, 1, 13, 30, tzinfo=timezone.utc))
 
     def build(name, agent_key):
+        """构造当前测试场景所需的 ``build`` 数据、文件或受控对象。"""
         agent = Agent.__new__(Agent)
         agent.name = name
         agent.agent_key = agent_key
@@ -145,6 +164,7 @@ def test_chat_cooldown_uses_durable_pair_timestamp_not_semantic_retrieval():
 
 
 def test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work():
+    """回归验证 ``test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(datetime(2026, 1, 1, 13, 25, tzinfo=timezone.utc))
     schedule = Schedule(
         clock=clock,
@@ -174,6 +194,7 @@ def test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work():
 
 
 def test_restored_schedule_compares_the_simulation_local_calendar_day():
+    """回归验证 ``test_restored_schedule_compares_the_simulation_local_calendar_day`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(
         datetime(2026, 2, 13, 0, 30, tzinfo=timezone(timedelta(hours=8)))
     )
@@ -195,6 +216,7 @@ def test_restored_schedule_compares_the_simulation_local_calendar_day():
 
 
 def test_chat_quality_guard_rejects_placeholders_and_exact_repeats():
+    """回归验证 ``test_chat_quality_guard_rejects_placeholders_and_exact_repeats`` 所描述的业务结果、故障边界和隔离约束。"""
     assert valid_chat_message("我们一起核对住房政策数据。")
     assert not valid_chat_message("填坑")
     assert not valid_chat_message("TODO")

@@ -17,6 +17,8 @@ HEIGHT = 100
 
 
 def _inside_polygon(x: int, y: int, points: list[tuple[int, int]]) -> bool:
+    """用射线法判断网格坐标是否落在校园轮廓多边形内。"""
+
     inside = False
     previous = points[-1]
     for current in points:
@@ -31,6 +33,8 @@ def _inside_polygon(x: int, y: int, points: list[tuple[int, int]]) -> bool:
 
 
 def _sector(x: int, y: int) -> str:
+    """按坐标把校园 Tile 粗分到北部、中部、南部或西部区域。"""
+
     if y < 34:
         return "北部教学区"
     if y > 76:
@@ -43,6 +47,8 @@ def _sector(x: int, y: int) -> str:
 
 
 def build_world() -> dict[str, Any]:
+    """生成中大南校区的道路、水体、建筑和运行时地址网格。"""
+
     campus_outline = [
         (84, 0), (103, 3), (108, 17), (130, 18), (132, 27), (139, 30),
         (139, 51), (134, 52), (134, 71), (126, 79), (108, 85),
@@ -61,6 +67,8 @@ def build_world() -> dict[str, Any]:
         collision: bool | None = None,
         address: list[str] | None = None,
     ) -> None:
+        """写入一个可见单元，并按需同步碰撞和语义地址到运行 Tile。"""
+
         if not (0 <= x < WIDTH and 0 <= y < HEIGHT):
             return
         cells[f"{x},{y}"] = {"kind": kind}
@@ -76,12 +84,16 @@ def build_world() -> dict[str, Any]:
                 set_cell(x, y, "grass", collision=False, address=[_sector(x, y)])
 
     def disk(cx: int, cy: int, radius: int, kind: str) -> None:
+        """用圆形画笔在校园轮廓内绘制一种地表。"""
+
         for y in range(cy - radius, cy + radius + 1):
             for x in range(cx - radius, cx + radius + 1):
                 if (x - cx) ** 2 + (y - cy) ** 2 <= radius**2 and f"{x},{y}" in cells:
                     set_cell(x, y, kind)
 
     def line(points: list[tuple[int, int]], width: int, kind: str) -> None:
+        """沿折线采样并用圆形画笔绘制指定宽度的道路或小径。"""
+
         for (x1, y1), (x2, y2) in zip(points, points[1:]):
             steps = max(abs(x2 - x1), abs(y2 - y1), 1)
             for step in range(steps + 1):
@@ -104,6 +116,8 @@ def build_world() -> dict[str, Any]:
         line(points, 0, "path")
 
     def ellipse(cx: int, cy: int, rx: int, ry: int, kind: str, collision: bool) -> None:
+        """绘制椭圆水体或场地，并同步其碰撞属性。"""
+
         for y in range(cy - ry, cy + ry + 1):
             for x in range(cx - rx, cx + rx + 1):
                 if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1 and f"{x},{y}" in cells:
@@ -121,6 +135,8 @@ def build_world() -> dict[str, Any]:
         kind: str,
         address: list[str],
     ) -> None:
+        """绘制矩形建筑，并为其 Tile 写入完整空间地址。"""
+
         for yy in range(y, y + height):
             for xx in range(x, x + width):
                 if f"{xx},{yy}" in cells:
@@ -197,6 +213,8 @@ def build_world() -> dict[str, Any]:
 
 
 def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = None) -> Any:
+    """调用地图 API，并把 HTTP 错误响应转换为可读异常。"""
+
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = Request(
         f"{base_url.rstrip('/')}/api/v1{path}",
@@ -213,6 +231,8 @@ def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = No
 
 
 def seed(base_url: str) -> dict[str, Any]:
+    """幂等创建、更新并发布中大南校区公共地图。"""
+
     existing = _request(base_url, f"/maps?{urlencode({'page': 1, 'page_size': 100})}")
     match = next((item for item in existing["items"] if item["map_key"] == MAP_KEY), None)
     if match is not None:
@@ -244,6 +264,8 @@ def seed(base_url: str) -> dict[str, Any]:
 
 
 def main() -> int:
+    """解析目标服务地址并播种校园地图。"""
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     args = parser.parse_args()

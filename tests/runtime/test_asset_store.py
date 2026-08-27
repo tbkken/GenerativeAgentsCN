@@ -1,3 +1,4 @@
+"""运行时回归测试：覆盖 ``test_asset_store`` 对应的行为、故障边界和回归约束。"""
 from io import BytesIO
 
 import pytest
@@ -6,6 +7,7 @@ from generative_agents.assets import AssetStore, AssetValidationError
 
 
 def test_same_asset_is_materialized_once_with_server_hash(tmp_path):
+    """回归验证 ``test_same_asset_is_materialized_once_with_server_hash`` 所描述的业务结果、故障边界和隔离约束。"""
     store = AssetStore(tmp_path)
     payload = b'{"world":"ville","tiles":[]}'
 
@@ -29,6 +31,7 @@ def test_same_asset_is_materialized_once_with_server_hash(tmp_path):
 
 
 def test_asset_store_enforces_size_type_and_path_containment(tmp_path):
+    """回归验证 ``test_asset_store_enforces_size_type_and_path_containment`` 所描述的业务结果、故障边界和隔离约束。"""
     store = AssetStore(tmp_path, max_bytes=8)
     with pytest.raises(AssetValidationError, match="maximum size"):
         store.put_stream(BytesIO(b"123456789"), logical_name="large.json")
