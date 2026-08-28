@@ -98,14 +98,59 @@ class _FakeGame:
         """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agents[key]
 
-    def agent_think(self, key, _status):
+    def agent_think(
+        self,
+        key,
+        _status,
+        *,
+        step_no,
+        total_steps,
+        stride_minutes,
+    ):
         """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         agent = self.agents[key]
-        agent.coord = (2, 1)
         return {
             "plan": {"path": [(1, 1), (2, 1)]},
             "info": {"currently": "walking"},
             "events": (),
+        }
+
+    def commit_world_action(
+        self,
+        key,
+        outcome,
+        *,
+        stride_minutes,
+        movement_budget,
+    ):
+        agent = self.agents[key]
+        from_coord = tuple(agent.coord)
+        planned_path = ((1, 1), (2, 1))
+        agent.coord = (2, 1)
+        executed_path = planned_path
+        outcome["events"] = (
+            {
+                "kind": "world_domain_event",
+                "event_type": "AGENT_MOVED",
+                "agent_keys": (key,),
+                "subject": agent.name,
+                "predicate": "moves to",
+                "object": "world:cafe",
+                "structured_payload": {
+                    "action_type": "MOVE",
+                    "from_coord": list(from_coord),
+                    "to_coord": [2, 1],
+                    "executed_path": [list(coord) for coord in executed_path],
+                    "planned_path": [list(coord) for coord in planned_path],
+                    "remaining_path": [],
+                },
+            },
+        )
+        return {
+            "outcome": outcome,
+            "planned_path": planned_path,
+            "executed_path": executed_path,
+            "remaining_path": (),
         }
 
 
@@ -138,7 +183,7 @@ def test_simulation_runner_commits_complete_observed_step_result(tmp_path):
     assert result.agents[0].path == ((1, 1), (2, 1))
     assert result.agents[0].path_source == "OBSERVED"
     assert result.agents[0].currently == "walking"
-    assert result.domain_events[0].event_type == "MOVED"
+    assert result.domain_events[0].event_type == "AGENT_MOVED"
 
 
 def test_clock_and_rng_are_run_local_when_interleaved():
@@ -161,6 +206,10 @@ def test_game_checkpoint_round_trip_restores_run_local_rng_state():
     game = Game.__new__(Game)
     game.context = SimpleNamespace(random=random.Random(42))
     game.agents = {}
+    game.game_object_interactions = SimpleNamespace(
+        snapshot_state=lambda: {},
+        restore_state=lambda state: None,
+    )
     game.context.clock = SimulationClock(
         datetime(2026, 1, 1, tzinfo=timezone.utc)
     )
@@ -337,16 +386,20 @@ def test_llm_trace_records_each_physical_attempt_and_one_logical_end(tmp_path):
     assert model.completion("prompt", caller="schedule", agent_key="agent-a") == "ok"
     records = [json.loads(line) for line in writer.path.read_text().splitlines()]
     assert [record["event_type"] for record in records] == [
+        "PHYSICAL_START",
         "PHYSICAL_ATTEMPT",
+        "PHYSICAL_START",
         "PHYSICAL_ATTEMPT",
         "LOGICAL_END",
     ]
     assert [record["status"] for record in records] == [
+        "RUNNING",
         "FAILED",
+        "RUNNING",
         "SUCCEEDED",
         "SUCCEEDED",
     ]
-    assert records[1]["total_tokens"] == 5
+    assert records[3]["total_tokens"] == 5
     assert "secret-not-recorded" not in writer.path.read_text()
 
 

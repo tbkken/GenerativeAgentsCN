@@ -16,18 +16,22 @@ from generative_agents.services.artifacts import ArtifactService
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
+from tests.support import publish_user_map
 
 
 def _published(service, definition: ExperimentDefinition):
     """为本测试模块封装 ``_published`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(service.database, world=definition.world)
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],

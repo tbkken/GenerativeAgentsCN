@@ -32,6 +32,11 @@ from generative_agents.persistence.models import (
     RunStep,
 )
 from generative_agents.runtime import worker
+from tests.support import (
+    first_builtin_crowd_revision_id,
+    publish_user_map,
+    publish_user_map_via_api,
+)
 from generative_agents.runtime.algorithm import get_algorithm_profile
 from generative_agents.runtime.artifact_builder import ArtifactBuilder
 from generative_agents.runtime.artifact_scheduler import ArtifactSchedulerRepository
@@ -116,14 +121,17 @@ def _definition(key: str) -> ExperimentDefinition:
 def _publish(database, definition: ExperimentDefinition):
     """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     service = ExperimentService(database)
+    map_revision = publish_user_map(database, world=definition.world)
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],
@@ -774,9 +782,16 @@ def test_agent_crud_world_asset_and_published_revision_rerun_http(tmp_path):
     database_url = "sqlite:///" + (tmp_path / "crud-rerun.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
+        crowd_revision_id = first_builtin_crowd_revision_id(client)
         experiment = client.post(
             "/api/v1/experiments",
-            json={"name": "CRUD", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "CRUD",
+                "brain_skill": "stanford-town-brain",
+                "map_revision_id": map_revision["id"],
+                "crowd_revision_ids": [crowd_revision_id],
+            },
         ).json()
         draft = client.get(f"/api/v1/experiments/{experiment['id']}/draft").json()
         agent = dict(draft["definition"]["agents"][0])

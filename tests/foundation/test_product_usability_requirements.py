@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from generative_agents.web.app import create_app
+from tests.support import publish_user_map_via_api
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,6 +22,7 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
             if item["is_builtin"]
         )
         crowd_revision_ids = [crowd["current_published"]["id"]]
+    map_revision = publish_user_map_via_api(client, name=f"{name} map")
     response = client.post(
         "/api/v1/experiments",
         json={
@@ -28,7 +30,9 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
             "goal": "产品可用性验收",
             "owner": metadata.get("owner", "产品研究员"),
             "tags": metadata.get("tags", ["UX验收"]),
+            "brain_skill": metadata.get("brain_skill", "stanford-town-brain"),
             "source": source,
+            "map_revision_id": map_revision["id"],
             "crowd_revision_ids": crowd_revision_ids,
         },
     )
@@ -79,13 +83,10 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
     """回归验证 ``test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        brain = client.get("/api/v1/skills/stanford-town-brain")
+        brain = client.get("/api/v1/skills/pedestrian-crossing-brain")
         assert brain.status_code == 200
         assert brain.json()["kind"] == "brain"
-        public_map = next(
-            item for item in client.get("/api/v1/maps?page_size=100").json()["items"]
-            if item["map_key"] == "the-ville"
-        )
+        public_map = publish_user_map_via_api(client, name="Resource selected map")
         crowd = next(
             item for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
             if item["is_builtin"]
@@ -95,7 +96,8 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
             json={
                 "name": "资源优先创建",
                 "goal": "验证创建入口组合大脑、地图和一个或多个人群",
-                "map_revision_id": public_map["current_published"]["id"],
+                "brain_skill": "pedestrian-crossing-brain",
+                "map_revision_id": public_map["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },
         )
@@ -104,14 +106,34 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
             f"/api/v1/experiments/{response.json()['id']}/draft"
         ).json()
         assert len(draft["definition"]["agents"]) == 25
-        assert draft["definition"]["world"]["map_revision_id"] == public_map["current_published"]["id"]
+        assert draft["definition"]["engine"]["brain_skill"] == "pedestrian-crossing-brain"
+        assert draft["definition"]["world"]["map_revision_id"] == public_map["id"]
         assert "brain_revision_id" not in draft["provenance"]
-        assert draft["provenance"]["world_map_revision_id"] == public_map["current_published"]["id"]
+        assert draft["provenance"]["world_map_revision_id"] == public_map["id"]
         assert draft["provenance"]["crowd_revision_ids"] == [crowd["current_published"]["id"]]
 
-        missing_crowd = client.post("/api/v1/experiments", json={"name": "缺少人群"})
+        missing_crowd = client.post(
+            "/api/v1/experiments",
+            json={
+                "name": "缺少人群",
+                "brain_skill": "stanford-town-brain",
+                "map_revision_id": public_map["id"],
+            },
+        )
         assert missing_crowd.status_code == 422
         assert missing_crowd.json()["error"]["code"] == "CROWD_REQUIRED"
+
+        wrong_kind = client.post(
+            "/api/v1/experiments",
+            json={
+                "name": "错误大脑类型",
+                "brain_skill": "wake-up",
+                "map_revision_id": public_map["id"],
+                "crowd_revision_ids": [crowd["current_published"]["id"]],
+            },
+        )
+        assert wrong_kind.status_code == 422
+        assert wrong_kind.json()["error"]["code"] == "BRAIN_SKILL_KIND_REQUIRED"
 
 
 def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_url):
@@ -122,9 +144,9 @@ def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_ur
         report = client.post(f"/api/v1/experiments/{blank['id']}/draft/validate").json()
         codes = {item["code"] for item in report["errors"]}
         assert report["valid"] is False
-        assert report["counts"]["blocking"] >= 2
+        assert report["counts"]["blocking"] >= 1
         assert "NO_ENABLED_AGENT" in codes
-        assert "WORLD_EMPTY" in codes
+        assert "WORLD_EMPTY" not in codes
         assert "MODEL_NOT_RESOLVED" not in codes
         assert "MODEL_SERVICE_NOT_ONLINE" not in codes
         assert report["counts"]["automatic"] == 2
@@ -184,6 +206,8 @@ def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
             "capture_model_payloads": False,
         }
         assert estimate["estimate"]["model_calls"]["high"] >= estimate["estimate"]["model_calls"]["low"]
+        assert estimate["estimate_version"] == 2
+        assert estimate["estimate"]["model_calls"] == {"low": 50001, "high": 150003}
 
         comparison = client.post(
             "/api/v1/experiments/compare",

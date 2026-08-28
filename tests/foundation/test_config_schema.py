@@ -123,6 +123,65 @@ def test_publication_validation_keeps_incomplete_blank_draft_editable():
     }
 
 
+def test_publication_warns_before_replay_when_agent_media_is_missing(
+    publishable_definition,
+):
+    report = validate_for_publish(publishable_definition)
+
+    assert {item.code for item in report.warnings} >= {
+        "AGENT_PORTRAIT_ASSET_MISSING",
+        "AGENT_SPRITE_ASSET_MISSING",
+    }
+    assert report.valid is True
+
+
+def test_publication_warns_when_structured_initial_address_is_not_declared(
+    publishable_definition,
+):
+    report = validate_for_publish(publishable_definition)
+
+    issue = next(
+        item
+        for item in report.warnings
+        if item.code == "AGENT_INITIAL_ADDRESS_UNDECLARED"
+    )
+    assert issue.path == "agents.0.spatial.address.initial_location"
+    assert "home > bedroom > bed" in issue.message
+
+
+def test_publication_rejects_initial_address_that_disagrees_with_coordinate(
+    publishable_definition,
+):
+    payload = copy.deepcopy(
+        publishable_definition.model_dump(mode="json", exclude_none=False)
+    )
+    payload["world"]["definition"]["tiles"].append(
+        {
+            "coord": [1, 0],
+            "collision": False,
+            "address": ["office", "desk"],
+        }
+    )
+    payload["world"]["definition"]["size"] = [1, 2]
+    payload["world"]["definition"]["map"] = [[0, 0]]
+    payload["agents"][0]["spatial"]["address"]["initial_location"] = [
+        "test",
+        "office",
+        "desk",
+    ]
+    payload["agents"][0]["spatial"]["tree"]["test"]["office"] = ["desk"]
+
+    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
+
+    issue = next(
+        item
+        for item in report.errors
+        if item.code == "AGENT_INITIAL_ADDRESS_MISMATCH"
+    )
+    assert "[0, 0]" in issue.message
+    assert "home > bedroom > bed" in issue.message
+
+
 def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
     """回归验证 ``test_definition_hash_changes_with_algorithm_or_seed`` 所描述的业务结果、故障边界和隔离约束。"""
     original = definition_hash(publishable_definition)

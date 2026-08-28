@@ -64,7 +64,15 @@ class _MovementGame:
         """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agent
 
-    def agent_think(self, _agent_key, status):
+    def agent_think(
+        self,
+        _agent_key,
+        status,
+        *,
+        step_no,
+        total_steps,
+        stride_minutes,
+    ):
         """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent.move(status["coord"], status.get("path"))
         route = list(self.agent.path or self.initial_route)
@@ -78,6 +86,26 @@ class _MovementGame:
                 "schedule": {},
             },
             "events": (),
+        }
+
+    def commit_world_action(
+        self,
+        _agent_key,
+        outcome,
+        *,
+        stride_minutes,
+        movement_budget,
+    ):
+        planned_path = tuple(tuple(coord) for coord in outcome["plan"]["path"])
+        from_coord = tuple(self.agent.coord)
+        consumed = planned_path[:movement_budget]
+        remaining = planned_path[len(consumed) :]
+        self.agent.move(consumed[-1] if consumed else from_coord, remaining)
+        return {
+            "outcome": outcome,
+            "planned_path": planned_path,
+            "executed_path": (from_coord, *consumed),
+            "remaining_path": remaining,
         }
 
 

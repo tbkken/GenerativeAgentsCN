@@ -6,6 +6,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from generative_agents.web.app import create_app
+from tests.support import publish_user_map_via_api
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -85,6 +86,49 @@ def _publish_crowd(
     return created.json(), published.json()
 
 
+def test_user_agent_and_crowd_support_archive_restore_and_delete(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        agent, agent_revision = _publish_agent(
+            client, "可清理 Agent", "cleanup-agent"
+        )
+        crowd, _crowd_revision = _publish_crowd(
+            client,
+            "可清理 Crowd",
+            "cleanup-crowd",
+            [agent_revision["id"]],
+        )
+
+        crowd_archived = client.post(f"/api/v1/crowds/{crowd['id']}/archive")
+        crowd_hidden = client.get("/api/v1/crowds?archived=active&page_size=100").json()
+        crowd_restored = client.post(f"/api/v1/crowds/{crowd['id']}/restore")
+        client.post(f"/api/v1/crowds/{crowd['id']}/archive")
+        crowd_deleted = client.delete(f"/api/v1/crowds/{crowd['id']}")
+
+        agent_archived = client.post(
+            f"/api/v1/agent-templates/{agent['id']}/archive"
+        )
+        agent_hidden = client.get(
+            "/api/v1/agent-templates?archived=active&page_size=500"
+        ).json()
+        agent_restored = client.post(
+            f"/api/v1/agent-templates/{agent['id']}/restore"
+        )
+        client.post(f"/api/v1/agent-templates/{agent['id']}/archive")
+        agent_deleted = client.delete(f"/api/v1/agent-templates/{agent['id']}")
+
+    assert crowd_archived.status_code == 200
+    assert crowd_archived.json()["archived_at"] is not None
+    assert crowd["id"] not in {item["id"] for item in crowd_hidden["items"]}
+    assert crowd_restored.json()["archived_at"] is None
+    assert crowd_deleted.status_code == 204
+    assert agent_archived.status_code == 200
+    assert agent_archived.json()["archived_at"] is not None
+    assert agent["id"] not in {item["id"] for item in agent_hidden["items"]}
+    assert agent_restored.json()["archived_at"] is None
+    assert agent_deleted.status_code == 204
+
+
 def test_builtin_public_agents_and_crowd_are_seeded(database_url):
     """回归验证 ``test_builtin_public_agents_and_crowd_are_seeded`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
@@ -125,6 +169,7 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
     """回归验证 ``test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
         system_agents = client.get("/api/v1/agent-templates?page_size=500").json()["items"]
         first_system_revision = system_agents[0]["current_published"]["id"]
         second_system_revision = system_agents[1]["current_published"]["id"]
@@ -147,6 +192,8 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
             "/api/v1/experiments",
             json={
                 "name": "多个人群去重实验",
+                "brain_skill": "stanford-town-brain",
+                "map_revision_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_a["id"], crowd_b["id"]],
             },
         )
@@ -161,8 +208,12 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
         assert len(draft["provenance"]["crowd_agent_duplicate_names"]) == 1
 
         custom_copy = next(item for item in imported if item["name"] == "社区记录员")
-        assert custom_copy["coord"] == [36, 65]
-        assert custom_copy["spatial"] == custom_revision["definition"]["spatial"]
+        assert 0 <= custom_copy["coord"][0] < 4
+        assert 0 <= custom_copy["coord"][1] < 4
+        assert custom_copy["spatial"]["address"]["living_area"][0] == "Test user map"
+        assert custom_revision["id"] in draft["provenance"][
+            "agent_spatial_remapped_revision_ids"
+        ]
         custom_copy["currently"] = "只修改实验副本"
         updated = client.put(
             f"/api/v1/experiments/{created.json()['id']}/draft/agents/{custom_copy['agent_key']}",

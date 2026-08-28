@@ -36,6 +36,7 @@ from generative_agents.runtime.results import (
     MemoryDeltaKind,
     StepResultBuilder,
 )
+from tests.support import publish_user_map
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.sqlite_result_projector import SqliteResultProjector
 from generative_agents.runtime.worker import _prepare_attempt_state
@@ -106,14 +107,17 @@ def database(tmp_path: Path):
 
 def _publish(service: ExperimentService, definition: ExperimentDefinition):
     """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(service.database, world=definition.world)
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],
@@ -211,6 +215,34 @@ def test_force_cancel_request_can_escalate_after_soft_cancel(
         )
         assert latest.payload_json["force"] is True
         assert latest.payload_json["supervisor_action_required"] is True
+
+
+def test_cancel_defaults_to_immediate_supervisor_termination(
+    database, tmp_path: Path
+):
+    """The normal cancel command must not wait for a long blocking model call."""
+
+    runs, run = _queue_run(database, tmp_path, "cancel-immediate-default")
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert scheduler.register_worker(claimed, pid=4242, pid_create_time=1.0)
+
+    assert runs.cancel(run["run_id"])["status"] == "CANCEL_REQUESTED"
+
+    with database.session_factory() as session:
+        latest = session.scalar(
+            select(RunEvent)
+            .where(
+                RunEvent.run_id == run["run_id"],
+                RunEvent.event_type == "state",
+            )
+            .order_by(RunEvent.id.desc())
+        )
+        assert latest.payload_json == {
+            "status": "CANCEL_REQUESTED",
+            "force": True,
+            "supervisor_action_required": True,
+        }
 
 
 def test_force_kill_does_not_promote_uncheckpointed_completed_step(
@@ -436,8 +468,13 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
     game = Game(config, {}, context=context)
     # Avoid model initialization; the step only captures the restored boundary.
     game.reset_game = lambda: None
-    game.agent_think = lambda _key, _status: {
+    game.agent_think = lambda _key, _status, **_kwargs: {
         "plan": {"path": []},
+        "world_action": {
+            "action_type": "WAIT",
+            "arguments": {"action_type": "WAIT", "description": "resumed"},
+            "path": [],
+        },
         "info": {"currently": "resumed"},
         "events": (),
     }

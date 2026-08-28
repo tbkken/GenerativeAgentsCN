@@ -156,6 +156,35 @@ def test_checkpoint_bundle_is_verified_and_latest_is_idempotent(tmp_path):
     assert writer.write(result, frame) == checkpoint
 
 
+def test_checkpoint_publish_retries_transient_windows_access_denied(
+    tmp_path, monkeypatch
+):
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    source.mkdir()
+    (source / "complete.txt").write_text("complete", encoding="utf-8")
+    original_rename = os.rename
+    attempts = 0
+
+    def transient_rename(old, new):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            error = PermissionError("temporarily held by Windows")
+            error.winerror = 5
+            raise error
+        return original_rename(old, new)
+
+    monkeypatch.setattr(os, "rename", transient_rename)
+    monkeypatch.setattr("generative_agents.runtime.checkpoint.time.sleep", lambda _: None)
+
+    CheckpointBundleWriter._publish_directory(source, target)
+
+    assert attempts == 2
+    assert not source.exists()
+    assert (target / "complete.txt").read_text(encoding="utf-8") == "complete"
+
+
 def test_checkpoint_rejects_unsafe_agent_storage_key(tmp_path):
     """回归验证 ``test_checkpoint_rejects_unsafe_agent_storage_key`` 所描述的业务结果、故障边界和隔离约束。"""
     run_id = uuid4()
@@ -391,7 +420,7 @@ def test_run_manifest_is_verified_and_immutable(tmp_path):
     assert written.definition.experiment.key == "manifest-test"
     assert store.load_verified().manifest_hash == document["manifest_hash"]
     changed = dict(document)
-    changed["code_build_id"] = "different-build"
+    changed["materialized_at"] = "2026-01-02T00:00:00+00:00"
     unsigned = dict(changed)
     unsigned.pop("manifest_hash")
     changed["manifest_hash"] = hashlib.sha256(
@@ -443,14 +472,29 @@ def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp
         **changed_skills["stanford-town-brain"],
         "revision": "new-live-revision",
     }
-    assert store.reuse_for_revision(
+    changed_document = build_manifest_document(
+        run_id=run_id,
         experiment_id=experiment_id,
         revision_id=revision_id,
         definition=definition,
         expected_definition_hash=definition_digest,
+        code_build_id="first-service-build",
         assets=[],
+        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        dependency_versions={"pydantic": "first-service-version"},
         skill_bundle=changed_skills,
-    ).path.read_bytes() == before
+    )
+    assert changed_document["definition_hash"] == document["definition_hash"]
+    assert changed_document["execution_input_hash"] != document["execution_input_hash"]
+    with pytest.raises(ManifestConflictError, match="Skill bundle"):
+        store.reuse_for_revision(
+            experiment_id=experiment_id,
+            revision_id=revision_id,
+            definition=definition,
+            expected_definition_hash=definition_digest,
+            assets=[],
+            skill_bundle=changed_skills,
+        )
 
     changed_payload = definition.model_dump(mode="json", exclude_none=False)
     changed_payload["experiment"]["goal"] = "material definition changed"

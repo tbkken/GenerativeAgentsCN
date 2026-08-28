@@ -30,6 +30,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import insert, select
 
 from generative_agents import compress
+from tests.support import publish_user_map
 from generative_agents.config import ExperimentDefinition
 from generative_agents.config.schema import make_blank_definition
 from generative_agents.modules.storage.index import LlamaIndex
@@ -43,6 +44,7 @@ from generative_agents.persistence.models import (
     RunAttempt,
     RunConversation,
     RunMessage,
+    RunModelTraceCursor,
     RunQueue,
     RunResultSummary,
     RunStep,
@@ -199,14 +201,17 @@ def _publish_run(database, var_dir: Path, key: str):
     """为本测试模块封装 ``_publish_run`` 辅助步骤，减少重复的场景搭建代码。"""
     experiments = ExperimentService(database)
     definition = _definition(key)
+    map_revision = publish_user_map(database, world=definition.world)
     experiment = experiments.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = experiments.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = experiments.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],
@@ -1050,6 +1055,61 @@ def test_def_047_log_service_rejects_a_real_symlink_chain(database, tmp_path: Pa
         "RUN_STORAGE_INTEGRITY_ERROR",
     )
     assert str(outside) not in rejected.value.message
+
+
+def test_running_model_trace_is_readable_before_the_first_step_projection(
+    database, tmp_path: Path
+):
+    """A blocking first request is observable before any Step creates a DB cursor."""
+
+    var_dir = tmp_path / "var"
+    _experiment, _revision, run, claimed = _claimed_run(
+        database, var_dir, "trace-before-first-step"
+    )
+    run_id = UUID(run["run_id"])
+    attempt_id = UUID(claimed.attempt_id)
+    writer = ModelTraceWriter(
+        RunPaths.under(var_dir, run_id),
+        run_id=run_id,
+        attempt_id=attempt_id,
+        attempt_no=claimed.attempt_no,
+        capture_payloads=True,
+    )
+    at = datetime(2026, 8, 9, tzinfo=timezone.utc)
+    writer.append(
+        ModelTraceEvent(
+            event_type=ModelTraceEventType.PHYSICAL_START,
+            run_id=run_id,
+            attempt_id=attempt_id,
+            call_id=uuid4(),
+            step_no=1,
+            agent_key="test-agent",
+            purpose="skill_runtime",
+            prompt_key="brain",
+            provider="vllm",
+            resolved_model="test-model",
+            started_at=at,
+            ended_at=at,
+            latency_ms=0,
+            attempt_no=1,
+            status=ModelTraceStatus.RUNNING,
+            payload={"request": "safe"},
+        )
+    )
+    with database.session_factory() as session:
+        assert session.get(
+            RunModelTraceCursor, (run["run_id"], claimed.attempt_id)
+        ) is None
+
+    page = LogService(database, var_dir=var_dir).model_traces(
+        run["run_id"], claimed.attempt_id, event_type="PHYSICAL"
+    )
+
+    assert page["available"] is True
+    assert [(item["event_type"], item["status"]) for item in page["items"]] == [
+        ("PHYSICAL_START", "RUNNING")
+    ]
+    assert page["items"][0]["payload_available"] is True
 
 
 def test_def_047_model_trace_detail_filters_and_redacts_payloads(database, tmp_path: Path):

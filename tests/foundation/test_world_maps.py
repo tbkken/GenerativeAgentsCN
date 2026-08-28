@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from generative_agents.web import create_app
+from tests.support import publish_user_map_via_api
 
 
 def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
@@ -53,15 +54,38 @@ def test_map_workspace_populates_experiment_creation_selector():
     assert "prepareExperimentCreate" in javascript
 
 
+def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        created = client.post(
+            "/api/v1/maps",
+            json={"name": "可清理地图", "description": "归档与删除验收"},
+        ).json()
+        archived = client.post(f"/api/v1/maps/{created['id']}/archive")
+        active = client.get("/api/v1/maps?archived=active").json()
+        archive_page = client.get("/api/v1/maps?archived=archived").json()
+        restored = client.post(f"/api/v1/maps/{created['id']}/restore")
+        client.post(f"/api/v1/maps/{created['id']}/archive")
+        deleted = client.delete(f"/api/v1/maps/{created['id']}")
+        missing = client.get(f"/api/v1/maps/{created['id']}")
+
+    assert archived.status_code == 200
+    assert archived.json()["archived_at"] is not None
+    assert created["id"] not in {item["id"] for item in active["items"]}
+    assert created["id"] in {item["id"] for item in archive_page["items"]}
+    assert restored.status_code == 200
+    assert restored.json()["archived_at"] is None
+    assert deleted.status_code == 204
+    assert missing.status_code == 404
+
+
 def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
     """回归验证 ``test_public_map_lifecycle_and_experiment_overlay_are_isolated`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         catalog = client.get("/api/v1/maps").json()
-        assert catalog["total"] >= 2
-        builtin = next(item for item in catalog["items"] if item["map_key"] == "the-ville")
-        assert builtin["map_key"] == "the-ville"
-        assert builtin["current_published"]["state"] == "PUBLISHED"
+        assert catalog["total"] == 0
+        baseline_revision = publish_user_map_via_api(client, name="Baseline user map")
 
         created_response = client.post(
             "/api/v1/maps",
@@ -109,7 +133,12 @@ def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
 
         experiment = client.post(
             "/api/v1/experiments",
-            json={"name": "地图覆盖层实验", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "地图覆盖层实验",
+                "brain_skill": "stanford-town-brain",
+                "source": {"type": "BLANK"},
+                "map_revision_id": baseline_revision["id"],
+            },
         ).json()
         experiment_draft = client.get(
             f"/api/v1/experiments/{experiment['id']}/draft"

@@ -115,12 +115,9 @@ def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(dat
             "schema_version"
         ] == "ga-spatial-scene/v1"
 
-        legacy = client.get("/api/v1/maps?page=1&page_size=100").json()["items"]
-        builtin = next(item for item in legacy if item["map_key"] == "the-ville")
-        builtin_revision = client.get(
-            f"/api/v1/maps/{builtin['id']}/revisions/{builtin['current_published']['id']}"
-        ).json()
-        assert "spatial_scene" not in builtin_revision["world"]["definition"]
+        # Spatial scenes are opt-in on user maps; an ordinary user-map draft
+        # remains on the base world contract.
+        assert "spatial_scene" not in draft["world"]["definition"]
 
 
 def test_spatial_scene_contract_rejects_duplicate_placement_keys():

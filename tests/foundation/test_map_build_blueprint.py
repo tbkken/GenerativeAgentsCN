@@ -88,7 +88,7 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
         assert guide["complete"] is True
         assert len(definition["editor"]["module_instances"]) == 2
         assert all(
-            item["source_map_revision_id"]
+            item["source_map_revision_id"] is None
             for item in definition["editor"]["module_instances"]
         )
         assert definition["traffic_layout"]["lanes_per_direction"] == 3

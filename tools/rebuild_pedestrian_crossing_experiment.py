@@ -154,6 +154,7 @@ def _signal_node(
         bounds=GridRect(x=x, y=y, width=1, height=2),
         semantic="被动提供当前行人相位和自然语言安全建议",
         material_slice_id=material_slice_id,
+        interaction_mode="SKILL_BOUND",
         skill_bindings=_skill_binding(),
         extensions={
             "state": {

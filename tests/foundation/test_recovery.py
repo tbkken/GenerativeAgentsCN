@@ -13,18 +13,22 @@ from generative_agents.runtime.results import StepResultBuilder
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.sqlite_result_projector import SqliteResultProjector
 from generative_agents.services.runs import RunService
+from tests.support import publish_user_map
 
 
 def _run(service, database, definition: ExperimentDefinition, var_dir):
     """为本测试模块封装 ``_run`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(database, world=definition.world)
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],

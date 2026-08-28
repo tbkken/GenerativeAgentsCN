@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from generative_agents.persistence.models import ExperimentRevision, Run, RunEvent
 from generative_agents.web import create_app
+from tests.support import first_builtin_crowd_revision_id, publish_user_map_via_api
 
 
 def _test_png(width: int, height: int) -> bytes:
@@ -28,11 +29,11 @@ def _test_png(width: int, height: int) -> bytes:
 
 class _ModelResponse:
     """为 ``_ModelResponse`` 相关场景组织共享测试状态、输入或断言。"""
-    def __init__(self, body):
+    def __init__(self, body, status_code=200):
         """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
         self._body = body
-        self.status_code = 200
-        self.ok = True
+        self.status_code = status_code
+        self.ok = 200 <= status_code < 300
 
     def json(self):
         """为本测试模块封装 ``json`` 辅助步骤，减少重复的场景搭建代码。"""
@@ -61,16 +62,27 @@ class _AutoModelSession:
         return _ModelResponse({"choices": [{"message": {"content": "OK"}}]})
 
 
+class _OfflineModelSession:
+    def get(self, _url, **_kwargs):
+        return _ModelResponse({"detail": "unauthorized"}, status_code=401)
+
+    def post(self, _url, **_kwargs):
+        return _ModelResponse({"detail": "unauthorized"}, status_code=401)
+
+
 def test_experiment_api_create_list_validate_and_conflict(database_url):
     """回归验证 ``test_experiment_api_create_list_validate_and_conflict`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
         created_response = client.post(
             "/api/v1/experiments",
             json={
                 "name": "API Experiment",
                 "goal": "Exercise the real service",
+                "brain_skill": "stanford-town-brain",
                 "source": {"type": "BLANK"},
+                "map_revision_id": map_revision["id"],
             },
         )
         assert created_response.status_code == 201
@@ -111,9 +123,16 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
     with TestClient(app) as client:
         session = _AutoModelSession()
         app.state.model_probe_service._session = session
+        map_revision = publish_user_map_via_api(client)
+        crowd_revision_id = first_builtin_crowd_revision_id(client)
         created = client.post(
             "/api/v1/experiments",
-            json={"name": "Auto model run", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "Auto model run",
+                "brain_skill": "stanford-town-brain",
+                "map_revision_id": map_revision["id"],
+                "crowd_revision_ids": [crowd_revision_id],
+            },
         ).json()
         draft = client.get(f"/api/v1/experiments/{created['id']}/draft").json()
         models = draft["definition"]["models"]
@@ -175,13 +194,54 @@ def test_api_errors_have_uniform_envelope_and_request_id(database_url):
         assert invalid.json()["error"]["code"] == "REQUEST_VALIDATION_FAILED"
 
 
+def test_offline_model_probe_is_counted_once_as_a_publish_warning(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
+        created = client.post(
+            "/api/v1/experiments",
+            json={
+                "name": "Offline model warning",
+                "brain_skill": "stanford-town-brain",
+                "source": {"type": "BLANK"},
+                "map_revision_id": map_revision["id"],
+            },
+        ).json()
+        draft = client.get(f"/api/v1/experiments/{created['id']}/draft").json()
+        app.state.model_probe_service._session = _OfflineModelSession()
+        failed = client.post(
+            f"/api/v1/experiments/{created['id']}/draft/models/chat/test",
+            json={"lock_version": draft["lock_version"]},
+        )
+        assert failed.status_code >= 400
+
+        report = client.post(
+            f"/api/v1/experiments/{created['id']}/draft/validate"
+        ).json()
+
+    model_warnings = [
+        item for item in report["warnings"] if item["path"] == "models.chat"
+    ]
+    assert len(model_warnings) == 1
+    assert model_warnings[0]["code"] == "MODEL_ENDPOINT_ERROR"
+    assert report["counts"]["warning"] == len(report["warnings"])
+    assert report["counts"]["automatic"] == 1
+
+
 def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_url):
     """回归验证 ``test_metadata_agent_prompt_and_world_draft_routes_are_optimistic`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
+        crowd_revision_id = first_builtin_crowd_revision_id(client)
         created = client.post(
             "/api/v1/experiments",
-            json={"name": "Editable", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "Editable",
+                "brain_skill": "stanford-town-brain",
+                "map_revision_id": map_revision["id"],
+                "crowd_revision_ids": [crowd_revision_id],
+            },
         ).json()
         renamed = client.patch(
             f"/api/v1/experiments/{created['id']}",
@@ -221,9 +281,15 @@ def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
     """回归验证 ``test_duplicate_experiment_deep_copies_the_selected_definition`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
         source = client.post(
             "/api/v1/experiments",
-            json={"name": "Source", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "Source",
+                "brain_skill": "stanford-town-brain",
+                "source": {"type": "BLANK"},
+                "map_revision_id": map_revision["id"],
+            },
         ).json()
         duplicate_response = client.post(
             f"/api/v1/experiments/{source['id']}/duplicate", json={}
@@ -328,9 +394,15 @@ def test_global_event_cursor_exposes_run_activity_with_experiment_identity(datab
     """回归验证 ``test_global_event_cursor_exposes_run_activity_with_experiment_identity`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        map_revision = publish_user_map_via_api(client)
         experiment = client.post(
             "/api/v1/experiments",
-            json={"name": "Live status", "source": {"type": "BUILTIN_DEFAULT"}},
+            json={
+                "name": "Live status",
+                "brain_skill": "stanford-town-brain",
+                "source": {"type": "BLANK"},
+                "map_revision_id": map_revision["id"],
+            },
         ).json()
         run_id = "global-event-run"
         now = datetime.now(timezone.utc)
