@@ -21,7 +21,7 @@ example_input: "2026-08-19 10:15，简在吧台后听到马克说：他下个月
 
 ## Scripts 与 MCP
 
-持久化记忆通过公共 `memory-stream` MCP 工具追加和检索。Skill 只传递待存储或待检索的自然语言，不定义业务对象端口。
+空间感知通过 `world-perceive` MCP 获取。持久化记忆通过公共 `memory-stream-search` 与 `memory-stream-append` MCP 工具检索和追加。Skill 只传递待存储或待检索的自然语言，不定义回放协议。
 
 ## 返回结果
 

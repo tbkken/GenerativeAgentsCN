@@ -141,6 +141,7 @@ class SimulationRunner:
         """
         if steps < 1 or stride_minutes < 1:
             raise ValueError("steps and stride_minutes must be positive")
+        target_step = self.completed_steps + steps
         self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
         for offset in range(steps):
@@ -172,42 +173,23 @@ class SimulationRunner:
             for agent_key, status in self.agent_status.items():
                 agent = self.game.get_agent(agent_key)
                 from_coord = tuple(agent.coord)
-                outcome = self.game.agent_think(agent_key, status)
-                resolve_interaction = getattr(
-                    self.game, "resolve_game_object_interaction", None
+                outcome = self.game.agent_think(
+                    agent_key,
+                    status,
+                    step_no=step_no,
+                    total_steps=target_step,
+                    stride_minutes=stride_minutes,
                 )
-                if callable(resolve_interaction):
-                    outcome = resolve_interaction(
-                        agent_key,
-                        outcome,
-                        step_no=step_no,
-                    )
-                planned_path = tuple(
-                    tuple(coord)
-                    for coord in (outcome.get("plan", {}).get("path") or ())
+                committed = self.game.commit_world_action(
+                    agent_key,
+                    outcome,
+                    stride_minutes=stride_minutes,
+                    movement_budget=self._movement_budget(stride_minutes),
                 )
-                movement_budget = (
-                    0
-                    if (outcome.get("plan") or {}).get("movement_directive") == "WAIT"
-                    else self._movement_budget(stride_minutes)
-                )
-                consumed = planned_path[:movement_budget]
-                remaining = planned_path[len(consumed) :]
-                executed_path = tuple()
-                if consumed:
-                    move = getattr(agent, "move", None)
-                    if callable(move):
-                        move(tuple(consumed[-1]), remaining)
-                    else:
-                        # 导入器和测试使用的轻量领域适配器，可能只暴露坐标与路径状态。
-                        agent.coord = tuple(consumed[-1])
-                        agent.path = list(remaining)
-                    # 已提交路径描述的是一个移动区间，必须同时包含观测起点和所有已消费路点，
-                    # 这样 from_coord -> path -> to_coord 才能形成自洽的事实链。
-                    observed_waypoints = (
-                        consumed[1:] if consumed[0] == from_coord else consumed
-                    )
-                    executed_path = (from_coord, *observed_waypoints)
+                outcome = committed["outcome"]
+                planned_path = committed["planned_path"]
+                executed_path = committed["executed_path"]
+                remaining = committed["remaining_path"]
                 collector.capture_agent(
                     agent_key,
                     agent,

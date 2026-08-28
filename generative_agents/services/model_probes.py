@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from time import perf_counter
 from typing import Any, Literal
+from urllib.parse import urlparse
 
 import requests
 
@@ -88,6 +91,9 @@ class ModelProbeService:
                 },
             )
         definition = ExperimentDefinition.model_validate(draft["definition"])
+        definition, credential_source = self._with_local_unsloth_credential(
+            definition, purpose
+        )
         model = getattr(definition.models, purpose)
         started = perf_counter()
         config_hash = self._configuration_hash(model)
@@ -100,6 +106,8 @@ class ModelProbeService:
         )
         try:
             resolved, service_info = self._probe_model(purpose, model)
+            if credential_source:
+                service_info["credential_source"] = credential_source
         except ServiceError as exc:
             latency_ms = max(0, round((perf_counter() - started) * 1000))
             details = exc.details if isinstance(exc.details, dict) else {}
@@ -374,6 +382,13 @@ class ModelProbeService:
                 },
             )
         definition = ExperimentDefinition.model_validate(draft["definition"])
+        credential_sources: dict[str, str] = {}
+        for purpose in ("chat", "embedding"):
+            definition, source = self._with_local_unsloth_credential(
+                definition, purpose
+            )
+            if source:
+                credential_sources[purpose] = source
         payload = definition.model_dump(mode="json", exclude_none=False)
         resolutions: list[dict[str, Any]] = []
         for purpose in ("chat", "embedding"):
@@ -389,6 +404,8 @@ class ModelProbeService:
             started = perf_counter()
             try:
                 resolved, service_info = self._probe_model(purpose, model)
+                if purpose in credential_sources:
+                    service_info["credential_source"] = credential_sources[purpose]
             except ServiceError as exc:
                 latency_ms = max(0, round((perf_counter() - started) * 1000))
                 details = exc.details if isinstance(exc.details, dict) else {}
@@ -481,6 +498,72 @@ class ModelProbeService:
                     "reason": type(exc).__name__,
                 },
             ) from exc
+
+    def _with_local_unsloth_credential(
+        self, definition: ExperimentDefinition, purpose: Purpose
+    ) -> tuple[ExperimentDefinition, str | None]:
+        """Import a valid loopback Unsloth key without exposing it to the browser."""
+
+        model = getattr(definition.models, purpose)
+        key = self._valid_cached_unsloth_key(str(model.base_url or ""))
+        if not key:
+            return definition, None
+        current = (
+            self._secrets.resolve_plaintext(model.secret_ref)
+            if model.secret_ref
+            else ""
+        )
+        if current == key:
+            return definition, "local_unsloth_cache"
+        saved = self._secrets.create(
+            kind="OPENAI_API_KEY",
+            value=key,
+            supersedes_id=model.secret_ref,
+        )
+        payload = definition.model_dump(mode="json", exclude_none=False)
+        payload["models"][purpose]["secret_ref"] = saved["secret_id"]
+        payload["models"][purpose]["resolved_model"] = None
+        if purpose == "chat":
+            payload["models"][purpose]["context_window"] = None
+        return ExperimentDefinition.model_validate(payload), "local_unsloth_cache"
+
+    def _valid_cached_unsloth_key(self, configured_base_url: str) -> str | None:
+        parsed = urlparse(configured_base_url)
+        if parsed.scheme not in {"http", "https"} or parsed.hostname not in {
+            "127.0.0.1",
+            "localhost",
+            "::1",
+        }:
+            return None
+        base_path = parsed.path.rstrip("/")
+        if base_path.endswith("/v1"):
+            base_path = base_path[:-3]
+        authority = parsed.netloc
+        server_base = f"{parsed.scheme}://{authority}{base_path}".rstrip("/")
+        cache = Path.home() / ".unsloth" / "studio" / "auth" / "agent_api_key.json"
+        try:
+            document = json.loads(cache.read_text(encoding="utf-8"))
+            entry = (document.get("servers") or {}).get(server_base) or {}
+        except (OSError, ValueError, TypeError):
+            return None
+        candidates = [
+            key
+            for bucket in ("saved", "minted")
+            for key in (entry.get(bucket) or ())
+            if isinstance(key, str) and key
+        ]
+        for key in candidates:
+            try:
+                response = self._session.get(
+                    f"{server_base}/v1/models",
+                    headers={"Authorization": f"Bearer {key}"},
+                    timeout=min(3, self._max_timeout),
+                )
+                if response.ok:
+                    return key
+            except requests.RequestException:
+                return None
+        return None
 
     def _execute_probe(self, purpose, model, *, secret: str, timeout: int):
         """执行`execute``probe`的内部处理，供当前模块或类复用。

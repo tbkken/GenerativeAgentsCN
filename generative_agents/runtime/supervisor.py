@@ -17,8 +17,7 @@ import psutil
 from filelock import FileLock
 
 from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import REQUIRED_ATOMIC_SKILLS
-from generative_agents.skills import SkillRegistry
+from generative_agents.skills import DatabaseSkillRegistry
 from generative_agents.status import RevisionState, RunStatus
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
@@ -31,6 +30,7 @@ from generative_agents.persistence.models import (
 from .context import RunPaths
 from .manifest import RunManifestStore, build_manifest_document
 from .scheduler import ClaimedRun, LocalRunSchedulerRepository
+from .stall import RunStallDetector
 
 
 @dataclass(slots=True)
@@ -78,6 +78,11 @@ class LocalProcessSupervisor:
         self._repository = LocalRunSchedulerRepository(
             database, max_concurrent_runs=max_concurrent_runs
         )
+        self._skill_registry = DatabaseSkillRegistry(
+            database,
+            cache_root=self._var_dir / "skill-runtime-cache",
+        )
+        self._stall_detector = RunStallDetector(database)
         self.max_concurrent_runs = max_concurrent_runs
         self.poll_interval_seconds = poll_interval_seconds
         self._process_factory = process_factory
@@ -144,6 +149,7 @@ class LocalProcessSupervisor:
         """
         self._reap_children()
         self._enforce_force_cancellations()
+        self._stall_detector.inspect()
         self._repository.reconcile()
         while not self._stop.is_set():
             claimed = self._repository.claim_next()
@@ -188,6 +194,7 @@ class LocalProcessSupervisor:
         说明:
             运行首次启动时生成快照，恢复或重试时只做一致性核验，从而保证同一运行不会读取漂移的配置。
         """
+        self._skill_registry.ensure_builtin_skills()
         with self._database.session_factory() as session:
             revision = session.get(ExperimentRevision, claimed.revision_id)
             if revision is None or revision.state != RevisionState.PUBLISHED:
@@ -224,23 +231,28 @@ class LocalProcessSupervisor:
                 )
             paths = RunPaths.under(self._var_dir, UUID(claimed.run_id))
             store = RunManifestStore(paths)
+            skill_roots = {
+                definition.engine.brain_skill,
+                *self._bound_skill_names(
+                    definition.world.model_dump(mode="json", exclude_none=False)
+                ),
+            }
+            skill_bundle = self._skill_registry.snapshot(skill_roots)
             if store.exists():
-                store.reuse_for_revision(
+                verified = store.reuse_for_revision(
                     experiment_id=UUID(claimed.experiment_id),
                     revision_id=UUID(claimed.revision_id),
                     definition=definition,
                     expected_definition_hash=revision.definition_hash,
                     assets=assets,
+                    skill_bundle=skill_bundle,
                 )
+                run = session.get(Run, claimed.run_id)
+                if run is None:
+                    raise RuntimeError("claimed Run disappeared during materialization")
+                run.execution_hash = verified.execution_input_hash
+                session.commit()
                 return
-            skill_roots = {
-                definition.engine.brain_skill,
-                *(key.replace("_", "-") for key in REQUIRED_ATOMIC_SKILLS),
-                *self._bound_skill_names(
-                    definition.world.model_dump(mode="json", exclude_none=False)
-                ),
-            }
-            skill_bundle = SkillRegistry().snapshot(skill_roots)
             document = build_manifest_document(
                 run_id=UUID(claimed.run_id),
                 experiment_id=UUID(claimed.experiment_id),
@@ -252,7 +264,12 @@ class LocalProcessSupervisor:
                 materialized_at=datetime.now(timezone.utc),
                 skill_bundle=skill_bundle,
             )
-            store.materialize(document)
+            verified = store.materialize(document)
+            run = session.get(Run, claimed.run_id)
+            if run is None:
+                raise RuntimeError("claimed Run disappeared during materialization")
+            run.execution_hash = verified.execution_input_hash
+            session.commit()
 
     @staticmethod
     def _bound_skill_names(value) -> set[str]:

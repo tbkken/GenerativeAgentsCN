@@ -724,11 +724,11 @@
       const experimentCreateSelect = document.getElementById('newExperimentMap');
       if (experimentCreateSelect) {
         const previousCreateValue = experimentCreateSelect.value;
-        experimentCreateSelect.innerHTML = published
-          .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}${item.map_key === 'the-ville' ? ' · 默认' : ''}</option>`).join('');
+        experimentCreateSelect.innerHTML = '<option value="">请选择已发布地图</option>' + published
+          .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
         experimentCreateSelect.value = published.some(item => item.current_published.id === previousCreateValue)
           ? previousCreateValue
-          : (published.find(item => item.map_key === 'the-ville')?.current_published.id || published[0]?.current_published.id || '');
+          : '';
       }
     },
 
@@ -736,8 +736,6 @@
       this.init();
       if (!this.selectorMaps.length) await this.loadMaps();
       this.populateMapSelectors();
-      const baseline = this.selectorMaps.find(item => item.map_key === 'the-ville')?.current_published?.id;
-      if (baseline) document.getElementById('newExperimentMap').value = baseline;
     },
 
     recoveryKey(mapId = this.selectedMapId, draftId = this.draft?.id) {

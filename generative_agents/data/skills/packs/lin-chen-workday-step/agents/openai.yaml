@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lin Chen Workday Step"
+  short_description: "运行 Lin Chen Workday Step 智能体技能"
+  default_prompt: "使用 $lin-chen-workday-step 来完成任务。"

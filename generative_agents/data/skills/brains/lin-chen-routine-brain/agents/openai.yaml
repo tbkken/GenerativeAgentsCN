@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lin Chen Routine Brain"
+  short_description: "运行 Lin Chen Routine Brain 智能体技能"
+  default_prompt: "使用 $lin-chen-routine-brain 来完成任务。"

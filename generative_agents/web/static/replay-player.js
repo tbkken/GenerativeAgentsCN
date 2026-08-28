@@ -31,11 +31,28 @@
   // 名称与动作气泡使用独立偏移，长名称不会和动作表情争夺同一位置。
   const AGENT_NAME_OFFSET = Object.freeze({ x: -18, y: -44 });
   const ACTION_BUBBLE_OFFSET = Object.freeze({ x: 38, y: -24 });
+  const SPATIAL_HIERARCHY_DEPTH = Object.freeze({
+    WORLD: 1,
+    SECTOR: 2,
+    ARENA: 3,
+    GAME_OBJECT: 4,
+  });
 
   class GAReplayPlayer {
     static resolveAgentSelection(selectedKey, selectedRevisionId, runRevisionId, agents) {
       if (!selectedKey || !selectedRevisionId || selectedRevisionId !== runRevisionId) return null;
       return agents.some(agent => agent.agent_key === selectedKey) ? selectedKey : null;
+    }
+
+    static orderedSpatialHierarchyNodes(nodes, maxDepth = 4) {
+      return (Array.isArray(nodes) ? [...nodes] : [])
+        .filter(node => Number(SPATIAL_HIERARCHY_DEPTH[node?.kind] || 0) <= Number(maxDepth))
+        .filter(node => SPATIAL_HIERARCHY_DEPTH[node?.kind] && node?.material_slice_id)
+        .sort((left, right) => (
+          SPATIAL_HIERARCHY_DEPTH[left.kind] - SPATIAL_HIERARCHY_DEPTH[right.kind]
+          || Number(left.sort_order || 0) - Number(right.sort_order || 0)
+          || String(left.id || '').localeCompare(String(right.id || ''))
+        ));
     }
 
     constructor(options = {}) {
@@ -61,6 +78,7 @@
       this.abortController = null;
       this.generation = 0;
       this.windows = new Map();
+      this.worldStateBefore = new Map();
       this.agentObjects = new Map();
       this.agentDefinitions = new Map();
       this.selectedAgentKey = null;
@@ -110,6 +128,7 @@
       if (this.abortController) this.abortController.abort();
       this.abortController = null;
       this.windows.clear();
+      this.worldStateBefore.clear();
       this.agentObjects.clear();
       this.mapLayers.clear();
       this.worldObjects.clear();
@@ -226,6 +245,7 @@
       const previousAvailableStep = this.availableStep;
       if (manifest.available_step < this.availableStep) {
         this.windows.clear();
+        this.worldStateBefore.clear();
         this.currentStep = Math.min(this.currentStep, manifest.available_step);
       }
       // A RUNNING replay grows inside its last (usually incomplete) cached
@@ -238,6 +258,7 @@
       ) {
         const tailFrom = Math.floor((previousAvailableStep - 1) / this.windowSize) * this.windowSize + 1;
         this.windows.delete(tailFrom);
+        this.worldStateBefore.delete(tailFrom);
       }
       if (manifest.available_step !== this.availableStep) {
         this.availableStep = manifest.available_step;
@@ -281,7 +302,12 @@
         this.resultVersion = page.result_version;
         window = page.steps;
         this.windows.set(from, window);
-        while (this.windows.size > 5) this.windows.delete(this.windows.keys().next().value);
+        this.worldStateBefore.set(from, page.world_state_before || {});
+        while (this.windows.size > 5) {
+          const oldest = this.windows.keys().next().value;
+          this.windows.delete(oldest);
+          this.worldStateBefore.delete(oldest);
+        }
       }
       return window.find(item => item.step_no === stepNo) || null;
     }
@@ -293,6 +319,7 @@
 
     _renderStep(step) {
       if (!this.scene) return;
+      this._renderWorldState(step.step_no);
       step.agents.forEach(fact => {
         const object = this.agentObjects.get(fact.agent_key);
         if (!object) return;
@@ -316,7 +343,13 @@
           );
         }
         if (object.bubble) {
-          object.bubble.setText(fact.action?.emoji || fact.action?.description || '');
+          const actionDescription = fact.action?.description || '';
+          const actionEmoji = fact.action?.emoji || '';
+          object.bubble.setText(
+            actionDescription
+              ? `${actionEmoji ? `${actionEmoji} ` : ''}${actionDescription}`
+              : actionEmoji,
+          );
           object.bubble.setPosition(
             targetX + ACTION_BUBBLE_OFFSET.x,
             targetY + ACTION_BUBBLE_OFFSET.y,
@@ -345,6 +378,26 @@
         schedule_revisions: step.schedule_revisions,
         effects: step.effects || [],
         availableStep: this.availableStep,
+      });
+    }
+
+    _renderWorldState(stepNo) {
+      const from = Math.floor((Math.max(1, stepNo) - 1) / this.windowSize) * this.windowSize + 1;
+      const state = { ...(this.worldStateBefore.get(from) || {}) };
+      const window = this.windows.get(from) || [];
+      window.forEach(step => {
+        if (step.step_no > stepNo) return;
+        (step.domain_events || []).forEach(event => {
+          if (event.event_type !== 'GAME_OBJECT_STATE_CHANGED') return;
+          const payload = event.payload?.structured_payload || {};
+          if (payload.object_key && payload.after && typeof payload.after === 'object') {
+            state[payload.object_key] = { ...payload.after };
+          }
+        });
+      });
+      this.worldObjects.forEach((object, objectKey) => {
+        object.state = { ...(object.initialState || {}), ...(state[objectKey] || {}) };
+        if (object.glyph) object.glyph.setText(this._appearanceGlyph(object.appearance, object.state));
       });
     }
 
@@ -645,6 +698,23 @@
                   composite.restore();
                 });
               });
+              // Hierarchy-bound materials are the semantic map layers.  The
+              // editor renders them parent-first, and replay must preserve the
+              // same frozen World -> Sector -> Arena -> Game Object ordering.
+              // Game Objects remain live Phaser objects below, so the static
+              // composite owns only L1-L3 and the object pass owns L4.
+              GAReplayPlayer.orderedSpatialHierarchyNodes(hierarchyNodes, 3).forEach(node => {
+                const bounds = node.bounds || {};
+                const slice = sliceById.get(String(node.material_slice_id || ''));
+                detailedWorldDrawn = drawCompositeSlice(
+                  slice,
+                  0,
+                  Number(bounds.x || 0) * scale,
+                  Number(bounds.y || 0) * scale,
+                  Math.max(1, Number(bounds.width || 1)) * scale,
+                  Math.max(1, Number(bounds.height || 1)) * scale,
+                ) || detailedWorldDrawn;
+              });
               if (detailedWorldDrawn) {
                 this.textures.addCanvas('world-composite', compositeCanvas);
                 this.add.image(0, 0, 'world-composite').setOrigin(0).setDepth(1);
@@ -669,10 +739,15 @@
               for (let x = 0; x <= width; x += 1) gridGraphics.lineBetween(x * scale, 0, x * scale, height * scale);
               for (let y = 0; y <= height; y += 1) gridGraphics.lineBetween(0, y * scale, width * scale, y * scale);
 
-              (assets.objects || []).forEach(item => {
+              [...(assets.objects || [])].sort((left, right) => {
+                const leftNode = hierarchyById.get(String(left.instance_key || ''));
+                const rightNode = hierarchyById.get(String(right.instance_key || ''));
+                return Number(leftNode?.sort_order || 0) - Number(rightNode?.sort_order || 0)
+                  || String(left.instance_key || '').localeCompare(String(right.instance_key || ''));
+              }).forEach(item => {
                 const hierarchyNode = hierarchyById.get(String(item.instance_key || ''));
                 const bounds = hierarchyNode?.bounds || {};
-                if (hierarchyNode?.material_slice_id && drawMaterialSlice(
+                const materialDrawn = hierarchyNode?.material_slice_id && drawMaterialSlice(
                   hierarchyNode.material_slice_id,
                   Number(bounds.x ?? item.x_m ?? item.x ?? 0),
                   Number(bounds.y ?? item.y_m ?? item.y ?? 0),
@@ -681,19 +756,24 @@
                     heightInTiles: Number(bounds.height || 1),
                     depth: 10,
                   },
-                )) return;
+                );
                 const [px, py] = player._worldPoint([
                   item.x_m ?? item.x,
                   item.y_m ?? item.y,
                 ]);
-                const glyph = this.add.text(
-                  px,
-                  py,
-                  player._appearanceGlyph(item.appearance, item.state),
-                  { fontFamily: REPLAY_FONT_FAMILY, fontSize: `${Math.max(14, scale)}px` },
-                ).setOrigin(0.5).setDepth(10);
-                if (typeof glyph.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);
-                player.worldObjects.set(item.instance_key, { glyph, appearance: item.appearance || {} });
+                const glyph = materialDrawn ? null : this.add.text(
+                    px,
+                    py,
+                    player._appearanceGlyph(item.appearance, item.state),
+                    { fontFamily: REPLAY_FONT_FAMILY, fontSize: `${Math.max(14, scale)}px` },
+                  ).setOrigin(0.5).setDepth(10);
+                if (typeof glyph?.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);
+                player.worldObjects.set(item.instance_key, {
+                  glyph,
+                  appearance: item.appearance || {},
+                  initialState: { ...(item.state || {}) },
+                  state: { ...(item.state || {}) },
+                });
               });
 
               this.cameras.main.setBounds(0, 0, width * scale, height * scale);

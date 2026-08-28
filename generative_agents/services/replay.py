@@ -11,6 +11,7 @@ from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     ExperimentRevision,
     Run,
+    RunDomainEvent,
     RunResultSummary,
     RunStep,
 )
@@ -136,6 +137,11 @@ class ReplayService:
             definition = ExperimentDefinition.model_validate(revision.definition_json)
             revision_id = revision.id
             definition_hash = revision.definition_hash
+            world_state_before = self._world_state_before(
+                session,
+                run_id=run_id,
+                before_step=from_step,
+            )
             # The detached row retains only immutable scalar ownership fields.
             session.expunge(run)
 
@@ -167,8 +173,30 @@ class ReplayService:
             "from_step": from_step,
             "next_from_step": next_from,
             "partial": partial,
+            "world_state_before": world_state_before,
             "steps": validated["steps"],
         }
+
+    @staticmethod
+    def _world_state_before(session, *, run_id: str, before_step: int) -> dict[str, dict[str, Any]]:
+        """Reduce committed object-state events before a replay window."""
+        rows = session.scalars(
+            select(RunDomainEvent)
+            .where(
+                RunDomainEvent.run_id == run_id,
+                RunDomainEvent.step_no < before_step,
+                RunDomainEvent.event_type == "GAME_OBJECT_STATE_CHANGED",
+            )
+            .order_by(RunDomainEvent.step_no, RunDomainEvent.id)
+        )
+        states: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            structured = (row.payload_json or {}).get("structured_payload") or {}
+            object_key = str(structured.get("object_key") or "").strip()
+            after = structured.get("after")
+            if object_key and isinstance(after, dict):
+                states[object_key] = dict(after)
+        return states
 
     def _context(self, run_id: str) -> dict[str, Any]:
         """执行运行上下文的内部处理，供当前模块或类复用。

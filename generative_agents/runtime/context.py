@@ -16,7 +16,6 @@ from pathlib import Path
 from typing import Any, Mapping, Protocol
 from uuid import UUID
 
-from generative_agents.config.schema import REQUIRED_ATOMIC_SKILLS
 from generative_agents.skills import SkillRegistry
 
 from .algorithm import AlgorithmProfile
@@ -464,17 +463,6 @@ class FileSkillInstructionRepository:
         brain = self.registry.get(self.brain)
         if brain.kind != "brain":
             raise ValueError(f"Configured brain is not a brain Skill: {self.brain}")
-        missing = []
-        for key in REQUIRED_ATOMIC_SKILLS:
-            try:
-                self.registry.get(key)
-            except ValueError:
-                missing.append(key)
-        if missing:
-            raise ValueError(
-                "brain Skill set is missing atomic Skills: "
-                + ", ".join(sorted(missing))
-            )
 
     def get(self, key: str) -> str:
         """执行 `FileSkillInstructionRepository` 的`get`操作。
@@ -516,7 +504,7 @@ class SnapshotSkillInstructionRepository:
             ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
         """
         normalized = {str(key).replace("_", "-") for key in self.skills}
-        missing = {key.replace("_", "-") for key in REQUIRED_ATOMIC_SKILLS} - normalized
+        missing: set[str] = set()
         if self.brain not in normalized:
             missing.add(self.brain)
         if missing:
@@ -594,4 +582,5 @@ class SimulationContext:
     passive_skills: PassiveSkillExecutor | None = None
     memory_stream: Any | None = None
     skill_mcp: Any | None = None
+    brain_runtime: Any | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)

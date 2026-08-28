@@ -1,0 +1,4 @@
+interface:
+  display_name: "Routine Timekeeper"
+  short_description: "运行 Routine Timekeeper 智能体技能"
+  default_prompt: "使用 $routine-timekeeper 来完成任务。"

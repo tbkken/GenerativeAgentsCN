@@ -93,9 +93,7 @@ class StepResultCollector:
             activity = ActivityKind.MOVING
         elif predicate in {"对话", "chat", "聊天"}:
             activity = ActivityKind.CHAT
-        elif any(
-            word in description.casefold() for word in ("sleep", "rest", "睡", "休息")
-        ):
+        elif predicate in {"等待", "wait", "休息", "睡眠", "睡觉"}:
             activity = ActivityKind.REST
         else:
             activity = ActivityKind.OTHER
@@ -142,16 +140,6 @@ class StepResultCollector:
             },
             key=f"action:{agent_key}",
         )
-        if tuple(from_coord) != to_coord:
-            self._add_domain_event(
-                "MOVED",
-                (agent_key,),
-                {
-                    "from_coord": tuple(from_coord),
-                    "to_coord": to_coord,
-                    "path": observed_path,
-                },
-            )
         for raw_event in outcome.get("events") or ():
             self._capture_event(raw_event)
 
@@ -241,14 +229,21 @@ class StepResultCollector:
         if kind == "conversation":
             self._sequences["conversation"] += 1
             sequence = self._sequences["conversation"]
-            conversation_id = deterministic_record_id(
-                self.builder.run_id,
-                self.builder.step_no,
-                "conversation",
-                str(sequence),
+            raw_conversation_id = event.get("conversation_id")
+            conversation_id = (
+                UUID(str(raw_conversation_id))
+                if raw_conversation_id
+                else deterministic_record_id(
+                    self.builder.run_id,
+                    self.builder.step_no,
+                    "conversation",
+                    str(sequence),
+                )
             )
             messages = []
-            for message_sequence, (speaker, content) in enumerate(event["messages"], 1):
+            first_message_sequence = int(event.get("message_sequence") or 1)
+            for message_offset, (speaker, content) in enumerate(event["messages"]):
+                message_sequence = first_message_sequence + message_offset
                 speaker_key = self._name_to_key.get(speaker, speaker)
                 messages.append(
                     ConversationMessage(
@@ -256,7 +251,7 @@ class StepResultCollector:
                             self.builder.run_id,
                             self.builder.step_no,
                             "message",
-                            f"{sequence}:{message_sequence}",
+                            f"{conversation_id}:{message_sequence}",
                         ),
                         sequence=message_sequence,
                         speaker_agent_key=speaker_key,
@@ -327,6 +322,9 @@ class StepResultCollector:
                         datetime.fromisoformat(expires_at) if expires_at else None
                     ),
                     evidence_memory_ids=tuple(event.get("evidence_memory_ids") or ()),
+                    replacement_memory_id=event.get("replacement_memory_id"),
+                    supersedes_memory_id=event.get("supersedes_memory_id"),
+                    reason=event.get("reason"),
                 )
             )
             if delta_kind == MemoryDeltaKind.CREATED and semantic_event:
@@ -420,9 +418,11 @@ class StepResultCollector:
                 StepEffectKind.SKILL_EXECUTED,
                 (event["agent_key"],),
                 {
+                    "input_text": event.get("input_text"),
                     "output_text": event.get("output_text"),
                     "execution_source": event.get("execution_source"),
                     "source_type": "AGENT_COGNITION",
+                    "trace": list(event.get("trace") or ()),
                 },
                 key=(
                     f"skill:{event['agent_key']}:{event['skill_name']}:"
@@ -430,6 +430,43 @@ class StepResultCollector:
                 ),
                 skill_name=event["skill_name"],
                 skill_revision=event.get("skill_revision"),
+            )
+        elif kind == "world_domain_event":
+            structured_payload = event.get("structured_payload")
+            if not isinstance(structured_payload, Mapping) or not structured_payload:
+                raise ValueError(
+                    "world_domain_event requires a non-empty structured_payload"
+                )
+            subject = str(event.get("subject") or "").strip()
+            predicate = str(event.get("predicate") or "").strip()
+            object_value = str(event.get("object") or "").strip()
+            if not subject or not predicate or not object_value:
+                raise ValueError(
+                    "world_domain_event requires Event(subject, predicate, object)"
+                )
+            self._add_domain_event(
+                str(event.get("event_type") or "WORLD_CHANGED"),
+                tuple(event.get("agent_keys") or ()),
+                {
+                    "title": str(
+                        structured_payload.get("description")
+                        or f"{subject}{predicate}{object_value}"
+                    ),
+                    "detail": f"{subject} / {predicate} / {object_value}",
+                    "location": ":".join(
+                        str(part)
+                        for part in (
+                            structured_payload.get("after_address")
+                            or structured_payload.get("address")
+                            or ()
+                        )
+                        if str(part)
+                    ),
+                    "subject": subject,
+                    "predicate": predicate,
+                    "object": object_value,
+                    "structured_payload": dict(structured_payload),
+                },
             )
 
     def capture_event(self, event: Mapping) -> None:

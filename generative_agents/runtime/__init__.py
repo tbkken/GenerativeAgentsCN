@@ -1,6 +1,8 @@
 """Runtime contracts for isolated experiment workers."""
 
 from .algorithm import AlgorithmProfile, get_algorithm_profile
+from .brain import BrainRuntime
+from .capabilities import PlannedWorldAction, SimulationMCPServer
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from .context import (
     RunControl,
@@ -11,6 +13,7 @@ from .context import (
     SimulationContext,
 )
 from .frame_store import FrameConflictError, FrameStore
+from .iteration import IterationContext
 from .manifest import RunManifestStore, VerifiedRunManifest, build_manifest_document
 from .model_trace import (
     ModelTraceEvent,
@@ -42,6 +45,7 @@ __all__ = [
     "ActivityKind",
     "AgentStepResult",
     "AlgorithmProfile",
+    "BrainRuntime",
     "CheckpointBundleWriter",
     "CheckpointSnapshot",
     "ConversationMessage",
@@ -51,6 +55,7 @@ __all__ = [
     "FrameStore",
     "MemoryDelta",
     "MemoryDeltaKind",
+    "IterationContext",
     "ModelTraceEvent",
     "ModelTraceEventType",
     "ModelTraceStatus",
@@ -58,6 +63,7 @@ __all__ = [
     "ModelTraceProjectionError",
     "ModelTraceProjector",
     "ModelUsageDelta",
+    "PlannedWorldAction",
     "RunControl",
     "RunManifestStore",
     "RunPaths",
@@ -69,6 +75,7 @@ __all__ = [
     "StepEffectRecord",
     "SimulationClock",
     "SimulationContext",
+    "SimulationMCPServer",
     "StepResult",
     "StepResultBuilder",
     "SqliteResultProjector",

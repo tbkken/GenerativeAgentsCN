@@ -1,5 +1,6 @@
 """generative_agents.model.llm_model"""
 
+import copy
 import json
 import time
 import re
@@ -34,6 +35,10 @@ class LLMModel:
         self._api_key = config.get("api_key", "")
         self._base_url = config.get("base_url", "")
         self._model = config["model"]
+        self._timeout = config.get("timeout_seconds", config.get("timeout", 300))
+        self._max_tokens = config.get("max_tokens", 2048)
+        self._temperature = config.get("temperature", 0.5)
+        self._enable_thinking = bool(config.get("enable_thinking", False))
         self._summary = {"total": [0, 0, 0]}
         self._retry_attempts = config.get("retry_attempts", 10)
         self._retry_backoff = config.get("retry_backoff_seconds", 5)
@@ -45,6 +50,45 @@ class LLMModel:
 
         self._handle = self.setup(config)
         self._enabled = True
+
+    def chat_completion(
+        self,
+        messages,
+        *,
+        tools=None,
+        temperature=None,
+        max_tokens=None,
+        agent_key=None,
+        step_no=None,
+        purpose="skill_runtime",
+        prompt_key=None,
+        retry=None,
+    ):
+        """Execute one traced OpenAI-compatible chat/tool logical call.
+
+        Skill orchestration uses this boundary instead of issuing HTTP requests
+        directly.  Transport failures and malformed tool arguments therefore
+        share the same retry, usage, cancellation, and trace semantics as every
+        other model call in a Run.
+        """
+
+        request_messages = copy.deepcopy(list(messages))
+        return self.completion(
+            request_messages,
+            retry=retry,
+            return_type=None,
+            caller=purpose,
+            agent_key=agent_key,
+            step_no=step_no,
+            prompt_key=prompt_key,
+            raise_on_failure=True,
+            _completion_method=self._chat_completion,
+            tools=list(tools or ()),
+            temperature=(
+                self._temperature if temperature is None else float(temperature)
+            ),
+            max_tokens=max_tokens or self._max_tokens,
+        )
 
     def setup(self, config):
         """执行 `LLMModel` 的`setup`操作。
@@ -85,6 +129,8 @@ class LLMModel:
             返回函数计算得到的结果。
         """
         retry = retry or self._retry_attempts
+        raise_on_failure = bool(kwargs.pop("raise_on_failure", False))
+        completion_method = kwargs.pop("_completion_method", None) or self._completion
         response = None
         call_id = uuid4()
         agent_key = kwargs.pop("agent_key", None)
@@ -97,8 +143,34 @@ class LLMModel:
             started_at = datetime.now(timezone.utc)
             self._last_usage = {}
             attempt_error = None
+            output = None
+            # Persist the request boundary before entering the blocking provider
+            # call. The diagnostics API tails this append-only fact directly, so
+            # a long local-model request is visible while it is still running.
+            self._record(
+                ModelTraceEvent(
+                    event_type=ModelTraceEventType.PHYSICAL_START,
+                    run_id=self._recorder.run_id if self._recorder else uuid4(),
+                    attempt_id=(
+                        self._recorder.attempt_id if self._recorder else uuid4()
+                    ),
+                    call_id=call_id,
+                    step_no=step_no,
+                    agent_key=agent_key,
+                    purpose=caller,
+                    prompt_key=prompt_key,
+                    provider=self.provider,
+                    resolved_model=self._model,
+                    started_at=started_at,
+                    ended_at=started_at,
+                    latency_ms=0,
+                    attempt_no=attempt_no,
+                    status=ModelTraceStatus.RUNNING,
+                    payload={"request": prompt},
+                )
+            )
             try:
-                output = self._completion(prompt, return_type, **kwargs)
+                output = completion_method(prompt, return_type, **kwargs)
                 self._summary["total"][0] += 1
                 self._summary[caller][0] += 1
                 if callback:
@@ -138,6 +210,7 @@ class LLMModel:
                     total_tokens=self._last_usage.get("total_tokens"),
                     error_code=type(attempt_error).__name__ if attempt_error else None,
                     error_summary=str(attempt_error) if attempt_error else None,
+                    payload={"request": prompt, "response": output},
                 )
             )
             if response is not None:
@@ -182,9 +255,92 @@ class LLMModel:
                 ),
                 error_code=type(logical_error).__name__ if logical_error else None,
                 error_summary=str(logical_error) if logical_error else None,
+                payload={"request": prompt, "response": result},
             )
         )
+        if response is None and raise_on_failure and last_error is not None:
+            raise last_error
         return result
+
+    def _chat_completion(
+        self,
+        messages,
+        _return_type,
+        *,
+        tools=None,
+        temperature=None,
+        max_tokens=None,
+    ):
+        """Perform one physical OpenAI-compatible chat completion request."""
+
+        base_url = self._base_url.rstrip("/")
+        if not base_url.endswith("/v1"):
+            base_url = f"{base_url}/v1"
+        payload = {
+            "model": self._model,
+            "messages": messages,
+            "temperature": (
+                self._temperature if temperature is None else float(temperature)
+            ),
+            "max_tokens": max_tokens or self._max_tokens,
+            "stream": False,
+            # False must be transmitted explicitly: several local servers
+            # enable thinking by default when this field is omitted.
+            "chat_template_kwargs": {"enable_thinking": self._enable_thinking},
+        }
+        if tools:
+            payload["tools"] = tools
+            payload["tool_choice"] = "auto"
+        headers = {"Content-Type": "application/json"}
+        if self._api_key:
+            headers["Authorization"] = f"Bearer {self._api_key}"
+        response = requests.post(
+            f"{base_url}/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=self._timeout,
+        )
+        response.raise_for_status()
+        document = response.json()
+        self._last_usage = document.get("usage") or {}
+        choices = document.get("choices") or []
+        if not choices or not isinstance(choices[0], dict):
+            raise ValueError("model response has no chat completion choice")
+        message = choices[0].get("message")
+        if not isinstance(message, dict):
+            raise ValueError("model response choice has no message object")
+        tool_calls = message.get("tool_calls") or []
+        if tool_calls:
+            try:
+                for call in tool_calls:
+                    function = call.get("function") or {}
+                    arguments = json.loads(function.get("arguments") or "{}")
+                    if not isinstance(arguments, dict):
+                        raise TypeError("tool arguments must decode to an object")
+            except (AttributeError, json.JSONDecodeError, TypeError) as exc:
+                # Preserve the malformed answer as repair context for the next
+                # configured physical attempt without mutating Skill messages.
+                messages.extend(
+                    [
+                        {
+                            "role": "assistant",
+                            "content": message.get("content") or "",
+                            "tool_calls": tool_calls,
+                        },
+                        {
+                            "role": "user",
+                            "content": (
+                                "The previous tool call arguments were invalid JSON. "
+                                "Return one corrected tool call whose arguments are a "
+                                "complete JSON object matching the supplied schema."
+                            ),
+                        },
+                    ]
+                )
+                raise ValueError("model returned invalid tool arguments") from exc
+        elif not str(message.get("content") or "").strip():
+            raise ValueError("model response has neither content nor tool calls")
+        return dict(message)
 
     @property
     def provider(self):
@@ -425,9 +581,9 @@ class VLLMLLMModel(LLMModel):
         异常:
             RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
         """
-        self._timeout = config.get("timeout", 300)
+        self._timeout = config.get("timeout_seconds", config.get("timeout", 300))
         self._max_tokens = config.get("max_tokens", 2048)
-        self._enable_thinking = config.get("enable_thinking", False)
+        self._enable_thinking = bool(config.get("enable_thinking", False))
         self._base_url = self._base_url.rstrip("/")
 
         session = requests.Session()

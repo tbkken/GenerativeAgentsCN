@@ -43,6 +43,7 @@ from generative_agents.status import (
 )
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 if TYPE_CHECKING:
     from .model_probes import ModelProbeService
@@ -70,11 +71,7 @@ def _iso_utc(value: datetime) -> str:
         返回处理后的文本或稳定标识。
     """
 
-    if value.tzinfo is None:
-        value = value.replace(tzinfo=timezone.utc)
-    else:
-        value = value.astimezone(timezone.utc)
-    return value.isoformat()
+    return iso_utc(value)
 
 
 def _encode_cursor(created_at: datetime, run_id: str) -> str:
@@ -410,6 +407,7 @@ class RunService:
         *,
         cursor: str | None = None,
         limit: int = 50,
+        archived: str = "active",
     ) -> dict[str, Any]:
         """查询`runs`。
 
@@ -428,10 +426,18 @@ class RunService:
             raise ServiceError(
                 "INVALID_LIMIT", "limit 必须在 1 到 100 之间", status_code=422
             )
+        if archived not in {"active", "archived", "all"}:
+            raise ServiceError(
+                "INVALID_ARCHIVE_FILTER", "Run 归档筛选无效", status_code=422
+            )
         with self._database.session_factory() as session:
             if session.get(Experiment, experiment_id) is None:
                 raise not_found("experiment", experiment_id)
             statement = select(Run).where(Run.experiment_id == experiment_id)
+            if archived == "active":
+                statement = statement.where(Run.archived_at.is_(None))
+            elif archived == "archived":
+                statement = statement.where(Run.archived_at.is_not(None))
             if cursor:
                 created_at, cursor_id = _decode_cursor(cursor)
                 statement = statement.where(
@@ -459,6 +465,72 @@ class RunService:
                 "next_cursor": next_cursor,
             }
 
+    def set_archived(self, run_id: str, *, archived: bool) -> dict[str, Any]:
+        with self._database.session_factory.begin() as session:
+            run = self._require_run(session, run_id)
+            if run.status in OPEN_RUN_STATUSES:
+                raise ServiceError(
+                    "RUN_ACTIVE",
+                    "正在运行、排队或等待停止的 Run 不能归档",
+                    status_code=409,
+                )
+            run.archived_at = self._now() if archived else None
+        return self.get_run(run_id)
+
+    def delete_run(self, run_id: str) -> dict[str, Any]:
+        """Hard-delete SQL facts and move Run files into recoverable trash."""
+
+        moved_to: Path | None = None
+        source = RunPaths.under(self._var_dir, UUID(run_id)).root.resolve()
+        var_root = Path(self._var_dir).resolve()
+        try:
+            source.relative_to(var_root)
+        except ValueError as exc:
+            raise ServiceError(
+                "RUN_STORAGE_BOUNDARY_VIOLATION",
+                "Run 存储路径超出受控目录",
+                status_code=500,
+            ) from exc
+        with self._database.session_factory() as session:
+            run = self._require_run(session, run_id)
+            if run.status in OPEN_RUN_STATUSES:
+                raise ServiceError(
+                    "RUN_ACTIVE", "活动 Run 不能删除", status_code=409
+                )
+            if run.archived_at is None:
+                raise ServiceError(
+                    "RUN_NOT_ARCHIVED",
+                    "请先归档 Run，再执行彻底删除",
+                    status_code=409,
+                )
+        if source.exists():
+            trash_root = (var_root / "trash" / "runs").resolve()
+            try:
+                trash_root.relative_to(var_root)
+            except ValueError as exc:
+                raise ServiceError(
+                    "RUN_STORAGE_BOUNDARY_VIOLATION",
+                    "Run 回收站路径超出受控目录",
+                    status_code=500,
+                ) from exc
+            trash_root.mkdir(parents=True, exist_ok=True)
+            moved_to = trash_root / f"{run_id}-{uuid4().hex[:8]}"
+            source.replace(moved_to)
+        try:
+            with self._database.session_factory.begin() as session:
+                run = self._require_run(session, run_id)
+                session.delete(run)
+        except Exception:
+            if moved_to is not None and moved_to.exists() and not source.exists():
+                source.parent.mkdir(parents=True, exist_ok=True)
+                moved_to.replace(source)
+            raise
+        return {
+            "run_id": run_id,
+            "deleted": True,
+            "storage_recoverable_at": str(moved_to) if moved_to is not None else None,
+        }
+
     def pause(self, run_id: str) -> dict[str, Any]:
         """执行 `RunService` 的`pause`操作。
 
@@ -480,12 +552,12 @@ class RunService:
             self._append_state_event(session, run, now)
         return self.get_run(run_id)
 
-    def cancel(self, run_id: str, *, force: bool = False) -> dict[str, Any]:
+    def cancel(self, run_id: str, *, force: bool = True) -> dict[str, Any]:
         """执行 `RunService` 的`cancel`操作。
 
         参数:
             run_id: 仿真运行的唯一标识。 类型：`str`。
-            force: 是否忽略可安全绕过的短路条件并强制执行；不会绕过所有权或完整性校验。 类型：`bool`。 默认值：`False`。
+            force: 是否由 Supervisor 立即终止已验证身份的 Worker；未提交的当前 Step 会被丢弃。 类型：`bool`。 默认值：`True`。
 
         返回:
             返回以字段名或业务键组织的结构化映射。
@@ -760,12 +832,22 @@ class RunService:
             else None
         )
         result_summary = session.get(RunResultSummary, run.id)
+        post_processing = session.scalar(
+            select(RunEvent)
+            .where(
+                RunEvent.run_id == run.id,
+                RunEvent.event_type == "post_processing",
+            )
+            .order_by(RunEvent.id.desc())
+            .limit(1)
+        )
         return {
             "run_id": run.id,
             "experiment_id": run.experiment_id,
             "revision_id": run.revision_id,
             "revision_no": revision.revision_no if revision else None,
             "definition_hash": revision.definition_hash if revision else None,
+            "execution_hash": run.execution_hash,
             "status": run.status,
             "queue_position": queue_position,
             "slot_no": run.slot_no,
@@ -785,6 +867,12 @@ class RunService:
             "created_at": _iso_utc(run.created_at),
             "started_at": _iso_utc(run.started_at) if run.started_at else None,
             "finished_at": _iso_utc(run.finished_at) if run.finished_at else None,
+            "archived_at": _iso_utc(run.archived_at) if run.archived_at else None,
             "recoverable": run.status in RESUMABLE_RUN_STATUSES
             and run.recoverable_step > 0,
+            "post_processing": (
+                dict(post_processing.payload_json or {})
+                if post_processing is not None
+                else None
+            ),
         }

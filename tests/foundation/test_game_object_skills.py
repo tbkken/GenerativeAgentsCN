@@ -55,6 +55,7 @@ def _world() -> dict:
                     "name": "行人信号灯",
                     "parent_id": "crossing",
                     "bounds": {"x": 3, "y": 4, "width": 1, "height": 1},
+                    "interaction_mode": "SKILL_BOUND",
                     "skill_bindings": [
                         {
                             "interaction_key": "query-pedestrian-signal",
@@ -113,6 +114,15 @@ class _CountingPassiveRuntime:
         return self.runtime.run(*args, **kwargs)
 
 
+class _TextSkillModel:
+    def __init__(self):
+        self.requests = []
+
+    def chat_completion(self, messages, **kwargs):
+        self.requests.append({"messages": messages, **kwargs})
+        return {"content": "洗手台反馈：已出水，可以洗漱。"}
+
+
 def test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language():
     """回归验证 ``test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
     runtime = SnapshotPassiveSkillRuntime(SkillRegistry().snapshot())
@@ -148,6 +158,48 @@ def test_crosswalk_signal_advisor_returns_all_three_phases_in_natural_language()
     assert "绿灯闪烁清空期" in flashing.output_text
 
 
+def test_game_object_can_bind_a_text_only_skill(tmp_path):
+    registry = SkillRegistry(tmp_path / "skills")
+    document = registry.create(
+        name="sink-response",
+        description="根据交互请求和对象状态用自然语言反馈。",
+        kind="atomic",
+    )
+    snapshot = registry.snapshot([document.name])
+    model = _TextSkillModel()
+    runtime = SnapshotPassiveSkillRuntime(
+        snapshot,
+        registry=registry,
+        model_config={"model": "test-model", "enable_thinking": False},
+        model_client=model,
+    )
+
+    result = runtime.run(
+        "sink-response",
+        "我想洗漱",
+        context={
+            "step_no": 3,
+            "virtual_time": "2026-08-28T07:10:00+08:00",
+            "agent": {"agent_key": "lin-chen", "name": "林晨"},
+            "game_object": {"object_key": "sink-1", "name": "洗手台"},
+            "object_state": {"water": "available"},
+        },
+    )
+
+    assert result.output_text == "洗手台反馈：已出水，可以洗漱。"
+    assert result.revision == document.revision
+    assert [item["event"] for item in result.trace] == [
+        "game_object_skill.start",
+        "skill.start",
+        "skill.result",
+        "game_object_skill.result",
+    ]
+    request = model.requests[0]
+    assert '"object_key": "sink-1"' in request["messages"][1]["content"]
+    assert request["agent_key"] == "lin-chen"
+    assert request["step_no"] == 3
+
+
 def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
     """回归验证 ``test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it`` 所描述的业务结果、故障边界和隔离约束。"""
     clock = SimulationClock(datetime(2026, 8, 22, 8, 0, tzinfo=timezone.utc))
@@ -159,17 +211,17 @@ def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
 
     assert [item.interaction_key for item in nearby] == ["query-pedestrian-signal"]
     assert runtime.calls == 0
-    assert system.interact(agent, [(4, 4), (4, 3)], step_no=1) is None
-    assert runtime.calls == 0
-
-    agent.selection = nearby[0].selection_key
-    first = system.interact(agent, [(4, 4), (4, 3)], step_no=1)
-    second = system.interact(agent, [(4, 4), (4, 3)], step_no=2)
+    first = system.interact_selected(
+        agent, nearby[0].selection_key, step_no=1
+    )
+    second = system.interact_selected(
+        agent, nearby[0].selection_key, step_no=2
+    )
 
     assert runtime.calls == 2
-    assert first["agent_decision"] == "WAIT"
+    assert first["agent_decision"] == "COMPLETED"
     assert "行人红灯" in first["response"]
-    assert second["agent_decision"] == "CONTINUE"
+    assert second["agent_decision"] == "COMPLETED"
     assert "行人绿灯" in second["response"]
 
 
@@ -226,46 +278,76 @@ class _InteractiveRunnerGame:
         """为本测试模块封装 ``get_agent`` 辅助步骤，减少重复的场景搭建代码。"""
         return self.agent
 
-    def agent_think(self, _agent_key, status):
+    def agent_think(
+        self,
+        _agent_key,
+        status,
+        *,
+        step_no,
+        total_steps,
+        stride_minutes,
+    ):
         """为本测试模块封装 ``agent_think`` 辅助步骤，减少重复的场景搭建代码。"""
         self.agent.move(status["coord"], status.get("path"))
         route = list(self.agent.path or self.route)
+        decision = "WAIT" if step_no == 1 else "MOVE"
+        response = "当前为行人红灯，请等待。" if step_no == 1 else "当前为行人绿灯，可以通行。"
         return {
-            "plan": {"path": route},
+            "plan": {"path": route if decision == "MOVE" else []},
+            "world_action": {
+                "action_type": decision,
+                "arguments": {"action_type": decision},
+                "path": route if decision == "MOVE" else [],
+            },
             "info": {
                 "currently": "准备过马路",
                 "associate": {},
                 "concepts": {},
                 "action": {},
                 "schedule": {},
+                "external_observations": [{
+                    "object_key": "pedestrian-signal",
+                    "response": response,
+                    "agent_decision": "WAIT" if step_no == 1 else "CONTINUE",
+                }],
             },
-            "events": (),
+            "events": ({
+                "kind": "game_object_interaction",
+                "agent_key": "pedestrian",
+                "object_key": "pedestrian-signal",
+                "object_name": "行人信号灯",
+                "interaction_key": "query-pedestrian-signal",
+                "skill_name": "traffic-signal-state",
+                "skill_revision": "revision-demo",
+                "request": "现在可以过马路吗？",
+                "response": response,
+                "agent_decision": "COMPLETED",
+                "location": ("过街演示", "道路", "斑马线"),
+            },),
         }
 
-    def resolve_game_object_interaction(self, _agent_key, outcome, *, step_no):
-        """为本测试模块封装 ``resolve_game_object_interaction`` 辅助步骤，减少重复的场景搭建代码。"""
-        decision = "WAIT" if step_no == 1 else "CONTINUE"
-        response = "当前为行人红灯，请等待。" if decision == "WAIT" else "当前为行人绿灯，可以通行。"
-        outcome["plan"]["movement_directive"] = decision
-        outcome["info"]["external_observations"] = [{
-            "object_key": "pedestrian-signal",
-            "response": response,
-            "agent_decision": decision,
-        }]
-        outcome["events"] = ({
-            "kind": "game_object_interaction",
-            "agent_key": "pedestrian",
-            "object_key": "pedestrian-signal",
-            "object_name": "行人信号灯",
-            "interaction_key": "query-pedestrian-signal",
-            "skill_name": "traffic-signal-state",
-            "skill_revision": "revision-demo",
-            "request": "现在可以过马路吗？",
-            "response": response,
-            "agent_decision": decision,
-            "location": ("过街演示", "道路", "斑马线"),
-        },)
-        return outcome
+    def commit_world_action(
+        self,
+        _agent_key,
+        outcome,
+        *,
+        stride_minutes,
+        movement_budget,
+    ):
+        """提交测试 Brain 已选择的单一世界动作。"""
+        planned = tuple(tuple(coord) for coord in outcome["world_action"]["path"])
+        consumed = planned[:movement_budget]
+        remaining = planned[len(consumed):]
+        origin = tuple(self.agent.coord)
+        if consumed:
+            self.agent.move(consumed[-1], remaining)
+        executed = (origin, *consumed) if consumed else ()
+        return {
+            "outcome": outcome,
+            "planned_path": planned,
+            "executed_path": executed,
+            "remaining_path": remaining,
+        }
 
 
 class _Committer:
@@ -357,6 +439,12 @@ def test_demo_resources_materialize_through_public_apis(database_url):
             },
         )
         assert agent_revision.status_code == 200, agent_revision.text
+        assert {
+            item["code"] for item in agent_revision.json()["validation"]["warnings"]
+        } == {
+            "AGENT_PORTRAIT_ASSET_MISSING",
+            "AGENT_SPRITE_ASSET_MISSING",
+        }
 
         crowd = client.post(
             "/api/v1/crowds",
@@ -384,6 +472,7 @@ def test_demo_resources_materialize_through_public_apis(database_url):
             json={
                 "name": "Game Object Skill 端到端实验：行人过街",
                 "goal": "红灯等待，绿灯过街",
+                "brain_skill": "stanford-town-brain",
                 "map_revision_id": map_revision.json()["id"],
                 "crowd_revision_ids": [crowd_revision.json()["id"]],
             },

@@ -69,10 +69,31 @@ def test_game_keeps_runtime_keys_but_passes_name_index_to_cognition():
             return self.name
 
     agent = _Agent()
+
+    class _BrainRuntime:
+        def run_step(
+            self,
+            runtime_game,
+            agent_key,
+            *,
+            step_no,
+            total_steps,
+            stride_minutes,
+        ):
+            assert agent_key == "resident-005"
+            assert (step_no, total_steps, stride_minutes) == (1, 1, 10)
+            observed_rosters.append(runtime_game.agents_by_name)
+            return {
+                "world_action": {"action_type": "WAIT", "arguments": {}},
+                "info": {},
+                "events": (),
+            }
+
     game = Game.__new__(Game)
     game.agents = {"resident-005": agent}
     game.agents_by_name = MappingProxyType({"克劳斯": agent})
     game.context = SimpleNamespace(
+        brain_runtime=_BrainRuntime(),
         clock=SimpleNamespace(
             daily_duration=lambda: 0,
             get_date=lambda _fmt=None: "20260214-10:00:00",
@@ -81,7 +102,13 @@ def test_game_keeps_runtime_keys_but_passes_name_index_to_cognition():
     game.record_interval = 30
     game.logger = SimpleNamespace(info=lambda *_args, **_kwargs: None)
 
-    game.agent_think("resident-005", {"coord": (0, 0), "path": ()})
+    game.agent_think(
+        "resident-005",
+        {"coord": (0, 0), "path": ()},
+        step_no=1,
+        total_steps=1,
+        stride_minutes=10,
+    )
 
     assert game.get_agent("resident-005") is agent
     assert len(observed_rosters) == 1

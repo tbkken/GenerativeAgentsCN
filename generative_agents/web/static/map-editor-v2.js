@@ -386,7 +386,7 @@
           id: rootId, kind: 'WORLD', parent_id: null,
           name: world.world_name || world.definition?.world || '未命名地图', sort_order: 0,
           bounds: { x: 0, y: 0, width, height }, semantic: '',
-          material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', skill_bindings: [], extensions: {},
+          material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', skill_bindings: [], extensions: {},
         }],
         import_metadata: {
           importer: 'blank-map/v2', width, height,
@@ -479,6 +479,8 @@
       this.childrenByParent = new Map();
       for (const node of this.document.hierarchy_nodes || []) {
         if (!Array.isArray(node.skill_bindings)) node.skill_bindings = [];
+        node.interaction_mode = node.kind === 'GAME_OBJECT' && node.skill_bindings.length
+          ? 'SKILL_BOUND' : 'STATIC';
         const list = this.childrenByParent.get(node.parent_id || '') || [];
         list.push(node); this.childrenByParent.set(node.parent_id || '', list);
       }
@@ -970,6 +972,7 @@
             interaction_radius_m: Math.max(.1, Number(this.inspector.querySelector('[data-node-interaction-radius]').value) || 2),
             default_request: this.inspector.querySelector('[data-node-interaction-request]').value.trim() || '请提供当前状态和可执行信息。',
           }] : [];
+          node.interaction_mode = skillName ? 'SKILL_BOUND' : 'STATIC';
         }
         this.nodeMaterialPreview = null;
         node.extensions ||= {}; delete node.extensions.mask;
@@ -2041,7 +2044,7 @@
       const siblings = this.childrenByParent.get(parent.id) || [];
       const node = { id: uid(next.toLowerCase()), kind: next, parent_id: parent.id, name: `未命名 ${LEVEL_LABEL[next]}`, sort_order: siblings.length,
         bounds: { x: parent.bounds.x, y: parent.bounds.y, width: Math.max(1, Math.min(4, parent.bounds.width)), height: Math.max(1, Math.min(4, parent.bounds.height)) },
-        semantic: '', material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', skill_bindings: [], extensions: {} };
+        semantic: '', material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', skill_bindings: [], extensions: {} };
       this.document.hierarchy_nodes.push(node); this.changed = true; this.expandedNodes.add(parent.id); this.nodeMaterialPreview = null; this.selectedNodeId = node.id; this.reindex(); this.renderAll(); this.focusNode(node);
       requestAnimationFrame(() => this.inspector.querySelector('[data-node-name]')?.select());
     }

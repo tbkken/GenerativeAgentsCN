@@ -12,18 +12,22 @@ from generative_agents.config import ExperimentDefinition
 from generative_agents.persistence.models import ExperimentRevision
 from generative_agents.services import ServiceError
 from generative_agents.skills import SkillRegistry
+from tests.support import publish_user_map
 
 
 def _create_publishable(service, definition: ExperimentDefinition):
     """为本测试模块封装 ``_create_publishable`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(service.database, world=definition.world)
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(created["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = created["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     updated = service.update_draft(
         experiment_id=created["id"],
         expected_lock_version=draft["lock_version"],
@@ -54,7 +58,6 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
             "run_messages",
                 "run_memory_events",
                 "run_step_effects",
-                "builtin_catalog_snapshots",
                 "world_maps",
                 "world_map_revisions",
                 "model_probe_statuses",
@@ -70,13 +73,20 @@ def test_alembic_upgrade_creates_core_tables_and_sqlite_pragmas(database):
         assert connection.exec_driver_sql("PRAGMA journal_mode").scalar() == "wal"
         assert connection.exec_driver_sql(
             "SELECT version_num FROM alembic_version"
-                ).scalar() == "0024_step_effect_ledger"
+                ).scalar() == "0001_capability_composition"
 
 
 def test_create_and_list_experiments_isolated_and_paginated(service):
     """回归验证 ``test_create_and_list_experiments_isolated_and_paginated`` 所描述的业务结果、故障边界和隔离约束。"""
-    first = service.create_experiment(name="Alpha", goal="memory", source_type="BLANK")
-    second = service.create_experiment(name="Beta", goal="social", source_type="BLANK")
+    map_revision = publish_user_map(service.database)
+    first = service.create_experiment(
+        name="Alpha", goal="memory", source_type="BLANK",
+        map_revision_id=map_revision["id"],
+    )
+    second = service.create_experiment(
+        name="Beta", goal="social", source_type="BLANK",
+        map_revision_id=map_revision["id"],
+    )
     assert first["id"] != second["id"]
     assert first["current_draft"]["id"] != second["current_draft"]["id"]
 
@@ -89,15 +99,22 @@ def test_create_and_list_experiments_isolated_and_paginated(service):
     assert five_item_page["page_size"] == 5
 
 
-def test_builtin_template_is_materialized_once_per_independent_draft(service):
-    """回归验证 ``test_builtin_template_is_materialized_once_per_independent_draft`` 所描述的业务结果、故障边界和隔离约束。"""
-    first = service.create_experiment(name="标准实验 A", source_type="BUILTIN_DEFAULT")
-    second = service.create_experiment(name="标准实验 B", source_type="BUILTIN_DEFAULT")
+def test_selected_user_map_is_materialized_once_per_independent_draft(service):
+    """Two drafts may share one published user map without sharing mutable state."""
+    map_revision = publish_user_map(service.database, name="共享用户地图")
+    first = service.create_experiment(
+        name="标准实验 A", source_type="BLANK",
+        map_revision_id=map_revision["id"],
+    )
+    second = service.create_experiment(
+        name="标准实验 B", source_type="BLANK",
+        map_revision_id=map_revision["id"],
+    )
     first_draft = service.get_draft(first["id"])
     second_draft = service.get_draft(second["id"])
 
-    assert len(first_draft["definition"]["agents"]) == 25
-    assert first_draft["definition"]["world"]["world_name"] == "the Ville"
+    assert first_draft["definition"]["agents"] == []
+    assert first_draft["definition"]["world"]["world_name"] == "共享用户地图"
     assert "prompts" not in first_draft["definition"]
     assert SkillRegistry().prompt("base-desc").strip()
     changed = ExperimentDefinition.model_validate(first_draft["definition"])
@@ -115,7 +132,10 @@ def test_builtin_template_is_materialized_once_per_independent_draft(service):
 
 def test_stale_draft_save_returns_revision_conflict(service):
     """回归验证 ``test_stale_draft_save_returns_revision_conflict`` 所描述的业务结果、故障边界和隔离约束。"""
-    created = service.create_experiment(name="Conflict", source_type="BLANK")
+    created = service.create_experiment(
+        name="Conflict", source_type="BLANK",
+        map_revision_id=publish_user_map(service.database)["id"],
+    )
     draft = service.get_draft(created["id"])
     definition = ExperimentDefinition.model_validate(draft["definition"])
     updated = service.update_draft(
@@ -196,7 +216,10 @@ def test_fork_published_revision_is_a_deep_independent_draft(
 
 def test_database_allows_only_one_draft_per_experiment(service, database):
     """回归验证 ``test_database_allows_only_one_draft_per_experiment`` 所描述的业务结果、故障边界和隔离约束。"""
-    created = service.create_experiment(name="One draft", source_type="BLANK")
+    created = service.create_experiment(
+        name="One draft", source_type="BLANK",
+        map_revision_id=publish_user_map(service.database)["id"],
+    )
     current = service.get_draft(created["id"])
     duplicate = ExperimentRevision(
         id=str(uuid4()),
@@ -217,7 +240,10 @@ def test_database_allows_only_one_draft_per_experiment(service, database):
 
 def test_publish_rejects_auto_model_without_resolved_identity(service):
     """回归验证 ``test_publish_rejects_auto_model_without_resolved_identity`` 所描述的业务结果、故障边界和隔离约束。"""
-    created = service.create_experiment(name="Unresolved", source_type="BLANK")
+    created = service.create_experiment(
+        name="Unresolved", source_type="BLANK",
+        map_revision_id=publish_user_map(service.database)["id"],
+    )
     draft = service.get_draft(created["id"])
     with pytest.raises(ServiceError) as exc:
         service.publish_draft(

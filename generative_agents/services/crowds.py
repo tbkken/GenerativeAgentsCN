@@ -33,6 +33,7 @@ from generative_agents.persistence.models import (
 from generative_agents.status import RevisionState
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 
 def _utc_now() -> datetime:
@@ -54,6 +55,20 @@ def normalize_agent_name(name: str) -> str:
         返回处理后的文本或稳定标识。
     """
     return unicodedata.normalize("NFKC", name.strip()).casefold()
+
+
+def _spatial_tree_for_address(address: list[str]) -> dict[str, Any]:
+    """Build the Agent spatial tree representation for one map address."""
+    if len(address) < 2:
+        raise ValueError("a materialized Agent address needs at least two levels")
+    tree: dict[str, Any] = {}
+    cursor = tree
+    for segment in address[:-2]:
+        child: dict[str, Any] = {}
+        cursor[segment] = child
+        cursor = child
+    cursor[address[-2]] = [address[-1]]
+    return tree
 
 
 def _make_key(name: str, prefix: str) -> str:
@@ -83,7 +98,9 @@ def _document_hash(payload: Any) -> str:
     return hashlib.sha256(canonical_json_bytes({"value": payload})).hexdigest()
 
 
-def _validate_agent_template_for_publish(definition: AgentTemplateDefinition) -> None:
+def _validate_agent_template_for_publish(
+    definition: AgentTemplateDefinition,
+) -> list[dict[str, str]]:
     """校验智能体`template``for``publish`。
 
     参数:
@@ -113,6 +130,26 @@ def _validate_agent_template_for_publish(definition: AgentTemplateDefinition) ->
             status_code=422,
             details=issue.details or None,
         )
+    warnings = []
+    if not str(definition.portrait_asset or "").strip():
+        warnings.append(
+            {
+                "code": "AGENT_PORTRAIT_ASSET_MISSING",
+                "path": "portrait_asset",
+                "message": "Agent 缺少头像，界面将使用姓名首字降级显示",
+                "severity": "WARNING",
+            }
+        )
+    if not str(definition.sprite_asset or "").strip():
+        warnings.append(
+            {
+                "code": "AGENT_SPRITE_ASSET_MISSING",
+                "path": "sprite_asset",
+                "message": "Agent 缺少行走图，回放无法渲染正式 Sprite",
+                "severity": "WARNING",
+            }
+        )
+    return warnings
 
 
 def _template_from_agent(agent: AgentDefinition) -> AgentTemplateDefinition:
@@ -390,6 +427,7 @@ class CrowdService:
         status: RevisionState | str | None = None,
         page: int = 1,
         page_size: int = 100,
+        archived: str = "active",
     ) -> dict[str, Any]:
         """查询智能体集合。
 
@@ -409,6 +447,10 @@ class CrowdService:
             raise ServiceError(
                 "INVALID_PAGINATION", "Agent 分页参数无效", status_code=422
             )
+        if archived not in {"active", "archived", "all"}:
+            raise ServiceError(
+                "INVALID_ARCHIVE_FILTER", "Agent 归档筛选无效", status_code=422
+            )
         try:
             normalized_status = (
                 RevisionState(str(status).upper()).value if status else None
@@ -421,6 +463,16 @@ class CrowdService:
         with self.database.session_factory() as session:
             statement = select(AgentTemplate)
             count_statement = select(func.count()).select_from(AgentTemplate)
+            archive_predicate = (
+                AgentTemplate.archived_at.is_(None)
+                if archived == "active"
+                else AgentTemplate.archived_at.is_not(None)
+                if archived == "archived"
+                else None
+            )
+            if archive_predicate is not None:
+                statement = statement.where(archive_predicate)
+                count_statement = count_statement.where(archive_predicate)
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
                 predicate = or_(
@@ -453,6 +505,63 @@ class CrowdService:
                 "total": total,
                 "total_pages": max(1, ceil(total / page_size)),
             }
+
+    def set_agent_archived(self, agent_id: str, *, archived: bool) -> dict[str, Any]:
+        with self.database.session_factory.begin() as session:
+            agent = session.get(AgentTemplate, agent_id)
+            if agent is None:
+                raise not_found("agent_template", agent_id)
+            if agent.is_builtin:
+                raise ServiceError(
+                    "BUILTIN_AGENT_IMMUTABLE",
+                    "系统内置 Agent 不能归档",
+                    status_code=409,
+                )
+            agent.archived_at = _utc_now() if archived else None
+            agent.updated_at = _utc_now()
+            agent.row_version += 1
+        return self.get_agent(agent_id)
+
+    def delete_agent(self, agent_id: str) -> None:
+        with self.database.session_factory.begin() as session:
+            agent = session.get(AgentTemplate, agent_id)
+            if agent is None:
+                raise not_found("agent_template", agent_id)
+            if agent.is_builtin:
+                raise ServiceError(
+                    "BUILTIN_AGENT_IMMUTABLE",
+                    "系统内置 Agent 不能删除",
+                    status_code=409,
+                )
+            if agent.archived_at is None:
+                raise ServiceError(
+                    "AGENT_NOT_ARCHIVED",
+                    "请先归档 Agent，再执行彻底删除",
+                    status_code=409,
+                )
+            member_count = int(
+                session.scalar(
+                    select(func.count())
+                    .select_from(CrowdRevisionMember)
+                    .where(CrowdRevisionMember.agent_id == agent_id)
+                )
+                or 0
+            )
+            if member_count:
+                raise ServiceError(
+                    "AGENT_IN_USE",
+                    "Agent 仍被 Crowd 修订引用，只能保持归档",
+                    status_code=409,
+                )
+            agent.current_draft_revision_id = None
+            agent.current_published_revision_id = None
+            session.flush()
+            session.execute(
+                delete(AgentTemplateRevision).where(
+                    AgentTemplateRevision.agent_id == agent_id
+                )
+            )
+            session.delete(agent)
 
     def create_agent(
         self,
@@ -688,7 +797,7 @@ class CrowdService:
             definition = AgentTemplateDefinition.model_validate(
                 revision.definition_json
             )
-            _validate_agent_template_for_publish(definition)
+            validation_warnings = _validate_agent_template_for_publish(definition)
             normalized_name = normalize_agent_name(definition.name)
             conflict = session.scalar(
                 select(AgentTemplate.id).where(
@@ -702,7 +811,11 @@ class CrowdService:
                 )
             now = _utc_now()
             revision.state = RevisionState.PUBLISHED.value
-            revision.validation_json = {"valid": True, "errors": [], "warnings": []}
+            revision.validation_json = {
+                "valid": True,
+                "errors": [],
+                "warnings": validation_warnings,
+            }
             revision.published_at = now
             revision.updated_at = now
             agent.name = definition.name
@@ -871,6 +984,7 @@ class CrowdService:
         status: RevisionState | str | None = None,
         page: int = 1,
         page_size: int = 5,
+        archived: str = "active",
     ) -> dict[str, Any]:
         """查询`crowds`。
 
@@ -890,6 +1004,10 @@ class CrowdService:
             raise ServiceError(
                 "INVALID_PAGINATION", "人群分页参数无效", status_code=422
             )
+        if archived not in {"active", "archived", "all"}:
+            raise ServiceError(
+                "INVALID_ARCHIVE_FILTER", "Crowd 归档筛选无效", status_code=422
+            )
         try:
             normalized_status = (
                 RevisionState(str(status).upper()).value if status else None
@@ -904,6 +1022,17 @@ class CrowdService:
             status_statement = select(CrowdTemplate.status, func.count()).group_by(
                 CrowdTemplate.status
             )
+            archive_predicate = (
+                CrowdTemplate.archived_at.is_(None)
+                if archived == "active"
+                else CrowdTemplate.archived_at.is_not(None)
+                if archived == "archived"
+                else None
+            )
+            if archive_predicate is not None:
+                statement = statement.where(archive_predicate)
+                count_statement = count_statement.where(archive_predicate)
+                status_statement = status_statement.where(archive_predicate)
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
                 predicate = or_(
@@ -942,6 +1071,58 @@ class CrowdService:
                 "total_pages": max(1, ceil(total / page_size)),
                 "status_counts": counts,
             }
+
+    def set_crowd_archived(self, crowd_id: str, *, archived: bool) -> dict[str, Any]:
+        with self.database.session_factory.begin() as session:
+            crowd = session.get(CrowdTemplate, crowd_id)
+            if crowd is None:
+                raise not_found("crowd", crowd_id)
+            if crowd.is_builtin:
+                raise ServiceError(
+                    "BUILTIN_CROWD_IMMUTABLE",
+                    "系统内置 Crowd 不能归档",
+                    status_code=409,
+                )
+            crowd.archived_at = _utc_now() if archived else None
+            crowd.updated_at = _utc_now()
+            crowd.row_version += 1
+        return self.get_crowd(crowd_id)
+
+    def delete_crowd(self, crowd_id: str) -> None:
+        with self.database.session_factory.begin() as session:
+            crowd = session.get(CrowdTemplate, crowd_id)
+            if crowd is None:
+                raise not_found("crowd", crowd_id)
+            if crowd.is_builtin:
+                raise ServiceError(
+                    "BUILTIN_CROWD_IMMUTABLE",
+                    "系统内置 Crowd 不能删除",
+                    status_code=409,
+                )
+            if crowd.archived_at is None:
+                raise ServiceError(
+                    "CROWD_NOT_ARCHIVED",
+                    "请先归档 Crowd，再执行彻底删除",
+                    status_code=409,
+                )
+            if self._crowd_usage_count(session, crowd_id):
+                raise ServiceError(
+                    "CROWD_IN_USE",
+                    "Crowd 仍被实验修订引用，只能保持归档",
+                    status_code=409,
+                )
+            crowd.current_draft_revision_id = None
+            crowd.current_published_revision_id = None
+            session.flush()
+            session.execute(
+                delete(CrowdRevisionMember).where(
+                    CrowdRevisionMember.crowd_id == crowd_id
+                )
+            )
+            session.execute(
+                delete(CrowdRevision).where(CrowdRevision.crowd_id == crowd_id)
+            )
+            session.delete(crowd)
 
     def get_crowd(self, crowd_id: str) -> dict[str, Any]:
         """获取人群。
@@ -1193,7 +1374,9 @@ class CrowdService:
                 "CROWD_REQUIRED", "请至少选择一个已发布人群", status_code=422
             )
         walkable: list[tuple[int, int]] = []
-        for tile in world.definition.get("tiles", []):
+        world_tiles = world.definition.get("tiles", [])
+        tile_by_coord: dict[tuple[int, int], dict[str, Any]] = {}
+        for tile in world_tiles:
             if not isinstance(tile, dict) or tile.get("collision") is True:
                 continue
             coord = tile.get("coord")
@@ -1202,7 +1385,9 @@ class CrowdService:
                 and len(coord) == 2
                 and all(isinstance(value, int) and value >= 0 for value in coord)
             ):
-                walkable.append((coord[0], coord[1]))
+                normalized_coord = (coord[0], coord[1])
+                walkable.append(normalized_coord)
+                tile_by_coord[normalized_coord] = tile
         walkable = sorted(set(walkable), key=lambda item: (item[1], item[0]))
         if not walkable:
             raise ServiceError(
@@ -1270,6 +1455,7 @@ class CrowdService:
             )
         result: list[AgentDefinition] = []
         imported_revision_ids: list[str] = []
+        spatial_remapped_revision_ids: list[str] = []
         occupied: set[tuple[int, int]] = set()
         for _agent, revision in selected:
             template = AgentTemplateDefinition.model_validate(revision.definition_json)
@@ -1279,6 +1465,30 @@ class CrowdService:
                 preferred = next(coord for coord in walkable if coord not in occupied)
             occupied.add(preferred)
             payload["coord"] = list(preferred)
+            spatial = payload.get("spatial") or {}
+            world_roots = {
+                world.world_name,
+                str(world.definition.get("world") or ""),
+            }
+            spatial_issues = validate_agent_spatial(
+                spatial.get("address") or {},
+                spatial.get("tree") or {},
+                world_roots=world_roots,
+                world_tiles=world_tiles,
+            )
+            if spatial_issues:
+                assigned_address = list(
+                    tile_by_coord.get(preferred, {}).get("address") or ()
+                )
+                if len(assigned_address) >= 2:
+                    payload["spatial"] = {
+                        "address": {
+                            "living_area": assigned_address,
+                            "sleeping": assigned_address,
+                        },
+                        "tree": _spatial_tree_for_address(assigned_address),
+                    }
+                    spatial_remapped_revision_ids.append(revision.id)
             result.append(AgentDefinition.model_validate(payload))
             imported_revision_ids.append(revision.id)
         return result, {
@@ -1288,6 +1498,7 @@ class CrowdService:
             "crowd_agent_count": len(result),
             "crowd_agent_duplicate_names": duplicate_names,
             "agent_template_revision_ids": imported_revision_ids,
+            "agent_spatial_remapped_revision_ids": spatial_remapped_revision_ids,
         }
 
     @staticmethod
@@ -1531,11 +1742,12 @@ class CrowdService:
             "status": agent.status,
             "is_builtin": agent.is_builtin,
             "row_version": agent.row_version,
+            "archived_at": iso_utc(agent.archived_at) if agent.archived_at else None,
             "current_draft": self._agent_revision_summary(draft),
             "current_published": self._agent_revision_summary(published),
             "crowd_count": crowd_count,
-            "created_at": agent.created_at.isoformat(),
-            "updated_at": agent.updated_at.isoformat(),
+            "created_at": iso_utc(agent.created_at),
+            "updated_at": iso_utc(agent.updated_at),
         }
 
     @staticmethod
@@ -1561,10 +1773,10 @@ class CrowdService:
             "definition_hash": revision.definition_hash,
             "lock_version": revision.lock_version,
             "name": definition.name,
-            "published_at": revision.published_at.isoformat()
+            "published_at": iso_utc(revision.published_at)
             if revision.published_at
             else None,
-            "updated_at": revision.updated_at.isoformat(),
+            "updated_at": iso_utc(revision.updated_at),
         }
 
     def _agent_revision_detail(
@@ -1617,14 +1829,15 @@ class CrowdService:
             "status": crowd.status,
             "is_builtin": crowd.is_builtin,
             "row_version": crowd.row_version,
+            "archived_at": iso_utc(crowd.archived_at) if crowd.archived_at else None,
             "current_draft": self._crowd_revision_summary(session, draft),
             "current_published": self._crowd_revision_summary(session, published),
             "agent_count": self._crowd_member_count(session, selected.id)
             if selected
             else 0,
             "usage_count": self._crowd_usage_count(session, crowd.id),
-            "created_at": crowd.created_at.isoformat(),
-            "updated_at": crowd.updated_at.isoformat(),
+            "created_at": iso_utc(crowd.created_at),
+            "updated_at": iso_utc(crowd.updated_at),
         }
 
     @staticmethod
@@ -1686,10 +1899,10 @@ class CrowdService:
             "membership_hash": revision.membership_hash,
             "lock_version": revision.lock_version,
             "agent_count": self._crowd_member_count(session, revision.id),
-            "published_at": revision.published_at.isoformat()
+            "published_at": iso_utc(revision.published_at)
             if revision.published_at
             else None,
-            "updated_at": revision.updated_at.isoformat(),
+            "updated_at": iso_utc(revision.updated_at),
         }
 
     def _crowd_revision_detail(

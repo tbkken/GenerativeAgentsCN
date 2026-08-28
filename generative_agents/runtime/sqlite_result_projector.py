@@ -264,8 +264,11 @@ class SqliteResultProjector:
                 agent_summary.updated_step = result.step_no
             session.flush()
 
+            new_conversation_count = 0
             for conversation in result.conversations:
-                self._conversation(session, run, result, conversation)
+                new_conversation_count += int(
+                    self._conversation(session, run, result, conversation)
+                )
             for delta in result.memory_deltas:
                 self._memory(session, run.id, result, delta)
             for schedule in result.schedule_revisions:
@@ -303,7 +306,7 @@ class SqliteResultProjector:
             summary.available_step = result.step_no
             summary.virtual_time = result.virtual_time
             summary.action_count += len(result.agents)
-            summary.conversation_count += len(result.conversations)
+            summary.conversation_count += new_conversation_count
             summary.message_count += message_count
             summary.memory_count += memory_created
             summary.model_call_count += logical_calls
@@ -378,7 +381,7 @@ class SqliteResultProjector:
         return value
 
     @staticmethod
-    def _conversation(session, run, result, conversation) -> None:
+    def _conversation(session, run, result, conversation) -> bool:
         """执行`conversation`的内部处理，供当前模块或类复用。
 
         参数:
@@ -399,8 +402,11 @@ class SqliteResultProjector:
             raise ResultProjectionError(
                 "conversation requires two distinct participants"
             )
-        session.add(
-            RunConversation(
+        conversation_id = str(conversation.conversation_id)
+        stored = session.get(RunConversation, conversation_id)
+        is_new = stored is None
+        if stored is None:
+            stored = RunConversation(
                 id=str(conversation.conversation_id),
                 run_id=run.id,
                 start_step=result.step_no,
@@ -416,15 +422,31 @@ class SqliteResultProjector:
                 summary=conversation.summary,
                 ended_reason=conversation.ended_reason,
             )
-        )
-        for agent_key in participants:
-            session.add(
-                RunConversationParticipant(
-                    run_id=run.id,
-                    conversation_id=str(conversation.conversation_id),
-                    agent_key=agent_key,
+            session.add(stored)
+            for agent_key in participants:
+                session.add(
+                    RunConversationParticipant(
+                        run_id=run.id,
+                        conversation_id=conversation_id,
+                        agent_key=agent_key,
+                    )
                 )
+        else:
+            stored_participants = tuple(
+                sorted((stored.initiator_agent_key, stored.responder_agent_key))
             )
+            if stored.run_id != run.id or stored_participants != participants:
+                raise ResultProjectionError(
+                    "conversation thread identity conflicts with stored participants"
+                )
+            stored.end_step = result.step_no
+            stored.ended_at = result.virtual_time
+            stored.duration_minutes = (stored.duration_minutes or 0) + (
+                conversation.duration_minutes or 0
+            )
+            stored.message_count += len(conversation.messages)
+            stored.summary = conversation.summary or stored.summary
+            stored.ended_reason = conversation.ended_reason or stored.ended_reason
         for message in conversation.messages:
             session.add(
                 RunMessage(
@@ -453,15 +475,18 @@ class SqliteResultProjector:
                 last_conversation_at=result.virtual_time,
             )
             session.add(edge)
-        edge.conversation_count += 1
+        if is_new:
+            edge.conversation_count += 1
         edge.message_count += len(conversation.messages)
         edge.duration_minutes += conversation.duration_minutes or 0
         edge.last_conversation_at = result.virtual_time
         for agent_key in participants:
             agent_summary = session.get(RunAgentSummary, (run.id, agent_key))
             if agent_summary is not None:
-                agent_summary.conversation_count += 1
+                if is_new:
+                    agent_summary.conversation_count += 1
                 agent_summary.message_count += len(conversation.messages)
+        return is_new
 
     @staticmethod
     def _memory(session, run_id, result, delta) -> None:
@@ -498,6 +523,7 @@ class SqliteResultProjector:
                         last_accessed_at=result.virtual_time,
                         expires_at=delta.expires_at,
                         evidence_node_ids_json=list(delta.evidence_memory_ids),
+                        supersedes_memory_node_id=delta.supersedes_memory_id,
                     )
                 )
             agent_summary = session.get(RunAgentSummary, (run_id, delta.agent_key))
@@ -512,13 +538,17 @@ class SqliteResultProjector:
             memory.last_accessed_step = result.step_no
             memory.last_accessed_at = result.virtual_time
         else:
-            memory.state = (
-                MemoryState.EXPIRED.value
-                if delta.kind == MemoryDeltaKind.EXPIRED
-                else MemoryState.EVICTED.value
-            )
+            states = {
+                MemoryDeltaKind.EXPIRED: MemoryState.EXPIRED,
+                MemoryDeltaKind.EVICTED: MemoryState.EVICTED,
+                MemoryDeltaKind.SUPERSEDED: MemoryState.SUPERSEDED,
+                MemoryDeltaKind.INVALIDATED: MemoryState.INVALIDATED,
+            }
+            memory.state = states[delta.kind].value
             memory.removed_step = result.step_no
             memory.removed_at = result.virtual_time
+            memory.superseded_by_memory_node_id = delta.replacement_memory_id
+            memory.invalidated_reason = delta.reason
 
     @staticmethod
     def _schedule(session, run_id, result, record) -> None:

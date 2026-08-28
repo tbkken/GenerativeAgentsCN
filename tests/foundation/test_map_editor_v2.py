@@ -18,7 +18,10 @@ from generative_agents.config.map_editor import (
 )
 from generative_agents.config.schema import WorldConfig
 from generative_agents.services.map_importer import fresh_ville_editor_document
-from generative_agents.services.maps import _compile_editor_v2_runtime_addresses
+from generative_agents.services.maps import (
+    _compile_editor_v2_runtime_addresses,
+    _validate_map_editor_v2,
+)
 from generative_agents.web.app import create_app
 
 
@@ -105,6 +108,88 @@ def test_publish_compiler_turns_editor_tree_into_runtime_tile_addresses():
         "人行横道",
         "等待区",
     ]
+
+
+def test_map_validation_warns_when_every_game_object_is_static():
+    world = WorldConfig.model_validate(
+        {
+            "world_key": "static-world",
+            "world_name": "Static World",
+            "definition": {
+                "world": "Static World",
+                "tile_size": 32,
+                "size": [1, 1],
+                "tile_address_keys": ["world", "sector", "arena", "game_object"],
+                "tiles": [
+                    {"coord": [0, 0], "collision": False, "address": ["Static World"]}
+                ],
+                "editor_v2": {
+                    "schema_version": "ga-map-editor/v2",
+                    "root_node_id": "world",
+                    "hierarchy_nodes": [
+                        {
+                            "id": "world",
+                            "kind": "WORLD",
+                            "name": "Static World",
+                            "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                        },
+                        {
+                            "id": "sector",
+                            "kind": "SECTOR",
+                            "parent_id": "world",
+                            "name": "Street",
+                            "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                        },
+                        {
+                            "id": "arena",
+                            "kind": "ARENA",
+                            "parent_id": "sector",
+                            "name": "Square",
+                            "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                        },
+                        {
+                            "id": "object",
+                            "kind": "GAME_OBJECT",
+                            "parent_id": "arena",
+                            "name": "Bench",
+                            "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                            "interaction_mode": "STATIC",
+                        },
+                    ],
+                },
+            },
+        }
+    )
+
+    errors, warnings = _validate_map_editor_v2(world)
+
+    assert errors == []
+    assert [warning["code"] for warning in warnings] == ["ALL_GAME_OBJECTS_STATIC"]
+
+
+def test_skill_bound_game_object_requires_a_passive_skill_binding():
+    with pytest.raises(ValidationError, match="require a passive Skill"):
+        MapEditorDocumentV2.model_validate(
+            {
+                "root_node_id": "world",
+                "hierarchy_nodes": [
+                    {
+                        "id": "world",
+                        "kind": "WORLD",
+                        "name": "World",
+                        "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                    },
+                    {
+                        "id": "object",
+                        "kind": "GAME_OBJECT",
+                        "parent_id": "world",
+                        "name": "Door",
+                        "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                        "interaction_mode": "SKILL_BOUND",
+                    },
+                ],
+            }
+        )
 
 
 def test_ville_import_is_lossless_for_used_visual_materials():

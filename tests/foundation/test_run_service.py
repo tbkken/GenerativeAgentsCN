@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import os
 from pathlib import Path
+from uuid import uuid4
 
 from sqlalchemy import select
 
@@ -14,25 +15,35 @@ from generative_agents.config import ExperimentDefinition, validate_for_publish
 from generative_agents.persistence.models import (
     Experiment,
     Run,
+    RunAgentStep,
     RunAttempt,
+    RunDomainEvent,
+    RunEvent,
     RunQueue,
+    RunStep,
 )
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.runs import RunService
+from generative_agents.services.quality import RunQualityService
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.supervisor import LocalProcessSupervisor
+from generative_agents.runtime.stall import RunStallDetector
+from tests.support import publish_user_map
 
 
 def _publish(service, definition: ExperimentDefinition):
     """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(service.database, world=definition.world)
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(created["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = created["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=created["id"],
         expected_lock_version=draft["lock_version"],
@@ -44,6 +55,97 @@ def _publish(service, definition: ExperimentDefinition):
         expected_lock_version=draft["lock_version"],
     )
     return created, revision
+
+
+def _append_stationary_actions(
+    database,
+    *,
+    run_id: str,
+    attempt_id: str,
+    count: int,
+    event_type: str,
+    predicate: str,
+    object_value: str,
+    vary_description: bool = False,
+    expected_until_step: int | None = None,
+):
+    started = datetime(2026, 8, 28, 7, 0, tzinfo=timezone.utc)
+    with database.session_factory.begin() as session:
+        run = session.get(Run, run_id)
+        run.completed_steps = count
+        for step_no in range(1, count + 1):
+            virtual_time = started + timedelta(minutes=step_no * 10)
+            session.add(
+                RunStep(
+                    run_id=run_id,
+                    step_no=step_no,
+                    attempt_id=attempt_id,
+                    virtual_time=virtual_time,
+                    frame_path=f"frames/{step_no}.json",
+                    frame_sha256="a" * 64,
+                    action_count=1,
+                    movement_count=0,
+                    conversation_count=0,
+                    message_count=0,
+                    memory_created_count=0,
+                    memory_accessed_count=0,
+                    model_logical_calls=1,
+                    model_retry_count=0,
+                    active_agent_count=1,
+                    checkpoint=False,
+                )
+            )
+            # RunAgentStep has a composite FK to the committed step. Flush the
+            # parent explicitly because these test rows have no ORM relationship.
+            session.flush()
+            description = f"Test Agent{predicate}{object_value}"
+            if vary_description:
+                description = f"{description}（计划等待第 {step_no} 步）"
+            session.add(
+                RunAgentStep(
+                    run_id=run_id,
+                    step_no=step_no,
+                    agent_key="test-agent",
+                    virtual_time=virtual_time,
+                    x=0,
+                    y=0,
+                    address="test / home / bedroom / bed",
+                    action_text=description,
+                    action_emoji=None,
+                    activity_kind="OTHER",
+                    currently_text=description,
+                    schedule_item_id=None,
+                    path_source="OBSERVED",
+                    decision_context_json={},
+                )
+            )
+            session.add(
+                RunDomainEvent(
+                    id=str(uuid4()),
+                    run_id=run_id,
+                    step_no=step_no,
+                    virtual_time=virtual_time,
+                    event_type=event_type,
+                    primary_agent_key="test-agent",
+                    title=description,
+                    detail=f"Test Agent / {predicate} / {object_value}",
+                    location="test:home:bedroom:bed",
+                    importance_score=0,
+                    payload_json={
+                        "subject": "Test Agent",
+                        "predicate": predicate,
+                        "object": object_value,
+                        "structured_payload": {
+                            "action_type": event_type,
+                            "arguments": (
+                                {"expected_until_step": expected_until_step}
+                                if expected_until_step is not None
+                                else {}
+                            ),
+                        },
+                    },
+                )
+            )
 
 
 def test_published_revision_creates_uuid_scoped_fifo_run(
@@ -108,9 +210,9 @@ def test_run_instants_keep_explicit_utc_offset_after_sqlite_round_trip(
 
     serialized = runs.get_run(created["run_id"])
 
-    assert serialized["created_at"].endswith("+00:00")
-    assert serialized["started_at"] == "2026-08-09T05:20:11+00:00"
-    assert serialized["finished_at"] == "2026-08-09T06:09:27+00:00"
+    assert serialized["created_at"].endswith("Z")
+    assert serialized["started_at"] == "2026-08-09T05:20:11Z"
+    assert serialized["finished_at"] == "2026-08-09T06:09:27Z"
 
 
 def test_paused_run_cancels_without_new_attempt_or_slot(
@@ -134,6 +236,205 @@ def test_paused_run_cancels_without_new_attempt_or_slot(
         assert session.scalar(
             select(RunAttempt).where(RunAttempt.run_id == created["run_id"])
         ) is None
+
+
+def test_supervisor_requests_safe_pause_after_repeated_wait_facts(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    created = RunService(database, var_dir=tmp_path / "var").create_from_published(
+        experiment["id"], revision["id"]
+    )
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert claimed is not None
+    assert scheduler.register_worker(claimed, pid=4242, pid_create_time=1.0)
+    _append_stationary_actions(
+        database,
+        run_id=created["run_id"],
+        attempt_id=claimed.attempt_id,
+        count=3,
+        event_type="AGENT_WAITED",
+        predicate="等待",
+        object_value="下一轮",
+    )
+
+    report = RunStallDetector(
+        database,
+        wait_window_steps=3,
+        repeated_action_window_steps=5,
+    ).inspect()
+
+    assert report.pause_requested_run_ids == (created["run_id"],)
+    with database.session_factory() as session:
+        run = session.get(Run, created["run_id"])
+        assert run.status == "PAUSE_REQUESTED"
+        detected = session.scalar(
+            select(RunEvent)
+            .where(
+                RunEvent.run_id == created["run_id"],
+                RunEvent.event_type == "stall_detected",
+            )
+            .order_by(RunEvent.id.desc())
+        )
+        assert detected.payload_json["reason"] == "REPEATED_WAIT_AT_SAME_LOCATION"
+        assert detected.payload_json["repeat_count"] == 3
+        assert detected.payload_json["event"] == {
+            "subject": "Test Agent",
+            "predicate": "等待",
+            "object": "下一轮",
+        }
+
+
+def test_supervisor_does_not_pause_intentional_varying_wait(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    created = RunService(database, var_dir=tmp_path / "var").create_from_published(
+        experiment["id"], revision["id"]
+    )
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert claimed is not None
+    assert scheduler.register_worker(claimed, pid=4242, pid_create_time=1.0)
+    _append_stationary_actions(
+        database,
+        run_id=created["run_id"],
+        attempt_id=claimed.attempt_id,
+        count=6,
+        event_type="AGENT_WAITED",
+        predicate="等待",
+        object_value="私聊结束",
+        vary_description=True,
+    )
+
+    report = RunStallDetector(
+        database,
+        wait_window_steps=6,
+        repeated_action_window_steps=12,
+    ).inspect()
+
+    assert report.pause_requested_run_ids == ()
+    with database.session_factory() as session:
+        assert session.get(Run, created["run_id"]).status == "RUNNING"
+
+
+def test_supervisor_does_not_reuse_previous_attempt_evidence(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    created = RunService(database, var_dir=tmp_path / "var").create_from_published(
+        experiment["id"], revision["id"]
+    )
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert claimed is not None
+    assert scheduler.register_worker(claimed, pid=4242, pid_create_time=1.0)
+    _append_stationary_actions(
+        database,
+        run_id=created["run_id"],
+        attempt_id=claimed.attempt_id,
+        count=3,
+        event_type="AGENT_WAITED",
+        predicate="等待",
+        object_value="下一轮",
+    )
+    # Model the instant after resume: the new Attempt starts at step 4 but has
+    # not committed a step yet. Historical rows must not trigger a zero-progress
+    # pause.
+    with database.session_factory.begin() as session:
+        session.get(RunAttempt, claimed.attempt_id).start_step = 4
+
+    report = RunStallDetector(
+        database,
+        wait_window_steps=3,
+        repeated_action_window_steps=5,
+    ).inspect()
+
+    assert report.pause_requested_run_ids == ()
+    with database.session_factory() as session:
+        assert session.get(Run, created["run_id"]).status == "RUNNING"
+
+
+def test_repeated_act_is_diagnosed_without_unsafe_auto_pause(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    created = RunService(database, var_dir=tmp_path / "var").create_from_published(
+        experiment["id"], revision["id"]
+    )
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert claimed is not None
+    assert scheduler.register_worker(claimed, pid=4242, pid_create_time=1.0)
+    _append_stationary_actions(
+        database,
+        run_id=created["run_id"],
+        attempt_id=claimed.attempt_id,
+        count=5,
+        event_type="AGENT_ACTED",
+        predicate="办公",
+        object_value="处理项目文档",
+    )
+
+    detector = RunStallDetector(
+        database,
+        wait_window_steps=3,
+        repeated_action_window_steps=5,
+    )
+    first = detector.inspect()
+    second = detector.inspect()
+
+    assert first.pause_requested_run_ids == ()
+    assert first.suspected_run_ids == (created["run_id"],)
+    assert second.suspected_run_ids == ()
+    with database.session_factory() as session:
+        assert session.get(Run, created["run_id"]).status == "RUNNING"
+        suspected = list(
+            session.scalars(
+                select(RunEvent).where(
+                    RunEvent.run_id == created["run_id"],
+                    RunEvent.event_type == "stall_suspected",
+                )
+            )
+        )
+        assert len(suspected) == 1
+        assert suspected[0].payload_json["reason"] == "REPEATED_STATIONARY_ACTION"
+
+
+def test_completed_run_exposes_quality_post_processing_as_independent_pending_phase(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    runs = RunService(database, var_dir=tmp_path / "var")
+    created = runs.create_from_published(experiment["id"], revision["id"])
+    with database.session_factory.begin() as session:
+        run = session.get(Run, created["run_id"])
+        session.query(RunQueue).filter(RunQueue.run_id == run.id).delete()
+        run.status = "COMPLETED"
+        run.completed_steps = run.requested_steps
+        run.finished_at = datetime.now(timezone.utc)
+        session.add(
+            RunEvent(
+                run_id=run.id,
+                event_type="post_processing",
+                payload_json={
+                    "status": "RUNNING",
+                    "phase": "QUALITY_EVALUATION",
+                    "message": "仿真执行已完成，正在生成质量报告",
+                },
+            )
+        )
+
+    detail = runs.get_run(created["run_id"])
+    quality = RunQualityService(database, var_dir=tmp_path / "var").get(
+        created["run_id"]
+    )
+
+    assert detail["status"] == "COMPLETED"
+    assert detail["post_processing"]["status"] == "RUNNING"
+    assert quality["quality_status"] == "PENDING"
+    assert quality["evaluator"]["status"] == "PENDING"
 
 
 def test_reconcile_finishes_force_cancel_without_promoting_recovery_boundary(
@@ -165,6 +466,35 @@ def test_reconcile_finishes_force_cancel_without_promoting_recovery_boundary(
         assert run.recoverable_step == 2
         assert run.slot_no is None
         assert run.current_attempt_id is None
+
+
+def test_terminal_run_can_be_archived_restored_and_deleted(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    runs = RunService(database, var_dir=tmp_path / "var")
+    created = runs.create_from_published(experiment["id"], revision["id"])
+
+    with pytest.raises(ServiceError) as active_error:
+        runs.set_archived(created["run_id"], archived=True)
+    assert active_error.value.code == "RUN_ACTIVE"
+
+    runs.cancel(created["run_id"])
+    archived = runs.set_archived(created["run_id"], archived=True)
+    active_page = runs.list_runs(experiment["id"], archived="active")
+    archived_page = runs.list_runs(experiment["id"], archived="archived")
+    restored = runs.set_archived(created["run_id"], archived=False)
+    runs.set_archived(created["run_id"], archived=True)
+    deleted = runs.delete_run(created["run_id"])
+
+    assert archived["archived_at"] is not None
+    assert active_page["items"] == []
+    assert [item["run_id"] for item in archived_page["items"]] == [created["run_id"]]
+    assert restored["archived_at"] is None
+    assert deleted["deleted"] is True
+    with pytest.raises(ServiceError) as missing:
+        runs.get_run(created["run_id"])
+    assert missing.value.code == "RUN_NOT_FOUND"
 
 
 def test_run_history_uses_stable_cursor_and_can_reach_all_pages(

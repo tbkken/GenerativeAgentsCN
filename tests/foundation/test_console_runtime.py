@@ -27,12 +27,27 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
 
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
+        public_map = client.post(
+            "/api/v1/maps",
+            json={"name": "Console user map", "map_key": "console-user-map"},
+        ).json()
+        map_draft = client.get(f"/api/v1/maps/{public_map['id']}/draft").json()
+        map_revision = client.post(
+            f"/api/v1/maps/{public_map['id']}/draft/publish",
+            json={
+                "draft_revision_id": map_draft["id"],
+                "lock_version": map_draft["lock_version"],
+            },
+        )
+        assert map_revision.status_code == 200, map_revision.text
         created = client.post(
             "/api/v1/experiments",
             json={
                 "name": "Dynamic console experiment",
                 "goal": "Exercise the production list-to-detail path",
-                "source": {"type": "BUILTIN_DEFAULT"},
+                "brain_skill": "stanford-town-brain",
+                "source": {"type": "BLANK"},
+                "map_revision_id": map_revision.json()["id"],
             },
         )
         assert created.status_code == 201
@@ -685,6 +700,10 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert ".diagnostic-lists-grid { display: grid; grid-template-columns: minmax(390px,.82fr) minmax(520px,1.18fr);" in shell
     assert "state.modelUsageItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
     assert "state.traceItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
+    assert "event_type=PHYSICAL&cursor=" in source
+    assert "syncModelTracePolling(runId, generation)" in source
+    assert "item.status === 'RUNNING'" in source
+    assert "JSON.stringify({ force: options.force ?? true })" in source
     assert "filtered.slice(pagination.itemsFrom, pagination.itemsTo)" in source
     assert "state.checkpointItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
     assert "state.eventPage = 1" in source
@@ -772,12 +791,62 @@ def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
     assert "/actions/publish-and-run" in publish
     assert "function modelAutoProbeMarkup" in source
     assert "report.auto_model_probe" in source
-    assert "上次自动检测失败" in source
+    assert "failureItems" not in source
+    assert "...(report.warnings || []).map" in source
     assert "const report = await refreshValidation();" in source
     assert "operations.artifact_jobs" in source
     assert "artifact_queued" in source
     assert "artifact_running" in source
     assert "result_rewound" in source
+
+
+def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
+    root = Path(__file__).parents[2]
+    shell = (
+        root / "generative_agents" / "web" / "static" / "experiment-console.html"
+    ).read_text(encoding="utf-8")
+    source = (
+        root / "generative_agents" / "web" / "static" / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    assert 'id="newExperimentBrain"' in shell
+    assert "固定使用当前文件型大脑" not in shell
+    assert "prepareExperimentBrainChoices()" in source
+    assert "brain_skill: brainSkill" in source
+    assert "enqueueDraftMutation(() => saveDraftUnlocked(options))" in source
+    assert "return enqueueDraftMutation(async () =>" in source
+    assert "if (state.formDirty) await saveDraftUnlocked({ silent: true });" in source
+    assert "transportRetries: 1" in source
+    assert "CONTROL_PLANE_NETWORK_ERROR" in source
+    assert "await acceptSavedDraft(saved);" in source
+    assert "state.runEstimate = null;" in source
+    assert "refreshValidation()," in source
+    overview = source[
+        source.index("function fillDefinitionOverview") : source.index(
+            "function applyRunEstimateToOverview"
+        )
+    ]
+    assert "'6 / 6'" not in overview
+    assert "renderOverviewValidation(cachedValidation)" in overview
+
+
+def test_uploaded_agent_images_become_canonical_ui_state_without_reload():
+    source = (
+        Path(__file__).parents[2]
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "console-api.js"
+    ).read_text(encoding="utf-8")
+    upload = source[
+        source.index("async function uploadStagedAgentImages") : source.index(
+            "function setAgentEditorReadOnly"
+        )
+    ]
+
+    assert "$(`agentEdit${prefix}`).value = images[kind]" in upload
+    assert "setAgentImagePreview(kind, images[kind], '已保存到数据库')" in upload
+    assert "state.agentImageFiles[kind] = null" in upload
 
 
 def test_chat_output_limit_is_not_presented_as_the_model_context_window():
@@ -813,6 +882,47 @@ def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():
 
     assert "type: PhaserRuntime.CANVAS" in source
     assert "type: PhaserRuntime.AUTO" not in source
+
+
+def test_replay_spatial_hierarchy_materials_are_ordered_l1_through_l4():
+    """World-backed replay materials keep the editor's semantic layer order."""
+    node = shutil.which("node")
+    assert node, "Node.js is required for the replay spatial-layer contract"
+    root = Path(__file__).parents[2]
+    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    program = r"""
+global.window = global;
+global.Phaser = {};
+const { GAReplayPlayer } = require(process.argv[1]);
+const nodes = [
+  {id:'object-b',kind:'GAME_OBJECT',sort_order:2,material_slice_id:'slice-object-b'},
+  {id:'arena',kind:'ARENA',sort_order:0,material_slice_id:'slice-arena'},
+  {id:'world',kind:'WORLD',sort_order:0,material_slice_id:'slice-world'},
+  {id:'object-a',kind:'GAME_OBJECT',sort_order:1,material_slice_id:'slice-object-a'},
+  {id:'sector',kind:'SECTOR',sort_order:0,material_slice_id:'slice-sector'},
+  {id:'ignored',kind:'WORLD',sort_order:0,material_slice_id:null},
+];
+const all = GAReplayPlayer.orderedSpatialHierarchyNodes(nodes).map(item => item.id);
+const composite = GAReplayPlayer.orderedSpatialHierarchyNodes(nodes, 3).map(item => item.id);
+if (JSON.stringify(all) !== JSON.stringify(['world','sector','arena','object-a','object-b'])) {
+  throw new Error(`unexpected L1-L4 order: ${JSON.stringify(all)}`);
+}
+if (JSON.stringify(composite) !== JSON.stringify(['world','sector','arena'])) {
+  throw new Error(`unexpected static composite: ${JSON.stringify(composite)}`);
+}
+"""
+    subprocess.run(
+        [node, "-e", program, str(player)],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    source = player.read_text(encoding="utf-8")
+    assert "GAReplayPlayer.orderedSpatialHierarchyNodes(hierarchyNodes, 3)" in source
+    assert "Number(bounds.width || 1)) * scale" in source
+    assert "Number(bounds.height || 1)) * scale" in source
 
 
 def test_replay_agent_selection_is_revision_owned_and_executable():

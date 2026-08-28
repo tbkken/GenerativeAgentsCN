@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workday Stage Select"
+  short_description: "运行 Workday Stage Select 智能体技能"
+  default_prompt: "使用 $workday-stage-select 来完成任务。"

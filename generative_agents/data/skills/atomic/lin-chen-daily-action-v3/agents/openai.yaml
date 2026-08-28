@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lin Chen Daily Action V3"
+  short_description: "运行 Lin Chen Daily Action V3 智能体技能"
+  default_prompt: "使用 $lin-chen-daily-action-v3 来完成任务。"

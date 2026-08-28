@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import shutil
+import sqlite3
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
@@ -155,3 +156,62 @@ def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
     assert StepEffectKind.EVENT_PERCEIVED in {
         effect.kind for effect in result.effects
     }
+
+
+def test_memory_supersede_and_invalidate_preserve_history_but_hide_stale_versions(
+    tmp_path,
+):
+    database_path = tmp_path / "memory-lifecycle.sqlite"
+    memory = MemoryStream(database_path, run_id=uuid4(), attempt_id=uuid4())
+    started = datetime(2026, 8, 28, 9, 0, tzinfo=timezone.utc)
+    memory.begin_step(1, started)
+    original = memory.append(
+        agent_key="resident-001",
+        content="会议安排在下午两点",
+        kind="event",
+        poignancy=7,
+    )
+    memory.drain_result_events()
+
+    memory.begin_step(2, started + timedelta(minutes=10))
+    changed = memory.supersede(
+        agent_key="resident-001",
+        memory_id=original["id"],
+        content="会议改到下午三点",
+        reason="收到新的会议通知",
+    )
+    replacement = changed["replacement"]
+    found = memory.search(agent_key="resident-001", query="会议几点")
+    events = memory.drain_result_events()
+
+    assert [item["id"] for item in found] == [replacement["id"]]
+    assert [event["memory_kind"] for event in events[:2]] == [
+        MemoryDeltaKind.SUPERSEDED.value,
+        MemoryDeltaKind.CREATED.value,
+    ]
+    with sqlite3.connect(database_path) as connection:
+        old_state, superseded_by = connection.execute(
+            "SELECT state, superseded_by_memory_id FROM run_memories WHERE id = ?",
+            (original["id"],),
+        ).fetchone()
+        new_state, supersedes = connection.execute(
+            "SELECT state, supersedes_memory_id FROM run_memories WHERE id = ?",
+            (replacement["id"],),
+        ).fetchone()
+    assert (old_state, superseded_by) == ("SUPERSEDED", replacement["id"])
+    assert (new_state, supersedes) == ("ACTIVE", original["id"])
+
+    memory.begin_step(3, started + timedelta(minutes=20))
+    memory.invalidate(
+        agent_key="resident-001",
+        memory_id=replacement["id"],
+        reason="会议已经取消",
+    )
+
+    assert memory.search(agent_key="resident-001", query="会议") == []
+    with sqlite3.connect(database_path) as connection:
+        state, reason = connection.execute(
+            "SELECT state, invalidated_reason FROM run_memories WHERE id = ?",
+            (replacement["id"],),
+        ).fetchone()
+    assert (state, reason) == ("INVALIDATED", "会议已经取消")

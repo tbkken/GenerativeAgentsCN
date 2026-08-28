@@ -35,6 +35,7 @@ from generative_agents.status import (
 )
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 from .run_storage import RunStorageBoundary
 
 
@@ -422,9 +423,9 @@ class ArtifactService:
             "progress": job.progress,
             "artifact_id": job.artifact_id,
             "error_summary": job.error_summary,
-            "created_at": job.created_at.isoformat(),
-            "started_at": job.started_at.isoformat() if job.started_at else None,
-            "finished_at": job.finished_at.isoformat() if job.finished_at else None,
+            "created_at": iso_utc(job.created_at),
+            "started_at": iso_utc(job.started_at) if job.started_at else None,
+            "finished_at": iso_utc(job.finished_at) if job.finished_at else None,
         }
 
     @staticmethod
@@ -455,6 +456,6 @@ class ArtifactService:
                 else ArtifactScope.FINAL.value
             ),
             "state": artifact.state,
-            "created_at": artifact.created_at.isoformat(),
+            "created_at": iso_utc(artifact.created_at),
             "error_summary": artifact.error_summary,
         }

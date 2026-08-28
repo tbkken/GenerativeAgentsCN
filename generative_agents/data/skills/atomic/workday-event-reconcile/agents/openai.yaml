@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workday Event Reconcile"
+  short_description: "运行 Workday Event Reconcile 智能体技能"
+  default_prompt: "使用 $workday-event-reconcile 来完成任务。"

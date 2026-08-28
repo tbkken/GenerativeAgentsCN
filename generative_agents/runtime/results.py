@@ -29,6 +29,8 @@ class StepEffectKind(StrEnum):
     MEMORY_ACCESSED = "MEMORY_ACCESSED"
     MEMORY_EXPIRED = "MEMORY_EXPIRED"
     MEMORY_EVICTED = "MEMORY_EVICTED"
+    MEMORY_SUPERSEDED = "MEMORY_SUPERSEDED"
+    MEMORY_INVALIDATED = "MEMORY_INVALIDATED"
     REFLECTION_CREATED = "REFLECTION_CREATED"
     SCHEDULE_REVISED = "SCHEDULE_REVISED"
     DOMAIN_EVENT = "DOMAIN_EVENT"
@@ -105,6 +107,9 @@ class MemoryDelta:
     created_at: datetime | None = None
     expires_at: datetime | None = None
     evidence_memory_ids: tuple[str, ...] = ()
+    replacement_memory_id: str | None = None
+    supersedes_memory_id: str | None = None
+    reason: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -259,6 +264,8 @@ class StepResult:
             MemoryDeltaKind.ACCESSED: StepEffectKind.MEMORY_ACCESSED,
             MemoryDeltaKind.EXPIRED: StepEffectKind.MEMORY_EXPIRED,
             MemoryDeltaKind.EVICTED: StepEffectKind.MEMORY_EVICTED,
+            MemoryDeltaKind.SUPERSEDED: StepEffectKind.MEMORY_SUPERSEDED,
+            MemoryDeltaKind.INVALIDATED: StepEffectKind.MEMORY_INVALIDATED,
         }
         for item in self.memory_deltas:
             payload = {
@@ -273,6 +280,9 @@ class StepResult:
                 "created_at": item.created_at.isoformat() if item.created_at else None,
                 "expires_at": item.expires_at.isoformat() if item.expires_at else None,
                 "evidence_memory_ids": list(item.evidence_memory_ids),
+                "replacement_memory_id": item.replacement_memory_id,
+                "supersedes_memory_id": item.supersedes_memory_id,
+                "reason": item.reason,
             }
             effects.append(
                 StepEffectRecord(
@@ -437,6 +447,9 @@ class StepResult:
                         else None
                     ),
                     evidence_memory_ids=tuple(item.get("evidence_memory_ids", ())),
+                    replacement_memory_id=item.get("replacement_memory_id"),
+                    supersedes_memory_id=item.get("supersedes_memory_id"),
+                    reason=item.get("reason"),
                 )
                 for item in value.get("memory_deltas", ())
             ),

@@ -789,7 +789,7 @@ API Key 不进入 `definition_json`、日志、异常和前端响应。配置只
 - 发布并运行：在一个数据库事务内完成最终校验哈希检查、草稿发布、QUEUED Run 创建、`run_queue` 入队和实验状态更新。API 不直接抢槽或启动子进程。
 - 调度认领：`BEGIN IMMEDIATE` 内计算 1..N 的最小空闲槽、选择最小 queue id、创建 SPAWNING RunAttempt，将 Run 改为 STARTING、写 `slot_no/current_attempt_id` 并删除队列行；提交后物化文件并启动子进程。
 - 子进程启动失败：补偿事务将 Run 标记 FAILED，结束 attempt，清空 `slot_no/current_attempt_id/pid`；发布版本仍保留，调度器继续处理下一个排队 Run。
-- 暂停/取消请求：只修改状态，不等待子进程结束；worker 在步骤边界确认并写入最终状态。
+- 暂停请求只修改状态，由 worker 在完整步骤边界确认；取消请求默认写入强制终止事实，由 Supervisor 校验 PID 与进程创建时间后立即结束 worker，未提交的当前 Step 不可见。
 - checkpoint 写入和数据库进度更新不在同一文件系统事务中；恢复时以“已原子落盘且通过校验的最新 checkpoint”为准，并修正数据库投影。
 
 ### 7.12 结果读取模型
@@ -881,11 +881,11 @@ Agent 页不能每次扫描全部步骤。`run_agent_summaries` 以 `(run_id, ag
 
 #### `run_model_usage`
 
-当前 `LLMModel._summary` 只存在进程内存和普通日志，进程退出后无法可靠生成模型调用结果。高保真首期只展示按用途聚合，不值得把每个完整调用都塞进 SQLite。每个 attempt 独占 `traces/model-calls-NNN.jsonl`，以递增 `event_seq` 追加两类事实：每次 HTTP 请求结束写 `PHYSICAL_ATTEMPT`；一个逻辑调用结束写 `LOGICAL_END`。公共字段为 attempt_id、call_id、step、agent、purpose/prompt_key、provider、resolved model、开始/结束、latency、attempt_no、结果状态、token（provider 返回时）、error_code；默认不写完整 prompt/response。
+当前 `LLMModel._summary` 只存在进程内存和普通日志，进程退出后无法可靠生成模型调用结果。高保真首期只展示按用途聚合，不值得把每个完整调用都塞进 SQLite。每个 attempt 独占 `traces/model-calls-NNN.jsonl`，以递增 `event_seq` 追加三类事实：进入阻塞 HTTP 请求前写 `PHYSICAL_START/RUNNING`，请求结束写同一 `call_id + attempt_no` 的 `PHYSICAL_ATTEMPT`，一个逻辑调用结束写 `LOGICAL_END`。公共字段为 attempt_id、call_id、step、agent、purpose/prompt_key、provider、resolved model、开始/结束、latency、attempt_no、结果状态、token（provider 返回时）、error_code；默认不写完整 prompt/response。调用明细 API 可在首个 Step 尚未投影 cursor 时直接从 Attempt 所属路径安全增量读取原始 JSONL，页面按调用身份合并开始/结束事实。
 
 SQLite `run_model_usage` 以 `(run_id, purpose, provider, resolved_model)` 为主键，保存 logical_call_count、successful_call_count、fallback_count、physical_attempt_count、retry_count、input/output token 合计、固定延迟桶 JSON、max_latency_ms 和 updated_step。P95 以物理请求耗时从固定延迟桶确定性计算；不在每次请求时排序全量 trace。口径固定为：一次 `Agent.completion()` 是一个 logical call；其中每次 HTTP 尝试是 physical attempt；所有尝试失败并使用 failsafe 计入 fallback 且不算成功。它统计该 Run 所有 attempt 中已经落盘的真实调用，包括后来未形成已提交 step 的调用，避免低估故障恢复产生的模型消耗；`run_steps.model_logical_calls` 则只统计已提交步骤，两者不得混用。
 
-新增 `run_model_trace_cursors(run_id, attempt_id, relative_path, last_event_seq, byte_offset, updated_at)`。`ModelTraceProjector` 在步骤边界、attempt 结束和 startup reconcile 时从 cursor 后读取完整 JSONL 行，在同一 SQLite 事务内更新 usage、cursor 和 `run_result_summaries.result_version`；重复执行不会重复计数。文件尾部半行等待下次读取，死亡 attempt 中只有 `PHYSICAL_ATTEMPT` 而没有 `LOGICAL_END` 的请求仍计入物理尝试，但不伪造成完成的逻辑调用。
+新增 `run_model_trace_cursors(run_id, attempt_id, relative_path, last_event_seq, byte_offset, updated_at)`。`ModelTraceProjector` 在步骤边界、attempt 结束和 startup reconcile 时从 cursor 后读取完整 JSONL 行，在同一 SQLite 事务内更新 usage、cursor 和 `run_result_summaries.result_version`；重复执行不会重复计数。`PHYSICAL_START` 只表达实时生命周期，不增加调用、重试、token 或延迟聚合；这些口径仍只由完成的 `PHYSICAL_ATTEMPT` 驱动。文件尾部半行等待下次读取；死亡 attempt 中没有匹配完成事件的开始事实在界面标记为 `ABORTED`，也不伪造成完成调用。
 
 仅在发布配置显式启用 `results.capture_model_payloads` 时，才在同一 JSONL 记录脱敏、压缩后的 payload 引用及哈希。该开关属于 Revision；关闭时 API 不能声称支持查看原始 prompt/response。
 
@@ -1061,7 +1061,7 @@ stateDiagram-v2
 5. 当达到 `checkpoint_interval_steps` 或即将进入上述状态时，提交包含状态、RNG、对话和向量索引的完整 checkpoint bundle。
 6. 短事务更新 `completed_steps`、`recoverable_step`、`virtual_time`、`heartbeat_at` 和最终控制状态；进入非运行状态时清空 `slot_no` 和 `current_attempt_id`，结束 attempt、追加事件并主动唤醒调度器。
 
-暂停和取消不在单个 Agent 或一次 LLM 请求中途强杀进程，避免得到不可恢复的半步状态。用户点击后 UI 显示“正在暂停”，等当前完整步骤结束再进入 PAUSED。
+暂停不在单个 Agent 或一次 LLM 请求中途强杀进程；用户点击后 UI 显示“正在暂停”，等当前完整步骤结束再进入 PAUSED。取消采用不同语义：立即终止已验证身份的 worker，保留此前原子提交的 Step，并丢弃尚未提交的当前 Step。
 
 ### 9.3 心跳与重启对账
 
@@ -1351,9 +1351,9 @@ POST | `/experiments/{id}/revisions/{revision_id}/runs`
 
 结果页 Run 选择器调用 `GET /experiments/{id}/runs?cursor=&limit=50&sort=-created_at`。每项必须返回 `run_id`、run status、revision_no/hash、created/started/finished 时间、requested/completed/available step、result_state、capabilities 和是否 recoverable。API 校验每个 Run 都属于路径中的 Experiment。默认选择规则固定为：URL 指定且归属正确的 run → 当前非终态且已有结果的 run → 最近一个有结果的 run → 最近创建的 run。SSE 出现新 Run 时不自动切换，避免用户正在查看历史结果时页面跳走。
 
-取消请求 body 为 `{"force": false}`，默认软取消并等待步骤边界。控制接口必须幂等：重复 pause 在 PAUSE_REQUESTED 返回当前状态；重复 cancel 在 CANCELLED 返回当前状态。取消 QUEUED Run 必须在同一事务中删除 `run_queue` 行。取消 PAUSED Run 不创建 attempt、不占槽，在一个短事务中直接改为 CANCELLED，保留现有 checkpoint 与部分结果并解除“单实验一个开放 Run”约束。取消 STARTING Run 使用条件 UPDATE：若 worker 尚未注册则直接 CANCELLED、结束 attempt、清空槽；若它已原子转为 RUNNING，则重新读取后改为 CANCEL_REQUESTED。迟到的 worker 因 `current_attempt_id` 失效而自行退出。恢复操作将 Run 重新放到队尾。非法状态转换返回 `409 INVALID_RUN_TRANSITION`。
+取消请求 body 默认等价于 `{"force": true}`，立即结束当前 worker；显式 `{"force": false}` 只保留给内部协作式控制和诊断。控制接口必须幂等：重复 pause 在 PAUSE_REQUESTED 返回当前状态；重复 cancel 在 CANCELLED 返回当前状态。取消 QUEUED Run 必须在同一事务中删除 `run_queue` 行。取消 PAUSED Run 不创建 attempt、不占槽，在一个短事务中直接改为 CANCELLED，保留现有 checkpoint 与部分结果并解除“单实验一个开放 Run”约束。取消 STARTING Run 使用条件 UPDATE：若 worker 尚未注册则直接 CANCELLED、结束 attempt、清空槽；若它已原子转为 RUNNING，则重新读取后改为 CANCEL_REQUESTED。迟到的 worker 因 `current_attempt_id` 失效而自行退出。恢复操作将 Run 重新放到队尾。非法状态转换返回 `409 INVALID_RUN_TRANSITION`。
 
-若 worker 卡在长时间模型请求，软取消可能暂时不释放槽。用户再次提交 `{"force": true}` 时，Supervisor 必须同时匹配 PID 和 `pid_create_time` 后调用 terminate，等待 `GA_WORKER_FORCE_KILL_GRACE_SECONDS`，必要时再 kill；随后标记 CANCELLED、结束 attempt 并释放槽。禁止只凭 PID 杀进程，避免 PID 复用误伤其他实验。
+Supervisor 收到默认强制取消事实后，必须同时匹配 PID 和 `pid_create_time` 再执行 kill；随后对账为 CANCELLED、结束 attempt 并释放槽。禁止只凭 PID 杀进程，避免 PID 复用误伤其他实验。该路径不受当前模型请求超时时间约束。
 
 强制取消采用明确的“结果边界与恢复边界分离”规则：已经通过 StepCommitter 完整提交的 `available_step` 是该 CANCELLED Run 的最终可读事实上界，不回退到 `recoverable_step`；制品任务只可读取该上界，且记录 source available_step/result_version。`recoverable_step` 仅表示可恢复 checkpoint，但 CANCELLED 是终态且不允许 resume，因此两者可以不同。被终止时尚未完成原子 frame + SQLite 投影的半步不可见。只有 INTERRUPTED/FAILED 的恢复流程才执行 8.3 的 checkpoint rewind 协议；不得把 force cancel 的终态结果与可恢复分支混用。
 

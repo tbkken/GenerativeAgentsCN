@@ -10,11 +10,11 @@ from math import ceil
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 
-from generative_agents.config import canonical_json_bytes, make_builtin_definition
+from generative_agents.config import canonical_json_bytes
 from generative_agents.config.map_editor import MapEditorDocumentV2
 from generative_agents.config.schema import WorldConfig, WorldOverlayConfig
 from generative_agents.config.spatial_assets import (
@@ -29,10 +29,14 @@ from generative_agents.persistence.models import (
     WorldMap,
     WorldMapRevision,
 )
-from generative_agents.skills import SkillRegistry, SkillRegistryError
+from generative_agents.skills import (
+    DatabaseSkillRegistry,
+    SkillRegistryError,
+)
 from generative_agents.status import RevisionState
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 
 def _utc_now() -> datetime:
@@ -169,6 +173,14 @@ def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
             continue
         x, y = coord
         path = [root.name]
+        semantics = [
+            {
+                "kind": root.kind,
+                "id": root.id,
+                "name": root.name,
+                "semantic": root.semantic,
+            }
+        ]
         parent = root
         for expected_kind in expected_kinds:
             candidates = [
@@ -187,7 +199,16 @@ def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
                 ),
             )
             path.append(parent.name)
+            semantics.append(
+                {
+                    "kind": parent.kind,
+                    "id": parent.id,
+                    "name": parent.name,
+                    "semantic": parent.semantic,
+                }
+            )
         tile["address"] = path
+        tile["spatial_semantics"] = semantics
         compiled_tiles.append(tile)
 
     definition["world"] = root.name
@@ -882,7 +903,7 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
 
 
 def _validate_spatial_scene(
-    session: Session, world: WorldConfig
+    session: Session, world: WorldConfig, *, skill_registry=None
 ) -> list[dict[str, str]]:
     """校验空间数据`scene`。
 
@@ -994,6 +1015,7 @@ def _validate_spatial_scene(
                 _validate_passive_skill_bindings(
                     contract.skill_bindings,
                     path=f"definition.spatial_scene.placements.{index}",
+                    registry=skill_registry,
                 )
             )
         if not (0 <= placement.x_m < max_x and 0 <= placement.y_m < max_y):
@@ -1007,7 +1029,9 @@ def _validate_spatial_scene(
     return errors
 
 
-def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, str]]:
+def _validate_passive_skill_bindings(
+    bindings, *, path: str, registry
+) -> list[dict[str, str]]:
     """校验`passive`技能`bindings`。
 
     参数:
@@ -1018,7 +1042,6 @@ def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, s
         返回以字段名或业务键组织的结构化映射。
     """
     errors: list[dict[str, str]] = []
-    registry = SkillRegistry()
     for index, binding in enumerate(bindings):
         binding_path = f"{path}.skill_bindings.{index}"
         try:
@@ -1032,21 +1055,23 @@ def _validate_passive_skill_bindings(bindings, *, path: str) -> list[dict[str, s
                 }
             )
             continue
-        if document.kind != "atomic" or "scripts/main.py" not in document.scripts:
+        if document.kind == "brain":
             errors.append(
                 {
                     "code": "GAME_OBJECT_SKILL_NOT_PASSIVE",
                     "path": f"{binding_path}.skill_name",
                     "message": (
-                        f"Game Object Skill {binding.skill_name} 必须是包含 "
-                        "scripts/main.py 的 atomic Skill"
+                        f"Game Object 不能绑定 Brain Skill {binding.skill_name}；"
+                        "请绑定返回文本反馈的 atomic 或 pack Skill"
                     ),
                 }
             )
     return errors
 
 
-def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
+def _validate_map_editor_v2(
+    world: WorldConfig, *, skill_registry=None
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     """校验地图`editor``v2`。
 
     参数:
@@ -1057,33 +1082,54 @@ def _validate_map_editor_v2(world: WorldConfig) -> list[dict[str, str]]:
     """
     raw_document = world.definition.get("editor_v2")
     if raw_document is None:
-        return []
+        return [], []
     try:
         document = MapEditorDocumentV2.model_validate(raw_document)
     except ValidationError as exc:
-        return [
-            {
-                "code": "MAP_EDITOR_V2_INVALID",
-                "path": "definition.editor_v2",
-                "message": item["msg"],
-            }
-            for item in exc.errors(include_url=False)
-        ]
+        return (
+            [
+                {
+                    "code": "MAP_EDITOR_V2_INVALID",
+                    "path": "definition.editor_v2",
+                    "message": item["msg"],
+                }
+                for item in exc.errors(include_url=False)
+            ],
+            [],
+        )
     errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    game_objects = []
     for index, node in enumerate(document.hierarchy_nodes):
         errors.extend(
             _validate_passive_skill_bindings(
                 node.skill_bindings,
                 path=f"definition.editor_v2.hierarchy_nodes.{index}",
+                registry=skill_registry,
             )
         )
-    return errors
+        if node.kind == "GAME_OBJECT":
+            game_objects.append((index, node))
+    if game_objects and not any(
+        node.interaction_mode == "SKILL_BOUND" for _index, node in game_objects
+    ):
+        warnings.append(
+            {
+                "code": "ALL_GAME_OBJECTS_STATIC",
+                "path": "definition.editor_v2.hierarchy_nodes",
+                "message": (
+                    f"地图包含 {len(game_objects)} 个 Game Object，但没有任何对象绑定被动 Skill；"
+                    "Agent 只能感知这些对象，不能与其交互。"
+                ),
+            }
+        )
+    return errors, warnings
 
 
 class WorldMapService:
     """管理地图草稿、发布版本、实验引用和编辑器文档编译。"""
 
-    def __init__(self, database: Database) -> None:
+    def __init__(self, database: Database, *, skill_registry=None) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
         参数:
@@ -1093,6 +1139,10 @@ class WorldMapService:
             无返回值。
         """
         self.database = database
+        self.skill_registry = skill_registry or DatabaseSkillRegistry(
+            database,
+            cache_root="var/skill-runtime-cache",
+        )
 
     @staticmethod
     def list_blueprints() -> list[dict[str, Any]]:
@@ -1102,466 +1152,6 @@ class WorldMapService:
             返回以字段名或业务键组织的结构化映射。
         """
         return [copy.deepcopy(item) for item in MAP_BLUEPRINTS]
-
-    def ensure_builtin_map(self) -> dict[str, Any]:
-        """确保`builtin`地图。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-
-        with self.database.session_factory.begin() as session:
-            existing = session.scalar(
-                select(WorldMap).where(WorldMap.map_key == "the-ville")
-            )
-            if existing is not None:
-                return self._map_detail(session, existing)
-            now = _utc_now()
-            map_id = str(uuid4())
-            public_map = WorldMap(
-                id=map_id,
-                map_key="the-ville",
-                name="the Ville 标准小镇",
-                description="内置公共地图，可被多个实验引用并在实验内独立微调。",
-                status=RevisionState.DRAFT.value,
-                row_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(public_map)
-            session.flush()
-            world = normalize_public_world(
-                make_builtin_definition(
-                    key="builtin-map-catalog",
-                    name="公共地图目录",
-                ).world
-            )
-            payload = world.model_dump(mode="json", exclude_none=False)
-            digest = world_hash(world)
-            published = WorldMapRevision(
-                id=str(uuid4()),
-                map_id=map_id,
-                revision_no=1,
-                state=RevisionState.PUBLISHED.value,
-                schema_version=1,
-                world_json=payload,
-                world_hash=digest,
-                validation_json={"valid": True, "errors": [], "warnings": []},
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-                published_at=now,
-            )
-            session.add(published)
-            session.flush()
-            draft = WorldMapRevision(
-                id=str(uuid4()),
-                map_id=map_id,
-                revision_no=2,
-                state=RevisionState.DRAFT.value,
-                base_revision_id=published.id,
-                schema_version=1,
-                world_json=copy.deepcopy(payload),
-                world_hash=digest,
-                validation_json=None,
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(draft)
-            session.flush()
-            public_map.current_published_revision_id = published.id
-            public_map.current_draft_revision_id = draft.id
-            return self._map_detail(session, public_map)
-
-    def ensure_intersection_map(self) -> dict[str, Any]:
-        """确保`intersection`地图。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
-        """
-
-        with self.database.session_factory.begin() as session:
-            existing = session.scalar(
-                select(WorldMap).where(
-                    WorldMap.map_key == "standard-3lane-intersection"
-                )
-            )
-            asset_keys = {
-                "tile-ground",
-                "tile-road-asphalt",
-                "tile-sidewalk",
-                "marking-crosswalk",
-                "object-traffic-light",
-                "zone-pedestrian-wait",
-                "marking-vehicle-stop-line",
-            }
-            assets = list(
-                session.scalars(
-                    select(SpatialAssetDefinition).where(
-                        SpatialAssetDefinition.asset_key.in_(asset_keys)
-                    )
-                )
-            )
-            revisions = {
-                item.asset_key: session.get(
-                    SpatialAssetRevision, item.current_published_revision_id
-                )
-                for item in assets
-                if item.current_published_revision_id
-            }
-            if set(revisions) != asset_keys or any(
-                item is None for item in revisions.values()
-            ):
-                raise RuntimeError("intersection spatial assets are unavailable")
-
-            size = 48
-            road_min, road_max = 15, 32
-            crosswalk_bands = lambda x, y: (
-                road_min <= x <= road_max and y in {12, 13, 14, 33, 34, 35}
-            ) or (road_min <= y <= road_max and x in {12, 13, 14, 33, 34, 35})
-            tiles: list[dict[str, Any]] = []
-            for y in range(size):
-                for x in range(size):
-                    if crosswalk_bands(x, y):
-                        tile_key = "crosswalk"
-                    elif road_min <= x <= road_max or road_min <= y <= road_max:
-                        tile_key = "road"
-                    elif x in {13, 14, 33, 34} or y in {13, 14, 33, 34}:
-                        tile_key = "sidewalk"
-                    else:
-                        tile_key = "ground"
-                    tiles.append(
-                        {
-                            "coord": [x, y],
-                            "collision": False,
-                            "address": ["标准路口", "公共道路"],
-                            "tile": tile_key,
-                        }
-                    )
-
-            def placement(
-                key: str,
-                asset_key: str,
-                x: float,
-                y: float,
-                rotation: float = 0,
-                state: dict[str, Any] | None = None,
-            ) -> dict[str, Any]:
-                """向地图蓝图添加一个空间资源实例及其初始状态覆盖。
-
-                参数:
-                    key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-                    asset_key: 用于稳定定位资源的键。 类型：`str`。
-                    x: 空间坐标的水平分量。 类型：`float`。
-                    y: 空间坐标的垂直分量。 类型：`float`。
-                    rotation: 空间资源实例相对于默认方向的旋转角度。 类型：`float`。 默认值：`0`。
-                    state: 空间资源实例的初始状态覆盖映射；为空时使用资源定义中的默认状态。 类型：`dict[str, Any] | None`。 默认值：`None`。
-
-                返回:
-                    返回以字段名或业务键组织的结构化映射。
-                """
-                return {
-                    "instance_key": key,
-                    "spatial_asset_revision_id": revisions[asset_key].id,
-                    "x_m": x,
-                    "y_m": y,
-                    "rotation_degrees": rotation,
-                    "state_overrides": state or {},
-                }
-
-            placements = [
-                placement(
-                    "signal-north",
-                    "object-traffic-light",
-                    14,
-                    14,
-                    0,
-                    {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
-                ),
-                placement(
-                    "signal-east",
-                    "object-traffic-light",
-                    34,
-                    14,
-                    90,
-                    {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
-                ),
-                placement(
-                    "signal-south",
-                    "object-traffic-light",
-                    34,
-                    34,
-                    180,
-                    {"state": "VEHICLE_RED", "phase": "VEHICLE_RED"},
-                ),
-                placement(
-                    "signal-west",
-                    "object-traffic-light",
-                    14,
-                    34,
-                    270,
-                    {"state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN"},
-                ),
-                placement("wait-north", "zone-pedestrian-wait", 24, 11),
-                placement("wait-east", "zone-pedestrian-wait", 36, 24),
-                placement("wait-south", "zone-pedestrian-wait", 24, 36),
-                placement("wait-west", "zone-pedestrian-wait", 11, 24),
-                placement("stop-north", "marking-vehicle-stop-line", 24, 12, 0),
-                placement("stop-east", "marking-vehicle-stop-line", 35, 24, 90),
-                placement("stop-south", "marking-vehicle-stop-line", 24, 35, 180),
-                placement("stop-west", "marking-vehicle-stop-line", 12, 24, 270),
-            ]
-            world = WorldConfig.model_validate(
-                {
-                    "world_key": "standard-3lane-intersection",
-                    "world_name": "标准四向三车道路口",
-                    "definition": {
-                        "world": "标准路口",
-                        "size": [size, size],
-                        "tile_size": 16,
-                        "tile_address_keys": [
-                            "world",
-                            "sector",
-                            "arena",
-                            "object",
-                        ],
-                        "traffic_layout": {
-                            "intersection_type": "FOUR_WAY",
-                            "approaches": ["NORTH", "EAST", "SOUTH", "WEST"],
-                            "lanes_per_direction": 3,
-                            "lane_width_m": 3.0,
-                            "crosswalks": [
-                                {
-                                    "crosswalk_key": "north",
-                                    "bounds_m": {
-                                        "x": 15,
-                                        "y": 12,
-                                        "width": 18,
-                                        "height": 3,
-                                    },
-                                },
-                                {
-                                    "crosswalk_key": "east",
-                                    "bounds_m": {
-                                        "x": 33,
-                                        "y": 15,
-                                        "width": 3,
-                                        "height": 18,
-                                    },
-                                },
-                                {
-                                    "crosswalk_key": "south",
-                                    "bounds_m": {
-                                        "x": 15,
-                                        "y": 33,
-                                        "width": 18,
-                                        "height": 3,
-                                    },
-                                },
-                                {
-                                    "crosswalk_key": "west",
-                                    "bounds_m": {
-                                        "x": 12,
-                                        "y": 15,
-                                        "width": 3,
-                                        "height": 18,
-                                    },
-                                },
-                            ],
-                        },
-                        "tiles": tiles,
-                        "palette": [
-                            {
-                                "key": "ground",
-                                "label": "基础地面",
-                                "color": "#c9d9bd",
-                                "collision": False,
-                            },
-                            {
-                                "key": "road",
-                                "label": "六车道道路",
-                                "color": "#53605d",
-                                "collision": False,
-                            },
-                            {
-                                "key": "sidewalk",
-                                "label": "人行道",
-                                "color": "#d5ddd7",
-                                "collision": False,
-                            },
-                            {
-                                "key": "crosswalk",
-                                "label": "斑马线",
-                                "color": "#f7faf8",
-                                "collision": False,
-                            },
-                        ],
-                        "spatial_scene": {
-                            "meters_per_tile": 1.0,
-                            "palette_refs": {
-                                "ground": revisions["tile-ground"].id,
-                                "road": revisions["tile-road-asphalt"].id,
-                                "sidewalk": revisions["tile-sidewalk"].id,
-                                "crosswalk": revisions["marking-crosswalk"].id,
-                            },
-                            "placements": placements,
-                        },
-                        "editor": {
-                            "schema_version": 1,
-                            "palette": [
-                                {
-                                    "id": "ground",
-                                    "name": "基础地面",
-                                    "color": "#c9d9bd",
-                                    "collision": False,
-                                },
-                                {
-                                    "id": "road",
-                                    "name": "六车道道路",
-                                    "color": "#53605d",
-                                    "collision": False,
-                                },
-                                {
-                                    "id": "sidewalk",
-                                    "name": "人行道",
-                                    "color": "#d5ddd7",
-                                    "collision": False,
-                                },
-                                {
-                                    "id": "crosswalk",
-                                    "name": "斑马线",
-                                    "color": "#f7faf8",
-                                    "collision": False,
-                                },
-                            ],
-                            "cells": {
-                                f"{item['coord'][0]},{item['coord'][1]}": {
-                                    "kind": item["tile"]
-                                }
-                                for item in tiles
-                            },
-                            "spatial_assets": {
-                                revision.id: copy.deepcopy(revision.contract_json)
-                                for revision in revisions.values()
-                            },
-                            "module_definition": {
-                                "module_key": "standard-3lane-intersection",
-                                "name": "标准四向三车道路口",
-                                "lanes_per_direction": 3,
-                                "crosswalk_count": 4,
-                                "anchor": [24, 24],
-                            },
-                        },
-                    },
-                    "assets": [],
-                }
-            )
-            errors = [
-                *_validate_world_definition(world),
-                *_validate_spatial_scene(session, world),
-                *_validate_map_editor_v2(world),
-            ]
-            if errors:
-                raise RuntimeError(f"invalid built-in intersection map: {errors}")
-            now = _utc_now()
-            payload = normalize_public_world(world).model_dump(
-                mode="json", exclude_none=False
-            )
-            expected_hash = world_hash(world)
-            if existing is not None:
-                current = session.get(
-                    WorldMapRevision, existing.current_published_revision_id
-                )
-                if current is not None and current.world_hash == expected_hash:
-                    return self._map_detail(session, existing)
-                revision_no = (
-                    int(
-                        session.scalar(
-                            select(func.max(WorldMapRevision.revision_no)).where(
-                                WorldMapRevision.map_id == existing.id
-                            )
-                        )
-                        or 0
-                    )
-                    + 1
-                )
-                published = WorldMapRevision(
-                    id=str(uuid4()),
-                    map_id=existing.id,
-                    revision_no=revision_no,
-                    state=RevisionState.PUBLISHED.value,
-                    base_revision_id=current.id if current else None,
-                    schema_version=1,
-                    world_json=payload,
-                    world_hash=expected_hash,
-                    validation_json={"valid": True, "errors": [], "warnings": []},
-                    lock_version=1,
-                    created_at=now,
-                    updated_at=now,
-                    published_at=now,
-                )
-                session.add(published)
-                session.flush()
-                existing.current_published_revision_id = published.id
-                existing.row_version += 1
-                existing.updated_at = now
-                return self._map_detail(session, existing)
-            public_map = WorldMap(
-                id=str(uuid4()),
-                map_key="standard-3lane-intersection",
-                name="标准四向三车道路口",
-                description="48m × 48m、每个方向三车道、四条人行横道与可感知交通设施的复用地图。",
-                status=RevisionState.PUBLISHED.value,
-                row_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(public_map)
-            session.flush()
-            published = WorldMapRevision(
-                id=str(uuid4()),
-                map_id=public_map.id,
-                revision_no=1,
-                state=RevisionState.PUBLISHED.value,
-                schema_version=1,
-                world_json=payload,
-                world_hash=expected_hash,
-                validation_json={"valid": True, "errors": [], "warnings": []},
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-                published_at=now,
-            )
-            session.add(published)
-            session.flush()
-            public_map.current_published_revision_id = published.id
-            return self._map_detail(session, public_map)
-
-    def default_revision_id(self) -> str:
-        """执行 `WorldMapService` 的`default`修订版本`id`操作。
-
-        返回:
-            返回处理后的文本或稳定标识。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-
-        with self.database.session_factory() as session:
-            public_map = session.scalar(
-                select(WorldMap).where(WorldMap.map_key == "the-ville")
-            )
-            if public_map is None or not public_map.current_published_revision_id:
-                raise ServiceError(
-                    "DEFAULT_MAP_UNAVAILABLE",
-                    "the Ville 基准地图尚未初始化",
-                    status_code=503,
-                )
-            return public_map.current_published_revision_id
 
     def create_map(
         self,
@@ -1785,6 +1375,7 @@ class WorldMapService:
         status: RevisionState | str | None = None,
         page: int = 1,
         page_size: int = 5,
+        archived: str = "active",
     ) -> dict[str, Any]:
         """查询`maps`。
 
@@ -1804,6 +1395,10 @@ class WorldMapService:
             raise ServiceError(
                 "INVALID_PAGINATION", "地图分页参数无效", status_code=422
             )
+        if archived not in {"active", "archived", "all"}:
+            raise ServiceError(
+                "INVALID_ARCHIVE_FILTER", "地图归档筛选无效", status_code=422
+            )
         try:
             normalized_status = (
                 RevisionState(str(status).upper()).value if status else None
@@ -1818,6 +1413,19 @@ class WorldMapService:
             status_count_statement = select(WorldMap.status, func.count()).group_by(
                 WorldMap.status
             )
+            archive_predicate = (
+                WorldMap.archived_at.is_(None)
+                if archived == "active"
+                else WorldMap.archived_at.is_not(None)
+                if archived == "archived"
+                else None
+            )
+            if archive_predicate is not None:
+                statement = statement.where(archive_predicate)
+                count_statement = count_statement.where(archive_predicate)
+                status_count_statement = status_count_statement.where(
+                    archive_predicate
+                )
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
                 predicate = or_(
@@ -1854,6 +1462,41 @@ class WorldMapService:
                 "total_pages": max(1, ceil(total / page_size)),
                 "status_counts": status_counts,
             }
+
+    def set_archived(self, map_id: str, *, archived: bool) -> dict[str, Any]:
+        with self.database.session_factory.begin() as session:
+            public_map = session.get(WorldMap, map_id)
+            if public_map is None:
+                raise not_found("map", map_id)
+            public_map.archived_at = _utc_now() if archived else None
+            public_map.updated_at = _utc_now()
+            public_map.row_version += 1
+        return self.get_map(map_id)
+
+    def delete_map(self, map_id: str) -> None:
+        with self.database.session_factory.begin() as session:
+            public_map = session.get(WorldMap, map_id)
+            if public_map is None:
+                raise not_found("map", map_id)
+            if public_map.archived_at is None:
+                raise ServiceError(
+                    "MAP_NOT_ARCHIVED",
+                    "请先归档地图，再执行彻底删除",
+                    status_code=409,
+                )
+            if self._usage_experiment_ids(session, map_id):
+                raise ServiceError(
+                    "MAP_IN_USE",
+                    "地图仍被实验修订引用，只能保持归档",
+                    status_code=409,
+                )
+            public_map.current_draft_revision_id = None
+            public_map.current_published_revision_id = None
+            session.flush()
+            session.execute(
+                delete(WorldMapRevision).where(WorldMapRevision.map_id == map_id)
+            )
+            session.delete(public_map)
 
     def get_map(self, map_id: str) -> dict[str, Any]:
         """获取地图。
@@ -1984,6 +1627,8 @@ class WorldMapService:
         异常:
             ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
         """
+        if hasattr(self.skill_registry, "ensure_builtin_skills"):
+            self.skill_registry.ensure_builtin_skills()
         with self.database.session_factory.begin() as session:
             public_map, revision = self._require_draft(session, map_id)
             if (
@@ -1996,17 +1641,23 @@ class WorldMapService:
                     status_code=409,
                 )
             world = normalize_public_world(revision.world_json)
-            editor_errors = _validate_map_editor_v2(world)
+            editor_errors, editor_warnings = _validate_map_editor_v2(
+                world, skill_registry=self.skill_registry
+            )
             if not editor_errors:
                 world = _compile_editor_v2_runtime_addresses(world)
             errors = _validate_world_definition(world)
-            errors.extend(_validate_spatial_scene(session, world))
+            errors.extend(
+                _validate_spatial_scene(
+                    session, world, skill_registry=self.skill_registry
+                )
+            )
             errors.extend(editor_errors)
             if errors:
                 revision.validation_json = {
                     "valid": False,
                     "errors": errors,
-                    "warnings": [],
+                    "warnings": editor_warnings,
                 }
                 raise ServiceError(
                     "MAP_VALIDATION_FAILED",
@@ -2017,7 +1668,11 @@ class WorldMapService:
             now = _utc_now()
             revision.world_json = world.model_dump(mode="json", exclude_none=False)
             revision.world_hash = world_hash(world)
-            revision.validation_json = {"valid": True, "errors": [], "warnings": []}
+            revision.validation_json = {
+                "valid": True,
+                "errors": [],
+                "warnings": editor_warnings,
+            }
             revision.state = RevisionState.PUBLISHED.value
             revision.published_at = now
             revision.updated_at = now
@@ -2341,6 +1996,9 @@ class WorldMapService:
             "description": public_map.description,
             "status": public_map.status,
             "row_version": public_map.row_version,
+            "archived_at": iso_utc(public_map.archived_at)
+            if public_map.archived_at
+            else None,
             "current_draft": self._revision_summary(draft),
             "current_published": self._revision_summary(published),
             "usage_count": len(self._usage_experiment_ids(session, public_map.id)),
@@ -2348,8 +2006,8 @@ class WorldMapService:
             "tile_size": definition.get("tile_size")
             if isinstance(definition, dict)
             else None,
-            "updated_at": public_map.updated_at.isoformat(),
-            "created_at": public_map.created_at.isoformat(),
+            "updated_at": iso_utc(public_map.updated_at),
+            "created_at": iso_utc(public_map.created_at),
         }
 
     @staticmethod
@@ -2370,8 +2028,8 @@ class WorldMapService:
             "state": revision.state,
             "world_hash": revision.world_hash,
             "lock_version": revision.lock_version,
-            "updated_at": revision.updated_at.isoformat(),
-            "published_at": revision.published_at.isoformat()
+            "updated_at": iso_utc(revision.updated_at),
+            "published_at": iso_utc(revision.published_at)
             if revision.published_at
             else None,
         }

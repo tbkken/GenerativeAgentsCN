@@ -6,6 +6,7 @@ Runtime 负责在模型调用、私有脚本、子 Skill 和 MCP 工具之间循
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -15,14 +16,24 @@ from types import ModuleType
 from typing import Any, Mapping
 from uuid import uuid4
 
-import requests
-
 from .registry import SkillDocument, SkillRegistry
 from .mcp import SkillMCPServer
 
 
 class SkillRuntimeError(RuntimeError):
     """A model, script, or child Skill could not complete."""
+
+
+class RecoverableSkillRuntimeError(SkillRuntimeError):
+    """A transient model failure or no-progress loop can degrade one step."""
+
+
+class SkillModelError(RecoverableSkillRuntimeError):
+    """The configured model gateway exhausted its retry policy."""
+
+
+class SkillLoopError(RecoverableSkillRuntimeError):
+    """The Brain repeated a stable tool call without making progress."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +70,20 @@ class SkillRuntime:
         mcp: SkillMCPServer | None = None,
         timeout: float = 300,
         max_hops: int = 8,
+        temperature: float = 0.2,
+        max_tokens: int = 2048,
+        enable_thinking: bool = False,
+        provider: str = "vllm",
+        retry_attempts: int = 1,
+        retry_backoff_seconds: float = 0,
+        model_client=None,
+        recorder=None,
+        control=None,
+        logger=None,
+        sleep=None,
+        agent_key: str | None = None,
+        step_no: int | None = None,
+        max_identical_tool_calls: int = 2,
     ) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -87,6 +112,23 @@ class SkillRuntime:
         self.mcp = mcp
         self.timeout = timeout
         self.max_hops = max_hops
+        self.temperature = float(temperature)
+        self.max_tokens = int(max_tokens)
+        self.enable_thinking = bool(enable_thinking)
+        self.provider = str(provider or "vllm")
+        self.retry_attempts = max(1, int(retry_attempts))
+        self.retry_backoff_seconds = max(0, float(retry_backoff_seconds))
+        self._model_client = model_client
+        self._recorder = recorder
+        self._control = control
+        self._logger = logger
+        self._sleep = sleep
+        self.agent_key = agent_key
+        self.step_no = step_no
+        self.max_identical_tool_calls = max(1, int(max_identical_tool_calls))
+        self._active_skill_name: str | None = None
+        self._total_tool_calls = 0
+        self._tool_progress: dict[str, tuple[str, int]] = {}
 
     def run(
         self,
@@ -106,6 +148,8 @@ class SkillRuntime:
             包含规范化 Skill 名称、输出文本和每次脚本/子 Skill/MCP 调用的结果。
         """
         trace: list[dict[str, Any]] = []
+        self._total_tool_calls = 0
+        self._tool_progress = {}
         output = self._run(
             self.registry.get(skill_name),
             str(input_text),
@@ -166,7 +210,15 @@ class SkillRuntime:
             return output
         user_prompt = self._input_message(input_text, context)
         children = [self.registry.get(name) for name in document.children]
-        mcp_tools = self.mcp.tools() if self.mcp and "MCP" in document.markdown else []
+        mcp_tools = (
+            [
+                tool
+                for tool in self.mcp.tools()
+                if str(tool.get("name") or "") in document.markdown
+            ]
+            if self.mcp
+            else []
+        )
         script_handlers = self._script_handlers(document)
         # 没有任何可调用依赖的叶子 Skill，只需要一次普通聊天完成。
         if not children and not mcp_tools and not script_handlers:
@@ -180,6 +232,7 @@ class SkillRuntime:
                     "user_prompt": user_prompt,
                 }
             )
+            self._active_skill_name = document.name
             output = self._complete(
                 [
                     {"role": "system", "content": system_prompt},
@@ -275,6 +328,7 @@ class SkillRuntime:
             )
         # 组合 Skill 采用受限工具循环；每轮模型只能调用当前文档显式允许的能力。
         for _ in range(self.max_hops):
+            self._active_skill_name = document.name
             response = self._complete(messages, tools=tools)
             tool_calls = response.get("tool_calls") or []
             if not tool_calls:
@@ -299,11 +353,43 @@ class SkillRuntime:
                 function = call.get("function") or {}
                 try:
                     arguments = json.loads(function.get("arguments") or "{}")
-                except json.JSONDecodeError as exc:
-                    raise SkillRuntimeError(
+                    if not isinstance(arguments, dict):
+                        raise TypeError("tool arguments must be a JSON object")
+                except (json.JSONDecodeError, TypeError) as exc:
+                    raise SkillModelError(
                         "Model returned invalid tool arguments"
                     ) from exc
                 tool_name = str(function.get("name") or "")
+                request_fingerprint = self._tool_request_fingerprint(
+                    document.name, tool_name, arguments
+                )
+                previous = self._tool_progress.get(request_fingerprint)
+                if previous is not None and previous[1] >= self.max_identical_tool_calls:
+                    trace.append(
+                        {
+                            "event": "loop.detected",
+                            "skill": document.name,
+                            "tool": tool_name,
+                            "arguments": arguments,
+                            "repeat_count": previous[1],
+                        }
+                    )
+                    raise SkillLoopError(
+                        f"Skill {document.name} repeated {tool_name} without progress"
+                    )
+                self._total_tool_calls += 1
+                if self._total_tool_calls > self.max_hops:
+                    trace.append(
+                        {
+                            "event": "loop.budget_exhausted",
+                            "skill": document.name,
+                            "tool": tool_name,
+                            "tool_call_count": self._total_tool_calls,
+                        }
+                    )
+                    raise SkillLoopError(
+                        f"Brain exceeded the configured {self.max_hops} tool-call budget"
+                    )
                 if tool_name == "call_skill":
                     # 子 Skill 获得自然语言上下文，但仍共享本次运行的审计轨迹。
                     child_name = arguments.get("name")
@@ -368,6 +454,17 @@ class SkillRuntime:
                     raise SkillRuntimeError(
                         f"Skill {document.name} attempted unavailable tool {tool_name}"
                     )
+                output_fingerprint = hashlib.sha256(
+                    str(tool_output).encode("utf-8")
+                ).hexdigest()
+                if previous is not None and previous[0] == output_fingerprint:
+                    repeat_count = previous[1] + 1
+                else:
+                    repeat_count = 1
+                self._tool_progress[request_fingerprint] = (
+                    output_fingerprint,
+                    repeat_count,
+                )
                 messages.append(
                     {
                         "role": "tool",
@@ -376,7 +473,7 @@ class SkillRuntime:
                         "content": tool_output,
                     }
                 )
-        raise SkillRuntimeError(
+        raise SkillLoopError(
             f"Skill {document.name} did not finish within {self.max_hops} calls"
         )
 
@@ -398,36 +495,66 @@ class SkillRuntime:
         异常:
             SkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
-        payload: dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": 0.2,
-            "max_tokens": 2048,
-        }
-        if tools:
-            payload["tools"] = tools
-            payload["tool_choice"] = "auto"
-        headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
         try:
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=payload,
-                timeout=self.timeout,
+            return dict(
+                self._model().chat_completion(
+                    messages,
+                    tools=tools,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                    agent_key=self.agent_key,
+                    step_no=self.step_no,
+                    purpose="skill_runtime",
+                    prompt_key=self._active_skill_name,
+                    retry=self.retry_attempts,
+                )
             )
-            response.raise_for_status()
-            document = response.json()
-            return dict(document["choices"][0]["message"])
-        except (
-            requests.RequestException,
-            KeyError,
-            IndexError,
-            TypeError,
-            ValueError,
-        ) as exc:
-            raise SkillRuntimeError(f"Local Skill model call failed: {exc}") from exc
+        except Exception as exc:
+            raise SkillModelError(f"Skill model call failed after retries: {exc}") from exc
+
+    def _model(self):
+        """Lazily create the shared traced model adapter for direct runtimes."""
+
+        if self._model_client is None:
+            from generative_agents.modules.model.llm_model import create_llm_model
+
+            self._model_client = create_llm_model(
+                {
+                    "provider": self.provider,
+                    "model": self.model,
+                    "base_url": self.base_url,
+                    "api_key": self.api_key,
+                    "timeout_seconds": self.timeout,
+                    "timeout": self.timeout,
+                    "max_tokens": self.max_tokens,
+                    "temperature": self.temperature,
+                    "enable_thinking": self.enable_thinking,
+                    "retry_attempts": self.retry_attempts,
+                    "retry_backoff_seconds": self.retry_backoff_seconds,
+                },
+                recorder=self._recorder,
+                control=self._control,
+                logger=self._logger,
+                sleep=self._sleep,
+            )
+        return self._model_client
+
+    @staticmethod
+    def _tool_request_fingerprint(
+        skill_name: str, tool_name: str, arguments: Mapping[str, Any]
+    ) -> str:
+        encoded = json.dumps(
+            {
+                "skill": skill_name,
+                "tool": tool_name,
+                "arguments": arguments,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
 
     @staticmethod
     def _input_message(input_text: str, context: Mapping[str, Any]) -> str:

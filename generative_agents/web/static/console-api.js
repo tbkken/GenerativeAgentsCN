@@ -74,6 +74,8 @@
     operationsAbortController: null,
     logSource: null,
     logGeneration: 0,
+    logRunId: null,
+    logAttemptId: null,
     checkpointGeneration: 0,
     checkpointItems: [],
     checkpointPage: 1,
@@ -93,6 +95,9 @@
     traceEof: true,
     traceItems: [],
     tracePage: 1,
+    tracePollTimer: null,
+    tracePollBusy: false,
+    tracePollTerminalRunId: null,
     modelUsageItems: [],
     modelUsagePage: 1,
     traceDetailState: null,
@@ -141,6 +146,7 @@
     pendingResumeStep: 0,
     workspacePage: 'experiments',
     remoteConflictKey: null,
+    draftMutation: Promise.resolve(),
     bootstrapped: false,
   };
 
@@ -468,14 +474,32 @@
     $('wizardBack').hidden = state.wizardStep === 1;
     $('wizardNext').textContent = state.wizardStep === 3 ? '创建实验' : '下一步';
     $('createSummaryName').textContent = $('newExperimentName').value.trim() || '未填写';
+    const brainOption = $('newExperimentBrain')?.selectedOptions?.[0];
     const mapOption = $('newExperimentMap')?.selectedOptions?.[0];
-    if ($('createSummaryBrain')) $('createSummaryBrain').textContent = 'stanford-town-brain · 文件型 Skill 集合';
+    if ($('createSummaryBrain')) $('createSummaryBrain').textContent = $('newExperimentBrain')?.value ? brainOption?.textContent || $('newExperimentBrain').value : '未选择';
     if ($('createSummaryMap')) $('createSummaryMap').textContent = mapOption?.textContent?.replace(/ · v\d+(?: · 默认)?$/, '') || '未选择';
     const crowdSummary = window.CrowdWorkspace?.getCreationSummary?.() || { names: [], crowdCount: 0, agentCount: 0, duplicateCount: 0 };
     if ($('createSummaryCrowds')) $('createSummaryCrowds').textContent = crowdSummary.names.length ? crowdSummary.names.join('、') : '未选择';
     if ($('createSummaryAgents')) $('createSummaryAgents').textContent = crowdSummary.crowdCount
       ? `${crowdSummary.agentCount} 个 Agent${crowdSummary.duplicateCount ? ` · 已去重 ${crowdSummary.duplicateCount} 个同名项` : ' · 无同名重复'}`
       : '请选择至少一个人群';
+  }
+
+  async function prepareExperimentBrainChoices() {
+    const selector = $('newExperimentBrain');
+    selector.disabled = true;
+    selector.replaceChildren(new Option('正在加载 Brain Skill…', ''));
+    const response = await api('/skills?kind=brain');
+    selector.replaceChildren(new Option('请选择已发布的 Brain Skill', ''));
+    (response.items || []).forEach(item => {
+      selector.appendChild(new Option(
+        `${item.name}${item.description ? ` · ${item.description}` : ''}`,
+        item.name,
+      ));
+    });
+    selector.disabled = !(response.items || []).length;
+    if (selector.disabled) selector.options[0].textContent = '暂无可用 Brain Skill';
+    renderWizardStep();
   }
 
   const modalFocusableSelector = [
@@ -557,15 +581,8 @@
     const probe = report.auto_model_probe;
     if (!probe?.enabled) return '';
     const purposes = (probe.purposes || []).map(item => item === 'chat' ? 'Chat' : item === 'embedding' ? 'Embedding' : item);
-    const failures = (report.model_status?.items || []).filter(item => item.status === 'OFFLINE');
     const summary = `<div class="validation-item model-auto-probe"><span>↻</span><div><strong>模型服务由系统自动检测</strong><small>确认发布后会一次性检测 ${escapeHtml(purposes.join(' + '))}，并将 auto 固化为实际模型。无需逐项操作。</small></div></div>`;
-    const failureItems = failures.map(item => validationItemMarkup({
-      message: `${item.purpose === 'chat' ? 'Chat' : 'Embedding'} 上次自动检测失败：${item.reason_message || item.reason_code || '连接失败'}；确认发布会自动重试`,
-      code: item.reason_code || 'MODEL_AUTO_PROBE_FAILED',
-      fix_page: 'models',
-      fix_control: item.purpose === 'chat' ? 'chatModel' : 'embeddingModel',
-    }, '!')).join('');
-    return summary + failureItems;
+    return summary;
   }
 
   function renderOverviewValidation(report) {
@@ -586,7 +603,12 @@
 
   async function refreshValidation() {
     if (!state.selectedExperimentId || !state.draft) return null;
-    const report = await api(`/experiments/${state.selectedExperimentId}/draft/validate`, { method: 'POST' });
+    const experimentId = state.selectedExperimentId;
+    const definitionHash = state.draft.definition_hash;
+    const report = await api(`/experiments/${experimentId}/draft/validate`, { method: 'POST' });
+    if (experimentId !== state.selectedExperimentId
+      || definitionHash !== state.draft?.definition_hash
+      || report.definition_hash !== state.draft?.definition_hash) return null;
     renderOverviewValidation(report);
     return report;
   }
@@ -674,11 +696,29 @@
 
   async function api(path, options = {}) {
     // 所有请求都通过统一错误信封，调用者无需分别解析 FastAPI/业务错误格式。
-    const response = await fetch(`/api/v1${path}`, {
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-      cache: 'no-store',
-      ...options,
-    });
+    const { transportRetries = 0, ...fetchOptions } = options;
+    let response;
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        response = await fetch(`/api/v1${path}`, {
+          headers: { 'Content-Type': 'application/json', ...(fetchOptions.headers || {}) },
+          cache: 'no-store',
+          ...fetchOptions,
+        });
+        break;
+      } catch (cause) {
+        if (fetchOptions.signal?.aborted) throw cause;
+        if (!(cause instanceof TypeError) || attempt >= transportRetries) {
+          const error = new Error('浏览器未能把请求送到系统服务，请检查本机服务或代理后重试');
+          error.code = 'CONTROL_PLANE_NETWORK_ERROR';
+          error.details = { transport_attempts: attempt + 1 };
+          error.path = path;
+          error.cause = cause;
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, 200 * (attempt + 1)));
+      }
+    }
     if (!response.ok) {
       const payload = await response.json().catch(() => ({}));
       const document = payload.error || {};
@@ -704,22 +744,26 @@
 
   function formatSystemTime(value) {
     if (!value) return '—';
+    const instant = parseApiInstant(value);
+    if (!Number.isFinite(instant)) return String(value);
     return new Intl.DateTimeFormat('zh-CN', {
       timeZone: userTimeZone,
       month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
       hour12: false,
-    }).format(new Date(value));
+    }).format(new Date(instant));
   }
 
   function systemTimeMarkup(value, suffix = '') {
     if (!value) return '—';
-    const iso = new Date(value).toISOString();
+    const instant = parseApiInstant(value);
+    if (!Number.isFinite(instant)) return escapeHtml(String(value));
+    const iso = new Date(instant).toISOString();
     return `<time datetime="${escapeHtml(iso)}" title="${escapeHtml(`${iso} · 显示时区 ${userTimeZone}`)}">${escapeHtml(formatSystemTime(value))} ${escapeHtml(userTimeZone)}${escapeHtml(suffix)}</time>`;
   }
 
   function formatLogTime(value) {
     if (!value) return '';
-    const date = new Date(value);
+    const date = new Date(parseApiInstant(value));
     if (Number.isNaN(date.getTime())) return String(value);
     const timeZone = state.logTimeZoneMode === 'UTC' ? 'UTC' : userTimeZone;
     const display = new Intl.DateTimeFormat('zh-CN', {
@@ -1068,25 +1112,49 @@
       || 'stanford-town-brain';
   }
 
-  async function applyExperimentBrainSkill(brainSkill) {
-    if (!state.selectedExperimentId || !state.draft) {
-      throw new Error('已发布版本只读，请先创建新修订');
-    }
-    const definition = structuredClone(state.draft.definition);
-    definition.engine.brain_skill = brainSkill;
-    const saved = await api(`/experiments/${state.selectedExperimentId}/draft`, {
-      method: 'PUT',
-      body: JSON.stringify({ lock_version: state.draft.lock_version, data: definition }),
-    });
+  function enqueueDraftMutation(operation) {
+    const queued = state.draftMutation.catch(() => {}).then(operation);
+    state.draftMutation = queued.catch(() => {});
+    return queued;
+  }
+
+  async function acceptSavedDraft(saved, { refreshDerived = true } = {}) {
     state.draft = saved;
     state.revision = saved;
     state.definition = saved.definition;
+    state.runEstimate = null;
     fillDraft(saved.definition);
     fillDefinitionOverview(saved.definition, saved);
     clearDirty();
+    if (refreshDerived) {
+      await Promise.all([
+        refreshRunEstimateOverview(state.selectedExperimentId, saved.id),
+        refreshValidation(),
+      ]);
+    }
     scheduleGlobalReconcile({ full: true });
-    showToast(`${brainSkill} 已连接到当前实验 Draft。`, '实验 Brain 已应用');
-    return { brain_skill: brainSkill };
+    return saved;
+  }
+
+  async function applyExperimentBrainSkill(brainSkill) {
+    return enqueueDraftMutation(async () => {
+      if (!state.selectedExperimentId || !state.draft) {
+        throw new Error('已发布版本只读，请先创建新修订');
+      }
+      // Brain application is a partial mutation. Flush visible unsaved fields
+      // first so accepting its response cannot restore an older step count or
+      // model configuration from state.draft.
+      if (state.formDirty) await saveDraftUnlocked({ silent: true });
+      const definition = structuredClone(state.draft.definition);
+      definition.engine.brain_skill = brainSkill;
+      const saved = await api(`/experiments/${state.selectedExperimentId}/draft`, {
+        method: 'PUT',
+        body: JSON.stringify({ lock_version: state.draft.lock_version, data: definition }),
+      });
+      await acceptSavedDraft(saved);
+      showToast(`${brainSkill} 已连接到当前实验 Draft。`, '实验 Brain 已应用');
+      return { brain_skill: saved.definition.engine.brain_skill };
+    });
   }
 
   window.ExperimentBrainBridge = {
@@ -1134,16 +1202,17 @@
     const tiles = definition.world?.definition?.tiles || [];
     const revisionNo = revision?.revision_no || 0;
     const hash = revision?.definition_hash || '';
+    const brainSkill = definition.engine?.brain_skill || '未选择';
     $('overviewAgentLabel').textContent = '参与 Agent';
     $('overviewAgentUnit').textContent = '个角色';
     $('overviewSkillLabel').textContent = 'SKILL 大脑';
-    $('overviewSkillFoot').textContent = '运行时从文件加载并随 Run 固化';
+    $('overviewSkillFoot').textContent = '运行时从数据库 Revision 物化并随 Run 固化';
     $('overviewWorldUnit').textContent = 'tiles';
     $('overviewLatestUnit').textContent = '步';
     $('overviewDefinitionTitle').textContent = '实验定义';
     $('overviewDefinitionDescription').textContent = '配置虚拟时间、运行规模、记录粒度和随机复现边界。';
-    $('overviewSkillCount').textContent = '已连接';
-    $('overviewSkillMeta').textContent = 'stanford-town-brain';
+    $('overviewSkillCount').textContent = brainSkill;
+    $('overviewSkillMeta').textContent = '自然语言技能接力';
     $('overviewTileCount').textContent = tiles.length.toLocaleString('zh-CN');
     $('overviewWorldMeta').textContent = definition.world?.world_name || '世界待配置';
     $('overviewAgentMetaStatus').textContent = enabled ? `${enabled} 个已启用 Agent` : '阻断：至少启用 1 个 Agent';
@@ -1160,17 +1229,26 @@
     updateOptionalText('overviewChatCheck', `${definition.models.chat.provider} · ${definition.models.chat.resolved_model || definition.models.chat.model}`);
     updateOptionalText('overviewEmbeddingCheck', `${definition.models.embedding.provider} · ${definition.models.embedding.resolved_model || definition.models.embedding.model}`);
     updateOptionalText('overviewAgentCheck', `${enabled} / ${agents.length} 个角色已启用`);
-    updateOptionalText('overviewSkillCheck', 'stanford-town-brain · SKILL.md');
+    updateOptionalText('overviewSkillCheck', `${brainSkill} · SKILL.md`);
     updateOptionalText('overviewWorldCheck', `${definition.world?.world_name || '未命名'} · ${tiles.length} tiles`);
     $('overviewSnapshotHash').textContent = hash ? `sha256:${hash.slice(0, 12)}…` : '草稿尚未发布';
     $('overviewSnapshotAgents').textContent = `agents ×${agents.length}`;
     $('overviewSnapshotSkills').textContent = 'skill bundle · immutable';
-    const errorCount = revision?.validation?.errors?.length || 0;
-    $('overviewValidationCount').textContent = errorCount ? `${errorCount} 个阻塞项` : '6 / 6';
-    $('overviewValidationCount').className = `chip ${errorCount ? 'amber' : 'teal'}`;
+    const cachedValidation = state.validationReport?.definition_hash === hash
+      ? state.validationReport
+      : null;
+    if (cachedValidation) {
+      renderOverviewValidation(cachedValidation);
+    } else {
+      const errorCount = revision?.validation?.errors?.length || 0;
+      $('overviewValidationCount').textContent = errorCount ? `${errorCount} 个阻塞项` : '等待实时校验';
+      $('overviewValidationCount').className = `chip ${errorCount ? 'amber' : 'blue'}`;
+    }
     $('overviewRevisionChip').textContent = revision?.state === 'PUBLISHED' ? 'Published Revision' : 'Draft Revision';
     $('overviewReleaseDetails').hidden = revision?.state !== 'PUBLISHED' || !state.experiment?.latest_run?.id;
-    if (state.runEstimate?.revision_id === revision?.id) {
+    if (state.runEstimate?.revision_id === revision?.id
+      && state.runEstimate?.definition_hash === revision?.definition_hash
+      && state.runEstimate?.lock_version === revision?.lock_version) {
       applyRunEstimateToOverview(state.runEstimate);
     }
   }
@@ -1182,7 +1260,7 @@
     $('overviewSkillLabel').textContent = 'SKILL 大脑';
     $('overviewSkillCount').textContent = scale.brain_skill || 'stanford-town-brain';
     $('overviewSkillMeta').textContent = '自然语言技能接力';
-    $('overviewSkillFoot').textContent = `${estimate.estimate.model_calls.low}–${estimate.estimate.model_calls.high} 次模型调用`;
+    $('overviewSkillFoot').textContent = `${estimate.estimate.model_calls.low}–${estimate.estimate.model_calls.high} 次模型调用 · 估算 v${estimate.estimate_version || 1}`;
     $('overviewAgentMetaStatus').textContent = `${scale.agents} 个启用 Agent`;
     $('overviewTileCount').textContent = scale.steps;
     $('overviewWorldUnit').textContent = 'steps';
@@ -1194,7 +1272,10 @@
   async function refreshRunEstimateOverview(experimentId = state.selectedExperimentId, revisionId = state.revision?.id) {
     if (!experimentId || !revisionId) return;
     const estimate = await api(`/experiments/${experimentId}/run-estimate`);
-    if (experimentId !== state.selectedExperimentId || revisionId !== state.revision?.id) return;
+    if (experimentId !== state.selectedExperimentId
+      || revisionId !== state.revision?.id
+      || estimate.definition_hash !== state.revision?.definition_hash
+      || estimate.lock_version !== state.revision?.lock_version) return;
     applyRunEstimateToOverview(estimate);
   }
 
@@ -1660,10 +1741,18 @@
     select.innerHTML = state.runHistory.length ? state.runHistory.map((run, index) => {
       const runNumber = state.runHistory.length - index;
       const status = statusLabels[run.status] || run.status;
-      return `<option value="${escapeHtml(run.run_id)}">运行 ${runNumber} · ${escapeHtml(status)} · ${run.completed_steps}/${run.requested_steps} 步</option>`;
+      const fingerprint = run.execution_hash ? ` · 执行 ${run.execution_hash.slice(0, 8)}` : '';
+      return `<option value="${escapeHtml(run.run_id)}">运行 ${runNumber} · ${escapeHtml(status)} · ${run.completed_steps}/${run.requested_steps} 步${escapeHtml(fingerprint)}</option>`;
     }).join('') : '<option value="">暂无运行记录</option>';
     select.disabled = !state.runHistory.length;
     if (selectedRunId && state.runHistory.some(run => run.run_id === selectedRunId)) select.value = selectedRunId;
+    const selectedRun = state.runHistory.find(run => run.run_id === select.value);
+    const fingerprint = selectedRun?.execution_hash || '';
+    $('resultExecutionHash').hidden = state.workspacePage !== 'results';
+    $('resultExecutionHash').textContent = fingerprint
+      ? `执行指纹 ${fingerprint.slice(0, 12)}`
+      : '执行指纹待生成';
+    $('resultExecutionHash').title = fingerprint || 'Run 清单物化后生成';
   }
 
   function resetResultRuntime() {
@@ -1688,6 +1777,7 @@
     state.checkpointItems = [];
     state.checkpointPage = 1;
     state.selectedRunId = null;
+    stopModelTracePolling();
     clearResultDurationTimer();
     if (state.resultRefreshTimer) clearTimeout(state.resultRefreshTimer);
     state.resultRefreshTimer = null;
@@ -1700,6 +1790,49 @@
     teardownReplay();
   }
 
+  function resetOperationsWorkspaceForRunSwitch() {
+    // Run-scoped diagnostics must never retain either data or selection ownership
+    // from the previous Run while the new requests are in flight.
+    state.operationFactsGeneration += 1;
+    state.logGeneration += 1;
+    state.checkpointGeneration += 1;
+    stopModelTracePolling();
+    closeLogStream();
+    state.operationsAbortController?.abort();
+    state.operationsAbortController = null;
+    state.operationsRunId = null;
+    state.selectedAttemptId = null;
+    state.selectedTraceAttemptId = null;
+    state.logRunId = null;
+    state.logAttemptId = null;
+    state.logCursor = 0;
+    state.logFileId = null;
+    state.logRecords = [];
+    state.logCarry = '';
+    state.logDiscardUntilNewline = false;
+    state.operationEvents = [];
+    state.eventCursor = 0;
+    state.eventPage = 1;
+    state.traceItems = [];
+    state.traceCursor = null;
+    state.traceEof = true;
+    state.tracePage = 1;
+    state.checkpointItems = [];
+    state.checkpointPage = 1;
+    state.traceDetailState = null;
+    state.checkpointPreviewState = null;
+    $('attemptLogSelect').innerHTML = '<option value="">正在加载 Attempt…</option>';
+    $('traceAttemptSelect').innerHTML = '<option value="">正在加载 Attempt…</option>';
+    $('attemptRows').innerHTML = '<div class="empty-state"><strong>正在加载当前 Run 的执行尝试…</strong></div>';
+    $('logViewport').textContent = '等待加载当前 Run 的日志…';
+    $('modelTraceRows').innerHTML = '<div class="diagnostic-list-empty">正在加载当前 Run 的模型调用…</div>';
+    $('systemEventRows').innerHTML = '<div class="diagnostic-list-empty">正在加载当前 Run 的系统事件…</div>';
+    $('checkpointRows').innerHTML = '<div class="diagnostic-list-empty">正在加载当前 Run 的检查点…</div>';
+    $('modelTraceDetail').hidden = true;
+    $('checkpointDetail').hidden = true;
+    $('checkpointPreview').hidden = true;
+  }
+
   async function loadResults(runId) {
     // 切换 Run 时先拆除旧 SSE、日志流和 Phaser 实例，避免跨 Run DOM/网络所有权泄漏。
     const generation = ++state.resultGeneration;
@@ -1707,13 +1840,10 @@
     teardownReplay();
     state.conversationGeneration += 1;
     state.memoryGeneration += 1;
+    resetOperationsWorkspaceForRunSwitch();
     state.selectedRunId = runId;
     renderRunSelect(runId);
     if (state.eventSource) state.eventSource.close();
-    closeLogStream();
-    state.operationsAbortController?.abort();
-    state.operationsAbortController = null;
-    state.operationsRunId = null;
     clearResultDurationTimer();
     if (state.resultRefreshTimer) clearTimeout(state.resultRefreshTimer);
     await refreshResultData(runId, generation);
@@ -1740,7 +1870,7 @@
       });
       scheduleResultRefresh(runId, generation);
     };
-    ['queue', 'state', 'reconcile', 'progress', 'result_rewound',
+    ['queue', 'state', 'reconcile', 'progress', 'quality', 'post_processing', 'result_rewound',
       'artifact_queued', 'artifact_running', 'artifact_retry', 'artifact_ready', 'artifact_error'].forEach(
       eventType => state.eventSource.addEventListener(eventType, handleRunEvent)
     );
@@ -1779,6 +1909,7 @@
     renderConversations(conversations.items);
     renderMemories(memories.items);
     renderOperations(operations);
+    if (run.quality) renderRunQuality(run.quality);
     if (state.operationsRunId !== runId) {
       loadOperationsWorkspace(runId, generation).catch(error => {
         if (error.name !== 'AbortError') reportError(error);
@@ -1789,6 +1920,9 @@
       });
     }
     renderRunActions(run);
+    if (typeof syncModelTracePolling === 'function') {
+      syncModelTracePolling(runId, generation);
+    }
     if (document.querySelector('[data-result-panel="timeline"]')?.classList.contains('active')) {
       ensureReplayPlayer(runId, generation).catch(reportError);
     } else if (state.replayPlayer && state.replayRunId === runId) {
@@ -1797,6 +1931,35 @@
       });
     }
     syncWorkspaceUrl();
+  }
+
+  function renderRunQuality(quality) {
+    const banner = $('runQualityBanner');
+    if (!banner) return;
+    const status = quality?.quality_status || 'PENDING';
+    const labels = {
+      PASS: '通过', WARNING: '有观察项', UNKNOWN: '评估不可用',
+      NOT_EVALUATED: '未评估', PENDING: '待评估',
+    };
+    if (banner.dataset) banner.dataset.status = status;
+    const issues = quality?.issues || [];
+    const count = issues.length;
+    const detail = count ? `
+      <details class="run-quality-details">
+        <summary>展开 ${count} 项质量告警</summary>
+        <ol>${issues.map((issue, index) => {
+          const step = Number(issue?.step_no);
+          const target = Number.isInteger(step) && step > 0
+            ? `<button type="button" class="quality-step-link" data-quality-step="${step}">定位 Step ${step}</button>`
+            : '';
+          const scope = [issue?.agent_key ? `Agent ${issue.agent_key}` : '', target].filter(Boolean).join(' · ');
+          const evidence = issue?.evidence && Object.keys(issue.evidence).length
+            ? `<pre>${escapeHtml(JSON.stringify(issue.evidence, null, 2))}</pre>`
+            : '';
+          return `<li><div><strong>${index + 1}. ${escapeHtml(issue?.code || 'QUALITY_WARNING')}</strong><span>${escapeHtml(scope)}</span></div><p>${escapeHtml(issue?.message || '行为质量观察项')}</p>${evidence}</li>`;
+        }).join('')}</ol>
+      </details>` : '';
+    banner.innerHTML = `<div class="run-quality-summary"><strong>行为质量：${escapeHtml(labels[status] || status)}</strong><span>${escapeHtml(quality?.summary || '')}${count ? ` · ${count} 项告警` : ''}（不改变运行完成状态）</span></div>${detail}`;
   }
 
   function applyRunActivity(activity) {
@@ -1922,7 +2085,8 @@
 
   function updateAgentResultTab(tab, item, active) {
     const name = item.display_name || item.agent_key;
-    const statusText = { CHAT: '对话中', MOVING: '移动中', REST: '休息中', OTHER: '活动中' }[item.latest_activity_kind] || item.latest_activity_kind;
+    const terminal = ['COMPLETED', 'FAILED', 'CANCELLED'].includes(item.run_status || state.currentRun?.status);
+    const statusText = terminal ? '已结束' : ({ CHAT: '对话中', MOVING: '移动中', REST: '休息中', OTHER: '活动中' }[item.latest_activity_kind] || item.latest_activity_kind);
     tab.dataset.agentKey = item.agent_key;
     tab.dataset.agentStatus = item.latest_activity_kind;
     tab.classList.toggle('active', active);
@@ -2178,19 +2342,42 @@
   }
 
   function agentEventLabel(kind) {
-    return { MOVED: '移动', CONVERSATION: '参与', MEMORY: '记忆', SCHEDULE: '计划' }[kind] || kind || '事件';
+    return {
+      AGENT_MOVED: '移动',
+      AGENT_ACTED: '行动',
+      AGENT_WAITED: '等待',
+      AGENT_SPOKE: '对话',
+      GAME_OBJECT_INTERACTED: '交互',
+      GAME_OBJECT_STATE_CHANGED: '对象状态',
+      CONVERSATION: '参与',
+      MEMORY: '记忆',
+      SCHEDULE: '计划',
+    }[kind] || kind || '事件';
   }
 
   function agentEventTitle(kind, payload) {
-    if (kind === 'MOVED') return 'Agent 移动到新的位置';
+    const fact = payload.structured_payload || payload;
+    const semanticTitle = fact.description
+      || payload.title
+      || [payload.subject, payload.predicate, payload.object].filter(Boolean).join('');
+    if (semanticTitle && semanticTitle !== kind) return semanticTitle;
+    if (kind === 'AGENT_MOVED') return 'Agent 移动到新的位置';
     if (kind === 'CONVERSATION') return 'Agent 参与了一次对话';
     return payload.title || kind || '领域事件';
   }
 
   function agentEventDetail(kind, payload) {
-    if (kind === 'MOVED') return `${JSON.stringify(payload.from_coord || [])} → ${JSON.stringify(payload.to_coord || [])}`;
+    if (kind === 'AGENT_MOVED') {
+      const fact = payload.structured_payload || payload;
+      return `${JSON.stringify(fact.from_coord || [])} → ${JSON.stringify(fact.to_coord || [])}`;
+    }
+    if (kind === 'GAME_OBJECT_STATE_CHANGED') {
+      const fact = payload.structured_payload || {};
+      return `${fact.object_key || ''} → ${JSON.stringify(fact.after || {})}`;
+    }
     if (kind === 'CONVERSATION') return `${payload.message_count || 0} 条消息`;
-    return payload.detail || '';
+    return payload.detail
+      || [payload.subject, payload.predicate, payload.object].filter(Boolean).join(' / ');
   }
 
   function renderConversations(items) {
@@ -2221,7 +2408,16 @@
 
   function renderMemories(items) {
     $('memoryResultCount').textContent = `显示 ${items.length} 条已提交记忆`;
-    $('memoryRows').innerHTML = items.map(item => `<tr data-memory-agent="${escapeHtml(item.agent_key)}" data-memory-type="${escapeHtml(item.type)}"><td><span class="memory-type ${escapeHtml(item.type)}">${escapeHtml(item.type)}</span></td><td>${escapeHtml(item.agent_name || item.agent_key)}</td><td class="memory-desc">${escapeHtml(item.description || '—')}</td><td>${item.poignancy ?? '—'}</td><td>${item.created_step} / ${item.last_accessed_step ?? '—'}</td><td><code>${escapeHtml(item.memory_id)}</code></td></tr>`).join('');
+    $('memoryRows').innerHTML = items.map(item => {
+      const lifecycle = item.superseded_by_memory_id
+        ? ` → ${item.superseded_by_memory_id}`
+        : item.supersedes_memory_id
+          ? ` ← ${item.supersedes_memory_id}`
+          : item.invalidated_reason
+            ? ` · ${item.invalidated_reason}`
+            : '';
+      return `<tr data-memory-agent="${escapeHtml(item.agent_key)}" data-memory-type="${escapeHtml(item.type)}"><td><span class="memory-type ${escapeHtml(item.type)}">${escapeHtml(item.type)}</span></td><td>${escapeHtml(item.agent_name || item.agent_key)}</td><td class="memory-desc">${escapeHtml(item.description || '—')}</td><td><span class="chip">${escapeHtml(item.state || 'ACTIVE')}</span><small>${escapeHtml(lifecycle)}</small></td><td>${item.poignancy ?? '—'}</td><td>${item.created_step} / ${item.last_accessed_step ?? '—'}</td><td><code>${escapeHtml(item.memory_id)}</code></td></tr>`;
+    }).join('');
   }
 
   function renderTimeline(timeline) {
@@ -2502,9 +2698,9 @@
     const pagination = operationListPager('usage', state.modelUsageItems.length, state.modelUsagePage);
     state.modelUsagePage = pagination.page;
     const rows = state.modelUsageItems.slice(pagination.itemsFrom, pagination.itemsTo);
-    const header = '<div class="usage-row head"><span>用途</span><span>调用数</span><span>最大延迟</span><span>重试</span></div>';
+    const header = '<div class="usage-row head"><span>用途</span><span>逻辑 / 物理</span><span>最大延迟</span><span>重试</span></div>';
     $('modelUsageRows').innerHTML = header + (rows.length
-      ? rows.map(item => `<div class="usage-row"><strong>${escapeHtml(item.purpose)}</strong><code>${item.logical_calls}</code><span>${item.max_latency_ms} ms</span><span>${item.retries}</span></div>`).join('')
+      ? rows.map(item => `<div class="usage-row"><strong>${escapeHtml(item.purpose)}</strong><code title="逻辑调用 / 物理请求">${item.logical_calls} / ${item.physical_attempts}</code><span>${item.max_latency_ms} ms</span><span>${item.retries}</span></div>`).join('')
       : '<div class="diagnostic-list-empty">暂无用途汇总</div>');
     $('modelUsagePagination').innerHTML = pagination.html;
   }
@@ -2615,9 +2811,12 @@
   }
 
   async function selectAttemptLog(runId, attemptId) {
+    if (runId !== state.selectedRunId) return;
     const generation = ++state.logGeneration;
     closeLogStream();
     state.selectedAttemptId = attemptId;
+    state.logRunId = runId;
+    state.logAttemptId = attemptId;
     state.logRecords = [];
     state.logCarry = '';
     state.logDiscardUntilNewline = false;
@@ -2641,6 +2840,9 @@
   }
 
   function renderAttempts(document) {
+    const attemptTimeMarkup = typeof systemTimeMarkup === 'function'
+      ? systemTimeMarkup
+      : value => escapeHtml(typeof formatTime === 'function' ? formatTime(value) : String(value ?? ''));
     const options = document.items.map(item => `<option value="${item.attempt_id}">Attempt ${String(item.attempt_no).padStart(2, '0')} · ${escapeHtml(item.status)}</option>`).join('');
     $('attemptLogSelect').innerHTML = options || '<option value="">暂无 Attempt</option>';
     $('traceAttemptSelect').innerHTML = options || '<option value="">暂无 Attempt</option>';
@@ -2657,7 +2859,7 @@
     $('attemptRows').innerHTML = document.items.length ? document.items.map(item => `
       <div class="attempt-item" data-attempt-id="${item.attempt_id}">
         <span class="attempt-num">${String(item.attempt_no).padStart(2, '0')}</span>
-        <div><strong>${escapeHtml(item.stop_reason || item.status)}</strong><span>Step ${item.start_step} → ${item.end_step ?? '运行中'} · ${formatTime(item.started_at)}${item.error_message ? ` · ${escapeHtml(item.error_message)}` : ''}</span></div>
+        <div><strong>${escapeHtml(item.stop_reason || item.status)}</strong><span>Step ${item.start_step} → ${item.end_step ?? '运行中'} · 墙钟 ${attemptTimeMarkup(item.started_at)}${item.error_message ? ` · ${escapeHtml(item.error_message)}` : ''}</span></div>
         <span class="chip ${item.status === 'ENDED' ? 'teal' : 'amber'}">${item.log.available ? `${Math.ceil(item.log.size_bytes / 1024)} KB` : '无日志'}</span>
       </div>`).join('') : '<div class="empty-state"><strong>尚未创建执行尝试</strong></div>';
     return selected;
@@ -2669,8 +2871,13 @@
       : { page: 1, itemsFrom: 0, itemsTo: state.traceItems.length, html: '' };
     state.tracePage = pagination.page;
     const items = state.traceItems.slice(pagination.itemsFrom, pagination.itemsTo);
-    const header = '<div class="trace-row head"><span>状态</span><span>用途 / 模型</span><span>延迟</span><span>重试</span><span>序号</span></div>';
-    $('modelTraceRows').innerHTML = header + (items.length ? items.map(item => `<button type="button" class="trace-row" data-trace-id="${item.trace_id}"><span class="chip ${item.status === 'SUCCESS' ? 'teal' : 'amber'}">${escapeHtml(item.status || item.event_type)}</span><strong>${escapeHtml(item.purpose || 'unknown')}<br><code>${escapeHtml(item.resolved_model || item.model || '—')}</code></strong><span>${item.latency_ms ?? '—'} ms</span><span>${item.retry ? `#${item.attempt_no}` : '—'}</span><code>${item.event_seq}</code></button>`).join('') : '<div class="diagnostic-list-empty">该 Attempt 尚无模型调用明细</div>');
+    const header = '<div class="trace-row head"><span>状态</span><span>物理请求用途 / 模型</span><span>延迟</span><span>重试</span><span>序号</span></div>';
+    $('modelTraceRows').innerHTML = header + (items.length ? items.map(item => {
+      const statusClass = item.status === 'RUNNING' ? 'blue'
+        : ['SUCCEEDED', 'FALLBACK'].includes(item.status) ? 'teal' : 'amber';
+      const latency = item.status === 'RUNNING' ? '进行中' : `${item.latency_ms ?? '—'} ms`;
+      return `<button type="button" class="trace-row" data-trace-id="${item.trace_id}"><span class="chip ${statusClass}">${escapeHtml(item.status || item.event_type)}</span><strong>${escapeHtml(item.purpose || 'unknown')}<br><code>${escapeHtml(item.resolved_model || item.model || '—')}</code></strong><span>${latency}</span><span>${item.retry ? `#${item.attempt_no}` : '—'}</span><code>${item.event_seq}</code></button>`;
+    }).join('') : '<div class="diagnostic-list-empty">该 Attempt 尚无模型调用明细</div>');
     const paginationHost = $('modelTracePagination');
     if (paginationHost) paginationHost.innerHTML = pagination.html;
     $('loadMoreTraces').hidden = state.traceEof;
@@ -2697,12 +2904,26 @@
     }
     const purpose = $('tracePurposeFilter').value.trim();
     const suffix = purpose ? `&purpose=${encodeURIComponent(purpose)}` : '';
-    const page = await api(`/runs/${runId}/model-traces?attempt_id=${encodeURIComponent(attemptId)}&cursor=${state.traceCursor ?? 0}&limit=200${suffix}`, { signal });
+    const page = await api(`/runs/${runId}/model-traces?attempt_id=${encodeURIComponent(attemptId)}&event_type=PHYSICAL&cursor=${state.traceCursor ?? 0}&limit=200${suffix}`, { signal });
     if ((factsGeneration !== null && factsGeneration !== state.operationFactsGeneration)
       || runId !== state.selectedRunId || signal.aborted
       || (attemptId !== state.selectedAttemptId && attemptId !== state.selectedTraceAttemptId)) return;
-    const known = new Set(state.traceItems.map(item => item.trace_id));
-    state.traceItems.push(...page.items.filter(item => !known.has(item.trace_id)));
+    // PHYSICAL_START and PHYSICAL_ATTEMPT share call_id + attempt_no. Keep one
+    // live row and replace it with the later completion event when it arrives.
+    const identity = item => item.call_id
+      ? `${item.call_id}:${item.attempt_no ?? 0}`
+      : item.trace_id;
+    const merged = new Map(state.traceItems.map(item => [identity(item), item]));
+    page.items.forEach(item => {
+      const key = identity(item);
+      const current = merged.get(key);
+      if (!current || Number(item.event_seq || 0) >= Number(current.event_seq || 0)) {
+        merged.set(key, item);
+      }
+    });
+    state.traceItems = [...merged.values()].sort(
+      (left, right) => Number(left.event_seq || 0) - Number(right.event_seq || 0)
+    );
     state.traceCursor = page.next_cursor;
     state.traceEof = page.eof;
     renderModelTraces();
@@ -2724,6 +2945,59 @@
     $('tracePayloadMore').hidden = detail.next_cursor === null;
   }
 
+  function stopModelTracePolling() {
+    if (state.tracePollTimer) clearTimeout(state.tracePollTimer);
+    state.tracePollTimer = null;
+    state.tracePollBusy = false;
+    state.tracePollTerminalRunId = null;
+  }
+
+  function syncModelTracePolling(runId, resultGeneration) {
+    if (runId !== state.selectedRunId || resultGeneration !== state.resultGeneration) return;
+    const active = ['STARTING', 'RUNNING', 'PAUSE_REQUESTED', 'CANCEL_REQUESTED']
+      .includes(state.currentRun?.status);
+    if (active) state.tracePollTerminalRunId = null;
+    if ((!active && state.tracePollTerminalRunId === runId)
+      || state.tracePollTimer || state.tracePollBusy) return;
+    state.tracePollTimer = setTimeout(async () => {
+      state.tracePollTimer = null;
+      if (runId !== state.selectedRunId || resultGeneration !== state.resultGeneration) return;
+      const signal = state.operationsAbortController?.signal;
+      const attemptId = $('traceAttemptSelect').value || state.selectedTraceAttemptId;
+      if (!signal || signal.aborted || !attemptId) {
+        syncModelTracePolling(runId, resultGeneration);
+        return;
+      }
+      state.tracePollBusy = true;
+      try {
+        await loadModelTraces(runId, attemptId, signal, { append: true });
+      } catch (error) {
+        if (error.name !== 'AbortError') console.warn('模型调用实时刷新失败', error);
+      } finally {
+        state.tracePollBusy = false;
+      }
+      if (runId !== state.selectedRunId || resultGeneration !== state.resultGeneration) return;
+      const stillActive = ['STARTING', 'RUNNING', 'PAUSE_REQUESTED', 'CANCEL_REQUESTED']
+        .includes(state.currentRun?.status);
+      if (!stillActive) {
+        // The final tail read replaces completed starts. A remaining start was
+        // interrupted with its Worker and is no longer an active model call.
+        state.traceItems = state.traceItems.map(item => item.status === 'RUNNING'
+          ? { ...item, status: 'ABORTED' } : item);
+        state.tracePollTerminalRunId = runId;
+        renderModelTraces();
+        return;
+      }
+      state.tracePollTimer = setTimeout(
+        () => {
+          state.tracePollTimer = null;
+          syncModelTracePolling(runId, resultGeneration);
+        },
+        1000,
+      );
+    }, active ? 750 : 0);
+  }
+
   function renderSystemEvents(items) {
     const merged = new Map(state.operationEvents.map(item => [item.id, item]));
     items.forEach(item => merged.set(item.id, item));
@@ -2735,11 +3009,14 @@
       : { page: 1, itemsFrom: 0, itemsTo: filtered.length, html: '' };
     state.eventPage = pagination.page;
     const visible = filtered.slice(pagination.itemsFrom, pagination.itemsTo);
-    const header = '<div class="event-row head"><span>时间</span><span>事件</span><span>事实</span></div>';
+    const header = '<div class="event-row head"><span>墙钟时间</span><span>事件</span><span>事实</span></div>';
     const timeFormatter = typeof formatSystemTime === 'function' ? formatSystemTime : formatTime;
     const zoneLabel = typeof userTimeZone === 'string' ? userTimeZone : '';
     $('systemEventRows').innerHTML = header + (visible.length ? visible.map(item => {
-      const timestamp = new Date(item.created_at);
+      const parsedInstant = typeof parseApiInstant === 'function'
+        ? parseApiInstant(item.created_at)
+        : Date.parse(item.created_at);
+      const timestamp = new Date(parsedInstant);
       const timestampTitle = Number.isNaN(timestamp.getTime()) ? String(item.created_at || '') : timestamp.toISOString();
       return `<div class="event-row"><time title="${escapeHtml(timestampTitle)}">${timeFormatter(item.created_at)} ${escapeHtml(zoneLabel)}</time><strong>${escapeHtml(item.event_type)}</strong><code>${escapeHtml(JSON.stringify(item.payload || {}))}</code></div>`;
     }).join('') : '<div class="diagnostic-list-empty">暂无匹配事件</div>');
@@ -2770,7 +3047,7 @@
     const pagination = operationListPager('checkpoints', state.checkpointItems.length, state.checkpointPage);
     state.checkpointPage = pagination.page;
     const items = state.checkpointItems.slice(pagination.itemsFrom, pagination.itemsTo);
-    const header = '<div class="checkpoint-row head"><span>Step</span><span>状态</span><span>Attempt</span><span>Hash / 时间</span><span>大小</span><span>校验 / 恢复</span></div>';
+    const header = '<div class="checkpoint-row head"><span>Step</span><span>状态</span><span>Attempt</span><span>Hash / 虚拟时间</span><span>大小</span><span>校验 / 恢复</span></div>';
     $('checkpointRows').innerHTML = header + (items.length ? items.map(item => `<button class="checkpoint-row" type="button" data-checkpoint-step="${item.step_no}"><code>${item.step_no}</code><span class="chip ${item.validated ? 'teal' : 'amber'}">${escapeHtml(item.status)}</span><code>${escapeHtml((item.attempt_id || '—').slice(0, 8))}</code><span><code>${escapeHtml((item.bundle_sha256 || '—').slice(0, 12))}</code><br>${formatTime(item.virtual_time)}</span><span>${Math.ceil(item.size_bytes / 1024)} KB · ${item.file_count} 文件</span><span>${item.resumable ? '<strong>可恢复</strong>' : escapeHtml(item.validation?.reason || item.validation?.code || '—')}</span></button>`).join('') : '<div class="diagnostic-list-empty">当前 Run 尚无检查点</div>');
     $('checkpointPagination').innerHTML = pagination.html;
   }
@@ -2831,7 +3108,12 @@
       || resultGeneration !== state.resultGeneration
       || runId !== state.selectedRunId || signal.aborted) return;
     renderCheckpoints(checkpoints, checkpointGeneration);
-    renderAttempts(attempts);
+    const selectedAttempt = renderAttempts(attempts);
+    const selectedMeta = attempts.items.find(item => item.attempt_id === selectedAttempt);
+    if (selectedAttempt && selectedMeta?.log.available
+      && (state.logRunId !== runId || state.logAttemptId !== selectedAttempt)) {
+      selectAttemptLog(runId, selectedAttempt).catch(reportError);
+    }
     await loadSystemEvents(runId, signal, { append: true, factsGeneration });
     const traceAttempt = $('traceAttemptSelect').value;
     if (traceAttempt) await loadModelTraces(runId, traceAttempt, signal, { append: true, factsGeneration });
@@ -2843,7 +3125,6 @@
     state.operationsAbortController = controller;
     state.operationsRunId = runId;
     const factsGeneration = state.operationFactsGeneration = (state.operationFactsGeneration || 0) + 1;
-    const logGeneration = ++state.logGeneration;
     const checkpointGeneration = ++state.checkpointGeneration;
     const [attempts, checkpoints] = await Promise.all([
       api(`/runs/${runId}/attempts`, { signal: controller.signal }),
@@ -2854,12 +3135,15 @@
       || runId !== state.selectedRunId || controller.signal.aborted) return;
     const selectedAttempt = renderAttempts(attempts);
     renderCheckpoints(checkpoints, checkpointGeneration);
-    await loadSystemEvents(runId, controller.signal, { factsGeneration });
-    await loadModelTraces(runId, selectedAttempt, controller.signal, { factsGeneration });
-    if (logGeneration !== state.logGeneration || runId !== state.selectedRunId) return;
     const selectedMeta = attempts.items.find(item => item.attempt_id === selectedAttempt);
-    if (selectedAttempt && selectedMeta?.log.available) await selectAttemptLog(runId, selectedAttempt);
-    else $('logViewport').textContent = '该 Attempt 尚未产生可读日志。';
+    const logRequest = selectedAttempt && selectedMeta?.log.available
+      ? selectAttemptLog(runId, selectedAttempt)
+      : Promise.resolve().then(() => { $('logViewport').textContent = '该 Attempt 尚未产生可读日志。'; });
+    await Promise.all([
+      logRequest,
+      loadSystemEvents(runId, controller.signal, { factsGeneration }),
+      loadModelTraces(runId, selectedAttempt, controller.signal, { factsGeneration }),
+    ]);
   }
 
   function simulationStartTime(value, timezone) {
@@ -2880,7 +3164,7 @@
     return saved.secret_id;
   }
 
-  async function saveDraft({ silent = false } = {}) {
+  async function saveDraftUnlocked({ silent = false } = {}) {
     if (!state.draft) return;
     const requestedName = state.experiment.name;
     const definition = structuredClone(state.draft.definition);
@@ -2966,12 +3250,13 @@
     const saved = await api(`/experiments/${state.selectedExperimentId}/draft`, {
       method: 'PUT', body: JSON.stringify({ lock_version: state.draft.lock_version, data: definition }),
     });
-    state.draft = saved;
-    clearDirty();
-    fillDraft(saved.definition);
-    scheduleGlobalReconcile({ full: true });
+    await acceptSavedDraft(saved);
     if (!silent) showToast('草稿已保存到当前实验，不影响其他实验。', '保存成功');
     return saved;
+  }
+
+  function saveDraft(options = {}) {
+    return enqueueDraftMutation(() => saveDraftUnlocked(options));
   }
 
   async function testModelConnection(purpose) {
@@ -2981,7 +3266,7 @@
     badge.className = 'connection-status checking';
     try {
       const result = await api(`/experiments/${state.selectedExperimentId}/draft/models/${purpose}/test`, {
-        method: 'POST', body: JSON.stringify({ lock_version: state.draft.lock_version }),
+        method: 'POST', body: JSON.stringify({ lock_version: state.draft.lock_version }), transportRetries: 1,
       });
       state.draft = await api(`/experiments/${state.selectedExperimentId}/draft`);
       fillDraft(state.draft.definition);
@@ -3030,6 +3315,10 @@
   }
 
   async function createExperiment() {
+    const brainSkill = $('newExperimentBrain').value;
+    if (!brainSkill) throw new Error('新仿真必须显式选择一个 Brain Skill');
+    const mapRevisionId = $('newExperimentMap').value;
+    if (!mapRevisionId) throw new Error('新仿真必须显式选择一个已发布的用户地图');
     const created = await api('/experiments', {
       method: 'POST',
       body: JSON.stringify({
@@ -3037,7 +3326,8 @@
         goal: $('newExperimentGoal').value.trim(),
         owner: $('newExperimentOwner').value.trim(),
         tags: $('newExperimentTag').value.split(/[,，]/).map(item => item.trim()).filter(Boolean),
-        map_revision_id: $('newExperimentMap').value || null,
+        brain_skill: brainSkill,
+        map_revision_id: mapRevisionId,
         crowd_revision_ids: window.CrowdWorkspace?.selectedCreateRevisionIds?.() || [],
       }),
     });
@@ -3060,12 +3350,14 @@
   const splitSpatialObjects = value => String(value || '').split(/[，,\n]/).map(item => item.trim()).filter(Boolean);
 
   function displaySpatialPurpose(purpose) {
+    if (purpose === 'initial_location') return '初始位置';
     if (purpose === 'living_area') return '居住地';
     if (purpose === 'sleeping') return '睡觉';
     return purpose;
   }
 
   function savedSpatialPurpose(purpose) {
+    if (purpose === '初始位置') return 'initial_location';
     if (purpose === '居住地') return 'living_area';
     if (purpose === '睡觉') return 'sleeping';
     return purpose;
@@ -3115,6 +3407,61 @@
     $('agentAddressRows').innerHTML = addressRows.join('');
     $('agentSpaceRows').innerHTML = spaceRows.join('');
     updateSpatialEditorEmptyStates();
+    syncAgentInitialLocationPreview();
+  }
+
+  function agentCoordTileAddress() {
+    if (state.agentEditorContext?.ownerType !== 'experiment') return null;
+    const x = Number($('agentEditX').value);
+    const y = Number($('agentEditY').value);
+    const tiles = state.draft?.definition?.world?.definition?.tiles || [];
+    const tile = tiles.find(item => Number(item?.coord?.[0]) === x && Number(item?.coord?.[1]) === y);
+    return Array.isArray(tile?.address) ? tile.address.map(String).filter(Boolean) : null;
+  }
+
+  function syncAgentInitialLocationPreview() {
+    const host = $('agentInitialLocationResolved');
+    if (!host) return;
+    const address = agentCoordTileAddress();
+    host.textContent = address?.length
+      ? `当前坐标的地图语义：${address.join(' > ')}`
+      : state.agentEditorContext?.ownerType === 'experiment'
+        ? '当前坐标没有可解析的地图语义'
+        : '公共 Agent 加入实验后校验坐标与初始位置';
+    $('useAgentInitialLocation').hidden = !address?.length || state.agentEditorContext?.ownerType !== 'experiment';
+  }
+
+  function applyResolvedInitialLocation() {
+    const address = agentCoordTileAddress();
+    if (!address?.length) throw new Error('当前坐标没有可解析的地图语义');
+    const rows = [...document.querySelectorAll('#agentAddressRows .spatial-table-row')];
+    let row = rows.find(item => savedSpatialPurpose(item.querySelector('.agent-address-purpose').value.trim()) === 'initial_location');
+    if (!row) {
+      $('agentAddressRows').querySelector('.spatial-table-empty')?.remove();
+      $('agentAddressRows').insertAdjacentHTML('afterbegin', agentAddressRowMarkup('initial_location', address));
+      row = $('agentAddressRows').firstElementChild;
+    } else {
+      row.querySelector('.agent-address-path').value = address.join(' > ');
+    }
+    showToast('已把坐标对应的地图语义填入“初始位置”。', '初始位置已同步');
+  }
+
+  function validateInitialLocationAgainstCoord(spatial) {
+    const declared = spatial.address?.initial_location || spatial.address?.['初始位置'];
+    const actual = agentCoordTileAddress();
+    if (!declared || !actual) return;
+    const roots = new Set([
+      state.draft?.definition?.world?.world_name,
+      state.draft?.definition?.world?.definition?.world,
+    ].filter(Boolean));
+    const normalize = path => {
+      const value = [...path];
+      if (roots.has(value[0])) value.shift();
+      return JSON.stringify(value);
+    };
+    if (normalize(declared) !== normalize(actual)) {
+      throw new Error(`初始位置“${declared.join(' > ')}”与坐标指向的“${actual.join(' > ')}”不一致`);
+    }
   }
 
   function readSpatialEditor() {
@@ -3237,10 +3584,20 @@
       throw new Error(payload?.error?.message || `Agent 图片上传失败（${response.status}）`);
     }
     const uploaded = await response.json();
-    return {
+    const images = {
       portrait: uploaded.portrait?.content_url || $('agentEditPortrait').value || null,
       sprite: uploaded.sprite?.content_url || $('agentEditSprite').value || null,
     };
+    for (const kind of ['portrait', 'sprite']) {
+      if (!uploaded[kind]?.content_url) continue;
+      const prefix = kind === 'portrait' ? 'Portrait' : 'Sprite';
+      $(`agentEdit${prefix}`).value = images[kind];
+      setAgentImagePreview(kind, images[kind], '已保存到数据库');
+      if (state.agentImageObjectUrls[kind]) URL.revokeObjectURL(state.agentImageObjectUrls[kind]);
+      state.agentImageObjectUrls[kind] = null;
+      state.agentImageFiles[kind] = null;
+    }
+    return images;
   }
 
   function setAgentEditorReadOnly(readonly) {
@@ -3387,7 +3744,9 @@
     if (state.agentEditorContext?.ownerType === 'public-readonly') return;
     if (state.agentEditorContext?.ownerType === 'public') {
       const context = state.agentEditorContext;
-      if (!context.agentDraft && (!state.agentImageFiles.portrait || !state.agentImageFiles.sprite)) {
+      const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
+      const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
+      if (!context.agentDraft && (!hasPortrait || !hasSprite)) {
         throw new Error('新增 Agent 需要同时上传头像和 4×4 行走图');
       }
       const spatial = readSpatialEditor();
@@ -3433,7 +3792,10 @@
     if (!state.draft) throw new Error('当前没有可编辑 Draft');
     const key = $('agentEditKey').value.trim();
     const spatial = readSpatialEditor();
-    if (!state.editingAgentKey && (!state.agentImageFiles.portrait || !state.agentImageFiles.sprite)) {
+    validateInitialLocationAgainstCoord(spatial);
+    const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
+    const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
+    if (!state.editingAgentKey && (!hasPortrait || !hasSprite)) {
       throw new Error('新增 Agent 需要同时上传头像和 4×4 行走图');
     }
     const images = await uploadStagedAgentImages();
@@ -3459,14 +3821,12 @@
     const saved = await api(`/experiments/${state.selectedExperimentId}/draft/agents/${encodeURIComponent(key)}`, {
       method: 'PUT', body: JSON.stringify({ lock_version: state.draft.lock_version, data: agent }),
     });
-    state.draft = saved; state.definition = saved.definition;
-    fillDraft(saved.definition); fillDefinitionOverview(saved.definition, saved);
+    await acceptSavedDraft(saved);
     state.modalReturnFocus = state.editingAgentKey
       ? document.querySelector(`#agentRows .agent-row[data-agent-key="${CSS.escape(key)}"] .agent-edit-btn`)
       : $('addAgentBtn');
     releaseAgentImageObjectUrls();
-    closeModal('agentEditorModal'); clearDirty();
-    scheduleGlobalReconcile({ full: true });
+    closeModal('agentEditorModal');
     showToast('角色定义已保存到当前实验 Draft。', 'Agent 已保存');
   }
 
@@ -3562,7 +3922,9 @@
     const runId = state.selectedRunId;
     const experimentId = state.selectedExperimentId;
     const generation = state.resultGeneration;
-    const body = action === 'cancel' ? JSON.stringify({ force: Boolean(options.force) }) : undefined;
+    const body = action === 'cancel'
+      ? JSON.stringify({ force: options.force ?? true })
+      : undefined;
     const run = await api(`/runs/${runId}/${action}`, {
       method: 'POST', ...(body ? { body } : {}),
     });
@@ -3580,7 +3942,7 @@
       scheduleGlobalReconcile({ experimentId });
     }
     showToast(
-      action === 'pause' ? '会在当前安全步骤完成后暂停。' : action === 'resume' ? '运行已重新进入本机队列。' : '取消请求已提交。',
+      action === 'pause' ? '会在当前安全步骤完成后暂停。' : action === 'resume' ? '运行已重新进入本机队列。' : '正在立即终止当前执行；未提交的当前 Step 将被丢弃。',
       action === 'pause' ? '暂停请求已提交' : action === 'resume' ? '继续运行' : '取消运行',
     );
   }
@@ -3777,6 +4139,16 @@
   document.querySelectorAll('[data-result-tab]').forEach(tab => tab.addEventListener('click', () => {
     setResultTab(tab.dataset.resultTab, { push: true });
   }));
+  $('runQualityBanner').addEventListener('click', event => {
+    const target = event.target.closest('[data-quality-step]');
+    if (!target) return;
+    const step = Number(target.dataset.qualityStep);
+    if (!Number.isInteger(step) || step < 1) return;
+    setResultTab('timeline', { push: true });
+    $('timelineRange').value = step;
+    updateTimelineStep(step);
+    $('timelineRange').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
   document.querySelector('.result-tabs').addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     const tabs = [...document.querySelectorAll('[data-result-tab]')];
@@ -3860,6 +4232,7 @@
     $('newExperimentTag').value = '';
     try {
       await Promise.all([
+        prepareExperimentBrainChoices(),
         window.MapWorkspace?.prepareExperimentCreate(),
         window.CrowdWorkspace?.prepareExperimentCreate(),
       ]);
@@ -4217,6 +4590,10 @@
     $('agentAddressRows').insertAdjacentHTML('beforeend', agentAddressRowMarkup('', []));
     $('agentAddressRows').lastElementChild.querySelector('.agent-address-purpose').focus();
   });
+  $('useAgentInitialLocation').addEventListener('click', () => {
+    try { applyResolvedInitialLocation(); } catch (error) { reportError(error); }
+  });
+  [$('agentEditX'), $('agentEditY')].forEach(control => control.addEventListener('input', syncAgentInitialLocationPreview));
   $('addAgentSpaceRow').addEventListener('click', () => {
     $('agentSpaceRows').querySelector('.spatial-table-empty')?.remove();
     $('agentSpaceRows').insertAdjacentHTML('beforeend', agentSpaceRowMarkup([], []));
@@ -4587,6 +4964,11 @@
       $('newExperimentMap').focus();
       return;
     }
+    if (state.wizardStep === 2 && !$('newExperimentBrain').value) {
+      showToast('请选择一个 Brain Skill。', '无法继续');
+      $('newExperimentBrain').focus();
+      return;
+    }
     if (state.wizardStep === 2 && !(window.CrowdWorkspace?.selectedCreateRevisionIds?.().length)) {
       showToast('请至少选择一个已发布人群。', '无法继续');
       $('newExperimentCrowds').querySelector('input')?.focus();
@@ -4599,6 +4981,7 @@
     }
     createExperiment().catch(reportError);
   }, true);
+  $('newExperimentBrain').addEventListener('change', renderWizardStep);
   $('newExperimentMap').addEventListener('change', renderWizardStep);
   $('confirmPublish').addEventListener('click', event => {
     if (!state.draft) return;

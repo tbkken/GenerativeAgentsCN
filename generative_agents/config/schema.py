@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-import re
 from datetime import datetime
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import urlsplit, urlunsplit
@@ -641,18 +640,6 @@ class ExperimentDefinition(StrictModel):
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agent_key must be unique within an experiment")
         return self
-
-
-REQUIRED_ATOMIC_SKILLS = frozenset(
-    """base_desc decide_chat decide_chat_terminate decide_wait decide_wait_example
-    decide_game_object_interaction decide_game_object_response
-    describe_emoji describe_event describe_object determine_arena determine_object
-    determine_sector generate_chat generate_chat_check_repeat poignancy_chat
-    poignancy_event reflect_chat_memory reflect_chat_planing reflect_focus
-    reflect_insights retrieve_currently retrieve_plan retrieve_thought schedule_daily
-    schedule_decompose schedule_init schedule_revise summarize_chats
-    summarize_relation wake_up""".split()
-)
 
 
 def make_blank_definition(

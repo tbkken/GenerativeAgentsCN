@@ -284,6 +284,12 @@ class ModelTraceProjector:
         异常:
             ModelTraceProjectionError: 当底层操作报告该异常条件时抛出。
         """
+        event_type = record.get("event_type")
+        # PHYSICAL_START is a live lifecycle fact, not a billable attempt. The
+        # matching PHYSICAL_ATTEMPT completion event remains the sole source for
+        # usage, retry, token and latency aggregates.
+        if event_type == "PHYSICAL_START":
+            return
         key = (
             run_id,
             str(record.get("purpose") or "unknown"),
@@ -316,7 +322,6 @@ class ModelTraceProjector:
             )
             session.add(usage)
             session.flush()
-        event_type = record.get("event_type")
         if event_type == "PHYSICAL_ATTEMPT":
             usage.physical_attempt_count += 1
             if (record.get("attempt_no") or 1) > 1:

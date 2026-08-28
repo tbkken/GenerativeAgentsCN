@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 from urllib.parse import quote
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import and_, func, select
 
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
@@ -31,6 +31,7 @@ from generative_agents.persistence.models import (
 from generative_agents.status import MemoryState, ResultCompleteness
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 
 class ResultQueryService:
@@ -311,6 +312,7 @@ class ResultQueryService:
                             if latest is not None
                             else None
                         ),
+                        "run_status": run.status,
                     }
                 )
                 items.append(item)
@@ -448,6 +450,7 @@ class ResultQueryService:
             )
             return {
                 "run_id": run_id,
+                "run_status": run.status,
                 "agent": agent_view,
                 "steps": [
                     {
@@ -629,7 +632,7 @@ class ResultQueryService:
             run_id: 仿真运行的唯一标识。 类型：`str`。
             agent_key: 智能体在当前实验或运行中的稳定唯一键。 类型：`str | None`。 默认值：`None`。
             memory_type: 记忆类型筛选值；为空时包含事件、思考等全部类型。 类型：`str | None`。 默认值：`None`。
-            state: 记忆状态筛选值。允许值：`ACTIVE`、`EXPIRED`、`EVICTED`。 类型：`MemoryState | str | None`。 默认值：`None`。
+            state: 记忆状态筛选值。允许值：`ACTIVE`、`EXPIRED`、`EVICTED`、`SUPERSEDED`、`INVALIDATED`。 类型：`MemoryState | str | None`。 默认值：`None`。
             query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
             offset: 从结果集或字节流起点跳过的数量。 类型：`int`。 默认值：`0`。
             limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`50`。
@@ -729,8 +732,8 @@ class ResultQueryService:
                         "start_step": item.start_step,
                         "end_step": item.end_step,
                         "stop_reason": item.stop_reason,
-                        "started_at": item.started_at.isoformat(),
-                        "ended_at": item.ended_at.isoformat()
+                        "started_at": iso_utc(item.started_at),
+                        "ended_at": iso_utc(item.ended_at)
                         if item.ended_at
                         else None,
                     }
@@ -1001,7 +1004,7 @@ class ResultQueryService:
         return {
             "conversation_id": row.id,
             "start_step": row.start_step,
-            "started_at": row.started_at.isoformat(),
+            "started_at": iso_utc(row.started_at),
             "duration_minutes": row.duration_minutes,
             "duration_source": row.duration_source,
             "location": row.location,
@@ -1037,9 +1040,12 @@ class ResultQueryService:
             "description": row.description,
             "poignancy": row.poignancy,
             "created_step": row.created_step,
-            "created_at": row.created_at.isoformat() if row.created_at else None,
+            "created_at": iso_utc(row.created_at) if row.created_at else None,
             "last_accessed_step": row.last_accessed_step,
             "removed_step": row.removed_step,
+            "supersedes_memory_id": row.supersedes_memory_node_id,
+            "superseded_by_memory_id": row.superseded_by_memory_node_id,
+            "invalidated_reason": row.invalidated_reason,
         }
 
     @staticmethod

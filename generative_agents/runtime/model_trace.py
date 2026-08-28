@@ -20,6 +20,7 @@ from .context import RunPaths
 class ModelTraceEventType(StrEnum):
     """模型追踪流中的逻辑调用、物理尝试和结果事件类型。"""
 
+    PHYSICAL_START = "PHYSICAL_START"
     PHYSICAL_ATTEMPT = "PHYSICAL_ATTEMPT"
     LOGICAL_END = "LOGICAL_END"
 
@@ -27,9 +28,11 @@ class ModelTraceEventType(StrEnum):
 class ModelTraceStatus(StrEnum):
     """一次模型调用尝试的成功或失败状态。"""
 
+    RUNNING = "RUNNING"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     FALLBACK = "FALLBACK"
+    ABORTED = "ABORTED"
 
 
 _SECRET_PATTERNS = (
@@ -115,7 +118,10 @@ class ModelTraceEvent:
             raise ValueError("ended_at must not precede started_at")
         if self.latency_ms < 0:
             raise ValueError("latency_ms must not be negative")
-        if self.event_type == ModelTraceEventType.PHYSICAL_ATTEMPT:
+        if self.event_type in {
+            ModelTraceEventType.PHYSICAL_START,
+            ModelTraceEventType.PHYSICAL_ATTEMPT,
+        }:
             if self.attempt_no is None or self.attempt_no < 1:
                 raise ValueError("physical attempts require a positive attempt_no")
 

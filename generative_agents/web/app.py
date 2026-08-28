@@ -39,8 +39,6 @@ from generative_agents.config.schema import (
 )
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import (
-    Experiment,
-    ExperimentRevision,
     Run,
     RunEvent,
     RunQueue,
@@ -56,6 +54,7 @@ from generative_agents.services.maps import WorldMapService
 from generative_agents.services.map_importer import fresh_ville_editor_document
 from generative_agents.services.catalog import AssetService, SecretService
 from generative_agents.services.results import ResultQueryService
+from generative_agents.services.quality import RunQualityService
 from generative_agents.services.runs import RunService
 from generative_agents.runtime.supervisor import LocalProcessSupervisor
 from generative_agents.runtime.artifact_scheduler import ArtifactProcessScheduler
@@ -65,10 +64,13 @@ from generative_agents.services.checkpoints import CheckpointService
 from generative_agents.services.logs import LogService
 from generative_agents.services.replay import ReplayService
 from generative_agents.services.model_probes import ModelProbeService
+from generative_agents.services.timestamps import iso_utc
 from generative_agents.skills import (
+    DatabaseSkillRegistry,
     MemoryStream,
     SkillMCPServer,
     SkillRegistry,
+    SkillRegistryError,
     SkillRuntime,
 )
 from generative_agents.web.skill_api import create_skill_router
@@ -95,11 +97,7 @@ request_id_var: ContextVar[str] = ContextVar("request_id", default="")
 class SourceRequest(StrictModel):
     """带乐观锁源 Revision 的通用修改请求。"""
 
-    type: Literal[
-        "BUILTIN_DEFAULT",
-        "BLANK",
-        "REVISION",
-    ] = "BUILTIN_DEFAULT"
+    type: Literal["BLANK", "REVISION"] = "BLANK"
     revision_id: str | None = None
 
 
@@ -110,8 +108,13 @@ class CreateExperimentRequest(StrictModel):
     goal: str = Field(default="", max_length=10_000)
     owner: str = Field(default="", max_length=120)
     tags: list[str] = Field(default_factory=list, max_length=20)
+    brain_skill: str = Field(
+        min_length=1,
+        max_length=64,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+    )
     source: SourceRequest | None = None
-    map_revision_id: str | None = None
+    map_revision_id: str
     crowd_revision_ids: list[str] = Field(default_factory=list, max_length=50)
 
 
@@ -194,7 +197,7 @@ class PublishAndRunRequest(StrictModel):
 class CancelRunRequest(StrictModel):
     """取消 Run，并可选择请求强制终止 Worker。"""
 
-    force: bool = False
+    force: bool = True
 
 
 class SecretCreateRequest(StrictModel):
@@ -416,14 +419,19 @@ def create_app(
         )
     database = create_database(database_url)
     service = ExperimentService(database)
-    map_service = WorldMapService(database)
-    skill_registry = SkillRegistry(history_root=Path(var_dir) / "skill-history")
+    bundled_skill_registry = SkillRegistry()
+    skill_registry = DatabaseSkillRegistry(
+        database,
+        cache_root=Path(var_dir) / "skill-runtime-cache",
+    )
+    map_service = WorldMapService(database, skill_registry=skill_registry)
     skill_mcp = SkillMCPServer(MemoryStream(Path(var_dir) / "skill-memory.db"))
     skill_runtime = SkillRuntime(skill_registry, mcp=skill_mcp)
     spatial_asset_service = SpatialAssetService(database)
     tool_service = ToolService(database)
     crowd_service = CrowdService(database)
     result_service = ResultQueryService(database)
+    quality_service = RunQualityService(database, var_dir=var_dir)
     asset_service = AssetService(database, var_dir=var_dir)
     secret_service = SecretService(database, var_dir=var_dir)
     artifact_service = ArtifactService(database, var_dir=var_dir)
@@ -464,10 +472,9 @@ def create_app(
         """
         if migrate:
             upgrade_database(database_url)
-        map_service.ensure_builtin_map()
+        skill_registry.ensure_builtin_skills(bundled_skill_registry)
         crowd_service.ensure_builtin_resources()
         spatial_asset_service.ensure_builtin_assets()
-        map_service.ensure_intersection_map()
         tool_service.ensure_builtin_tools()
         app.state.database = database
         app.state.experiment_service = service
@@ -991,6 +998,7 @@ def create_app(
         status: str | None = None,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=100, ge=1, le=500),
+        archived: Literal["active", "archived", "all"] = "active",
     ):
         """查询智能体`templates`。
 
@@ -1004,7 +1012,11 @@ def create_app(
             返回函数计算得到的结果。
         """
         return crowd_service.list_agents(
-            query=q, status=status, page=page, page_size=page_size
+            query=q,
+            status=status,
+            page=page,
+            page_size=page_size,
+            archived=archived,
         )
 
     @app.get("/api/v1/agent-templates/{agent_id}")
@@ -1018,6 +1030,19 @@ def create_app(
             返回函数计算得到的结果。
         """
         return crowd_service.get_agent(agent_id)
+
+    @app.post("/api/v1/agent-templates/{agent_id}/archive")
+    def archive_agent_template(agent_id: str):
+        return crowd_service.set_agent_archived(agent_id, archived=True)
+
+    @app.post("/api/v1/agent-templates/{agent_id}/restore")
+    def restore_agent_template(agent_id: str):
+        return crowd_service.set_agent_archived(agent_id, archived=False)
+
+    @app.delete("/api/v1/agent-templates/{agent_id}", status_code=204)
+    def delete_agent_template(agent_id: str):
+        crowd_service.delete_agent(agent_id)
+        return Response(status_code=204)
 
     @app.get("/api/v1/agent-templates/{agent_id}/draft")
     def get_agent_template_draft(agent_id: str):
@@ -1131,6 +1156,7 @@ def create_app(
         status: str | None = None,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=5, ge=1, le=100),
+        archived: Literal["active", "archived", "all"] = "active",
     ):
         """查询`crowds`。
 
@@ -1144,7 +1170,11 @@ def create_app(
             返回函数计算得到的结果。
         """
         return crowd_service.list_crowds(
-            query=q, status=status, page=page, page_size=page_size
+            query=q,
+            status=status,
+            page=page,
+            page_size=page_size,
+            archived=archived,
         )
 
     @app.get("/api/v1/crowds/{crowd_id}")
@@ -1158,6 +1188,19 @@ def create_app(
             返回函数计算得到的结果。
         """
         return crowd_service.get_crowd(crowd_id)
+
+    @app.post("/api/v1/crowds/{crowd_id}/archive")
+    def archive_crowd(crowd_id: str):
+        return crowd_service.set_crowd_archived(crowd_id, archived=True)
+
+    @app.post("/api/v1/crowds/{crowd_id}/restore")
+    def restore_crowd(crowd_id: str):
+        return crowd_service.set_crowd_archived(crowd_id, archived=False)
+
+    @app.delete("/api/v1/crowds/{crowd_id}", status_code=204)
+    def delete_crowd(crowd_id: str):
+        crowd_service.delete_crowd(crowd_id)
+        return Response(status_code=204)
 
     @app.get("/api/v1/crowds/{crowd_id}/draft")
     def get_crowd_draft(crowd_id: str):
@@ -1284,6 +1327,7 @@ def create_app(
         status: str | None = None,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=5, ge=1, le=100),
+        archived: Literal["active", "archived", "all"] = "active",
     ):
         """查询`maps`。
 
@@ -1297,7 +1341,11 @@ def create_app(
             返回函数计算得到的结果。
         """
         return map_service.list_maps(
-            query=q, status=status, page=page, page_size=page_size
+            query=q,
+            status=status,
+            page=page,
+            page_size=page_size,
+            archived=archived,
         )
 
     @app.get("/api/v1/map-editor/ville-document")
@@ -1321,6 +1369,19 @@ def create_app(
             返回函数计算得到的结果。
         """
         return map_service.get_map(map_id)
+
+    @app.post("/api/v1/maps/{map_id}/archive")
+    def archive_map(map_id: str):
+        return map_service.set_archived(map_id, archived=True)
+
+    @app.post("/api/v1/maps/{map_id}/restore")
+    def restore_map(map_id: str):
+        return map_service.set_archived(map_id, archived=False)
+
+    @app.delete("/api/v1/maps/{map_id}", status_code=204)
+    def delete_map(map_id: str):
+        map_service.delete_map(map_id)
+        return Response(status_code=204)
 
     @app.get("/api/v1/maps/{map_id}/draft")
     def get_map_draft(map_id: str):
@@ -1443,11 +1504,22 @@ def create_app(
                 "请至少选择一个已发布人群",
                 status_code=422,
             )
-        source_type = body.source.type if body.source else "BUILTIN_DEFAULT"
+        try:
+            selected_brain = skill_registry.get(body.brain_skill)
+        except SkillRegistryError as exc:
+            raise ServiceError(
+                "BRAIN_SKILL_NOT_FOUND",
+                f"所选 Brain Skill 不存在或不可用：{body.brain_skill}",
+                status_code=422,
+            ) from exc
+        if selected_brain.kind != "brain":
+            raise ServiceError(
+                "BRAIN_SKILL_KIND_REQUIRED",
+                f"所选 Skill 不是 Brain：{body.brain_skill}",
+                status_code=422,
+            )
+        source_type = body.source.type if body.source else "BLANK"
         source_revision_id = body.source.revision_id if body.source else None
-        map_revision_id = body.map_revision_id
-        if body.source is None and not map_revision_id:
-            map_revision_id = map_service.default_revision_id()
         return service.create_experiment(
             name=body.name,
             goal=body.goal,
@@ -1455,7 +1527,8 @@ def create_app(
             source_revision_id=source_revision_id,
             owner=body.owner,
             tags=body.tags,
-            map_revision_id=map_revision_id,
+            brain_skill=selected_brain.name,
+            map_revision_id=body.map_revision_id,
             crowd_revision_ids=body.crowd_revision_ids,
         )
 
@@ -1878,14 +1951,43 @@ def create_app(
             for issue in report.get("errors", [])
             if issue.get("code") != "MODEL_NOT_RESOLVED"
         ]
+        offline_model_warnings = []
+        for item in model_status["items"]:
+            if item["status"] != "OFFLINE":
+                continue
+            purpose_label = "Chat" if item["purpose"] == "chat" else "Embedding"
+            offline_model_warnings.append(
+                {
+                    "code": item.get("reason_code") or "MODEL_AUTO_PROBE_FAILED",
+                    "message": (
+                        f"{purpose_label} 上次自动检测失败："
+                        f"{item.get('reason_message') or item.get('reason_code') or '连接失败'}；"
+                        "确认发布会自动重试"
+                    ),
+                    "path": f"models.{item['purpose']}",
+                    "fix_page": "models",
+                    "fix_control": (
+                        "chatModel"
+                        if item["purpose"] == "chat"
+                        else "embeddingModel"
+                    ),
+                }
+            )
+        report["warnings"] = [
+            *report.get("warnings", []),
+            *offline_model_warnings,
+        ]
         report["valid"] = not report["errors"]
-        automatic_model_checks = len(model_status["items"])
+        total_model_checks = len(model_status["items"])
+        automatic_model_checks = sum(
+            item["status"] != "OFFLINE" for item in model_status["items"]
+        )
         model_status["auto_probe_on_publish"] = True
         report["model_status"] = model_status
         report["auto_model_probe"] = {
             "enabled": True,
             "purposes": [item["purpose"] for item in model_status["items"]],
-            "count": automatic_model_checks,
+            "count": total_model_checks,
         }
         report["counts"] = {
             "blocking": len(report["errors"]),
@@ -2012,6 +2114,7 @@ def create_app(
         experiment_id: str,
         cursor: str | None = None,
         limit: int = Query(default=50, ge=1, le=100),
+        archived: Literal["active", "archived", "all"] = "active",
     ):
         """查询`runs`。
 
@@ -2023,7 +2126,9 @@ def create_app(
         返回:
             返回函数计算得到的结果。
         """
-        return run_service.list_runs(experiment_id, cursor=cursor, limit=limit)
+        return run_service.list_runs(
+            experiment_id, cursor=cursor, limit=limit, archived=archived
+        )
 
     @app.get("/api/v1/runs/{run_id}")
     def get_run(run_id: str):
@@ -2035,7 +2140,22 @@ def create_app(
         返回:
             返回函数计算得到的结果。
         """
-        return run_service.get_run(run_id)
+        return {
+            **run_service.get_run(run_id),
+            "quality": quality_service.get(run_id),
+        }
+
+    @app.post("/api/v1/runs/{run_id}/archive")
+    def archive_run(run_id: str):
+        return run_service.set_archived(run_id, archived=True)
+
+    @app.post("/api/v1/runs/{run_id}/restore")
+    def restore_run(run_id: str):
+        return run_service.set_archived(run_id, archived=False)
+
+    @app.delete("/api/v1/runs/{run_id}")
+    def delete_run(run_id: str):
+        return run_service.delete_run(run_id)
 
     @app.post("/api/v1/runs/{run_id}/pause")
     def pause_run(run_id: str):
@@ -2107,7 +2227,7 @@ def create_app(
                         "experiment_id": experiment_id,
                         "run_id": event.run_id,
                         "payload": event.payload_json,
-                        "created_at": event.created_at.isoformat(),
+                        "created_at": iso_utc(event.created_at),
                     }
                     for event, experiment_id in rows
                 ],
@@ -2236,7 +2356,7 @@ def create_app(
                         "id": event.id,
                         "event_type": event.event_type,
                         "payload": event.payload_json,
-                        "created_at": event.created_at.isoformat(),
+                        "created_at": iso_utc(event.created_at),
                     }
                     for event in events
                 ],
@@ -2301,7 +2421,7 @@ def create_app(
                             "id": event.id,
                             "event_type": event.event_type,
                             "payload": event.payload_json,
-                            "created_at": event.created_at.isoformat(),
+                            "created_at": iso_utc(event.created_at),
                         }
                         yield (
                             f"id: {event.id}\n"
@@ -2481,6 +2601,12 @@ def create_app(
             返回函数计算得到的结果。
         """
         return result_service.summary(run_id)
+
+    @app.get("/api/v1/runs/{run_id}/quality")
+    def run_quality(run_id: str):
+        """Return observational Brain conformance separately from execution state."""
+
+        return quality_service.get(run_id)
 
     @app.get("/api/v1/runs/{run_id}/results/timeline")
     def result_timeline(
@@ -2966,7 +3092,7 @@ def create_app(
             cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。
             limit: 本次最多返回或处理的记录数量。 类型：`int`。
             purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str | None`。 默认值：`None`。
-            status: 模型调用状态筛选值。允许值：`SUCCEEDED`、`FAILED`、`FALLBACK`。 类型：`str | None`。 默认值：`None`。
+            status: 模型调用状态筛选值。允许值包括 `RUNNING`、`SUCCEEDED`、`FAILED`、`FALLBACK`、`ABORTED`。 类型：`str | None`。 默认值：`None`。
             event_type: 模型轨迹事件类型筛选值；为空时不按事件类型过滤。 类型：`str | None`。 默认值：`None`。
 
         返回:

@@ -38,4 +38,5 @@ class ReplayStepsResponse(StrictModel):
     from_step: int
     next_from_step: int | None = None
     partial: bool
+    world_state_before: dict[str, dict[str, Any]]
     steps: list[dict[str, Any]]

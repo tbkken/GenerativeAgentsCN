@@ -5,10 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import Any, Iterable, Literal, Mapping
 
 
 SkillKind = Literal["atomic", "pack", "brain"]
@@ -44,6 +44,11 @@ class SkillDocument:
     revision: str
     updated_at: str
     example_input: str = ""
+    storage: str = "filesystem"
+    storage_ref: str | None = None
+    revision_no: int | None = None
+    is_builtin: bool = False
+    archived_at: str | None = None
 
     def summary(self) -> dict[str, object]:
         """执行 `SkillDocument` 的摘要操作。
@@ -56,7 +61,12 @@ class SkillDocument:
             "description": self.description,
             "example_input": self.example_input,
             "kind": self.kind,
-            "path": self.path.as_posix(),
+            "path": self.storage_ref or self.path.as_posix(),
+            "storage": self.storage,
+            "storage_ref": self.storage_ref,
+            "revision_no": self.revision_no,
+            "is_builtin": self.is_builtin,
+            "archived_at": self.archived_at,
             "children": list(self.children),
             "scripts": list(self.scripts),
             "revision": self.revision,
@@ -490,3 +500,104 @@ class SkillRegistry:
         timestamp = datetime.now(UTC).strftime("%Y%m%dT%H_%M_%S.%fZ")
         target = target_dir / f"{timestamp}-{document.revision}.md"
         target.write_text(document.markdown, encoding="utf-8")
+
+
+class SnapshotSkillRegistry:
+    """Expose an immutable Run manifest Skill bundle through ``SkillRegistry``.
+
+    The manifest remains the source of truth. Files are materialized only inside
+    the Run-owned runtime directory so deterministic scripts execute the exact
+    frozen source instead of the mutable workspace Skill catalog.
+    """
+
+    def __init__(
+        self,
+        skills: Mapping[str, Mapping[str, Any]],
+        *,
+        root: str | Path,
+    ) -> None:
+        self.root = Path(root).resolve()
+        self.root.mkdir(parents=True, exist_ok=True)
+        self._revisions = {
+            self.normalize_name(name): str(snapshot.get("revision") or "")
+            for name, snapshot in skills.items()
+        }
+        self._registry = SkillRegistry(
+            self.root,
+            history_root=self.root / ".history-disabled",
+        )
+        self._materialize(skills)
+
+    @staticmethod
+    def normalize_name(name: str) -> str:
+        return SkillRegistry.normalize_name(name)
+
+    def get(self, name: str) -> SkillDocument:
+        document = self._registry.get(name)
+        revision = self._revisions.get(document.name)
+        return replace(document, revision=revision) if revision else document
+
+    def list(
+        self, *, kind: SkillKind | None = None, query: str = ""
+    ) -> list[SkillDocument]:
+        return [
+            replace(document, revision=self._revisions[document.name])
+            if self._revisions.get(document.name)
+            else document
+            for document in self._registry.list(kind=kind, query=query)
+        ]
+
+    def prompt(self, key: str) -> str:
+        return self._registry.prompt(key)
+
+    def _materialize(self, skills: Mapping[str, Mapping[str, Any]]) -> None:
+        if not skills:
+            raise SkillRegistryError("run Skill bundle is empty")
+        for raw_name, raw_snapshot in sorted(skills.items()):
+            name = self.normalize_name(raw_name)
+            snapshot = dict(raw_snapshot)
+            kind = str(snapshot.get("kind") or "")
+            if kind not in _KINDS:
+                raise SkillRegistryError(
+                    f"Unsupported Skill kind in run snapshot: {kind!r}"
+                )
+            folder = "atomic" if kind == "atomic" else f"{kind}s"
+            skill_root = (self.root / folder / name).resolve()
+            try:
+                skill_root.relative_to(self.root)
+            except ValueError as exc:
+                raise SkillRegistryError("Skill snapshot path escaped Run root") from exc
+            skill_root.mkdir(parents=True, exist_ok=True)
+            markdown = str(snapshot.get("markdown") or "")
+            if not markdown.strip():
+                raise SkillRegistryError(f"Skill snapshot has no markdown: {name}")
+            self._write_exact(skill_root / "SKILL.md", markdown)
+            scripts = snapshot.get("scripts") or {}
+            if not isinstance(scripts, Mapping):
+                raise SkillRegistryError(f"Skill snapshot scripts are invalid: {name}")
+            for raw_relative, raw_source in sorted(scripts.items()):
+                relative = Path(str(raw_relative).replace("\\", "/"))
+                if relative.is_absolute() or ".." in relative.parts:
+                    raise SkillRegistryError(
+                        f"Unsafe Skill snapshot script path: {raw_relative}"
+                    )
+                target = (skill_root / relative).resolve()
+                try:
+                    target.relative_to(skill_root)
+                except ValueError as exc:
+                    raise SkillRegistryError(
+                        f"Skill snapshot script escaped Skill root: {raw_relative}"
+                    ) from exc
+                target.parent.mkdir(parents=True, exist_ok=True)
+                self._write_exact(target, str(raw_source))
+
+    @staticmethod
+    def _write_exact(path: Path, content: str) -> None:
+        if path.exists():
+            if path.read_text(encoding="utf-8-sig") != content:
+                raise SkillRegistryError(
+                    "Run Skill snapshot file already exists with different content: "
+                    f"{path}"
+                )
+            return
+        path.write_bytes(content.encode("utf-8"))

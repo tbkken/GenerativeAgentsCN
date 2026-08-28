@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 
@@ -86,6 +86,10 @@ class GameObjectInteractionSystem:
         self._executor = skill_executor
         self._clock = clock
         self._affordances = tuple(self._from_world(world))
+        self._object_states = {
+            item.object_key: copy.deepcopy(dict(item.object_state))
+            for item in self._affordances
+        }
 
     @property
     def affordances(self) -> tuple[GameObjectAffordance, ...]:
@@ -107,7 +111,12 @@ class GameObjectInteractionSystem:
         """
         return sorted(
             (
-                item
+                replace(
+                    item,
+                    object_state=copy.deepcopy(
+                        self._object_states.get(item.object_key, {})
+                    ),
+                )
                 for item in self._affordances
                 if item.distance_to(coord) <= item.interaction_radius_tiles
             ),
@@ -118,33 +127,30 @@ class GameObjectInteractionSystem:
             ),
         )
 
-    def interact(self, agent, planned_path, *, step_no: int) -> dict[str, Any] | None:
-        """执行 `GameObjectInteractionSystem` 的`interact`操作。
-
-        参数:
-            agent: 参与当前操作的智能体实例。
-            planned_path: `planned`对应的文件系统路径。
-            step_no: 当前仿真步编号；提交后按运行维度单调递增。 类型：`int`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
-        """
+    def interact_selected(
+        self,
+        agent,
+        selection_key: str,
+        *,
+        step_no: int,
+        request: str | None = None,
+    ) -> dict[str, Any]:
+        """Invoke exactly one nearby Game Object passive Skill selected by the Agent."""
 
         nearby = self.nearby(tuple(agent.coord))
-        if not nearby or self._executor is None:
-            return None
-        options = [item.as_agent_context(tuple(agent.coord)) for item in nearby]
-        selected_key = agent.choose_game_object_interaction(options, planned_path)
-        if not selected_key or selected_key == "NONE":
-            return None
         selected = next(
-            (item for item in nearby if item.selection_key == selected_key),
+            (item for item in nearby if item.selection_key == selection_key),
             None,
         )
         if selected is None:
-            return None
-
-        request = selected.default_request
+            raise ValueError(
+                f"Game Object interaction is not available nearby: {selection_key}"
+            )
+        if self._executor is None:
+            raise ValueError("Game Object passive Skill runtime is unavailable")
+        request = str(request or selected.default_request).strip()
+        if not request:
+            raise ValueError("Game Object interaction request cannot be empty")
         context = {
             "interaction_mode": "PASSIVE_REQUEST_RESPONSE",
             "step_no": step_no,
@@ -168,26 +174,56 @@ class GameObjectInteractionSystem:
             request,
             context=context,
         )
-        directive = agent.receive_game_object_observation(
-            object_key=selected.object_key,
-            object_name=selected.object_name,
-            interaction_key=selected.interaction_key,
-            skill_name=result.skill,
-            skill_revision=result.revision,
-            request=request,
-            response=result.output_text,
-            address=selected.address,
-        )
         return {
             "object_key": selected.object_key,
             "object_name": selected.object_name,
             "interaction_key": selected.interaction_key,
             "skill_name": result.skill,
             "skill_revision": result.revision,
+            "observed_step": step_no,
+            "observed_at": self._clock.get_date().isoformat(),
             "request": request,
             "response": result.output_text,
-            "agent_decision": directive,
+            "agent_decision": "COMPLETED",
             "trace": list(result.trace),
+        }
+
+    def object_state(self, object_key: str) -> dict[str, Any]:
+        """Return a defensive copy of one replayable Game Object state."""
+
+        if object_key not in self._object_states:
+            raise ValueError(f"Game Object does not exist: {object_key}")
+        return copy.deepcopy(self._object_states[object_key])
+
+    def apply_state_patch(
+        self, object_key: str, patch: Mapping[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Apply a shallow state patch and return exact before/after snapshots."""
+
+        if object_key not in self._object_states:
+            raise ValueError(f"Game Object does not exist: {object_key}")
+        if not isinstance(patch, Mapping) or not patch:
+            raise ValueError("Game Object state patch cannot be empty")
+        before = copy.deepcopy(self._object_states[object_key])
+        after = copy.deepcopy(before)
+        after.update(copy.deepcopy(dict(patch)))
+        self._object_states[object_key] = after
+        return before, copy.deepcopy(after)
+
+    def snapshot_state(self) -> dict[str, dict[str, Any]]:
+        """Return all mutable Game Object state for checkpoints and replay."""
+
+        return copy.deepcopy(self._object_states)
+
+    def restore_state(self, snapshot: Mapping[str, Mapping[str, Any]]) -> None:
+        """Restore Game Object state from a verified checkpoint snapshot."""
+
+        expected = set(self._object_states)
+        received = {str(key) for key in snapshot}
+        if received != expected:
+            raise ValueError("checkpoint Game Object state keys do not match the map")
+        self._object_states = {
+            str(key): copy.deepcopy(dict(value)) for key, value in snapshot.items()
         }
 
     @staticmethod

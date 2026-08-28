@@ -15,8 +15,6 @@ example_input: "2026-08-19 09:00，简已经到达咖啡馆，今天上午的排
 - `$determine-sector`：选择区域。
 - `$determine-arena`：选择区域内部的场所。
 - `$determine-object`：选择交互对象。
-- `$decide-game-object-interaction`：决定是否主动请求附近 Game Object。
-- `$decide-game-object-response`：把 Game Object 的返回作为外部信息并决定等待或继续。
 - `$decide-wait-example`：形成等待判断样例。
 - `$decide-wait`：决定等待还是继续。
 - `$describe-event`：形成可记忆的事件。
@@ -25,8 +23,10 @@ example_input: "2026-08-19 09:00，简已经到达咖啡馆，今天上午的排
 
 ## 执行方法
 
-从抽象计划逐步收敛到当前世界允许的行动。每一步把前一步结论和最新世界上下文原样交给下一个 Skill。
+先用 `world-perceive` MCP 读取真实四层地址、可通行空间和附近 Game Object，再从抽象计划逐步收敛到当前世界允许的行动。需要对象被动 Skill 时，只能通过 `world-act` 的 `INTERACT` 动作显式选择；最终通过 `world-act` MCP 提交 `MOVE`、`ACT`、`WAIT`、`SPEAK`、`INTERACT` 或 `SET_OBJECT_STATE` 之一。每一步把前一步结论和最新世界上下文原样交给下一个 Skill。
+
+起床、洗漱、吃饭、办公、喝咖啡等普通活动统一使用 `ACT`，由 Skill 直接填写有意义的 `predicate`、`object` 和可选 `description`，例如 `{"action_type":"ACT","predicate":"喝","object":"咖啡","description":"林晨在咖啡水吧喝咖啡"}`。不使用活动编码或数据字典；`WAIT` 只表示真实的等待。
 
 ## 返回结果
 
-返回一个在当前地图和角色状态下可执行的行动结论。
+返回行动选择的自然语言解释；世界变化以 `world-act` MCP 的结构化执行结果为准。

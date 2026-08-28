@@ -1,15 +1,14 @@
-"""文件型 Skill 平台的 REST 与 MCP 路由。"""
+"""数据库 Skill/Revision 平台的 REST 与 MCP 路由。"""
 
 from __future__ import annotations
 
 from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from generative_agents.skills import (
     SkillMCPServer,
-    SkillRegistry,
     SkillRegistryError,
     SkillRuntime,
     SkillRuntimeError,
@@ -44,14 +43,14 @@ class RunSkillRequest(RequestModel):
 
 
 def create_skill_router(
-    registry: SkillRegistry,
+    registry,
     runtime: SkillRuntime,
     mcp: SkillMCPServer,
 ) -> APIRouter:
     """创建技能`router`。
 
     参数:
-        registry: 按稳定键解析技能、模型或其他组件的注册表。 类型：`SkillRegistry`。
+        registry: 以数据库 Revision 为事实来源的 Skill 注册表。
         runtime: 传入当前算法的`runtime`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`SkillRuntime`。
         mcp: 技能调用使用的 MCP 服务端或客户端适配器。 类型：`SkillMCPServer`。
 
@@ -64,6 +63,7 @@ def create_skill_router(
     def list_skills(
         kind: Literal["atomic", "pack", "brain"] | None = None,
         q: str = Query(default="", max_length=200),
+        include_archived: bool = False,
     ):
         """查询`skills`。
 
@@ -74,7 +74,15 @@ def create_skill_router(
         返回:
             返回函数计算得到的结果。
         """
-        documents = registry.list(kind=kind, query=q)
+        documents = registry.list(
+            kind=kind,
+            query=q,
+            **(
+                {"include_archived": include_archived}
+                if hasattr(registry, "archive")
+                else {}
+            ),
+        )
         return {
             "items": [document.summary() for document in documents],
             "total": len(documents),
@@ -183,7 +191,22 @@ def create_skill_router(
             "model": runtime.model,
             "handoff": "natural-language",
             "business_schema_required": False,
+            "skill_storage": "database",
+            "run_snapshot": "immutable-manifest-bundle",
         }
+
+    @router.post("/api/v1/skills/{skill_name}/archive")
+    def archive_skill(skill_name: str):
+        return _skill_call(lambda: registry.archive(skill_name).detail())
+
+    @router.post("/api/v1/skills/{skill_name}/restore")
+    def restore_skill(skill_name: str):
+        return _skill_call(lambda: registry.restore(skill_name).detail())
+
+    @router.delete("/api/v1/skills/{skill_name}", status_code=204)
+    def delete_skill(skill_name: str):
+        _skill_call(lambda: registry.delete(skill_name))
+        return Response(status_code=204)
 
     @router.get("/api/v1/mcp/tools")
     def list_mcp_tools():

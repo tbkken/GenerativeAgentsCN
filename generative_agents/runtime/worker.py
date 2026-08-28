@@ -11,22 +11,23 @@ import threading
 from datetime import datetime
 from datetime import timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from filelock import FileLock
 from generative_agents.config import get_algorithm_profile
 from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Run
+from generative_agents.persistence.models import Run, RunEvent
 from generative_agents.security import MasterKeyStore, SecretCipher
 from generative_agents.skills import (
     MemoryStream,
     SkillMCPServer,
     SnapshotPassiveSkillRuntime,
+    SnapshotSkillRegistry,
 )
 from generative_agents.status import RunStatus
 
 from .checkpoint import CheckpointBundleWriter, CheckpointSnapshot
+from .brain import BrainRuntime
 from .commit import FileStepCommitter
 from .context import (
     RunControl,
@@ -41,10 +42,6 @@ from .model_trace import ModelTraceWriter
 from .scheduler import LocalRunSchedulerRepository
 from .sqlite_result_projector import SqliteResultProjector
 from .trace_projector import ModelTraceProjector
-
-if TYPE_CHECKING:
-    from generative_agents.start import SimulationRunner
-
 
 class ModelFactoryRegistry:
     """为每个智能体创建带调用轨迹的模型，且不修改 SDK 全局配置。"""
@@ -262,6 +259,7 @@ def main(argv=None) -> int:
     exit_code = 1
     worker_error_code: str | None = None
     worker_error_message: str | None = None
+    execution_finalized = False
     logger = _logger(args.run_id, "INFO")
     recorder: ModelTraceWriter | None = None
     try:
@@ -285,6 +283,10 @@ def main(argv=None) -> int:
         chat_config = definition.models.chat.model_dump(mode="json", exclude_none=False)
         chat_config["api_key"] = _secret_value(definition, "chat", cipher, database)
         embedding_key = _secret_value(definition, "embedding", cipher, database)
+        embedding_config = definition.models.embedding.model_dump(
+            mode="json", exclude_none=False
+        )
+        embedding_config["api_key"] = embedding_key
         skills = SnapshotSkillInstructionRepository(
             manifest.skill_bundle,
             brain=str(
@@ -309,6 +311,24 @@ def main(argv=None) -> int:
             else definition.simulation.start_time
         )
         simulation_clock = SimulationClock(start_time)
+        # One run-scoped embedding model powers both the public MCP memory stream
+        # and every Agent's associative memory.  Search still has a deterministic
+        # Chinese-aware fallback if the configured vector service is unavailable.
+        embedding_model = None
+        try:
+            from generative_agents.modules.storage.index import create_embedding_model
+
+            embedding_model, _resolved_embedding_model = create_embedding_model(
+                embedding_config
+            )
+        except Exception as exc:
+            logger.warning("shared memory embedding unavailable; using hybrid fallback: %s", exc)
+
+        def embed_memory_texts(texts: list[str]) -> list[list[float]]:
+            if embedding_model is None:
+                raise RuntimeError("embedding model is unavailable")
+            return embedding_model.get_text_embedding_batch(texts)
+
         memory_stream = MemoryStream(
             attempt_storage.parent
             / "runtime-storage"
@@ -317,6 +337,38 @@ def main(argv=None) -> int:
             run_id=args.run_id,
             attempt_id=args.attempt_id,
             clock=lambda: simulation_clock.get_date(),
+            embed_texts=embed_memory_texts if embedding_model is not None else None,
+            logger=logger,
+        )
+        snapshot_skill_registry = SnapshotSkillRegistry(
+            manifest.skill_bundle,
+            root=attempt_storage.parent / "runtime-storage" / "skill-bundle",
+        )
+        model_registry = ModelFactoryRegistry(
+            chat_config,
+            recorder,
+            control=control,
+            logger=logger,
+        )
+        chat_model = model_registry.get("chat")
+        brain_runtime = BrainRuntime(
+            snapshot_skill_registry,
+            brain_skill=skills.brain,
+            model_config=chat_config,
+            memory_stream=memory_stream,
+            model_client=chat_model,
+            recorder=recorder,
+            control=control,
+            logger=logger,
+        )
+        passive_skill_runtime = SnapshotPassiveSkillRuntime(
+            manifest.skill_bundle,
+            registry=snapshot_skill_registry,
+            model_config=chat_config,
+            model_client=chat_model,
+            recorder=recorder,
+            control=control,
+            logger=logger,
         )
         # 从这里开始，仿真只能通过 context 访问时间、随机数、路径、Skill 和模型。
         context = SimulationContext(
@@ -330,22 +382,19 @@ def main(argv=None) -> int:
             random=random.Random(definition.simulation.random_seed),
             paths=paths,
             skills=skills,
-            models=ModelFactoryRegistry(
-                chat_config,
-                recorder,
-                control=control,
-                logger=logger,
-            ),
+            models=model_registry,
             control=control,
             logger=logger,
-            passive_skills=SnapshotPassiveSkillRuntime(manifest.skill_bundle),
+            passive_skills=passive_skill_runtime,
             memory_stream=memory_stream,
             skill_mcp=SkillMCPServer(memory_stream),
+            brain_runtime=brain_runtime,
             metadata={
                 "model_trace": recorder,
                 "manifest_hash": manifest.manifest_hash,
                 "execution_mode": "SKILL_BRAIN",
                 "brain_skill": skills.brain,
+                "embedding_model": embedding_model,
             },
         )
         # 昂贵的世界引擎导入必须放在有效心跳之后；认知调用从当前运行选定的文件化大脑解析。
@@ -376,7 +425,76 @@ def main(argv=None) -> int:
         remaining = requested_steps - runner.completed_steps
         if remaining > 0:
             runner.run(remaining, stride_minutes=definition.simulation.stride_minutes)
-        exit_code = 0
+        if runner.completed_steps >= requested_steps:
+            # Simulation execution is complete at this boundary.  Quality
+            # evaluation is an observer-owned post-processing phase and must not
+            # keep the Run in RUNNING or retain a scarce execution slot.
+            _persist_post_processing_event(
+                database,
+                str(args.run_id),
+                status="RUNNING",
+                phase="QUALITY_EVALUATION",
+                message="仿真执行已完成，正在生成质量报告",
+            )
+            stop_monitor.set()
+            if monitor.is_alive():
+                monitor.join(timeout=2)
+            if recorder is not None and recorder.path.is_file():
+                ModelTraceProjector(database, var_dir=var_dir).project(
+                    run_id=str(args.run_id),
+                    attempt_id=str(args.attempt_id),
+                    relative_path=recorder.path.resolve()
+                    .relative_to(var_dir)
+                    .as_posix(),
+                )
+            if not repository.finish_worker(
+                str(args.run_id),
+                str(args.attempt_id),
+                exit_code=0,
+            ):
+                raise RuntimeError("worker lost ownership while completing execution")
+            execution_finalized = True
+            exit_code = 0
+            try:
+                quality_report = brain_runtime.evaluate_quality()
+                _persist_quality_report(paths, database, quality_report)
+                if recorder is not None and recorder.path.is_file():
+                    ModelTraceProjector(database, var_dir=var_dir).project(
+                        run_id=str(args.run_id),
+                        attempt_id=str(args.attempt_id),
+                        relative_path=recorder.path.resolve()
+                        .relative_to(var_dir)
+                        .as_posix(),
+                    )
+                _persist_post_processing_event(
+                    database,
+                    str(args.run_id),
+                    status="SUCCEEDED",
+                    phase="QUALITY_EVALUATION",
+                    message="质量报告已生成",
+                )
+                if quality_report["quality_status"] == "WARNING":
+                    logger.warning(
+                        "run execution completed with %d independent quality warning(s)",
+                        len(quality_report.get("issues") or ()),
+                    )
+            except Exception as exc:
+                # Post-processing never rewrites the already committed execution
+                # outcome.  Its own failure remains visible and can be retried
+                # independently.
+                logger.exception("run post-processing failed")
+                try:
+                    _persist_post_processing_event(
+                        database,
+                        str(args.run_id),
+                        status="FAILED",
+                        phase="QUALITY_EVALUATION",
+                        message=f"质量报告生成失败：{str(exc) or exc.__class__.__name__}",
+                    )
+                except Exception:
+                    logger.exception("post-processing failure status could not be persisted")
+        else:
+            exit_code = 0
     except Exception as exc:
         worker_error_code = getattr(exc, "code", "WORKER_EXECUTION_FAILED")
         worker_error_message = str(exc) or exc.__class__.__name__
@@ -386,7 +504,7 @@ def main(argv=None) -> int:
         stop_monitor.set()
         if monitor.is_alive():
             monitor.join(timeout=2)
-        if recorder is not None and recorder.path.is_file():
+        if not execution_finalized and recorder is not None and recorder.path.is_file():
             try:
                 ModelTraceProjector(database, var_dir=var_dir).project(
                     run_id=str(args.run_id),
@@ -401,16 +519,67 @@ def main(argv=None) -> int:
                     worker_error_code = "MODEL_TRACE_PROJECTION_FAILED"
                     worker_error_message = "final model trace projection failed"
                 logger.exception("final model trace projection failed")
-        repository.finish_worker(
-            str(args.run_id),
-            str(args.attempt_id),
-            exit_code=exit_code,
-            error_code=worker_error_code,
-            error_message=worker_error_message,
-        )
+        if not execution_finalized:
+            repository.finish_worker(
+                str(args.run_id),
+                str(args.attempt_id),
+                exit_code=exit_code,
+                error_code=worker_error_code,
+                error_message=worker_error_message,
+            )
         worker_lock.release()
         database.close()
     return exit_code
+
+
+def _persist_quality_report(paths: RunPaths, database, report: dict) -> None:
+    """Atomically publish a Run-owned quality report and its SSE notification."""
+
+    quality_dir = paths.root / "quality"
+    quality_dir.mkdir(parents=True, exist_ok=True)
+    target = quality_dir / "report.json"
+    temporary = quality_dir / "report.json.tmp"
+    temporary.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    temporary.replace(target)
+    with database.session_factory.begin() as session:
+        session.add(
+            RunEvent(
+                run_id=str(paths.run_id),
+                event_type="quality",
+                payload_json={
+                    "quality_status": report.get("quality_status"),
+                    "issue_count": len(report.get("issues") or ()),
+                    "execution_status_affected": False,
+                },
+            )
+        )
+
+
+def _persist_post_processing_event(
+    database,
+    run_id: str,
+    *,
+    status: str,
+    phase: str,
+    message: str,
+) -> None:
+    """Persist observer-owned progress without changing the Run lifecycle."""
+
+    with database.session_factory.begin() as session:
+        session.add(
+            RunEvent(
+                run_id=run_id,
+                event_type="post_processing",
+                payload_json={
+                    "status": status,
+                    "phase": phase,
+                    "message": message,
+                },
+            )
+        )
 
 
 def _attempt_no(database, attempt_id: str) -> int:
@@ -488,9 +657,6 @@ def _prepare_attempt_state(
         checkpoint = reader.select_for_recovery(
             expected_step,
             orphan_root=paths.orphaned / f"attempt-{attempt_id}" / "checkpoints",
-        )
-        bundle = json.loads(
-            (checkpoint.path / "bundle.json").read_text(encoding="utf-8")
         )
         storage_root.mkdir(parents=True, exist_ok=False)
         state = json.loads((checkpoint.path / "state.json").read_text(encoding="utf-8"))

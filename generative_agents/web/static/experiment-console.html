@@ -578,6 +578,21 @@
     .replay-agent-choice small { display: block; width: 100%; overflow: hidden; color: var(--muted); font-size: 7px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 
     .result-agent-layout, .conversation-layout { display: grid; grid-template-columns: 270px minmax(0,1fr); min-height: 580px; overflow: hidden; }
+    .run-quality-banner { display: block; margin: 0 0 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #f7f9f8; font-size: 9px; }
+    .run-quality-summary { display: flex; align-items: flex-start; gap: 10px; }
+    .run-quality-summary > strong { white-space: nowrap; }
+    .run-quality-details { margin-top: 9px; border-top: 1px solid rgba(40,70,60,.12); padding-top: 8px; }
+    .run-quality-details summary { color: var(--teal-2); cursor: pointer; font-weight: 700; }
+    .run-quality-details ol { display: grid; gap: 7px; margin: 8px 0 0; padding-left: 20px; }
+    .run-quality-details li { padding: 8px 9px; border-radius: 6px; background: rgba(255,255,255,.62); }
+    .run-quality-details li > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .run-quality-details li strong { font-family: var(--mono); }
+    .run-quality-details li p { margin: 4px 0 0; line-height: 1.5; }
+    .run-quality-details pre { overflow: auto; max-height: 160px; margin: 6px 0 0; padding: 7px; border-radius: 5px; background: rgba(30,45,40,.06); font: 8px/1.45 var(--mono); white-space: pre-wrap; }
+    .quality-step-link { border: 0; background: transparent; color: var(--teal-2); font: inherit; font-weight: 700; cursor: pointer; }
+    .run-quality-banner[data-status="PASS"] { border-color: #a9d6c2; background: #eef8f3; }
+    .run-quality-banner[data-status="WARNING"] { border-color: #e1c684; background: #fff8e8; }
+    .run-quality-banner[data-status="UNKNOWN"], .run-quality-banner[data-status="NOT_EVALUATED"] { border-color: #c7ced0; }
     .result-agent-list, .conversation-index { border-right: 1px solid var(--line); background: #fbfcfc; }
     .result-list-search { padding: 12px; border-bottom: 1px solid var(--line); }
     .result-list-search input { min-height: 31px; }
@@ -1156,6 +1171,7 @@
           <div class="experiment-actions" id="experimentActions" hidden>
             <span class="unsaved" id="unsaved" hidden><i class="unsaved-dot"></i><span>有未保存更改</span></span>
             <select class="control result-run-select" id="resultRunSelect" aria-label="选择实验运行" hidden><option value="">正在加载运行记录…</option></select>
+            <span class="draft-pill" id="resultExecutionHash" hidden>执行指纹待生成</span>
             <div class="result-run-controls" id="resultRunControls" hidden>
               <button class="btn" id="runPauseResumeBtn" hidden>暂停运行</button>
               <button class="btn" id="runCancelBtn" hidden>取消运行</button>
@@ -1365,7 +1381,7 @@
 
           <div class="stats overview-stats">
             <div class="stat"><div class="stat-label" id="overviewAgentLabel">参与 Agent</div><div class="stat-value"><span id="statAgentCount">25</span><small id="overviewAgentUnit">个角色</small></div><div class="stat-foot" id="overviewAgentMetaStatus">等待检查</div></div>
-            <div class="stat"><div class="stat-label" id="overviewSkillLabel">SKILL 大脑</div><div class="stat-value"><span id="overviewSkillCount">已连接</span><small id="overviewSkillMeta">stanford-town-brain</small></div><div class="stat-foot" id="overviewSkillFoot">运行时从文件加载并随 Run 固化</div></div>
+            <div class="stat"><div class="stat-label" id="overviewSkillLabel">SKILL 大脑</div><div class="stat-value"><span id="overviewSkillCount">已连接</span><small id="overviewSkillMeta">stanford-town-brain</small></div><div class="stat-foot" id="overviewSkillFoot">运行时从数据库 Revision 物化并随 Run 固化</div></div>
             <div class="stat"><div class="stat-label">模拟世界</div><div class="stat-value"><span id="overviewTileCount">0</span><small id="overviewWorldUnit">tiles</small></div><div class="stat-foot" id="overviewWorldMeta">世界待配置</div></div>
             <div class="stat"><div class="stat-label">最近运行</div><div class="stat-value"><span id="overviewLatestStep">—</span><small id="overviewLatestUnit">步</small></div><div class="stat-foot with-code"><span id="overviewLatestMeta">尚未运行</span><code id="overviewLatestRunCode"></code></div></div>
           </div>
@@ -1390,7 +1406,7 @@
                   <div class="panel-intro"><div><h2>已发布版本</h2><p>本次运行使用的模型、Agent、Skill bundle、世界和资源已锁定为只读 Revision。</p></div><span class="chip blue" id="overviewRevisionChip">Published Revision</span></div>
                   <div class="model-summary">
                     <div class="summary-cell"><span>基于版本</span><strong id="overviewBaseRevision">新实验</strong></div>
-                    <div class="summary-cell"><span>配置哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
+                    <div class="summary-cell"><span>定义哈希</span><strong id="overviewDefinitionHash">尚未发布</strong></div>
                     <div class="summary-cell"><span>引擎算法</span><strong id="overviewAlgorithm">ga-cn-v1</strong></div>
                   </div>
                   <div class="panel-columns">
@@ -1412,6 +1428,7 @@
           </div>
 
           <div id="resultWorkspace">
+            <div class="run-quality-banner" id="runQualityBanner" data-status="PENDING"><strong>行为质量：待评估</strong><span>执行状态与 Brain 行为质量分开统计。</span></div>
             <div class="result-tabs" role="tablist" aria-label="实验结果视图">
               <button class="result-tab active" role="tab" aria-selected="true" data-result-tab="timeline">仿真回放</button>
               <button class="result-tab" role="tab" aria-selected="false" data-result-tab="agents">Agent</button>
@@ -1495,7 +1512,7 @@
               <div class="card result-card">
                 <div class="result-card-head"><div><strong>记忆记录</strong><span id="memoryResultCount">等待数据</span></div><button class="btn btn-sm" data-artifact="memories.ndjson">导出筛选结果</button></div>
                 <div class="memory-table-wrap">
-                  <table class="memory-table"><thead><tr><th>类型</th><th>Agent</th><th>记忆内容</th><th>重要度</th><th>创建 / 最近访问</th><th>节点</th></tr></thead><tbody id="memoryRows"></tbody></table>
+                  <table class="memory-table"><thead><tr><th>类型</th><th>Agent</th><th>记忆内容</th><th>状态 / 版本关系</th><th>重要度</th><th>创建 / 最近访问</th><th>节点</th></tr></thead><tbody id="memoryRows"></tbody></table>
                 </div>
               </div>
             </div>
@@ -1525,12 +1542,12 @@
                   <div class="observability-toolbar"><select id="traceAttemptSelect" aria-label="模型调用 Attempt"></select><input id="tracePurposeFilter" type="search" placeholder="按 purpose 筛选" /><button class="btn btn-sm" id="refreshTraces">刷新</button></div>
                   <div class="diagnostic-lists-grid">
                     <section class="diagnostic-list-section" aria-labelledby="modelUsageTitle">
-                      <div class="diagnostic-list-title"><div><strong id="modelUsageTitle">用途汇总</strong><span>按 purpose 聚合调用次数、延迟和重试</span></div></div>
+                      <div class="diagnostic-list-title"><div><strong id="modelUsageTitle">用途汇总</strong><span>逻辑调用是一次完整请求；物理请求包含其重试尝试</span></div></div>
                       <div class="usage-table" id="modelUsageRows"></div>
                       <div id="modelUsagePagination"></div>
                     </section>
                     <section class="diagnostic-list-section" aria-labelledby="modelTraceTitle">
-                      <div class="diagnostic-list-title"><div><strong id="modelTraceTitle">调用明细</strong><span>当前 Attempt 的逐次模型请求</span></div></div>
+                      <div class="diagnostic-list-title"><div><strong id="modelTraceTitle">物理请求明细</strong><span>当前 Attempt 实际发往模型服务的请求（重试会单独列出）</span></div></div>
                       <div class="trace-table" id="modelTraceRows"><div class="diagnostic-list-empty">等待模型调用明细</div></div>
                       <div id="modelTracePagination"></div>
                     </section>
@@ -1797,9 +1814,9 @@
           <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="创建后会锁定所选版本；实验内修改不会影响来源资源。">?</button></div>
           <div class="creation-resource-grid">
             <div class="field">
-              <label>大脑 Skill</label>
-              <div class="control" style="height:auto;min-height:42px;padding:9px 11px"><strong>stanford-town-brain</strong></div>
-              <small>固定使用当前文件型大脑 Skill 集合；每次运行都会固化完整 Skill 快照。</small>
+              <label for="newExperimentBrain">大脑 Skill</label>
+              <select class="control" id="newExperimentBrain"><option value="">正在加载 Brain Skill…</option></select>
+              <small>必须显式选择一个 Brain Skill；运行时会把所选版本及其依赖固化到不可变快照。</small>
             </div>
             <div class="field">
               <label for="newExperimentMap">地图</label>
@@ -1817,8 +1834,8 @@
           <div class="section-title"><h3>确认实验草稿</h3><button type="button" class="help-tip" aria-label="实验草稿说明" data-tooltip="创建后直接进入实验概览；完成校验并发布后才能启动。">?</button></div>
           <div class="create-summary">
             <div class="create-summary-row"><span>实验名称</span><strong id="createSummaryName">未填写</strong></div>
-            <div class="create-summary-row"><span>大脑 Skill</span><strong id="createSummaryBrain">stanford-town-brain</strong></div>
-            <div class="create-summary-row"><span>地图</span><strong id="createSummaryMap">the Ville</strong></div>
+            <div class="create-summary-row"><span>大脑 Skill</span><strong id="createSummaryBrain">未选择</strong></div>
+            <div class="create-summary-row"><span>地图</span><strong id="createSummaryMap">未选择</strong></div>
             <div class="create-summary-row"><span>人群</span><strong id="createSummaryCrowds">尚未选择</strong></div>
             <div class="create-summary-row"><span>Agent 导入</span><strong id="createSummaryAgents">按名称去重并自动放置</strong></div>
             <div class="create-summary-row"><span>隔离策略</span><strong>锁定资源版本并创建独立 Draft Revision</strong></div>
@@ -1879,10 +1896,11 @@
             <div class="form-grid">
               <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
               <div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div>
+              <div class="field" style="grid-column:1/-1"><label>坐标语义校验</label><div class="inline-actions"><small id="agentInitialLocationResolved">尚未解析当前坐标</small><button class="btn btn-sm" id="useAgentInitialLocation" type="button">同步为初始位置</button></div></div>
               <div class="spatial-form-editor">
                 <section class="spatial-editor-section" aria-labelledby="agentAddressTitle">
                   <div class="spatial-editor-head">
-                    <div><strong id="agentAddressTitle">常用地址</strong><span>为“居住地”“睡觉”等用途指定位置；层级之间用 &gt; 分隔。</span></div>
+                    <div><strong id="agentAddressTitle">常用地址</strong><span>为“初始位置”“居住地”“睡觉”等用途指定位置；初始位置必须与上方坐标语义一致。</span></div>
                     <button class="btn btn-sm" id="addAgentAddressRow" type="button">添加地址</button>
                   </div>
                   <div class="spatial-table spatial-address-table">
@@ -2066,6 +2084,6 @@
   <script src="/static/console/map-workspace.js?v=20260823b"></script>
   <script src="/static/console/crowd-workspace.js?v=20260812k"></script>
   <script src="/static/console/skill-workspace.js?v=20260823c"></script>
-  <script src="/static/console/console-api.js?v=20260823d"></script>
+  <script src="/static/console/console-api.js?v=20260828a"></script>
 </body>
 </html>

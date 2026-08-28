@@ -23,11 +23,12 @@ from generative_agents.runtime.model_trace import (
     redact_error,
     redact_text,
 )
-from generative_agents.status import ArtifactJobStatus, RunAttemptStatus
+from generative_agents.status import ArtifactJobStatus, RunAttemptStatus, RunStatus
 
 from .byte_windows import file_identity, read_utf8_bytes, read_utf8_window
 from .errors import ServiceError, not_found
 from .run_storage import RunStorageBoundary
+from .timestamps import iso_utc
 
 
 _LEVEL = re.compile(r"\b(TRACE|DEBUG|INFO|WARNING|WARN|ERROR|CRITICAL)\b", re.I)
@@ -253,7 +254,7 @@ class LogService:
             cursor: 分页游标；为空时从结果集起点开始读取。 类型：`int`。 默认值：`0`。
             limit: 本次最多返回或处理的记录数量。 类型：`int`。 默认值：`100`。
             purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str | None`。 默认值：`None`。
-            status: 模型调用状态筛选值。允许值：`SUCCEEDED`、`FAILED`、`FALLBACK`。 类型：`ModelTraceStatus | str | None`。 默认值：`None`。
+            status: 模型调用状态筛选值。允许值包括 `RUNNING`、`SUCCEEDED`、`FAILED`、`FALLBACK`、`ABORTED`。 类型：`ModelTraceStatus | str | None`。 默认值：`None`。
             event_type: 模型轨迹事件类型筛选值；为空时不按事件类型过滤。 类型：`str | None`。 默认值：`None`。
 
         返回:
@@ -275,7 +276,7 @@ class LogService:
                 status_code=422,
             ) from exc
         run, attempt, trace, path = self._trace_target(run_id, attempt_id)
-        if trace is None:
+        if not path.is_file() and trace is None:
             return {
                 "run_id": run_id,
                 "attempt_id": attempt_id,
@@ -341,12 +342,33 @@ class LogService:
                         "模型追踪归属无效",
                         status_code=500,
                     )
+                if (
+                    record.get("event_type") == "PHYSICAL_START"
+                    and run.status
+                    in {
+                        RunStatus.COMPLETED.value,
+                        RunStatus.CANCELLED.value,
+                        RunStatus.FAILED.value,
+                        RunStatus.INTERRUPTED.value,
+                    }
+                ):
+                    # A killed Worker cannot append a matching completion fact.
+                    # Present orphan starts as aborted; a later completion for
+                    # the same call/attempt supersedes this row in the client.
+                    record["status"] = ModelTraceStatus.ABORTED.value
                 if purpose and record.get("purpose") != purpose:
                     continue
                 if normalized_status and record.get("status") != normalized_status:
                     continue
-                if event_type and record.get("event_type") != event_type:
-                    continue
+                if event_type:
+                    if event_type == "PHYSICAL":
+                        if record.get("event_type") not in {
+                            "PHYSICAL_START",
+                            "PHYSICAL_ATTEMPT",
+                        }:
+                            continue
+                    elif record.get("event_type") != event_type:
+                        continue
                 payload_available = "payload" in record
                 record.pop("payload", None)
                 record["payload_available"] = payload_available
@@ -399,7 +421,7 @@ class LogService:
                 "INVALID_TRACE_EVENT", "event_seq 必须为正数", status_code=422
             )
         _run, _attempt, trace, path = self._trace_target(run_id, attempt_id)
-        if trace is None or not path.is_file() or path.is_symlink():
+        if not path.is_file() or path.is_symlink():
             raise ServiceError(
                 "MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410
             )
@@ -484,7 +506,7 @@ class LogService:
         """
         attempt_id, event_seq = self._decode_trace_id(trace_id)
         _run, _attempt, trace, path = self._trace_target(run_id, attempt_id)
-        if trace is None or path is None or not path.is_file() or path.is_symlink():
+        if not path.is_file() or path.is_symlink():
             raise ServiceError(
                 "MODEL_TRACE_MISSING", "模型调用追踪不存在", status_code=410
             )
@@ -647,11 +669,15 @@ class LogService:
             if attempt is None or attempt.run_id != run_id:
                 raise not_found("attempt", attempt_id)
             trace = session.get(RunModelTraceCursor, (run_id, attempt_id))
-            path = (
-                self._boundary.owned_file(run, trace.relative_path, area="traces")
+            relative_path = (
+                trace.relative_path
                 if trace is not None
-                else None
+                else (
+                    f"runs/{run.id}/traces/"
+                    f"model-calls-{attempt.attempt_no:03d}.jsonl"
+                )
             )
+            path = self._boundary.owned_file(run, relative_path, area="traces")
             session.expunge(run)
             session.expunge(attempt)
             if trace is not None:
@@ -680,8 +706,8 @@ class LogService:
             "slot_no": attempt.slot_no,
             "start_step": attempt.start_step,
             "end_step": attempt.end_step,
-            "started_at": attempt.started_at.isoformat(),
-            "ended_at": attempt.ended_at.isoformat() if attempt.ended_at else None,
+            "started_at": iso_utc(attempt.started_at),
+            "ended_at": iso_utc(attempt.ended_at) if attempt.ended_at else None,
             "stop_reason": attempt.stop_reason,
             "error_code": attempt.error_code,
             "error_message": redact_error(attempt.error_message),

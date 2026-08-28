@@ -27,6 +27,7 @@ StorageExporter = Callable[[Path], None]
 _SAFE_AGENT_KEY = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,79}$")
 _PRUNE_TOMBSTONE = re.compile(r"^\.prune-step-[0-9]{6}-[0-9a-f-]+\.tmp$")
 _LOGGER = logging.getLogger(__name__)
+_WINDOWS_RENAME_RETRY_DELAYS = (0.05, 0.1, 0.2, 0.4, 0.8, 1.0)
 
 
 def _canonical_json(value: Any) -> bytes:
@@ -228,7 +229,7 @@ class CheckpointBundleWriter:
                 self._write_bytes(bundle_path, _canonical_json(bundle))
                 bundle_sha256 = _sha256(bundle_path)
                 self._fsync_directory_tree(temporary)
-                os.rename(temporary, target)
+                self._publish_directory(temporary, target)
                 self._fsync_directory(target.parent)
                 validated = self.validate(target)
                 if validated.bundle_sha256 != bundle_sha256:
@@ -241,6 +242,35 @@ class CheckpointBundleWriter:
             finally:
                 if temporary.exists():
                     shutil.rmtree(temporary)
+
+    @staticmethod
+    def _publish_directory(temporary: Path, target: Path) -> None:
+        """Atomically publish a completed bundle, tolerating transient Windows locks.
+
+        SQLite backup finalization, virus scanners and file indexers can briefly keep a
+        handle below a newly-created directory.  Windows reports that race as either
+        ``ERROR_ACCESS_DENIED`` (5) or ``ERROR_SHARING_VIOLATION`` (32).  Retrying the
+        same atomic directory rename is safe because the target does not exist and the
+        checkpoint access lock excludes another publisher.
+        """
+
+        delays = (*_WINDOWS_RENAME_RETRY_DELAYS, None)
+        for delay in delays:
+            try:
+                os.rename(temporary, target)
+                return
+            except OSError as exc:
+                winerror = getattr(exc, "winerror", None)
+                transient = isinstance(exc, PermissionError) or winerror in {5, 32, 33}
+                if not transient or delay is None or target.exists():
+                    raise
+                _LOGGER.warning(
+                    "checkpoint publish temporarily blocked; retrying %s -> %s: %s",
+                    temporary,
+                    target,
+                    exc,
+                )
+                time.sleep(delay)
 
     def validate(self, path: Path) -> StoredCheckpoint:
         """执行 `CheckpointBundleWriter` 的`validate`操作。

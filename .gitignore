@@ -169,6 +169,11 @@ checkpoints/
 
 # Experiment web service local state and credentials
 var/
+/var.pre-*/
+
+# Local map-editor export metadata (contains machine-specific paths and IDs)
+/docs/images/daily-routine-map/daily-routine-map-manifest.json
+/generative_agents/frontend/static/assets/experiment/daily-routine-map/daily-routine-map-manifest.json
 
 # Generated browser QA and filesystem capability fixtures
 tests/.browser-*/

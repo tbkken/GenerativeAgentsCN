@@ -89,8 +89,8 @@
         <label class="skill-search"><span>⌕</span><input id="skillSearchInput" value="${escapeHtml(state.query)}" placeholder="搜索名称、用途或执行说明…"></label>
         <button class="btn btn-primary" id="skillCreateInline">＋ 新建${isBrain ? '大脑' : state.kind === 'pack' ? ' Skill 包' : ' Skill'}</button>
       </div>
-      <div class="skill-catalog-summary"><strong>${state.items.length}</strong><span>${isBrain ? '个可用大脑' : state.kind === 'pack' ? '个技能包' : '个原子技能'} · 文件系统是唯一事实源</span></div>
-      <section class="skill-card-grid">${cards || '<div class="skill-empty"><strong>没有找到 Skill</strong><span>换一个搜索词，或创建新的文件型 Skill。</span></div>'}</section>`;
+      <div class="skill-catalog-summary"><strong>${state.items.length}</strong><span>${isBrain ? '个可用大脑' : state.kind === 'pack' ? '个技能包' : '个原子技能'} · 数据库 Revision 是唯一事实源</span></div>
+      <section class="skill-card-grid">${cards || '<div class="skill-empty"><strong>没有找到 Skill</strong><span>换一个搜索词，或创建新的数据库 Skill。</span></div>'}</section>`;
 
     target.querySelectorAll('[data-skill-kind]').forEach(button => button.addEventListener('click', async () => {
       state.kind = button.dataset.skillKind;
@@ -143,7 +143,7 @@
       <h2>${escapeHtml(titleCase(item.name))}</h2>
       <p>${escapeHtml(item.description)}</p>
       ${flow ? `<span class="skill-card-flow-real">${flow}</span>` : ''}
-      <span class="skill-card-footer"><code>skills/${escapeHtml(item.kind === 'atomic' ? 'atomic' : `${item.kind}s`)}/${escapeHtml(item.name)}/</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : 'SKILL.md'}</span></span>
+      <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'database' ? `DB Revision #${item.revision_no || 1}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
     </button>`;
   }
 
@@ -239,7 +239,7 @@
           <span>WHY THIS FILE</span><h2>一份说明，就是一项能力</h2>
           <p>Frontmatter 让大脑发现它，正文告诉模型何时使用、如何执行、如何交接结果。</p>
           <dl><dt>名称</dt><dd><code>${escapeHtml(item.name)}</code></dd><dt>类型</dt><dd>${kindName(item.kind)}</dd><dt>结果交接</dt><dd>自然语言</dd></dl>
-          <div class="skill-source-truth"><i>✓</i><div><strong>唯一事实源</strong><span>保存后直接写入这个 SKILL.md；没有数据库副本或图节点配置。</span></div></div>
+          <div class="skill-source-truth"><i>✓</i><div><strong>唯一事实源</strong><span>保存后写入数据库新 Revision；运行时物化为标准 SKILL.md 快照。</span></div></div>
         </aside>
         <div class="skill-markdown-editor">
           <header><span><i></i>SKILL.md</span><small>Markdown · UTF-8</small></header>
@@ -376,7 +376,7 @@
     state.page = kind === 'brain' ? 'brains' : 'skills';
     deactivateTopbar();
     const target = host();
-    target.innerHTML = `<section class="skill-create-screen"><button class="skill-back" id="skillCreateBack">← 返回</button><div class="skill-create-card"><span class="skill-kicker">NEW ${kind === 'brain' ? 'BRAIN' : kind === 'pack' ? 'SKILL PACK' : 'SKILL'}</span><h1>从一句清楚的用途开始</h1><p>创建后会生成标准目录、SKILL.md 和 agents/openai.yaml。你可以继续补充子 Skill、Script 与 MCP。</p><label>稳定名称<input id="skillCreateName" placeholder="例如 daily-review"></label><label>用途说明<textarea id="skillCreateDescription" placeholder="说明它能做什么，以及在什么情境下应该使用。"></textarea></label><button class="btn btn-primary" id="skillCreateConfirm">创建文件型 Skill</button></div></section>`;
+    target.innerHTML = `<section class="skill-create-screen"><button class="skill-back" id="skillCreateBack">← 返回</button><div class="skill-create-card"><span class="skill-kicker">NEW ${kind === 'brain' ? 'BRAIN' : kind === 'pack' ? 'SKILL PACK' : 'SKILL'}</span><h1>从一句清楚的用途开始</h1><p>创建后会生成数据库 Draft Revision；运行时再物化为标准 SKILL.md 快照。你可以继续补充子 Skill、Script 与 MCP。</p><label>稳定名称<input id="skillCreateName" placeholder="例如 daily-review"></label><label>用途说明<textarea id="skillCreateDescription" placeholder="说明它能做什么，以及在什么情境下应该使用。"></textarea></label><button class="btn btn-primary" id="skillCreateConfirm">创建数据库 Skill</button></div></section>`;
     $('skillCreateBack').addEventListener('click', () => activate(state.page).catch(report));
     $('skillCreateConfirm').addEventListener('click', async () => {
       const name = $('skillCreateName').value.trim();

@@ -23,6 +23,7 @@ from generative_agents.persistence.models import (
 from generative_agents.status import RevisionState
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 
 def _now() -> datetime:
@@ -673,8 +674,8 @@ class ToolService:
             "schema_version": revision.schema_version,
             "contract_hash": revision.contract_hash,
             "lock_version": revision.lock_version,
-            "updated_at": revision.updated_at.isoformat(),
-            "published_at": revision.published_at.isoformat()
+            "updated_at": iso_utc(revision.updated_at),
+            "published_at": iso_utc(revision.published_at)
             if revision.published_at
             else None,
         }
@@ -712,8 +713,8 @@ class ToolService:
             "current_draft": self._summary(draft),
             "current_published": self._summary(published),
             "active_contract": copy.deepcopy(active.contract_json) if active else None,
-            "created_at": tool.created_at.isoformat(),
-            "updated_at": tool.updated_at.isoformat(),
+            "created_at": iso_utc(tool.created_at),
+            "updated_at": iso_utc(tool.updated_at),
         }
 
     def _revision_detail(

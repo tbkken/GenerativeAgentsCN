@@ -59,6 +59,57 @@ def _discover_embedding_model(api_base, api_key, timeout):
     return models[0]
 
 
+def create_embedding_model(embedding_config):
+    """Create the run-scoped embedding adapter used by every memory surface.
+
+    The common MCP memory stream and the legacy associative memory must share
+    one model instance.  Besides avoiding duplicate local model loads, this
+    guarantees that a memory written through either surface is ranked in the
+    same vector space.
+    """
+
+    resolved_model = (
+        embedding_config.get("resolved_model")
+        or embedding_config.get("model")
+    )
+    provider = embedding_config["provider"]
+    if provider == "hugging_face":
+        embed_model = HuggingFaceEmbedding(model_name=resolved_model)
+    elif provider == "ollama":
+        embed_model = OllamaEmbedding(
+            model_name=resolved_model,
+            base_url=embedding_config["base_url"],
+            ollama_additional_kwargs={"mirostat": 0},
+        )
+    elif provider in ("openai", "openai_compatible"):
+        api_base = _openai_api_base(embedding_config["base_url"])
+        api_key = embedding_config.get("api_key") or "unused"
+        timeout = embedding_config.get(
+            "timeout_seconds", embedding_config.get("timeout", 120)
+        )
+        if not resolved_model or resolved_model == "auto":
+            resolved_model = _discover_embedding_model(
+                api_base,
+                api_key,
+                timeout,
+            )
+        embed_model = OpenAIEmbedding(
+            model_name=resolved_model,
+            api_base=api_base,
+            api_key=api_key,
+            timeout=timeout,
+            max_retries=embedding_config.get(
+                "transport_retry_attempts",
+                embedding_config.get("max_retries", 3),
+            ),
+        )
+    else:
+        raise NotImplementedError(
+            "embedding provider {} is not supported".format(provider)
+        )
+    return embed_model, resolved_model
+
+
 class LlamaIndex:
     """为单个智能体封装向量索引，并把嵌入模型限制在实例范围内。"""
 
@@ -85,37 +136,14 @@ class LlamaIndex:
         )
         self._retry_backoff = embedding_config.get("retry_backoff_seconds", 5)
         self._config = {"max_nodes": 0}
-        resolved_model = embedding_config["model"]
-        if embedding_config["provider"] == "hugging_face":
-            embed_model = HuggingFaceEmbedding(model_name=resolved_model)
-        elif embedding_config["provider"] == "ollama":
-            embed_model = OllamaEmbedding(
-                model_name=resolved_model,
-                base_url=embedding_config["base_url"],
-                ollama_additional_kwargs={"mirostat": 0},
-            )
-        elif embedding_config["provider"] in ("openai", "openai_compatible"):
-            api_base = _openai_api_base(embedding_config["base_url"])
-            api_key = embedding_config.get("api_key") or "unused"
-            timeout = embedding_config.get("timeout", 120)
-            if not resolved_model or resolved_model == "auto":
-                resolved_model = _discover_embedding_model(
-                    api_base,
-                    api_key,
-                    timeout,
-                )
-            embed_model = OpenAIEmbedding(
-                model_name=resolved_model,
-                api_base=api_base,
-                api_key=api_key,
-                timeout=timeout,
-                max_retries=embedding_config.get("max_retries", 3),
-            )
+        shared = embedding_config.get("_embed_model")
+        if shared is None:
+            embed_model, resolved_model = create_embedding_model(embedding_config)
         else:
-            raise NotImplementedError(
-                "embedding provider {} is not supported".format(
-                    embedding_config["provider"]
-                )
+            embed_model = shared
+            resolved_model = (
+                embedding_config.get("resolved_model")
+                or embedding_config["model"]
             )
 
         transformations = [SentenceSplitter(chunk_size=512, chunk_overlap=64)]

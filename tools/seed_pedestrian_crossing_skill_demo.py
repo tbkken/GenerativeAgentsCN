@@ -85,7 +85,7 @@ def _hierarchy_nodes() -> list[dict[str, Any]]:
     ) -> dict[str, Any]:
         """创建一个层级节点字典，并合并调用方提供的可选扩展字段。"""
 
-        return {
+        document = {
             "id": node_id,
             "kind": kind,
             "parent_id": parent_id,
@@ -93,6 +93,11 @@ def _hierarchy_nodes() -> list[dict[str, Any]]:
             "bounds": {"x": x, "y": y, "width": width, "height": height},
             **extra,
         }
+        if kind == "GAME_OBJECT":
+            document["interaction_mode"] = (
+                "SKILL_BOUND" if document.get("skill_bindings") else "STATIC"
+            )
+        return document
 
     return [
         node("world", "WORLD", None, WORLD_NAME, 0, 0, WIDTH, HEIGHT),

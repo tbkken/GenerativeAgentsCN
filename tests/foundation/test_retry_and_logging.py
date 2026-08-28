@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from uuid import uuid4
+
+import requests
 
 from generative_agents.modules.model.llm_model import LLMModel
 from generative_agents.modules.utils.log import create_file_logger
 from generative_agents.runtime.context import RunControl
+from generative_agents.runtime.model_trace import ModelTraceEventType
 
 
 class _AlwaysFailModel(LLMModel):
@@ -18,6 +22,32 @@ class _AlwaysFailModel(LLMModel):
         """为本测试模块封装 ``_completion`` 辅助步骤，减少重复的场景搭建代码。"""
         del prompt, return_type, kwargs
         raise RuntimeError("synthetic provider failure")
+
+
+class _ChatTransportModel(LLMModel):
+    def setup(self, config):
+        return None
+
+
+class _TraceRecorder:
+    def __init__(self):
+        self.run_id = uuid4()
+        self.attempt_id = uuid4()
+        self.events = []
+
+    def append(self, event):
+        self.events.append(event)
+
+
+class _ChatResponse:
+    def __init__(self, body):
+        self.body = body
+
+    def raise_for_status(self):
+        return None
+
+    def json(self):
+        return self.body
 
 
 def test_model_retry_wait_stops_on_run_control_request():
@@ -38,6 +68,118 @@ def test_model_retry_wait_stops_on_run_control_request():
 
     assert model.completion("prompt", failsafe="safe") == "safe"
     assert waits == [0.1]
+
+
+def test_chat_gateway_retries_timeout_and_malformed_tool_json(monkeypatch):
+    recorder = _TraceRecorder()
+    payloads = []
+    running_facts_seen_by_transport = []
+    outcomes = [
+        requests.Timeout("temporary timeout"),
+        _ChatResponse(
+            {
+                "choices": [
+                    {
+                        "message": {
+                            "content": "",
+                            "tool_calls": [
+                                {
+                                    "id": "bad",
+                                    "function": {
+                                        "name": "act",
+                                        "arguments": '{"target":',
+                                    },
+                                }
+                            ],
+                        }
+                    }
+                ]
+            }
+        ),
+        _ChatResponse(
+            {
+                "choices": [
+                    {
+                        "message": {
+                            "content": "",
+                            "tool_calls": [
+                                {
+                                    "id": "good",
+                                    "function": {
+                                        "name": "act",
+                                        "arguments": '{"target":"door"}',
+                                    },
+                                }
+                            ],
+                        }
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 8,
+                    "completion_tokens": 4,
+                    "total_tokens": 12,
+                },
+            }
+        ),
+    ]
+
+    def fake_post(_url, **kwargs):
+        payloads.append(kwargs["json"])
+        running_facts_seen_by_transport.append(
+            (
+                recorder.events[-1].event_type,
+                recorder.events[-1].status.value,
+            )
+        )
+        outcome = outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+    monkeypatch.setattr(
+        "generative_agents.modules.model.llm_model.requests.post", fake_post
+    )
+    model = _ChatTransportModel(
+        {
+            "base_url": "http://127.0.0.1:8001/v1",
+            "model": "local-test",
+            "enable_thinking": False,
+            "retry_attempts": 3,
+            "retry_backoff_seconds": 0,
+        },
+        recorder=recorder,
+    )
+
+    result = model.chat_completion(
+        [{"role": "user", "content": "open the door"}],
+        tools=[{"type": "function", "function": {"name": "act"}}],
+    )
+
+    assert result["tool_calls"][0]["id"] == "good"
+    assert len(payloads) == 3
+    assert all(
+        payload["chat_template_kwargs"] == {"enable_thinking": False}
+        for payload in payloads
+    )
+    assert any(
+        "invalid JSON" in message.get("content", "")
+        for message in payloads[2]["messages"]
+    )
+    assert running_facts_seen_by_transport == [
+        (ModelTraceEventType.PHYSICAL_START, "RUNNING"),
+        (ModelTraceEventType.PHYSICAL_START, "RUNNING"),
+        (ModelTraceEventType.PHYSICAL_START, "RUNNING"),
+    ]
+    assert [event.event_type for event in recorder.events] == [
+        ModelTraceEventType.PHYSICAL_START,
+        ModelTraceEventType.PHYSICAL_ATTEMPT,
+        ModelTraceEventType.PHYSICAL_START,
+        ModelTraceEventType.PHYSICAL_ATTEMPT,
+        ModelTraceEventType.PHYSICAL_START,
+        ModelTraceEventType.PHYSICAL_ATTEMPT,
+        ModelTraceEventType.LOGICAL_END,
+    ]
+    assert recorder.events[-1].status.value == "SUCCEEDED"
 
 
 def test_file_loggers_with_same_basename_do_not_share_handlers(tmp_path: Path):

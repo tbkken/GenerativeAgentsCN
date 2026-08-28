@@ -27,7 +27,7 @@ from generative_agents.config import (
 from .context import RunPaths
 
 
-MANIFEST_SCHEMA_VERSION = 2
+MANIFEST_SCHEMA_VERSION = 3
 
 
 class ManifestConflictError(RuntimeError):
@@ -68,6 +68,13 @@ class VerifiedRunManifest:
             raise ValueError("run manifest has no Skill bundle")
         return value
 
+    @property
+    def execution_input_hash(self) -> str:
+        value = self.document.get("execution_input_hash")
+        if not isinstance(value, str) or len(value) != 64:
+            raise ValueError("run manifest has no execution input hash")
+        return value
+
 
 def skill_bundle_hash(skills: Mapping[str, Mapping[str, Any]]) -> str:
     """执行 的技能`bundle`哈希值操作。
@@ -80,6 +87,41 @@ def skill_bundle_hash(skills: Mapping[str, Mapping[str, Any]]) -> str:
     """
     normalized = {str(key): dict(value) for key, value in sorted(skills.items())}
     return hashlib.sha256(canonical_json_bytes(normalized)).hexdigest()
+
+
+def execution_input_hash(
+    *,
+    definition: Mapping[str, Any],
+    algorithm_version: str,
+    code_build_id: str,
+    dependency_versions: Mapping[str, str | None],
+    assets: Iterable[Mapping[str, Any]],
+    skill_bundle: Mapping[str, Mapping[str, Any]],
+) -> str:
+    """Hash every immutable input that can change simulation behaviour."""
+
+    stable_assets = []
+    for raw in assets:
+        item = dict(raw)
+        item.pop("relative_path", None)
+        stable_assets.append(item)
+    stable_assets.sort(
+        key=lambda item: (
+            str(item.get("logical_path", "")),
+            str(item.get("asset_hash", "")),
+        )
+    )
+    document = {
+        "definition": dict(definition),
+        "algorithm_version": algorithm_version,
+        "code_build_id": code_build_id.strip(),
+        "dependency_versions": dict(sorted(dependency_versions.items())),
+        "assets": stable_assets,
+        "skill_bundle": {
+            str(key): dict(value) for key, value in sorted(skill_bundle.items())
+        },
+    }
+    return hashlib.sha256(canonical_json_bytes(document)).hexdigest()
 
 
 def collect_dependency_versions(
@@ -159,6 +201,11 @@ def build_manifest_document(
             str(item.get("asset_hash", "")),
         ),
     )
+    dependencies = dict(
+        dependency_versions
+        if dependency_versions is not None
+        else collect_dependency_versions()
+    )
     envelope: dict[str, Any] = {
         "manifest_schema_version": MANIFEST_SCHEMA_VERSION,
         "run_id": str(run_id),
@@ -170,11 +217,7 @@ def build_manifest_document(
         "code_build_id": code_build_id.strip(),
         "python_version": platform.python_version(),
         "python_implementation": platform.python_implementation(),
-        "dependency_versions": dict(
-            dependency_versions
-            if dependency_versions is not None
-            else collect_dependency_versions()
-        ),
+        "dependency_versions": dependencies,
         "assets": asset_list,
         "materialized_at": materialized_at.isoformat(),
         "brain_skill": definition.engine.brain_skill,
@@ -182,6 +225,14 @@ def build_manifest_document(
     skills = {str(key): dict(value) for key, value in sorted(skill_bundle.items())}
     envelope["skill_bundle"] = skills
     envelope["skill_bundle_hash"] = skill_bundle_hash(skills)
+    envelope["execution_input_hash"] = execution_input_hash(
+        definition=envelope["definition"],
+        algorithm_version=algorithm_version,
+        code_build_id=envelope["code_build_id"],
+        dependency_versions=dependencies,
+        assets=asset_list,
+        skill_bundle=skills,
+    )
     envelope["manifest_hash"] = hashlib.sha256(
         canonical_json_bytes(envelope)
     ).hexdigest()
@@ -290,6 +341,18 @@ class RunManifestStore:
             and document.get("algorithm_version") == definition.engine.algorithm_version
             and document.get("assets") == expected_assets
         )
+        if skill_bundle is not None:
+            expected_skills = {
+                str(key): dict(value) for key, value in sorted(skill_bundle.items())
+            }
+            if (
+                document.get("skill_bundle") != expected_skills
+                or document.get("skill_bundle_hash")
+                != skill_bundle_hash(expected_skills)
+            ):
+                raise ManifestConflictError(
+                    "run manifest Skill bundle differs from the current Skill content"
+                )
         if not matches:
             raise ManifestConflictError(
                 "run manifest does not match the claimed published Revision"
@@ -362,6 +425,16 @@ class RunManifestStore:
             raise ValueError("manifest brain Skill is missing from the Skill bundle")
         if skill_bundle_hash(skills) != digest:
             raise ValueError("manifest skill_bundle_hash mismatch")
+        expected_execution_hash = execution_input_hash(
+            definition=document["definition"],
+            algorithm_version=algorithm_version,
+            code_build_id=str(document.get("code_build_id") or ""),
+            dependency_versions=document.get("dependency_versions") or {},
+            assets=document.get("assets") or (),
+            skill_bundle=skills,
+        )
+        if document.get("execution_input_hash") != expected_execution_hash:
+            raise ValueError("manifest execution_input_hash mismatch")
         return actual_manifest_hash
 
     @staticmethod

@@ -73,23 +73,79 @@ class Base(DeclarativeBase):
     pass
 
 
-class BuiltinCatalogSnapshot(Base):
-    """Immutable creation-time source for new built-in experiment Drafts."""
+class SkillDefinition(Base):
+    """Product-owned Skill identity; user edits never target source files."""
 
-    __tablename__ = "builtin_catalog_snapshots"
+    __tablename__ = "skill_definitions"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
-    source_fingerprint: Mapped[str] = mapped_column(
-        String(64), nullable=False, unique=True
+    skill_key: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    is_builtin: Mapped[bool] = mapped_column(nullable=False, default=False)
+    current_revision_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey(
+            "skill_revisions.id",
+            ondelete="SET NULL",
+            use_alter=True,
+            name="fk_skill_definitions_current_revision",
+        ),
+        nullable=True,
     )
-    definition_hash: Mapped[str] = mapped_column(String(64), nullable=False)
-    definition_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
-    source_manifest_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            "kind IN ('atomic','pack','brain')", name="ck_skill_definition_kind"
+        ),
+        CheckConstraint("row_version >= 1", name="ck_skill_definition_row_version"),
+        Index("ix_skill_definitions_kind_updated", "kind", "updated_at"),
+        Index("ix_skill_definitions_archived", "archived_at", "updated_at"),
+    )
+
+
+class SkillRevision(Base):
+    """Immutable text and dependency snapshot for one Skill revision."""
+
+    __tablename__ = "skill_revisions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    skill_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("skill_definitions.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    revision_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    markdown: Mapped[str] = mapped_column(Text, nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    children_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    scripts_json: Mapped[dict[str, str]] = mapped_column(
+        JSON, nullable=False, default=dict
+    )
+    source: Mapped[str] = mapped_column(String(24), nullable=False, default="USER")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
 
-    __table_args__ = (Index("ix_builtin_catalog_created_at", "created_at", "id"),)
+    __table_args__ = (
+        UniqueConstraint("skill_id", "revision_no", name="uq_skill_revision_number"),
+        UniqueConstraint("skill_id", "content_hash", name="uq_skill_revision_content"),
+        CheckConstraint("revision_no >= 1", name="ck_skill_revision_number"),
+        CheckConstraint(
+            "source IN ('USER','SYSTEM_SEED','IMPORT')", name="ck_skill_revision_source"
+        ),
+        Index("ix_skill_revisions_skill", "skill_id", "revision_no"),
+    )
 
 
 class WorldMap(Base):
@@ -111,6 +167,9 @@ class WorldMap(Base):
         String(36), nullable=True
     )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -124,6 +183,7 @@ class WorldMap(Base):
         ),
         CheckConstraint("row_version >= 1", name="ck_world_maps_row_version"),
         Index("ix_world_maps_updated_at", "updated_at", "id"),
+        Index("ix_world_maps_archived", "archived_at", "updated_at"),
     )
 
 
@@ -398,6 +458,9 @@ class AgentTemplate(Base):
         String(36), nullable=True
     )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -412,6 +475,7 @@ class AgentTemplate(Base):
         ),
         CheckConstraint("row_version >= 1", name="ck_agent_templates_row_version"),
         Index("ix_agent_templates_updated_at", "updated_at", "id"),
+        Index("ix_agent_templates_archived", "archived_at", "updated_at"),
     )
 
 
@@ -494,6 +558,9 @@ class CrowdTemplate(Base):
         String(36), nullable=True
     )
     row_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -508,6 +575,7 @@ class CrowdTemplate(Base):
         ),
         CheckConstraint("row_version >= 1", name="ck_crowd_templates_row_version"),
         Index("ix_crowd_templates_updated_at", "updated_at", "id"),
+        Index("ix_crowd_templates_archived", "archived_at", "updated_at"),
     )
 
 
@@ -856,9 +924,13 @@ class Run(Base):
         DateTime(timezone=True), nullable=True
     )
     run_dir: Mapped[str] = mapped_column(Text, nullable=False)
+    execution_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     resume_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    archived_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )
@@ -908,6 +980,7 @@ class Run(Base):
         ),
         Index("ix_runs_experiment_created", "experiment_id", "created_at"),
         Index("ix_runs_status_queued", "status", "queued_at"),
+        Index("ix_runs_archived_created", "archived_at", "created_at"),
     )
 
 
@@ -1528,6 +1601,9 @@ class RunMemoryEvent(Base):
     evidence_node_ids_json: Mapped[list[str]] = mapped_column(
         JSON, nullable=False, default=list
     )
+    supersedes_memory_node_id: Mapped[str | None] = mapped_column(String(160))
+    superseded_by_memory_node_id: Mapped[str | None] = mapped_column(String(160))
+    invalidated_reason: Mapped[str | None] = mapped_column(Text)
 
     __table_args__ = (
         Index(

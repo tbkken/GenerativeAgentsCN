@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import sqlite3
 import hashlib
-from contextlib import contextmanager
+import json
+import math
+import re
+import unicodedata
+from contextlib import contextmanager, nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Callable, Iterator
@@ -23,6 +27,8 @@ class MemoryStream:
         run_id: str | UUID = "skill-workspace",
         attempt_id: str | UUID = "skill-workspace",
         clock: Callable[[], datetime] | None = None,
+        embed_texts: Callable[[list[str]], list[list[float]]] | None = None,
+        logger=None,
     ) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -39,6 +45,8 @@ class MemoryStream:
         self.run_id = str(run_id)
         self.attempt_id = str(attempt_id)
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._embed_texts = embed_texts
+        self._logger = logger
         self._step_no = 0
         self._virtual_time: datetime | None = None
         self._pending_events: list[dict[str, Any]] = []
@@ -66,7 +74,11 @@ class MemoryStream:
                     object_value TEXT,
                     address_json TEXT NOT NULL,
                     evidence_json TEXT NOT NULL,
+                    embedding_json TEXT,
                     created_attempt_id TEXT NOT NULL,
+                    supersedes_memory_id TEXT,
+                    superseded_by_memory_id TEXT,
+                    invalidated_reason TEXT,
                     PRIMARY KEY (run_id, id)
                 )
                 """
@@ -75,6 +87,23 @@ class MemoryStream:
                 "CREATE INDEX IF NOT EXISTS ix_run_memories_agent_time "
                 "ON run_memories(run_id, agent_key, state, created_at DESC)"
             )
+            columns = {
+                str(row[1])
+                for row in connection.execute("PRAGMA table_info(run_memories)")
+            }
+            if "embedding_json" not in columns:
+                connection.execute(
+                    "ALTER TABLE run_memories ADD COLUMN embedding_json TEXT"
+                )
+            for column, column_type in (
+                ("supersedes_memory_id", "TEXT"),
+                ("superseded_by_memory_id", "TEXT"),
+                ("invalidated_reason", "TEXT"),
+            ):
+                if column not in columns:
+                    connection.execute(
+                        f"ALTER TABLE run_memories ADD COLUMN {column} {column_type}"
+                    )
 
     def begin_step(self, step_no: int, virtual_time: datetime) -> None:
         """执行 `MemoryStream` 的`begin`仿真步操作。
@@ -129,6 +158,8 @@ class MemoryStream:
         address: list[str] | tuple[str, ...] = (),
         evidence_memory_ids: list[str] | tuple[str, ...] = (),
         emit_event: bool = True,
+        _connection: sqlite3.Connection | None = None,
+        _supersedes_memory_id: str | None = None,
     ) -> dict[str, Any]:
         """执行 `MemoryStream` 的`append`操作。
 
@@ -152,8 +183,6 @@ class MemoryStream:
         异常:
             ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
         """
-        import json
-
         content = content.strip()
         if not agent_key.strip() or not content:
             raise ValueError("agent_key and content are required")
@@ -161,7 +190,9 @@ class MemoryStream:
             raise ValueError("poignancy must be between 1 and 10")
         step_no, virtual_time = self._scope()
         namespace = self._namespace()
-        sequence = self._next_sequence(step_no, agent_key.strip())
+        sequence = self._next_sequence(
+            step_no, agent_key.strip(), connection=_connection
+        )
         stable_key = (
             f"{step_no}:{agent_key.strip()}:{sequence}:{kind}:"
             f"{hashlib.sha256(content.encode('utf-8')).hexdigest()}"
@@ -186,9 +217,16 @@ class MemoryStream:
             "object_value": object,
             "address_json": json.dumps(list(address), ensure_ascii=False),
             "evidence_json": json.dumps(list(evidence_memory_ids), ensure_ascii=False),
+            "embedding_json": self._embedding_json(content),
             "created_attempt_id": self.attempt_id,
+            "supersedes_memory_id": _supersedes_memory_id,
+            "superseded_by_memory_id": None,
+            "invalidated_reason": None,
         }
-        with self._connect() as connection:
+        connection_scope = (
+            nullcontext(_connection) if _connection is not None else self._connect()
+        )
+        with connection_scope as connection:
             existing = connection.execute(
                 "SELECT content, kind FROM run_memories WHERE run_id = ? AND id = ?",
                 (self.run_id, item["id"]),
@@ -204,13 +242,15 @@ class MemoryStream:
                         created_step, created_at, expires_at, last_accessed_step,
                         last_accessed_at, removed_step, removed_at, subject,
                         predicate, object_value, address_json, evidence_json,
-                        created_attempt_id
+                        embedding_json, created_attempt_id, supersedes_memory_id,
+                        superseded_by_memory_id, invalidated_reason
                     ) VALUES (
                         :run_id, :id, :agent_key, :content, :kind, :poignancy, :state,
                         :created_step, :created_at, :expires_at, :last_accessed_step,
                         :last_accessed_at, :removed_step, :removed_at, :subject,
                         :predicate, :object_value, :address_json, :evidence_json,
-                        :created_attempt_id
+                        :embedding_json, :created_attempt_id, :supersedes_memory_id,
+                        :superseded_by_memory_id, :invalidated_reason
                     )
                     """,
                     item,
@@ -259,18 +299,15 @@ class MemoryStream:
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
-        import json
-
         step_no, virtual_time = self._scope()
         limit = max(1, min(int(limit), 100))
-        terms = [term.casefold() for term in query.split() if term.strip()]
         with self._connect() as connection:
             connection.row_factory = sqlite3.Row
             rows = connection.execute(
                 """
                 SELECT id, agent_key, content, kind, poignancy, created_at,
                        expires_at, subject, predicate, object_value,
-                       address_json, evidence_json
+                       address_json, evidence_json, embedding_json
                 FROM run_memories
                 WHERE run_id = ? AND agent_key = ? AND state = ?
                 ORDER BY created_at DESC, id DESC LIMIT 500
@@ -284,20 +321,9 @@ class MemoryStream:
             item["evidence_memory_ids"] = json.loads(item.pop("evidence_json"))
             item["object"] = item.pop("object_value")
             items.append(item)
-        if terms:
-            items.sort(
-                key=lambda item: (
-                    sum(term in str(item["content"]).casefold() for term in terms),
-                    int(item["poignancy"]),
-                    str(item["created_at"]),
-                ),
-                reverse=True,
-            )
-            items = [
-                item
-                for item in items
-                if any(term in str(item["content"]).casefold() for term in terms)
-            ]
+        if query.strip():
+            self._rank_items(query, items)
+            items = [item for item in items if item["_retrieval_score"] > 0]
         selected = items[:limit]
         if selected:
             with self._connect() as connection:
@@ -330,14 +356,179 @@ class MemoryStream:
                             "description": item["content"],
                         }
                     )
+        for item in selected:
+            item.pop("embedding_json", None)
+            item["retrieval_score"] = round(
+                float(item.pop("_retrieval_score", 0.0)), 6
+            )
+            item["retrieval_method"] = item.pop(
+                "_retrieval_method", "hybrid_lexical"
+            )
         return selected
+
+    def _embedding_json(self, text: str) -> str | None:
+        if self._embed_texts is None:
+            return None
+        try:
+            vectors = self._embed_texts([text])
+            vector = self._valid_vector(vectors[0] if vectors else None)
+            return json.dumps(vector, separators=(",", ":")) if vector else None
+        except Exception as exc:  # semantic service failure must not lose memory writes
+            if self._logger is not None:
+                self._logger.warning("memory embedding write fallback: %s", exc)
+            return None
+
+    def _rank_items(self, query: str, items: list[dict[str, Any]]) -> None:
+        lexical = [self._hybrid_lexical_score(query, self._search_text(item)) for item in items]
+        semantic: list[float | None] = [None] * len(items)
+        if self._embed_texts is not None and items:
+            try:
+                query_vectors = self._embed_texts([query])
+                query_vector = self._valid_vector(
+                    query_vectors[0] if query_vectors else None
+                )
+                missing_indexes: list[int] = []
+                document_vectors: list[list[float] | None] = []
+                for index, item in enumerate(items):
+                    try:
+                        vector = self._valid_vector(
+                            json.loads(item.get("embedding_json") or "null")
+                        )
+                    except (TypeError, ValueError, json.JSONDecodeError):
+                        vector = None
+                    document_vectors.append(vector)
+                    if vector is None:
+                        missing_indexes.append(index)
+                if missing_indexes:
+                    generated = self._embed_texts(
+                        [self._search_text(items[index]) for index in missing_indexes]
+                    )
+                    updates = []
+                    for index, raw_vector in zip(missing_indexes, generated):
+                        vector = self._valid_vector(raw_vector)
+                        document_vectors[index] = vector
+                        if vector:
+                            encoded = json.dumps(vector, separators=(",", ":"))
+                            items[index]["embedding_json"] = encoded
+                            updates.append((encoded, self.run_id, items[index]["id"]))
+                    if updates:
+                        with self._connect() as connection:
+                            connection.executemany(
+                                "UPDATE run_memories SET embedding_json = ? "
+                                "WHERE run_id = ? AND id = ?",
+                                updates,
+                            )
+                if query_vector:
+                    semantic = [
+                        self._cosine(query_vector, vector) if vector else None
+                        for vector in document_vectors
+                    ]
+            except Exception as exc:
+                if self._logger is not None:
+                    self._logger.warning("memory semantic search fallback: %s", exc)
+
+        has_semantic = any(score is not None for score in semantic)
+        for index, item in enumerate(items):
+            semantic_score = semantic[index]
+            if semantic_score is None:
+                score = lexical[index]
+                method = "hybrid_lexical"
+            else:
+                normalized_semantic = max(0.0, min(1.0, (semantic_score + 1.0) / 2.0))
+                score = normalized_semantic * 0.78 + lexical[index] * 0.22
+                method = "embedding_hybrid"
+            # With vectors, top-k semantic retrieval intentionally returns the
+            # closest active memories.  The lexical fallback requires meaningful
+            # overlap so an unrelated query does not match on punctuation/stopwords.
+            if not has_semantic and lexical[index] < 0.08:
+                score = 0.0
+            item["_retrieval_score"] = score
+            item["_retrieval_method"] = method
+        items.sort(
+            key=lambda item: (
+                float(item["_retrieval_score"]),
+                int(item["poignancy"]),
+                str(item["created_at"]),
+            ),
+            reverse=True,
+        )
+
+    @staticmethod
+    def _search_text(item: dict[str, Any]) -> str:
+        return " ".join(
+            str(value or "")
+            for value in (
+                item.get("content"),
+                item.get("subject"),
+                item.get("predicate"),
+                item.get("object"),
+                " ".join(item.get("address") or ()),
+            )
+        )
+
+    @staticmethod
+    def _hybrid_lexical_score(query: str, document: str) -> float:
+        query_tokens = MemoryStream._semantic_tokens(query)
+        document_tokens = MemoryStream._semantic_tokens(document)
+        if not query_tokens or not document_tokens:
+            return 0.0
+        overlap = query_tokens & document_tokens
+        if not overlap:
+            return 0.0
+        weighted_overlap = sum(1.6 if len(token) >= 2 else 0.35 for token in overlap)
+        weighted_query = sum(1.6 if len(token) >= 2 else 0.35 for token in query_tokens)
+        return min(1.0, weighted_overlap / max(weighted_query, 1.0))
+
+    @staticmethod
+    def _semantic_tokens(value: str) -> set[str]:
+        normalized = unicodedata.normalize("NFKC", value).casefold()
+        tokens = set(re.findall(r"[a-z0-9]+", normalized))
+        stop_chars = set("的是了和与在有就都而及或也吗呢哪什今本此个种")
+        for segment in re.findall(r"[\u3400-\u9fff]+", normalized):
+            meaningful = "".join(char for char in segment if char not in stop_chars)
+            tokens.update(char for char in meaningful)
+            tokens.update(
+                meaningful[index : index + 2]
+                for index in range(max(0, len(meaningful) - 1))
+            )
+            tokens.update(
+                meaningful[index : index + 3]
+                for index in range(max(0, len(meaningful) - 2))
+            )
+        return {token for token in tokens if token}
+
+    @staticmethod
+    def _valid_vector(value) -> list[float] | None:
+        if not isinstance(value, (list, tuple)) or not value:
+            return None
+        try:
+            vector = [float(component) for component in value]
+        except (TypeError, ValueError):
+            return None
+        if not all(math.isfinite(component) for component in vector):
+            return None
+        return vector
+
+    @staticmethod
+    def _cosine(left: list[float], right: list[float]) -> float:
+        if len(left) != len(right) or not left:
+            return 0.0
+        left_norm = math.sqrt(sum(value * value for value in left))
+        right_norm = math.sqrt(sum(value * value for value in right))
+        if left_norm == 0 or right_norm == 0:
+            return 0.0
+        return sum(a * b for a, b in zip(left, right)) / (left_norm * right_norm)
 
     def remove(
         self,
         memory_id: str,
         *,
         state: MemoryState | str,
+        agent_key: str | None = None,
+        replacement_memory_id: str | None = None,
+        reason: str | None = None,
         emit_event: bool = True,
+        _connection: sqlite3.Connection | None = None,
     ) -> None:
         """把目标记录迁移到指定移除状态，并按需生成领域事件。
 
@@ -355,31 +546,60 @@ class MemoryStream:
         try:
             memory_state = MemoryState(state)
         except ValueError as exc:
-            raise ValueError("memory state must be EXPIRED or EVICTED") from exc
-        if memory_state not in {MemoryState.EXPIRED, MemoryState.EVICTED}:
-            raise ValueError("memory state must be EXPIRED or EVICTED")
+            raise ValueError(
+                "memory state must be EXPIRED, EVICTED, SUPERSEDED or INVALIDATED"
+            ) from exc
+        if memory_state not in {
+            MemoryState.EXPIRED,
+            MemoryState.EVICTED,
+            MemoryState.SUPERSEDED,
+            MemoryState.INVALIDATED,
+        }:
+            raise ValueError(
+                "memory state must be EXPIRED, EVICTED, SUPERSEDED or INVALIDATED"
+            )
+        if memory_state == MemoryState.SUPERSEDED and not replacement_memory_id:
+            raise ValueError("SUPERSEDED requires replacement_memory_id")
+        if memory_state == MemoryState.INVALIDATED and not str(reason or "").strip():
+            raise ValueError("INVALIDATED requires a reason")
         step_no, virtual_time = self._scope()
-        with self._connect() as connection:
+        connection_scope = (
+            nullcontext(_connection) if _connection is not None else self._connect()
+        )
+        with connection_scope as connection:
             existing = connection.execute(
                 """
                 SELECT agent_key, kind, content FROM run_memories
                 WHERE run_id = ? AND id = ? AND state = ?
+                  AND (? IS NULL OR agent_key = ?)
                 """,
-                (self.run_id, memory_id, MemoryState.ACTIVE.value),
+                (
+                    self.run_id,
+                    memory_id,
+                    MemoryState.ACTIVE.value,
+                    agent_key,
+                    agent_key,
+                ),
             ).fetchone()
             cursor = connection.execute(
                 """
                 UPDATE run_memories
-                SET state = ?, removed_step = ?, removed_at = ?
+                SET state = ?, removed_step = ?, removed_at = ?,
+                    superseded_by_memory_id = ?, invalidated_reason = ?
                 WHERE run_id = ? AND id = ? AND state = ?
+                  AND (? IS NULL OR agent_key = ?)
                 """,
                 (
                     memory_state.value,
                     step_no,
                     virtual_time.isoformat(),
+                    replacement_memory_id,
+                    str(reason or "").strip() or None,
                     self.run_id,
                     memory_id,
                     MemoryState.ACTIVE.value,
+                    agent_key,
+                    agent_key,
                 ),
             )
         if cursor.rowcount == 0:
@@ -393,8 +613,117 @@ class MemoryStream:
                     "memory_id": memory_id,
                     "memory_type": existing[1].upper(),
                     "description": existing[2],
+                    "replacement_memory_id": replacement_memory_id,
+                    "reason": str(reason or "").strip() or None,
                 }
             )
+
+    def supersede(
+        self,
+        *,
+        agent_key: str,
+        memory_id: str,
+        content: str,
+        reason: str | None = None,
+    ) -> dict[str, Any]:
+        """Atomically replace one active memory while retaining its history."""
+
+        with self._connect() as connection:
+            connection.row_factory = sqlite3.Row
+            existing = connection.execute(
+                """
+                SELECT * FROM run_memories
+                WHERE run_id = ? AND id = ? AND agent_key = ? AND state = ?
+                """,
+                (
+                    self.run_id,
+                    memory_id,
+                    agent_key.strip(),
+                    MemoryState.ACTIVE.value,
+                ),
+            ).fetchone()
+            if existing is None:
+                raise ValueError(f"active memory does not exist: {memory_id}")
+            evidence = list(json.loads(existing["evidence_json"] or "[]"))
+            if memory_id not in evidence:
+                evidence.append(memory_id)
+            replacement = self.append(
+                agent_key=agent_key,
+                content=content,
+                kind=existing["kind"],
+                poignancy=int(existing["poignancy"]),
+                expires_at=(
+                    datetime.fromisoformat(existing["expires_at"])
+                    if existing["expires_at"]
+                    else None
+                ),
+                subject=existing["subject"],
+                predicate=existing["predicate"],
+                object=existing["object_value"],
+                address=json.loads(existing["address_json"] or "[]"),
+                evidence_memory_ids=evidence,
+                emit_event=False,
+                _connection=connection,
+                _supersedes_memory_id=memory_id,
+            )
+            self.remove(
+                memory_id,
+                state=MemoryState.SUPERSEDED,
+                agent_key=agent_key,
+                replacement_memory_id=replacement["id"],
+                reason=reason,
+                emit_event=False,
+                _connection=connection,
+            )
+        self._pending_events.extend(
+            [
+                {
+                    "kind": "memory",
+                    "memory_kind": MemoryDeltaKind.SUPERSEDED.value,
+                    "agent_key": agent_key.strip(),
+                    "memory_id": memory_id,
+                    "memory_type": str(existing["kind"]).upper(),
+                    "description": existing["content"],
+                    "replacement_memory_id": replacement["id"],
+                    "reason": str(reason or "").strip() or None,
+                },
+                {
+                    "kind": "memory",
+                    "memory_kind": MemoryDeltaKind.CREATED.value,
+                    "agent_key": replacement["agent_key"],
+                    "memory_id": replacement["id"],
+                    "memory_type": replacement["kind"].upper(),
+                    "description": replacement["content"],
+                    "poignancy": replacement["poignancy"],
+                    "created_at": replacement["created_at"],
+                    "expires_at": replacement["expires_at"],
+                    "evidence_memory_ids": replacement["evidence_memory_ids"],
+                    "supersedes_memory_id": memory_id,
+                },
+            ]
+        )
+        return {"superseded_memory_id": memory_id, "replacement": replacement}
+
+    def invalidate(
+        self,
+        *,
+        agent_key: str,
+        memory_id: str,
+        reason: str,
+    ) -> dict[str, Any]:
+        """Explicitly invalidate one active memory without deleting history."""
+
+        self.remove(
+            memory_id,
+            state=MemoryState.INVALIDATED,
+            agent_key=agent_key,
+            reason=reason,
+        )
+        return {
+            "memory_id": memory_id,
+            "state": MemoryState.INVALIDATED.value,
+            "reason": reason.strip(),
+        }
 
     def access(self, memory_id: str, *, emit_event: bool = True) -> None:
         """更新记忆的最近访问步骤与时间，并按需生成访问事件。
@@ -478,7 +807,13 @@ class MemoryStream:
                 # renamed on Windows.
                 output.close()
 
-    def _next_sequence(self, step_no: int, agent_key: str) -> int:
+    def _next_sequence(
+        self,
+        step_no: int,
+        agent_key: str,
+        *,
+        connection: sqlite3.Connection | None = None,
+    ) -> int:
         """执行`next``sequence`的内部处理，供当前模块或类复用。
 
         参数:
@@ -488,8 +823,11 @@ class MemoryStream:
         返回:
             返回计算得到的整数值或版本号。
         """
-        with self._connect() as connection:
-            value = connection.execute(
+        connection_scope = (
+            nullcontext(connection) if connection is not None else self._connect()
+        )
+        with connection_scope as active_connection:
+            value = active_connection.execute(
                 """
                 SELECT COUNT(*) FROM run_memories
                 WHERE run_id = ? AND created_step = ? AND agent_key = ?
@@ -534,6 +872,10 @@ class MemoryStream:
             "object": item["object_value"],
             "address": json.loads(item["address_json"]),
             "evidence_memory_ids": json.loads(item["evidence_json"]),
+            "state": item["state"],
+            "supersedes_memory_id": item.get("supersedes_memory_id"),
+            "superseded_by_memory_id": item.get("superseded_by_memory_id"),
+            "invalidated_reason": item.get("invalidated_reason"),
         }
 
     @contextmanager
@@ -643,6 +985,33 @@ class SkillMCPServer:
                     "required": ["agent_key"],
                 },
             },
+            {
+                "name": "memory-stream-supersede",
+                "description": "Replace an active memory with a corrected version while retaining history.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "agent_key": {"type": "string"},
+                        "memory_id": {"type": "string"},
+                        "content": {"type": "string"},
+                        "reason": {"type": "string"},
+                    },
+                    "required": ["agent_key", "memory_id", "content"],
+                },
+            },
+            {
+                "name": "memory-stream-invalidate",
+                "description": "Invalidate an active memory without deleting its audit history.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "agent_key": {"type": "string"},
+                        "memory_id": {"type": "string"},
+                        "reason": {"type": "string"},
+                    },
+                    "required": ["agent_key", "memory_id", "reason"],
+                },
+            },
         ]
 
     def call(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -671,6 +1040,15 @@ class SkillMCPServer:
                 text = f"找到 {len(value)} 条相关记忆：\n{entries}"
             else:
                 text = "没有找到相关记忆。"
+        elif name == "memory-stream-supersede":
+            value = self.memory.supersede(**arguments)
+            text = (
+                f"已用新版本 {value['replacement']['id']} 替代记忆 "
+                f"{value['superseded_memory_id']}。"
+            )
+        elif name == "memory-stream-invalidate":
+            value = self.memory.invalidate(**arguments)
+            text = f"已将记忆 {value['memory_id']} 标记为 INVALIDATED。"
         else:
             raise ValueError(f"Unknown MCP tool: {name}")
         return {

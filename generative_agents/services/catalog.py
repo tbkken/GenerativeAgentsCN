@@ -17,6 +17,7 @@ from generative_agents.persistence.models import Asset, Secret
 from generative_agents.security import MasterKeyStore, SecretCipher
 
 from .errors import ServiceError, not_found
+from .timestamps import iso_utc
 
 
 class AssetService:
@@ -290,7 +291,7 @@ class AssetService:
             "logical_name": asset.logical_name,
             "media_type": asset.media_type,
             "size_bytes": asset.size_bytes,
-            "created_at": asset.created_at.isoformat(),
+            "created_at": iso_utc(asset.created_at),
         }
         if deduplicated is not None:
             result["deduplicated"] = deduplicated
@@ -410,5 +411,5 @@ class SecretService:
             "kind": secret.kind,
             "fingerprint": secret.fingerprint,
             "supersedes_id": secret.supersedes_id,
-            "created_at": secret.created_at.isoformat(),
+            "created_at": iso_utc(secret.created_at),
         }

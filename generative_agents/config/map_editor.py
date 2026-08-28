@@ -307,6 +307,7 @@ class HierarchyNode(StrictModel):
     material_slice_id: Identifier | None = None
     render_recipe_id: Identifier | None = None
     render_mode: Literal["LAYER_BACKED", "PLACED_RECIPE"] = "LAYER_BACKED"
+    interaction_mode: Literal["STATIC", "SKILL_BOUND"] = "STATIC"
     skill_bindings: list[GameObjectSkillBinding] = Field(
         default_factory=list, max_length=20
     )
@@ -339,6 +340,13 @@ class HierarchyNode(StrictModel):
         """
         if self.skill_bindings and self.kind != "GAME_OBJECT":
             raise ValueError("only GAME_OBJECT nodes may bind passive Skills")
+        if self.kind != "GAME_OBJECT" and self.interaction_mode != "STATIC":
+            raise ValueError("only GAME_OBJECT nodes may be Skill-bound")
+        if self.kind == "GAME_OBJECT":
+            if self.interaction_mode == "SKILL_BOUND" and not self.skill_bindings:
+                raise ValueError("SKILL_BOUND Game Objects require a passive Skill")
+            if self.interaction_mode == "STATIC" and self.skill_bindings:
+                raise ValueError("STATIC Game Objects cannot bind passive Skills")
         return self
 
 

@@ -32,6 +32,7 @@ class Tile:
         address_keys,
         address=None,
         collision=False,
+        spatial_semantics=None,
     ):
         # in order: world, sector, arena, game_object
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
@@ -60,6 +61,7 @@ class Tile:
         self.address_keys = address_keys
         self.address_map = dict(zip(address_keys[: len(self.address)], self.address))
         self.collision = collision
+        self.spatial_semantics = tuple(spatial_semantics or ())
         self.event_cnt = 0
         self._events = {}
         if len(self.address) == 4:
@@ -76,6 +78,7 @@ class Tile:
             address += "(collision)"
         return {
             "coord[{},{}]".format(self.coord[0], self.coord[1]): address,
+            "spatial_semantics": [dict(item) for item in self.spatial_semantics],
             "events": {k: str(v) for k, v in self.events.items()},
         }
 
@@ -261,7 +264,7 @@ class Maze:
             # keyword arguments into the runtime Tile contract.
             tile_attributes = {
                 key: tile_definition[key]
-                for key in ("address", "collision")
+                for key in ("address", "collision", "spatial_semantics")
                 if key in tile_definition
             }
             self.tiles[y][x] = Tile(

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
 from datetime import datetime, timezone
 from math import ceil
 from typing import Any, Literal
@@ -15,15 +14,12 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from generative_agents.config import (
     ExperimentDefinition,
-    ValidationIssue,
     definition_hash,
-    make_builtin_definition,
     validate_for_publish,
 )
 from generative_agents.config.schema import WorldOverlayConfig, make_blank_definition
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
-    BuiltinCatalogSnapshot,
     Experiment,
     ExperimentComparisonGroup,
     ExperimentRevision,
@@ -32,7 +28,6 @@ from generative_agents.persistence.models import (
     RunArtifact,
     RunResultSummary,
     Secret,
-    WorldMap,
     WorldMapRevision,
 )
 from generative_agents.status import (
@@ -45,11 +40,9 @@ from generative_agents.status import (
 from .errors import ServiceError, not_found
 
 SourceType = Literal[
-    "BUILTIN_DEFAULT",
     "BLANK",
     "REVISION",
 ]
-DefinitionFactory = Callable[[str, str, str], ExperimentDefinition]
 
 
 def _utc_now() -> datetime:
@@ -73,20 +66,6 @@ def _make_key(name: str) -> str:
     ascii_key = re.sub(r"[^a-z0-9]+", "-", name.casefold()).strip("-")
     prefix = ascii_key[:48].strip("-") or "experiment"
     return f"{prefix}-{uuid4().hex[:8]}"
-
-
-def _default_definition_factory(key: str, name: str, goal: str) -> ExperimentDefinition:
-    """执行`default`仿真定义`factory`的内部处理，供当前模块或类复用。
-
-    参数:
-        key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-        name: 目标对象的人类可读名称。 类型：`str`。
-        goal: 路径搜索、计划或推理任务需要达到的目标。 类型：`str`。
-
-    返回:
-        返回 `ExperimentDefinition` 类型的处理结果。
-    """
-    return make_builtin_definition(key=key, name=name, goal=goal)
 
 
 def _normalize_tags(tags: list[str] | None) -> list[str]:
@@ -130,88 +109,15 @@ def _flatten_document(value: Any, prefix: str = "") -> dict[str, Any]:
 class ExperimentService:
     """Owns short, synchronous SQLAlchemy transactions for experiment definitions."""
 
-    def __init__(
-        self,
-        database: Database,
-        *,
-        builtin_definition_factory: DefinitionFactory | None = None,
-    ) -> None:
+    def __init__(self, database: Database) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
         参数:
             database: 持久化数据库访问对象或会话工厂。 类型：`Database`。
-            builtin_definition_factory: 传入当前算法的`builtin`定义`factory`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`DefinitionFactory | None`。 默认值：`None`。
-
         返回:
             无返回值。
         """
         self.database = database
-        self._builtin_factory = builtin_definition_factory
-
-    def _builtin_definition(
-        self, session: Session, *, key: str, name: str, goal: str
-    ) -> tuple[ExperimentDefinition, dict[str, Any]]:
-        """执行`builtin`仿真定义的内部处理，供当前模块或类复用。
-
-        参数:
-            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-            name: 目标对象的人类可读名称。 类型：`str`。
-            goal: 路径搜索、计划或推理任务需要达到的目标。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        if self._builtin_factory is not None:
-            definition = self._builtin_factory(key, name, goal)
-            provenance = {"source_type": "BUILTIN_DEFAULT"}
-        else:
-            snapshot = session.scalar(
-                select(BuiltinCatalogSnapshot)
-                .order_by(
-                    BuiltinCatalogSnapshot.created_at.desc(),
-                    BuiltinCatalogSnapshot.id.desc(),
-                )
-                .limit(1)
-            )
-            if snapshot is None:
-                definition = _default_definition_factory(key, name, goal)
-                provenance = {
-                    "source_type": "BUILTIN_DEFAULT",
-                    "catalog_mode": "PACKAGE_FALLBACK",
-                }
-            else:
-                definition = ExperimentDefinition.model_validate(
-                    snapshot.definition_json
-                )
-                provenance = {
-                    "source_type": "BUILTIN_DEFAULT",
-                    "catalog_snapshot_id": snapshot.id,
-                    "catalog_definition_hash": snapshot.definition_hash,
-                    "catalog_source_fingerprint": snapshot.source_fingerprint,
-                }
-        public_map = session.scalar(
-            select(WorldMap).where(WorldMap.map_key == definition.world.world_key)
-        )
-        map_revision = (
-            session.get(WorldMapRevision, public_map.current_published_revision_id)
-            if public_map and public_map.current_published_revision_id
-            else None
-        )
-        if map_revision is not None and map_revision.state == RevisionState.PUBLISHED:
-            from .maps import WorldMapService
-
-            payload = definition.model_dump(mode="json", exclude_none=False)
-            payload["world"] = WorldMapService.materialize_world(
-                map_revision, definition.world.overlay
-            ).model_dump(mode="json", exclude_none=False)
-            definition = ExperimentDefinition.model_validate(payload)
-            provenance = {
-                **provenance,
-                "world_map_id": public_map.id,
-                "world_map_revision_id": map_revision.id,
-            }
-        return definition, provenance
 
     @staticmethod
     def _definition_with_map(
@@ -268,11 +174,12 @@ class ExperimentService:
         *,
         name: str,
         goal: str = "",
-        source_type: SourceType = "BUILTIN_DEFAULT",
+        source_type: SourceType = "BLANK",
         source_revision_id: str | None = None,
         owner: str = "",
         tags: list[str] | None = None,
-        map_revision_id: str | None = None,
+        map_revision_id: str,
+        brain_skill: str = "stanford-town-brain",
         crowd_revision_ids: list[str] | None = None,
     ) -> dict[str, Any]:
         """创建实验。
@@ -280,11 +187,12 @@ class ExperimentService:
         参数:
             name: 目标对象的人类可读名称。 类型：`str`。
             goal: 路径搜索、计划或推理任务需要达到的目标。 类型：`str`。 默认值：`''`。
-            source_type: `source`的类型判别值。 类型：`SourceType`。 默认值：`'BUILTIN_DEFAULT'`。
+            source_type: `source`的类型判别值。 类型：`SourceType`。 默认值：`'BLANK'`。
             source_revision_id: `source`修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
             owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str`。 默认值：`''`。
             tags: 用于分类、检索或展示目标对象的去重标签集合。 类型：`list[str] | None`。 默认值：`None`。
-            map_revision_id: 地图修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
+            map_revision_id: 必须显式选择的已发布用户地图修订版本标识。 类型：`str`。
+            brain_skill: 驱动当前实验的 Brain Skill 稳定键。 类型：`str`。 默认值：`'stanford-town-brain'`。
             crowd_revision_ids: 需要批量处理的人群修订版本唯一标识集合。 类型：`list[str] | None`。 默认值：`None`。
 
         返回:
@@ -297,6 +205,12 @@ class ExperimentService:
         if not name:
             raise ServiceError(
                 "INVALID_EXPERIMENT_NAME", "实验名称不能为空", status_code=422
+            )
+        if not map_revision_id:
+            raise ServiceError(
+                "MAP_REVISION_REQUIRED",
+                "新仿真必须显式选择一个已发布的用户地图版本",
+                status_code=422,
             )
         key = _make_key(name)
         with self.database.session_factory.begin() as session:
@@ -321,11 +235,6 @@ class ExperimentService:
                     "source_revision_id": source_revision_id,
                 }
                 base_revision_id = source_revision_id
-            elif source_type == "BUILTIN_DEFAULT":
-                source_definition, provenance = self._builtin_definition(
-                    session, key=key, name=name, goal=goal
-                )
-                base_revision_id = None
             elif source_type == "BLANK":
                 source_definition = make_blank_definition(key=key, name=name, goal=goal)
                 provenance = {"source_type": source_type}
@@ -338,11 +247,13 @@ class ExperimentService:
             definition = self._definition_for_new_owner(
                 source_definition, key=key, name=name, goal=goal
             )
-            if map_revision_id:
-                definition, map_provenance = self._definition_with_map(
-                    session, definition, map_revision_id=map_revision_id
-                )
-                provenance = {**provenance, **map_provenance}
+            definition_payload = definition.model_dump(mode="json", exclude_none=False)
+            definition_payload["engine"]["brain_skill"] = brain_skill
+            definition = ExperimentDefinition.model_validate(definition_payload)
+            definition, map_provenance = self._definition_with_map(
+                session, definition, map_revision_id=map_revision_id
+            )
+            provenance = {**provenance, **map_provenance}
             if crowd_revision_ids:
                 from .crowds import CrowdService
 
@@ -1725,10 +1636,15 @@ class ExperimentService:
             agents = sum(agent.enabled for agent in definition.agents)
             steps = definition.simulation.max_steps
             agent_steps = agents * steps
-            calls_low = max(0, round(agent_steps * 0.35))
-            calls_high = max(calls_low, round(agent_steps * 0.9))
-            token_low = calls_low * 300
-            token_high = calls_high * 1400
+            # A Brain iteration normally performs multiple logical calls: the
+            # Brain itself plus one or more child Skills/tool-result turns.  The
+            # old sub-one-call multiplier described the removed hard-coded
+            # pipeline and materially understated Skill-Brain runs.
+            quality_evaluator_calls = 1 if agent_steps else 0
+            calls_low = agent_steps * 2 + quality_evaluator_calls
+            calls_high = agent_steps * 6 + quality_evaluator_calls + (2 if agent_steps else 0)
+            token_low = calls_low * 1_200
+            token_high = calls_high * 8_000
             thresholds = []
             if agents >= 20:
                 thresholds.append("Agent count is at town scale")
@@ -1739,9 +1655,15 @@ class ExperimentService:
                     "Model payload capture increases storage and privacy exposure"
                 )
             return {
+                "estimate_version": 2,
                 "experiment_id": experiment_id,
                 "revision_id": revision.id,
-                "basis": "Skill-brain estimate based on enabled Agents and simulation steps",
+                "definition_hash": revision.definition_hash,
+                "lock_version": revision.lock_version,
+                "basis": (
+                    "Skill-Brain logical-call estimate: 2–6 model calls per "
+                    "Agent-step, plus one end-of-run quality evaluation"
+                ),
                 "scale": {
                     "execution_mode": "SKILL_BRAIN",
                     "brain_skill": definition.engine.brain_skill,
@@ -1754,7 +1676,7 @@ class ExperimentService:
                 "estimate": {
                     "model_calls": {"low": calls_low, "high": calls_high},
                     "tokens": {"low": token_low, "high": token_high},
-                    "wall_seconds": {"low": calls_low * 2, "high": calls_high * 15},
+                    "wall_seconds": {"low": calls_low * 2, "high": calls_high * 20},
                     "storage_bytes": {
                         "low": agent_steps * 500 + token_low * 2,
                         "high": agent_steps * 2_000 + token_high * 4,

@@ -98,6 +98,15 @@ def _issue(code: str, path: str, message: str, severity: Literal["ERROR", "WARNI
     )
 
 
+def _normalized_address(path, world_roots: set[str]) -> tuple[str, ...]:
+    if not isinstance(path, (list, tuple)):
+        return ()
+    parts = tuple(str(part).strip() for part in path if str(part).strip())
+    if parts and parts[0] in world_roots:
+        return parts[1:]
+    return parts
+
+
 def validate_for_publish(
     definition: ExperimentDefinition,
     *,
@@ -168,6 +177,7 @@ def validate_for_publish(
                 )
             )
             accessible: set[tuple[int, int]] = set()
+            tile_addresses: dict[tuple[int, int], list[str]] = {}
         else:
             accessible = {
                 tuple(tile["coord"])
@@ -176,6 +186,13 @@ def validate_for_publish(
                 and isinstance(tile.get("coord"), list)
                 and len(tile["coord"]) == 2
                 and not tile.get("collision", False)
+            }
+            tile_addresses = {
+                tuple(tile["coord"]): list(tile.get("address") or [])
+                for tile in tiles
+                if isinstance(tile, dict)
+                and isinstance(tile.get("coord"), list)
+                and len(tile["coord"]) == 2
             }
             if not accessible:
                 errors.append(
@@ -198,6 +215,29 @@ def validate_for_publish(
         for index, agent in enumerate(definition.agents):
             if not agent.enabled:
                 continue
+            # The bundled Ville renderer owns a stable package mapping for its
+            # resident keys. Every user-defined world relies on revision-owned
+            # Agent media instead, so missing media must be visible before a Run
+            # reaches Replay rather than surfacing there as a late warning.
+            if definition.world.world_key != "the-ville":
+                if not str(agent.portrait_asset or "").strip():
+                    warnings.append(
+                        _issue(
+                            "AGENT_PORTRAIT_ASSET_MISSING",
+                            f"agents.{index}.portrait_asset",
+                            f"Agent“{agent.name}”缺少头像，界面将使用姓名首字降级显示",
+                            "WARNING",
+                        )
+                    )
+                if not str(agent.sprite_asset or "").strip():
+                    warnings.append(
+                        _issue(
+                            "AGENT_SPRITE_ASSET_MISSING",
+                            f"agents.{index}.sprite_asset",
+                            f"Agent“{agent.name}”缺少行走图，回放无法渲染正式 Sprite",
+                            "WARNING",
+                        )
+                    )
             if not validate_legacy_agent_locations:
                 continue
             if tuple(agent.coord) not in accessible:
@@ -224,6 +264,41 @@ def validate_for_publish(
                         spatial_issue.code,
                         f"agents.{index}.spatial{suffix}",
                         f"Agent“{agent.name}”：{spatial_issue.message}",
+                        "ERROR",
+                    )
+                )
+            initial_address = (
+                agent.spatial.address.get("initial_location")
+                or agent.spatial.address.get("初始位置")
+            )
+            actual_address = tile_addresses.get(tuple(agent.coord))
+            if not initial_address:
+                warnings.append(
+                    _issue(
+                        "AGENT_INITIAL_ADDRESS_UNDECLARED",
+                        f"agents.{index}.spatial.address.initial_location",
+                        (
+                            f"Agent“{agent.name}”尚未声明结构化“初始位置”地址"
+                            + (
+                                f"；坐标当前指向“{' > '.join(actual_address)}”"
+                                if actual_address
+                                else ""
+                            )
+                        ),
+                        "WARNING",
+                    )
+                )
+            elif actual_address and _normalized_address(
+                initial_address, world_roots
+            ) != _normalized_address(actual_address, world_roots):
+                errors.append(
+                    _issue(
+                        "AGENT_INITIAL_ADDRESS_MISMATCH",
+                        f"agents.{index}.spatial.address.initial_location",
+                        (
+                            f"Agent“{agent.name}”声明的初始位置“{' > '.join(initial_address)}”"
+                            f"与坐标 {list(agent.coord)} 指向的“{' > '.join(actual_address)}”不一致"
+                        ),
                         "ERROR",
                     )
                 )

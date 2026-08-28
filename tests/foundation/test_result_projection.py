@@ -36,6 +36,7 @@ from generative_agents.runtime.results import (
     StepResultBuilder,
     deterministic_record_id,
 )
+from tests.support import publish_user_map
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.model_trace import (
     ModelTraceEvent,
@@ -51,14 +52,17 @@ from generative_agents.services.errors import ServiceError
 
 def _publish(service, definition: ExperimentDefinition):
     """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
+    map_revision = publish_user_map(service.database, world=definition.world)
     created = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
     )
     draft = service.get_draft(created["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = created["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
     draft = service.update_draft(
         experiment_id=created["id"],
         expected_lock_version=draft["lock_version"],
@@ -210,6 +214,7 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
         assert session.scalar(select(func.count()).select_from(RunStep)) == 1
         assert session.scalar(select(func.count()).select_from(RunConversation)) == 1
         assert session.scalar(select(func.count()).select_from(RunMessage)) == 2
+        assert session.get(RunResultSummary, run["run_id"]).conversation_count == 1
         assert session.scalar(select(func.count()).select_from(RunStepEffect)) == 3
         assert session.get(RunMemoryEvent, (run["run_id"], "a-agent", "memory-1")).state == "ACTIVE"
         edge = session.get(RunRelationshipEdge, (run["run_id"], "a-agent", "b-agent"))
@@ -271,6 +276,90 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
         raise AssertionError("another run's conversation leaked across the run boundary")
 
 
+def test_conversation_projection_appends_messages_to_one_cross_step_thread(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    var_dir = tmp_path / "var-thread"
+    run = RunService(database, var_dir=var_dir).create_from_published(
+        experiment["id"], revision["id"]
+    )
+    scheduler = LocalRunSchedulerRepository(database)
+    claimed = scheduler.claim_next()
+    assert scheduler.register_worker(claimed, pid=998, pid_create_time=1.0)
+    run_id = UUID(run["run_id"])
+    attempt_id = UUID(claimed.attempt_id)
+    conversation_id = deterministic_record_id(run_id, 1, "conversation", "thread")
+    projector = SqliteResultProjector(database, var_dir=var_dir)
+
+    for step_no, speaker, content in (
+        (1, "a-agent", "第一句话"),
+        (2, "b-agent", "第二句话"),
+    ):
+        virtual_time = datetime(
+            2026, 2, 13, 8, (step_no - 1) * 10, tzinfo=timezone.utc
+        )
+        builder = StepResultBuilder(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            step_no=step_no,
+            virtual_time=virtual_time,
+        )
+        for agent_key, x in (("a-agent", 0), ("b-agent", 1)):
+            builder.add_agent(
+                AgentStepResult(
+                    agent_key=agent_key,
+                    from_coord=(x, 0),
+                    to_coord=(x, 0),
+                    path=(),
+                    action=ActionSnapshot(description="说话"),
+                    activity_kind=ActivityKind.CHAT,
+                    location=("ville", "cafe"),
+                )
+            )
+        builder.add_conversation(
+            ConversationRecord(
+                conversation_id=conversation_id,
+                participant_agent_keys=("a-agent", "b-agent"),
+                location=("ville", "cafe"),
+                messages=(
+                    ConversationMessage(
+                        message_id=deterministic_record_id(
+                            run_id, step_no, "message", f"thread:{step_no}"
+                        ),
+                        sequence=step_no,
+                        speaker_agent_key=speaker,
+                        content=content,
+                    ),
+                ),
+                summary=content,
+                duration_minutes=10,
+            )
+        )
+        result = builder.freeze()
+        frame = FrameStore(RunPaths.under(var_dir, run_id)).write(result)
+        projector.commit_step(result, frame=frame, checkpoint_path=None)
+
+    with database.session_factory() as session:
+        conversation = session.get(RunConversation, str(conversation_id))
+        assert conversation.start_step == 1 and conversation.end_step == 2
+        assert conversation.message_count == 2
+        assert session.scalar(select(func.count()).select_from(RunConversation)) == 1
+        assert session.scalar(select(func.count()).select_from(RunMessage)) == 2
+        edge = session.get(
+            RunRelationshipEdge, (run["run_id"], "a-agent", "b-agent")
+        )
+        assert edge.conversation_count == 1 and edge.message_count == 2
+        assert session.get(
+            RunAgentSummary, (run["run_id"], "a-agent")
+        ).conversation_count == 1
+
+    detail = ResultQueryService(database).conversation(
+        run["run_id"], str(conversation_id)
+    )
+    assert [message["sequence"] for message in detail["messages"]] == [1, 2]
+
+
 def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
     service, database, publishable_definition, tmp_path
 ):
@@ -296,6 +385,25 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
         (1, ModelTraceStatus.FAILED),
         (2, ModelTraceStatus.SUCCEEDED),
     ):
+        writer.append(
+            ModelTraceEvent(
+                event_type=ModelTraceEventType.PHYSICAL_START,
+                run_id=run_id,
+                attempt_id=attempt_id,
+                call_id=call_id,
+                step_no=None,
+                agent_key="a-agent",
+                purpose="chat",
+                prompt_key="generate_chat",
+                provider="vllm",
+                resolved_model="test-model",
+                started_at=at,
+                ended_at=at,
+                latency_ms=0,
+                attempt_no=physical_attempt,
+                status=ModelTraceStatus.RUNNING,
+            )
+        )
         writer.append(
             ModelTraceEvent(
                 event_type=ModelTraceEventType.PHYSICAL_ATTEMPT,
@@ -372,10 +480,10 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
 
     assert projector.project(
         run_id=run["run_id"], attempt_id=claimed.attempt_id, relative_path=relative
-    ) == 3
+    ) == 5
     assert projector.project(
         run_id=run["run_id"], attempt_id=claimed.attempt_id, relative_path=relative
-    ) == 3
+    ) == 5
     with database.session_factory() as session:
         usage = session.get(
             RunModelUsage, (run["run_id"], "chat", "vllm", "test-model")
