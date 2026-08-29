@@ -147,6 +147,28 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
         assert wrong_kind.json()["error"]["code"] == "BRAIN_SKILL_KIND_REQUIRED"
 
 
+def test_experiment_and_saved_view_have_real_delete_lifecycle(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        experiment = _create(client, "可删除实验")
+        saved_view = client.post(
+            "/api/v1/experiment-saved-views",
+            json={"name": "临时视图", "query": {"q": "可删除"}},
+        ).json()
+
+        deleted_experiment = client.delete(f"/api/v1/experiments/{experiment['id']}")
+        deleted_view = client.delete(
+            f"/api/v1/experiment-saved-views/{saved_view['id']}"
+        )
+        missing_experiment = client.get(f"/api/v1/experiments/{experiment['id']}")
+        views = client.get("/api/v1/experiment-saved-views").json()["items"]
+
+    assert deleted_experiment.status_code == 204
+    assert deleted_view.status_code == 204
+    assert missing_experiment.status_code == 404
+    assert saved_view["id"] not in {item["id"] for item in views}
+
+
 def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_url):
     """回归验证 ``test_blank_publish_is_blocked_and_blank_map_is_fully_initialized`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)

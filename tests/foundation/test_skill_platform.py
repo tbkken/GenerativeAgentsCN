@@ -328,6 +328,8 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
         restored = client.post(
             "/api/v1/skills/user-runtime-skill/restore"
         )
+        deleted = client.delete("/api/v1/skills/user-runtime-skill")
+        missing_after_delete = client.get("/api/v1/skills/user-runtime-skill")
 
     assert first["storage"] == "database"
     assert first["revision_no"] == 1
@@ -340,6 +342,8 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
     assert hidden.status_code == 404
     assert visible_in_archive[0]["archived_at"] is not None
     assert restored.status_code == 200
+    assert deleted.status_code == 204
+    assert missing_after_delete.status_code == 404
     assert source_path.exists() is False
 
 

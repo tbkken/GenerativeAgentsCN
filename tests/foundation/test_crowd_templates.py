@@ -102,7 +102,6 @@ def test_user_agent_and_crowd_support_archive_restore_and_delete(database_url):
         crowd_archived = client.post(f"/api/v1/crowds/{crowd['id']}/archive")
         crowd_hidden = client.get("/api/v1/crowds?archived=active&page_size=100").json()
         crowd_restored = client.post(f"/api/v1/crowds/{crowd['id']}/restore")
-        client.post(f"/api/v1/crowds/{crowd['id']}/archive")
         crowd_deleted = client.delete(f"/api/v1/crowds/{crowd['id']}")
 
         agent_archived = client.post(
@@ -114,7 +113,6 @@ def test_user_agent_and_crowd_support_archive_restore_and_delete(database_url):
         agent_restored = client.post(
             f"/api/v1/agent-templates/{agent['id']}/restore"
         )
-        client.post(f"/api/v1/agent-templates/{agent['id']}/archive")
         agent_deleted = client.delete(f"/api/v1/agent-templates/{agent['id']}")
 
     assert crowd_archived.status_code == 200
