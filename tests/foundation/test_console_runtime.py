@@ -96,6 +96,19 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     )
 
 
+def test_console_experiment_list_replaces_loading_state_when_request_fails():
+    """列表请求失败必须显示可重试错误态，不能永久停留在“正在加载”。"""
+    root = Path(__file__).resolve().parents[2]
+    script = (
+        root / "generative_agents" / "web" / "static" / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    assert "实验列表加载失败" in script
+    assert 'id="retryExperimentList"' in script
+    assert "list.removeAttribute('aria-busy')" in script
+    assert "reportError(error)" in script
+
+
 def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
     """回归验证 ``test_map_editor_identity_and_publish_actions_share_the_global_topbar`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]

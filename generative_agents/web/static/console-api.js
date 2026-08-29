@@ -890,15 +890,7 @@
       sort: state.sort, ownerFilter: state.ownerFilter, tagFilter: state.tagFilter,
       modelFilter: state.modelFilter, mapFilter: state.mapFilter, archiveFilter: state.archiveFilter,
     };
-    const params = new URLSearchParams({ page: state.page, page_size: state.pageSize, sort: state.sort, archived: state.archiveFilter });
-    if (state.query) params.set('q', state.query);
-    if (state.status) params.set('status', state.status);
-    if (state.ownerFilter) params.set('owner', state.ownerFilter);
-    if (state.tagFilter) params.set('tag', state.tagFilter);
-    if (state.modelFilter) params.set('model', state.modelFilter);
-    if (state.mapFilter) params.set('map_key', state.mapFilter);
-    const data = await api(`/experiments?${params}`);
-    if (generation !== state.experimentListGeneration
+    const isStale = () => generation !== state.experimentListGeneration
       || requestState.page !== state.page
       || requestState.pageSize !== state.pageSize
       || requestState.status !== state.status
@@ -908,14 +900,41 @@
       || requestState.tagFilter !== state.tagFilter
       || requestState.modelFilter !== state.modelFilter
       || requestState.mapFilter !== state.mapFilter
-      || requestState.archiveFilter !== state.archiveFilter) return;
+      || requestState.archiveFilter !== state.archiveFilter;
+    const params = new URLSearchParams({ page: state.page, page_size: state.pageSize, sort: state.sort, archived: state.archiveFilter });
+    if (state.query) params.set('q', state.query);
+    if (state.status) params.set('status', state.status);
+    if (state.ownerFilter) params.set('owner', state.ownerFilter);
+    if (state.tagFilter) params.set('tag', state.tagFilter);
+    if (state.modelFilter) params.set('model', state.modelFilter);
+    if (state.mapFilter) params.set('map_key', state.mapFilter);
+    const list = $('experimentList');
+    list.setAttribute('aria-busy', 'true');
+    let data;
+    try {
+      data = await api(`/experiments?${params}`);
+    } catch (error) {
+      if (isStale()) return;
+      state.visibleExperimentIds = [];
+      list.innerHTML = `<div class="empty-state experiment-list-error" role="alert"><span class="empty-state-icon">!</span><strong>实验列表加载失败</strong><span>${escapeHtml(error.message || '系统服务没有返回可用的实验列表。')}</span><button class="btn btn-sm" id="retryExperimentList" type="button">重新加载</button></div>`;
+      list.removeAttribute('aria-busy');
+      $('experimentEmpty').hidden = true;
+      $('experimentListFooter').hidden = true;
+      updateTabCounts({ ALL: 0, RUNNING: 0, QUEUED: 0, DRAFT: 0, PAUSED: 0, COMPLETED: 0, FAILED: 0, CANCELLED: 0 });
+      updateExperimentSelectionControls();
+      list.querySelector('#retryExperimentList').addEventListener('click', () => loadExperiments());
+      reportError(error);
+      return;
+    }
+    if (isStale()) return;
+    list.removeAttribute('aria-busy');
     const lastPage = Math.max(1, data.total_pages || 1);
     if (state.page > lastPage) {
       state.page = lastPage;
       await loadExperiments();
       return;
     }
-    $('experimentList').innerHTML = data.items.map(cardTemplate).join('');
+    list.innerHTML = data.items.map(cardTemplate).join('');
     state.visibleExperimentIds = data.items.map(item => item.id);
     $('experimentList').classList.toggle('compact-view', state.listView === 'compact');
     $('experimentEmpty').hidden = data.total !== 0;
