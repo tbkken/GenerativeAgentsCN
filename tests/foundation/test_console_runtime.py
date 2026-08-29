@@ -596,12 +596,22 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     assert "deleteExperimentById" in console
     assert "deleteCurrentRun" in console
     assert "deleteSelectedSavedView" in console
+    assert 'class="experiment-delete-button"' in console
+    assert ">删除实验</button>" in console
     assert "async deleteMap" in maps
+    assert ">删除地图</button>" in maps
     assert "data-retry-map-list" in maps
     assert "async deleteCrowd" in crowds
+    assert ">删除人群</button>" in crowds
+    assert "byId('deleteCrowdBtn').hidden = false" in crowds
     assert "async deleteAgent" in crowds
     assert "async function deleteSkill" in skills
+    assert "删除大脑" in skills
+    assert "删除技能" in skills
+    assert "$('skillDelete').hidden = false" in skills
     assert "async deleteAsset" in assets
+    assert ">删除资产</button>" in assets
+    assert "this.$('deleteSpatialAsset').hidden = false" in assets
 
 
 def test_running_duration_uses_utc_instants_and_a_live_execution_label():

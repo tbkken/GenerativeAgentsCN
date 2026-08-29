@@ -149,6 +149,26 @@ def test_builtin_public_agents_and_crowd_are_seeded(database_url):
         assert builtin["current_published"]["state"] == "PUBLISHED"
 
 
+def test_seeded_crowd_can_be_deleted_and_is_not_recreated(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        builtin = next(
+            item
+            for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
+            if item["is_builtin"]
+        )
+        deleted = client.delete(f"/api/v1/crowds/{builtin['id']}")
+        assert deleted.status_code == 204, deleted.text
+
+    restarted = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(restarted) as client:
+        keys = {
+            item["crowd_key"]
+            for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
+        }
+    assert "stanford-town-residents" not in keys
+
+
 def test_agent_name_is_globally_unique_after_normalization(database_url):
     """回归验证 ``test_agent_name_is_globally_unique_after_normalization`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)

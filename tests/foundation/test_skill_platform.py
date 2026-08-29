@@ -279,6 +279,21 @@ def test_skill_api_starts_on_clean_database(tmp_path):
     assert created.json()["error"]["code"] == "REQUEST_VALIDATION_FAILED"
 
 
+def test_seeded_brain_can_be_deleted_and_is_not_recreated(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        brain = client.get("/api/v1/skills/stanford-town-brain")
+        assert brain.status_code == 200
+        assert brain.json()["is_builtin"] is True
+        deleted = client.delete("/api/v1/skills/stanford-town-brain")
+        assert deleted.status_code == 204, deleted.text
+
+    restarted = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(restarted) as client:
+        missing = client.get("/api/v1/skills/stanford-town-brain")
+    assert missing.status_code == 404
+
+
 def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_path):
     database_path = tmp_path / "app.db"
     app = create_app(

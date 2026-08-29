@@ -187,6 +187,23 @@ def test_published_revision_is_immutable_at_database_layer(
             session.delete(revision)
 
 
+def test_experiment_service_can_delete_the_whole_published_resource_tree(
+    service, publishable_definition
+):
+    created, draft = _create_publishable(service, publishable_definition)
+    service.publish_draft(
+        experiment_id=created["id"],
+        draft_revision_id=draft["id"],
+        expected_lock_version=draft["lock_version"],
+    )
+
+    service.delete_experiment(created["id"])
+
+    with pytest.raises(ServiceError) as exc:
+        service.get_experiment(created["id"])
+    assert exc.value.code == "EXPERIMENT_NOT_FOUND"
+
+
 def test_fork_published_revision_is_a_deep_independent_draft(
     service, database, publishable_definition
 ):
