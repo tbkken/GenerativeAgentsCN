@@ -576,6 +576,7 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     static = root / "generative_agents" / "web" / "static"
     shell = (static / "experiment-console.html").read_text(encoding="utf-8")
     console = (static / "console-api.js").read_text(encoding="utf-8")
+    ux = (static / "console-ux.css").read_text(encoding="utf-8")
     maps = (static / "map-workspace.js").read_text(encoding="utf-8")
     crowds = (static / "crowd-workspace.js").read_text(encoding="utf-8")
     skills = (static / "skill-workspace.js").read_text(encoding="utf-8")
@@ -597,12 +598,12 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     assert "deleteCurrentRun" in console
     assert "deleteSelectedSavedView" in console
     assert 'class="experiment-delete-button"' in console
-    assert ">删除实验</button>" in console
+    assert 'aria-label="删除实验"' in console
     assert "async deleteMap" in maps
-    assert ">删除地图</button>" in maps
+    assert 'aria-label="删除地图"' in maps
     assert "data-retry-map-list" in maps
     assert "async deleteCrowd" in crowds
-    assert ">删除人群</button>" in crowds
+    assert 'aria-label="删除人群"' in crowds
     assert "byId('deleteCrowdBtn').hidden = false" in crowds
     assert "async deleteAgent" in crowds
     assert "async function deleteSkill" in skills
@@ -610,8 +611,12 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     assert "删除技能" in skills
     assert "$('skillDelete').hidden = false" in skills
     assert "async deleteAsset" in assets
-    assert ">删除资产</button>" in assets
+    assert 'aria-label="删除资产"' in assets
     assert "this.$('deleteSpatialAsset').hidden = false" in assets
+    assert ".resource-card-shell>.resource-card-delete{" in ux
+    assert "border:0;background:transparent;color:#9b746d" in ux
+    assert "font-size:9px;font-weight:560" in ux
+    assert ".experiment-card-actions>.experiment-delete-button{min-height:0;padding:0;border:0;background:transparent" in ux
 
 
 def test_running_duration_uses_utc_instants_and_a_live_execution_label():

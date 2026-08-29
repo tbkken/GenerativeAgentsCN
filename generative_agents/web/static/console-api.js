@@ -908,7 +908,7 @@
           <div><div class="run-head"><span>${runTitle}</span><code>${escapeHtml(runCode)}</code></div><div class="run-value"><strong>${escapeHtml(runValue)}</strong><span>${escapeHtml(runDetail)}</span></div><div class="run-progress ${item.status === 'PAUSED' ? 'paused' : item.status === 'COMPLETED' ? 'completed' : ''}"><i style="width:${percent}%"></i></div></div>
           <div class="run-foot"><span>${updatedAtMarkup} · ${item.run_count || 0} 次运行</span><button class="run-cta ${run ? 'api-open-results' : 'api-open-experiment'}">${run ? '查看运行' : '继续配置'}</button></div>
         </div>
-        <div class="experiment-card-actions"><button class="experiment-delete-button" type="button">删除实验</button><button class="experiment-menu" aria-label="更多实验操作">⋯</button></div>
+        <div class="experiment-card-actions"><button class="experiment-delete-button" type="button" aria-label="删除实验" title="删除实验">删除</button><button class="experiment-menu" aria-label="更多实验操作">⋯</button></div>
       </article>`;
   }
 

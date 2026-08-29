@@ -150,7 +150,7 @@
           <span class="crowd-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span>${item.is_builtin ? '<b class="crowd-builtin">系统人群</b>' : `<code>${this.escape(item.crowd_key)}</code>`}</span>
           <h2>${this.escape(item.name)}</h2><p>${this.escape(item.description || '暂无用途说明')}</p>
           <span class="crowd-card-foot"><span><strong>${item.agent_count}</strong> 个 Agent</span><span>${item.usage_count} 个实验使用</span></span>
-        </button><button class="resource-card-delete" type="button" data-delete-crowd-id="${item.id}" data-delete-crowd-name="${this.escape(item.name)}">删除人群</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
+        </button><button class="resource-card-delete" type="button" aria-label="删除人群" title="删除人群" data-delete-crowd-id="${item.id}" data-delete-crowd-name="${this.escape(item.name)}">删除</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
       grid.querySelectorAll('[data-crowd-id]').forEach(card => card.addEventListener('click', () => this.openCrowd(card.dataset.crowdId).catch(error => this.fail(error))));
       grid.querySelectorAll('[data-delete-crowd-id]').forEach(button => button.addEventListener('click', () => this.deleteCrowd(button.dataset.deleteCrowdId, button.dataset.deleteCrowdName).catch(error => this.fail(error))));
       const footer = byId('crowdListFooter');

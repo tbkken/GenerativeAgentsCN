@@ -133,7 +133,7 @@
       <p>${escapeHtml(item.description)}</p>
       ${flow ? `<span class="skill-card-flow-real">${flow}</span>` : ''}
       <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'database' ? `DB Revision #${item.revision_no || 1}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
-    </button><button class="resource-card-delete" type="button" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}" data-delete-skill-kind="${escapeHtml(item.kind)}">${deleteLabel}</button></article>`;
+    </button><button class="resource-card-delete" type="button" aria-label="${deleteLabel}" title="${deleteLabel}" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}" data-delete-skill-kind="${escapeHtml(item.kind)}">删除</button></article>`;
   }
 
   async function openSkill(name) {
