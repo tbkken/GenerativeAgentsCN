@@ -142,6 +142,7 @@
     modalReturnFocus: null,
     pendingResumeRunId: null,
     pendingResumeStep: 0,
+    pendingResourceDelete: null,
     workspacePage: 'experiments',
     remoteConflictKey: null,
     draftMutation: Promise.resolve(),
@@ -567,6 +568,11 @@
     if (!modal) return;
     if (id === 'agentEditorModal') releaseAgentImageObjectUrls();
     modal.classList.remove('open');
+    if (id === 'resourceDeleteModal' && state.pendingResourceDelete) {
+      const pending = state.pendingResourceDelete;
+      state.pendingResourceDelete = null;
+      pending.resolve(false);
+    }
     if (state.activeModalId !== id) return;
     state.activeModalId = null;
     const returnFocus = state.modalReturnFocus;
@@ -576,6 +582,30 @@
       requestAnimationFrame(() => returnFocus.focus({ preventScroll: true }));
     }
   }
+
+  function confirmResourceDeletion({ type = '资源', name = '当前资源', message = '' } = {}) {
+    if (state.pendingResourceDelete) {
+      state.pendingResourceDelete.resolve(false);
+      state.pendingResourceDelete = null;
+    }
+    $('resourceDeleteTitle').textContent = `删除${type}`;
+    $('resourceDeleteName').textContent = name;
+    $('resourceDeleteMessage').textContent = message || '删除后将从数据库移除；被不可变 Revision 引用时，系统会拒绝操作。';
+    return new Promise(resolve => {
+      state.pendingResourceDelete = { resolve };
+      openModal('resourceDeleteModal', 'cancelResourceDelete');
+    });
+  }
+
+  function settleResourceDeletion(confirmed) {
+    const pending = state.pendingResourceDelete;
+    if (!pending) return;
+    state.pendingResourceDelete = null;
+    closeModal('resourceDeleteModal');
+    pending.resolve(Boolean(confirmed));
+  }
+
+  window.confirmResourceDeletion = confirmResourceDeletion;
 
   function handleModalKeydown(event, modal) {
     if (event.key === 'Escape') {
@@ -1926,14 +1956,16 @@
   function renderRunActions(run) {
     const pauseResume = $('runPauseResumeBtn');
     const cancel = $('runCancelBtn');
+    const remove = $('deleteRunBtn');
     const continueRun = $('runContinueBtn');
     const canContinue = isRunRecoverable(run);
     pauseResume.hidden = run.status !== 'RUNNING';
     pauseResume.textContent = '暂停运行';
     cancel.hidden = !['QUEUED', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED'].includes(run.status);
+    remove.hidden = ['QUEUED', 'STARTING', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED', 'CANCEL_REQUESTED'].includes(run.status);
     continueRun.hidden = !canContinue;
     continueRun.textContent = canContinue ? `继续执行 · Step ${run.recoverable_step}` : '继续执行';
-    $('resultRunControls').hidden = state.workspacePage !== 'results' || (pauseResume.hidden && cancel.hidden);
+    $('resultRunControls').hidden = state.workspacePage !== 'results' || (pauseResume.hidden && cancel.hidden && remove.hidden);
   }
 
   function renderAgents(items, { silent = false } = {}) {
@@ -3870,7 +3902,57 @@
 
   async function loadSavedViews() {
     const document = await api('/experiment-saved-views');
-    $('savedExperimentViews').innerHTML = '<option value="">已保存视图</option>' + document.items.map(item => `<option value="${escapeHtml(item.share_key)}">${escapeHtml(item.name)}</option>`).join('');
+    $('savedExperimentViews').innerHTML = '<option value="">已保存视图</option>' + document.items.map(item => `<option value="${escapeHtml(item.share_key)}" data-view-id="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join('');
+    $('deleteSavedExperimentView').disabled = true;
+  }
+
+  async function deleteExperimentById(experimentId, name) {
+    const confirmed = await confirmResourceDeletion({
+      type: '实验', name,
+      message: '实验草稿、发布 Revision 和配置将被删除。若仍有 Run，请先在“实验结果”中删除 Run。',
+    });
+    if (!confirmed) return;
+    await api(`/experiments/${encodeURIComponent(experimentId)}`, { method: 'DELETE' });
+    state.selectedExperimentIds.delete(experimentId);
+    if (state.selectedExperimentId === experimentId) {
+      resetResultRuntime();
+      state.selectedExperimentId = null;
+      state.experiment = null;
+      state.draft = null;
+      state.revision = null;
+      state.definition = null;
+      goToPage('experiments');
+    }
+    await loadExperiments();
+    showToast(`实验“${name}”已删除。`, '删除完成');
+  }
+
+  async function deleteCurrentRun() {
+    const run = state.currentRun || state.runHistory.find(item => item.run_id === state.selectedRunId);
+    if (!run) throw new Error('当前没有可删除的 Run');
+    const confirmed = await confirmResourceDeletion({
+      type: 'Run', name: `Run ${run.run_id.slice(0, 12)}`,
+      message: '运行事实、检查点、回放与制品记录将被删除；运行目录会移动到本机可恢复回收站。活动 Run 必须先取消。',
+    });
+    if (!confirmed) return;
+    const experimentId = state.selectedExperimentId;
+    await api(`/runs/${encodeURIComponent(run.run_id)}`, { method: 'DELETE' });
+    resetResultRuntime();
+    await openExperiment(String(experimentId), 'results');
+    showToast('Run 已删除，关联文件已移入可恢复回收站。', '删除完成');
+  }
+
+  async function deleteSelectedSavedView() {
+    const select = $('savedExperimentViews');
+    const option = select.selectedOptions?.[0];
+    const viewId = option?.dataset.viewId;
+    if (!viewId) return;
+    const name = option.textContent || '已保存视图';
+    const confirmed = await confirmResourceDeletion({ type: '已保存视图', name, message: '只删除这份筛选与排序配置，不影响任何实验。' });
+    if (!confirmed) return;
+    await api(`/experiment-saved-views/${encodeURIComponent(viewId)}`, { method: 'DELETE' });
+    await loadSavedViews();
+    showToast(`视图“${name}”已删除。`, '删除完成');
   }
 
   async function compareSelectedExperiments() {
@@ -4091,6 +4173,8 @@
   });
   $('closeModal').addEventListener('click', () => closeModal('publishModal'));
   $('cancelModal').addEventListener('click', () => closeModal('publishModal'));
+  [$('closeResourceDelete'), $('cancelResourceDelete')].forEach(button => button.addEventListener('click', () => settleResourceDeletion(false)));
+  $('confirmResourceDelete').addEventListener('click', () => settleResourceDeletion(true));
   [$('closeResumeRun'), $('cancelResumeRun')].forEach(button => button.addEventListener('click', () => closeModal('resumeRunModal')));
   [$('closeLeaveModal'), $('cancelLeave')].forEach(button => button.addEventListener('click', () => closeModal('leaveModal')));
   $('saveAndLeave').addEventListener('click', () => {
@@ -4157,11 +4241,14 @@
   }, true);
 
   let contextExperimentId = null;
+  let contextExperimentName = '';
   $('experimentList').addEventListener('click', event => {
     const menu = event.target.closest('.experiment-menu');
     if (!menu) return;
     event.stopPropagation();
-    contextExperimentId = menu.closest('.experiment-card')?.dataset.id || null;
+    const card = menu.closest('.experiment-card');
+    contextExperimentId = card?.dataset.id || null;
+    contextExperimentName = card?.querySelector('.experiment-link')?.textContent?.trim() || '当前实验';
     const contextMenu = $('experimentContextMenu');
     const archived = menu.closest('.experiment-card')?.dataset.archived === 'true';
     contextMenu.querySelector('[data-context-action="archive"]').hidden = archived;
@@ -4181,6 +4268,7 @@
       api(`/experiments/${contextExperimentId}/${action}`, { method: 'POST', body: '{}' })
         .then(() => loadExperiments()).catch(reportError);
     }
+    else if (action === 'delete') deleteExperimentById(contextExperimentId, contextExperimentName).catch(reportError);
   }, true);
   document.addEventListener('click', event => {
     if (!event.target.closest('#experimentContextMenu, .experiment-menu')) $('experimentContextMenu').hidden = true;
@@ -4276,12 +4364,14 @@
     }).catch(reportError);
   });
   $('savedExperimentViews').addEventListener('change', event => {
+    $('deleteSavedExperimentView').disabled = !event.target.value;
     if (!event.target.value) return;
     api(`/experiment-saved-views/shared/${encodeURIComponent(event.target.value)}`).then(saved => {
       applyListViewDocument(saved.query);
       return loadExperiments();
     }).catch(reportError);
   });
+  $('deleteSavedExperimentView').addEventListener('click', () => deleteSelectedSavedView().catch(reportError));
   [$('closeCompareExperiments'), $('closeComparisonDone')].forEach(button => button.addEventListener('click', () => closeModal('compareExperimentsModal')));
   $('saveComparisonGroup').addEventListener('click', () => {
     const name = $('comparisonGroupName').value.trim();
@@ -4320,6 +4410,9 @@
       loadRunHistory(state.selectedExperimentId, state.selectedRunId || state.latestRunId).catch(reportError);
     }
   }, true);
+  $('deleteExperimentBtn').addEventListener('click', () => {
+    if (state.selectedExperimentId) deleteExperimentById(state.selectedExperimentId, state.currentExperimentName || '当前实验').catch(reportError);
+  });
   $('saveExperimentMetadata')?.addEventListener('click', () => {
     saveExperimentMetadata().catch(reportError);
   });
@@ -4786,6 +4879,10 @@
   $('runCancelBtn').addEventListener('click', event => {
     event.stopImmediatePropagation();
     controlRun('cancel').catch(reportError);
+  }, true);
+  $('deleteRunBtn').addEventListener('click', event => {
+    event.stopImmediatePropagation();
+    deleteCurrentRun().catch(reportError);
   }, true);
   $('runContinueBtn').addEventListener('click', event => {
     event.stopImmediatePropagation();

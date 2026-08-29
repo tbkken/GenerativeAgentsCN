@@ -497,12 +497,6 @@ class RunService:
                 raise ServiceError(
                     "RUN_ACTIVE", "活动 Run 不能删除", status_code=409
                 )
-            if run.archived_at is None:
-                raise ServiceError(
-                    "RUN_NOT_ARCHIVED",
-                    "请先归档 Run，再执行彻底删除",
-                    status_code=409,
-                )
         if source.exists():
             trash_root = (var_root / "trash" / "runs").resolve()
             try:

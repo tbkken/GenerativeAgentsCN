@@ -743,6 +743,11 @@ def create_app(
         """
         return spatial_asset_service.get_asset(asset_id)
 
+    @app.delete("/api/v1/spatial-assets/{asset_id}", status_code=204)
+    def delete_spatial_asset(asset_id: str):
+        spatial_asset_service.delete_asset(asset_id)
+        return Response(status_code=204)
+
     @app.get("/api/v1/spatial-assets/{asset_id}/draft")
     def get_spatial_asset_draft(asset_id: str):
         """获取空间数据资源`draft`。
@@ -1658,6 +1663,11 @@ def create_app(
             experiment_id, archived=False, expected_row_version=body.row_version
         )
 
+    @app.delete("/api/v1/experiments/{experiment_id}", status_code=204)
+    def delete_experiment(experiment_id: str):
+        service.delete_experiment(experiment_id)
+        return Response(status_code=204)
+
     @app.post("/api/v1/experiments/batch")
     def batch_experiments(body: BatchExperimentRequest):
         """执行 的`batch``experiments`操作。
@@ -1708,6 +1718,11 @@ def create_app(
         """
         return {"items": service.list_comparison_groups()}
 
+    @app.delete("/api/v1/experiment-comparison-groups/{group_id}", status_code=204)
+    def delete_comparison_group(group_id: str):
+        service.delete_comparison_group(group_id)
+        return Response(status_code=204)
+
     @app.post("/api/v1/experiment-saved-views", status_code=201)
     def create_saved_view(body: SavedViewRequest):
         """创建`saved``view`。
@@ -1728,6 +1743,11 @@ def create_app(
             返回函数计算得到的结果。
         """
         return {"items": service.list_views()}
+
+    @app.delete("/api/v1/experiment-saved-views/{view_id}", status_code=204)
+    def delete_saved_view(view_id: str):
+        service.delete_view(view_id)
+        return Response(status_code=204)
 
     @app.get("/api/v1/experiment-saved-views/shared/{share_key}")
     def get_shared_view(share_key: str):

@@ -67,7 +67,6 @@ def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
         active = client.get("/api/v1/maps?archived=active").json()
         archive_page = client.get("/api/v1/maps?archived=archived").json()
         restored = client.post(f"/api/v1/maps/{created['id']}/restore")
-        client.post(f"/api/v1/maps/{created['id']}/archive")
         deleted = client.delete(f"/api/v1/maps/{created['id']}")
         missing = client.get(f"/api/v1/maps/{created['id']}")
 

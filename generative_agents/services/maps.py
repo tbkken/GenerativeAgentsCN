@@ -1696,21 +1696,20 @@ class WorldMapService:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
                 raise not_found("map", map_id)
-            if public_map.archived_at is None:
-                raise ServiceError(
-                    "MAP_NOT_ARCHIVED",
-                    "请先归档地图，再执行彻底删除",
-                    status_code=409,
-                )
             if self._usage_experiment_ids(session, map_id):
                 raise ServiceError(
                     "MAP_IN_USE",
-                    "地图仍被实验修订引用，只能保持归档",
+                    "地图仍被实验 Revision 引用；请先删除引用它的实验",
                     status_code=409,
                 )
             public_map.current_draft_revision_id = None
             public_map.current_published_revision_id = None
             session.flush()
+            session.execute(
+                update(WorldMapRevision)
+                .where(WorldMapRevision.map_id == map_id)
+                .values(base_revision_id=None)
+            )
             session.execute(
                 delete(WorldMapRevision).where(WorldMapRevision.map_id == map_id)
             )

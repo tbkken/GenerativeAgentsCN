@@ -75,6 +75,7 @@
       document.getElementById('backToMapsBtn').addEventListener('click', () => this.showCatalog().catch(error => this.fail(error)));
       document.getElementById('saveMapBtn').addEventListener('click', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
       document.getElementById('publishMapBtn').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
+      document.getElementById('deleteMapBtn').addEventListener('click', () => this.deleteMap(this.selectedMapId, this.detail?.name).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:change', () => this.handlePublicEditorChange());
       publicEditorRoot.addEventListener('map-editor-v2:request-edit', event => this.handlePublicEditorEditRequest(event).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:apply-blueprint-step', () => this.applyBlueprintStep().catch(error => this.fail(error)));
@@ -126,32 +127,69 @@
       this.init();
       const generation = ++this.listGeneration;
       const requestState = { status: this.status, query: this.query };
+      const grid = document.getElementById('mapCatalogGrid');
+      grid.setAttribute('aria-busy', 'true');
       const params = new URLSearchParams({ page: '1', page_size: '100' });
       if (this.query) params.set('q', this.query);
       if (this.status) params.set('status', this.status);
       const selectorParams = new URLSearchParams({ page: '1', page_size: '100' });
-      const [result, selectorResult] = await Promise.all([
-        request(`/maps?${params}`),
-        request(`/maps?${selectorParams}`),
-      ]);
+      let result;
+      let selectorResult;
+      try {
+        [result, selectorResult] = await Promise.all([
+          request(`/maps?${params}`),
+          request(`/maps?${selectorParams}`),
+        ]);
+      } catch (error) {
+        if (generation !== this.listGeneration) return;
+        grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>地图列表加载失败</strong><span>${escapeHtml(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-map-list>重新加载</button></div>`;
+        grid.querySelector('[data-retry-map-list]')?.addEventListener('click', () => this.loadMaps().catch(nextError => this.fail(nextError)));
+        document.getElementById('mapListFooter').hidden = true;
+        this.updateMapStatusCounts({});
+        throw error;
+      } finally {
+        if (generation === this.listGeneration) grid.removeAttribute('aria-busy');
+      }
       if (generation !== this.listGeneration
         || requestState.status !== this.status
         || requestState.query !== this.query) return;
       this.maps = result.items;
       this.selectorMaps = selectorResult.items;
-      const grid = document.getElementById('mapCatalogGrid');
       grid.innerHTML = this.maps.length ? this.maps.map(item => `
-        <button class="map-card" data-map-id="${item.id}">
+        <article class="resource-card-shell"><button class="map-card" data-map-id="${item.id}">
           <span class="map-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span><code>${escapeHtml(item.map_key)}</code></span>
           <h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.description || '暂无用途说明')}</p>
           <span class="map-card-foot"><span>${item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]}` : '待设置尺寸'}</span><span>${item.usage_count} 个实验使用</span></span>
-        </button>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
+        </button><button class="resource-card-delete" type="button" data-delete-map-id="${item.id}" data-delete-map-name="${escapeHtml(item.name)}">删除</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
       grid.querySelectorAll('[data-map-id]').forEach(card => card.addEventListener('click', () => this.openMap(card.dataset.mapId).catch(error => this.fail(error))));
+      grid.querySelectorAll('[data-delete-map-id]').forEach(button => button.addEventListener('click', () => this.deleteMap(button.dataset.deleteMapId, button.dataset.deleteMapName).catch(error => this.fail(error))));
       const footer = document.getElementById('mapListFooter');
       footer.hidden = result.total === 0;
       if (result.total) document.getElementById('mapCatalogCount').textContent = `共 ${result.total} 张地图`;
       this.updateMapStatusCounts(result.status_counts || {});
       this.populateMapSelectors();
+    },
+
+    async deleteMap(mapId, name = '当前地图') {
+      if (!mapId) return;
+      const confirmed = window.confirmResourceDeletion
+        ? await window.confirmResourceDeletion({ type: '地图', name, message: '地图及其全部草稿和发布 Revision 将被删除。仍被实验 Revision 引用时，系统会拒绝操作。' })
+        : window.confirm(`确认删除地图“${name}”？`);
+      if (!confirmed) return;
+      await request(`/maps/${encodeURIComponent(mapId)}`, { method: 'DELETE' });
+      this.clearLocalRecovery(mapId, this.draft?.id);
+      if (this.selectedMapId === mapId) {
+        this.cancelScheduledSaves();
+        this.selectedMapId = null;
+        this.detail = null;
+        this.draft = null;
+        document.getElementById('mapCatalogShell').hidden = false;
+        document.getElementById('mapEditorShell').hidden = true;
+        window.dispatchEvent(new CustomEvent('map-workspace:selection', { detail: { mapId: null } }));
+        this.replaceMapUrl(null);
+      }
+      await this.loadMaps();
+      notify(`地图“${name}”已删除。`, '删除完成');
     },
 
     updateMapStatusCounts(counts) {

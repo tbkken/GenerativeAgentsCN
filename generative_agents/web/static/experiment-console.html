@@ -1071,10 +1071,10 @@
       .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
     }
   </style>
-  <link rel="stylesheet" href="/static/console/crowd-workspace.css?v=20260823b" />
+  <link rel="stylesheet" href="/static/console/crowd-workspace.css?v=20260829c" />
   <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260829b" />
   <link rel="stylesheet" href="/static/console/skill-workspace.css?v=20260829a" />
-  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260829a" />
+  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260829b" />
 </head>
 <body class="hub-mode">
   <div class="app-shell">
@@ -1172,22 +1172,27 @@
             <div class="result-run-controls" id="resultRunControls" hidden>
               <button class="btn" id="runPauseResumeBtn" hidden>暂停运行</button>
               <button class="btn" id="runCancelBtn" hidden>取消运行</button>
+              <button class="btn btn-danger-soft" id="deleteRunBtn" hidden>删除 Run</button>
             </div>
             <button class="btn" id="cloneBtn">复制实验</button>
+            <button class="btn btn-danger-soft" id="deleteExperimentBtn">删除实验</button>
             <button class="btn btn-primary" id="saveBtn">保存草稿</button>
           </div>
           <div class="map-editor-actions" id="mapEditorActions" hidden>
             <span class="map-autosave-status" id="mapAutosaveStatus" data-state="saved" role="status" aria-live="polite">草稿已保存</span>
+            <button class="btn btn-danger-soft" id="deleteMapBtn">删除地图</button>
             <button class="btn" id="saveMapBtn">保存草稿</button>
             <button class="btn btn-primary" id="publishMapBtn">发布版本</button>
           </div>
           <div class="crowd-editor-top-actions" id="crowdEditorTopbarActions" hidden>
             <button class="btn" id="manageCrowdAgentsBtn">Agent 管理</button>
+            <button class="btn btn-danger-soft" id="deleteCrowdBtn">删除人群</button>
             <button class="btn" id="saveCrowdBtn">保存草稿</button>
             <button class="btn btn-primary" id="publishCrowdBtn">发布版本</button>
           </div>
           <div class="skill-editor-top-actions" id="skillEditorTopbarActions" hidden>
             <span class="skill-revision" id="skillEditorRevision">REV —</span>
+            <button class="btn btn-danger-soft" id="skillDelete">删除 Skill</button>
             <button class="btn btn-primary" id="skillSave">保存 SKILL.md</button>
           </div>
           <div class="result-header-actions" id="resultHeaderActions" hidden>
@@ -1231,6 +1236,7 @@
               <button class="btn btn-sm" id="toggleExperimentView" aria-pressed="false">紧凑表格</button>
               <button class="btn btn-sm" id="saveExperimentView">保存视图</button>
               <select class="control compact" id="savedExperimentViews" aria-label="已保存视图"><option value="">已保存视图</option></select>
+              <button class="btn btn-sm btn-danger-soft" id="deleteSavedExperimentView" disabled>删除视图</button>
             </div>
           </div>
 
@@ -1314,7 +1320,7 @@
                 <div class="spatial-asset-grid" id="spatialAssetGrid"><div class="empty-state"><strong>正在加载空间资产…</strong></div></div>
 
                 <div class="spatial-asset-editor" id="spatialAssetEditor" hidden>
-                  <header><div><button class="btn btn-sm" id="backToSpatialAssets">← 返回资产列表</button><h2 id="spatialAssetEditorTitle">空间资产编辑器</h2><p id="spatialAssetEditorMeta"></p></div><div><span class="map-state draft" id="spatialAssetEditorState">草稿</span><button class="btn" id="useSpatialAssetOnMap">加入当前地图</button><button class="btn" id="saveSpatialAsset">保存草稿</button><button class="btn btn-primary" id="publishSpatialAsset">发布版本</button></div></header>
+                  <header><div><button class="btn btn-sm" id="backToSpatialAssets">← 返回资产列表</button><h2 id="spatialAssetEditorTitle">空间资产编辑器</h2><p id="spatialAssetEditorMeta"></p></div><div><span class="map-state draft" id="spatialAssetEditorState">草稿</span><button class="btn btn-danger-soft" id="deleteSpatialAsset">删除资产</button><button class="btn" id="useSpatialAssetOnMap">加入当前地图</button><button class="btn" id="saveSpatialAsset">保存草稿</button><button class="btn btn-primary" id="publishSpatialAsset">发布版本</button></div></header>
                   <div class="spatial-asset-editor-grid">
                     <section><h3>外观与身份</h3><div class="form-grid"><div class="field"><label for="spatialAssetEditName">名称</label><input class="control spatial-dirty" id="spatialAssetEditName" /></div><div class="field"><label for="spatialAssetEditKey">稳定键</label><input class="control" id="spatialAssetEditKey" readonly /></div><div class="field"><label for="spatialAssetEditKind">类型</label><select class="control spatial-dirty" id="spatialAssetEditKind"><option value="TILE">画块</option><option value="OBJECT">物件</option><option value="ZONE">区域</option><option value="MARKING">标线</option><option value="NETWORK">网络</option></select></div><div class="field"><label for="spatialAppearanceMode">外观</label><select class="control spatial-dirty" id="spatialAppearanceMode"><option value="COLOR">颜色</option><option value="EMOJI">Emoji</option><option value="IMAGE">图片</option><option value="SPRITE">精灵图</option></select></div><div class="field" id="spatialColorField"><label for="spatialAppearanceColor">颜色</label><input type="color" id="spatialAppearanceColor" class="spatial-dirty" /></div><div class="field" id="spatialEmojiField" hidden><label for="spatialAppearanceEmoji">Emoji</label><input class="control spatial-dirty" id="spatialAppearanceEmoji" maxlength="16" /></div><div class="field span-2" id="spatialAssetPathField" hidden><label for="spatialAppearancePath">资源路径</label><input class="control spatial-dirty" id="spatialAppearancePath" placeholder="assets/maps/traffic-light.png" /></div><div class="field span-2"><label for="spatialAssetSummary">用途说明</label><textarea class="control spatial-dirty" id="spatialAssetSummary"></textarea></div></div><div class="spatial-state-builder"><header><div><h3>状态外观</h3><p>例如红灯、黄灯、绿灯；能力改变 state 后自动切换显示。</p></div><button class="btn btn-sm" id="addSpatialStateVariant">＋ 状态</button></header><div id="spatialStateVariantList"></div></div><div class="spatial-state-builder"><header><div><h3>初始状态</h3><p>以键值方式提供给挂载能力，不需要编写 JSON。</p></div><button class="btn btn-sm" id="addSpatialInitialState">＋ 状态字段</button></header><div id="spatialInitialStateList"></div></div></section>
                     <section><h3>物理与语义</h3><label class="map-check-row"><input type="checkbox" class="spatial-dirty" id="spatialCollision" /> 参与碰撞</label><label class="map-check-row"><input type="checkbox" class="spatial-dirty" id="spatialPresenceEvents" /> 产生进入/离开感知事件</label><div class="field"><label for="spatialSurface">表面语义</label><select class="control spatial-dirty" id="spatialSurface"><option value="GENERIC">通用</option><option value="ROAD">道路</option><option value="SIDEWALK">人行道</option><option value="CROSSWALK">斑马线</option><option value="BUILDING">建筑</option><option value="GRASS">草地</option><option value="WATER">水域</option></select></div><div class="field"><label for="spatialTraversal">允许通行</label><select class="control spatial-dirty" id="spatialTraversal" multiple size="5"><option value="ALL">全部</option><option value="PEDESTRIAN">行人</option><option value="CAR">汽车</option><option value="BICYCLE">自行车</option><option value="MOTORCYCLE">摩托车</option></select></div><div class="field"><label for="spatialSpeedLimit">限速（m/s，可留空）</label><input class="control spatial-dirty" type="number" min="0.1" step="0.1" id="spatialSpeedLimit" /></div></section>
@@ -1660,6 +1666,16 @@
     <button data-context-action="duplicate">◇ 复制实验</button>
     <button data-context-action="archive">□ 归档实验</button>
     <button data-context-action="restore" hidden>↺ 恢复实验</button>
+    <hr />
+    <button class="danger" data-context-action="delete">× 删除实验</button>
+  </div>
+
+  <div class="modal-backdrop" id="resourceDeleteModal" role="dialog" aria-modal="true" aria-labelledby="resourceDeleteTitle">
+    <div class="modal resource-delete-modal">
+      <div class="modal-head"><div><span class="eyebrow">DESTRUCTIVE ACTION</span><h2 id="resourceDeleteTitle">确认删除</h2></div><button class="close" id="closeResourceDelete" aria-label="关闭">×</button></div>
+      <div class="modal-body"><div class="resource-delete-warning"><span>!</span><div><strong id="resourceDeleteName">当前资源</strong><p id="resourceDeleteMessage">删除后将从数据库移除；被不可变 Revision 引用时，系统会拒绝操作。</p></div></div></div>
+      <div class="modal-foot"><button class="btn" id="cancelResourceDelete">取消</button><button class="btn btn-danger" id="confirmResourceDelete">确认删除</button></div>
+    </div>
   </div>
 
   <div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -1952,11 +1968,11 @@
   <script src="/static/console/vendor/phaser.min.js"></script>
   <script src="/static/console/replay-player.js?v=20260813b"></script>
   <script src="/static/console/modal-focus.js"></script>
-  <script src="/static/console/spatial-asset-workspace.js?v=20260812a"></script>
+  <script src="/static/console/spatial-asset-workspace.js?v=20260829b"></script>
   <script src="/static/console/map-editor-v2.js?v=20260829h"></script>
-  <script src="/static/console/map-workspace.js?v=20260829h"></script>
-  <script src="/static/console/crowd-workspace.js?v=20260812k"></script>
-  <script src="/static/console/skill-workspace.js?v=20260829a"></script>
-  <script src="/static/console/console-api.js?v=20260829c"></script>
+  <script src="/static/console/map-workspace.js?v=20260829i"></script>
+  <script src="/static/console/crowd-workspace.js?v=20260829d"></script>
+  <script src="/static/console/skill-workspace.js?v=20260829b"></script>
+  <script src="/static/console/console-api.js?v=20260829d"></script>
 </body>
 </html>

@@ -122,6 +122,8 @@ function element(id) {
     id, textContent: '', innerHTML: '', hidden: false, disabled: false, value: '',
     className: '', dataset: {}, classList: makeClassList(),
     lastChild: { textContent: '' }, previousElementSibling: { value: '' },
+    setAttribute(name, value) { this[name] = String(value); },
+    removeAttribute(name) { delete this[name]; },
   });
   return elements.get(id);
 }

@@ -8,7 +8,7 @@ from math import ceil
 from typing import Any, Literal
 from uuid import uuid4
 
-from sqlalchemy import Text, cast, exists, func, or_, select, update
+from sqlalchemy import Text, cast, delete, exists, func, or_, select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -24,6 +24,7 @@ from generative_agents.persistence.models import (
     ExperimentComparisonGroup,
     ExperimentRevision,
     ExperimentSavedView,
+    ModelProbeStatus,
     Run,
     RunArtifact,
     RunResultSummary,
@@ -1674,6 +1675,59 @@ class ExperimentService:
             session.flush()
             return self._experiment_detail(session, experiment)
 
+    def delete_experiment(self, experiment_id: str) -> None:
+        """Delete an experiment after its independently managed Runs are removed."""
+
+        with self.database.session_factory.begin() as session:
+            experiment = session.get(Experiment, experiment_id)
+            if experiment is None:
+                raise not_found("experiment", experiment_id)
+            run_count = int(
+                session.scalar(
+                    select(func.count())
+                    .select_from(Run)
+                    .where(Run.experiment_id == experiment_id)
+                )
+                or 0
+            )
+            if run_count:
+                raise ServiceError(
+                    "EXPERIMENT_HAS_RUNS",
+                    f"实验仍有 {run_count} 个 Run；请先在实验结果中删除这些 Run",
+                    status_code=409,
+                    details={"run_count": run_count},
+                )
+            experiment.current_draft_revision_id = None
+            experiment.current_published_revision_id = None
+            experiment.latest_run_id = None
+            session.flush()
+            session.execute(
+                delete(ModelProbeStatus).where(
+                    ModelProbeStatus.experiment_id == experiment_id
+                )
+            )
+            session.execute(
+                update(ExperimentRevision)
+                .where(ExperimentRevision.experiment_id == experiment_id)
+                .values(base_revision_id=None)
+            )
+            session.execute(
+                delete(ExperimentRevision).where(
+                    ExperimentRevision.experiment_id == experiment_id
+                )
+            )
+            groups = list(session.scalars(select(ExperimentComparisonGroup)))
+            for group in groups:
+                ids = list(group.experiment_ids_json or [])
+                if experiment_id not in ids:
+                    continue
+                group.experiment_ids_json = [
+                    item for item in ids if item != experiment_id
+                ]
+                flag_modified(group, "experiment_ids_json")
+                group.updated_at = _utc_now()
+            session.delete(experiment)
+
     def batch_manage(
         self,
         experiment_ids: list[str],
@@ -2008,6 +2062,13 @@ class ExperimentService:
                 for row in rows
             ]
 
+    def delete_comparison_group(self, group_id: str) -> None:
+        with self.database.session_factory.begin() as session:
+            row = session.get(ExperimentComparisonGroup, group_id)
+            if row is None:
+                raise not_found("comparison_group", group_id)
+            session.delete(row)
+
     def save_view(self, name: str, query: dict[str, Any]) -> dict[str, Any]:
         """保存`view`。
 
@@ -2062,6 +2123,13 @@ class ExperimentService:
                 }
                 for row in rows
             ]
+
+    def delete_view(self, view_id: str) -> None:
+        with self.database.session_factory.begin() as session:
+            row = session.get(ExperimentSavedView, view_id)
+            if row is None:
+                raise not_found("saved_view", view_id)
+            session.delete(row)
 
     def get_view_by_share_key(self, share_key: str) -> dict[str, Any]:
         """获取`view``by``share``key`。

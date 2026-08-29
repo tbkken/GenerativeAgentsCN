@@ -9,11 +9,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Mapping
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import Text, cast, func, or_, select
 from sqlalchemy.exc import IntegrityError
 
 from generative_agents.persistence.database import Database
-from generative_agents.persistence.models import SkillDefinition, SkillRevision
+from generative_agents.persistence.models import (
+    ExperimentRevision,
+    SkillDefinition,
+    SkillRevision,
+    WorldMapRevision,
+)
 
 from .registry import SkillDocument, SkillKind, SkillRegistry, SkillRegistryError
 
@@ -354,8 +359,40 @@ class DatabaseSkillRegistry:
             definition = self._definition(session, normalized, include_archived=True)
             if definition.is_builtin:
                 raise SkillRegistryError("Built-in Skills cannot be deleted")
-            if definition.archived_at is None:
-                raise SkillRegistryError("Archive the Skill before hard deletion")
+            revision_ids = list(
+                session.scalars(
+                    select(SkillRevision.id).where(
+                        SkillRevision.skill_id == definition.id
+                    )
+                )
+            )
+            references = [
+                cast(ExperimentRevision.definition_json, Text).contains(normalized),
+            ]
+            references.extend(
+                cast(ExperimentRevision.definition_json, Text).contains(revision_id)
+                for revision_id in revision_ids
+            )
+            used_by_experiment = session.scalar(
+                select(ExperimentRevision.id).where(or_(*references)).limit(1)
+            )
+            used_by_map = session.scalar(
+                select(WorldMapRevision.id)
+                .where(cast(WorldMapRevision.world_json, Text).contains(normalized))
+                .limit(1)
+            )
+            used_by_skill = session.scalar(
+                select(SkillRevision.id)
+                .where(
+                    SkillRevision.skill_id != definition.id,
+                    cast(SkillRevision.children_json, Text).contains(normalized),
+                )
+                .limit(1)
+            )
+            if used_by_experiment or used_by_map or used_by_skill:
+                raise SkillRegistryError(
+                    "Skill 仍被不可变的实验、地图或其他 Skill Revision 引用"
+                )
             session.delete(definition)
 
     def _definition(self, session, name: str, *, include_archived: bool = False):

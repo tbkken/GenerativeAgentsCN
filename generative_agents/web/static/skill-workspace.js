@@ -17,6 +17,7 @@
     dependencies: null,
     activeTab: 'definition',
     run: null,
+    catalogGeneration: 0,
   };
 
   const $ = id => document.getElementById(id);
@@ -56,7 +57,20 @@
   }
 
   async function loadCatalog() {
-    const result = await api(`/api/v1/skills?kind=${encodeURIComponent(state.kind)}&q=${encodeURIComponent(state.query)}`);
+    const generation = ++state.catalogGeneration;
+    let result;
+    try {
+      result = await api(`/api/v1/skills?kind=${encodeURIComponent(state.kind)}&q=${encodeURIComponent(state.query)}`);
+    } catch (error) {
+      if (generation !== state.catalogGeneration) return;
+      const target = host();
+      if (target) {
+        target.innerHTML = `<div class="skill-empty resource-load-error" role="alert"><strong>Skill 列表加载失败</strong><span>${escapeHtml(error.message || '请稍后重试')}</span><button class="btn btn-sm" id="retrySkillCatalog">重新加载</button></div>`;
+        $('retrySkillCatalog')?.addEventListener('click', () => loadCatalog().catch(report));
+      }
+      throw error;
+    }
+    if (generation !== state.catalogGeneration) return;
     state.items = result.items || [];
     state.counts = result.counts || state.counts;
     renderCatalog();
@@ -91,6 +105,7 @@
       await loadCatalog();
     }));
     target.querySelectorAll('[data-skill-name]').forEach(card => card.addEventListener('click', () => openSkill(card.dataset.skillName)));
+    target.querySelectorAll('[data-delete-skill]').forEach(button => button.addEventListener('click', () => deleteSkill(button.dataset.deleteSkill, button.dataset.deleteSkillLabel).catch(report)));
     $('skillCreateInline')?.addEventListener('click', () => showCreate(isBrain ? 'brain' : state.kind));
     let searchTimer;
     $('skillSearchInput')?.addEventListener('input', event => {
@@ -111,13 +126,13 @@
     const flow = children.length
       ? children.slice(0, 4).map(name => `<span>$${escapeHtml(name)}</span>`).join('<i>→</i>')
       : '';
-    return `<button class="skill-card-real" data-skill-name="${escapeHtml(item.name)}">
+    return `<article class="resource-card-shell"><button class="skill-card-real" data-skill-name="${escapeHtml(item.name)}">
       <span class="skill-card-head"><em>${type}</em><span class="skill-live"><i></i>可用</span></span>
       <h2>${escapeHtml(titleCase(item.name))}</h2>
       <p>${escapeHtml(item.description)}</p>
       ${flow ? `<span class="skill-card-flow-real">${flow}</span>` : ''}
       <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'database' ? `DB Revision #${item.revision_no || 1}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
-    </button>`;
+    </button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}">删除</button>`}</article>`;
   }
 
   async function openSkill(name) {
@@ -182,6 +197,20 @@
     $('skillEditorRevision').textContent = `REV ${item.revision}`;
     $('skillEditorBack').onclick = backToCatalog;
     $('skillSave').onclick = saveSkill;
+    $('skillDelete').hidden = Boolean(item.is_builtin);
+    $('skillDelete').onclick = () => deleteSkill(item.name, titleCase(item.name)).catch(report);
+  }
+
+  async function deleteSkill(name, label = name) {
+    const confirmed = window.confirmResourceDeletion
+      ? await window.confirmResourceDeletion({ type: 'Skill', name: label, message: 'Skill 的全部数据库 Revision 将被删除。仍被实验、地图或其他 Skill Revision 引用时，系统会拒绝操作。' })
+      : window.confirm(`确认删除 Skill“${label}”？`);
+    if (!confirmed) return;
+    await api(`/api/v1/skills/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    if (state.current?.name === name) state.current = null;
+    deactivateTopbar();
+    await loadCatalog();
+    toast(`Skill“${label}”已删除`);
   }
 
   function deactivateTopbar() {

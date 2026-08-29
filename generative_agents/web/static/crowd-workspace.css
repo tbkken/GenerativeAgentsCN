@@ -73,6 +73,7 @@
 .crowd-agent-card-actions { display:flex; flex:0 0 auto; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
 .crowd-agent-card-actions>button { min-height:30px; padding:0 9px; border:1px solid var(--line); border-radius:7px; background:#fff; color:#40564e; cursor:pointer; font-size:9px; }
 .crowd-agent-card-actions>button:hover { border-color:#9cc8bc; background:var(--primary-soft); color:var(--primary); }
+.crowd-agent-card-actions>.crowd-agent-delete{border-color:#efd1cb;background:#fff7f5;color:#a54237}.crowd-agent-card-actions>.crowd-agent-delete:hover{border-color:#d99488;background:#fff0ed;color:#96372e}
 .crowd-agent-scope { padding:5px 8px; border-radius:99px; background:var(--primary-soft); color:var(--primary); font-size:8px; white-space:nowrap; }
 .crowd-agent-select { display:flex; min-height:30px; align-items:center; gap:7px; padding:0 9px; border:1px solid #a9cec5; border-radius:7px; background:#f3faf8; color:#27695b; cursor:pointer; font-size:9px; }
 .crowd-agent-select input { margin:0; }

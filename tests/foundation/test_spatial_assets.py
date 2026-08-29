@@ -61,6 +61,24 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
         assert "capability_attachments" not in contract
 
 
+def test_custom_spatial_asset_can_be_deleted_but_builtin_is_protected(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        created = client.post(
+            "/api/v1/spatial-assets",
+            json={"name": "临时路标", "asset_key": "temporary-road-sign", "asset_kind": "OBJECT"},
+        ).json()
+        deleted = client.delete(f"/api/v1/spatial-assets/{created['id']}")
+        missing = client.get(f"/api/v1/spatial-assets/{created['id']}")
+        builtin = _asset_by_key(client, "object-traffic-light")
+        protected = client.delete(f"/api/v1/spatial-assets/{builtin['id']}")
+
+    assert deleted.status_code == 204
+    assert missing.status_code == 404
+    assert protected.status_code == 409
+    assert protected.json()["error"]["code"] == "BUILTIN_SPATIAL_ASSET_IMMUTABLE"
+
+
 def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(database_url):
     """回归验证 ``test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)

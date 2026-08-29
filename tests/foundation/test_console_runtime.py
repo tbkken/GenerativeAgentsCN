@@ -571,6 +571,39 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     )
 
 
+def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
+    root = Path(__file__).parents[2]
+    static = root / "generative_agents" / "web" / "static"
+    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
+    console = (static / "console-api.js").read_text(encoding="utf-8")
+    maps = (static / "map-workspace.js").read_text(encoding="utf-8")
+    crowds = (static / "crowd-workspace.js").read_text(encoding="utf-8")
+    skills = (static / "skill-workspace.js").read_text(encoding="utf-8")
+    assets = (static / "spatial-asset-workspace.js").read_text(encoding="utf-8")
+
+    for element_id in (
+        "resourceDeleteModal",
+        "deleteExperimentBtn",
+        "deleteRunBtn",
+        "deleteMapBtn",
+        "deleteCrowdBtn",
+        "skillDelete",
+        "deleteSpatialAsset",
+        "deleteSavedExperimentView",
+    ):
+        assert f'id="{element_id}"' in shell
+    assert "window.confirmResourceDeletion" in console
+    assert "deleteExperimentById" in console
+    assert "deleteCurrentRun" in console
+    assert "deleteSelectedSavedView" in console
+    assert "async deleteMap" in maps
+    assert "data-retry-map-list" in maps
+    assert "async deleteCrowd" in crowds
+    assert "async deleteAgent" in crowds
+    assert "async function deleteSkill" in skills
+    assert "async deleteAsset" in assets
+
+
 def test_running_duration_uses_utc_instants_and_a_live_execution_label():
     """回归验证 ``test_running_duration_uses_utc_instants_and_a_live_execution_label`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]

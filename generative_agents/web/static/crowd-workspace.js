@@ -31,6 +31,7 @@
     agentDraft: null,
     agentDetail: null,
     searchTimer: null,
+    listGeneration: 0,
 
     async request(path, options = {}) {
       const response = await fetch(`${API}${path}`, {
@@ -71,6 +72,7 @@
       byId('backToCrowdsBtn').addEventListener('click', () => this.showCatalog());
       byId('saveCrowdBtn').addEventListener('click', () => this.saveCrowd().catch(error => this.fail(error)));
       byId('publishCrowdBtn').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
+      byId('deleteCrowdBtn').addEventListener('click', () => this.deleteCrowd(this.detail?.id, this.detail?.name).catch(error => this.fail(error)));
       [byId('manageCrowdAgentsBtn'), byId('manageCrowdAgentsInlineBtn')].forEach(button => button.addEventListener('click', () => this.openAgentManager().catch(error => this.fail(error))));
       byId('confirmCreateCrowd').addEventListener('click', () => this.createCrowd().catch(error => this.fail(error)));
       ['closeCreateCrowd', 'cancelCreateCrowd'].forEach(id => byId(id).addEventListener('click', () => this.modal('close', 'createCrowdModal')));
@@ -112,13 +114,29 @@
 
     async loadCrowds() {
       this.init();
+      const generation = ++this.listGeneration;
+      const grid = byId('crowdCatalogGrid');
+      grid.setAttribute('aria-busy', 'true');
       const params = new URLSearchParams({ page: String(this.page), page_size: String(this.pageSize) });
       if (this.query) params.set('q', this.query);
       if (this.status) params.set('status', this.status);
-      const [result, selector] = await Promise.all([
-        this.request(`/crowds?${params}`),
-        this.request('/crowds?page=1&page_size=100'),
-      ]);
+      let result;
+      let selector;
+      try {
+        [result, selector] = await Promise.all([
+          this.request(`/crowds?${params}`),
+          this.request('/crowds?page=1&page_size=100'),
+        ]);
+      } catch (error) {
+        if (generation !== this.listGeneration) return;
+        grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>人群列表加载失败</strong><span>${this.escape(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-crowd-list>重新加载</button></div>`;
+        grid.querySelector('[data-retry-crowd-list]')?.addEventListener('click', () => this.loadCrowds().catch(nextError => this.fail(nextError)));
+        byId('crowdListFooter').hidden = true;
+        throw error;
+      } finally {
+        if (generation === this.listGeneration) grid.removeAttribute('aria-busy');
+      }
+      if (generation !== this.listGeneration) return;
       this.crowds = result.items;
       this.selectorCrowds = selector.items;
       this.renderCatalog(result);
@@ -128,12 +146,13 @@
     renderCatalog(result) {
       const grid = byId('crowdCatalogGrid');
       grid.innerHTML = this.crowds.length ? this.crowds.map(item => `
-        <button class="crowd-card" data-crowd-id="${item.id}">
+        <article class="resource-card-shell"><button class="crowd-card" data-crowd-id="${item.id}">
           <span class="crowd-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span>${item.is_builtin ? '<b class="crowd-builtin">系统人群</b>' : `<code>${this.escape(item.crowd_key)}</code>`}</span>
           <h2>${this.escape(item.name)}</h2><p>${this.escape(item.description || '暂无用途说明')}</p>
           <span class="crowd-card-foot"><span><strong>${item.agent_count}</strong> 个 Agent</span><span>${item.usage_count} 个实验使用</span></span>
-        </button>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
+        </button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-crowd-id="${item.id}" data-delete-crowd-name="${this.escape(item.name)}">删除</button>`}</article>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
       grid.querySelectorAll('[data-crowd-id]').forEach(card => card.addEventListener('click', () => this.openCrowd(card.dataset.crowdId).catch(error => this.fail(error))));
+      grid.querySelectorAll('[data-delete-crowd-id]').forEach(button => button.addEventListener('click', () => this.deleteCrowd(button.dataset.deleteCrowdId, button.dataset.deleteCrowdName).catch(error => this.fail(error))));
       const footer = byId('crowdListFooter');
       footer.hidden = result.total === 0;
       if (result.total) {
@@ -158,6 +177,18 @@
       });
     },
 
+    async deleteCrowd(crowdId, name = '当前人群') {
+      if (!crowdId) return;
+      const confirmed = window.confirmResourceDeletion
+        ? await window.confirmResourceDeletion({ type: '人群', name, message: '人群及其全部成员快照和 Revision 将被删除。仍被实验 Revision 引用时，系统会拒绝操作。' })
+        : window.confirm(`确认删除人群“${name}”？`);
+      if (!confirmed) return;
+      await this.request(`/crowds/${encodeURIComponent(crowdId)}`, { method: 'DELETE' });
+      if (this.detail?.id === crowdId) this.showCatalog();
+      await this.loadCrowds();
+      this.notify(`人群“${name}”已删除。`, '删除完成');
+    },
+
     async openCrowd(crowdId, push = true) {
       this.detail = await this.request(`/crowds/${crowdId}`);
       this.revisions = (await this.request(`/crowds/${crowdId}/revisions`)).items;
@@ -180,6 +211,7 @@
       state.textContent = editable ? '草稿' : this.detail.is_builtin ? '系统人群 · 只读' : '已发布';
       state.classList.toggle('draft', editable);
       byId('publishCrowdBtn').textContent = editable ? '发布版本' : this.detail.is_builtin ? '基于此人群创建' : '创建新修订';
+      byId('deleteCrowdBtn').hidden = Boolean(this.detail.is_builtin);
       this.renderMembers();
       window.dispatchEvent(new CustomEvent('crowd-workspace:selection', { detail: { crowdId } }));
       if (push) history.pushState({}, '', `/?view=crowds&crowd_id=${encodeURIComponent(crowdId)}`);
@@ -332,6 +364,7 @@
       const editableCrowd = this.revision?.state === 'DRAFT';
       const scopeLabel = item.is_builtin ? '系统公共 · 只读' : '自定义公共';
       const edit = item.is_builtin ? '' : `<button type="button" data-edit-public-agent="${this.escape(item.id)}">编辑</button>`;
+      const remove = item.is_builtin ? '' : `<button type="button" class="crowd-agent-delete" data-delete-public-agent="${this.escape(item.id)}" data-delete-public-agent-name="${this.escape(item.name)}">删除</button>`;
       const selectionLabel = checked ? '已加入当前人群' : '加入当前人群';
       const versionState = outdated
         ? `<span class="crowd-agent-version-warning">人群锁定 v${revision.revision_no} · 最新 v${latestRevision.revision_no}</span>${editableCrowd ? `<button type="button" class="crowd-agent-upgrade" data-upgrade-agent-id="${item.id}" data-latest-revision-id="${latestRevision.id}">升级到 v${latestRevision.revision_no}</button>` : '<span class="crowd-agent-version-readonly">创建人群新修订后可升级</span>'}`
@@ -341,7 +374,7 @@
       if (!definition) {
         const error = detail?.loadError;
         return `<article class="crowd-agent-card${checked ? ' selected' : ''}" data-agent-scope="${item.is_builtin ? 'system' : 'custom'}">
-          <div class="crowd-agent-card-head"><div><small>${item.is_builtin ? 'SYSTEM AGENT' : 'CUSTOM AGENT'}</small><h3>${this.escape(item.name)}<code>${this.escape(item.agent_key)} · v${revision.revision_no}</code></h3><div class="crowd-agent-version-state">${versionState}</div></div><div class="crowd-agent-card-actions"><span class="crowd-agent-scope">${scopeLabel}</span>${edit}${selectionControl}</div></div>
+          <div class="crowd-agent-card-head"><div><small>${item.is_builtin ? 'SYSTEM AGENT' : 'CUSTOM AGENT'}</small><h3>${this.escape(item.name)}<code>${this.escape(item.agent_key)} · v${revision.revision_no}</code></h3><div class="crowd-agent-version-state">${versionState}</div></div><div class="crowd-agent-card-actions"><span class="crowd-agent-scope">${scopeLabel}</span>${edit}${remove}${selectionControl}</div></div>
           <p>${this.escape(item.description || '暂无用途说明')}</p>
           <div class="crowd-agent-definition-state ${error ? 'error' : ''}">${error ? this.escape(error) : '正在读取完整 Agent 定义…'}</div>
         </article>`;
@@ -386,7 +419,7 @@
       return `<article class="crowd-agent-card${checked ? ' selected' : ''}" data-agent-scope="${item.is_builtin ? 'system' : 'custom'}">
         <div class="crowd-agent-card-head">
           <div class="crowd-agent-identity"><div><small>${item.is_builtin ? 'SYSTEM AGENT' : 'CUSTOM AGENT'}</small><h3>${this.escape(definition.name)}<code>${this.escape(definition.agent_key)} · Revision ${String(revision.revision_no).padStart(3, '0')}</code></h3><div class="crowd-agent-version-state">${versionState}</div></div></div>
-          <div class="crowd-agent-card-actions"><span class="crowd-agent-scope">${scopeLabel}</span>${edit}${selectionControl}</div>
+          <div class="crowd-agent-card-actions"><span class="crowd-agent-scope">${scopeLabel}</span>${edit}${remove}${selectionControl}</div>
         </div>
         <div class="content-workspace crowd-agent-readonly-workspace" data-agent-card-definition="${revision.id}">
           <nav class="content-tabs crowd-agent-content-tabs" role="tablist" aria-label="${this.escape(definition.name)}定义内容">
@@ -447,6 +480,7 @@
         this.renderAgentList();
       }));
       byId('crowdAgentList').querySelectorAll('[data-edit-public-agent]').forEach(button => button.addEventListener('click', () => this.openAgentEditor(button.dataset.editPublicAgent).catch(error => this.fail(error))));
+      byId('crowdAgentList').querySelectorAll('[data-delete-public-agent]').forEach(button => button.addEventListener('click', () => this.deleteAgent(button.dataset.deletePublicAgent, button.dataset.deletePublicAgentName).catch(error => this.fail(error))));
       byId('crowdAgentList').querySelectorAll('[data-agent-card-tab]').forEach(button => button.addEventListener('click', () => {
         const workspace = button.closest('[data-agent-card-definition]');
         if (!workspace) return;
@@ -459,6 +493,18 @@
         workspace.querySelectorAll('[data-agent-card-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.agentCardPanel === tab));
       }));
       this.updateAgentSelectionCount();
+    },
+
+    async deleteAgent(agentId, name = '当前 Agent') {
+      const confirmed = window.confirmResourceDeletion
+        ? await window.confirmResourceDeletion({ type: 'Agent', name, message: 'Agent 的草稿和全部 Revision 将被删除。仍被任何人群 Revision 引用时，系统会拒绝操作。' })
+        : window.confirm(`确认删除 Agent“${name}”？`);
+      if (!confirmed) return;
+      await this.request(`/agent-templates/${encodeURIComponent(agentId)}`, { method: 'DELETE' });
+      this.clearAgentSelection(agentId);
+      await this.loadAgents();
+      this.renderAgentList();
+      this.notify(`Agent“${name}”已删除。`, '删除完成');
     },
 
     updateAgentSelectionCount() {

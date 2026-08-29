@@ -17,6 +17,7 @@
     revisions: [],
     dirty: false,
     searchTimer: null,
+    listGeneration: 0,
 
     $(id) { return document.getElementById(id); },
     escape(value) { return String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character])); },
@@ -43,6 +44,7 @@
       this.$('backToSpatialAssets').addEventListener('click', () => this.showCatalog());
       this.$('saveSpatialAsset').addEventListener('click', () => this.save().catch(error => this.fail(error)));
       this.$('publishSpatialAsset').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
+      this.$('deleteSpatialAsset').addEventListener('click', () => this.deleteAsset(this.detail?.id, this.detail?.name).catch(error => this.fail(error)));
       this.$('useSpatialAssetOnMap').addEventListener('click', () => this.useOnMap());
       this.$('addSpatialStateVariant').addEventListener('click', () => this.addStateRow('variant'));
       this.$('addSpatialInitialState').addEventListener('click', () => this.addStateRow('initial'));
@@ -61,9 +63,23 @@
 
     async activate() { this.init(); await this.load(); },
     async load() {
+      const generation = ++this.listGeneration;
+      const grid = this.$('spatialAssetGrid');
+      grid.setAttribute('aria-busy', 'true');
       const params = new URLSearchParams({ page: '1', page_size: '100' });
       if (this.kind) params.set('kind', this.kind); if (this.query) params.set('q', this.query);
-      const assets = await this.request(`/spatial-assets?${params}`);
+      let assets;
+      try {
+        assets = await this.request(`/spatial-assets?${params}`);
+      } catch (error) {
+        if (generation !== this.listGeneration) return;
+        grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>空间资产加载失败</strong><span>${this.escape(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-spatial-assets>重新加载</button></div>`;
+        grid.querySelector('[data-retry-spatial-assets]')?.addEventListener('click', () => this.load().catch(nextError => this.fail(nextError)));
+        throw error;
+      } finally {
+        if (generation === this.listGeneration) grid.removeAttribute('aria-busy');
+      }
+      if (generation !== this.listGeneration) return;
       this.items = assets.items;
       this.renderCatalog();
     },
@@ -73,9 +89,28 @@
         const contract = item.active_contract || {}; const appearance = contract.appearance || {};
         const preview = appearance.mode === 'EMOJI' ? this.escape(appearance.emoji) : '';
         const style = appearance.mode === 'COLOR' ? `background:${this.escape(appearance.color)}` : '';
-        return `<button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code></span></button>`;
+        return `<article class="resource-card-shell"><button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code></span></button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-spatial-id="${item.id}" data-delete-spatial-name="${this.escape(item.name)}">删除</button>`}</article>`;
       }).join('') : '<div class="empty-state"><strong>没有符合条件的空间资产</strong></div>';
       grid.querySelectorAll('[data-spatial-id]').forEach(card => card.addEventListener('click', () => this.open(card.dataset.spatialId).catch(error => this.fail(error))));
+      grid.querySelectorAll('[data-delete-spatial-id]').forEach(button => button.addEventListener('click', () => this.deleteAsset(button.dataset.deleteSpatialId, button.dataset.deleteSpatialName).catch(error => this.fail(error))));
+    },
+
+    async deleteAsset(assetId, name = '当前空间资产') {
+      if (!assetId) return;
+      const confirmed = window.confirmResourceDeletion
+        ? await window.confirmResourceDeletion({ type: '空间资产', name, message: '资产的草稿和全部发布 Revision 将被删除。仍被地图 Revision 引用时，系统会拒绝操作。' })
+        : window.confirm(`确认删除空间资产“${name}”？`);
+      if (!confirmed) return;
+      await this.request(`/spatial-assets/${encodeURIComponent(assetId)}`, { method: 'DELETE' });
+      if (this.detail?.id === assetId) {
+        this.$('spatialAssetGrid').hidden = false;
+        this.$('spatialAssetEditor').hidden = true;
+        this.detail = null;
+        this.revision = null;
+        this.setDirty(false);
+      }
+      await this.load();
+      this.notify(`空间资产“${name}”已删除。`, '删除完成');
     },
 
     async create() {
@@ -110,6 +145,7 @@
     renderState() {
       const editable = this.revision.state === 'DRAFT'; const state = this.$('spatialAssetEditorState');
       state.textContent = editable ? '草稿' : this.detail.is_builtin ? '系统 · 只读' : '已发布 · 只读'; state.classList.toggle('draft', editable);
+      this.$('deleteSpatialAsset').hidden = Boolean(this.detail.is_builtin);
       this.$('saveSpatialAsset').disabled = !editable; this.$('publishSpatialAsset').textContent = editable ? '发布版本' : this.detail.is_builtin ? '基于此资产创建' : '创建新修订';
       this.$('useSpatialAssetOnMap').disabled = !this.detail.current_published;
       this.$('spatialAssetEditor').querySelectorAll('input,select,textarea,.spatial-row-remove').forEach(control => { if (!control.closest('.spatial-asset-editor > header')) control.disabled = !editable; });

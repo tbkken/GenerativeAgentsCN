@@ -10,7 +10,7 @@ from math import ceil
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import Text, cast, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
 from generative_agents.config.hashing import canonical_json_bytes
@@ -19,6 +19,7 @@ from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     SpatialAssetDefinition,
     SpatialAssetRevision,
+    WorldMapRevision,
 )
 from generative_agents.status import RevisionState
 
@@ -569,6 +570,57 @@ class SpatialAssetService:
             if asset is None:
                 raise not_found("spatial_asset", asset_id)
             return self._asset_detail(session, asset)
+
+    def delete_asset(self, asset_id: str) -> None:
+        """Delete one custom asset without invalidating immutable map revisions."""
+
+        with self.database.session_factory.begin() as session:
+            asset = session.get(SpatialAssetDefinition, asset_id)
+            if asset is None:
+                raise not_found("spatial_asset", asset_id)
+            if asset.is_builtin:
+                raise ServiceError(
+                    "BUILTIN_SPATIAL_ASSET_IMMUTABLE",
+                    "系统内置空间资产不能删除",
+                    status_code=409,
+                )
+            revision_ids = list(
+                session.scalars(
+                    select(SpatialAssetRevision.id).where(
+                        SpatialAssetRevision.spatial_asset_id == asset_id
+                    )
+                )
+            )
+            if revision_ids:
+                reference_filter = or_(
+                    *[
+                        cast(WorldMapRevision.world_json, Text).contains(revision_id)
+                        for revision_id in revision_ids
+                    ]
+                )
+                referencing_map = session.scalar(
+                    select(WorldMapRevision.id).where(reference_filter).limit(1)
+                )
+                if referencing_map is not None:
+                    raise ServiceError(
+                        "SPATIAL_ASSET_IN_USE",
+                        "空间资产仍被地图 Revision 引用；请先删除引用它的地图",
+                        status_code=409,
+                    )
+            asset.current_draft_revision_id = None
+            asset.current_published_revision_id = None
+            session.flush()
+            session.execute(
+                update(SpatialAssetRevision)
+                .where(SpatialAssetRevision.spatial_asset_id == asset_id)
+                .values(base_revision_id=None)
+            )
+            session.execute(
+                delete(SpatialAssetRevision).where(
+                    SpatialAssetRevision.spatial_asset_id == asset_id
+                )
+            )
+            session.delete(asset)
 
     def get_draft(self, asset_id: str) -> dict[str, Any]:
         """获取`draft`。

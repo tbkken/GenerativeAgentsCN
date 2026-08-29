@@ -11,7 +11,7 @@ from math import ceil
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import delete, func, or_, select
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
 from generative_agents.config import (
@@ -533,12 +533,6 @@ class CrowdService:
                     "系统内置 Agent 不能删除",
                     status_code=409,
                 )
-            if agent.archived_at is None:
-                raise ServiceError(
-                    "AGENT_NOT_ARCHIVED",
-                    "请先归档 Agent，再执行彻底删除",
-                    status_code=409,
-                )
             member_count = int(
                 session.scalar(
                     select(func.count())
@@ -550,12 +544,17 @@ class CrowdService:
             if member_count:
                 raise ServiceError(
                     "AGENT_IN_USE",
-                    "Agent 仍被 Crowd 修订引用，只能保持归档",
+                    "Agent 仍被 Crowd Revision 引用；请先删除引用它的人群",
                     status_code=409,
                 )
             agent.current_draft_revision_id = None
             agent.current_published_revision_id = None
             session.flush()
+            session.execute(
+                update(AgentTemplateRevision)
+                .where(AgentTemplateRevision.agent_id == agent_id)
+                .values(base_revision_id=None)
+            )
             session.execute(
                 delete(AgentTemplateRevision).where(
                     AgentTemplateRevision.agent_id == agent_id
@@ -1099,21 +1098,20 @@ class CrowdService:
                     "系统内置 Crowd 不能删除",
                     status_code=409,
                 )
-            if crowd.archived_at is None:
-                raise ServiceError(
-                    "CROWD_NOT_ARCHIVED",
-                    "请先归档 Crowd，再执行彻底删除",
-                    status_code=409,
-                )
             if self._crowd_usage_count(session, crowd_id):
                 raise ServiceError(
                     "CROWD_IN_USE",
-                    "Crowd 仍被实验修订引用，只能保持归档",
+                    "人群仍被实验 Revision 引用；请先删除引用它的实验",
                     status_code=409,
                 )
             crowd.current_draft_revision_id = None
             crowd.current_published_revision_id = None
             session.flush()
+            session.execute(
+                update(CrowdRevision)
+                .where(CrowdRevision.crowd_id == crowd_id)
+                .values(base_revision_id=None)
+            )
             session.execute(
                 delete(CrowdRevisionMember).where(
                     CrowdRevisionMember.crowd_id == crowd_id

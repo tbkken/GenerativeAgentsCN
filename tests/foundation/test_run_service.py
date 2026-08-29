@@ -486,7 +486,6 @@ def test_terminal_run_can_be_archived_restored_and_deleted(
     active_page = runs.list_runs(experiment["id"], archived="active")
     archived_page = runs.list_runs(experiment["id"], archived="archived")
     restored = runs.set_archived(created["run_id"], archived=False)
-    runs.set_archived(created["run_id"], archived=True)
     deleted = runs.delete_run(created["run_id"])
 
     assert archived["archived_at"] is not None
