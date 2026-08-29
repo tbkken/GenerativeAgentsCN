@@ -46,6 +46,7 @@ class SkillDocument:
     example_input: str = ""
     storage: str = "filesystem"
     storage_ref: str | None = None
+    revision_id: str | None = None
     revision_no: int | None = None
     is_builtin: bool = False
     archived_at: str | None = None
@@ -64,6 +65,7 @@ class SkillDocument:
             "path": self.storage_ref or self.path.as_posix(),
             "storage": self.storage,
             "storage_ref": self.storage_ref,
+            "revision_id": self.revision_id,
             "revision_no": self.revision_no,
             "is_builtin": self.is_builtin,
             "archived_at": self.archived_at,

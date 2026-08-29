@@ -1072,9 +1072,9 @@
     }
   </style>
   <link rel="stylesheet" href="/static/console/crowd-workspace.css?v=20260823b" />
-  <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260823d" />
-  <link rel="stylesheet" href="/static/console/skill-workspace.css?v=20260823c" />
-  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260823a" />
+  <link rel="stylesheet" href="/static/console/map-workspace.css?v=20260829b" />
+  <link rel="stylesheet" href="/static/console/skill-workspace.css?v=20260829a" />
+  <link rel="stylesheet" href="/static/console/console-ux.css?v=20260829a" />
 </head>
 <body class="hub-mode">
   <div class="app-shell">
@@ -1101,11 +1101,8 @@
       <nav class="nav experiment-scope">
         <button class="nav-item" data-page="overview"><span class="nav-icon">◫</span><span class="nav-text">实验概览</span></button>
         <button class="nav-item" data-page="results"><span class="nav-icon">◈</span><span class="nav-text">实验结果</span><span class="nav-count" id="navRunCount"></span></button>
-        <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">Agent 配置</span><span class="nav-count" id="navAgentCount"></span></button>
-        <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型服务</span><span class="nav-count"></span></button>
-        <button class="nav-item" data-page="experiment-brain"><span class="nav-icon">¶</span><span class="nav-text">实验大脑</span><span class="nav-count"></span></button>
-        <button class="nav-item" data-page="world"><span class="nav-icon">⌗</span><span class="nav-text">世界与地图</span></button>
-        <button class="nav-item" data-page="advanced"><span class="nav-icon">⌘</span><span class="nav-text">行为参数</span></button>
+        <button class="nav-item" data-page="agents"><span class="nav-icon">◉</span><span class="nav-text">参与 Agent</span><span class="nav-count" id="navAgentCount"></span></button>
+        <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型与运行</span><span class="nav-count"></span></button>
       </nav>
     </aside>
 
@@ -1297,12 +1294,6 @@
                 </div>
               </div>
               <aside class="map-inspector map-editor-panel active" data-map-panel="edit semantics">
-                <section class="map-build-guide" id="mapBuildGuide" hidden>
-                  <div class="map-build-guide-head"><div><span>SCENE BUILD GUIDE</span><h3 id="mapBuildGuideTitle">地图构建向导</h3></div><strong id="mapBuildGuideProgress">0 / 0</strong></div>
-                  <div class="map-build-guide-list" id="mapBuildGuideList"></div>
-                  <button class="btn btn-primary btn-sm" id="applyMapBlueprintStep" style="width:100%">应用下一步</button>
-                  <p id="mapBuildGuideHint">每一步都会写入当前地图 Draft。</p>
-                </section>
                 <h3>Tile 属性</h3>
                 <div class="map-coordinate" data-map-coordinate>尚未选择格子</div>
                 <div class="field"><label>区域 Sector</label><input class="control" data-map-address="0" placeholder="例如：商业区" /></div>
@@ -1388,7 +1379,13 @@
 
           <div class="content-workspace">
             <div class="overview-panel">
-              <div class="panel-intro"><div><h2 id="overviewDefinitionTitle">实验定义</h2><p id="overviewDefinitionDescription">配置虚拟时间、运行规模、记录粒度和随机复现边界。</p></div><span class="chip amber" id="overviewConfigStatus">等待检查</span></div>
+              <div class="panel-intro"><div><h2>资源组合</h2><p>实验只引用资源中心发布的不可变版本；要改内容，请回到对应资源创建新 Revision。</p></div><span class="chip blue">Revision Pinning</span></div>
+              <div class="form-grid" id="experimentCompositionFields">
+                <div class="field"><label for="experimentBrainRevisionSelect">Brain Skill Revision</label><select class="control" id="experimentBrainRevisionSelect"><option value="">正在加载 Brain…</option></select><small class="field-hint" id="experimentBrainRevisionMeta">必须选择不可变 Brain Revision</small></div>
+                <div class="field"><label for="experimentMapRevisionSelect">地图 Revision</label><select class="control" id="experimentMapRevisionSelect"><option value="">正在加载地图…</option></select><small class="field-hint" id="experimentMapRevisionMeta">必须选择已发布地图 Revision</small></div>
+                <div class="field" style="grid-column:1/-1"><button class="btn" id="saveExperimentComposition" type="button">应用资源组合</button></div>
+              </div>
+              <div class="panel-intro"><div><h2 id="overviewDefinitionTitle">实验定义</h2><p id="overviewDefinitionDescription">配置虚拟时间、运行步数和随机复现边界。</p></div><span class="chip amber" id="overviewConfigStatus">等待检查</span></div>
               <div class="form-grid" id="overviewLegacyDefinitionFields">
                 <div class="field"><label for="experimentNameDraft">实验名称</label><input class="control" id="experimentNameDraft" maxlength="120" /></div>
                 <div class="field" style="grid-column:1/-1"><label for="experimentGoalDraft">实验目标与故事</label><textarea class="control" id="experimentGoalDraft" maxlength="10000" rows="4" placeholder="说明要观察的完整故事、时间范围和预期结果"></textarea></div>
@@ -1397,8 +1394,11 @@
                 <div class="field"><label for="timezone">时区</label><select class="control dirty-track" id="timezone"><option value="Asia/Shanghai">Asia/Shanghai (UTC+08:00)</option><option value="UTC">UTC</option><option value="America/Los_Angeles">America/Los_Angeles</option></select></div>
                 <div class="field"><label for="stride">单步时间跨度</label><div class="input-unit"><input class="control dirty-track" id="stride" type="number" min="1" value="10" /><span>分钟</span></div></div>
                 <div class="field"><label for="maxSteps">模拟总步数</label><div class="input-unit"><input class="control dirty-track" id="maxSteps" type="number" min="1" max="1000000" value="144" /><span>步</span></div></div>
-                <div class="field"><div class="field-label"><label for="recordInterval">状态记录间隔</label><button type="button" class="help-tip" aria-label="状态记录间隔说明" data-tooltip="每经过这段虚拟时间，为 Agent 生成一次状态记录点。间隔越短，回放和问题排查越细致，但结果数据量也越大；它不会改变模拟步进速度。">?</button></div><div class="input-unit"><input class="control dirty-track" id="recordInterval" type="number" min="1" value="30" /><span>分钟</span></div><small class="field-hint">控制 Agent 状态记录点的密度，用于回放和排查；越短记录越细、数据量越大。</small></div>
                 <div class="field"><div class="field-label"><label for="seed">随机种子</label><button type="button" class="help-tip" aria-label="随机种子说明" data-tooltip="固定路径选择、候选位置和失败回退的随机序列。">?</button></div><input class="control dirty-track" id="seed" type="number" value="240213" /></div>
+                <div class="field"><label for="checkpointInterval">检查点频率</label><div class="input-unit"><input class="control dirty-track" id="checkpointInterval" type="number" min="1" value="1" /><span>步</span></div></div>
+                <div class="field"><label for="checkpointRetention">检查点保留</label><div class="input-unit"><input class="control dirty-track" id="checkpointRetention" type="number" min="2" max="20" value="2" /><span>份</span></div></div>
+                <div class="field"><label for="projectionInterval">Agent 状态投影</label><div class="input-unit"><input class="control dirty-track" id="projectionInterval" type="number" min="1" max="100" value="1" /><span>步</span></div></div>
+                <div class="field"><label>保存模型 Payload</label><button class="switch" id="capturePayloads" aria-label="切换模型 Payload 审计留存"></button><small class="field-hint">仅用于审计；会增加存储与隐私暴露。</small></div>
               </div>
               <section class="overview-release">
                 <button class="btn btn-primary btn-block" id="publishBtn">发布版本并启动实验</button>
@@ -1603,7 +1603,7 @@
 
         <section class="page" id="page-models">
           <div class="page-heading">
-            <div><div class="heading-line"><h1>模型服务</h1><button type="button" class="help-tip" aria-label="模型服务说明" data-tooltip="这里保存当前实验的模型连接；发布后解析为明确模型 ID 并锁定。">?</button></div></div>
+            <div><div class="heading-line"><h1>模型与运行</h1><button type="button" class="help-tip" aria-label="模型与运行说明" data-tooltip="设置本次实验使用的模型连接；重试与取消由系统运行监督器负责。">?</button></div></div>
             <span class="revision-meta"><span class="connection-status untested" id="modelConnectionSummary">2 个服务未检测</span></span>
           </div>
           <div class="content-workspace" data-content-tabs="models">
@@ -1618,10 +1618,10 @@
                 <div class="field"><label for="chatProvider">Provider</label><select class="control dirty-track" id="chatProvider"><option value="vllm">vLLM</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option></select></div>
                 <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="auto" /></div>
                 <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:5001" /></div>
-                <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="300" /><span>秒</span></div></div>
+                <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="120" min="1" max="600" /><span>秒</span></div></div>
                 <div class="field"><div class="field-label"><label for="chatMaxTokens">单次最大输出</label><button type="button" class="help-tip" aria-label="单次最大输出说明" data-tooltip="限制模型每次回复最多生成多少 tokens，不是模型的上下文窗口。服务上下文能力会在下方自动检测。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
                 <div class="field"><label for="chatTemperature">Temperature</label><input class="control dirty-track" id="chatTemperature" type="number" min="0" max="2" step="0.1" value="0.5" /></div>
-                <div class="field"><label for="chatRetries">失败重试</label><div class="input-unit"><input class="control dirty-track" id="chatRetries" type="number" min="1" max="20" value="10" /><span>次</span></div></div>
+                <div class="field"><label for="chatRetries">失败重试预算</label><div class="input-unit"><input class="control dirty-track" id="chatRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
                 <div class="field"><label for="chatBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="chatBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
                 <div class="field"><label>思考模式</label><button class="switch" id="chatThinking" aria-label="切换聊天模型思考模式"></button></div>
                 <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
@@ -1635,8 +1635,8 @@
                 <div class="field"><label for="embeddingModel">模型 ID</label><input class="control dirty-track" id="embeddingModel" value="qwen3-embedding-0.6b" /></div>
                 <div class="field" style="grid-column:1/-1"><label for="embeddingBaseUrl">Base URL</label><input class="control dirty-track" id="embeddingBaseUrl" value="http://127.0.0.1:5002" /></div>
                 <div class="field"><label for="embeddingTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="embeddingTimeout" value="120" /><span>秒</span></div></div>
-                <div class="field"><label for="embeddingTransportRetries">传输重试</label><div class="input-unit"><input class="control dirty-track" id="embeddingTransportRetries" type="number" min="1" max="20" value="3" /><span>次</span></div></div>
-                <div class="field"><label for="embeddingIndexRetries">索引操作重试</label><div class="input-unit"><input class="control dirty-track" id="embeddingIndexRetries" type="number" min="1" max="20" value="10" /><span>次</span></div></div>
+                <div class="field"><label for="embeddingTransportRetries">传输重试预算</label><div class="input-unit"><input class="control dirty-track" id="embeddingTransportRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
+                <div class="field"><label for="embeddingIndexRetries">索引操作重试预算</label><div class="input-unit"><input class="control dirty-track" id="embeddingIndexRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
                 <div class="field"><label for="embeddingBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="embeddingBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
                 <div class="field" style="grid-column:1/-1"><label for="embeddingSecret">API Key</label><input class="control dirty-track" id="embeddingSecret" type="password" value="" placeholder="未设置" /></div>
               </div>
@@ -1649,98 +1649,6 @@
           </div>
         </section>
 
-        <section class="page" id="page-experiment-brain"></section>
-
-        <section class="page" id="page-world">
-          <div class="page-heading">
-            <div><div class="heading-line"><h1>世界与地图</h1><button type="button" class="help-tip" aria-label="世界版本说明" data-tooltip="地图结构和视觉资源一起锁定，保证模拟与回放使用相同世界版本。">?</button></div></div>
-            <span class="revision-meta"><span>世界快照</span><code id="worldRevisionCode">未发布</code></span>
-          </div>
-          <div class="experiment-map-source">
-            <div class="experiment-map-source-copy"><strong>公共地图来源</strong><span id="experimentMapSourceMeta">当前实验仍使用自身世界定义</span></div>
-            <select class="control" id="experimentMapSelect" aria-label="选择公共地图版本"><option value="">载入公共地图…</option></select>
-            <div><button class="btn btn-sm" id="applyExperimentMapBtn">使用此地图</button> <button class="btn btn-sm" id="tuneExperimentMapBtn">实验内微调</button></div>
-          </div>
-          <div class="content-workspace" data-content-tabs="world">
-            <nav class="content-tabs" role="tablist" aria-label="世界与地图内容">
-              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="map">地图预览</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="definition">地图定义</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="assets">资源版本</button>
-            </nav>
-            <div class="content-tab-panel active" role="tabpanel" data-content-panel="map">
-              <div class="panel-intro"><div><h2 id="worldPreviewTitle">世界待配置</h2><p id="worldPreviewMeta">等待世界定义</p></div><span class="chip teal">Revision 世界快照</span></div>
-              <div class="map-preview">
-                <img src="/static/console/snapshot.png" alt="实验地图预览" />
-                <span class="map-badge" id="worldMapBadge">当前 Revision 世界快照</span>
-                <div class="map-tools"><button class="map-tool" data-toast="地图已适配视口" aria-label="适配地图">⌗</button></div>
-              </div>
-              <div class="map-legend"><span><i class="legend-dot"></i><b id="worldWalkableTiles">0</b> 可访问 Tile</span><span><i class="legend-dot collision"></i><b id="worldCollisionTiles">0</b> 碰撞 Tile</span><span><i class="legend-dot agent"></i><b id="worldAgentPositions">0</b> Agent 初始位置</span></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="definition">
-              <div class="panel-intro"><div><h2>地图定义</h2><p>发布前校验地图尺寸、地址层级与完整世界结构。</p></div><span class="chip teal">有效</span></div>
-              <div class="form-grid"><div class="field"><label for="worldName">世界名称</label><input class="control dirty-track" id="worldName" value="the Ville" /></div><div class="field"><label for="worldKey">世界稳定键</label><input class="control dirty-track" id="worldKey" /></div><div class="field"><label>地址层级</label><div class="locked-input" id="worldAddressKeys">尚未配置</div></div><div class="field"><label>地图尺寸</label><div class="locked-input" id="worldDimensions">尚未配置</div></div><div class="field" style="grid-column:1/-1"><label for="worldDefinition">完整世界定义 JSON</label><textarea class="control dirty-track" id="worldDefinition" style="min-height:360px;font-family:var(--mono)"></textarea></div></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="assets">
-              <div class="panel-intro"><div><h2>资源版本锁</h2><p>按内容哈希锁定视觉与结构资源；同名文件变化不会影响已有 Revision。</p></div><div><label class="btn btn-sm" for="worldAssetInput">上传资源</label><input id="worldAssetInput" type="file" hidden multiple /></div></div>
-              <div class="asset-list" id="worldAssetList"><div class="empty-state"><strong>等待实验数据</strong></div></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="page" id="page-advanced">
-          <div class="page-heading">
-            <div><div class="heading-line"><h1>行为参数</h1><button type="button" class="help-tip" aria-label="行为参数说明" data-tooltip="这些参数随实验 Revision 保存，用于对比不同阈值下的行为结果。">?</button></div></div>
-            <div class="revision-meta behavior-actions"><button class="btn btn-sm" id="showChangedBehavior">仅看已修改</button><button class="btn btn-sm" id="resetBehaviorDefaults">恢复方案默认</button><button class="btn btn-sm" id="copyBehaviorScheme">复制方案 JSON</button></div>
-          </div>
-          <div class="content-workspace" data-content-tabs="advanced">
-            <nav class="content-tabs" role="tablist" aria-label="行为参数分类">
-              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="perception">感知与反思</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="memory">记忆检索</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="social">社交行为</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="execution">执行与复现</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="results">结果记录</button>
-            </nav>
-            <div class="content-tab-panel active" role="tabpanel" data-content-panel="perception">
-              <div class="section-head compact"><div class="section-title"><h2>感知与反思</h2><button type="button" class="help-tip" aria-label="感知与反思参数说明" data-tooltip="影响 Agent 观察环境、积累情感和生成反思。">?</button></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>视野半径</strong><button type="button" class="help-tip" aria-label="视野半径说明" data-tooltip="以 Agent 当前 Tile 为中心的 box 半径。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="visionOutput" /><output class="range-value" id="visionOutput">8</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>注意力带宽</strong><button type="button" class="help-tip" aria-label="注意力带宽说明" data-tooltip="每步最多处理的事件数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="20" value="8" data-range-output="bandwidthOutput" /><output class="range-value" id="bandwidthOutput">8</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>反思阈值</strong><button type="button" class="help-tip" aria-label="反思阈值说明" data-tooltip="情感强度累计到该值后触发反思。">?</button></div><div class="range-wrap"><input type="range" min="20" max="300" step="10" value="150" data-range-output="reflectOutput" /><output class="range-value" id="reflectOutput">150</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>反思焦点数量</strong><button type="button" class="help-tip" aria-label="反思焦点数量说明" data-tooltip="每次反思生成的问题数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="3" data-range-output="focusOutput" /><output class="range-value" id="focusOutput">3</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>每个焦点洞察</strong><button type="button" class="help-tip" aria-label="每个焦点洞察说明" data-tooltip="每个反思焦点最多生成的洞察数量。">?</button></div><div class="range-wrap"><input type="range" min="1" max="10" value="5" data-range-output="insightOutput" /><output class="range-value" id="insightOutput">5</output></div></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="memory">
-              <div class="section-head compact"><div class="section-title"><h2>记忆检索</h2><button type="button" class="help-tip" aria-label="记忆检索参数说明" data-tooltip="控制记忆候选数量和排序权重。">?</button></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>近期记忆保留</strong><button type="button" class="help-tip" aria-label="近期记忆保留说明" data-tooltip="每种记忆默认返回的最近条数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="30" value="8" data-range-output="retentionOutput" /><output class="range-value" id="retentionOutput">8</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>每类记忆上限</strong><button type="button" class="help-tip" aria-label="每类记忆上限说明" data-tooltip="事件、反思和对话记忆分别允许保留的最大条数；-1 表示不限。">?</button></div><div class="input-unit"><input class="control dirty-track" id="maxMemories" type="number" min="-1" value="-1" /><span>条</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>反思记忆候选</strong><button type="button" class="help-tip" aria-label="反思记忆候选说明" data-tooltip="触发反思后最多选取的近期记忆数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="reflectionMemoryLimit" type="number" min="1" max="100" value="10" /><span>条</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>新近性衰减</strong><button type="button" class="help-tip" aria-label="新近性衰减说明" data-tooltip="每经过一个记忆顺序位置时保留的新近性系数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="recencyDecay" type="number" min="0.001" max="1" step="0.001" value="0.995" /></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>新近性权重</strong><button type="button" class="help-tip" aria-label="新近性权重说明" data-tooltip="时间接近程度对最终排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="0.5" data-range-output="recencyOutput" /><output class="range-value" id="recencyOutput">0.5</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>相关性权重</strong><button type="button" class="help-tip" aria-label="相关性权重说明" data-tooltip="向量语义相似度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="3" data-range-output="relevanceOutput" /><output class="range-value" id="relevanceOutput">3.0</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>重要性权重</strong><button type="button" class="help-tip" aria-label="重要性权重说明" data-tooltip="事件情感强度对排序的贡献。">?</button></div><div class="range-wrap"><input type="range" min="0" max="5" step="0.1" value="2" data-range-output="importanceOutput" /><output class="range-value" id="importanceOutput">2.0</output></div></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="social">
-              <div class="section-head compact"><div class="section-title"><h2>社交行为</h2><button type="button" class="help-tip" aria-label="社交行为参数说明" data-tooltip="控制对话频率、轮数和夜间互动。">?</button></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>最大对话轮数</strong><button type="button" class="help-tip" aria-label="最大对话轮数说明" data-tooltip="每次社交互动允许的最大往返轮数。">?</button></div><div class="range-wrap"><input type="range" min="1" max="12" value="4" data-range-output="chatOutput" /><output class="range-value" id="chatOutput">4</output></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>再次对话冷却</strong><button type="button" class="help-tip" aria-label="再次对话冷却说明" data-tooltip="同一组 Agent 再次发起对话前的间隔。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatCooldown" value="60" /><span>分钟</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>夜间停止社交</strong><button type="button" class="help-tip" aria-label="夜间停止社交说明" data-tooltip="到达指定虚拟时间后不再发起新互动。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatStopHour" value="23:00" /><span>时刻</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>重复内容检测</strong><button type="button" class="help-tip" aria-label="重复内容检测说明" data-tooltip="从第二轮开始检测对话复读。">?</button></div><button class="switch on" id="repeatDetection" aria-label="切换重复内容检测"></button></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="execution">
-              <div class="section-head compact"><div class="section-title"><h2>执行与复现</h2><button type="button" class="help-tip" aria-label="执行与复现参数说明" data-tooltip="控制随机序列、检查点和记忆有效期。">?</button></div><span class="inline-risk">高影响 <button type="button" class="help-tip edge" aria-label="高影响参数说明" data-tooltip="调整这些参数可能显著改变实验结果，建议从现有 Revision 创建新修订。">?</button></span></div>
-              <div class="setting-row"><div class="setting-copy"><strong>日程生成重试</strong><button type="button" class="help-tip" aria-label="日程生成重试说明" data-tooltip="日程未满足时间或多样性约束时的最大重试次数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleRetries" type="number" min="1" max="100" value="5" /><span>次</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>日程活动多样性</strong><button type="button" class="help-tip" aria-label="日程活动多样性说明" data-tooltip="日程生成结果至少包含的不同活动数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="scheduleDiversity" type="number" min="1" max="100" value="5" /><span>类</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>检查点频率</strong><button type="button" class="help-tip" aria-label="检查点频率说明" data-tooltip="每完成指定步数持久化一次运行状态。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointInterval" value="1" /><span>步</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>检查点保留</strong><button type="button" class="help-tip" aria-label="检查点保留说明" data-tooltip="成功生成新检查点后保留的最近完整恢复点数量。">?</button></div><div class="input-unit"><input class="control dirty-track" id="checkpointRetention" type="number" min="2" max="20" value="2" /><span>份</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>记忆默认有效期</strong><button type="button" class="help-tip" aria-label="记忆默认有效期说明" data-tooltip="事件与反思记忆的默认过期天数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="memoryExpireDays" value="30" /><span>天</span></div></div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="results">
-              <div class="section-head compact"><div class="section-title"><h2>结果记录</h2><button type="button" class="help-tip" aria-label="结果记录参数说明" data-tooltip="控制结果查询粒度、兼容回放和模型调用留痕。">?</button></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>Agent 状态投影</strong><button type="button" class="help-tip" aria-label="Agent 状态投影说明" data-tooltip="每隔多少步写入可查询的 Agent 状态；原始逐步结果仍完整保存。">?</button></div><div class="input-unit"><input class="control dirty-track" id="projectionInterval" type="number" min="1" max="100" value="1" /><span>步</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>兼容回放插值</strong><button type="button" class="help-tip" aria-label="兼容回放插值说明" data-tooltip="旧 movement.json 中每个模拟步骤生成的动画采样数。">?</button></div><div class="input-unit"><input class="control dirty-track" id="replayFrames" type="number" min="1" max="120" value="60" /><span>帧</span></div></div>
-              <div class="setting-row"><div class="setting-copy"><strong>记录模型输入输出</strong><button type="button" class="help-tip" aria-label="记录模型输入输出说明" data-tooltip="关闭时只记录调用统计；开启后额外保存脱敏 payload。">?</button></div><button class="switch" id="capturePayloads" aria-label="切换模型输入输出记录"></button></div>
-            </div>
-          </div>
-        </section>
       </div>
     </main>
   </div>
@@ -1816,17 +1724,17 @@
             <div class="field">
               <label for="newExperimentBrain">大脑 Skill</label>
               <select class="control" id="newExperimentBrain"><option value="">正在加载 Brain Skill…</option></select>
-              <small>必须显式选择一个 Brain Skill；运行时会把所选版本及其依赖固化到不可变快照。</small>
+              <small>必须显式选择一个不可变 Brain Revision；运行启动时冻结其递归依赖闭包。</small>
             </div>
             <div class="field">
               <label for="newExperimentMap">地图</label>
               <select class="control" id="newExperimentMap"><option value="">正在加载已发布地图…</option></select>
-              <small>锁定已发布地图版本，之后可为当前实验添加独立覆盖层。</small>
+              <small>锁定已发布地图 Revision；地图内容只能在地图中心创建新版本。</small>
             </div>
             <div class="field creation-crowd-field">
               <label id="newExperimentCrowdsLabel">人群（可多选）</label>
               <div class="creation-crowd-list" id="newExperimentCrowds" role="group" aria-labelledby="newExperimentCrowdsLabel"><span class="muted">正在加载已发布人群…</span></div>
-              <small>多个群体按 Agent 名称合并去重；导入后成为当前实验的独立 Agent，可继续编辑。</small>
+              <small>多个群体按稳定 Agent 身份导入；实验保存独立 Agent 快照。</small>
             </div>
           </div>
         </div>
@@ -1896,6 +1804,8 @@
             <div class="form-grid">
               <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
               <div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div>
+              <div class="field"><label for="agentEditVisionRadius">感知视野上限</label><div class="input-unit"><input class="control" id="agentEditVisionRadius" type="number" min="1" max="10000" value="8" /><span>格</span></div><small class="field-hint">Brain 可以请求更小范围，不能越过此上限。</small></div>
+              <div class="field"><label for="agentEditAttentionBandwidth">注意力带宽</label><div class="input-unit"><input class="control" id="agentEditAttentionBandwidth" type="number" min="1" max="1000000" value="8" /><span>项</span></div><small class="field-hint">限制每次感知返回的附近候选数量。</small></div>
               <div class="field" style="grid-column:1/-1"><label>坐标语义校验</label><div class="inline-actions"><small id="agentInitialLocationResolved">尚未解析当前坐标</small><button class="btn btn-sm" id="useAgentInitialLocation" type="button">同步为初始位置</button></div></div>
               <div class="spatial-form-editor">
                 <section class="spatial-editor-section" aria-labelledby="agentAddressTitle">
@@ -1964,43 +1874,6 @@
         <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" placeholder="这张地图适合哪些实验…"></textarea></div>
       </div>
       <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="experimentMapOverlayModal" role="dialog" aria-modal="true" aria-labelledby="experimentMapOverlayTitle">
-    <div class="modal wide map-overlay-dialog">
-      <div class="modal-head"><div><h2 id="experimentMapOverlayTitle">实验地图微调</h2><p>更改只写入当前实验 Draft，不会改变公共地图或其他实验。</p></div><button class="close" id="closeExperimentMapOverlay" aria-label="关闭">×</button></div>
-      <div class="modal-body">
-        <div class="map-editor-layout" id="experimentMapEditor">
-          <aside class="map-tool-panel">
-            <h3>编辑工具</h3>
-            <div class="map-tool-grid" data-map-tools></div>
-            <h3 style="margin-top:20px">画块</h3>
-            <div class="map-palette" data-map-palette></div>
-            <button class="btn btn-sm" data-add-palette style="margin-top:10px;width:100%">＋ 自定义画块</button>
-          </aside>
-          <div class="map-editor-center">
-            <div class="map-canvas-toolbar">
-              <button class="btn btn-sm" data-map-undo disabled>撤销</button>
-              <button class="btn btn-sm" data-map-redo disabled>重做</button>
-              <span class="spacer"></span>
-              <button class="btn btn-sm" data-map-zoom-out>−</button><span class="map-zoom-label" data-map-zoom>100%</span><button class="btn btn-sm" data-map-zoom-in>＋</button><button class="btn btn-sm" data-map-fit>适配</button>
-            </div>
-            <div class="map-canvas-host" data-map-canvas-host><canvas class="map-editor-canvas" data-map-canvas></canvas><span class="map-canvas-hint">当前只影响本实验 · 空白处左键/空格/中键拖动 · 滚轮缩放</span></div>
-          </div>
-          <aside class="map-inspector">
-            <h3>Tile 属性</h3>
-            <div class="map-coordinate" data-map-coordinate>尚未选择格子</div>
-            <div class="field"><label>区域 Sector</label><input class="control" data-map-address="0" /></div>
-            <div class="field"><label>场所 Arena</label><input class="control" data-map-address="1" /></div>
-            <div class="field"><label>对象 Object</label><input class="control" data-map-address="2" /></div>
-            <label class="map-check-row"><input type="checkbox" data-map-collision /> 不可通行（碰撞）</label>
-            <button class="btn btn-primary btn-sm" data-apply-semantics style="width:100%">应用到当前格</button>
-            <button class="btn btn-sm" data-clear-semantics style="width:100%;margin-top:8px">清除语义</button>
-          </aside>
-        </div>
-      </div>
-      <div class="modal-foot"><span class="revision-meta" id="experimentMapOverlayMeta">等待地图数据</span><button class="btn" id="cancelExperimentMapOverlay">取消</button><button class="btn btn-primary" id="saveExperimentMapOverlay">保存实验微调</button></div>
     </div>
   </div>
 
@@ -2080,10 +1953,10 @@
   <script src="/static/console/replay-player.js?v=20260813b"></script>
   <script src="/static/console/modal-focus.js"></script>
   <script src="/static/console/spatial-asset-workspace.js?v=20260812a"></script>
-  <script src="/static/console/map-editor-v2.js?v=20260823c"></script>
-  <script src="/static/console/map-workspace.js?v=20260823b"></script>
+  <script src="/static/console/map-editor-v2.js?v=20260829h"></script>
+  <script src="/static/console/map-workspace.js?v=20260829h"></script>
   <script src="/static/console/crowd-workspace.js?v=20260812k"></script>
-  <script src="/static/console/skill-workspace.js?v=20260823c"></script>
-  <script src="/static/console/console-api.js?v=20260828a"></script>
+  <script src="/static/console/skill-workspace.js?v=20260829a"></script>
+  <script src="/static/console/console-api.js?v=20260829b"></script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 # Prompt 流程编排技术设计
 
+> 已废止：本方案与自然语言 Brain Skill 架构冲突，不得实现或恢复。系统不提供固定五流程和可视化工作流编排器；当前设计见 [用户地图与 Skill Brain 仿真架构](capability-composition-platform-design.md) 与 [实验资源组合 UX 与交互边界](experiment-resource-composition-ux.md)。本文仅保留为历史决策记录。
+
 ## 1. 边界
 
 Prompt 编排属于实验 Draft Revision。系统固定提供五条可编辑流程：日程与状态、感知与记忆、行动与空间、社交与对话、反思与认知；首期不允许新建或删除顶层流程。流程之间独立保存，任一流程的画布、Prompt 和版本操作不得改变其他流程或其他实验。

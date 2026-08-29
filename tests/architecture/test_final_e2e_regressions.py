@@ -33,6 +33,8 @@ from generative_agents.persistence.models import (
 )
 from generative_agents.runtime import worker
 from tests.support import (
+    brain_selection_for_database,
+    brain_revision_via_api,
     first_builtin_crowd_revision_id,
     publish_user_map,
     publish_user_map_via_api,
@@ -127,11 +129,13 @@ def _publish(database, definition: ExperimentDefinition):
         goal=definition.experiment.goal,
         source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
     payload["world"] = draft["definition"]["world"]
+    payload["engine"] = draft["definition"]["engine"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],
@@ -646,7 +650,8 @@ def test_def_044_homepage_shell_and_images_are_packaged_runtime_assets(tmp_path)
     assert shell.is_file()
     shell_document = shell.read_text(encoding="utf-8")
     assert 'src="resources/snapshot.png"' not in shell_document
-    assert 'src="/static/console/snapshot.png"' in shell_document
+    # The experiment shell no longer embeds a Brain/world editor preview, but
+    # the packaged fallback remains available to resource workspaces.
 
     database_url = "sqlite:///" + (tmp_path / "packaged-shell.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
@@ -777,7 +782,7 @@ def test_def_041_to_043_legacy_artifacts_log_and_counts_are_consistent(
     assert all(view["run_id"] == run_id for view in views)
 
 
-def test_agent_crud_world_asset_and_published_revision_rerun_http(tmp_path):
+def test_agent_crud_rejects_world_mutation_and_published_revision_rerun_http(tmp_path):
     """回归验证 ``test_agent_crud_world_asset_and_published_revision_rerun_http`` 所描述的业务结果、故障边界和隔离约束。"""
     database_url = "sqlite:///" + (tmp_path / "crud-rerun.db").as_posix()
     app = create_app(database_url=database_url, supervisor_enabled=False)
@@ -789,6 +794,7 @@ def test_agent_crud_world_asset_and_published_revision_rerun_http(tmp_path):
             json={
                 "name": "CRUD",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
@@ -820,15 +826,15 @@ def test_agent_crud_world_asset_and_published_revision_rerun_http(tmp_path):
                 "size": asset["size_bytes"],
             }
         )
-        saved_world = client.put(
+        removed_world_editor = client.put(
             f"/api/v1/experiments/{experiment['id']}/draft/world",
             json={"lock_version": changed.json()["lock_version"], "data": world},
         )
-        assert saved_world.status_code == 200, saved_world.text
+        assert removed_world_editor.status_code in {404, 405}
         deleted = client.request(
             "DELETE",
             f"/api/v1/experiments/{experiment['id']}/draft/agents/added-agent",
-            json={"lock_version": saved_world.json()["lock_version"], "data": {}},
+            json={"lock_version": changed.json()["lock_version"], "data": {}},
         )
         assert deleted.status_code == 200, deleted.text
 

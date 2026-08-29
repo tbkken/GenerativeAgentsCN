@@ -1,5 +1,7 @@
 # GenerativeAgentsCN 产品可用性验收与需求清单
 
+> 历史文档：本文记录 2026-08-11 的旧产品基线，其中“默认模板、Prompt 可视化流程、实验地图覆盖层、行为参数”等要求已被 2026-08-29 的能力组合架构废止，不得作为当前实现依据。当前规范见 [实验资源组合 UX 与交互边界](experiment-resource-composition-ux.md) 与 [用户地图与 Skill Brain 仿真架构](capability-composition-platform-design.md)。
+
 > 文档状态：待产品审阅
 > 验收日期：2026-08-11（Asia/Shanghai）
 > 验收环境：本机服务 `http://127.0.0.1:8000/`，1920 × 1080 宽屏

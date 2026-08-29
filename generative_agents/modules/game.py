@@ -59,9 +59,6 @@ class Game:
         """
         self.context = context
         self.name = str(context.run_id)
-        self.record_interval = config.get(
-            "record_interval_minutes", config.get("record_iterval", 30)
-        )
         self.logger = context.logger
         maze_definition = config.get("maze") or config.get("world")
         if not isinstance(maze_definition, dict):

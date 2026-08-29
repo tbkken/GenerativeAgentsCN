@@ -20,6 +20,7 @@ from generative_agents.skills import SkillRegistry, SnapshotPassiveSkillRuntime
 from generative_agents.start import SimulationRunner
 from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
 from generative_agents.web.app import create_app
+from tests.support import brain_revision_via_api
 from tools.seed_pedestrian_crossing_skill_demo import build_agent, build_world
 
 
@@ -473,6 +474,7 @@ def test_demo_resources_materialize_through_public_apis(database_url):
                 "name": "Game Object Skill 端到端实验：行人过街",
                 "goal": "红灯等待，绿灯过街",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": map_revision.json()["id"],
                 "crowd_revision_ids": [crowd_revision.json()["id"]],
             },

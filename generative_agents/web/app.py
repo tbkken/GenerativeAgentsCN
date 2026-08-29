@@ -35,7 +35,6 @@ from generative_agents.config import (
 from generative_agents.config.schema import (
     StrictModel,
     WorldConfig,
-    WorldOverlayConfig,
 )
 from generative_agents.persistence import create_database, upgrade_database
 from generative_agents.persistence.models import (
@@ -113,6 +112,7 @@ class CreateExperimentRequest(StrictModel):
         max_length=64,
         pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
     )
+    brain_revision_id: str
     source: SourceRequest | None = None
     map_revision_id: str
     crowd_revision_ids: list[str] = Field(default_factory=list, max_length=50)
@@ -274,11 +274,11 @@ class ExperimentMapSelectionRequest(StrictModel):
     map_revision_id: str
 
 
-class ExperimentMapOverlayRequest(StrictModel):
-    """保存仅属于当前实验的地图覆盖层。"""
+class ExperimentBrainSelectionRequest(StrictModel):
+    """为实验草稿选择一个不可变 Brain Skill Revision。"""
 
     lock_version: int = Field(ge=1)
-    overlay: dict[str, Any] = Field(default_factory=dict)
+    brain_revision_id: str
 
 
 class CreateAgentTemplateRequest(StrictModel):
@@ -1505,14 +1505,14 @@ def create_app(
                 status_code=422,
             )
         try:
-            selected_brain = skill_registry.get(body.brain_skill)
+            selected_brain = skill_registry.get_revision(body.brain_revision_id)
         except SkillRegistryError as exc:
             raise ServiceError(
                 "BRAIN_SKILL_NOT_FOUND",
-                f"所选 Brain Skill 不存在或不可用：{body.brain_skill}",
+                f"所选 Brain Skill Revision 不存在或不可用：{body.brain_revision_id}",
                 status_code=422,
             ) from exc
-        if selected_brain.kind != "brain":
+        if selected_brain.kind != "brain" or selected_brain.name != body.brain_skill:
             raise ServiceError(
                 "BRAIN_SKILL_KIND_REQUIRED",
                 f"所选 Skill 不是 Brain：{body.brain_skill}",
@@ -1528,6 +1528,8 @@ def create_app(
             owner=body.owner,
             tags=body.tags,
             brain_skill=selected_brain.name,
+            brain_revision_id=body.brain_revision_id,
+            brain_revision_hash=selected_brain.revision,
             map_revision_id=body.map_revision_id,
             crowd_revision_ids=body.crowd_revision_ids,
         )
@@ -1800,24 +1802,6 @@ def create_app(
             data=body.data,
         )
 
-    @app.put("/api/v1/experiments/{experiment_id}/draft/world")
-    def replace_world(experiment_id: str, body: DraftUpdateRequest):
-        """执行 的`replace`世界操作。
-
-        参数:
-            experiment_id: 实验记录的唯一标识。 类型：`str`。
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`DraftUpdateRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.patch_draft_section(
-            experiment_id=experiment_id,
-            section="world",
-            expected_lock_version=body.lock_version,
-            data=body.data,
-        )
-
     @app.put("/api/v1/experiments/{experiment_id}/draft/map")
     def select_experiment_map(experiment_id: str, body: ExperimentMapSelectionRequest):
         """执行 的`select`实验地图操作。
@@ -1833,25 +1817,6 @@ def create_app(
             experiment_id,
             expected_lock_version=body.lock_version,
             map_revision_id=body.map_revision_id,
-        )
-
-    @app.put("/api/v1/experiments/{experiment_id}/draft/map-overlay")
-    def update_experiment_map_overlay(
-        experiment_id: str, body: ExperimentMapOverlayRequest
-    ):
-        """更新实验地图`overlay`。
-
-        参数:
-            experiment_id: 实验记录的唯一标识。 类型：`str`。
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`ExperimentMapOverlayRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return map_service.update_experiment_overlay(
-            experiment_id,
-            expected_lock_version=body.lock_version,
-            overlay=WorldOverlayConfig.model_validate(body.overlay),
         )
 
     @app.put("/api/v1/experiments/{experiment_id}/draft/agents/{agent_key}")
@@ -1982,6 +1947,7 @@ def create_app(
         automatic_model_checks = sum(
             item["status"] != "OFFLINE" for item in model_status["items"]
         )
+
         model_status["auto_probe_on_publish"] = True
         report["model_status"] = model_status
         report["auto_model_probe"] = {
@@ -2002,6 +1968,16 @@ def create_app(
             ),
         }
         return report
+
+    @app.put("/api/v1/experiments/{experiment_id}/draft/brain")
+    def select_experiment_brain(
+        experiment_id: str, body: ExperimentBrainSelectionRequest
+    ):
+        return service.select_brain_for_experiment(
+            experiment_id,
+            expected_lock_version=body.lock_version,
+            brain_revision_id=body.brain_revision_id,
+        )
 
     @app.post("/api/v1/experiments/{experiment_id}/draft/models/{purpose}/test")
     def test_model_connection(

@@ -43,8 +43,8 @@ def test_algorithm_profile_is_the_fixed_ga_cn_v1_contract():
     [
         (("simulation", "stride_minutes"), 0),
         (("simulation", "max_steps"), 0),
-        (("results", "replay_interpolation_frames"), 121),
-        (("behavior", "memory", "recency_decay"), 0),
+        (("simulation", "checkpoint_retention"), 1),
+        (("results", "agent_step_projection_interval_steps"), 0),
     ],
 )
 def test_schema_rejects_result_changing_boundary_values(path, value):

@@ -3,10 +3,28 @@
 from __future__ import annotations
 
 import copy
+import tempfile
+from pathlib import Path
 from uuid import uuid4
 
 from generative_agents.config import ExperimentDefinition
 from generative_agents.services.maps import WorldMapService
+from generative_agents.skills import DatabaseSkillRegistry
+
+
+def brain_selection_for_database(database) -> dict[str, str]:
+    """Seed and return the exact built-in Brain Revision for service tests."""
+    registry = DatabaseSkillRegistry(
+        database,
+        cache_root=Path(tempfile.gettempdir()) / "ga-cn-test-skill-cache",
+    )
+    registry.ensure_builtin_skills()
+    brain = registry.get("stanford-town-brain")
+    return {
+        "brain_skill": brain.name,
+        "brain_revision_id": brain.revision_id,
+        "brain_revision_hash": brain.revision,
+    }
 
 
 def publish_user_map(database, *, world=None, name: str = "Test user map") -> dict:
@@ -115,6 +133,16 @@ def first_builtin_crowd_revision_id(client) -> str:
     crowds = client.get("/api/v1/crowds?page_size=100").json()["items"]
     crowd = next(item for item in crowds if item["is_builtin"])
     return crowd["current_published"]["id"]
+
+
+def brain_revision_via_api(client, name: str = "stanford-town-brain") -> dict:
+    """Return the exact immutable Brain Revision selected by API tests."""
+    response = client.get(f"/api/v1/skills/{name}")
+    assert response.status_code == 200, response.text
+    document = response.json()
+    assert document["kind"] == "brain"
+    assert document["revision_id"]
+    return document
 
 
 def bind_definition_to_selected_map(

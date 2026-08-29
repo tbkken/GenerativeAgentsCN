@@ -1,5 +1,7 @@
 # 基于实验隔离的配置与运行 Web 服务技术方案
 
+> 历史文档：本文的隔离、不可变 Revision 和运行监督原则仍有参考价值，但其中旧字段、兼容迁移、实验内地图/Prompt/behavior 编辑和旧回放方案已被 2026-08-29 架构取代，不得据此恢复旧接口。当前规范见 [用户地图与 Skill Brain 仿真架构](capability-composition-platform-design.md) 与 [实验资源组合 UX 与交互边界](experiment-resource-composition-ux.md)。
+
 > 文档状态：可直接进入开发拆分
 > 方案版本：v1.2（同机多实验并发 + 完整结果工作台）
 > 适用项目：GenerativeAgentsCN

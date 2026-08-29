@@ -392,10 +392,6 @@ textarea.control { line-height: 1.6; }
 .map-inspector .field label,
 .map-zoom-label,
 .map-canvas-hint { font-size: var(--text-caption); }
-.modal.wide.map-overlay-dialog {
-  width: min(1480px, calc(100vw - 48px));
-}
-
 @media (max-width: 1280px) {
   :root {
     --sidebar-width: 204px;
@@ -413,8 +409,7 @@ textarea.control { line-height: 1.6; }
     width: calc(100% - var(--sidebar-width));
     margin-left: var(--sidebar-width);
   }
-  .map-editor-layout,
-  .map-overlay-dialog .map-editor-layout {
+  .map-editor-layout {
     grid-template-columns: 180px minmax(360px, 1fr);
   }
 }

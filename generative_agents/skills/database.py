@@ -114,6 +114,21 @@ class DatabaseSkillRegistry:
             )
             return self._document(session, definition)
 
+    def get_revision(self, revision_id: str) -> SkillDocument:
+        """Load one immutable Skill Revision by identity, independent of latest state."""
+        with self.database.session_factory() as session:
+            revision = session.get(SkillRevision, revision_id)
+            if revision is None:
+                raise SkillRegistryError(
+                    f"Skill revision does not exist: {revision_id}"
+                )
+            definition = session.get(SkillDefinition, revision.skill_id)
+            if definition is None:
+                raise SkillRegistryError(
+                    f"Skill definition does not exist for revision: {revision_id}"
+                )
+            return self._document(session, definition, revision)
+
     def create(
         self,
         *,
@@ -252,7 +267,10 @@ class DatabaseSkillRegistry:
         }
 
     def snapshot(
-        self, roots: Iterable[str] | None = None
+        self,
+        roots: Iterable[str] | None = None,
+        *,
+        root_revisions: Mapping[str, str] | None = None,
     ) -> dict[str, dict[str, object]]:
         with self.database.session_factory() as session:
             selected: dict[str, tuple[SkillDefinition, SkillRevision]] = {}
@@ -270,13 +288,28 @@ class DatabaseSkillRegistry:
                         self._revision(session, definition),
                     )
             else:
+                pinned = {
+                    self.normalize_name(name): revision_id
+                    for name, revision_id in (root_revisions or {}).items()
+                }
                 pending = [self.normalize_name(name) for name in roots]
                 while pending:
                     name = pending.pop()
                     if name in selected:
                         continue
-                    definition = self._definition(session, name)
-                    revision = self._revision(session, definition)
+                    definition = self._definition(
+                        session, name, include_archived=True
+                    )
+                    revision_id = pinned.get(name)
+                    revision = (
+                        session.get(SkillRevision, revision_id)
+                        if revision_id is not None
+                        else self._revision(session, definition)
+                    )
+                    if revision is None or revision.skill_id != definition.id:
+                        raise SkillRegistryError(
+                            f"Skill revision does not belong to {name}: {revision_id}"
+                        )
                     selected[name] = (definition, revision)
                     pending.extend(revision.children_json or ())
             return {
@@ -372,6 +405,7 @@ class DatabaseSkillRegistry:
                 f"database://skills/{definition.skill_key}/revisions/"
                 f"{revision.revision_no}"
             ),
+            revision_id=revision.id,
             revision_no=revision.revision_no,
             is_builtin=bool(definition.is_builtin),
             archived_at=(

@@ -3,7 +3,11 @@
 import os
 import time
 import requests
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+
+try:
+    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+except ModuleNotFoundError:  # Optional; only needed for the Hugging Face provider.
+    HuggingFaceEmbedding = None
 from llama_index.core.indices.vector_store.retrievers import VectorIndexRetriever
 from llama_index.core.schema import TextNode
 from llama_index import core as index_core
@@ -74,6 +78,10 @@ def create_embedding_model(embedding_config):
     )
     provider = embedding_config["provider"]
     if provider == "hugging_face":
+        if HuggingFaceEmbedding is None:
+            raise RuntimeError(
+                "hugging_face embedding requires llama-index-embeddings-huggingface"
+            )
         embed_model = HuggingFaceEmbedding(model_name=resolved_model)
     elif provider == "ollama":
         embed_model = OllamaEmbedding(

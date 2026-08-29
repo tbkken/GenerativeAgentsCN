@@ -28,29 +28,32 @@ def test_two_day_commute_demo_uses_real_experiment_pages_and_cross_day_results(d
     assert 'id="experimentNavigation"' in demo.text
     assert 'id="autoDemo"' in demo.text
     assert 'class="demo-controller"' in demo.text
-    assert "实验配置 · 1/11" in demo.text
+    assert "实验配置 · 1/10" in demo.text
     assert "commute-map.js" in demo.text
     assert "新建实验" in script.text
-    assert "世界与地图" in demo.text
-    assert "Agent 配置" in demo.text
-    assert "场景装配" in demo.text
+    assert "世界与地图" not in demo.text
+    assert "大脑编排" not in demo.text
+    assert "行为参数" not in demo.text
+    assert "参与 Agent" in demo.text
+    assert "模型与运行" in demo.text
     assert "实验结果" in demo.text
-    assert "能力与工具" in script.text
+    assert "资源组合" in script.text
+    assert "Brain Revision" in script.text
+    assert "不创建实验覆盖层" in script.text
     assert "tool.car-01" in script.text
     assert "controller_agent_id" in script.text
     assert "company.vehicle.enter" in script.text
     assert "worldSharedMap" in script.text
     assert "replaySharedMap" in script.text
     assert "window.CommuteMap.render" in script.text
-    assert "一条跨日时间轴" in script.text
-    assert "周一 08:47:18" in script.text
-    assert "周二 07:54:12" in script.text
+    assert "StepResult 是唯一事实来源" in script.text
+    assert "周一 08:47" in script.text
+    assert "周二 07:54" in script.text
     assert "路口 A 红灯停车" in script.text
     assert "停入 P03" in script.text
-    assert "case 10:unifiedReplay()" in script.text
+    assert "Event(SPO) + structured_payload" in script.text
     assert "commute-home-office" in shared_map_script.text
     assert "map-rev-commute-001" in shared_map_script.text
-    assert "127.0.0.1:5001/v1" in script.text
     assert "URLSearchParams" in script.text
     assert "demo-steps" not in demo.text
     assert "/demos/two-day-commute?autoplay=1" in shell.text

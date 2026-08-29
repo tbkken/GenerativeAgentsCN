@@ -38,11 +38,9 @@
     if (state.mounted) return;
     const skillsPage = $('page-skills');
     const brainsPage = $('page-brains');
-    const experimentBrainPage = $('page-experiment-brain');
-    if (!skillsPage || !brainsPage || !experimentBrainPage) return;
+    if (!skillsPage || !brainsPage) return;
     skillsPage.innerHTML = '<div id="skillWorkspace" class="skill-workspace"></div>';
     brainsPage.innerHTML = '<div id="brainSkillWorkspace" class="skill-workspace"></div>';
-    experimentBrainPage.innerHTML = '<div id="experimentBrainSkillWorkspace" class="skill-workspace"></div>';
     state.mounted = true;
     $('createSkillBtn')?.addEventListener('click', () => showCreate('atomic'));
     $('createBrainBtn')?.addEventListener('click', () => showCreate('brain'));
@@ -52,7 +50,7 @@
     mount();
     state.page = page;
     state.current = null;
-    state.kind = ['brains', 'experiment-brain'].includes(page) ? 'brain' : (state.kind === 'brain' ? 'atomic' : state.kind);
+    state.kind = page === 'brains' ? 'brain' : (state.kind === 'brain' ? 'atomic' : state.kind);
     deactivateTopbar();
     await loadCatalog();
   }
@@ -66,7 +64,6 @@
 
   function host() {
     if (state.page === 'brains') return $('brainSkillWorkspace');
-    if (state.page === 'experiment-brain') return $('experimentBrainSkillWorkspace');
     return $('skillWorkspace');
   }
 
@@ -74,13 +71,9 @@
     const target = host();
     if (!target) return;
     deactivateTopbar();
-    const isBrain = ['brains', 'experiment-brain'].includes(state.page);
+    const isBrain = state.page === 'brains';
     const cards = state.items.map(item => skillCard(item)).join('');
-    const experimentBrainSelector = state.page === 'experiment-brain'
-      ? renderExperimentBrainSelector()
-      : '';
     target.innerHTML = `
-      ${experimentBrainSelector}
       <div class="skill-catalog-toolbar">
         <div class="skill-kind-tabs" ${isBrain ? 'hidden' : ''}>
           ${kindButton('atomic', '单个 Skill', state.counts.atomic)}
@@ -99,32 +92,12 @@
     }));
     target.querySelectorAll('[data-skill-name]').forEach(card => card.addEventListener('click', () => openSkill(card.dataset.skillName)));
     $('skillCreateInline')?.addEventListener('click', () => showCreate(isBrain ? 'brain' : state.kind));
-    $('experimentBrainApply')?.addEventListener('click', async () => {
-      const selected = $('experimentBrainSelect')?.value;
-      if (!selected) return;
-      try {
-        await window.ExperimentBrainBridge?.apply(selected);
-        renderCatalog();
-      } catch (error) { report(error); }
-    });
     let searchTimer;
     $('skillSearchInput')?.addEventListener('input', event => {
       clearTimeout(searchTimer);
       state.query = event.target.value;
       searchTimer = setTimeout(() => loadCatalog().catch(report), 220);
     });
-  }
-
-  function renderExperimentBrainSelector() {
-    const selected = window.ExperimentBrainBridge?.selected?.() || 'stanford-town-brain';
-    const editable = window.ExperimentBrainBridge?.editable?.() !== false;
-    const options = state.items.map(item => `<option value="${escapeHtml(item.name)}" ${item.name === selected ? 'selected' : ''}>${escapeHtml(titleCase(item.name))}</option>`).join('');
-    const description = state.items.find(item => item.name === selected)?.description || '';
-    return `<section class="experiment-brain-selector">
-      <div><span>CURRENT EXPERIMENT BRAIN</span><strong>${escapeHtml(titleCase(selected))}</strong><p>${escapeHtml(description)}</p></div>
-      <label>实验 Brain<select id="experimentBrainSelect" ${editable ? '' : 'disabled'}>${options}</select></label>
-      <button class="btn btn-primary" id="experimentBrainApply" ${editable ? '' : 'disabled'}>应用到当前实验</button>
-    </section>`;
   }
 
   function kindButton(kind, label, count) {
@@ -185,7 +158,6 @@
   }
 
   function editorRootLabel() {
-    if (state.page === 'experiment-brain') return '实验大脑';
     if (state.page === 'brains') return '大脑中心';
     return '技能列表';
   }

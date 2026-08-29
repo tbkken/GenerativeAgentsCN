@@ -17,7 +17,7 @@ from generative_agents.config import (
     definition_hash,
     validate_for_publish,
 )
-from generative_agents.config.schema import WorldOverlayConfig, make_blank_definition
+from generative_agents.config.schema import make_blank_definition
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     Experiment,
@@ -28,6 +28,8 @@ from generative_agents.persistence.models import (
     RunArtifact,
     RunResultSummary,
     Secret,
+    SkillDefinition,
+    SkillRevision,
     WorldMapRevision,
 )
 from generative_agents.status import (
@@ -142,12 +144,13 @@ class ExperimentService:
         from .maps import WorldMapService
 
         payload = definition.model_dump(mode="json", exclude_none=False)
-        payload["world"] = WorldMapService.materialize_world(
-            map_revision, WorldOverlayConfig()
-        ).model_dump(mode="json", exclude_none=False)
+        payload["world"] = WorldMapService.materialize_world(map_revision).model_dump(
+            mode="json", exclude_none=False
+        )
         return ExperimentDefinition.model_validate(payload), {
             "world_map_id": map_revision.map_id,
             "world_map_revision_id": map_revision.id,
+            "world_map_revision_hash": map_revision.world_hash,
         }
 
     @staticmethod
@@ -179,7 +182,9 @@ class ExperimentService:
         owner: str = "",
         tags: list[str] | None = None,
         map_revision_id: str,
-        brain_skill: str = "stanford-town-brain",
+        brain_skill: str,
+        brain_revision_id: str,
+        brain_revision_hash: str,
         crowd_revision_ids: list[str] | None = None,
     ) -> dict[str, Any]:
         """创建实验。
@@ -192,7 +197,9 @@ class ExperimentService:
             owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str`。 默认值：`''`。
             tags: 用于分类、检索或展示目标对象的去重标签集合。 类型：`list[str] | None`。 默认值：`None`。
             map_revision_id: 必须显式选择的已发布用户地图修订版本标识。 类型：`str`。
-            brain_skill: 驱动当前实验的 Brain Skill 稳定键。 类型：`str`。 默认值：`'stanford-town-brain'`。
+            brain_skill: 驱动当前实验的 Brain Skill 稳定键。 类型：`str`。
+            brain_revision_id: 用户明确选择的不可变 Brain Revision 标识。
+            brain_revision_hash: 所选 Brain Revision 的完整内容哈希。
             crowd_revision_ids: 需要批量处理的人群修订版本唯一标识集合。 类型：`list[str] | None`。 默认值：`None`。
 
         返回:
@@ -214,6 +221,24 @@ class ExperimentService:
             )
         key = _make_key(name)
         with self.database.session_factory.begin() as session:
+            brain_revision = session.get(SkillRevision, brain_revision_id)
+            brain_definition = (
+                session.get(SkillDefinition, brain_revision.skill_id)
+                if brain_revision is not None
+                else None
+            )
+            if (
+                brain_revision is None
+                or brain_definition is None
+                or brain_definition.skill_key != brain_skill
+                or brain_definition.kind != "brain"
+                or brain_revision.content_hash != brain_revision_hash
+            ):
+                raise ServiceError(
+                    "BRAIN_REVISION_CONFLICT",
+                    "所选 Brain Skill Revision 不存在、类型错误或内容哈希不匹配",
+                    status_code=422,
+                )
             if source_type == "REVISION":
                 if not source_revision_id:
                     raise ServiceError(
@@ -248,12 +273,24 @@ class ExperimentService:
                 source_definition, key=key, name=name, goal=goal
             )
             definition_payload = definition.model_dump(mode="json", exclude_none=False)
-            definition_payload["engine"]["brain_skill"] = brain_skill
+            definition_payload["engine"].update(
+                {
+                    "brain_skill": brain_skill,
+                    "brain_revision_id": brain_revision_id,
+                    "brain_revision_hash": brain_revision_hash,
+                }
+            )
             definition = ExperimentDefinition.model_validate(definition_payload)
             definition, map_provenance = self._definition_with_map(
                 session, definition, map_revision_id=map_revision_id
             )
-            provenance = {**provenance, **map_provenance}
+            provenance = {
+                **provenance,
+                **map_provenance,
+                "brain_skill": brain_skill,
+                "brain_revision_id": brain_revision_id,
+                "brain_revision_hash": brain_revision_hash,
+            }
             if crowd_revision_ids:
                 from .crowds import CrowdService
 
@@ -955,6 +992,7 @@ class ExperimentService:
         experiment_id: str,
         expected_lock_version: int,
         definition: ExperimentDefinition,
+        allow_resource_reselection: bool = False,
     ) -> dict[str, Any]:
         """更新`draft`。
 
@@ -971,6 +1009,18 @@ class ExperimentService:
         """
         with self.database.session_factory.begin() as session:
             experiment, current = self._require_draft(session, experiment_id)
+            current_definition = ExperimentDefinition.model_validate(
+                current.definition_json
+            )
+            if not allow_resource_reselection and (
+                definition.engine != current_definition.engine
+                or definition.world != current_definition.world
+            ):
+                raise ServiceError(
+                    "RESOURCE_SELECTION_ENDPOINT_REQUIRED",
+                    "地图与 Brain 只能通过显式的 Revision 选择接口修改",
+                    status_code=422,
+                )
             if definition.experiment.key != experiment.experiment_key:
                 raise ServiceError(
                     "EXPERIMENT_KEY_IMMUTABLE",
@@ -988,6 +1038,27 @@ class ExperimentService:
                 )
             digest = definition_hash(definition)
             now = _utc_now()
+            update_values: dict[str, Any] = {
+                "definition_json": definition.model_dump(
+                    mode="json", exclude_none=False
+                ),
+                "definition_hash": digest,
+                "schema_version": definition.schema_version,
+                "validation_json": None,
+                "validated_hash": None,
+                "lock_version": ExperimentRevision.lock_version + 1,
+                "updated_at": now,
+            }
+            if allow_resource_reselection:
+                update_values["provenance_json"] = {
+                    **(current.provenance_json or {}),
+                    "brain_skill": definition.engine.brain_skill,
+                    "brain_revision_id": definition.engine.brain_revision_id,
+                    "brain_revision_hash": definition.engine.brain_revision_hash,
+                    "world_map_id": definition.world.map_id,
+                    "world_map_revision_id": definition.world.map_revision_id,
+                    "world_map_revision_hash": definition.world.map_revision_hash,
+                }
             result = session.execute(
                 update(ExperimentRevision)
                 .where(
@@ -995,17 +1066,7 @@ class ExperimentService:
                     ExperimentRevision.state == RevisionState.DRAFT,
                     ExperimentRevision.lock_version == expected_lock_version,
                 )
-                .values(
-                    definition_json=definition.model_dump(
-                        mode="json", exclude_none=False
-                    ),
-                    definition_hash=digest,
-                    schema_version=definition.schema_version,
-                    validation_json=None,
-                    validated_hash=None,
-                    lock_version=ExperimentRevision.lock_version + 1,
-                    updated_at=now,
-                )
+                .values(**update_values)
             )
             if result.rowcount != 1:
                 actual = session.scalar(
@@ -1049,8 +1110,16 @@ class ExperimentService:
         异常:
             ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
         """
-        if section not in {"simulation", "models", "behavior", "results", "world"}:
+        editable_sections = {"simulation", "models", "results"}
+        resource_sections = {"engine", "world"}
+        if section not in editable_sections | resource_sections:
             raise ServiceError("INVALID_DRAFT_SECTION", "草稿区域无效", status_code=404)
+        if section in resource_sections:
+            raise ServiceError(
+                "RESOURCE_SELECTION_ENDPOINT_REQUIRED",
+                "地图与 Brain 只能通过显式的 Revision 选择接口修改",
+                status_code=422,
+            )
         draft = self.get_draft(experiment_id)
         payload = draft["definition"]
         payload[section] = data
@@ -1059,6 +1128,53 @@ class ExperimentService:
             experiment_id=experiment_id,
             expected_lock_version=expected_lock_version,
             definition=definition,
+        )
+
+    def select_brain_for_experiment(
+        self,
+        experiment_id: str,
+        *,
+        expected_lock_version: int,
+        brain_revision_id: str,
+    ) -> dict[str, Any]:
+        """Select one immutable, active Brain Revision for an experiment draft."""
+        with self.database.session_factory() as session:
+            revision = session.get(SkillRevision, brain_revision_id)
+            definition = (
+                session.get(SkillDefinition, revision.skill_id)
+                if revision is not None
+                else None
+            )
+            if (
+                revision is None
+                or definition is None
+                or definition.kind != "brain"
+                or definition.archived_at is not None
+            ):
+                raise ServiceError(
+                    "BRAIN_SKILL_NOT_FOUND",
+                    "所选 Brain Skill Revision 不存在、已归档或类型错误",
+                    status_code=422,
+                )
+            brain_skill = definition.skill_key
+            brain_revision_hash = revision.content_hash
+
+        draft = self.get_draft(experiment_id)
+        engine = dict(draft["definition"]["engine"])
+        engine.update(
+            {
+                "brain_skill": brain_skill,
+                "brain_revision_id": brain_revision_id,
+                "brain_revision_hash": brain_revision_hash,
+            }
+        )
+        payload = draft["definition"]
+        payload["engine"] = engine
+        return self.update_draft(
+            experiment_id=experiment_id,
+            expected_lock_version=expected_lock_version,
+            definition=ExperimentDefinition.model_validate(payload),
+            allow_resource_reselection=True,
         )
 
     def put_draft_agent(
@@ -1338,6 +1454,28 @@ class ExperimentService:
             if model["model"].casefold() != "auto":
                 model["resolved_model"] = model["model"]
         definition = ExperimentDefinition.model_validate(payload)
+        brain_revision = (
+            session.get(SkillRevision, definition.engine.brain_revision_id)
+            if definition.engine.brain_revision_id
+            else None
+        )
+        brain_definition = (
+            session.get(SkillDefinition, brain_revision.skill_id)
+            if brain_revision is not None
+            else None
+        )
+        if (
+            brain_revision is None
+            or brain_definition is None
+            or brain_definition.skill_key != definition.engine.brain_skill
+            or brain_definition.kind != "brain"
+            or brain_revision.content_hash != definition.engine.brain_revision_hash
+        ):
+            raise ServiceError(
+                "BRAIN_REVISION_CONFLICT",
+                "实验必须引用一个存在且哈希匹配的 Brain Skill Revision",
+                status_code=409,
+            )
         if definition.world.map_revision_id:
             from .maps import WorldMapService
 

@@ -38,7 +38,6 @@ from generative_agents.services.map_importer import (  # noqa: E402
 
 API = "http://127.0.0.1:8000/api/v1"
 MAP_ID = "8f3f17dc-05b3-498a-8ff2-36fbf143992c"
-SOURCE_EXPERIMENT_REVISION_ID = "c1e6f832-eb9b-41a0-9eca-90ce3a9df13e"
 MAP_NAME = "Ville 晨间双人行横道"
 WORLD_NAME = "Ville 晨间通勤街区"
 EXPERIMENT_NAME = "Ville 长时过街实验：信号感知与安全决策"
@@ -553,6 +552,7 @@ def publish_map() -> dict[str, Any]:
 def create_experiment(map_revision_id: str) -> dict[str, Any]:
     """创建或复用演示实验，并绑定指定的已发布地图 Revision。"""
 
+    brain = request_json("GET", "/skills/pedestrian-crossing-brain")
     catalog = request_json(
         "GET", f"/experiments?q={quote(EXPERIMENT_NAME)}&archived=all&page_size=50"
     )
@@ -573,7 +573,9 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
                 "goal": "观察 Agent 在 45 分钟晨间通勤中，能否主动查询独立信号灯、根据红绿与闪烁相位安全等待和过街，并在离开人行横道后继续前往咖啡馆。",
                 "owner": "Pedestrian Safety Lab",
                 "tags": ["ville", "pedestrian-crossing", "game-object-skill", "long-run", "brain"],
-                "source": {"type": "REVISION", "revision_id": SOURCE_EXPERIMENT_REVISION_ID},
+                "source": {"type": "BLANK"},
+                "brain_skill": brain["name"],
+                "brain_revision_id": brain["revision_id"],
                 "map_revision_id": map_revision_id,
             },
         )
@@ -589,8 +591,19 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
             {},
         )
     draft = request_json("GET", f"/experiments/{experiment_id}/draft")
+    if draft["definition"]["world"]["map_revision_id"] != map_revision_id:
+        draft = request_json(
+            "PUT",
+            f"/experiments/{experiment_id}/draft/map",
+            {"lock_version": draft["lock_version"], "map_revision_id": map_revision_id},
+        )
+    if draft["definition"]["engine"].get("brain_revision_id") != brain["revision_id"]:
+        draft = request_json(
+            "PUT",
+            f"/experiments/{experiment_id}/draft/brain",
+            {"lock_version": draft["lock_version"], "brain_revision_id": brain["revision_id"]},
+        )
     definition = draft["definition"]
-    definition["engine"]["brain_skill"] = "pedestrian-crossing-brain"
     definition["simulation"].update(
         {
             "start_time": "2026-08-23T08:05:00+08:00",
@@ -598,7 +611,6 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
             "max_steps": 15,
             "checkpoint_interval_steps": 3,
             "checkpoint_retention": 3,
-            "record_interval_minutes": 3,
             "random_seed": 2026082302,
             "log_level": "INFO",
         }
@@ -606,15 +618,8 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
     definition["results"].update(
         {
             "agent_step_projection_interval_steps": 1,
-            "replay_interpolation_frames": 30,
             "capture_model_payloads": False,
         }
-    )
-    definition["behavior"]["percept"].update(
-        {"mode": "box", "vision_radius": 10, "attention_bandwidth": 12}
-    )
-    definition["behavior"]["chat"].update(
-        {"max_iterations": 4, "cooldown_minutes": 45, "stop_after_hour": 23}
     )
     previous = (definition.get("agents") or [{}])[0]
     definition["agents"] = [
@@ -633,6 +638,11 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
             ],
             "coord": [16, 12],
             "currently": "08:05 从北侧林荫步行道出发，准备穿过中央大道去晨光咖啡馆；到达人行横道前需要主动确认信号。",
+            "perception": {
+                "mode": "box",
+                "vision_radius": 10,
+                "attention_bandwidth": 12,
+            },
             "scratch": {
                 "age": 29,
                 "innate": "谨慎、守规则、观察细致，遇到不确定交通状态会先确认。",

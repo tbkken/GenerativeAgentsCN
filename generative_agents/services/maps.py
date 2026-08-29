@@ -1,4 +1,4 @@
-"""可复用公共地图的生命周期，以及实验私有地图覆盖层。"""
+"""可复用公共地图的生命周期与已发布 Revision 选择。"""
 
 from __future__ import annotations
 
@@ -14,9 +14,9 @@ from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 
-from generative_agents.config import canonical_json_bytes
+from generative_agents.config import ExperimentDefinition, canonical_json_bytes
 from generative_agents.config.map_editor import MapEditorDocumentV2
-from generative_agents.config.schema import WorldConfig, WorldOverlayConfig
+from generative_agents.config.schema import WorldConfig
 from generative_agents.config.spatial_assets import (
     SpatialAssetContract,
     SpatialSceneExtension,
@@ -61,28 +61,6 @@ def _make_key(name: str) -> str:
     return f"{(ascii_key[:48].strip('-') or 'map')}-{uuid4().hex[:8]}"
 
 
-def _merge_patch(document: Any, patch: Any) -> Any:
-    """执行`merge``patch`的内部处理，供当前模块或类复用。
-
-    参数:
-        document: 待校验、转换或持久化的结构化文档。 类型：`Any`。
-        patch: 传入当前算法的`patch`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`Any`。
-
-    返回:
-        返回 `Any` 类型的处理结果。
-    """
-
-    if not isinstance(patch, dict):
-        return copy.deepcopy(patch)
-    result = copy.deepcopy(document) if isinstance(document, dict) else {}
-    for key, value in patch.items():
-        if value is None:
-            result.pop(key, None)
-        else:
-            result[key] = _merge_patch(result.get(key), value)
-    return result
-
-
 def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
     """规范化`public`世界。
 
@@ -100,7 +78,6 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
             "map_id": None,
             "map_revision_id": None,
             "map_revision_hash": None,
-            "overlay": WorldOverlayConfig().model_dump(mode="json", exclude_none=False),
         }
     )
     return WorldConfig.model_validate(payload)
@@ -288,6 +265,239 @@ def _map_blueprint(key: str) -> dict[str, Any] | None:
     """
     return next(
         (copy.deepcopy(item) for item in MAP_BLUEPRINTS if item["key"] == key), None
+    )
+
+
+def _commute_blueprint_editor_document(
+    *, name: str, stable_key: str, width: int, height: int, tile_size: int, step: int
+) -> dict[str, Any]:
+    """Build the canonical four-level authoring tree for the commute blueprint."""
+
+    root_id = f"world-{stable_key}"
+    nodes: list[dict[str, Any]] = []
+
+    def add_node(
+        node_id: str,
+        kind: str,
+        parent_id: str | None,
+        node_name: str,
+        bounds: tuple[int, int, int, int],
+        semantic: str,
+        sort_order: int,
+    ) -> None:
+        x, y, node_width, node_height = bounds
+        nodes.append(
+            {
+                "id": node_id,
+                "kind": kind,
+                "parent_id": parent_id,
+                "name": node_name,
+                "sort_order": sort_order,
+                "bounds": {
+                    "x": x,
+                    "y": y,
+                    "width": node_width,
+                    "height": node_height,
+                },
+                "semantic": semantic,
+                "material_slice_id": None,
+                "render_recipe_id": None,
+                "render_mode": "LAYER_BACKED",
+                "interaction_mode": "STATIC",
+                "skill_bindings": [],
+                "extensions": {},
+            }
+        )
+
+    add_node(
+        root_id,
+        "WORLD",
+        None,
+        name,
+        (0, 0, width, height),
+        "包含住宅、通勤道路和公司园区的两日通勤实验世界。",
+        0,
+    )
+    if step >= 1:
+        add_node(
+            "sector-home",
+            "SECTOR",
+            root_id,
+            "住宅区",
+            (0, 35, 25, 21),
+            "居民出发、返家和步行接驳区域。",
+            0,
+        )
+        add_node(
+            "arena-home",
+            "ARENA",
+            "sector-home",
+            "林晨住宅",
+            (3, 37, 16, 16),
+            "林晨居住并开始每日通勤的住宅场所。",
+            0,
+        )
+        add_node(
+            "object-home-building",
+            "GAME_OBJECT",
+            "arena-home",
+            "住宅建筑",
+            (7, 41, 9, 9),
+            "住宅建筑本体；可被感知，但不绑定被动 Skill。",
+            0,
+        )
+        add_node(
+            "sector-office",
+            "SECTOR",
+            root_id,
+            "公司园区",
+            (74, 0, 22, 24),
+            "办公、门禁和停车发生的公司园区。",
+            1,
+        )
+        add_node(
+            "arena-office-building",
+            "ARENA",
+            "sector-office",
+            "办公楼区域",
+            (76, 2, 18, 10),
+            "员工工作的办公楼及其入口区域。",
+            0,
+        )
+        add_node(
+            "object-office-building",
+            "GAME_OBJECT",
+            "arena-office-building",
+            "办公楼",
+            (80, 4, 11, 8),
+            "办公楼建筑本体。",
+            0,
+        )
+        add_node(
+            "arena-office-entry",
+            "ARENA",
+            "sector-office",
+            "园区入口与停车场",
+            (76, 12, 18, 12),
+            "车辆和行人进入园区、通过门禁并停车的区域。",
+            1,
+        )
+    if step >= 2:
+        add_node(
+            "sector-transport",
+            "SECTOR",
+            root_id,
+            "城市道路",
+            (0, 0, width, height),
+            "连接住宅区与公司园区的公共通勤道路网络。",
+            2,
+        )
+        add_node(
+            "arena-commute-corridor",
+            "ARENA",
+            "sector-transport",
+            "东西向通勤主路",
+            (0, 0, width, height),
+            "包含机动车道、人行道、路口和过街设施的通勤走廊。",
+            0,
+        )
+    for required_step, key, center_x in ((3, "a", 34), (4, "b", 60)):
+        if step < required_step:
+            continue
+        add_node(
+            f"object-intersection-{key}",
+            "GAME_OBJECT",
+            "arena-commute-corridor",
+            f"三车道路口 {key.upper()}",
+            (center_x - 7, 20, 14, 17),
+            "机动车、行人与信号控制发生冲突和协商的四向路口。",
+            required_step,
+        )
+    if step >= 6:
+        for key, center_x in (("a", 34), ("b", 60)):
+            for order, (side, x, y) in enumerate(
+                (
+                    ("north", center_x - 5, 22),
+                    ("east", center_x + 4, 22),
+                    ("south", center_x + 4, 33),
+                    ("west", center_x - 5, 33),
+                )
+            ):
+                add_node(
+                    f"object-signal-{key}-{side}",
+                    "GAME_OBJECT",
+                    "arena-commute-corridor",
+                    f"路口 {key.upper()} {side} 信号灯",
+                    (x, y, 1, 1),
+                    "控制车辆与行人通行次序的交通信号灯。",
+                    10 + order,
+                )
+    if step >= 7:
+        add_node(
+            "object-office-gate",
+            "GAME_OBJECT",
+            "arena-office-entry",
+            "园区车辆门禁",
+            (80, 20, 1, 1),
+            "核验车辆进入公司园区资格的门禁。",
+            0,
+        )
+        for order, x in enumerate((85, 88, 91), start=1):
+            add_node(
+                f"object-parking-p{order:02d}",
+                "GAME_OBJECT",
+                "arena-office-entry",
+                f"停车位 P{order:02d}",
+                (x, 14, 1, 1),
+                "可记录占用状态的园区停车位。",
+                order,
+            )
+
+    def layer(layer_id: str, layer_name: str, level: str, z_index: int) -> dict[str, Any]:
+        return {
+            "id": layer_id,
+            "name": layer_name,
+            "display_level": level,
+            "z_index": z_index,
+            "width": width,
+            "height": height,
+            "raw_gids": [],
+            "cell_overrides": [],
+            "recipe_placements": [],
+            "visible": True,
+            "opacity": 1.0,
+        }
+
+    document = {
+        "schema_version": "ga-map-editor/v2",
+        "root_node_id": root_id,
+        "material_sources": [],
+        "material_slices": [],
+        "material_canvases": [],
+        "render_recipes": [],
+        "visual_layers": [
+            layer("layer-world", "地图底图", "MAP", 0),
+            layer("layer-sector", "Sector", "SECTOR", 10),
+            layer("layer-arena", "Arena", "ARENA", 20),
+            layer("layer-object", "Game Object", "GAME_OBJECT", 30),
+        ],
+        "hierarchy_nodes": nodes,
+        "import_metadata": {
+            "importer": "two-day-commute-blueprint/v2",
+            "width": width,
+            "height": height,
+            "tile_size": tile_size,
+            "used_gid_count": 0,
+            "collision_coords": [],
+            "source_sha256": "",
+        },
+        "tile_overrides": {},
+        "tile_override_parts": {},
+        "tile_override_layers": {},
+        "ui_state": {},
+    }
+    return MapEditorDocumentV2.model_validate(document).model_dump(
+        mode="json", exclude_none=False
     )
 
 
@@ -693,6 +903,14 @@ def _commute_blueprint_world(
             "complete": step == len(blueprint["steps"]),
         },
     }
+    definition["editor_v2"] = _commute_blueprint_editor_document(
+        name=name,
+        stable_key=stable_key,
+        width=width,
+        height=height,
+        tile_size=tile_size,
+        step=step,
+    )
     return WorldConfig.model_validate(world)
 
 
@@ -1792,63 +2010,18 @@ class WorldMapService:
             revision = session.get(WorldMapRevision, map_revision_id)
             if revision is None or revision.state != RevisionState.PUBLISHED.value:
                 raise not_found("map_revision", map_revision_id)
-            world = self.materialize_world(revision, WorldOverlayConfig())
-        from .experiments import ExperimentService
-
-        return ExperimentService(self.database).patch_draft_section(
-            experiment_id=experiment_id,
-            section="world",
-            expected_lock_version=expected_lock_version,
-            data=world.model_dump(mode="json", exclude_none=False),
-        )
-
-    def update_experiment_overlay(
-        self,
-        experiment_id: str,
-        *,
-        expected_lock_version: int,
-        overlay: WorldOverlayConfig | dict[str, Any],
-    ) -> dict[str, Any]:
-        """更新实验`overlay`。
-
-        参数:
-            experiment_id: 实验记录的唯一标识。 类型：`str`。
-            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
-            overlay: 叠加到已发布基础世界上的实验私有修改。 类型：`WorldOverlayConfig | dict[str, Any]`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
+            world = self.materialize_world(revision)
         from .experiments import ExperimentService
 
         experiment_service = ExperimentService(self.database)
         draft = experiment_service.get_draft(experiment_id)
-        current = WorldConfig.model_validate(draft["definition"]["world"])
-        if not current.map_revision_id:
-            raise ServiceError(
-                "EXPERIMENT_MAP_REQUIRED",
-                "请先为实验选择一个已发布公共地图",
-                status_code=409,
-            )
-        with self.database.session_factory() as session:
-            revision = session.get(WorldMapRevision, current.map_revision_id)
-            if revision is None or revision.state != RevisionState.PUBLISHED.value:
-                raise ServiceError(
-                    "MAP_REVISION_UNAVAILABLE",
-                    "实验引用的公共地图版本不可用",
-                    status_code=409,
-                )
-            world = self.materialize_world(
-                revision, WorldOverlayConfig.model_validate(overlay)
-            )
-        return experiment_service.patch_draft_section(
+        payload = draft["definition"]
+        payload["world"] = world.model_dump(mode="json", exclude_none=False)
+        return experiment_service.update_draft(
             experiment_id=experiment_id,
-            section="world",
             expected_lock_version=expected_lock_version,
-            data=world.model_dump(mode="json", exclude_none=False),
+            definition=ExperimentDefinition.model_validate(payload),
+            allow_resource_reselection=True,
         )
 
     def materialize_for_publish_in_session(
@@ -1880,37 +2053,20 @@ class WorldMapService:
                 "实验引用的公共地图版本已失效",
                 status_code=409,
             )
-        return self.materialize_world(revision, world.overlay)
+        return self.materialize_world(revision)
 
     @staticmethod
-    def materialize_world(
-        revision: WorldMapRevision, overlay: WorldOverlayConfig
-    ) -> WorldConfig:
-        """执行 `WorldMapService` 的`materialize`世界操作。
-
-        参数:
-            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision`。
-            overlay: 叠加到已发布基础世界上的实验私有修改。 类型：`WorldOverlayConfig`。
-
-        返回:
-            返回 `WorldConfig` 类型的处理结果。
-        """
+    def materialize_world(revision: WorldMapRevision) -> WorldConfig:
+        """Materialize one immutable public map Revision for an experiment."""
         base = normalize_public_world(revision.world_json)
-        definition = _merge_patch(base.definition, overlay.definition_patch)
-        assets = {item.logical_path: item for item in base.assets}
-        for logical_path in overlay.removed_asset_paths:
-            assets.pop(logical_path, None)
-        for item in overlay.asset_additions:
-            assets[item.logical_path] = item
         return WorldConfig(
             world_key=base.world_key,
             world_name=base.world_name,
-            definition=definition,
-            assets=list(assets.values()),
+            definition=copy.deepcopy(base.definition),
+            assets=list(base.assets),
             map_id=revision.map_id,
             map_revision_id=revision.id,
             map_revision_hash=revision.world_hash,
-            overlay=overlay,
         )
 
     def _require_draft(

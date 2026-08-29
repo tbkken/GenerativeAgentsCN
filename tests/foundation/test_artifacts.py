@@ -16,7 +16,7 @@ from generative_agents.services.artifacts import ArtifactService
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.results import ResultQueryService
 from generative_agents.services.runs import RunService
-from tests.support import publish_user_map
+from tests.support import brain_selection_for_database, publish_user_map
 
 
 def _published(service, definition: ExperimentDefinition):
@@ -27,11 +27,13 @@ def _published(service, definition: ExperimentDefinition):
         goal=definition.experiment.goal,
         source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
     payload["world"] = draft["definition"]["world"]
+    payload["engine"] = draft["definition"]["engine"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],

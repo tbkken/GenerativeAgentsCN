@@ -1,7 +1,7 @@
 /**
  * 公共地图工作区：负责目录、草稿、自动保存、本地恢复、发布和 MapEditorV2 挂载。
  *
- * GridEditor 是轻量兼容编辑器；manager 是页面级状态机。服务器草稿始终带 lock_version，
+ * manager 是页面级状态机。服务器草稿始终带 lock_version，
  * localStorage 只保存尚未同步的恢复副本，不能覆盖服务端已经更新的权威 Revision。
  */
 (() => {
@@ -44,544 +44,6 @@
     window.dispatchEvent(new CustomEvent('map-workspace:modal', { detail: { action, id, focusId } }));
   }
 
-  function defaultPalette() {
-    return [
-      { id: 'ground', name: '地面', color: '#c9d7bb', collision: false },
-      { id: 'path', name: '道路', color: '#d9c7a2', collision: false },
-      { id: 'interior', name: '室内', color: '#e8d9c9', collision: false },
-      { id: 'water', name: '水域', color: '#82b8c6', collision: true },
-      { id: 'wall', name: '墙体', color: '#6f7b78', collision: true },
-    ];
-  }
-
-  function normalizeWorld(input) {
-    const world = deepClone(input || {});
-    world.world_key ||= 'custom-map';
-    world.world_name ||= '自定义地图';
-    world.assets ||= [];
-    world.map_id ??= null;
-    world.map_revision_id ??= null;
-    world.map_revision_hash ??= null;
-    world.overlay ||= { definition_patch: {}, asset_additions: [], removed_asset_paths: [] };
-    const definition = world.definition ||= {};
-    definition.world ||= world.world_name;
-    if (!Array.isArray(definition.size) || definition.size.length !== 2) definition.size = [32, 48];
-    definition.size = definition.size.map(value => Math.max(1, Math.min(300, Number(value) || 1)));
-    definition.tile_size = Math.max(1, Number(definition.tile_size) || 32);
-    if (!Array.isArray(definition.tile_address_keys) || !definition.tile_address_keys.length) {
-      definition.tile_address_keys = ['world', 'sector', 'arena', 'game_object'];
-    }
-    if (!Array.isArray(definition.tiles)) definition.tiles = [];
-    const editor = definition.editor ||= {};
-    editor.schema_version = 1;
-    if (!Array.isArray(editor.palette) || !editor.palette.length) {
-      editor.palette = Array.isArray(definition.palette) && definition.palette.length
-        ? definition.palette.map(item => ({
-          id: item.key,
-          name: item.label || item.key,
-          color: item.color || '#eef2ef',
-          collision: Boolean(item.collision),
-        }))
-        : defaultPalette();
-    }
-    if (!editor.cells || typeof editor.cells !== 'object' || Array.isArray(editor.cells)) editor.cells = {};
-    if (!Object.keys(editor.cells).length && definition.tiles.length) {
-      definition.tiles.forEach(tile => {
-        if (tile?.coord?.length === 2 && tile.tile) {
-          editor.cells[`${tile.coord[0]},${tile.coord[1]}`] = { kind: tile.tile };
-        }
-      });
-    }
-    if (!editor.spatial_assets || typeof editor.spatial_assets !== 'object' || Array.isArray(editor.spatial_assets)) editor.spatial_assets = {};
-    return world;
-  }
-
-  function mergePatch(base, target) {
-    if (same(base, target)) return undefined;
-    if (Array.isArray(base) || Array.isArray(target)) return deepClone(target);
-    if (base && target && typeof base === 'object' && typeof target === 'object') {
-      const patch = {};
-      for (const key of new Set([...Object.keys(base), ...Object.keys(target)])) {
-        if (!(key in target)) patch[key] = null;
-        else {
-          const value = mergePatch(base[key], target[key]);
-          if (value !== undefined) patch[key] = value;
-        }
-      }
-      return Object.keys(patch).length ? patch : undefined;
-    }
-    return deepClone(target);
-  }
-
-  class GridEditor {
-    constructor(root) {
-      this.root = root;
-      this.canvas = root.querySelector('[data-map-canvas]');
-      this.host = root.querySelector('[data-map-canvas-host]');
-      this.context = this.canvas.getContext('2d');
-      this.world = null;
-      this.tool = 'select';
-      this.paletteId = 'ground';
-      this.selected = null;
-      this.zoom = 1;
-      this.offsetX = 20;
-      this.offsetY = 20;
-      this.drag = null;
-      this.spaceDown = false;
-      this.history = [];
-      this.future = [];
-      this.changed = false;
-      this.readonly = false;
-      this.tools = [
-        ['select', '↖', '选择'], ['brush', '✎', '画笔'], ['eraser', '⌫', '橡皮'],
-        ['semantic', '⌖', '语义'], ['collision', '▦', '碰撞'], ['pan', '✥', '拖动画布'],
-      ];
-      this.bind();
-      this.resizeObserver = new ResizeObserver(() => this.resize());
-      this.resizeObserver.observe(this.host);
-    }
-
-    bind() {
-      this.root.querySelector('[data-map-tools]').innerHTML = this.tools.map(([id, icon, name]) =>
-        `<button class="map-tool-button${id === this.tool ? ' active' : ''}" data-map-tool="${id}"><span>${icon}</span>${name}</button>`
-      ).join('');
-      this.root.querySelectorAll('[data-map-tool]').forEach(button => button.addEventListener('click', () => {
-        this.tool = button.dataset.mapTool;
-        this.root.querySelectorAll('[data-map-tool]').forEach(item => item.classList.toggle('active', item === button));
-        this.host.classList.toggle('pan-mode', this.tool === 'pan');
-      }));
-      this.root.querySelector('[data-map-zoom-in]').addEventListener('click', () => this.changeZoom(1.2));
-      this.root.querySelector('[data-map-zoom-out]').addEventListener('click', () => this.changeZoom(1 / 1.2));
-      this.root.querySelector('[data-map-fit]').addEventListener('click', () => this.fit());
-      this.root.querySelector('[data-map-undo]').addEventListener('click', () => this.undo());
-      this.root.querySelector('[data-map-redo]').addEventListener('click', () => this.redo());
-      this.root.querySelector('[data-add-palette]').addEventListener('click', event => this.showPaletteForm(event.currentTarget));
-      this.root.querySelector('[data-apply-semantics]').addEventListener('click', () => this.applyInspector());
-      this.root.querySelector('[data-clear-semantics]').addEventListener('click', () => this.clearSelected());
-      this.canvas.addEventListener('pointerdown', event => this.pointerDown(event));
-      this.canvas.addEventListener('pointermove', event => this.pointerMove(event));
-      this.canvas.addEventListener('pointerup', event => this.pointerUp(event));
-      this.canvas.addEventListener('pointercancel', event => this.pointerUp(event));
-      this.canvas.addEventListener('wheel', event => this.wheel(event), { passive: false });
-      this.root.addEventListener('keydown', event => this.keydown(event));
-      this.root.addEventListener('keyup', event => { if (event.code === 'Space') this.spaceDown = false; });
-      this.root.tabIndex ||= -1;
-    }
-
-    setWorld(world) {
-      this.world = normalizeWorld(world);
-      this.history = [];
-      this.future = [];
-      this.changed = false;
-      this.selected = null;
-      this.renderPalette();
-      this.refreshInspector();
-      requestAnimationFrame(() => this.fit());
-      this.updateHistoryButtons();
-    }
-
-    setReadOnly(value) {
-      this.readonly = Boolean(value);
-      this.root.querySelectorAll('[data-map-tool]').forEach(button => {
-        button.disabled = this.readonly && !['select', 'semantic', 'pan'].includes(button.dataset.mapTool);
-      });
-      this.root.querySelectorAll('[data-palette-id]').forEach(button => { button.disabled = this.readonly; });
-      this.root.querySelector('[data-add-palette]').disabled = this.readonly;
-      this.refreshInspector();
-    }
-
-    getWorld() { return deepClone(this.world); }
-
-    get definition() { return this.world.definition; }
-    get editor() { return this.definition.editor; }
-    get height() { return this.definition.size[0]; }
-    get width() { return this.definition.size[1]; }
-    get cellSize() { return 18 * this.zoom; }
-
-    renderPalette() {
-      const palette = this.root.querySelector('[data-map-palette]');
-      palette.innerHTML = this.editor.palette.map(item => `
-        <button class="map-palette-item${item.id === this.paletteId ? ' active' : ''}" data-palette-id="${escapeHtml(item.id)}">
-          <span class="map-palette-swatch" style="background:${escapeHtml(item.color || '#eef2ef')}">${escapeHtml(item.emoji || '')}</span>
-          <span>${escapeHtml(item.name)}${item.collision ? ' · 碰撞' : ''}</span>
-        </button>`).join('');
-      palette.querySelectorAll('[data-palette-id]').forEach(button => button.addEventListener('click', () => {
-        if (this.readonly) return;
-        this.paletteId = button.dataset.paletteId;
-        palette.querySelectorAll('[data-palette-id]').forEach(item => item.classList.toggle('active', item === button));
-        this.tool = 'brush';
-        this.root.querySelectorAll('[data-map-tool]').forEach(item => item.classList.toggle('active', item.dataset.mapTool === 'brush'));
-      }));
-      this.setReadOnly(this.readonly);
-    }
-
-    showPaletteForm(button) {
-      if (this.readonly) return;
-      const existing = this.root.querySelector('[data-palette-form]');
-      if (existing) { existing.remove(); return; }
-      const form = document.createElement('div');
-      form.dataset.paletteForm = '';
-      form.innerHTML = `
-        <input class="control" data-palette-name placeholder="画块名称" style="margin-top:8px" />
-        <div style="display:flex;gap:7px;margin-top:7px"><input type="color" data-palette-color value="#b8c8a6" style="width:42px"><label class="map-check-row" style="margin:0"><input type="checkbox" data-palette-collision> 碰撞</label></div>
-        <button class="btn btn-primary btn-sm" data-palette-confirm style="width:100%;margin-top:7px">添加</button>`;
-      button.insertAdjacentElement('beforebegin', form);
-      form.querySelector('[data-palette-confirm]').addEventListener('click', () => {
-        const name = form.querySelector('[data-palette-name]').value.trim();
-        if (!name) return form.querySelector('[data-palette-name]').focus();
-        this.snapshot();
-        const id = `custom-${Date.now().toString(36)}`;
-        this.editor.palette.push({
-          id, name,
-          color: form.querySelector('[data-palette-color]').value,
-          collision: form.querySelector('[data-palette-collision]').checked,
-        });
-        this.paletteId = id;
-        this.changed = true;
-        form.remove();
-        this.renderPalette();
-        this.render();
-      });
-      form.querySelector('[data-palette-name]').focus();
-    }
-
-    resize() {
-      const rect = this.host.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const ratio = window.devicePixelRatio || 1;
-      this.canvas.width = Math.max(1, Math.round(rect.width * ratio));
-      this.canvas.height = Math.max(1, Math.round(rect.height * ratio));
-      this.canvas.style.width = `${rect.width}px`;
-      this.canvas.style.height = `${rect.height}px`;
-      this.context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      this.viewportWidth = rect.width;
-      this.viewportHeight = rect.height;
-      this.render();
-    }
-
-    fit() {
-      if (!this.world || !this.viewportWidth) return;
-      this.zoom = Math.max(.18, Math.min(2.4,
-        Math.min((this.viewportWidth - 48) / (this.width * 18), (this.viewportHeight - 48) / (this.height * 18))));
-      this.offsetX = (this.viewportWidth - this.width * this.cellSize) / 2;
-      this.offsetY = (this.viewportHeight - this.height * this.cellSize) / 2;
-      this.render();
-    }
-
-    changeZoom(factor, anchor = null) {
-      const previous = this.cellSize;
-      const point = anchor || { x: this.viewportWidth / 2, y: this.viewportHeight / 2 };
-      const mapX = (point.x - this.offsetX) / previous;
-      const mapY = (point.y - this.offsetY) / previous;
-      this.zoom = Math.max(.15, Math.min(4, this.zoom * factor));
-      this.offsetX = point.x - mapX * this.cellSize;
-      this.offsetY = point.y - mapY * this.cellSize;
-      this.render();
-    }
-
-    wheel(event) {
-      event.preventDefault();
-      const rect = this.canvas.getBoundingClientRect();
-      this.changeZoom(event.deltaY < 0 ? 1.12 : 1 / 1.12, { x: event.clientX - rect.left, y: event.clientY - rect.top });
-    }
-
-    eventPoint(event) {
-      const rect = this.canvas.getBoundingClientRect();
-      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    }
-
-    pointCell(point) {
-      const x = Math.floor((point.x - this.offsetX) / this.cellSize);
-      const y = Math.floor((point.y - this.offsetY) / this.cellSize);
-      return x >= 0 && y >= 0 && x < this.width && y < this.height ? { x, y } : null;
-    }
-
-    pointerDown(event) {
-      this.root.focus({ preventScroll: true });
-      this.canvas.setPointerCapture(event.pointerId);
-      const point = this.eventPoint(event);
-      const cell = this.pointCell(point);
-      if (this.tool === 'pan' || this.spaceDown || event.button === 1 || (event.button === 0 && !cell)) {
-        this.drag = { mode: 'pan', pointerId: event.pointerId, point, offsetX: this.offsetX, offsetY: this.offsetY };
-        this.host.classList.add('dragging');
-        return;
-      }
-      if (!cell) return;
-      if (this.readonly && !['select', 'semantic'].includes(this.tool)) return;
-      if (event.button === 0 && ['brush', 'eraser', 'collision'].includes(this.tool)) {
-        this.drag = { mode: 'pending-edit', pointerId: event.pointerId, point, cell, offsetX: this.offsetX, offsetY: this.offsetY };
-        return;
-      }
-      this.snapshot();
-      this.drag = { mode: 'edit', pointerId: event.pointerId, last: null };
-      this.applyTool(cell);
-    }
-
-    pointerMove(event) {
-      if (!this.drag || this.drag.pointerId !== event.pointerId) return;
-      const point = this.eventPoint(event);
-      if (this.drag.mode === 'pending-edit') {
-        const distance = Math.hypot(point.x - this.drag.point.x, point.y - this.drag.point.y);
-        if (distance >= 7) {
-          this.drag.mode = 'pan';
-          this.host.classList.add('dragging');
-          this.offsetX = this.drag.offsetX + point.x - this.drag.point.x;
-          this.offsetY = this.drag.offsetY + point.y - this.drag.point.y;
-          this.render();
-        }
-      } else if (this.drag.mode === 'pan') {
-        this.offsetX = this.drag.offsetX + point.x - this.drag.point.x;
-        this.offsetY = this.drag.offsetY + point.y - this.drag.point.y;
-        this.render();
-      } else if (['brush', 'eraser', 'collision'].includes(this.tool)) {
-        const cell = this.pointCell(point);
-        if (cell) this.applyTool(cell);
-      }
-    }
-
-    pointerUp(event) {
-      if (!this.drag || this.drag.pointerId !== event.pointerId) return;
-      if (this.drag.mode === 'pending-edit') {
-        this.snapshot();
-        this.applyTool(this.drag.cell);
-      }
-      if (this.drag.mode === 'edit' && !this.changed) this.history.pop();
-      this.drag = null;
-      this.host.classList.remove('dragging');
-      this.updateHistoryButtons();
-    }
-
-    applyTool(cell) {
-      const key = `${cell.x},${cell.y}`;
-      if (this.drag?.last === key) return;
-      if (this.drag) this.drag.last = key;
-      this.selected = cell;
-      if (this.tool === 'brush') {
-        const palette = this.editor.palette.find(item => item.id === this.paletteId) || this.editor.palette[0];
-        this.editor.cells[key] = { kind: palette.id };
-        this.updateRuntimeTile(cell, { collision: Boolean(palette.collision), tile: palette.id });
-        this.changed = true;
-      } else if (this.tool === 'eraser') {
-        delete this.editor.cells[key];
-        this.removeRuntimeTile(cell);
-        this.changed = true;
-      } else if (this.tool === 'collision') {
-        const tile = this.runtimeTile(cell);
-        this.updateRuntimeTile(cell, { collision: !Boolean(tile?.collision) });
-        this.changed = true;
-      }
-      this.refreshInspector();
-      this.render();
-    }
-
-    runtimeTile(cell) {
-      return this.definition.tiles.find(tile => tile.coord?.[0] === cell.x && tile.coord?.[1] === cell.y) || null;
-    }
-
-    updateRuntimeTile(cell, changes) {
-      let tile = this.runtimeTile(cell);
-      if (!tile) {
-        tile = { coord: [cell.x, cell.y] };
-        this.definition.tiles.push(tile);
-      }
-      Object.assign(tile, changes);
-      if (tile.collision === false && !tile.address?.length && !this.editor.cells[`${cell.x},${cell.y}`]) {
-        this.removeRuntimeTile(cell);
-      }
-    }
-
-    removeRuntimeTile(cell) {
-      this.definition.tiles = this.definition.tiles.filter(tile => !(tile.coord?.[0] === cell.x && tile.coord?.[1] === cell.y));
-    }
-
-    refreshInspector() {
-      const coordinate = this.root.querySelector('[data-map-coordinate]');
-      const tile = this.selected ? this.runtimeTile(this.selected) : null;
-      coordinate.textContent = this.selected ? `x: ${this.selected.x} · y: ${this.selected.y}` : '尚未选择格子';
-      this.root.querySelectorAll('[data-map-address]').forEach(input => {
-        input.disabled = !this.selected;
-        input.value = tile?.address?.[Number(input.dataset.mapAddress)] || '';
-      });
-      const collision = this.root.querySelector('[data-map-collision]');
-      collision.disabled = !this.selected;
-      collision.checked = Boolean(tile?.collision);
-      this.root.querySelectorAll('[data-map-address]').forEach(input => { input.disabled = !this.selected || this.readonly; });
-      collision.disabled = !this.selected || this.readonly;
-      this.root.querySelector('[data-apply-semantics]').disabled = !this.selected || this.readonly;
-      this.root.querySelector('[data-clear-semantics]').disabled = !this.selected || this.readonly;
-    }
-
-    applyInspector() {
-      if (!this.selected) return;
-      this.snapshot();
-      const address = [...this.root.querySelectorAll('[data-map-address]')]
-        .map(input => input.value.trim());
-      while (address.length && !address.at(-1)) address.pop();
-      if (address.some((value, index) => !value && address.slice(index + 1).some(Boolean))) {
-        notify('空间语义必须按“区域 → 场所 → 对象”连续填写。', '无法保存');
-        this.history.pop();
-        return;
-      }
-      const changes = { collision: this.root.querySelector('[data-map-collision]').checked };
-      if (address.length) changes.address = address;
-      else changes.address = undefined;
-      this.updateRuntimeTile(this.selected, changes);
-      const tile = this.runtimeTile(this.selected);
-      if (tile && changes.address === undefined) delete tile.address;
-      this.changed = true;
-      this.render();
-      this.updateHistoryButtons();
-    }
-
-    clearSelected() {
-      if (!this.selected) return;
-      this.snapshot();
-      const tile = this.runtimeTile(this.selected);
-      if (tile) {
-        delete tile.address;
-        tile.collision = false;
-        if (!this.editor.cells[`${this.selected.x},${this.selected.y}`]) this.removeRuntimeTile(this.selected);
-      }
-      this.changed = true;
-      this.refreshInspector();
-      this.render();
-      this.updateHistoryButtons();
-    }
-
-    snapshot() {
-      this.history.push(deepClone(this.world));
-      if (this.history.length > 30) this.history.shift();
-      this.future = [];
-      this.changed = false;
-    }
-
-    undo() {
-      if (!this.history.length) return;
-      this.future.push(deepClone(this.world));
-      this.world = this.history.pop();
-      this.changed = true;
-      this.renderPalette(); this.refreshInspector(); this.render(); this.updateHistoryButtons();
-    }
-
-    redo() {
-      if (!this.future.length) return;
-      this.history.push(deepClone(this.world));
-      this.world = this.future.pop();
-      this.changed = true;
-      this.renderPalette(); this.refreshInspector(); this.render(); this.updateHistoryButtons();
-    }
-
-    updateHistoryButtons() {
-      this.root.querySelector('[data-map-undo]').disabled = !this.history.length;
-      this.root.querySelector('[data-map-redo]').disabled = !this.future.length;
-    }
-
-    keydown(event) {
-      if (event.code === 'Space') { this.spaceDown = true; event.preventDefault(); }
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
-        event.preventDefault();
-        event.shiftKey ? this.redo() : this.undo();
-      }
-    }
-
-    render() {
-      if (!this.world || !this.viewportWidth) return;
-      const context = this.context;
-      context.clearRect(0, 0, this.viewportWidth, this.viewportHeight);
-      context.fillStyle = '#e9eeeb';
-      context.fillRect(0, 0, this.viewportWidth, this.viewportHeight);
-      const size = this.cellSize;
-      const xStart = Math.max(0, Math.floor(-this.offsetX / size));
-      const yStart = Math.max(0, Math.floor(-this.offsetY / size));
-      const xEnd = Math.min(this.width, Math.ceil((this.viewportWidth - this.offsetX) / size));
-      const yEnd = Math.min(this.height, Math.ceil((this.viewportHeight - this.offsetY) / size));
-      const runtime = new Map(this.definition.tiles.map(tile => [`${tile.coord?.[0]},${tile.coord?.[1]}`, tile]));
-      const palette = new Map(this.editor.palette.map(item => [item.id, item]));
-      for (let y = yStart; y < yEnd; y += 1) {
-        for (let x = xStart; x < xEnd; x += 1) {
-          const key = `${x},${y}`;
-          const tile = runtime.get(key);
-          const visual = palette.get(this.editor.cells[key]?.kind);
-          let fill = visual?.color || (tile?.address?.length ? '#d8eadf' : '#f8faf8');
-          if (tile?.collision && !visual) fill = '#71807c';
-          context.fillStyle = fill;
-          context.fillRect(this.offsetX + x * size, this.offsetY + y * size, size + .5, size + .5);
-          if (tile?.address?.length && size > 8) {
-            context.fillStyle = '#16715c';
-            context.beginPath();
-            context.arc(this.offsetX + (x + .72) * size, this.offsetY + (y + .28) * size, Math.max(1.5, size * .09), 0, Math.PI * 2);
-            context.fill();
-          }
-          if (tile?.collision && size > 9) {
-            context.strokeStyle = 'rgba(82, 38, 32, .45)';
-            context.lineWidth = 1;
-            context.beginPath();
-            context.moveTo(this.offsetX + x * size + 3, this.offsetY + y * size + 3);
-            context.lineTo(this.offsetX + (x + 1) * size - 3, this.offsetY + (y + 1) * size - 3);
-            context.stroke();
-          }
-        }
-      }
-      if (size >= 7) {
-        context.strokeStyle = 'rgba(45, 67, 59, .13)';
-        context.lineWidth = 1;
-        context.beginPath();
-        for (let x = xStart; x <= xEnd; x += 1) {
-          const px = Math.round(this.offsetX + x * size) + .5;
-          context.moveTo(px, this.offsetY + yStart * size);
-          context.lineTo(px, this.offsetY + yEnd * size);
-        }
-        for (let y = yStart; y <= yEnd; y += 1) {
-          const py = Math.round(this.offsetY + y * size) + .5;
-          context.moveTo(this.offsetX + xStart * size, py);
-          context.lineTo(this.offsetX + xEnd * size, py);
-        }
-        context.stroke();
-      }
-      const scene = this.definition.spatial_scene;
-      if (scene?.placements?.length) {
-        const metersPerTile = Number(scene.meters_per_tile) || 1;
-        scene.placements.forEach(placement => {
-          const contract = this.editor.spatial_assets?.[placement.spatial_asset_revision_id];
-          if (!contract) return;
-          const x = this.offsetX + (placement.x_m / metersPerTile + .5) * size;
-          const y = this.offsetY + (placement.y_m / metersPerTile + .5) * size;
-          const state = { ...(contract.initial_state || {}), ...(placement.state_overrides || {}) };
-          const stateValue = state.phase || state.state || state.mode;
-          const variant = contract.appearance?.state_variants?.[stateValue] || {};
-          const color = variant.color || contract.appearance?.color || '#78b6a9';
-          const emoji = variant.emoji || contract.appearance?.emoji;
-          context.save();
-          context.translate(x, y);
-          context.rotate((Number(placement.rotation_degrees) || 0) * Math.PI / 180);
-          if (contract.kind === 'ZONE') {
-            context.globalAlpha = .3;
-            context.fillStyle = color;
-            context.fillRect(-size * .48, -size * .48, size * .96, size * .96);
-            context.globalAlpha = .85;
-            context.strokeStyle = color;
-            context.setLineDash([3, 2]);
-            context.strokeRect(-size * .48, -size * .48, size * .96, size * .96);
-          } else if (emoji) {
-            context.font = `${Math.max(12, size * .78)}px system-ui`;
-            context.textAlign = 'center'; context.textBaseline = 'middle';
-            context.fillText(emoji, 0, 0);
-          } else {
-            context.fillStyle = color;
-            context.fillRect(-size * .3, -size * .3, size * .6, size * .6);
-          }
-          context.restore();
-        });
-      }
-      if (this.selected) {
-        context.strokeStyle = '#f0a33a';
-        context.lineWidth = 2;
-        context.strokeRect(this.offsetX + this.selected.x * size + 1, this.offsetY + this.selected.y * size + 1, size - 2, size - 2);
-      }
-      this.root.querySelector('[data-map-zoom]').textContent = `${Math.round(this.zoom * 100)}%`;
-    }
-  }
-
   const manager = {
     maps: [],
     selectorMaps: [],
@@ -591,9 +53,7 @@
     draft: null,
     revisions: [],
     experiment: null,
-    baseExperimentRevision: null,
     publicEditor: null,
-    overlayEditor: null,
     status: '',
     query: '',
     listGeneration: 0,
@@ -611,13 +71,13 @@
       this.initialized = true;
       const publicEditorRoot = document.getElementById('publicMapEditor');
       this.publicEditor = new window.MapEditorV2(publicEditorRoot);
-      this.overlayEditor = new GridEditor(document.getElementById('experimentMapEditor'));
       document.getElementById('createMapBtn').addEventListener('click', () => this.openCreate());
       document.getElementById('backToMapsBtn').addEventListener('click', () => this.showCatalog().catch(error => this.fail(error)));
       document.getElementById('saveMapBtn').addEventListener('click', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
       document.getElementById('publishMapBtn').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:change', () => this.handlePublicEditorChange());
       publicEditorRoot.addEventListener('map-editor-v2:request-edit', event => this.handlePublicEditorEditRequest(event).catch(error => this.fail(error)));
+      publicEditorRoot.addEventListener('map-editor-v2:apply-blueprint-step', () => this.applyBlueprintStep().catch(error => this.fail(error)));
       window.addEventListener('beforeunload', event => this.handleBeforeUnload(event));
       window.addEventListener('pagehide', () => this.persistLocalRecovery());
       window.addEventListener('online', () => {
@@ -639,11 +99,6 @@
       ['closeCreateMap', 'cancelCreateMap'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'createMapModal')));
       document.getElementById('newMapBlueprint').addEventListener('change', () => this.updateCreateMode('blueprint'));
       document.getElementById('newMapSource').addEventListener('change', () => this.updateCreateMode('source'));
-      document.getElementById('applyMapBlueprintStep')?.addEventListener('click', () => this.applyBlueprintStep().catch(error => this.fail(error)));
-      document.getElementById('applyExperimentMapBtn').addEventListener('click', () => this.selectExperimentMap().catch(error => this.fail(error)));
-      document.getElementById('tuneExperimentMapBtn').addEventListener('click', () => this.openExperimentTuning().catch(error => this.fail(error)));
-      document.getElementById('saveExperimentMapOverlay').addEventListener('click', () => this.saveExperimentOverlay().catch(error => this.fail(error)));
-      ['closeExperimentMapOverlay', 'cancelExperimentMapOverlay'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'experimentMapOverlayModal')));
       document.querySelectorAll('[data-map-tab]').forEach(tab => tab.addEventListener('click', () => this.setTab(tab.dataset.mapTab)));
       window.addEventListener('spatial-asset-workspace:add-to-map', event => this.addSpatialAsset(event.detail?.asset));
     },
@@ -716,11 +171,6 @@
       source.innerHTML = '<option value="">不复制</option>' + published
         .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
       source.value = currentSource;
-      const select = document.getElementById('experimentMapSelect');
-      const current = this.experiment?.world?.map_revision_id || select.value;
-      select.innerHTML = '<option value="">请选择已发布地图</option>' + published
-        .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
-      select.value = current || '';
       const experimentCreateSelect = document.getElementById('newExperimentMap');
       if (experimentCreateSelect) {
         const previousCreateValue = experimentCreateSelect.value;
@@ -729,6 +179,13 @@
         experimentCreateSelect.value = published.some(item => item.current_published.id === previousCreateValue)
           ? previousCreateValue
           : '';
+      }
+      const compositionSelect = document.getElementById('experimentMapRevisionSelect');
+      if (compositionSelect) {
+        const selectedRevision = this.experiment?.world?.map_revision_id || compositionSelect.value;
+        compositionSelect.innerHTML = '<option value="">请选择已发布地图 Revision</option>' + published
+          .map(item => `<option value="${item.current_published.id}" data-map-id="${item.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
+        compositionSelect.value = selectedRevision || '';
       }
     },
 
@@ -1028,21 +485,29 @@
     async applyBlueprintStep() {
       const guide = this.draft?.world?.definition?.editor?.build_guide;
       if (!guide || guide.complete || this.draft.state !== 'DRAFT') return;
-      if (this.publicEditor.changed || this.savePromise) await this.savePublic({ manual: false });
       const nextStep = Number(guide.current_step || 0) + 1;
-      const saved = await request(`/maps/${this.selectedMapId}/draft/blueprint-steps/${nextStep}`, {
-        method: 'POST',
-        body: JSON.stringify({ lock_version: this.draft.lock_version }),
-      });
-      this.draft = saved;
-      this.publicEditor.setWorld(saved.world);
-      this.clearLocalRecovery(this.selectedMapId, saved.id);
-      this.lastSavedAt = new Date();
-      this.setAutoSaveStatus('saved', this.formatSaveTime(this.lastSavedAt));
-      this.renderBuildGuide();
-      this.renderAudit();
-      const step = saved.world.definition.editor.build_guide.steps[nextStep - 1];
-      notify(`${step.name} 已写入地图 Draft。`, `构建进度 ${nextStep} / ${guide.total_steps}`);
+      const button = document.getElementById('applyMapBlueprintStep');
+      button.disabled = true;
+      button.textContent = `正在应用第 ${nextStep} 步…`;
+      try {
+        if (this.publicEditor.changed || this.savePromise) await this.savePublic({ manual: false });
+        const saved = await request(`/maps/${this.selectedMapId}/draft/blueprint-steps/${nextStep}`, {
+          method: 'POST',
+          body: JSON.stringify({ lock_version: this.draft.lock_version }),
+        });
+        this.draft = saved;
+        this.publicEditor.setWorld(saved.world);
+        this.clearLocalRecovery(this.selectedMapId, saved.id);
+        this.lastSavedAt = new Date();
+        this.setAutoSaveStatus('saved', this.formatSaveTime(this.lastSavedAt));
+        this.renderBuildGuide();
+        this.renderAudit();
+        const step = saved.world.definition.editor.build_guide.steps[nextStep - 1];
+        notify(`${step.name} 已写入地图 Draft。`, `构建进度 ${nextStep} / ${guide.total_steps}`);
+      } catch (error) {
+        this.renderBuildGuide();
+        throw error;
+      }
     },
 
     updateCreateMode(changed) {
@@ -1231,59 +696,21 @@
       this.populateMapSelectors();
       const world = context.world || {};
       const map = this.selectorMaps.find(item => item.id === world.map_id);
-      document.getElementById('experimentMapSourceMeta').textContent = map
-        ? `${map.name} · 公共 Revision ${map.current_published?.revision_no || '—'} · 当前实验有独立覆盖层`
-        : '当前实验仍使用自身世界定义';
-      document.getElementById('applyExperimentMapBtn').disabled = !context.editable;
-      document.getElementById('tuneExperimentMapBtn').disabled = !context.editable || !world.map_revision_id;
+      const meta = document.getElementById('experimentMapRevisionMeta');
+      if (meta) meta.textContent = map
+        ? `${map.name} · 已锁定 Revision ${map.current_published?.revision_no || '—'}`
+        : '必须选择已发布地图 Revision';
     },
 
     async selectExperimentMap() {
       if (!this.experiment?.editable) throw new Error('已发布实验不可修改地图');
-      const revisionId = document.getElementById('experimentMapSelect').value;
+      const revisionId = document.getElementById('experimentMapRevisionSelect').value;
       if (!revisionId) throw new Error('请先选择一个已发布地图版本');
       const draft = await request(`/experiments/${this.experiment.experimentId}/draft/map`, {
         method: 'PUT', body: JSON.stringify({ lock_version: this.experiment.lockVersion, map_revision_id: revisionId }),
       });
       this.emitExperimentDraft(draft);
-      notify('公共地图已复制为当前实验的可追溯世界来源。', '地图已应用');
-    },
-
-    async openExperimentTuning() {
-      const world = this.experiment?.world;
-      if (!world?.map_id || !world.map_revision_id) throw new Error('请先为实验选择公共地图');
-      this.baseExperimentRevision = await request(`/maps/${world.map_id}/revisions/${world.map_revision_id}`);
-      this.overlayEditor.setWorld(world);
-      this.overlayEditor.setReadOnly(false);
-      document.getElementById('experimentMapOverlayTitle').textContent = `${this.baseExperimentRevision.map_name} · 实验微调`;
-      document.getElementById('experimentMapOverlayMeta').textContent = `公共 v${this.baseExperimentRevision.revision_no} + 当前实验覆盖层`;
-      modal('open', 'experimentMapOverlayModal');
-      requestAnimationFrame(() => {
-        this.overlayEditor.resize();
-        this.overlayEditor.fit();
-      });
-    },
-
-    async saveExperimentOverlay() {
-      if (!this.baseExperimentRevision || !this.experiment?.editable) return;
-      const target = this.overlayEditor.getWorld();
-      const base = normalizeWorld(this.baseExperimentRevision.world);
-      const patch = mergePatch(base.definition, target.definition) || {};
-      const currentOverlay = this.experiment.world.overlay || {};
-      const draft = await request(`/experiments/${this.experiment.experimentId}/draft/map-overlay`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          lock_version: this.experiment.lockVersion,
-          overlay: {
-            definition_patch: patch,
-            asset_additions: currentOverlay.asset_additions || [],
-            removed_asset_paths: currentOverlay.removed_asset_paths || [],
-          },
-        }),
-      });
-      modal('close', 'experimentMapOverlayModal');
-      this.emitExperimentDraft(draft);
-      notify('微调已保存到当前实验，公共地图和其他实验未改变。', '实验覆盖层已保存');
+      notify('已切换实验引用的地图 Revision。', '地图已应用');
     },
 
     emitExperimentDraft(draft) {
@@ -1303,6 +730,7 @@
 
   window.MapWorkspace = {
     activate: () => manager.activate(),
+    applyBlueprintStep: () => manager.applyBlueprintStep().catch(error => manager.fail(error)),
     setExperimentContext: context => manager.setExperimentContext(context),
     refresh: () => manager.loadMaps(),
     prepareExperimentCreate: () => manager.prepareExperimentCreate(),

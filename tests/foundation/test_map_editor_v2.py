@@ -285,7 +285,8 @@ def test_formal_map_editor_fills_the_remaining_viewport_height():
     assert "body.map-editor-mode .content" in styles
     assert "height: calc(100dvh - var(--topbar-height));" in styles
     assert "body.map-editor-mode .map-editor-v2" in styles
-    assert "grid-template-rows: 54px minmax(0, 1fr);" in styles
+    assert "grid-template-rows: 54px auto minmax(0, 1fr);" in styles
+    assert "body.map-editor-mode .map-editor-v2 > .me2-build-guide" in styles
     assert "body.map-editor-mode .me2-layout" in styles
     assert "height: min(760px, calc(100vh - 235px));" not in styles
 

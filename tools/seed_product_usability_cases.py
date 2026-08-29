@@ -44,16 +44,11 @@ CASES: list[dict[str, Any]] = [
     },
     {
         "code": "UX-04",
-        "name": "UX-04 双Agent对话冷却实验",
-        "goal": "验证双角色社交、对话轮数、冷却时间和停止时间的配置可理解性。",
+        "name": "UX-04 双Agent Brain会话实验",
+        "goal": "验证双角色社交是否由所选 Brain Skill 的自然语言 SOP 稳定驱动。",
         "source": "BUILTIN_DEFAULT",
         "agents": 2,
         "simulation": {"max_steps": 36, "stride_minutes": 10},
-        "chat": {
-            "max_iterations": 2,
-            "cooldown_minutes": 20,
-            "stop_after_hour": 22,
-        },
     },
     {
         "code": "UX-05",
@@ -97,7 +92,6 @@ CASES: list[dict[str, Any]] = [
         "simulation": {
             "max_steps": 120,
             "stride_minutes": 5,
-            "record_interval_minutes": 5,
         },
         "results": {
             "agent_step_projection_interval_steps": 1,
@@ -122,16 +116,16 @@ CASES: list[dict[str, Any]] = [
     },
     {
         "code": "UX-11",
-        "name": "UX-11 Prompt线性日程编排",
-        "goal": "验证 Start→LLM→Script 的线性 Prompt 工作流编辑、变量提示和版本保存。",
+        "name": "UX-11 Brain Skill线性SOP",
+        "goal": "验证自然语言 Brain SOP、子 Skill 选择、版本保存和依赖冻结。",
         "source": "BUILTIN_DEFAULT",
         "agents": 2,
         "simulation": {"max_steps": 24, "stride_minutes": 10},
     },
     {
         "code": "UX-12",
-        "name": "UX-12 Prompt条件分支与状态",
-        "goal": "验证条件分支、状态更新、连线和左右布局在复杂流程中的可用性。",
+        "name": "UX-12 Brain Skill条件SOP",
+        "goal": "验证自然语言条件、停止规则和子 Skill 调用在复杂 Brain SOP 中的可用性。",
         "source": "BUILTIN_DEFAULT",
         "agents": 3,
         "simulation": {"max_steps": 48, "stride_minutes": 10},
@@ -146,8 +140,8 @@ CASES: list[dict[str, Any]] = [
     },
     {
         "code": "UX-14",
-        "name": "UX-14 自定义地图与实验覆盖层",
-        "goal": "验证地图创建、发布、实验选择和实验级覆盖层的端到端路径。",
+        "name": "UX-14 自定义地图Revision选择",
+        "goal": "验证地图创建、发布以及实验选择不可变地图 Revision 的端到端路径。",
         "source": "BUILTIN_DEFAULT",
         "agents": 2,
         "simulation": {"max_steps": 24, "stride_minutes": 10},
@@ -193,6 +187,15 @@ def api_request(method: str, path: str, payload: dict[str, Any] | None = None) -
 def seed() -> list[dict[str, Any]]:
     """幂等创建产品易用性评审所需的实验样例并返回创建结果。"""
 
+    map_items = api_request("GET", "/maps?status=PUBLISHED&page_size=100")["items"]
+    if not map_items or not map_items[0].get("current_published"):
+        raise RuntimeError("请先创建并发布一张用户地图，再运行 UX 样例种子")
+    map_revision_id = map_items[0]["current_published"]["id"]
+    brain = api_request("GET", "/skills/stanford-town-brain")
+    crowd_items = api_request("GET", "/crowds?status=PUBLISHED&page_size=100")["items"]
+    if not crowd_items or not crowd_items[0].get("current_published"):
+        raise RuntimeError("请先发布一个 Crowd Revision，再运行 UX 样例种子")
+    crowd_revision_id = crowd_items[0]["current_published"]["id"]
     existing = api_request("GET", "/experiments?page_size=50&sort=created_at")["items"]
     by_code = {
         case["code"]: next(
@@ -212,7 +215,13 @@ def seed() -> list[dict[str, Any]]:
                 {
                     "name": case["name"],
                     "goal": case["goal"],
-                    "source": {"type": case["source"]},
+                    "source": {"type": "BLANK"},
+                    "brain_skill": brain["name"],
+                    "brain_revision_id": brain["revision_id"],
+                    "map_revision_id": map_revision_id,
+                    "crowd_revision_ids": (
+                        [] if case["source"] == "BLANK" else [crowd_revision_id]
+                    ),
                 },
             )
             action = "created"
@@ -248,7 +257,6 @@ def seed() -> list[dict[str, Any]]:
             definition["agents"] = definition["agents"][: case.get("agents", len(definition["agents"]))]
             definition["simulation"].update(case.get("simulation", {}))
             definition["results"].update(case.get("results", {}))
-            definition["behavior"]["chat"].update(case.get("chat", {}))
             if case.get("invalid_models"):
                 definition["models"]["chat"]["base_url"] = "http://127.0.0.1:59999/v1"
                 definition["models"]["embedding"]["base_url"] = "http://127.0.0.1:59998/v1"

@@ -237,7 +237,19 @@ class LocalProcessSupervisor:
                     definition.world.model_dump(mode="json", exclude_none=False)
                 ),
             }
-            skill_bundle = self._skill_registry.snapshot(skill_roots)
+            skill_bundle = self._skill_registry.snapshot(
+                skill_roots,
+                root_revisions={
+                    definition.engine.brain_skill: definition.engine.brain_revision_id
+                }
+                if definition.engine.brain_revision_id
+                else None,
+            )
+            frozen_brain = skill_bundle.get(definition.engine.brain_skill) or {}
+            if frozen_brain.get("revision") != definition.engine.brain_revision_hash:
+                raise RuntimeError(
+                    "run Brain Skill Revision differs from the experiment definition"
+                )
             if store.exists():
                 verified = store.reuse_for_revision(
                     experiment_id=UUID(claimed.experiment_id),

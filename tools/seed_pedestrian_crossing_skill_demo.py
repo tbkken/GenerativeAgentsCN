@@ -233,11 +233,6 @@ def build_world() -> dict[str, Any]:
         "map_id": None,
         "map_revision_id": None,
         "map_revision_hash": None,
-        "overlay": {
-            "definition_patch": {},
-            "asset_additions": [],
-            "removed_asset_paths": [],
-        },
     }
 
 
@@ -427,6 +422,7 @@ def _ensure_experiment(
     experiment = _find(listing["items"], "name", EXPERIMENT_NAME)
     if experiment is not None:
         return experiment, False
+    brain = _request(base_url, "/skills/stanford-town-brain")
     experiment = _request(
         base_url,
         "/experiments",
@@ -439,6 +435,8 @@ def _ensure_experiment(
             ),
             "owner": "Game Object Skill Demo",
             "tags": ["game-object-skill", "pedestrian-crossing", "end-to-end"],
+            "brain_skill": brain["name"],
+            "brain_revision_id": brain["revision_id"],
             "map_revision_id": map_revision_id,
             "crowd_revision_ids": [crowd_revision_id],
         },
@@ -452,7 +450,6 @@ def _ensure_experiment(
             "max_steps": 3,
             "checkpoint_interval_steps": 1,
             "checkpoint_retention": 2,
-            "record_interval_minutes": 1,
             "random_seed": 20260822,
         }
     )
@@ -464,7 +461,7 @@ def _ensure_experiment(
                 "model": chat_model,
                 "resolved_model": None,
                 "secret_ref": chat_secret_ref,
-                "timeout_seconds": 1800,
+                "timeout_seconds": 600,
                 "retry_attempts": 2,
                 "retry_backoff_seconds": 2,
             }

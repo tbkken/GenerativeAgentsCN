@@ -67,7 +67,9 @@ def _fix_target(path: str) -> tuple[str, str | None]:
     if path.startswith("agents"):
         return "agents", "agentSearch"
     if path.startswith("world"):
-        return "world", "worldDefinition"
+        return "overview", "experimentMapRevisionSelect"
+    if path.startswith("engine"):
+        return "overview", "experimentBrainRevisionSelect"
     if path.startswith("models"):
         return "models", "chatModel" if ".chat" in path else "embeddingModel"
     if path.startswith("simulation") or path.startswith("results"):
@@ -111,14 +113,14 @@ def validate_for_publish(
     definition: ExperimentDefinition,
     *,
     existing_secret_refs: set[str] | None = None,
-    validate_legacy_agent_locations: bool = True,
+    validate_agent_locations: bool = True,
 ) -> ValidationReport:
     """校验`for``publish`。
 
     参数:
         definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`ExperimentDefinition`。
         existing_secret_refs: 修改前已经存在的密钥引用集合，用于识别新增或失效引用。 类型：`set[str] | None`。 默认值：`None`。
-        validate_legacy_agent_locations: 是否对旧版智能体地址执行兼容性校验。 类型：`bool`。 默认值：`True`。
+        validate_agent_locations: 是否校验 Agent 地址与所选地图 Revision 一致。 类型：`bool`。 默认值：`True`。
 
     返回:
         返回 `ValidationReport` 类型的处理结果。
@@ -127,6 +129,32 @@ def validate_for_publish(
     errors: list[ValidationIssue] = []
     warnings: list[ValidationIssue] = []
     get_algorithm_profile(definition.engine.algorithm_version)
+
+    if not (
+        definition.engine.brain_revision_id
+        and definition.engine.brain_revision_hash
+    ):
+        errors.append(
+            _issue(
+                "BRAIN_REVISION_REQUIRED",
+                "engine.brain_revision_id",
+                "必须显式选择一个 Brain Skill Revision",
+                "ERROR",
+            )
+        )
+    if not (
+        definition.world.map_id
+        and definition.world.map_revision_id
+        and definition.world.map_revision_hash
+    ):
+        errors.append(
+            _issue(
+                "MAP_REVISION_REQUIRED",
+                "world.map_revision_id",
+                "必须显式选择一个已发布地图 Revision",
+                "ERROR",
+            )
+        )
 
     if not any(agent.enabled for agent in definition.agents):
         errors.append(
@@ -238,7 +266,7 @@ def validate_for_publish(
                             "WARNING",
                         )
                     )
-            if not validate_legacy_agent_locations:
+            if not validate_agent_locations:
                 continue
             if tuple(agent.coord) not in accessible:
                 errors.append(
