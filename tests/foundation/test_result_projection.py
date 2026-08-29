@@ -506,6 +506,76 @@ def test_model_trace_cursor_counts_failed_attempts_and_is_idempotent(
         assert summary.result_version == 2
 
 
+def test_model_usage_projection_is_visible_immediately_after_a_physical_attempt(
+    service, database, publishable_definition, tmp_path
+):
+    experiment, revision = _publish(service, publishable_definition)
+    var_dir = tmp_path / "var"
+    run = RunService(database, var_dir=var_dir).create_from_published(
+        experiment["id"], revision["id"]
+    )
+    claimed = LocalRunSchedulerRepository(database).claim_next()
+    run_id = UUID(run["run_id"])
+    attempt_id = UUID(claimed.attempt_id)
+    paths = RunPaths.under(var_dir, run_id)
+    projector = ModelTraceProjector(database, var_dir=var_dir)
+    writer = ModelTraceWriter(
+        paths,
+        run_id=run_id,
+        attempt_id=attempt_id,
+        attempt_no=1,
+        capture_payloads=False,
+        on_append=lambda path: projector.project(
+            run_id=str(run_id),
+            attempt_id=str(attempt_id),
+            relative_path=path.relative_to(var_dir).as_posix(),
+        ),
+    )
+    at = datetime(2026, 8, 29, tzinfo=timezone.utc)
+    call_id = uuid4()
+    common = dict(
+        run_id=run_id,
+        attempt_id=attempt_id,
+        call_id=call_id,
+        step_no=1,
+        agent_key="resident-001",
+        purpose="chat",
+        prompt_key="brain",
+        provider="vllm",
+        resolved_model="live-model",
+        started_at=at,
+        ended_at=at,
+        attempt_no=1,
+    )
+    writer.append(
+        ModelTraceEvent(
+            event_type=ModelTraceEventType.PHYSICAL_START,
+            latency_ms=0,
+            status=ModelTraceStatus.RUNNING,
+            **common,
+        )
+    )
+    writer.append(
+        ModelTraceEvent(
+            event_type=ModelTraceEventType.PHYSICAL_ATTEMPT,
+            latency_ms=125,
+            status=ModelTraceStatus.SUCCEEDED,
+            prompt_tokens=20,
+            completion_tokens=5,
+            **common,
+        )
+    )
+
+    with database.session_factory() as session:
+        usage = session.get(
+            RunModelUsage, (run["run_id"], "chat", "vllm", "live-model")
+        )
+        assert usage is not None
+        assert usage.physical_attempt_count == 1
+        assert usage.input_tokens == 20
+        assert usage.output_tokens == 5
+
+
 def test_model_trace_projection_accepts_an_attempt_with_no_trace_file(
     service, database, publishable_definition, tmp_path
 ):

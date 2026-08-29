@@ -1446,3 +1446,33 @@ def test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_correc
     assert '"tilemap_url": _NORMALIZED_TILEMAP_URL' in replay_contract
     assert '"tilemap_asset": {' in replay_contract
     assert '"normalization": "INTERIORS_PT3_IMAGEHEIGHT_10016"' in replay_contract
+
+
+def test_replay_has_a_real_three_frame_agent_atlas():
+    root = Path(__file__).resolve().parents[2]
+    atlas_path = (
+        root
+        / "generative_agents"
+        / "web"
+        / "static"
+        / "replay-assets"
+        / "agent-sprite-4x3.json"
+    )
+    atlas = json.loads(atlas_path.read_text(encoding="utf-8"))
+    replay_contract = (
+        root / "generative_agents" / "runtime" / "replay_v2.py"
+    ).read_text(encoding="utf-8")
+    console = (
+        root / "generative_agents" / "web" / "static" / "console-api.js"
+    ).read_text(encoding="utf-8")
+
+    assert atlas["meta"]["size"] == {"w": 96, "h": 128}
+    assert len(atlas["frames"]) == 12
+    assert {item["filename"].split("-")[0] for item in atlas["frames"]} == {
+        "down",
+        "left",
+        "right",
+        "up",
+    }
+    assert "agent-sprite-{layout}.json" in replay_contract
+    assert "width === 96 ? '4x3' : '4x4'" in console
