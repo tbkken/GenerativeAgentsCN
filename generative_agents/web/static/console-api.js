@@ -908,7 +908,7 @@
           <div><div class="run-head"><span>${runTitle}</span><code>${escapeHtml(runCode)}</code></div><div class="run-value"><strong>${escapeHtml(runValue)}</strong><span>${escapeHtml(runDetail)}</span></div><div class="run-progress ${item.status === 'PAUSED' ? 'paused' : item.status === 'COMPLETED' ? 'completed' : ''}"><i style="width:${percent}%"></i></div></div>
           <div class="run-foot"><span>${updatedAtMarkup} · ${item.run_count || 0} 次运行</span><button class="run-cta ${run ? 'api-open-results' : 'api-open-experiment'}">${run ? '查看运行' : '继续配置'}</button></div>
         </div>
-        <button class="experiment-menu" aria-label="实验操作">⋯</button>
+        <div class="experiment-card-actions"><button class="experiment-delete-button" type="button">删除实验</button><button class="experiment-menu" aria-label="更多实验操作">⋯</button></div>
       </article>`;
   }
 
@@ -4243,6 +4243,15 @@
   let contextExperimentId = null;
   let contextExperimentName = '';
   $('experimentList').addEventListener('click', event => {
+    const deleteButton = event.target.closest('.experiment-delete-button');
+    if (deleteButton) {
+      event.stopPropagation();
+      const card = deleteButton.closest('.experiment-card');
+      const experimentId = card?.dataset.id;
+      const name = card?.querySelector('.experiment-link')?.textContent?.trim() || '当前实验';
+      if (experimentId) deleteExperimentById(experimentId, name).catch(reportError);
+      return;
+    }
     const menu = event.target.closest('.experiment-menu');
     if (!menu) return;
     event.stopPropagation();

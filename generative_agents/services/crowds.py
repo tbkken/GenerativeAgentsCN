@@ -29,6 +29,7 @@ from generative_agents.persistence.models import (
     CrowdRevisionMember,
     CrowdTemplate,
     ExperimentRevision,
+    SeedResourceTombstone,
 )
 from generative_agents.status import RevisionState
 
@@ -193,6 +194,12 @@ class CrowdService:
             definition = make_builtin_definition(
                 key="builtin-agent-catalog", name="斯坦福小镇居民"
             )
+            deleted_seed = session.get(
+                SeedResourceTombstone,
+                {"resource_type": "crowd", "resource_key": "stanford-town-residents"},
+            )
+            if deleted_seed is not None:
+                return {"deleted": True, "crowd_key": "stanford-town-residents"}
             existing_crowd = session.scalar(
                 select(CrowdTemplate).where(
                     CrowdTemplate.crowd_key == "stanford-town-residents"
@@ -527,12 +534,6 @@ class CrowdService:
             agent = session.get(AgentTemplate, agent_id)
             if agent is None:
                 raise not_found("agent_template", agent_id)
-            if agent.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_AGENT_IMMUTABLE",
-                    "系统内置 Agent 不能删除",
-                    status_code=409,
-                )
             member_count = int(
                 session.scalar(
                     select(func.count())
@@ -546,6 +547,12 @@ class CrowdService:
                     "AGENT_IN_USE",
                     "Agent 仍被 Crowd Revision 引用；请先删除引用它的人群",
                     status_code=409,
+                )
+            if agent.is_builtin:
+                session.merge(
+                    SeedResourceTombstone(
+                        resource_type="agent", resource_key=agent.agent_key
+                    )
                 )
             agent.current_draft_revision_id = None
             agent.current_published_revision_id = None
@@ -1092,17 +1099,17 @@ class CrowdService:
             crowd = session.get(CrowdTemplate, crowd_id)
             if crowd is None:
                 raise not_found("crowd", crowd_id)
-            if crowd.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_CROWD_IMMUTABLE",
-                    "系统内置 Crowd 不能删除",
-                    status_code=409,
-                )
             if self._crowd_usage_count(session, crowd_id):
                 raise ServiceError(
                     "CROWD_IN_USE",
                     "人群仍被实验 Revision 引用；请先删除引用它的实验",
                     status_code=409,
+                )
+            if crowd.is_builtin:
+                session.merge(
+                    SeedResourceTombstone(
+                        resource_type="crowd", resource_key=crowd.crowd_key
+                    )
                 )
             crowd.current_draft_revision_id = None
             crowd.current_published_revision_id = None

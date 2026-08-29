@@ -15,6 +15,7 @@ from sqlalchemy.exc import IntegrityError
 from generative_agents.persistence.database import Database
 from generative_agents.persistence.models import (
     ExperimentRevision,
+    SeedResourceTombstone,
     SkillDefinition,
     SkillRevision,
     WorldMapRevision,
@@ -46,8 +47,15 @@ class DatabaseSkillRegistry:
         inserted = 0
         with self.database.session_factory.begin() as session:
             existing = set(session.scalars(select(SkillDefinition.skill_key)))
+            deleted_seeds = set(
+                session.scalars(
+                    select(SeedResourceTombstone.resource_key).where(
+                        SeedResourceTombstone.resource_type == "skill"
+                    )
+                )
+            )
             for document in source.list():
-                if document.name in existing:
+                if document.name in existing or document.name in deleted_seeds:
                     continue
                 scripts = {
                     relative: (document.path.parent / relative).read_text(
@@ -357,8 +365,6 @@ class DatabaseSkillRegistry:
         normalized = self.normalize_name(name)
         with self.database.session_factory.begin() as session:
             definition = self._definition(session, normalized, include_archived=True)
-            if definition.is_builtin:
-                raise SkillRegistryError("Built-in Skills cannot be deleted")
             revision_ids = list(
                 session.scalars(
                     select(SkillRevision.id).where(
@@ -392,6 +398,12 @@ class DatabaseSkillRegistry:
             if used_by_experiment or used_by_map or used_by_skill:
                 raise SkillRegistryError(
                     "Skill 仍被不可变的实验、地图或其他 Skill Revision 引用"
+                )
+            if definition.is_builtin:
+                session.merge(
+                    SeedResourceTombstone(
+                        resource_type="skill", resource_key=definition.skill_key
+                    )
                 )
             session.delete(definition)
 

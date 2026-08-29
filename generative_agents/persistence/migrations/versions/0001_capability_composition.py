@@ -36,6 +36,11 @@ def upgrade() -> None:
         CREATE TRIGGER trg_published_revision_no_update
         BEFORE UPDATE ON experiment_revisions
         WHEN OLD.state = 'PUBLISHED'
+          AND NOT EXISTS (
+            SELECT 1 FROM resource_deletion_grants grant_row
+            WHERE grant_row.resource_type = 'experiment'
+              AND grant_row.resource_id = OLD.experiment_id
+          )
         BEGIN
           SELECT RAISE(ABORT, 'PUBLISHED_REVISION_IMMUTABLE');
         END
@@ -46,6 +51,11 @@ def upgrade() -> None:
         CREATE TRIGGER trg_published_revision_no_delete
         BEFORE DELETE ON experiment_revisions
         WHEN OLD.state = 'PUBLISHED'
+          AND NOT EXISTS (
+            SELECT 1 FROM resource_deletion_grants grant_row
+            WHERE grant_row.resource_type = 'experiment'
+              AND grant_row.resource_id = OLD.experiment_id
+          )
         BEGIN
           SELECT RAISE(ABORT, 'PUBLISHED_REVISION_IMMUTABLE');
         END

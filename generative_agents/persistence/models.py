@@ -73,6 +73,30 @@ class Base(DeclarativeBase):
     pass
 
 
+class SeedResourceTombstone(Base):
+    """Remember an explicitly deleted bundled seed so startup never recreates it."""
+
+    __tablename__ = "seed_resource_tombstones"
+
+    resource_type: Mapped[str] = mapped_column(String(32), primary_key=True)
+    resource_key: Mapped[str] = mapped_column(String(128), primary_key=True)
+    deleted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
+class ResourceDeletionGrant(Base):
+    """Short-lived service authorization for deleting an immutable resource tree."""
+
+    __tablename__ = "resource_deletion_grants"
+
+    resource_type: Mapped[str] = mapped_column(String(32), primary_key=True)
+    resource_id: Mapped[str] = mapped_column(String(128), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
 class SkillDefinition(Base):
     """Product-owned Skill identity; user edits never target source files."""
 

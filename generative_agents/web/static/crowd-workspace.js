@@ -150,7 +150,7 @@
           <span class="crowd-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span>${item.is_builtin ? '<b class="crowd-builtin">系统人群</b>' : `<code>${this.escape(item.crowd_key)}</code>`}</span>
           <h2>${this.escape(item.name)}</h2><p>${this.escape(item.description || '暂无用途说明')}</p>
           <span class="crowd-card-foot"><span><strong>${item.agent_count}</strong> 个 Agent</span><span>${item.usage_count} 个实验使用</span></span>
-        </button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-crowd-id="${item.id}" data-delete-crowd-name="${this.escape(item.name)}">删除</button>`}</article>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
+        </button><button class="resource-card-delete" type="button" data-delete-crowd-id="${item.id}" data-delete-crowd-name="${this.escape(item.name)}">删除人群</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的人群</strong><span>新建人群后，可从公共 Agent 列表添加成员。</span></div>';
       grid.querySelectorAll('[data-crowd-id]').forEach(card => card.addEventListener('click', () => this.openCrowd(card.dataset.crowdId).catch(error => this.fail(error))));
       grid.querySelectorAll('[data-delete-crowd-id]').forEach(button => button.addEventListener('click', () => this.deleteCrowd(button.dataset.deleteCrowdId, button.dataset.deleteCrowdName).catch(error => this.fail(error))));
       const footer = byId('crowdListFooter');
@@ -211,7 +211,7 @@
       state.textContent = editable ? '草稿' : this.detail.is_builtin ? '系统人群 · 只读' : '已发布';
       state.classList.toggle('draft', editable);
       byId('publishCrowdBtn').textContent = editable ? '发布版本' : this.detail.is_builtin ? '基于此人群创建' : '创建新修订';
-      byId('deleteCrowdBtn').hidden = Boolean(this.detail.is_builtin);
+      byId('deleteCrowdBtn').hidden = false;
       this.renderMembers();
       window.dispatchEvent(new CustomEvent('crowd-workspace:selection', { detail: { crowdId } }));
       if (push) history.pushState({}, '', `/?view=crowds&crowd_id=${encodeURIComponent(crowdId)}`);
@@ -364,7 +364,7 @@
       const editableCrowd = this.revision?.state === 'DRAFT';
       const scopeLabel = item.is_builtin ? '系统公共 · 只读' : '自定义公共';
       const edit = item.is_builtin ? '' : `<button type="button" data-edit-public-agent="${this.escape(item.id)}">编辑</button>`;
-      const remove = item.is_builtin ? '' : `<button type="button" class="crowd-agent-delete" data-delete-public-agent="${this.escape(item.id)}" data-delete-public-agent-name="${this.escape(item.name)}">删除</button>`;
+      const remove = `<button type="button" class="crowd-agent-delete" data-delete-public-agent="${this.escape(item.id)}" data-delete-public-agent-name="${this.escape(item.name)}">删除 Agent</button>`;
       const selectionLabel = checked ? '已加入当前人群' : '加入当前人群';
       const versionState = outdated
         ? `<span class="crowd-agent-version-warning">人群锁定 v${revision.revision_no} · 最新 v${latestRevision.revision_no}</span>${editableCrowd ? `<button type="button" class="crowd-agent-upgrade" data-upgrade-agent-id="${item.id}" data-latest-revision-id="${latestRevision.id}">升级到 v${latestRevision.revision_no}</button>` : '<span class="crowd-agent-version-readonly">创建人群新修订后可升级</span>'}`

@@ -105,7 +105,7 @@
       await loadCatalog();
     }));
     target.querySelectorAll('[data-skill-name]').forEach(card => card.addEventListener('click', () => openSkill(card.dataset.skillName)));
-    target.querySelectorAll('[data-delete-skill]').forEach(button => button.addEventListener('click', () => deleteSkill(button.dataset.deleteSkill, button.dataset.deleteSkillLabel).catch(report)));
+    target.querySelectorAll('[data-delete-skill]').forEach(button => button.addEventListener('click', () => deleteSkill(button.dataset.deleteSkill, button.dataset.deleteSkillLabel, button.dataset.deleteSkillKind).catch(report)));
     $('skillCreateInline')?.addEventListener('click', () => showCreate(isBrain ? 'brain' : state.kind));
     let searchTimer;
     $('skillSearchInput')?.addEventListener('input', event => {
@@ -121,6 +121,7 @@
 
   function skillCard(item) {
     const type = item.kind === 'brain' ? 'BRAIN SKILL' : item.kind === 'pack' ? 'SKILL PACK' : 'SKILL';
+    const deleteLabel = item.kind === 'brain' ? '删除大脑' : item.kind === 'pack' ? '删除技能包' : '删除技能';
     const children = item.children || [];
     const scripts = item.scripts || [];
     const flow = children.length
@@ -132,7 +133,7 @@
       <p>${escapeHtml(item.description)}</p>
       ${flow ? `<span class="skill-card-flow-real">${flow}</span>` : ''}
       <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'database' ? `DB Revision #${item.revision_no || 1}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
-    </button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}">删除</button>`}</article>`;
+    </button><button class="resource-card-delete" type="button" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}" data-delete-skill-kind="${escapeHtml(item.kind)}">${deleteLabel}</button></article>`;
   }
 
   async function openSkill(name) {
@@ -197,20 +198,22 @@
     $('skillEditorRevision').textContent = `REV ${item.revision}`;
     $('skillEditorBack').onclick = backToCatalog;
     $('skillSave').onclick = saveSkill;
-    $('skillDelete').hidden = Boolean(item.is_builtin);
-    $('skillDelete').onclick = () => deleteSkill(item.name, titleCase(item.name)).catch(report);
+    $('skillDelete').hidden = false;
+    $('skillDelete').textContent = item.kind === 'brain' ? '删除大脑' : item.kind === 'pack' ? '删除技能包' : '删除技能';
+    $('skillDelete').onclick = () => deleteSkill(item.name, titleCase(item.name), item.kind).catch(report);
   }
 
-  async function deleteSkill(name, label = name) {
+  async function deleteSkill(name, label = name, kind = state.kind) {
+    const type = kind === 'brain' ? '大脑' : kind === 'pack' ? '技能包' : '技能';
     const confirmed = window.confirmResourceDeletion
-      ? await window.confirmResourceDeletion({ type: 'Skill', name: label, message: 'Skill 的全部数据库 Revision 将被删除。仍被实验、地图或其他 Skill Revision 引用时，系统会拒绝操作。' })
-      : window.confirm(`确认删除 Skill“${label}”？`);
+      ? await window.confirmResourceDeletion({ type, name: label, message: `${type}的全部数据库 Revision 将被删除。仍被实验、地图或其他 Skill Revision 引用时，系统会拒绝操作。` })
+      : window.confirm(`确认删除${type}“${label}”？`);
     if (!confirmed) return;
     await api(`/api/v1/skills/${encodeURIComponent(name)}`, { method: 'DELETE' });
     if (state.current?.name === name) state.current = null;
     deactivateTopbar();
     await loadCatalog();
-    toast(`Skill“${label}”已删除`);
+    toast(`${type}“${label}”已删除`);
   }
 
   function deactivateTopbar() {

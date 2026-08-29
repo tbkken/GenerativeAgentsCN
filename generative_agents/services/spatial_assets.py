@@ -17,6 +17,7 @@ from generative_agents.config.hashing import canonical_json_bytes
 from generative_agents.config.spatial_assets import SpatialAssetContract
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
+    SeedResourceTombstone,
     SpatialAssetDefinition,
     SpatialAssetRevision,
     WorldMapRevision,
@@ -280,7 +281,16 @@ class SpatialAssetService:
         """
         with self.database.session_factory.begin() as session:
             contracts = _builtin_contracts()
+            deleted_seeds = set(
+                session.scalars(
+                    select(SeedResourceTombstone.resource_key).where(
+                        SeedResourceTombstone.resource_type == "spatial_asset"
+                    )
+                )
+            )
             for asset_key, contract in contracts.items():
+                if asset_key in deleted_seeds:
+                    continue
                 existing = session.scalar(
                     select(SpatialAssetDefinition).where(
                         SpatialAssetDefinition.asset_key == asset_key
@@ -578,12 +588,6 @@ class SpatialAssetService:
             asset = session.get(SpatialAssetDefinition, asset_id)
             if asset is None:
                 raise not_found("spatial_asset", asset_id)
-            if asset.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_SPATIAL_ASSET_IMMUTABLE",
-                    "系统内置空间资产不能删除",
-                    status_code=409,
-                )
             revision_ids = list(
                 session.scalars(
                     select(SpatialAssetRevision.id).where(
@@ -607,6 +611,12 @@ class SpatialAssetService:
                         "空间资产仍被地图 Revision 引用；请先删除引用它的地图",
                         status_code=409,
                     )
+            if asset.is_builtin:
+                session.merge(
+                    SeedResourceTombstone(
+                        resource_type="spatial_asset", resource_key=asset.asset_key
+                    )
+                )
             asset.current_draft_revision_id = None
             asset.current_published_revision_id = None
             session.flush()

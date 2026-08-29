@@ -25,6 +25,7 @@ from generative_agents.persistence.models import (
     ExperimentRevision,
     ExperimentSavedView,
     ModelProbeStatus,
+    ResourceDeletionGrant,
     Run,
     RunArtifact,
     RunResultSummary,
@@ -1697,6 +1698,12 @@ class ExperimentService:
                     status_code=409,
                     details={"run_count": run_count},
                 )
+            session.merge(
+                ResourceDeletionGrant(
+                    resource_type="experiment", resource_id=experiment_id
+                )
+            )
+            session.flush()
             experiment.current_draft_revision_id = None
             experiment.current_published_revision_id = None
             experiment.latest_run_id = None
@@ -1727,6 +1734,13 @@ class ExperimentService:
                 flag_modified(group, "experiment_ids_json")
                 group.updated_at = _utc_now()
             session.delete(experiment)
+            session.flush()
+            session.execute(
+                delete(ResourceDeletionGrant).where(
+                    ResourceDeletionGrant.resource_type == "experiment",
+                    ResourceDeletionGrant.resource_id == experiment_id,
+                )
+            )
 
     def batch_manage(
         self,

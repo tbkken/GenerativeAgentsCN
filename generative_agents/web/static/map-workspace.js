@@ -136,10 +136,15 @@
       let result;
       let selectorResult;
       try {
-        [result, selectorResult] = await Promise.all([
-          request(`/maps?${params}`),
-          request(`/maps?${selectorParams}`),
-        ]);
+        if (!this.query && !this.status) {
+          result = await request(`/maps?${params}`);
+          selectorResult = result;
+        } else {
+          [result, selectorResult] = await Promise.all([
+            request(`/maps?${params}`),
+            request(`/maps?${selectorParams}`),
+          ]);
+        }
       } catch (error) {
         if (generation !== this.listGeneration) return;
         grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>地图列表加载失败</strong><span>${escapeHtml(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-map-list>重新加载</button></div>`;
@@ -160,7 +165,7 @@
           <span class="map-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span><code>${escapeHtml(item.map_key)}</code></span>
           <h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.description || '暂无用途说明')}</p>
           <span class="map-card-foot"><span>${item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]}` : '待设置尺寸'}</span><span>${item.usage_count} 个实验使用</span></span>
-        </button><button class="resource-card-delete" type="button" data-delete-map-id="${item.id}" data-delete-map-name="${escapeHtml(item.name)}">删除</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
+        </button><button class="resource-card-delete" type="button" data-delete-map-id="${item.id}" data-delete-map-name="${escapeHtml(item.name)}">删除地图</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
       grid.querySelectorAll('[data-map-id]').forEach(card => card.addEventListener('click', () => this.openMap(card.dataset.mapId).catch(error => this.fail(error))));
       grid.querySelectorAll('[data-delete-map-id]').forEach(button => button.addEventListener('click', () => this.deleteMap(button.dataset.deleteMapId, button.dataset.deleteMapName).catch(error => this.fail(error))));
       const footer = document.getElementById('mapListFooter');

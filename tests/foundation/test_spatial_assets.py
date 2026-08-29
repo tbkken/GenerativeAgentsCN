@@ -61,7 +61,7 @@ def test_builtin_spatial_assets_cover_blocks_objects_zones_and_markings(database
         assert "capability_attachments" not in contract
 
 
-def test_custom_spatial_asset_can_be_deleted_but_builtin_is_protected(database_url):
+def test_custom_and_seeded_spatial_assets_can_be_deleted_permanently(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         created = client.post(
@@ -71,12 +71,19 @@ def test_custom_spatial_asset_can_be_deleted_but_builtin_is_protected(database_u
         deleted = client.delete(f"/api/v1/spatial-assets/{created['id']}")
         missing = client.get(f"/api/v1/spatial-assets/{created['id']}")
         builtin = _asset_by_key(client, "object-traffic-light")
-        protected = client.delete(f"/api/v1/spatial-assets/{builtin['id']}")
+        deleted_builtin = client.delete(f"/api/v1/spatial-assets/{builtin['id']}")
 
     assert deleted.status_code == 204
     assert missing.status_code == 404
-    assert protected.status_code == 409
-    assert protected.json()["error"]["code"] == "BUILTIN_SPATIAL_ASSET_IMMUTABLE"
+    assert deleted_builtin.status_code == 204
+
+    restarted = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(restarted) as client:
+        keys = {
+            item["asset_key"]
+            for item in client.get("/api/v1/spatial-assets?page_size=100").json()["items"]
+        }
+    assert "object-traffic-light" not in keys
 
 
 def test_public_map_can_opt_into_versioned_spatial_scene_without_changing_v1(database_url):

@@ -89,7 +89,7 @@
         const contract = item.active_contract || {}; const appearance = contract.appearance || {};
         const preview = appearance.mode === 'EMOJI' ? this.escape(appearance.emoji) : '';
         const style = appearance.mode === 'COLOR' ? `background:${this.escape(appearance.color)}` : '';
-        return `<article class="resource-card-shell"><button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code></span></button>${item.is_builtin ? '' : `<button class="resource-card-delete" type="button" data-delete-spatial-id="${item.id}" data-delete-spatial-name="${this.escape(item.name)}">删除</button>`}</article>`;
+        return `<article class="resource-card-shell"><button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code></span></button><button class="resource-card-delete" type="button" data-delete-spatial-id="${item.id}" data-delete-spatial-name="${this.escape(item.name)}">删除资产</button></article>`;
       }).join('') : '<div class="empty-state"><strong>没有符合条件的空间资产</strong></div>';
       grid.querySelectorAll('[data-spatial-id]').forEach(card => card.addEventListener('click', () => this.open(card.dataset.spatialId).catch(error => this.fail(error))));
       grid.querySelectorAll('[data-delete-spatial-id]').forEach(button => button.addEventListener('click', () => this.deleteAsset(button.dataset.deleteSpatialId, button.dataset.deleteSpatialName).catch(error => this.fail(error))));
@@ -145,7 +145,7 @@
     renderState() {
       const editable = this.revision.state === 'DRAFT'; const state = this.$('spatialAssetEditorState');
       state.textContent = editable ? '草稿' : this.detail.is_builtin ? '系统 · 只读' : '已发布 · 只读'; state.classList.toggle('draft', editable);
-      this.$('deleteSpatialAsset').hidden = Boolean(this.detail.is_builtin);
+      this.$('deleteSpatialAsset').hidden = false;
       this.$('saveSpatialAsset').disabled = !editable; this.$('publishSpatialAsset').textContent = editable ? '发布版本' : this.detail.is_builtin ? '基于此资产创建' : '创建新修订';
       this.$('useSpatialAssetOnMap').disabled = !this.detail.current_published;
       this.$('spatialAssetEditor').querySelectorAll('input,select,textarea,.spatial-row-remove').forEach(control => { if (!control.closest('.spatial-asset-editor > header')) control.disabled = !editable; });
