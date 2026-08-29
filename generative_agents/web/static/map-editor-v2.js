@@ -294,8 +294,9 @@
         const bundled = await response.json();
         if (skillResponse?.ok) {
           const skillCatalog = await skillResponse.json();
-          this.passiveSkillCatalog = (skillCatalog.items || [])
-            .filter(item => (item.scripts || []).includes('scripts/main.py'));
+          // Text-only atomic Skills are valid passive feedback Skills. The
+          // frozen runtime supplies their model gateway; scripts are optional.
+          this.passiveSkillCatalog = skillCatalog.items || [];
         }
         this.bundledDocument = bundled;
         const saved = this.world?.definition?.editor_v2;
@@ -394,7 +395,7 @@
           id: rootId, kind: 'WORLD', parent_id: null,
           name: world.world_name || world.definition?.world || '未命名地图', sort_order: 0,
           bounds: { x: 0, y: 0, width, height }, semantic: '',
-          material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', skill_bindings: [], extensions: {},
+          material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', initial_state: {}, skill_bindings: [], extensions: {},
         }],
         import_metadata: {
           importer: 'blank-map/v2', width, height,
@@ -487,6 +488,7 @@
       this.childrenByParent = new Map();
       for (const node of this.document.hierarchy_nodes || []) {
         if (!Array.isArray(node.skill_bindings)) node.skill_bindings = [];
+        if (!node.initial_state || Array.isArray(node.initial_state) || typeof node.initial_state !== 'object') node.initial_state = {};
         node.interaction_mode = node.kind === 'GAME_OBJECT' && node.skill_bindings.length
           ? 'SKILL_BOUND' : 'STATIC';
         const list = this.childrenByParent.get(node.parent_id || '') || [];
@@ -641,7 +643,7 @@
         button.hidden = !canvasEditing;
         button.classList.toggle('active', button.dataset.me2Tool === this.tool);
       });
-      this.root.querySelector('[data-map-history]').hidden = !canvasEditing;
+      this.root.querySelector('[data-map-history]').hidden = !canvasEditing && !this.undoStack.length && !this.redoStack.length;
       this.root.querySelector('.me2-depth').hidden = material;
       this.root.querySelector('[data-semantics]').hidden = material;
       this.renderBrushPalette();
@@ -668,8 +670,7 @@
         tools.innerHTML = `<div class="me2-left-actions"><button class="me2-primary-soft" data-new-canvas title="${this.readonly ? '点击后自动创建新修订并新建画布' : '新建可绘制画布'}">＋ 新建画布</button><button class="me2-outline" data-upload-source ${this.readonly ? 'disabled' : ''}>＋ 导入原图</button></div>`;
         this.leftContent.innerHTML = `<div class="me2-material-tree">${this.materialTree()}</div>`;
         tools.querySelector('[data-new-canvas]')?.addEventListener('click', () => {
-          if (this.readonly) this.requestEditableAction('new-canvas');
-          else this.createMaterialCanvas();
+          this.requestEditableAction('new-canvas');
         });
         tools.querySelector('[data-upload-source]')?.addEventListener('click', () => this.root.querySelector('[data-source-upload]').click());
         this.bindMaterialTree();
@@ -930,7 +931,10 @@
           <label>交互说明<input class="control" data-node-interaction-description value="${escapeHtml(binding?.description || '查询对象当前状态')}" ${this.readonly ? 'disabled' : ''}></label>
           <label>交互距离（米）<input class="control" type="number" min="0.1" step="0.1" data-node-interaction-radius value="${Number(binding?.interaction_radius_m || 2)}" ${this.readonly ? 'disabled' : ''}></label>
           <label>默认请求<textarea class="control" rows="3" data-node-interaction-request ${this.readonly ? 'disabled' : ''}>${escapeHtml(binding?.default_request || '请提供当前状态和可执行信息。')}</textarea></label>
-          <div class="me2-inspector-note">靠近只会向 Agent 暴露此交互；只有 Agent 明确选择后才执行 Skill。</div></div>` : '';
+          <div class="me2-inspector-note">靠近只会向 Agent 暴露此交互；只有 Agent 明确选择后才执行 Skill。</div></div>
+        <div class="me2-form-section"><div class="me2-section-title"><strong>初始状态</strong><span>可回放事实</span></div>
+          <label>状态对象<textarea class="control" rows="5" data-node-initial-state ${this.readonly ? 'disabled' : ''} placeholder='{"state":"RED","powered":true}'>${escapeHtml(JSON.stringify(node.initial_state || {}, null, 2))}</textarea></label>
+          <div class="me2-inspector-note">请输入 JSON 对象。运行从这里建立对象状态；名称和空间语义不再代替真实状态。</div></div>` : '';
       return `<div class="me2-address-path">${escapeHtml(address)}</div>
         <div class="me2-form-section"><label>节点名称<input class="control" data-node-name value="${escapeHtml(node.name)}" ${this.readonly ? 'disabled' : ''}></label></div>
         <div class="me2-form-section"><label>显示素材<select class="control" data-node-material ${this.readonly ? 'disabled' : ''}><option value="">不叠加素材</option>${materialOptions}</select></label>
@@ -972,6 +976,18 @@
         const materialId = this.inspector.querySelector('[data-node-material]')?.value || '';
         node.material_slice_id = this.sliceById.has(materialId) ? materialId : null;
         if (node.kind === 'GAME_OBJECT') {
+          let initialState;
+          try {
+            initialState = JSON.parse(this.inspector.querySelector('[data-node-initial-state]')?.value || '{}');
+          } catch (error) {
+            this.toast('初始状态未保存', '请输入有效 JSON 对象');
+            return;
+          }
+          if (!initialState || Array.isArray(initialState) || typeof initialState !== 'object') {
+            this.toast('初始状态未保存', '初始状态必须是 JSON 对象');
+            return;
+          }
+          node.initial_state = initialState;
           const skillName = this.inspector.querySelector('[data-node-skill]')?.value || '';
           node.skill_bindings = skillName ? [{
             interaction_key: this.inspector.querySelector('[data-node-interaction-key]').value.trim() || 'query-state',
@@ -1049,10 +1065,19 @@
       this.inspector.querySelector('[data-delete-canvas]')?.addEventListener('click', () => this.deleteMaterialCanvas(canvas));
     }
 
-    createMaterialCanvas() {
+    createMaterialCanvas(options = {}) {
       if (this.readonly) return;
+      const previousSelection = {
+        workspace: this.workspace,
+        selectedCanvasId: this.selectedCanvasId,
+        selectedSourceId: this.selectedSourceId,
+        selectedSliceId: this.selectedSliceId,
+        materialView: this.materialView,
+      };
       const id = uid('canvas'); const sourceId = uid('source'); const sliceId = uid('slice');
-      const name = '未命名画布'; const width = 32; const height = 32;
+      const name = String(options.name || '').trim().slice(0, 255) || '新画布';
+      const width = Math.max(1, Math.min(256, Number(options.width) || 32));
+      const height = Math.max(1, Math.min(256, Number(options.height) || 32));
       const source = { id: sourceId, name, kind: 'CANVAS', asset_id: null, asset_hash: null, bundled_path: null,
         generated_color: null, media_type: 'image/png', width_px: width * MATERIAL_GRID_SIZE, height_px: height * MATERIAL_GRID_SIZE,
         tile_width: MATERIAL_GRID_SIZE, tile_height: MATERIAL_GRID_SIZE, columns: width, rows: height,
@@ -1066,7 +1091,9 @@
       this.expandedMaterialGroups.add('canvases'); this.mapTool = 'brush'; this.tool = 'brush'; this.materialPan = false;
       this.brushPaletteOpen = false;
       this.root.querySelectorAll('[data-me2-tab]').forEach(item => item.classList.toggle('active', item.dataset.me2Tab === 'materials'));
-      this.changed = true; this.reindex(); this.refreshCanvasImages(); this.resetMapHistory(); this.renderAll(); requestAnimationFrame(() => {
+      this.changed = true; this.reindex(); this.refreshCanvasImages(); this.resetMapHistory();
+      this.undoStack.push({ kind: 'canvas-create', label: `新建画布“${name}”`, source: deepClone(source), slice: deepClone(slice), canvas: deepClone(canvas), previousSelection });
+      this.renderAll(); requestAnimationFrame(() => {
         this.fit(); this.inspector.querySelector('[data-canvas-name]')?.select();
       });
       this.toast('画布已新建', `${width} × ${height} 格 · 从画笔选择素材开始绘制`);
@@ -1886,6 +1913,10 @@
     }
 
     applyMapHistoryEntry(entry, valueKey) {
+      if (entry.kind === 'canvas-create') {
+        this.applyCanvasCreationHistory(entry, valueKey === 'after');
+        return;
+      }
       for (const change of entry.changes) {
         const value = change[valueKey];
         this.writePaintCellState(change.index, value);
@@ -1897,20 +1928,36 @@
       this.updateMapHistoryControls();
     }
 
+    applyCanvasCreationHistory(entry, restore) {
+      if (restore) {
+        if (!this.document.material_sources.some(item => item.id === entry.source.id)) this.document.material_sources.push(deepClone(entry.source));
+        if (!this.document.material_slices.some(item => item.id === entry.slice.id)) this.document.material_slices.push(deepClone(entry.slice));
+        if (!this.document.material_canvases.some(item => item.id === entry.canvas.id)) this.document.material_canvases.push(deepClone(entry.canvas));
+        this.workspace = 'materials'; this.selectedCanvasId = entry.canvas.id; this.selectedSourceId = entry.source.id; this.selectedSliceId = entry.slice.id; this.materialView = 'canvas';
+      } else {
+        this.document.material_canvases = this.document.material_canvases.filter(item => item.id !== entry.canvas.id);
+        this.document.material_slices = this.document.material_slices.filter(item => item.id !== entry.slice.id);
+        this.document.material_sources = this.document.material_sources.filter(item => item.id !== entry.source.id);
+        this.images.delete(entry.source.id); this.imageUrls.delete(entry.source.id);
+        Object.assign(this, entry.previousSelection);
+      }
+      this.changed = true; this.reindex(); this.refreshCanvasImages(); this.renderAll(); requestAnimationFrame(() => this.fit());
+    }
+
     undoMapEdit() {
-      if (!this.isCanvasEditing() || this.readonly || !this.undoStack.length) return;
+      if (this.readonly || !this.undoStack.length) return;
       const entry = this.undoStack.pop();
-      this.applyMapHistoryEntry(entry, 'before');
       this.redoStack.push(entry);
+      this.applyMapHistoryEntry(entry, 'before');
       this.updateMapHistoryControls();
       this.toast('已撤回画布操作', entry.label);
     }
 
     redoMapEdit() {
-      if (!this.isCanvasEditing() || this.readonly || !this.redoStack.length) return;
+      if (this.readonly || !this.redoStack.length) return;
       const entry = this.redoStack.pop();
-      this.applyMapHistoryEntry(entry, 'after');
       this.undoStack.push(entry);
+      this.applyMapHistoryEntry(entry, 'after');
       this.updateMapHistoryControls();
       this.toast('已重做画布操作', entry.label);
     }
@@ -2052,7 +2099,7 @@
       const siblings = this.childrenByParent.get(parent.id) || [];
       const node = { id: uid(next.toLowerCase()), kind: next, parent_id: parent.id, name: `未命名 ${LEVEL_LABEL[next]}`, sort_order: siblings.length,
         bounds: { x: parent.bounds.x, y: parent.bounds.y, width: Math.max(1, Math.min(4, parent.bounds.width)), height: Math.max(1, Math.min(4, parent.bounds.height)) },
-        semantic: '', material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', skill_bindings: [], extensions: {} };
+        semantic: '', material_slice_id: null, render_recipe_id: null, render_mode: 'LAYER_BACKED', interaction_mode: 'STATIC', initial_state: {}, skill_bindings: [], extensions: {} };
       this.document.hierarchy_nodes.push(node); this.changed = true; this.expandedNodes.add(parent.id); this.nodeMaterialPreview = null; this.selectedNodeId = node.id; this.reindex(); this.renderAll(); this.focusNode(node);
       requestAnimationFrame(() => this.inspector.querySelector('[data-node-name]')?.select());
     }

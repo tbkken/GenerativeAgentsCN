@@ -1,6 +1,8 @@
 """基础能力回归测试：覆盖 ``test_crowd_templates`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
+import json
+import subprocess
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -317,3 +319,32 @@ def test_crowd_workspace_and_create_flow_replace_presets():
     assert "grid-template-columns:repeat(2,minmax(0,1fr))" in crowd_css
     assert "/agent-templates" in crowd_js
     assert "/crowds" in crowd_js
+
+
+def test_unpublished_crowd_does_not_crash_experiment_creation_summary():
+    workspace = json.dumps(
+        (ROOT / "generative_agents/web/static/crowd-workspace.js").as_posix()
+    )
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+require({workspace});
+const manager = window.CrowdWorkspace;
+manager.selectorCrowds = [
+  {{id:'draft-only', name:'刚创建的人群', current_published:null}},
+  {{id:'published', name:'已发布人群', current_published:{{id:'revision-1'}}}},
+];
+manager.createSelection = new Set(['revision-1']);
+manager.selectorDetails = new Map([['revision-1', {{members:[{{name:'林晓'}}]}}]]);
+assert.deepEqual(manager.getCreationSummary(), {{
+  revisionIds:['revision-1'], names:['已发布人群'], crowdCount:1,
+  agentCount:1, duplicateCount:0,
+}});
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )

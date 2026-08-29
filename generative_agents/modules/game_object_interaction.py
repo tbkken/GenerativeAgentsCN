@@ -87,9 +87,13 @@ class GameObjectInteractionSystem:
         self._clock = clock
         self._affordances = tuple(self._from_world(world))
         self._object_states = {
-            item.object_key: copy.deepcopy(dict(item.object_state))
-            for item in self._affordances
+            object_key: copy.deepcopy(dict(initial_state))
+            for object_key, initial_state in self._initial_states_from_world(world)
         }
+        for item in self._affordances:
+            self._object_states.setdefault(
+                item.object_key, copy.deepcopy(dict(item.object_state))
+            )
 
     @property
     def affordances(self) -> tuple[GameObjectAffordance, ...]:
@@ -240,6 +244,44 @@ class GameObjectInteractionSystem:
         yield from GameObjectInteractionSystem._from_spatial_scene(world)
 
     @staticmethod
+    def _initial_states_from_world(world: Mapping[str, Any]):
+        """Yield every Game Object state, including objects without a Skill."""
+
+        editor = world.get("editor_v2")
+        if isinstance(editor, Mapping):
+            for node in editor.get("hierarchy_nodes", ()):
+                if not isinstance(node, Mapping) or node.get("kind") != "GAME_OBJECT":
+                    continue
+                object_key = str(node.get("id") or "")
+                if object_key:
+                    yield object_key, copy.deepcopy(
+                        dict(node.get("initial_state") or {})
+                    )
+
+        scene = world.get("spatial_scene")
+        if not isinstance(scene, Mapping):
+            return
+        legacy_editor = world.get("editor") or {}
+        assets = (
+            legacy_editor.get("spatial_assets")
+            if isinstance(legacy_editor, Mapping)
+            else {}
+        )
+        assets = assets if isinstance(assets, Mapping) else {}
+        for placement in scene.get("placements") or ():
+            if not isinstance(placement, Mapping):
+                continue
+            revision_id = str(placement.get("spatial_asset_revision_id") or "")
+            contract = assets.get(revision_id)
+            if not isinstance(contract, Mapping) or contract.get("kind") != "OBJECT":
+                continue
+            object_key = str(placement.get("instance_key") or revision_id)
+            state = copy.deepcopy(dict(contract.get("initial_state") or {}))
+            state.update(copy.deepcopy(dict(placement.get("state_overrides") or {})))
+            if object_key:
+                yield object_key, state
+
+    @staticmethod
     def _from_editor_v2(world: Mapping[str, Any]):
         """执行`from``editor``v2`的内部处理，供当前模块或类复用。
 
@@ -288,7 +330,7 @@ class GameObjectInteractionSystem:
             y = float(bounds.get("y", 0))
             width = max(1.0, float(bounds.get("width", 1)))
             height = max(1.0, float(bounds.get("height", 1)))
-            state = (node.get("extensions") or {}).get("state") or {}
+            state = node.get("initial_state") or {}
             for binding in node.get("skill_bindings") or ():
                 if not isinstance(binding, Mapping):
                     continue

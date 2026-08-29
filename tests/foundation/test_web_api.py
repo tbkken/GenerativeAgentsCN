@@ -168,7 +168,9 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
         assert revision["definition"]["models"]["chat"]["resolved_model"] == "test-chat"
         assert revision["definition"]["models"]["chat"]["context_window"] == 40_000
         assert revision["definition"]["models"]["embedding"]["resolved_model"] == "test-embedding"
-        assert [method for method, _url in session.calls] == [
+        # Unsloth may first validate a locally minted key against /v1/models;
+        # the authoritative discovery and minimal probes are the final calls.
+        assert [method for method, _url in session.calls[-4:]] == [
             "GET",
             "POST",
             "GET",
@@ -370,9 +372,16 @@ def test_asset_and_secret_http_contracts_are_safe_and_idempotent(database_url):
         assert sprite_content.headers["content-type"] == "image/png"
         assert "immutable" in sprite_content.headers["cache-control"]
 
-        invalid_sprite = client.post(
+        three_frame_sprite = client.post(
             "/api/v1/agent-images",
             files={"sprite": ("sprite.png", _test_png(96, 128), "image/png")},
+        )
+        assert three_frame_sprite.status_code == 201
+        assert three_frame_sprite.json()["sprite"]["width"] == 96
+
+        invalid_sprite = client.post(
+            "/api/v1/agent-images",
+            files={"sprite": ("sprite.png", _test_png(64, 128), "image/png")},
         )
         assert invalid_sprite.status_code == 422
         assert invalid_sprite.json()["error"]["code"] == "INVALID_AGENT_SPRITE_SIZE"

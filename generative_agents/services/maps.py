@@ -1846,6 +1846,7 @@ class WorldMapService:
         """
         if hasattr(self.skill_registry, "ensure_builtin_skills"):
             self.skill_registry.ensure_builtin_skills()
+        validation_failure: dict[str, Any] | None = None
         with self.database.session_factory.begin() as session:
             public_map, revision = self._require_draft(session, map_id)
             if (
@@ -1863,43 +1864,63 @@ class WorldMapService:
             )
             if not editor_errors:
                 world = _compile_editor_v2_runtime_addresses(world)
-            errors = _validate_world_definition(world)
-            errors.extend(
-                _validate_spatial_scene(
-                    session, world, skill_registry=self.skill_registry
-                )
+            world_errors = _validate_world_definition(world)
+            spatial_errors = _validate_spatial_scene(
+                session, world, skill_registry=self.skill_registry
             )
-            errors.extend(editor_errors)
+            errors = [*world_errors, *spatial_errors, *editor_errors]
+            checks = [
+                {
+                    "code": "EDITOR_V2_HIERARCHY_AND_SKILLS",
+                    "message": "四层空间层级、Game Object 与被动 Skill 引用",
+                    "status": "FAILED" if editor_errors else "PASSED",
+                },
+                {
+                    "code": "WORLD_TILE_GRID",
+                    "message": "地图尺寸、Tile 坐标、碰撞与语义地址",
+                    "status": "FAILED" if world_errors else "PASSED",
+                },
+                {
+                    "code": "SPATIAL_SCENE_CONTRACTS",
+                    "message": "版本化空间资产、放置和初始状态合同",
+                    "status": "FAILED" if spatial_errors else "PASSED",
+                },
+            ]
             if errors:
                 revision.validation_json = {
                     "valid": False,
                     "errors": errors,
                     "warnings": editor_warnings,
+                    "checks": checks,
                 }
-                raise ServiceError(
-                    "MAP_VALIDATION_FAILED",
-                    "地图未通过发布校验",
-                    status_code=422,
-                    details=revision.validation_json,
-                )
-            now = _utc_now()
-            revision.world_json = world.model_dump(mode="json", exclude_none=False)
-            revision.world_hash = world_hash(world)
-            revision.validation_json = {
-                "valid": True,
-                "errors": [],
-                "warnings": editor_warnings,
-            }
-            revision.state = RevisionState.PUBLISHED.value
-            revision.published_at = now
-            revision.updated_at = now
-            public_map.current_draft_revision_id = None
-            public_map.current_published_revision_id = revision.id
-            public_map.status = RevisionState.PUBLISHED.value
-            public_map.row_version += 1
-            public_map.updated_at = now
-            session.flush()
-            return self._revision_detail(revision, public_map)
+                revision.updated_at = _utc_now()
+                validation_failure = dict(revision.validation_json)
+            else:
+                now = _utc_now()
+                revision.world_json = world.model_dump(mode="json", exclude_none=False)
+                revision.world_hash = world_hash(world)
+                revision.validation_json = {
+                    "valid": True,
+                    "errors": [],
+                    "warnings": editor_warnings,
+                    "checks": checks,
+                }
+                revision.state = RevisionState.PUBLISHED.value
+                revision.published_at = now
+                revision.updated_at = now
+                public_map.current_draft_revision_id = None
+                public_map.current_published_revision_id = revision.id
+                public_map.status = RevisionState.PUBLISHED.value
+                public_map.row_version += 1
+                public_map.updated_at = now
+                session.flush()
+                return self._revision_detail(revision, public_map)
+        raise ServiceError(
+            "MAP_VALIDATION_FAILED",
+            "地图未通过发布校验",
+            status_code=422,
+            details=validation_failure or {},
+        )
 
     def fork_revision(self, map_id: str, revision_id: str) -> dict[str, Any]:
         """执行 `WorldMapService` 的`fork`修订版本操作。

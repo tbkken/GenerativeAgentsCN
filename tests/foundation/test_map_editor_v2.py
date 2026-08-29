@@ -276,6 +276,8 @@ def test_formal_map_editor_contains_only_world_and_material_tabs():
     assert "map-editor-v2:request-edit" in source
     assert "data-new-canvas ${this.readonly ? 'disabled' : ''}" not in source
     assert "this.workspace = 'materials'; this.selectedCanvasId = id" in source
+    assert ".filter(item => (item.scripts || []).includes('scripts/main.py'))" not in source
+    assert "data-node-initial-state" in source
 
 
 def test_formal_map_editor_fills_the_remaining_viewport_height():
@@ -801,6 +803,66 @@ def test_map_editor_contract_persists_node_material_assignments():
     root["material_slice_id"] = "missing-slice"
     with pytest.raises(ValidationError, match="references missing material slice"):
         MapEditorDocumentV2.model_validate(document)
+
+
+def test_map_editor_persists_initial_state_only_on_game_objects():
+    document = fresh_ville_editor_document().model_dump(mode="json")
+    game_object = next(
+        item for item in document["hierarchy_nodes"] if item["kind"] == "GAME_OBJECT"
+    )
+    game_object["initial_state"] = {"signal": "RED", "powered": True}
+
+    parsed = MapEditorDocumentV2.model_validate(document)
+
+    parsed_object = next(
+        item for item in parsed.hierarchy_nodes if item.id == game_object["id"]
+    )
+    assert parsed_object.initial_state == {"signal": "RED", "powered": True}
+
+    document["hierarchy_nodes"][0]["initial_state"] = {"invalid": True}
+    with pytest.raises(ValidationError, match="only GAME_OBJECT nodes"):
+        MapEditorDocumentV2.model_validate(document)
+
+
+def test_new_canvas_uses_confirmed_configuration_and_can_be_undone():
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+global.requestAnimationFrame = callback => callback();
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+editor.document = {{material_sources:[], material_slices:[], material_canvases:[]}};
+editor.workspace = 'world'; editor.selectedCanvasId = null; editor.selectedSourceId = null;
+editor.selectedSliceId = null; editor.materialView = 'sources'; editor.readonly = false;
+editor.undoStack = []; editor.redoStack = []; editor.images = new Map(); editor.imageUrls = new Map();
+editor.expandedMaterialGroups = new Set();
+editor.root = {{querySelectorAll: () => [], querySelector: () => null}};
+editor.inspector = {{querySelector: () => null}};
+editor.reindex = () => {{}}; editor.refreshCanvasImages = () => {{}};
+editor.renderAll = () => {{}}; editor.fit = () => {{}}; editor.toast = () => {{}};
+
+editor.createMaterialCanvas({{name:'红绿灯画布', width:12, height:7}});
+assert.equal(editor.document.material_canvases.length, 1);
+assert.deepEqual(
+  [editor.document.material_canvases[0].name, editor.document.material_canvases[0].width_tiles, editor.document.material_canvases[0].height_tiles],
+  ['红绿灯画布', 12, 7]
+);
+assert.equal(editor.undoStack[0].kind, 'canvas-create');
+editor.undoMapEdit();
+assert.equal(editor.document.material_canvases.length, 0);
+assert.equal(editor.workspace, 'world');
+editor.redoMapEdit();
+assert.equal(editor.document.material_canvases.length, 1);
+assert.equal(editor.document.material_canvases[0].name, '红绿灯画布');
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_large_slice_paints_erases_and_restores_as_one_map_stamp():

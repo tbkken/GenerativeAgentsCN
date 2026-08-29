@@ -266,10 +266,10 @@ class AssetService:
                 "头像必须是边长至少 32px 的正方形 PNG",
                 status_code=422,
             )
-        if kind == "sprite" and (width, height) != (128, 128):
+        if kind == "sprite" and (width, height) not in {(96, 128), (128, 128)}:
             raise ServiceError(
                 "INVALID_AGENT_SPRITE_SIZE",
-                "4×4 行走图必须是 128×128 PNG（每格 32×32）",
+                "行走图必须是 96×128（4×3）或 128×128（4×4）PNG，每格 32×32",
                 status_code=422,
             )
         return width, height

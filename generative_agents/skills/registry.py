@@ -142,6 +142,7 @@ class SkillRegistry:
         """
         kinds = (kind,) if kind else _KINDS
         needle = query.strip().casefold()
+        normalized_needle = re.sub(r"[\s_-]+", "-", needle).strip("-")
         documents: list[SkillDocument] = []
         for current_kind in kinds:
             kind_root = (
@@ -153,8 +154,11 @@ class SkillRegistry:
                 continue
             for skill_file in sorted(kind_root.glob("*/SKILL.md")):
                 document = self._read(skill_file, current_kind)
-                haystack = f"{document.name}\n{document.description}\n{document.body}".casefold()
-                if not needle or needle in haystack:
+                haystack = (
+                    f"{document.name}\n{document.name.replace('-', ' ')}\n"
+                    f"{document.description}\n{document.body}"
+                ).casefold()
+                if not needle or needle in haystack or normalized_needle in document.name:
                     documents.append(document)
         return sorted(documents, key=lambda item: (item.kind, item.name))
 

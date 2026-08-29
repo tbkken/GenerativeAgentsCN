@@ -294,8 +294,16 @@ def test_map_publish_rejects_runtime_invalid_tiles(database_url):
 
         assert response.status_code == 422
         assert response.json()["error"]["code"] == "MAP_VALIDATION_FAILED"
-        errors = response.json()["error"]["details"]["errors"]
+        details = response.json()["error"]["details"]
+        errors = details["errors"]
         assert errors[0]["code"] == "WORLD_TILE_OUT_OF_BOUNDS"
+        assert {item["code"]: item["status"] for item in details["checks"]} == {
+            "EDITOR_V2_HIERARCHY_AND_SKILLS": "PASSED",
+            "WORLD_TILE_GRID": "FAILED",
+            "SPATIAL_SCENE_CONTRACTS": "PASSED",
+        }
+        persisted = client.get(f"/api/v1/maps/{created['id']}/draft").json()
+        assert persisted["validation"] == details
 
 
 def test_map_publish_accepts_address_using_every_declared_level(database_url):

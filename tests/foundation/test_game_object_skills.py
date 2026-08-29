@@ -66,10 +66,8 @@ def _world() -> dict:
                             "default_request": "现在可以过马路吗？",
                         }
                     ],
-                    "extensions": {
-                        "state": {
-                            "signal_cycle": {"red_steps": 1, "green_steps": 2}
-                        }
+                    "initial_state": {
+                        "signal_cycle": {"red_steps": 1, "green_steps": 2}
                     },
                 },
             ]
@@ -199,6 +197,42 @@ def test_game_object_can_bind_a_text_only_skill(tmp_path):
     assert '"object_key": "sink-1"' in request["messages"][1]["content"]
     assert request["agent_key"] == "lin-chen"
     assert request["step_no"] == 3
+
+
+def test_editor_game_object_initial_state_is_real_even_without_a_passive_skill():
+    clock = SimulationClock(datetime(2026, 8, 22, 8, 0, tzinfo=timezone.utc))
+    world = {
+        "editor_v2": {
+            "hierarchy_nodes": [
+                {
+                    "id": "world",
+                    "kind": "WORLD",
+                    "name": "测试世界",
+                    "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                },
+                {
+                    "id": "fault-light",
+                    "kind": "GAME_OBJECT",
+                    "parent_id": "world",
+                    "name": "故障红灯",
+                    "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+                    "initial_state": {"signal": "RED", "powered": True},
+                    "skill_bindings": [],
+                },
+            ]
+        }
+    }
+
+    system = GameObjectInteractionSystem(world, skill_executor=None, clock=clock)
+
+    assert system.affordances == ()
+    assert system.object_state("fault-light") == {
+        "signal": "RED",
+        "powered": True,
+    }
+    before, after = system.apply_state_patch("fault-light", {"powered": False})
+    assert before["powered"] is True
+    assert after == {"signal": "RED", "powered": False}
 
 
 def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():

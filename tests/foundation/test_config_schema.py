@@ -11,6 +11,16 @@ from generative_agents.config.hashing import canonical_json_bytes
 from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
 
 
+def test_new_experiment_uses_the_real_unsloth_chat_endpoint():
+    definition = make_blank_definition(key="unsloth-default", name="Unsloth")
+
+    assert definition.models.chat.provider == "vllm"
+    assert definition.models.chat.model == "Qwen3.8-27B-UD-Q4_K_XL"
+    assert str(definition.models.chat.base_url).rstrip("/") == (
+        "http://127.0.0.1:8888/v1"
+    )
+
+
 def test_canonical_hash_normalizes_key_order_unicode_and_newlines():
     """回归验证 ``test_canonical_hash_normalizes_key_order_unicode_and_newlines`` 所描述的业务结果、故障边界和隔离约束。"""
     first = {"b": "e\u0301\r\nline", "a": {"x": 1}}

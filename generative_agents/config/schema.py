@@ -475,6 +475,7 @@ class AgentTemplateDefinition(StrictModel):
     ]
     portrait_asset: str | None = None
     sprite_asset: str | None = None
+    sprite_layout: Literal["4x3", "4x4"] = "4x4"
     model_override: str | None = None
     tags: list[str] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
@@ -494,6 +495,7 @@ class AgentDefinition(StrictModel):
     ]
     portrait_asset: str | None = None
     sprite_asset: str | None = None
+    sprite_layout: Literal["4x3", "4x4"] = "4x4"
     model_override: str | None = None
     tags: list[str] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
@@ -575,8 +577,8 @@ def make_blank_definition(
             "models": {
                 "chat": {
                     "provider": "vllm",
-                    "model": "qwen3.8:27b-q4_K_M",
-                    "base_url": "http://127.0.0.1:11434/v1",
+                    "model": "Qwen3.8-27B-UD-Q4_K_XL",
+                    "base_url": "http://127.0.0.1:8888/v1",
                 },
                 "embedding": {
                     "provider": "openai_compatible",

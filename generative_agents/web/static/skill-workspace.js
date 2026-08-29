@@ -16,6 +16,7 @@
     current: null,
     dependencies: null,
     activeTab: 'definition',
+    activeFile: 'SKILL.md',
     run: null,
     catalogGeneration: 0,
   };
@@ -144,6 +145,7 @@
     state.current = detail;
     state.dependencies = dependencies;
     state.activeTab = 'definition';
+    state.activeFile = 'SKILL.md';
     state.run = null;
     renderEditor();
   }
@@ -163,6 +165,7 @@
       </nav>
       <main id="skillEditorPanel">${renderPanel()}</main>`;
     target.querySelectorAll('[data-skill-tab]').forEach(button => button.addEventListener('click', () => {
+      if (state.activeTab === 'definition') captureActiveSource();
       state.activeTab = button.dataset.skillTab;
       renderEditor();
     }));
@@ -197,6 +200,7 @@
     $('skillEditorDescription').textContent = item.description || '';
     $('skillEditorRevision').textContent = `REV ${item.revision}`;
     $('skillEditorBack').onclick = backToCatalog;
+    $('skillSave').textContent = '保存 Revision';
     $('skillSave').onclick = saveSkill;
     $('skillDelete').hidden = false;
     $('skillDelete').textContent = item.kind === 'brain' ? '删除大脑' : item.kind === 'pack' ? '删除技能包' : '删除技能';
@@ -237,20 +241,28 @@
 
   function renderPanel() {
     const item = state.current;
-    if (state.activeTab === 'definition') return `
+    if (state.activeTab === 'definition') {
+      const scripts = item.script_sources || {};
+      const activeFile = state.activeFile === 'SKILL.md' || Object.hasOwn(scripts, state.activeFile)
+        ? state.activeFile : 'SKILL.md';
+      state.activeFile = activeFile;
+      const source = activeFile === 'SKILL.md' ? item.markdown : scripts[activeFile];
+      const fileButtons = Object.keys(scripts).sort().map(path => `<button class="${activeFile === path ? 'active' : ''}" data-skill-file="${escapeHtml(path)}">${escapeHtml(path)}</button>`).join('');
+      return `
       <section class="skill-definition-layout">
         <aside class="skill-definition-guide">
           <span>WHY THIS FILE</span><h2>一份说明，就是一项能力</h2>
-          <p>Frontmatter 让大脑发现它，正文告诉模型何时使用、如何执行、如何交接结果。</p>
+          <p>Frontmatter 让大脑发现它；需要确定性处理时，可在同一 Revision 中加入私有 Python Script。</p>
           <dl><dt>名称</dt><dd><code>${escapeHtml(item.name)}</code></dd><dt>类型</dt><dd>${kindName(item.kind)}</dd><dt>结果交接</dt><dd>自然语言</dd></dl>
-          <div class="skill-source-truth"><i>✓</i><div><strong>唯一事实源</strong><span>保存后写入数据库新 Revision；运行时物化为标准 SKILL.md 快照。</span></div></div>
+          <div class="skill-source-truth"><i>✓</i><div><strong>唯一事实源</strong><span>SKILL.md 与 scripts/ 一起保存到数据库新 Revision，并共同参与完整哈希。</span></div></div>
         </aside>
         <div class="skill-markdown-editor">
-          <header><span><i></i>SKILL.md</span><small>Markdown · UTF-8</small></header>
-          <textarea id="skillMarkdown" spellcheck="false">${escapeHtml(item.markdown)}</textarea>
+          <header><span><i></i>${escapeHtml(activeFile)}</span><span class="skill-source-actions"><small>${activeFile === 'SKILL.md' ? 'Markdown' : 'Python'} · UTF-8</small>${activeFile === 'SKILL.md' ? '' : '<button type="button" data-delete-skill-script>删除脚本</button>'}</span></header>
+          <textarea id="skillSource" spellcheck="false">${escapeHtml(source)}</textarea>
         </div>
-        <aside class="skill-file-outline"><span>文件结构</span><button class="active">SKILL.md</button><button>${(item.scripts || []).length ? 'scripts/' : 'scripts/（按需）'}</button><button>agents/openai.yaml</button><p>引用子 Skill 时，在正文中写 <code>$skill-name</code>。</p></aside>
+        <aside class="skill-file-outline"><span>文件结构</span><button class="${activeFile === 'SKILL.md' ? 'active' : ''}" data-skill-file="SKILL.md">SKILL.md</button>${fileButtons}<button class="skill-add-script" data-add-skill-script>＋ scripts/main.py</button><p>Script 必须返回自然语言；地图被动 Skill 也可以只使用 SKILL.md。</p></aside>
       </section>`;
+    }
     if (state.activeTab === 'dependencies') return renderDependencies();
     if (state.activeTab === 'run') return `
       <section class="skill-run-layout">
@@ -285,24 +297,57 @@
   }
 
   function bindPanel() {
+    if (state.activeTab === 'definition') {
+      document.querySelectorAll('[data-skill-file]').forEach(button => button.addEventListener('click', () => {
+        captureActiveSource();
+        state.activeFile = button.dataset.skillFile;
+        renderEditor();
+      }));
+      document.querySelector('[data-add-skill-script]')?.addEventListener('click', () => {
+        captureActiveSource();
+        state.current.script_sources ||= {};
+        state.current.script_sources['scripts/main.py'] ||= 'def run(input_text, context):\n    """Return passive feedback or a deterministic Skill result."""\n    return input_text\n';
+        state.activeFile = 'scripts/main.py';
+        renderEditor();
+      });
+      document.querySelector('[data-delete-skill-script]')?.addEventListener('click', () => {
+        if (state.activeFile === 'SKILL.md') return;
+        const path = state.activeFile;
+        if (!window.confirm(`删除私有脚本“${path}”？保存 Revision 后生效。`)) return;
+        delete state.current.script_sources[path];
+        state.activeFile = 'SKILL.md';
+        renderEditor();
+      });
+    }
     if (state.activeTab === 'run') $('skillRunButton')?.addEventListener('click', runSkill);
     if (state.activeTab === 'history') loadHistory().catch(report);
   }
 
+  function captureActiveSource() {
+    const source = $('skillSource');
+    if (!source || !state.current) return;
+    if (state.activeFile === 'SKILL.md') state.current.markdown = source.value;
+    else {
+      state.current.script_sources ||= {};
+      state.current.script_sources[state.activeFile] = source.value;
+    }
+  }
+
   async function saveSkill() {
-    const markdown = $('skillMarkdown')?.value;
+    captureActiveSource();
+    const markdown = state.current?.markdown;
     if (typeof markdown !== 'string') return;
     const button = $('skillSave');
     button.disabled = true;
     button.textContent = '正在保存…';
     try {
       state.current = await api(`/api/v1/skills/${encodeURIComponent(state.current.name)}`, {
-        method: 'PUT', body: JSON.stringify({ markdown }),
+        method: 'PUT', body: JSON.stringify({ markdown, scripts: state.current.script_sources || {} }),
       });
       state.dependencies = await api(`/api/v1/skills/${encodeURIComponent(state.current.name)}/dependencies`);
       renderEditor();
-      toast('SKILL.md 已写入文件系统');
-    } catch (error) { report(error); button.disabled = false; button.textContent = '保存 SKILL.md'; }
+      toast('SKILL.md 与私有 Scripts 已保存为新的数据库 Revision');
+    } catch (error) { report(error); button.disabled = false; button.textContent = '保存 Revision'; }
   }
 
   function runRunning() {

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -102,14 +103,6 @@ class DatabaseSkillRegistry:
                 statement = statement.where(SkillDefinition.kind == kind)
             if not include_archived:
                 statement = statement.where(SkillDefinition.archived_at.is_(None))
-            needle = query.strip()
-            if needle:
-                statement = statement.where(
-                    or_(
-                        SkillDefinition.skill_key.contains(needle.casefold()),
-                        SkillDefinition.description.contains(needle),
-                    )
-                )
             rows = list(
                 session.scalars(
                     statement.order_by(
@@ -117,6 +110,16 @@ class DatabaseSkillRegistry:
                     )
                 )
             )
+            needle = query.strip().casefold()
+            if needle:
+                normalized_needle = re.sub(r"[\s_-]+", "-", needle).strip("-")
+                rows = [
+                    row
+                    for row in rows
+                    if needle in row.description.casefold()
+                    or needle in row.skill_key.replace("-", " ").casefold()
+                    or normalized_needle in row.skill_key.casefold()
+                ]
             return [self._document(session, row) for row in rows]
 
     def get(self, name: str, *, include_archived: bool = False) -> SkillDocument:
@@ -198,12 +201,22 @@ class DatabaseSkillRegistry:
             raise SkillRegistryError(f"Skill already exists: {normalized}") from exc
         return self.get(normalized)
 
-    def save(self, name: str, markdown: str) -> SkillDocument:
+    def save(
+        self,
+        name: str,
+        markdown: str,
+        *,
+        scripts: Mapping[str, str] | None = None,
+    ) -> SkillDocument:
         normalized = self.normalize_name(name)
         with self.database.session_factory.begin() as session:
             definition = self._definition(session, normalized)
             current = self._revision(session, definition)
-            scripts = dict(current.scripts_json or {})
+            scripts = (
+                dict(current.scripts_json or {})
+                if scripts is None
+                else self._normalize_script_sources(scripts)
+            )
             parsed = self._parse_candidate(
                 normalized, definition.kind, markdown, scripts
             )
@@ -238,6 +251,15 @@ class DatabaseSkillRegistry:
             definition.updated_at = _utc_now()
             definition.row_version += 1
         return self.get(normalized)
+
+    def script_sources(self, name: str) -> dict[str, str]:
+        """Return current private Script sources from the database Revision."""
+
+        normalized = self.normalize_name(name)
+        with self.database.session_factory() as session:
+            definition = self._definition(session, normalized)
+            revision = self._revision(session, definition)
+            return dict(sorted((revision.scripts_json or {}).items()))
 
     def history(self, name: str) -> list[dict[str, str | int]]:
         normalized = self.normalize_name(name)
@@ -489,6 +511,27 @@ class DatabaseSkillRegistry:
             separators=(",", ":"),
         ).encode("utf-8")
         return hashlib.sha256(encoded).hexdigest()
+
+    @classmethod
+    def _normalize_script_sources(
+        cls, scripts: Mapping[str, str]
+    ) -> dict[str, str]:
+        if len(scripts) > 50:
+            raise SkillRegistryError("Skill cannot contain more than 50 private Scripts")
+        normalized: dict[str, str] = {}
+        for raw_relative, raw_source in scripts.items():
+            relative = str(raw_relative).replace("\\", "/").strip()
+            if not relative.startswith("scripts/") or relative.endswith("/"):
+                raise SkillRegistryError(
+                    f"Skill private files must live under scripts/: {raw_relative}"
+                )
+            if not isinstance(raw_source, str):
+                raise SkillRegistryError(f"Skill script source must be text: {relative}")
+            if len(raw_source) > 500_000:
+                raise SkillRegistryError(f"Skill script is too large: {relative}")
+            cls._safe_script_path(Path("skill-root").resolve(), relative)
+            normalized[relative] = raw_source
+        return dict(sorted(normalized.items()))
 
     @staticmethod
     def _safe_script_path(skill_root: Path, relative: str) -> Path:

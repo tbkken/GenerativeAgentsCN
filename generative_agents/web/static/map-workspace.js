@@ -98,6 +98,8 @@
       }));
       document.getElementById('confirmCreateMap').addEventListener('click', () => this.create().catch(error => this.fail(error)));
       ['closeCreateMap', 'cancelCreateMap'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'createMapModal')));
+      ['closeCreateCanvas', 'cancelCreateCanvas'].forEach(id => document.getElementById(id).addEventListener('click', () => modal('close', 'createCanvasModal')));
+      document.getElementById('confirmCreateCanvas').addEventListener('click', () => this.confirmCreateCanvas().catch(error => this.fail(error)));
       document.getElementById('newMapBlueprint').addEventListener('change', () => this.updateCreateMode('blueprint'));
       document.getElementById('newMapSource').addEventListener('change', () => this.updateCreateMode('source'));
       document.querySelectorAll('[data-map-tab]').forEach(tab => tab.addEventListener('click', () => this.setTab(tab.dataset.mapTab)));
@@ -499,6 +501,21 @@
         <div class="map-audit-card"><span>碰撞 Tile</span><strong>${collisions.toLocaleString('zh-CN')}</strong></div>
         <div class="map-audit-card"><span>语义 Tile</span><strong>${addressed.toLocaleString('zh-CN')}</strong></div>
         <div class="map-audit-card"><span>版本化空间资产</span><strong>${spatialAssets.toLocaleString('zh-CN')}</strong></div>`;
+      const validationRoot = document.querySelector('[data-map-validation]');
+      const validation = this.draft.validation;
+      if (validationRoot) {
+        const checks = validation?.checks || [];
+        const errors = validation?.errors || [];
+        const warnings = validation?.warnings || [];
+        const issueMessage = issue => typeof issue === 'string' ? issue : (issue.message || issue.code || '未知问题');
+        validationRoot.innerHTML = validation ? `
+          <div class="map-validation-heading"><div><h3>发布校验明细</h3><p>${validation.valid ? '当前 Revision 已通过发布校验' : '当前草稿未通过发布校验'}</p></div><span class="map-state ${validation.valid ? '' : 'draft'}">${errors.length} 阻断 · ${warnings.length} 警告</span></div>
+          <div class="map-validation-list">
+            ${checks.map(item => `<div class="map-validation-row ${item.status === 'PASSED' ? 'passed' : 'failed'}"><b>${item.status === 'PASSED' ? '✓' : '×'}</b><span><strong>${escapeHtml(item.message)}</strong><code>${escapeHtml(item.code)}</code></span></div>`).join('')}
+            ${errors.map(item => `<div class="map-validation-row failed"><b>×</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.code || item.path || '')}</code></span></div>`).join('')}
+            ${warnings.map(item => `<div class="map-validation-row warning"><b>!</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.code || item.path || '')}</code></span></div>`).join('')}
+          </div>` : '<div class="map-validation-empty"><strong>尚未执行发布校验</strong><span>发布时会逐项展示四层语义、Tile、空间资产与被动 Skill 校验结果。</span></div>';
+      }
       document.querySelector('[data-map-revisions]').innerHTML = '<h3>版本记录</h3>' + this.revisions.map(item => `
         <div class="map-revision-row"><strong>v${item.revision_no}</strong><code>${item.world_hash.slice(0, 16)}…</code><span>${new Date(item.updated_at).toLocaleString('zh-CN')}</span><span class="map-state ${item.state === 'DRAFT' ? 'draft' : ''}">${item.state === 'DRAFT' ? '草稿' : '已发布'}</span></div>`).join('');
     },
@@ -701,8 +718,15 @@
         this.clearLocalRecovery(this.selectedMapId, this.draft.id);
         await this.loadMaps();
         await this.openMap(this.selectedMapId, false);
+        this.setTab('audit');
         notify(`Revision v${published.revision_no} 已锁定，可被实验引用。`, '地图已发布');
       } catch (error) {
+        if (error.code === 'MAP_VALIDATION_FAILED' && error.details) {
+          this.draft.validation = error.details;
+          this.renderAudit();
+          this.setTab('audit');
+          notify(`${(error.details.errors || []).length} 个阻断问题、${(error.details.warnings || []).length} 个警告，请查看校验明细。`, '地图发布失败');
+        }
         this.publicEditor.setReadOnly(false);
         if (this.publicEditor.changed) this.setAutoSaveStatus('error', error.message || '发布失败');
         else this.setAutoSaveStatus('saved', this.lastSavedAt ? this.formatSaveTime(this.lastSavedAt) : '');
@@ -714,20 +738,36 @@
 
     async handlePublicEditorEditRequest(event) {
       if (event.detail?.intent !== 'new-canvas' || !this.draft) return;
-      if (this.draft.state === 'DRAFT') {
-        this.publicEditor.createMaterialCanvas();
-        return;
+      if (!['DRAFT', 'PUBLISHED'].includes(this.draft.state) || this.editTransitionPromise) return;
+      const count = this.publicEditor.document?.material_canvases?.length || 0;
+      document.getElementById('newCanvasName').value = `画布 ${count + 1}`;
+      document.getElementById('newCanvasWidth').value = '32';
+      document.getElementById('newCanvasHeight').value = '32';
+      modal('open', 'createCanvasModal', 'newCanvasName');
+    },
+
+    async confirmCreateCanvas() {
+      if (!this.draft || this.editTransitionPromise) return;
+      const name = document.getElementById('newCanvasName').value.trim();
+      const width = Number(document.getElementById('newCanvasWidth').value);
+      const height = Number(document.getElementById('newCanvasHeight').value);
+      if (!name) throw new Error('请填写画布名称');
+      if (!Number.isInteger(width) || width < 1 || width > 256 || !Number.isInteger(height) || height < 1 || height > 256) {
+        throw new Error('画布宽高必须是 1–256 的整数');
       }
-      if (this.draft.state !== 'PUBLISHED' || this.editTransitionPromise) return;
+      const confirmButton = document.getElementById('confirmCreateCanvas');
       const action = (async () => {
-        await this.publishOrFork();
+        confirmButton.disabled = true;
+        if (this.draft.state === 'PUBLISHED') await this.publishOrFork();
         if (this.draft?.state !== 'DRAFT') throw new Error('无法创建地图修订草稿');
-        this.publicEditor.createMaterialCanvas();
+        this.publicEditor.createMaterialCanvas({ name, width, height });
+        modal('close', 'createCanvasModal');
       })();
       this.editTransitionPromise = action;
       try {
         await action;
       } finally {
+        confirmButton.disabled = false;
         if (this.editTransitionPromise === action) this.editTransitionPromise = null;
       }
     },

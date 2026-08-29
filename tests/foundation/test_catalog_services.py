@@ -75,9 +75,17 @@ def test_agent_images_are_validated_and_saved_as_database_blobs(database, tmp_pa
     assert record.relative_path == ""
     assert not any(path.is_file() for path in (var_dir / "assets").rglob("*"))
 
-    with pytest.raises(ServiceError, match="128×128"):
+    three_frame = service.upload_database_images(
+        {"sprite": (BytesIO(_png(96, 128)), "three-frame-sprite.png")}
+    )
+    assert (three_frame["sprite"]["width"], three_frame["sprite"]["height"]) == (
+        96,
+        128,
+    )
+
+    with pytest.raises(ServiceError, match="96×128.*128×128"):
         service.upload_database_images(
-            {"sprite": (BytesIO(_png(96, 128)), "legacy-sprite.png")}
+            {"sprite": (BytesIO(_png(64, 128)), "invalid-sprite.png")}
         )
 
 

@@ -1193,7 +1193,7 @@
           <div class="skill-editor-top-actions" id="skillEditorTopbarActions" hidden>
             <span class="skill-revision" id="skillEditorRevision">REV —</span>
             <button class="btn btn-danger-soft" id="skillDelete">删除 Skill</button>
-            <button class="btn btn-primary" id="skillSave">保存 SKILL.md</button>
+            <button class="btn btn-primary" id="skillSave">保存 Revision</button>
           </div>
           <div class="result-header-actions" id="resultHeaderActions" hidden>
             <button class="btn btn-primary" id="runContinueBtn" hidden>继续执行</button>
@@ -1311,6 +1311,7 @@
               </aside>
               <section class="map-editor-panel map-audit-panel" data-map-panel="audit">
                 <div class="map-audit-grid" data-map-audit-cards></div>
+                <div class="map-validation-report" data-map-validation></div>
                 <div class="map-revision-list" data-map-revisions></div>
               </section>
               <section class="map-editor-panel spatial-assets-panel" data-map-panel="assets">
@@ -1622,8 +1623,8 @@
               <div class="provider-head"><div class="provider-logo">LLM</div><div class="section-title"><strong>聊天与推理模型</strong><button type="button" class="help-tip" aria-label="聊天模型用途" data-tooltip="用于规划、对话、反思和动作决策。">?</button></div><span class="connection-status untested" id="chatConnectionStatus">未检测</span></div>
               <div class="form-grid">
                 <div class="field"><label for="chatProvider">Provider</label><select class="control dirty-track" id="chatProvider"><option value="vllm">vLLM</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option></select></div>
-                <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="auto" /></div>
-                <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:5001" /></div>
+                <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="Qwen3.8-27B-UD-Q4_K_XL" /></div>
+                <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:8888/v1" /></div>
                 <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="120" min="1" max="600" /><span>秒</span></div></div>
                 <div class="field"><div class="field-label"><label for="chatMaxTokens">单次最大输出</label><button type="button" class="help-tip" aria-label="单次最大输出说明" data-tooltip="限制模型每次回复最多生成多少 tokens，不是模型的上下文窗口。服务上下文能力会在下方自动检测。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
                 <div class="field"><label for="chatTemperature">Temperature</label><input class="control dirty-track" id="chatTemperature" type="number" min="0" max="2" step="0.1" value="0.5" /></div>
@@ -1805,8 +1806,8 @@
                   <input id="agentPortraitFile" type="file" accept="image/png,.png" hidden />
                 </article>
                 <article class="agent-image-card">
-                  <div class="agent-image-preview sprite"><img id="agentSpritePreview" alt="4×4 行走图预览" /><span id="agentSpriteEmpty">未选择行走图</span></div>
-                  <div class="agent-image-copy"><strong>4×4 行走图</strong><span>128×128 PNG，每格 32×32；四行依次为下、左、右、上。</span><small id="agentSpriteStatus">使用内置行走图或选择新图片</small></div>
+                  <div class="agent-image-preview sprite"><img id="agentSpritePreview" alt="行走图预览" /><span id="agentSpriteEmpty">未选择行走图</span></div>
+                  <div class="agent-image-copy"><strong>4×3 / 4×4 行走图</strong><span>96×128 或 128×128 PNG，每格 32×32；四行依次为下、左、右、上。</span><small id="agentSpriteStatus">使用内置行走图或选择新图片</small></div>
                   <button class="btn btn-sm" id="chooseAgentSprite" type="button">选择行走图</button>
                   <input id="agentSpriteFile" type="file" accept="image/png,.png" hidden />
                 </article>
@@ -1890,6 +1891,18 @@
         <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" placeholder="这张地图适合哪些实验…"></textarea></div>
       </div>
       <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="createCanvasModal" role="dialog" aria-modal="true" aria-labelledby="createCanvasTitle">
+    <div class="modal small">
+      <div class="modal-head"><div><h2 id="createCanvasTitle">新建素材画布</h2><p>确认名称和尺寸后才会创建；创建动作可以立即撤销。</p></div><button class="close" id="closeCreateCanvas" aria-label="关闭">×</button></div>
+      <div class="modal-body"><div class="form-grid">
+        <div class="field span-2"><label for="newCanvasName">画布名称</label><input class="control" id="newCanvasName" maxlength="255" /></div>
+        <div class="field"><label for="newCanvasWidth">宽度（格）</label><input class="control" id="newCanvasWidth" type="number" min="1" max="256" value="32" /></div>
+        <div class="field"><label for="newCanvasHeight">高度（格）</label><input class="control" id="newCanvasHeight" type="number" min="1" max="256" value="32" /></div>
+      </div></div>
+      <div class="modal-foot"><button class="btn" id="cancelCreateCanvas">取消</button><button class="btn btn-primary" id="confirmCreateCanvas">创建画布</button></div>
     </div>
   </div>
 

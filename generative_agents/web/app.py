@@ -57,6 +57,7 @@ from generative_agents.services.quality import RunQualityService
 from generative_agents.services.runs import RunService
 from generative_agents.runtime.supervisor import LocalProcessSupervisor
 from generative_agents.runtime.artifact_scheduler import ArtifactProcessScheduler
+from generative_agents.runtime.health import runtime_health_issues
 from generative_agents.services.artifacts import ArtifactService
 from generative_agents.services.byte_windows import read_utf8_handle
 from generative_agents.services.checkpoints import CheckpointService
@@ -1926,6 +1927,15 @@ def create_app(
             返回函数计算得到的结果。
         """
         report = service.validate_draft(experiment_id)
+        for issue in runtime_health_issues():
+            report.setdefault("errors", []).append(
+                {
+                    **issue,
+                    "severity": "ERROR",
+                    "fix_page": "overview",
+                    "fix_control": None,
+                }
+            )
         model_status = model_probe_service.status_summary(experiment_id)
         # Publish-and-run performs one authoritative probe for every configured
         # model service and pins ``auto`` to the discovered model IDs before the
@@ -1975,13 +1985,14 @@ def create_app(
             "purposes": [item["purpose"] for item in model_status["items"]],
             "count": total_model_checks,
         }
+        total_checks = 9
         report["counts"] = {
             "blocking": len(report["errors"]),
             "warning": len(report.get("warnings", [])),
             "automatic": automatic_model_checks,
             "passed": max(
                 0,
-                8
+                total_checks
                 - len(report["errors"])
                 - len(report.get("warnings", []))
                 - automatic_model_checks,

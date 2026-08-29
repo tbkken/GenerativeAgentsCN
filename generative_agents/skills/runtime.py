@@ -103,9 +103,9 @@ class SkillRuntime:
         self.base_url = (
             base_url
             or os.getenv("GA_SKILL_LLM_BASE_URL")
-            or "http://127.0.0.1:11434/v1"
+            or "http://127.0.0.1:8888/v1"
         ).rstrip("/")
-        self.model = model or os.getenv("GA_SKILL_LLM_MODEL") or "qwen3.8:27b-q4_K_M"
+        self.model = model or os.getenv("GA_SKILL_LLM_MODEL") or "Qwen3.8-27B-UD-Q4_K_XL"
         self.api_key = (
             api_key if api_key is not None else os.getenv("GA_SKILL_LLM_API_KEY", "")
         )

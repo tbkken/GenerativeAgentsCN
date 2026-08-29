@@ -11,7 +11,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 from uuid import UUID
 
 from .context import RunPaths
@@ -139,6 +139,7 @@ class ModelTraceWriter:
         attempt_id: UUID,
         attempt_no: int,
         capture_payloads: bool,
+        on_append: Callable[[Path], None] | None = None,
     ):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -164,6 +165,7 @@ class ModelTraceWriter:
         self._run_id = run_id
         self._attempt_id = attempt_id
         self._capture_payloads = capture_payloads
+        self._on_append = on_append
         self._lock = threading.Lock()
         self._event_seq = self._read_last_sequence()
 
@@ -244,7 +246,9 @@ class ModelTraceWriter:
                 file_handle.flush()
                 os.fsync(file_handle.fileno())
             self._event_seq = sequence
-            return sequence
+        if self._on_append is not None:
+            self._on_append(self.path)
+        return sequence
 
     def _to_record(self, event: ModelTraceEvent, sequence: int) -> dict[str, Any]:
         """执行`to``record`的内部处理，供当前模块或类复用。

@@ -26,6 +26,7 @@ from generative_agents.persistence.models import (
     RunResultSummary,
 )
 from generative_agents.runtime.context import RunPaths
+from generative_agents.runtime.health import runtime_health_issues
 from generative_agents.runtime.checkpoint import (
     CheckpointBundleWriter,
     CheckpointSnapshot,
@@ -134,6 +135,19 @@ def _run_shape(
     return definition.simulation.max_steps, definition.simulation.stride_minutes
 
 
+def _assert_runtime_health() -> None:
+    """Reject queue creation when the core has a deterministic startup defect."""
+
+    issues = runtime_health_issues()
+    if issues:
+        raise ServiceError(
+            "RUNTIME_PREFLIGHT_FAILED",
+            "运行内核未通过启动前健康检查",
+            status_code=422,
+            details={"errors": issues},
+        )
+
+
 class RunService:
     """管理 Run 创建、排队、查询、暂停、取消和安全恢复的事务边界。"""
 
@@ -184,6 +198,7 @@ class RunService:
 
         from .experiments import ExperimentService
 
+        _assert_runtime_health()
         if self._model_probes is not None:
             prepared = self._model_probes.resolve_for_publish(
                 experiment_id,
@@ -290,6 +305,7 @@ class RunService:
         异常:
             ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
         """
+        _assert_runtime_health()
         now = self._now()
         queue_reason = RunQueueReason(reason)
         try:

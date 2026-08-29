@@ -30,6 +30,7 @@
     pendingAgentDeleteKeys: [],
     agentImageFiles: { portrait: null, sprite: null },
     agentImageObjectUrls: { portrait: null, sprite: null },
+    agentSpriteLayout: '4x4',
     currentComparison: null,
     pendingExperimentOrganizeAction: null,
     modelStatus: null,
@@ -3400,6 +3401,7 @@
   function renderAgentImageEditor(agent, existing) {
     releaseAgentImageObjectUrls();
     state.agentImageFiles = { portrait: null, sprite: null };
+    state.agentSpriteLayout = agent.sprite_layout || '4x4';
     $('agentPortraitFile').value = '';
     $('agentSpriteFile').value = '';
     $('agentEditPortrait').value = agent.portrait_asset || '';
@@ -3410,7 +3412,7 @@
     const portraitUrl = agent.portrait_asset || (builtinRoot ? `${builtinRoot}/portrait.png` : '');
     const spriteUrl = agent.sprite_asset || (builtinRoot ? `${builtinRoot}/texture.png` : '');
     setAgentImagePreview('portrait', portraitUrl, agent.portrait_asset ? '已保存到数据库' : existing ? '当前使用内置头像' : '请选择头像');
-    setAgentImagePreview('sprite', spriteUrl, agent.sprite_asset ? '已保存到数据库' : existing ? '当前使用内置行走图' : '请选择 4×4 行走图');
+    setAgentImagePreview('sprite', spriteUrl, agent.sprite_asset ? `已保存到数据库 · ${state.agentSpriteLayout}` : existing ? '当前使用内置行走图' : '请选择 4×3 或 4×4 行走图');
   }
 
   async function stageAgentImage(kind, file) {
@@ -3428,7 +3430,8 @@
       });
       const [width, height] = dimensions;
       if (kind === 'portrait' && (width !== height || width < 32)) throw new Error('头像必须是边长至少 32px 的正方形 PNG');
-      if (kind === 'sprite' && (width !== 128 || height !== 128)) throw new Error('4×4 行走图必须是 128×128 PNG（每格 32×32）');
+      if (kind === 'sprite' && !((width === 96 || width === 128) && height === 128)) throw new Error('行走图必须是 96×128（4×3）或 128×128（4×4）PNG，每格 32×32');
+      if (kind === 'sprite') state.agentSpriteLayout = width === 96 ? '4x3' : '4x4';
       if (state.agentImageObjectUrls[kind]) URL.revokeObjectURL(state.agentImageObjectUrls[kind]);
       state.agentImageObjectUrls[kind] = objectUrl;
       state.agentImageFiles[kind] = file;
@@ -3442,7 +3445,7 @@
   async function uploadStagedAgentImages() {
     const staged = state.agentImageFiles;
     if (!staged.portrait && !staged.sprite) {
-      return { portrait: $('agentEditPortrait').value || null, sprite: $('agentEditSprite').value || null };
+      return { portrait: $('agentEditPortrait').value || null, sprite: $('agentEditSprite').value || null, sprite_layout: state.agentSpriteLayout };
     }
     const form = new FormData();
     if (staged.portrait) form.append('portrait', staged.portrait, staged.portrait.name);
@@ -3456,7 +3459,9 @@
     const images = {
       portrait: uploaded.portrait?.content_url || $('agentEditPortrait').value || null,
       sprite: uploaded.sprite?.content_url || $('agentEditSprite').value || null,
+      sprite_layout: uploaded.sprite ? (uploaded.sprite.width === 96 ? '4x3' : '4x4') : state.agentSpriteLayout,
     };
+    state.agentSpriteLayout = images.sprite_layout;
     for (const kind of ['portrait', 'sprite']) {
       if (!uploaded[kind]?.content_url) continue;
       const prefix = kind === 'portrait' ? 'Portrait' : 'Sprite';
@@ -3519,6 +3524,7 @@
     const agent = existing || {
       agent_key: `resident-${String(index).padStart(3, '0')}`, enabled: true, name: '', portrait_asset: null,
       sprite_asset: null,
+      sprite_layout: '4x4',
       coord: [0, 0], currently: '', scratch: { age: 30, innate: '', learned: '', lifestyle: '', daily_plan: '' },
       spatial: { address: {}, tree: {} },
       perception: { mode: 'box', vision_radius: 8, attention_bandwidth: 8 },
@@ -3557,6 +3563,7 @@
       name: '',
       portrait_asset: null,
       sprite_asset: null,
+      sprite_layout: '4x4',
       model_override: null,
       tags: [],
       goals: [],
@@ -3622,7 +3629,7 @@
       const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
       const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
       if (!context.agentDraft && (!hasPortrait || !hasSprite)) {
-        throw new Error('新增 Agent 需要同时上传头像和 4×4 行走图');
+        throw new Error('新增 Agent 需要同时上传头像和 4×3 或 4×4 行走图');
       }
       const spatial = readSpatialEditor();
       if (!spatial.address.living_area && !spatial.address.sleeping && !spatial.address['睡觉']) {
@@ -3639,6 +3646,7 @@
         name: $('agentEditName').value.trim(),
         portrait_asset: images.portrait,
         sprite_asset: images.sprite,
+        sprite_layout: images.sprite_layout,
         model_override: previous.model_override || null,
         tags: previous.tags || [],
         goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),
@@ -3676,7 +3684,7 @@
     const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
     const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
     if (!state.editingAgentKey && (!hasPortrait || !hasSprite)) {
-      throw new Error('新增 Agent 需要同时上传头像和 4×4 行走图');
+      throw new Error('新增 Agent 需要同时上传头像和 4×3 或 4×4 行走图');
     }
     const images = await uploadStagedAgentImages();
     const previous = state.editingAgentKey ? state.draft.definition.agents.find(item => item.agent_key === state.editingAgentKey) : null;
@@ -3686,6 +3694,7 @@
       name: $('agentEditName').value.trim(),
       portrait_asset: images.portrait,
       sprite_asset: images.sprite,
+      sprite_layout: images.sprite_layout,
       model_override: previous?.model_override || null,
       tags: previous?.tags || [],
       goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),

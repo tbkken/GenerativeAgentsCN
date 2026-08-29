@@ -273,7 +273,8 @@ def test_skill_api_starts_on_clean_database(tmp_path):
     assert counts["atomic"] >= 33
     assert counts["pack"] >= 5
     assert counts["brain"] >= 2
-    assert runtime.json()["model"] == "qwen3.8:27b-q4_K_M"
+    assert runtime.json()["model"] == "Qwen3.8-27B-UD-Q4_K_XL"
+    assert runtime.json()["base_url"] == "http://127.0.0.1:8888/v1"
     assert runtime.json()["handoff"] == "natural-language"
     assert created.status_code == 422
     assert created.json()["error"]["code"] == "REQUEST_VALIDATION_FAILED"
@@ -328,8 +329,25 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
         )
         saved = client.put(
             "/api/v1/skills/user-runtime-skill",
-            json={"markdown": markdown},
+            json={
+                "markdown": markdown,
+                "scripts": {
+                    "scripts/main.py": (
+                        "def run(input_text, context):\n"
+                        "    return f'ACT: {input_text}'\n"
+                    )
+                },
+            },
         )
+        detail_with_script = client.get(
+            "/api/v1/skills/user-runtime-skill"
+        ).json()
+        found_by_display_name = client.get(
+            "/api/v1/skills?q=User%20Runtime%20Skill"
+        ).json()["items"]
+        found_by_key = client.get(
+            "/api/v1/skills?q=user-runtime-skill"
+        ).json()["items"]
         history = client.get(
             "/api/v1/skills/user-runtime-skill/history"
         ).json()["items"]
@@ -352,6 +370,14 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
     assert saved.status_code == 200
     assert saved.json()["revision_no"] == 2
     assert saved.json()["revision"] != first["revision"]
+    assert detail_with_script["script_sources"]["scripts/main.py"].startswith(
+        "def run("
+    )
+    assert detail_with_script["scripts"] == ["scripts/main.py"]
+    assert [item["name"] for item in found_by_display_name] == [
+        "user-runtime-skill"
+    ]
+    assert [item["name"] for item in found_by_key] == ["user-runtime-skill"]
     assert [item["revision_no"] for item in history] == [2, 1]
     assert archived.status_code == 200
     assert hidden.status_code == 404

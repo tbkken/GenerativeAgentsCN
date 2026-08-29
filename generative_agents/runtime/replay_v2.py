@@ -264,7 +264,7 @@ def _grid_render_asset(raw_definition: Mapping[str, Any]) -> dict[str, Any]:
                     "x": float(bounds.get("x", 0)),
                     "y": float(bounds.get("y", 0)),
                     "appearance": appearance,
-                    "state": dict(extensions.get("state") or {}),
+                    "state": dict(node.get("initial_state") or {}),
                 }
             )
 
@@ -325,11 +325,13 @@ def _agents(
         if agent.sprite_asset and agent.sprite_asset.startswith(
             "/api/v1/agent-images/"
         ):
+            layout = agent.sprite_layout
             sprite = {
                 "status": ReplayAssetStatus.READY.value,
                 "source": ReplayAssetSource.REVISION_DATABASE.value,
                 "texture_url": agent.sprite_asset,
-                "atlas_url": "/static/console/replay-assets/agent-sprite-4x4.json",
+                "atlas_url": f"/static/console/replay-assets/agent-sprite-{layout}.json",
+                "layout": layout,
             }
         elif directory:
             sprite = {
@@ -337,6 +339,7 @@ def _agents(
                 "source": ReplayAssetSource.BUILTIN_PACKAGE.value,
                 "texture_url": f"{_VILLAGE_URL}/agents/{quote(directory)}/texture.png",
                 "atlas_url": f"{_VILLAGE_URL}/agents/sprite.json",
+                "layout": "4x4",
             }
         elif agent.sprite_asset:
             sprite = {

@@ -306,10 +306,6 @@ class Game:
             stride_minutes=stride_minutes,
         )
         info = outcome.setdefault("info", {})
-        elapsed = self.context.clock.daily_duration() - agent.last_record
-        info["record"] = elapsed > self.record_interval
-        if info["record"]:
-            agent.last_record = self.context.clock.daily_duration()
         if agent.llm_available():
             info["llm"] = agent._llm.get_summary()
         title = "{}.summary @ {}".format(

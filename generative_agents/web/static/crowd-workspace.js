@@ -138,7 +138,10 @@
       }
       if (generation !== this.listGeneration) return;
       this.crowds = result.items;
-      this.selectorCrowds = selector.items;
+      // The experiment composer only accepts immutable published revisions.
+      // Newly created crowds have current_published=null until publication and
+      // must never be dereferenced by the selector renderer.
+      this.selectorCrowds = selector.items.filter(item => item.current_published);
       this.renderCatalog(result);
       this.populateCreateSelector();
     },
@@ -430,7 +433,7 @@
           <div class="content-tab-panel active crowd-agent-readonly-panel" role="tabpanel" data-agent-card-panel="identity">
             <div class="form-grid">
               ${field('显示名称', definition.name)}${field('年龄', scratch.age == null ? '' : `${scratch.age} 岁`)}
-              <div class="agent-image-editor crowd-agent-readonly-images">${imageCard(portrait, '头像', '正方形 PNG；用于列表、结果与对话展示。')}${imageCard(sprite, '4×4 行走图', '128×128 PNG；四行依次为下、左、右、上。', true)}</div>
+              <div class="agent-image-editor crowd-agent-readonly-images">${imageCard(portrait, '头像', '正方形 PNG；用于列表、结果与对话展示。')}${imageCard(sprite, `${definition.sprite_layout || '4x4'} 行走图`, '96×128（4×3）或 128×128（4×4）；四行依次为下、左、右、上。', true)}</div>
               ${field('当前目标', definition.currently, true)}
             </div>
           </div>
@@ -617,7 +620,8 @@
     populateCreateSelector() {
       const root = byId('newExperimentCrowds');
       if (!root) return;
-      root.innerHTML = this.selectorCrowds.length ? this.selectorCrowds.map(item => {
+      const publishedCrowds = this.selectorCrowds.filter(item => item.current_published);
+      root.innerHTML = publishedCrowds.length ? publishedCrowds.map(item => {
         const revision = item.current_published;
         return `<label class="creation-crowd-option${this.createSelection.has(revision.id) ? ' selected' : ''}"><input type="checkbox" value="${revision.id}" ${this.createSelection.has(revision.id) ? 'checked' : ''} /><span><strong>${this.escape(item.name)}</strong><small>${item.agent_count} 个 Agent · v${revision.revision_no}${item.is_builtin ? ' · 系统' : ''}</small></span></label>`;
       }).join('') : '<div class="empty-state"><strong>暂无已发布人群</strong><span>请先在人群中心创建并发布人群。</span></div>';
@@ -634,7 +638,7 @@
     },
 
     getCreationSummary() {
-      const selected = this.selectorCrowds.filter(item => this.createSelection.has(item.current_published.id));
+      const selected = this.selectorCrowds.filter(item => item.current_published && this.createSelection.has(item.current_published.id));
       const names = new Set();
       let rawCount = 0;
       selected.forEach(item => {

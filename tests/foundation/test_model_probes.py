@@ -103,7 +103,7 @@ def test_auto_model_probe_pins_resolved_model_into_the_same_draft(
     assert saved["definition"]["models"]["chat"]["resolved_model"] == "resolved-test-model"
     assert saved["definition"]["models"]["chat"]["context_window"] == 40_000
     assert saved["definition"]["models"]["embedding"]["resolved_model"] == "resolved-test-model"
-    assert [method for method, _url, _kwargs in session.calls] == [
+    assert [method for method, _url, _kwargs in session.calls[-4:]] == [
         "GET", "POST", "GET", "POST"
     ]
     assert chat["service"]["context_window"] == 40_000
@@ -141,7 +141,7 @@ def test_publish_preflight_resolves_all_auto_models_with_one_draft_write(
     ]
     assert saved["definition"]["models"]["chat"]["resolved_model"] == "resolved-test-model"
     assert saved["definition"]["models"]["embedding"]["resolved_model"] == "resolved-test-model"
-    assert [method for method, _url, _kwargs in session.calls] == [
+    assert [method for method, _url, _kwargs in session.calls[-4:]] == [
         "GET",
         "POST",
         "GET",

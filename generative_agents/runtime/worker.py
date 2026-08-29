@@ -273,12 +273,34 @@ def main(argv=None) -> int:
         definition = manifest.definition
         logger = _logger(args.run_id, definition.simulation.log_level)
         cipher = SecretCipher(MasterKeyStore(var_dir).load_or_create())
+        live_trace_projector = ModelTraceProjector(database, var_dir=var_dir)
+        live_projection_lock = threading.Lock()
+
+        def project_live_trace(trace_path: Path) -> None:
+            """Keep logical/physical usage visible before the Step commits."""
+
+            try:
+                with live_projection_lock:
+                    live_trace_projector.project(
+                        run_id=str(args.run_id),
+                        attempt_id=str(args.attempt_id),
+                        relative_path=trace_path.resolve()
+                        .relative_to(var_dir)
+                        .as_posix(),
+                    )
+            except Exception as exc:
+                # The JSONL remains the durable source and the next append or
+                # finalizer retries projection. Observability must not turn a
+                # successful model response into a failed simulation action.
+                logger.warning("live model trace projection deferred: %s", exc)
+
         recorder = ModelTraceWriter(
             paths,
             run_id=args.run_id,
             attempt_id=args.attempt_id,
             attempt_no=_attempt_no(database, str(args.attempt_id)),
             capture_payloads=definition.results.capture_model_payloads,
+            on_append=project_live_trace,
         )
         chat_config = definition.models.chat.model_dump(mode="json", exclude_none=False)
         chat_config["api_key"] = _secret_value(definition, "chat", cipher, database)

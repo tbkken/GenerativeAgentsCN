@@ -12,8 +12,8 @@
         "think": {
             "llm": {
                 "provider": "vllm",
-                "model": "qwen3.8:27b-q4_K_M",
-                "base_url": "http://127.0.0.1:11434/v1",
+                "model": "Qwen3.8-27B-UD-Q4_K_XL",
+                "base_url": "http://127.0.0.1:8888/v1",
                 "api_key": "",
                 "timeout": 300,
                 "max_tokens": 2048,

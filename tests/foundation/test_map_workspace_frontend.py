@@ -102,7 +102,9 @@ def test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas():
     assert "map-editor-v2:request-edit" in workspace
     assert "handlePublicEditorEditRequest(event)" in workspace
     assert "await this.publishOrFork();" in workspace
-    assert "this.publicEditor.createMaterialCanvas();" in workspace
+    assert "modal('open', 'createCanvasModal', 'newCanvasName')" in workspace
+    assert "this.publicEditor.createMaterialCanvas({ name, width, height });" in workspace
+    assert "画布宽高必须是 1–256 的整数" in workspace
     assert "editTransitionPromise" in workspace
 
 

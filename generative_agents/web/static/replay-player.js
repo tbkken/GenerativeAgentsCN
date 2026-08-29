@@ -547,6 +547,11 @@
                   sourceUrl,
                 );
               });
+              manifest.agents.forEach(agent => {
+                if (agent.sprite_asset.status === 'READY') {
+                  this.load.atlas(`agent:${agent.agent_key}`, agent.sprite_asset.texture_url, agent.sprite_asset.atlas_url);
+                }
+              });
             },
             create() {
               if (!player._owns(manifest.run_id, generation)) return;

@@ -30,9 +30,10 @@ class CreateSkillRequest(RequestModel):
 
 
 class SaveSkillRequest(RequestModel):
-    """保存已有 Skill 新版本的 Markdown 内容。"""
+    """保存已有 Skill 新版本的 Markdown 与私有 Script 内容。"""
 
     markdown: str = Field(min_length=1, max_length=200_000)
+    scripts: dict[str, str] | None = None
 
 
 class RunSkillRequest(RequestModel):
@@ -120,7 +121,22 @@ def create_skill_router(
         返回:
             返回函数计算得到的结果。
         """
-        return _skill_call(lambda: registry.get(skill_name).detail())
+        def detail():
+            document = registry.get(skill_name)
+            result = document.detail()
+            result["script_sources"] = (
+                registry.script_sources(skill_name)
+                if hasattr(registry, "script_sources")
+                else {
+                    relative: (document.path.parent / relative).read_text(
+                        encoding="utf-8-sig"
+                    )
+                    for relative in document.scripts
+                }
+            )
+            return result
+
+        return _skill_call(detail)
 
     @router.put("/api/v1/skills/{skill_name}")
     def save_skill(skill_name: str, body: SaveSkillRequest):
@@ -133,7 +149,33 @@ def create_skill_router(
         返回:
             返回函数计算得到的结果。
         """
-        return _skill_call(lambda: registry.save(skill_name, body.markdown).detail())
+        def save():
+            if hasattr(registry, "script_sources"):
+                document = registry.save(
+                    skill_name,
+                    body.markdown,
+                    scripts=body.scripts,
+                )
+            else:
+                if body.scripts is not None:
+                    raise SkillRegistryError(
+                        "This Skill registry does not support database Script editing"
+                    )
+                document = registry.save(skill_name, body.markdown)
+            result = document.detail()
+            result["script_sources"] = (
+                registry.script_sources(skill_name)
+                if hasattr(registry, "script_sources")
+                else {
+                    relative: (document.path.parent / relative).read_text(
+                        encoding="utf-8-sig"
+                    )
+                    for relative in document.scripts
+                }
+            )
+            return result
+
+        return _skill_call(save)
 
     @router.get("/api/v1/skills/{skill_name}/dependencies")
     def get_skill_dependencies(skill_name: str):

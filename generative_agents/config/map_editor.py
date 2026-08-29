@@ -308,6 +308,7 @@ class HierarchyNode(StrictModel):
     render_recipe_id: Identifier | None = None
     render_mode: Literal["LAYER_BACKED", "PLACED_RECIPE"] = "LAYER_BACKED"
     interaction_mode: Literal["STATIC", "SKILL_BOUND"] = "STATIC"
+    initial_state: dict[str, Any] = Field(default_factory=dict, max_length=100)
     skill_bindings: list[GameObjectSkillBinding] = Field(
         default_factory=list, max_length=20
     )
@@ -340,6 +341,8 @@ class HierarchyNode(StrictModel):
         """
         if self.skill_bindings and self.kind != "GAME_OBJECT":
             raise ValueError("only GAME_OBJECT nodes may bind passive Skills")
+        if self.initial_state and self.kind != "GAME_OBJECT":
+            raise ValueError("only GAME_OBJECT nodes may define initial state")
         if self.kind != "GAME_OBJECT" and self.interaction_mode != "STATIC":
             raise ValueError("only GAME_OBJECT nodes may be Skill-bound")
         if self.kind == "GAME_OBJECT":
