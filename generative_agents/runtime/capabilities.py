@@ -52,8 +52,10 @@ class SimulationMCPServer:
             {
                 "name": "world-perceive",
                 "description": (
-                    "Observe spatial semantics, events, nearby Agents, and nearby "
-                    "Game Objects without changing the simulation world."
+                    "Observe compact, unique four-layer spatial semantics, events, "
+                    "nearby Agents, and nearby Game Objects without changing the "
+                    "simulation world. radius_tiles is optional and is always "
+                    "clamped to this Agent's configured vision radius."
                 ),
                 "inputSchema": {
                     "type": "object",
@@ -292,63 +294,203 @@ class SimulationMCPServer:
 
     def _perceive(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         agent = self.game.get_agent(self.iteration.agent_key)
-        radius = int(
-            arguments.get("radius_tiles")
+        percept_config = getattr(agent, "percept_config", {}) or {}
+        vision_radius = max(0, int(percept_config.get("vision_r", 4)))
+        requested_radius = (
+            int(arguments["radius_tiles"])
             if arguments.get("radius_tiles") is not None
-            else getattr(agent, "percept_config", {}).get("vision_r", 4)
+            else vision_radius
         )
-        radius = max(0, min(radius, 100))
+        radius = max(0, min(requested_radius, vision_radius))
+        attention_bandwidth = max(0, int(percept_config.get("att_bandwidth", 8)))
         center = tuple(agent.coord)
-        tiles = []
-        x_min = max(0, center[0] - radius)
-        x_max = min(self.game.maze.maze_width - 1, center[0] + radius)
-        y_min = max(0, center[1] - radius)
-        y_max = min(self.game.maze.maze_height - 1, center[1] + radius)
-        for y in range(y_min, y_max + 1):
-            for x in range(x_min, x_max + 1):
-                tile = self.game.maze.tile_at((x, y))
-                events = [event.to_dict() for event in tile.get_events()]
-                semantics = [
-                    copy.deepcopy(dict(item))
-                    for item in getattr(tile, "spatial_semantics", ())
-                ]
-                if tile.address != [tile.address[0]] or events or semantics:
-                    tiles.append(
-                        {
-                            "coord": [x, y],
-                            "address": list(tile.address),
-                            "collision": bool(tile.collision),
-                            "spatial_semantics": semantics,
-                            "events": events,
-                        }
-                    )
-        nearby_agents = [
-            {
-                "agent_key": key,
-                "name": other.name,
-                "coord": list(other.coord),
-                "address": list(other.get_tile().get_address()),
-                "current_action": other.get_event().to_dict(),
+
+        semantic_query = getattr(self.game.maze, "semantic_nodes_in_scope", None)
+        if not callable(semantic_query):
+            raise ValueError("runtime map does not provide a spatial semantic index")
+        indexed_nodes = list(semantic_query(center, radius))
+        nodes_by_id = {
+            str(item.get("id") or ""): copy.deepcopy(dict(item))
+            for item in indexed_nodes
+            if str(item.get("id") or "").strip()
+        }
+        # IterationContext is the authoritative current-location snapshot.  Add
+        # its four anchors defensively so a legacy or partially indexed map can
+        # never hide the Agent's own World/Sector/Arena/Game Object semantics.
+        for level, semantic in enumerate(self.iteration.spatial_semantics):
+            item = copy.deepcopy(dict(semantic))
+            address = list(self.iteration.address[: level + 1])
+            node_id = str(item.get("id") or "").strip() or "legacy:{}:{}".format(
+                str(item.get("kind") or "").upper(),
+                ":".join(address),
+            )
+            current = nodes_by_id.setdefault(node_id, item)
+            current.update(
+                {
+                    "id": node_id,
+                    "address": address,
+                    "distance_tiles": 0.0,
+                    "relation": "CURRENT",
+                }
+            )
+
+        kind_order = {"WORLD": 0, "SECTOR": 1, "ARENA": 2, "GAME_OBJECT": 3}
+
+        def public_node(item):
+            return {
+                "id": str(item.get("id") or ""),
+                "kind": str(item.get("kind") or "").upper(),
+                "name": str(item.get("name") or item.get("id") or ""),
+                "semantic": str(item.get("semantic") or ""),
+                "address": list(item.get("address") or ()),
+                "distance_tiles": float(item.get("distance_tiles") or 0.0),
+                "relation": str(item.get("relation") or "NEARBY"),
             }
-            for key, other in sorted(self.game.agents.items())
-            if key != self.iteration.agent_key
-            and max(abs(other.coord[0] - center[0]), abs(other.coord[1] - center[1]))
-            <= radius
+
+        space_candidates = sorted(
+            (
+                public_node(item)
+                for item in nodes_by_id.values()
+                if str(item.get("kind") or "").upper() != "GAME_OBJECT"
+            ),
+            key=lambda item: (
+                item["relation"] != "CURRENT",
+                item["distance_tiles"],
+                kind_order.get(item["kind"], 99),
+                item["id"],
+            ),
+        )
+        current_spaces = [
+            item for item in space_candidates if item["relation"] == "CURRENT"
+        ]
+        nearby_spaces = [
+            item for item in space_candidates if item["relation"] != "CURRENT"
+        ]
+        spatial_nodes = [
+            *current_spaces,
+            *nearby_spaces[:attention_bandwidth],
+        ]
+
+        agent_candidates = []
+        for key, other in sorted(self.game.agents.items()):
+            if key == self.iteration.agent_key:
+                continue
+            distance = max(
+                abs(int(other.coord[0]) - int(center[0])),
+                abs(int(other.coord[1]) - int(center[1])),
+            )
+            if distance > radius:
+                continue
+            agent_candidates.append(
+                {
+                    "agent_key": key,
+                    "name": other.name,
+                    "coord": list(other.coord),
+                    "distance_tiles": float(distance),
+                    "address": list(other.get_tile().get_address()),
+                    "current_action": other.get_event().to_dict(),
+                }
+            )
+        agent_candidates.sort(
+            key=lambda item: (item["distance_tiles"], item["agent_key"])
+        )
+        nearby_agents = agent_candidates[:attention_bandwidth]
+
+        event_query = getattr(self.game.maze, "events_in_scope", None)
+        if not callable(event_query):
+            raise ValueError("runtime map does not provide an event perception index")
+        event_candidates = list(event_query(center, radius))
+        events = event_candidates[:attention_bandwidth]
+
+        object_candidates = {
+            str(item.get("id") or ""): {
+                "object_key": str(item.get("id") or ""),
+                "object_name": str(item.get("name") or item.get("id") or ""),
+                "semantic": str(item.get("semantic") or ""),
+                "address": list(item.get("address") or ()),
+                "distance_tiles": float(item.get("distance_tiles") or 0.0),
+                "relation": str(item.get("relation") or "NEARBY"),
+                "state": {},
+                "interactions": [],
+            }
+            for item in nodes_by_id.values()
+            if str(item.get("kind") or "").upper() == "GAME_OBJECT"
+            and str(item.get("id") or "").strip()
+        }
+        for affordance in self.game.game_object_interactions.nearby(center):
+            distance = float(affordance.distance_to(center))
+            if distance > radius:
+                continue
+            object_item = object_candidates.setdefault(
+                affordance.object_key,
+                {
+                    "object_key": affordance.object_key,
+                    "object_name": affordance.object_name,
+                    "semantic": "",
+                    "address": list(affordance.address),
+                    "distance_tiles": round(distance, 3),
+                    "relation": "NEARBY",
+                    "state": {},
+                    "interactions": [],
+                },
+            )
+            object_item["distance_tiles"] = min(
+                float(object_item["distance_tiles"]), round(distance, 3)
+            )
+            object_item["state"] = copy.deepcopy(dict(affordance.object_state))
+            object_item["interactions"].append(
+                {
+                    "selection_key": affordance.selection_key,
+                    "interaction_key": affordance.interaction_key,
+                    "skill_name": affordance.skill_name,
+                    "description": affordance.description,
+                }
+            )
+        sorted_objects = sorted(
+            object_candidates.values(),
+            key=lambda item: (
+                item["relation"] != "CURRENT",
+                item["distance_tiles"],
+                item["object_key"],
+            ),
+        )
+        current_objects = [
+            item for item in sorted_objects if item["relation"] == "CURRENT"
+        ]
+        nearby_objects = [
+            item for item in sorted_objects if item["relation"] != "CURRENT"
         ]
         objects = [
-            {
-                **item.as_agent_context(center),
-                "state": copy.deepcopy(dict(item.object_state)),
-            }
-            for item in self.game.game_object_interactions.nearby(center)
+            *current_objects,
+            *nearby_objects[:attention_bandwidth],
+        ]
+
+        current_node_ids = [
+            item["id"]
+            for item in sorted(
+                (
+                    public_node(item)
+                    for item in nodes_by_id.values()
+                    if str(item.get("relation") or "") == "CURRENT"
+                ),
+                key=lambda item: (kind_order.get(item["kind"], 99), item["id"]),
+            )
         ]
         return {
             "now": self.iteration.now.isoformat(),
             "agent": self.iteration.as_dict()["agent"],
+            "requested_radius_tiles": requested_radius,
             "radius_tiles": radius,
-            "tiles": tiles,
+            "vision_radius_tiles": vision_radius,
+            "current_location": {
+                "coord": list(center),
+                "address": list(self.iteration.address),
+                "spatial_node_ids": current_node_ids,
+            },
+            "spatial_nodes": spatial_nodes,
             "nearby_agents": nearby_agents,
             "game_objects": objects,
+            "events": events,
             "active_conversations": list(
                 getattr(
                     self.game,
@@ -356,6 +498,22 @@ class SimulationMCPServer:
                     lambda _agent_key: (),
                 )(self.iteration.agent_key)
             ),
+            "attention": {
+                "bandwidth": attention_bandwidth,
+                "nearby_space_candidates": len(nearby_spaces),
+                "nearby_agent_candidates": len(agent_candidates),
+                "game_object_candidates": len(nearby_objects),
+                "event_candidates": len(event_candidates),
+                "truncated": any(
+                    count > attention_bandwidth
+                    for count in (
+                        len(nearby_spaces),
+                        len(agent_candidates),
+                        len(nearby_objects),
+                        len(event_candidates),
+                    )
+                ),
+            },
         }
 
     def _plan_action(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
@@ -378,14 +536,14 @@ class SimulationMCPServer:
         if action_type == "MOVE":
             path = self._resolve_path(payload)
             payload["target_address"] = list(payload.get("target_address") or ())
-            payload["target_coord"] = list(path[-1]) if path else list(self.iteration.coord)
+            payload["target_coord"] = (
+                list(path[-1]) if path else list(self.iteration.coord)
+            )
         elif action_type == "ACT":
             predicate = str(payload.get("predicate") or "").strip()
             object_value = str(payload.get("object") or "").strip()
             if not predicate or not object_value:
-                raise ValueError(
-                    "ACT requires non-empty Event predicate and object"
-                )
+                raise ValueError("ACT requires non-empty Event predicate and object")
             payload["predicate"] = predicate
             payload["object"] = object_value
         elif action_type == "SPEAK":
@@ -399,15 +557,13 @@ class SimulationMCPServer:
                 raise ValueError("SPEAK currently requires exactly one other Agent")
             payload["participant_agent_keys"] = list(participants)
             payload["message"] = message
-            payload["conversation_id"] = str(
-                payload.get("conversation_id") or ""
-            ).strip() or None
+            payload["conversation_id"] = (
+                str(payload.get("conversation_id") or "").strip() or None
+            )
             payload["start_new_conversation"] = bool(
                 payload.get("start_new_conversation", False)
             )
-            payload["end_conversation"] = bool(
-                payload.get("end_conversation", False)
-            )
+            payload["end_conversation"] = bool(payload.get("end_conversation", False))
         elif action_type == "INTERACT":
             selection_key = str(payload.get("selection_key") or "").strip()
             if not selection_key:
@@ -470,7 +626,9 @@ class SimulationMCPServer:
             if candidate == current:
                 routes.append((candidate, ()))
                 continue
-            route = tuple(tuple(coord) for coord in self.game.maze.find_path(current, candidate))
+            route = tuple(
+                tuple(coord) for coord in self.game.maze.find_path(current, candidate)
+            )
             if route:
                 routes.append((candidate, route[1:] if route[0] == current else route))
         if not routes:

@@ -1,5 +1,7 @@
 """generative_agents.maze"""
 
+import copy
+from collections.abc import Mapping
 from itertools import product
 
 from generative_agents.modules import utils
@@ -278,8 +280,247 @@ class Maze:
                 for add in self.tile_at([j, i]).get_addresses():
                     self.address_tiles.setdefault(add, set()).add((j, i))
 
+        # Spatial semantics are authored as hierarchy nodes, while Tiles are a
+        # rendering, collision and path-finding representation.  Build a
+        # run-private semantic index once so Agent perception can query unique
+        # nodes without serialising the same World/Sector/Arena description for
+        # every visible Tile.
+        self._semantic_bucket_size = 16
+        self._semantic_nodes = self._build_semantic_nodes(config)
+        self._semantic_buckets: dict[tuple[int, int], set[str]] = {}
+        self._broad_semantic_node_ids: set[str] = set()
+        self._index_semantic_nodes()
+
         self.logger = logger
         self._rng = random_source
+
+    def _build_semantic_nodes(self, config) -> dict[str, dict]:
+        """Materialize one immutable runtime record for each semantic node."""
+
+        editor = config.get("editor_v2")
+        raw_nodes = (
+            editor.get("hierarchy_nodes") if isinstance(editor, Mapping) else None
+        )
+        if isinstance(raw_nodes, list) and raw_nodes:
+            nodes = {
+                str(item.get("id")): item
+                for item in raw_nodes
+                if isinstance(item, Mapping) and str(item.get("id") or "").strip()
+            }
+
+            def address_for(node):
+                parts = []
+                current = node
+                seen = set()
+                while isinstance(current, Mapping):
+                    node_id = str(current.get("id") or "")
+                    if not node_id or node_id in seen:
+                        break
+                    seen.add(node_id)
+                    parts.append(str(current.get("name") or node_id))
+                    parent_id = str(current.get("parent_id") or "")
+                    current = nodes.get(parent_id) if parent_id else None
+                return list(reversed(parts))
+
+            result = {}
+            for node_id, node in nodes.items():
+                bounds = node.get("bounds") or {}
+                x = int(bounds.get("x", 0))
+                y = int(bounds.get("y", 0))
+                width = max(1, int(bounds.get("width", 1)))
+                height = max(1, int(bounds.get("height", 1)))
+                result[node_id] = {
+                    "id": node_id,
+                    "kind": str(node.get("kind") or "").upper(),
+                    "name": str(node.get("name") or node_id),
+                    "semantic": str(node.get("semantic") or ""),
+                    "parent_id": str(node.get("parent_id") or "") or None,
+                    "address": address_for(node),
+                    "bounds": {
+                        "x": x,
+                        "y": y,
+                        "width": width,
+                        "height": height,
+                    },
+                }
+            return result
+
+        # Legacy maps have no hierarchy document.  Derive the same index once
+        # at Maze construction time; perception remains semantic-first after
+        # this compatibility boundary.
+        derived: dict[str, dict] = {}
+        extents: dict[str, list[int]] = {}
+        for row in self.tiles:
+            for tile in row:
+                parent_id = None
+                for level, item in enumerate(tile.spatial_semantics):
+                    if not isinstance(item, Mapping):
+                        continue
+                    address = list(tile.address[: level + 1])
+                    kind = str(item.get("kind") or "").upper()
+                    node_id = str(item.get("id") or "").strip()
+                    if not node_id:
+                        node_id = "legacy:{}:{}".format(kind, ":".join(address))
+                    if node_id not in derived:
+                        derived[node_id] = {
+                            "id": node_id,
+                            "kind": kind,
+                            "name": str(item.get("name") or address[-1]),
+                            "semantic": str(item.get("semantic") or ""),
+                            "parent_id": parent_id,
+                            "address": address,
+                        }
+                        extents[node_id] = [
+                            int(tile.coord[0]),
+                            int(tile.coord[1]),
+                            int(tile.coord[0]),
+                            int(tile.coord[1]),
+                        ]
+                    else:
+                        extent = extents[node_id]
+                        extent[0] = min(extent[0], int(tile.coord[0]))
+                        extent[1] = min(extent[1], int(tile.coord[1]))
+                        extent[2] = max(extent[2], int(tile.coord[0]))
+                        extent[3] = max(extent[3], int(tile.coord[1]))
+                    parent_id = node_id
+        for node_id, node in derived.items():
+            x_min, y_min, x_max, y_max = extents[node_id]
+            node["bounds"] = {
+                "x": x_min,
+                "y": y_min,
+                "width": x_max - x_min + 1,
+                "height": y_max - y_min + 1,
+            }
+        return derived
+
+    def _index_semantic_nodes(self) -> None:
+        """Index hierarchy bounds into coarse buckets for bounded range queries."""
+
+        bucket_size = self._semantic_bucket_size
+        for node_id, node in self._semantic_nodes.items():
+            bounds = node["bounds"]
+            raw_x = int(bounds["x"])
+            raw_y = int(bounds["y"])
+            width = max(1, int(bounds["width"]))
+            height = max(1, int(bounds["height"]))
+            x_min = max(0, raw_x)
+            y_min = max(0, raw_y)
+            x_max = min(
+                self.maze_width - 1,
+                raw_x + width - 1,
+            )
+            y_max = min(
+                self.maze_height - 1,
+                raw_y + height - 1,
+            )
+            if x_max < x_min or y_max < y_min:
+                continue
+            x_buckets = range(x_min // bucket_size, x_max // bucket_size + 1)
+            y_buckets = range(y_min // bucket_size, y_max // bucket_size + 1)
+            # A World-sized node should not be copied into every bucket of a
+            # very large map.  Broad nodes are checked once per query instead.
+            if len(x_buckets) * len(y_buckets) > 1024:
+                self._broad_semantic_node_ids.add(node_id)
+                continue
+            for bucket in product(x_buckets, y_buckets):
+                self._semantic_buckets.setdefault(bucket, set()).add(node_id)
+
+    @staticmethod
+    def _distance_to_bounds(coord, bounds) -> float:
+        """Return Chebyshev Tile distance from a coordinate to a node rectangle."""
+
+        x = float(coord[0])
+        y = float(coord[1])
+        x_min = float(bounds["x"])
+        y_min = float(bounds["y"])
+        x_max = x_min + max(1.0, float(bounds["width"])) - 1.0
+        y_max = y_min + max(1.0, float(bounds["height"])) - 1.0
+        dx = max(x_min - x, 0.0, x - x_max)
+        dy = max(y_min - y, 0.0, y - y_max)
+        return max(dx, dy)
+
+    def semantic_nodes_in_scope(self, coord, radius) -> list[dict]:
+        """Return unique hierarchy nodes intersecting one box-shaped view."""
+
+        center = (int(coord[0]), int(coord[1]))
+        radius = max(0, int(radius))
+        bucket_size = self._semantic_bucket_size
+        x_min = max(0, center[0] - radius)
+        x_max = min(self.maze_width - 1, center[0] + radius)
+        y_min = max(0, center[1] - radius)
+        y_max = min(self.maze_height - 1, center[1] + radius)
+        candidate_ids = set(self._broad_semantic_node_ids)
+        for bucket in product(
+            range(x_min // bucket_size, x_max // bucket_size + 1),
+            range(y_min // bucket_size, y_max // bucket_size + 1),
+        ):
+            candidate_ids.update(self._semantic_buckets.get(bucket, ()))
+
+        current_ids = {
+            str(item.get("id") or "")
+            for item in self.tile_at(center).spatial_semantics
+            if isinstance(item, Mapping)
+        }
+        kind_order = {"WORLD": 0, "SECTOR": 1, "ARENA": 2, "GAME_OBJECT": 3}
+        observed = []
+        for node_id in candidate_ids:
+            node = self._semantic_nodes[node_id]
+            distance = self._distance_to_bounds(center, node["bounds"])
+            if distance > radius:
+                continue
+            item = copy.deepcopy(node)
+            item["distance_tiles"] = round(distance, 3)
+            item["relation"] = "CURRENT" if node_id in current_ids else "NEARBY"
+            observed.append(item)
+        return sorted(
+            observed,
+            key=lambda item: (
+                item["relation"] != "CURRENT",
+                item["distance_tiles"],
+                kind_order.get(item["kind"], 99),
+                item["id"],
+            ),
+        )
+
+    def events_in_scope(self, coord, radius) -> list[dict]:
+        """Return distinct world facts in range, retaining their nearest coordinate."""
+
+        center = (int(coord[0]), int(coord[1]))
+        radius = max(0, int(radius))
+        observed = {}
+        for tile in self.get_scope(center, {"vision_r": radius, "mode": "box"}):
+            distance = max(
+                abs(int(tile.coord[0]) - center[0]),
+                abs(int(tile.coord[1]) - center[1]),
+            )
+            for event in tile.get_events():
+                event_payload = event.to_dict()
+                fingerprint = (
+                    str(event_payload.get("subject") or ""),
+                    str(event_payload.get("predicate") or ""),
+                    str(event_payload.get("object") or ""),
+                    str(event_payload.get("describe") or ""),
+                    tuple(event_payload.get("address") or ()),
+                )
+                previous = observed.get(fingerprint)
+                if previous is not None and previous[0] <= distance:
+                    continue
+                item = copy.deepcopy(event_payload)
+                item["coord"] = [int(tile.coord[0]), int(tile.coord[1])]
+                item["distance_tiles"] = float(distance)
+                observed[fingerprint] = (distance, item)
+        return [
+            item
+            for _, item in sorted(
+                observed.values(),
+                key=lambda pair: (
+                    pair[0],
+                    str(pair[1].get("subject") or ""),
+                    str(pair[1].get("predicate") or ""),
+                    str(pair[1].get("object") or ""),
+                ),
+            )
+        ]
 
     def find_path(self, src_coord, dst_coord):
         """在地图可通行区域内搜索从起点到终点的移动路径。
