@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import logging
+import random
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from uuid import uuid4
@@ -10,6 +13,7 @@ import pytest
 
 from generative_agents.modules.memory import Event
 from generative_agents.modules.game import Game
+from generative_agents.modules.maze import Maze
 from generative_agents.runtime.brain import BrainRuntime
 from generative_agents.runtime.capabilities import SimulationMCPServer
 from generative_agents.runtime.iteration import IterationContext
@@ -54,6 +58,29 @@ class _Maze:
     def find_path(self, source, target):
         return [tuple(source), tuple(target)]
 
+    def semantic_nodes_in_scope(self, _coord, _radius):
+        return [
+            {
+                **dict(item),
+                "address": ["用户世界"],
+                "distance_tiles": 0.0,
+                "relation": "CURRENT",
+            }
+            for item in self.tile.spatial_semantics
+        ]
+
+    def events_in_scope(self, _coord, _radius):
+        return [
+            {
+                **event.to_dict(),
+                "coord": (
+                    list(self.tile.coord) if hasattr(self.tile, "coord") else [1, 1]
+                ),
+                "distance_tiles": 0.0,
+            }
+            for event in self.tile.get_events()
+        ]
+
 
 class _Objects:
     def nearby(self, coord):
@@ -63,7 +90,7 @@ class _Objects:
 class _Agent:
     name = "小林"
     coord = (1, 1)
-    percept_config = {"vision_r": 2}
+    percept_config = {"vision_r": 2, "att_bandwidth": 8}
 
     def get_tile(self):
         return _Tile()
@@ -107,6 +134,158 @@ def test_iteration_context_exposes_virtual_time_and_four_layer_semantics():
     assert "2026-08-27T11:13:51+00:00" in text
     assert "一个由用户定义的安静世界" in text
     assert "用户世界" in text
+
+
+def test_world_perceive_uses_semantic_index_and_clamps_agent_attention_contract():
+    width, height = 48, 32
+    hierarchy_nodes = [
+        {
+            "id": "world-1",
+            "kind": "WORLD",
+            "parent_id": None,
+            "name": "用户世界",
+            "semantic": "用户定义的完整世界",
+            "bounds": {"x": 0, "y": 0, "width": width, "height": height},
+        },
+        {
+            "id": "sector-1",
+            "kind": "SECTOR",
+            "parent_id": "world-1",
+            "name": "生活区",
+            "semantic": "住宅和公共设施所在区域",
+            "bounds": {"x": 0, "y": 0, "width": width, "height": height},
+        },
+        {
+            "id": "arena-1",
+            "kind": "ARENA",
+            "parent_id": "sector-1",
+            "name": "咖啡厅",
+            "semantic": "供 Agent 喝咖啡和交谈的场所",
+            "bounds": {"x": 8, "y": 4, "width": 32, "height": 24},
+        },
+        {
+            "id": "object-1",
+            "kind": "GAME_OBJECT",
+            "parent_id": "arena-1",
+            "name": "咖啡水吧",
+            "semantic": "制作和领取咖啡的设施",
+            "bounds": {"x": 23, "y": 15, "width": 3, "height": 2},
+        },
+    ]
+    semantics = [
+        {
+            "id": item["id"],
+            "kind": item["kind"],
+            "name": item["name"],
+            "semantic": item["semantic"],
+        }
+        for item in hierarchy_nodes
+    ]
+    tiles = []
+    for y in range(height):
+        for x in range(width):
+            address = ["用户世界", "生活区"]
+            tile_semantics = semantics[:2]
+            if 8 <= x < 40 and 4 <= y < 28:
+                address.append("咖啡厅")
+                tile_semantics = semantics[:3]
+            if 23 <= x < 26 and 15 <= y < 17:
+                address.append("咖啡水吧")
+                tile_semantics = semantics
+            tiles.append(
+                {
+                    "coord": [x, y],
+                    "address": address,
+                    "collision": False,
+                    "spatial_semantics": tile_semantics,
+                }
+            )
+    maze = Maze(
+        {
+            "size": [height, width],
+            "tile_size": 1,
+            "world": "用户世界",
+            "tile_address_keys": ["world", "sector", "arena", "game_object"],
+            "tiles": tiles,
+            "editor_v2": {
+                "root_node_id": "world-1",
+                "hierarchy_nodes": hierarchy_nodes,
+            },
+        },
+        logging.getLogger(__name__),
+        random.Random(7),
+    )
+    duplicate = Event(
+        "咖啡水吧",
+        "状态为",
+        "空闲",
+        address=["用户世界", "生活区", "咖啡厅", "咖啡水吧"],
+    )
+    maze.tile_at((24, 15)).add_event(duplicate)
+    maze.tile_at((25, 15)).add_event(duplicate)
+
+    class _IndexedAgent(_Agent):
+        coord = (24, 15)
+        percept_config = {"vision_r": 8, "att_bandwidth": 8}
+
+        def get_tile(self):
+            return maze.tile_at(self.coord)
+
+    indexed_agent = _IndexedAgent()
+    game = SimpleNamespace(
+        maze=maze,
+        agents={"agent-1": indexed_agent},
+        agent_keys_by_name={indexed_agent.name: "agent-1"},
+        game_object_interactions=_Objects(),
+        get_agent=lambda _key: indexed_agent,
+    )
+    tile = maze.tile_at(indexed_agent.coord)
+    iteration = IterationContext(
+        run_id=uuid4(),
+        attempt_id=uuid4(),
+        agent_key="agent-1",
+        agent_name=indexed_agent.name,
+        step_no=1,
+        total_steps=3,
+        now=datetime(2026, 8, 27, 11, 13, 51, tzinfo=timezone.utc),
+        stride_minutes=10,
+        coord=indexed_agent.coord,
+        address=tuple(tile.address),
+        spatial_semantics=tuple(tile.spatial_semantics),
+    )
+
+    response = SimulationMCPServer(game, iteration).call(
+        "world-perceive", {"radius_tiles": 20}
+    )
+    payload = json.loads(response["content"][0]["text"])
+
+    assert response["isError"] is False
+    assert payload["requested_radius_tiles"] == 20
+    assert payload["radius_tiles"] == 8
+    assert "tiles" not in payload
+    assert payload["current_location"]["spatial_node_ids"] == [
+        "world-1",
+        "sector-1",
+        "arena-1",
+        "object-1",
+    ]
+    assert [item["id"] for item in payload["spatial_nodes"]] == [
+        "world-1",
+        "sector-1",
+        "arena-1",
+    ]
+    assert [item["object_key"] for item in payload["game_objects"]] == ["object-1"]
+    assert (
+        len(
+            [
+                item
+                for item in payload["events"]
+                if item["subject"] == "咖啡水吧" and item["predicate"] == "状态为"
+            ]
+        )
+        == 1
+    )
+    assert len(response["content"][0]["text"]) < 8_000
 
 
 def test_world_act_accepts_exactly_one_replayable_action_per_iteration():
@@ -289,9 +468,10 @@ def test_game_object_skill_response_is_delivered_once_in_next_iteration_context(
     assert delivered[0]["kind"] == "GAME_OBJECT_SKILL_RESPONSE"
     assert "trace" not in delivered[0]
     assert first["info"]["external_observations"] == delivered
-    assert captured_contexts[1]["IterationContext"]["variables"][
-        "external_observations"
-    ] == []
+    assert (
+        captured_contexts[1]["IterationContext"]["variables"]["external_observations"]
+        == []
+    )
     assert second["info"]["external_observations"] == []
 
 
@@ -304,13 +484,19 @@ def test_game_keeps_conversation_thread_and_message_sequence_across_steps():
 
     first = game.record_conversation_message("lin", ("zhou",))
     second = game.record_conversation_message("zhou", ("lin",))
-    ended = game.record_conversation_message(
-        "lin", ("zhou",), end_conversation=True
-    )
+    ended = game.record_conversation_message("lin", ("zhou",), end_conversation=True)
     restarted = game.record_conversation_message("zhou", ("lin",))
 
-    assert first["conversation_id"] == second["conversation_id"] == ended["conversation_id"]
-    assert [first["message_sequence"], second["message_sequence"], ended["message_sequence"]] == [1, 2, 3]
+    assert (
+        first["conversation_id"]
+        == second["conversation_id"]
+        == ended["conversation_id"]
+    )
+    assert [
+        first["message_sequence"],
+        second["message_sequence"],
+        ended["message_sequence"],
+    ] == [1, 2, 3]
     assert ended["ended_reason"] == "EXPLICIT_END"
     assert restarted["conversation_id"] != ended["conversation_id"]
 
@@ -344,6 +530,5 @@ def test_brain_quality_report_flags_repeated_read_without_changing_execution_sta
     assert report["quality_status"] == "WARNING"
     assert report["execution_status_affected"] is False
     assert any(
-        issue["code"] == "REPEATED_READ_WITHOUT_PROGRESS"
-        for issue in report["issues"]
+        issue["code"] == "REPEATED_READ_WITHOUT_PROGRESS" for issue in report["issues"]
     )
