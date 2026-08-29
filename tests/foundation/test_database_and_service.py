@@ -12,7 +12,7 @@ from generative_agents.config import ExperimentDefinition
 from generative_agents.persistence.models import ExperimentRevision
 from generative_agents.services import ServiceError
 from generative_agents.skills import SkillRegistry
-from tests.support import publish_user_map
+from tests.support import brain_selection_for_database, publish_user_map
 
 
 def _create_publishable(service, definition: ExperimentDefinition):
@@ -23,11 +23,13 @@ def _create_publishable(service, definition: ExperimentDefinition):
         goal=definition.experiment.goal,
         source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(created["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = created["experiment_key"]
     payload["world"] = draft["definition"]["world"]
+    payload["engine"] = draft["definition"]["engine"]
     updated = service.update_draft(
         experiment_id=created["id"],
         expected_lock_version=draft["lock_version"],
@@ -82,10 +84,12 @@ def test_create_and_list_experiments_isolated_and_paginated(service):
     first = service.create_experiment(
         name="Alpha", goal="memory", source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     second = service.create_experiment(
         name="Beta", goal="social", source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     assert first["id"] != second["id"]
     assert first["current_draft"]["id"] != second["current_draft"]["id"]
@@ -105,10 +109,12 @@ def test_selected_user_map_is_materialized_once_per_independent_draft(service):
     first = service.create_experiment(
         name="标准实验 A", source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     second = service.create_experiment(
         name="标准实验 B", source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     first_draft = service.get_draft(first["id"])
     second_draft = service.get_draft(second["id"])
@@ -135,6 +141,7 @@ def test_stale_draft_save_returns_revision_conflict(service):
     created = service.create_experiment(
         name="Conflict", source_type="BLANK",
         map_revision_id=publish_user_map(service.database)["id"],
+        **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(created["id"])
     definition = ExperimentDefinition.model_validate(draft["definition"])
@@ -219,6 +226,7 @@ def test_database_allows_only_one_draft_per_experiment(service, database):
     created = service.create_experiment(
         name="One draft", source_type="BLANK",
         map_revision_id=publish_user_map(service.database)["id"],
+        **brain_selection_for_database(service.database),
     )
     current = service.get_draft(created["id"])
     duplicate = ExperimentRevision(
@@ -243,6 +251,7 @@ def test_publish_rejects_auto_model_without_resolved_identity(service):
     created = service.create_experiment(
         name="Unresolved", source_type="BLANK",
         map_revision_id=publish_user_map(service.database)["id"],
+        **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(created["id"])
     with pytest.raises(ServiceError) as exc:

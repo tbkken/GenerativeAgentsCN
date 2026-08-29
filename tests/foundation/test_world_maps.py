@@ -1,10 +1,12 @@
 """基础能力回归测试：覆盖 ``test_world_maps`` 对应的行为、故障边界和回归约束。"""
 from __future__ import annotations
 
+import copy
+
 from fastapi.testclient import TestClient
 
 from generative_agents.web import create_app
-from tests.support import publish_user_map_via_api
+from tests.support import brain_revision_via_api, publish_user_map_via_api
 
 
 def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
@@ -79,8 +81,8 @@ def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
     assert missing.status_code == 404
 
 
-def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
-    """回归验证 ``test_public_map_lifecycle_and_experiment_overlay_are_isolated`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_experiment_selects_an_immutable_public_map_without_an_overlay(database_url):
+    """实验只引用公共地图 Revision，不能保存私有覆盖层。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         catalog = client.get("/api/v1/maps").json()
@@ -131,15 +133,19 @@ def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
         assert fetched_revision.status_code == 200
         assert fetched_revision.json()["world"]["definition"]["world"] == "shared-test-map"
 
-        experiment = client.post(
+        brain = brain_revision_via_api(client)
+        experiment_response = client.post(
             "/api/v1/experiments",
             json={
-                "name": "地图覆盖层实验",
-                "brain_skill": "stanford-town-brain",
+                "name": "地图 Revision 实验",
+                "brain_skill": brain["name"],
+                "brain_revision_id": brain["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": baseline_revision["id"],
             },
-        ).json()
+        )
+        assert experiment_response.status_code == 201, experiment_response.text
+        experiment = experiment_response.json()
         experiment_draft = client.get(
             f"/api/v1/experiments/{experiment['id']}/draft"
         ).json()
@@ -154,6 +160,33 @@ def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
         selected_world = selected.json()["definition"]["world"]
         assert selected_world["map_id"] == created["id"]
         assert selected_world["map_revision_id"] == published_revision["id"]
+        assert selected_world["map_revision_hash"] == published_revision["world_hash"]
+        assert "overlay" not in selected_world
+        assert selected.json()["provenance"]["world_map_revision_id"] == (
+            published_revision["id"]
+        )
+        assert selected.json()["provenance"]["world_map_revision_hash"] == (
+            published_revision["world_hash"]
+        )
+
+        alternate_brain = brain_revision_via_api(
+            client, "pedestrian-crossing-brain"
+        )
+        selected_brain = client.put(
+            f"/api/v1/experiments/{experiment['id']}/draft/brain",
+            json={
+                "lock_version": selected.json()["lock_version"],
+                "brain_revision_id": alternate_brain["revision_id"],
+            },
+        )
+        assert selected_brain.status_code == 200, selected_brain.text
+        assert selected_brain.json()["definition"]["engine"][
+            "brain_revision_id"
+        ] == alternate_brain["revision_id"]
+        assert selected_brain.json()["provenance"]["brain_revision_id"] == (
+            alternate_brain["revision_id"]
+        )
+        selected = selected_brain
 
         overlaid = client.put(
             f"/api/v1/experiments/{experiment['id']}/draft/map-overlay",
@@ -166,12 +199,41 @@ def test_public_map_lifecycle_and_experiment_overlay_are_isolated(database_url):
                 },
             },
         )
-        assert overlaid.status_code == 200, overlaid.text
-        assert (
-            overlaid.json()["definition"]["world"]["definition"]["editor"]
-            ["experiment_note"]
-            == "only here"
+        assert overlaid.status_code in {404, 405}
+        direct_world_write = client.put(
+            f"/api/v1/experiments/{experiment['id']}/draft/world",
+            json={"lock_version": selected.json()["lock_version"], "data": selected_world},
         )
+        assert direct_world_write.status_code in {404, 405}
+        tampered_definition = copy.deepcopy(selected.json()["definition"])
+        tampered_definition["world"]["world_name"] = "绕过 Revision 的私有世界"
+        full_bypass = client.put(
+            f"/api/v1/experiments/{experiment['id']}/draft",
+            json={
+                "lock_version": selected.json()["lock_version"],
+                "data": tampered_definition,
+            },
+        )
+        assert full_bypass.status_code == 422
+        assert full_bypass.json()["error"]["code"] == (
+            "RESOURCE_SELECTION_ENDPOINT_REQUIRED"
+        )
+        generic_world_bypass = client.patch(
+            f"/api/v1/experiments/{experiment['id']}/draft/world",
+            json={
+                "lock_version": selected.json()["lock_version"],
+                "data": selected_world,
+            },
+        )
+        assert generic_world_bypass.status_code == 422
+        generic_engine_bypass = client.patch(
+            f"/api/v1/experiments/{experiment['id']}/draft/engine",
+            json={
+                "lock_version": selected.json()["lock_version"],
+                "data": selected.json()["definition"]["engine"],
+            },
+        )
+        assert generic_engine_bypass.status_code == 422
 
         forked = client.post(
             f"/api/v1/maps/{created['id']}/revisions/{published_revision['id']}/fork"

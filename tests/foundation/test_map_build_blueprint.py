@@ -86,6 +86,14 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
         definition = draft["world"]["definition"]
         guide = definition["editor"]["build_guide"]
         assert guide["complete"] is True
+        editor_v2 = definition["editor_v2"]
+        assert editor_v2["schema_version"] == "ga-map-editor/v2"
+        assert {node["kind"] for node in editor_v2["hierarchy_nodes"]} == {
+            "WORLD",
+            "SECTOR",
+            "ARENA",
+            "GAME_OBJECT",
+        }
         assert len(definition["editor"]["module_instances"]) == 2
         assert all(
             item["source_map_revision_id"] is None
@@ -118,6 +126,17 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
         assert revision["state"] == "PUBLISHED"
         assert revision["world_hash"]
         assert revision["world"]["world_key"] == "commute-blueprint-acceptance"
+        signal_tile = next(
+            tile
+            for tile in revision["world"]["definition"]["tiles"]
+            if tile["coord"] == [29, 22]
+        )
+        assert signal_tile["address"] == [
+            "两日通勤验收地图",
+            "城市道路",
+            "东西向通勤主路",
+            "路口 A north 信号灯",
+        ]
 
 
 def test_map_workspace_exposes_persisted_build_guide_controls():
@@ -127,10 +146,14 @@ def test_map_workspace_exposes_persisted_build_guide_controls():
     static = Path(__file__).parents[2] / "generative_agents" / "web" / "static"
     html = (static / "experiment-console.html").read_text(encoding="utf-8")
     javascript = (static / "map-workspace.js").read_text(encoding="utf-8")
+    editor_javascript = (static / "map-editor-v2.js").read_text(encoding="utf-8")
+    stylesheet = (static / "map-workspace.css").read_text(encoding="utf-8")
 
     assert 'id="newMapBlueprint"' in html
-    assert 'id="mapBuildGuide"' in html
-    assert 'id="applyMapBlueprintStep"' in html
+    assert 'id="mapBuildGuide"' in editor_javascript
+    assert 'id="applyMapBlueprintStep"' in editor_javascript
+    assert "map-editor-v2:apply-blueprint-step" in editor_javascript
+    assert "grid-template-rows: 54px auto minmax(0, 1fr)" in stylesheet
     assert "async applyBlueprintStep()" in javascript
     assert "/draft/blueprint-steps/${nextStep}" in javascript
     assert "current_step" in javascript

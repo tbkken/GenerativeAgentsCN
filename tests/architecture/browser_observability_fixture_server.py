@@ -51,6 +51,7 @@ from generative_agents.services import ExperimentService
 from generative_agents.services.artifacts import ArtifactService
 from generative_agents.services.runs import RunService
 from generative_agents.web import create_app
+from tests.support import brain_selection_for_database, publish_user_map
 
 
 def _definition(key: str) -> ExperimentDefinition:
@@ -73,14 +74,19 @@ def _publish(database, var_dir: Path):
     """为本测试模块封装 ``_publish`` 辅助步骤，减少重复的场景搭建代码。"""
     service = ExperimentService(database)
     definition = _definition("browser-replay-qa")
+    map_revision = publish_user_map(database, world=definition.world)
     experiment = service.create_experiment(
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
+        map_revision_id=map_revision["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(experiment["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = experiment["experiment_key"]
+    payload["world"] = draft["definition"]["world"]
+    payload["engine"] = draft["definition"]["engine"]
     draft = service.update_draft(
         experiment_id=experiment["id"],
         expected_lock_version=draft["lock_version"],

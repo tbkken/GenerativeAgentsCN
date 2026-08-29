@@ -10,7 +10,7 @@ from generative_agents.config import ExperimentDefinition
 from generative_agents.services.catalog import SecretService
 from generative_agents.services.errors import ServiceError
 from generative_agents.services.model_probes import ModelProbeService
-from tests.support import publish_user_map
+from tests.support import brain_selection_for_database, publish_user_map
 
 
 class _Response:
@@ -79,6 +79,7 @@ def test_auto_model_probe_pins_resolved_model_into_the_same_draft(
     created = service.create_experiment(
         name="Probe", source_type="BLANK",
         map_revision_id=publish_user_map(database)["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
     draft = _make_models_auto(service, created, draft)
@@ -115,6 +116,7 @@ def test_publish_preflight_resolves_all_auto_models_with_one_draft_write(
     created = service.create_experiment(
         name="Auto publish", source_type="BLANK",
         map_revision_id=publish_user_map(database)["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
     draft = _make_models_auto(service, created, draft)
@@ -154,6 +156,7 @@ def test_publish_preflight_does_not_partially_pin_models_on_probe_failure(
     created = service.create_experiment(
         name="Atomic auto publish", source_type="BLANK",
         map_revision_id=publish_user_map(database)["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
     draft = _make_models_auto(service, created, draft)
@@ -183,6 +186,7 @@ def test_local_unsloth_key_is_validated_and_encrypted_without_browser_exposure(
         name="Local Unsloth auth",
         source_type="BLANK",
         map_revision_id=publish_user_map(database)["id"],
+        **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
     payload = draft["definition"]

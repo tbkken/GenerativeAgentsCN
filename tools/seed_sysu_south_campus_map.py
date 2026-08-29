@@ -208,7 +208,6 @@ def build_world() -> dict[str, Any]:
         "map_id": None,
         "map_revision_id": None,
         "map_revision_hash": None,
-        "overlay": {"definition_patch": {}, "asset_additions": [], "removed_asset_paths": []},
     }
 
 

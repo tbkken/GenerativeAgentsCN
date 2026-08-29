@@ -9,7 +9,11 @@ from fastapi.testclient import TestClient
 
 from generative_agents.persistence.models import ExperimentRevision, Run, RunEvent
 from generative_agents.web import create_app
-from tests.support import first_builtin_crowd_revision_id, publish_user_map_via_api
+from tests.support import (
+    brain_revision_via_api,
+    first_builtin_crowd_revision_id,
+    publish_user_map_via_api,
+)
 
 
 def _test_png(width: int, height: int) -> bytes:
@@ -81,6 +85,7 @@ def test_experiment_api_create_list_validate_and_conflict(database_url):
                 "name": "API Experiment",
                 "goal": "Exercise the real service",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": map_revision["id"],
             },
@@ -130,6 +135,7 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
             json={
                 "name": "Auto model run",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
@@ -203,6 +209,7 @@ def test_offline_model_probe_is_counted_once_as_a_publish_warning(database_url):
             json={
                 "name": "Offline model warning",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": map_revision["id"],
             },
@@ -239,6 +246,7 @@ def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_ur
             json={
                 "name": "Editable",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
@@ -268,13 +276,14 @@ def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_ur
         assert base_desc.json()["kind"] == "atomic"
 
         world = patched["definition"]["world"]
-        world["world_name"] = "Owned world"
-        saved_world = client.put(
+        removed_world_editor = client.put(
             f"/api/v1/experiments/{created['id']}/draft/world",
             json={"lock_version": patched["lock_version"], "data": world},
         )
-        assert saved_world.status_code == 200
-        assert saved_world.json()["definition"]["world"]["world_name"] == "Owned world"
+        assert removed_world_editor.status_code in {404, 405}
+        assert client.get(f"/api/v1/experiments/{created['id']}/draft").json()[
+            "definition"
+        ]["world"] == world
 
 
 def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
@@ -287,6 +296,7 @@ def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
             json={
                 "name": "Source",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": map_revision["id"],
             },
@@ -400,6 +410,7 @@ def test_global_event_cursor_exposes_run_activity_with_experiment_identity(datab
             json={
                 "name": "Live status",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": map_revision["id"],
             },

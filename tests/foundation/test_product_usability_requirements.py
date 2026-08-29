@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from generative_agents.web.app import create_app
-from tests.support import publish_user_map_via_api
+from tests.support import brain_revision_via_api, publish_user_map_via_api
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,6 +23,9 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
         )
         crowd_revision_ids = [crowd["current_published"]["id"]]
     map_revision = publish_user_map_via_api(client, name=f"{name} map")
+    brain = brain_revision_via_api(
+        client, metadata.get("brain_skill", "stanford-town-brain")
+    )
     response = client.post(
         "/api/v1/experiments",
         json={
@@ -30,7 +33,8 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
             "goal": "产品可用性验收",
             "owner": metadata.get("owner", "产品研究员"),
             "tags": metadata.get("tags", ["UX验收"]),
-            "brain_skill": metadata.get("brain_skill", "stanford-town-brain"),
+            "brain_skill": brain["name"],
+            "brain_revision_id": brain["revision_id"],
             "source": source,
             "map_revision_id": map_revision["id"],
             "crowd_revision_ids": crowd_revision_ids,
@@ -97,6 +101,7 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
                 "name": "资源优先创建",
                 "goal": "验证创建入口组合大脑、地图和一个或多个人群",
                 "brain_skill": "pedestrian-crossing-brain",
+                "brain_revision_id": brain.json()["revision_id"],
                 "map_revision_id": public_map["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },
@@ -108,8 +113,11 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
         assert len(draft["definition"]["agents"]) == 25
         assert draft["definition"]["engine"]["brain_skill"] == "pedestrian-crossing-brain"
         assert draft["definition"]["world"]["map_revision_id"] == public_map["id"]
-        assert "brain_revision_id" not in draft["provenance"]
+        assert draft["definition"]["engine"]["brain_revision_id"] == brain.json()["revision_id"]
+        assert draft["definition"]["engine"]["brain_revision_hash"] == brain.json()["revision"]
+        assert draft["provenance"]["brain_revision_id"] == brain.json()["revision_id"]
         assert draft["provenance"]["world_map_revision_id"] == public_map["id"]
+        assert draft["provenance"]["world_map_revision_hash"] == public_map["world_hash"]
         assert draft["provenance"]["crowd_revision_ids"] == [crowd["current_published"]["id"]]
 
         missing_crowd = client.post(
@@ -117,17 +125,20 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
             json={
                 "name": "缺少人群",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": public_map["id"],
             },
         )
         assert missing_crowd.status_code == 422
         assert missing_crowd.json()["error"]["code"] == "CROWD_REQUIRED"
 
+        atomic = client.get("/api/v1/skills/wake-up").json()
         wrong_kind = client.post(
             "/api/v1/experiments",
             json={
                 "name": "错误大脑类型",
                 "brain_skill": "wake-up",
+                "brain_revision_id": atomic["revision_id"],
                 "map_revision_id": public_map["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },

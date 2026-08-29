@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from generative_agents.web.app import create_app
-from tests.support import publish_user_map_via_api
+from tests.support import brain_revision_via_api, publish_user_map_via_api
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -193,6 +193,7 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
             json={
                 "name": "多个人群去重实验",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "map_revision_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_a["id"], crowd_b["id"]],
             },

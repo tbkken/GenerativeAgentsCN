@@ -36,7 +36,7 @@ from generative_agents.runtime.results import (
     StepResultBuilder,
     deterministic_record_id,
 )
-from tests.support import publish_user_map
+from tests.support import brain_selection_for_database, publish_user_map
 from generative_agents.runtime.scheduler import LocalRunSchedulerRepository
 from generative_agents.runtime.model_trace import (
     ModelTraceEvent,
@@ -58,11 +58,13 @@ def _publish(service, definition: ExperimentDefinition):
         goal=definition.experiment.goal,
         source_type="BLANK",
         map_revision_id=map_revision["id"],
+        **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(created["id"])
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["experiment"]["key"] = created["experiment_key"]
     payload["world"] = draft["definition"]["world"]
+    payload["engine"] = draft["definition"]["engine"]
     draft = service.update_draft(
         experiment_id=created["id"],
         expected_lock_version=draft["lock_version"],

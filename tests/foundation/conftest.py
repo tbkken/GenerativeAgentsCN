@@ -41,6 +41,19 @@ def publishable_definition() -> ExperimentDefinition:
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["models"]["chat"]["resolved_model"] = "Qwen/test-chat"
     payload["models"]["embedding"]["resolved_model"] = "test-embedding"
+    payload["engine"].update(
+        {
+            "brain_revision_id": "brain-revision-test",
+            "brain_revision_hash": "a" * 64,
+        }
+    )
+    payload["world"].update(
+        {
+            "map_id": "map-test",
+            "map_revision_id": "map-revision-test",
+            "map_revision_hash": "b" * 64,
+        }
+    )
     payload["world"]["definition"] = {
         "world": "test",
         "tile_size": 16,

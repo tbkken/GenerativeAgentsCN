@@ -39,9 +39,9 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert 'data-page="maps"' in shell
     assert 'id="page-maps"' in shell
     assert 'id="publicMapEditor"' in shell
-    assert 'id="experimentMapEditor"' in shell
-    assert 'id="experimentMapSelect"' in shell
-    assert 'id="tuneExperimentMapBtn"' in shell
+    assert 'id="experimentMapEditor"' not in shell
+    assert 'id="experimentMapRevisionSelect"' in shell
+    assert 'id="tuneExperimentMapBtn"' not in shell
     assert 'id="mapStatusFilters"' in shell
     assert 'data-map-filter="draft"' in shell
     assert 'id="mapPagination"' not in shell
@@ -50,17 +50,17 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert shell.count("map-workspace.css") == 1
 
 
-def test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay():
-    """回归验证 ``test_map_workspace_owns_pan_semantics_palette_and_experiment_overlay`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_map_workspace_edits_public_revisions_and_experiments_only_select_them():
+    """地图编辑只属于资源中心；实验页只保留 Revision 选择。"""
     source = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
+    editor = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
 
-    assert "class GridEditor" in source
-    assert "pointermove" in source
-    assert "event.deltaY" in source
-    assert "data-map-address" in source
-    assert "data-palette-form" in source
-    assert "mergePatch(base.definition, target.definition)" in source
-    assert "/draft/map-overlay" in source
+    assert "class GridEditor" not in source
+    assert "pointermove" in editor
+    assert "event.deltaY" in editor
+    assert "/draft/map-overlay" not in source
+    assert "experimentMapRevisionSelect" in source
+    assert "/draft/map`" in source
     assert "this.publicEditor.resize();" in source
     assert "this.publicEditor.fit();" in source
     assert "page_size: '100'" in source

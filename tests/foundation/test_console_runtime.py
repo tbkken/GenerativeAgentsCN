@@ -13,6 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from generative_agents.web import create_app
+from tests.support import brain_revision_via_api
 
 
 def _png_size(payload: bytes) -> tuple[int, int]:
@@ -40,12 +41,14 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
             },
         )
         assert map_revision.status_code == 200, map_revision.text
+        brain = brain_revision_via_api(client)
         created = client.post(
             "/api/v1/experiments",
             json={
                 "name": "Dynamic console experiment",
                 "goal": "Exercise the production list-to-detail path",
                 "brain_skill": "stanford-town-brain",
+                "brain_revision_id": brain["revision_id"],
                 "source": {"type": "BLANK"},
                 "map_revision_id": map_revision.json()["id"],
             },
@@ -292,7 +295,8 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
     script = script_response.text
     assert 'id="page-skills"' in shell
     assert 'id="page-brains"' in shell
-    assert 'id="page-experiment-brain"' in shell
+    assert 'id="page-experiment-brain"' not in shell
+    assert "experiment-brain" not in script
     assert "/api/v1/skills" in script
     assert "SKILL.md" in script
     assert "Scripts 与 MCP" in script
@@ -486,7 +490,7 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "syncWorkspaceUrl();" in route
     assert "openExperiment(id, targetPage = 'overview', preferredRunId = null)" in source
     assert "preferredRunId || state.latestRunId" in source
-    assert "requestedView !== 'experiments' && $(`page-${requestedView}`)" in bootstrap
+    assert "['overview', 'results', 'agents', 'models'].includes(requestedView)" in bootstrap
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
 
 
@@ -504,8 +508,10 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
         root / "generative_agents" / "web" / "static" / "console-api.js"
     ).read_text(encoding="utf-8")
 
-    for group in ("models", "world", "advanced", "agent-editor"):
+    for group in ("models", "agent-editor"):
         assert f'data-content-tabs="{group}"' in shell
+    assert 'data-content-tabs="world"' not in shell
+    assert 'data-content-tabs="advanced"' not in shell
     overview = shell[shell.index('id="page-overview"') : shell.index('id="page-results"')]
     agents = shell[shell.index('id="page-agents"') : shell.index('id="page-models"')]
     topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
@@ -528,7 +534,9 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert 'id="expOwner"' not in shell
     assert 'id="expTags"' not in shell
     assert topbar.index('id="topbarTitle"') < topbar.index('id="experimentHeaderMeta"')
-    assert '控制 Agent 状态记录点的密度' in overview
+    assert 'id="experimentBrainRevisionSelect"' in overview
+    assert 'id="experimentMapRevisionSelect"' in overview
+    assert '状态记录间隔' not in overview
     assert 'id="overviewLatestRunCode"' in overview
     assert 'class="result-metrics"' not in shell
     assert '<h1>Agent 配置</h1>' not in agents
@@ -538,9 +546,7 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert "function setContentTab" in script
     assert "definition.simulation.log_level = 'INFO';" in script
     latest_summary = script[
-        script.index("async function fillLatestRunSummary") : script.index(
-            "function behaviorControlKey"
-        )
+        script.index("async function fillLatestRunSummary") : script.index("function setSwitch")
     ]
     assert "/results/summary" not in latest_summary
     assert "/results/operations" not in latest_summary
@@ -813,8 +819,9 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     assert "固定使用当前文件型大脑" not in shell
     assert "prepareExperimentBrainChoices()" in source
     assert "brain_skill: brainSkill" in source
+    assert "brain_revision_id: brainRevisionId" in source
+    assert "saveExperimentComposition" in source
     assert "enqueueDraftMutation(() => saveDraftUnlocked(options))" in source
-    assert "return enqueueDraftMutation(async () =>" in source
     assert "if (state.formDirty) await saveDraftUnlocked({ silent: true });" in source
     assert "transportRetries: 1" in source
     assert "CONTROL_PLANE_NETWORK_ERROR" in source
