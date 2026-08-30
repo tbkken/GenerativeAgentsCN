@@ -20,6 +20,7 @@ from generative_agents.runtime.iteration import IterationContext
 from generative_agents.runtime.result_collector import StepResultCollector
 from generative_agents.runtime.results import StepResultBuilder
 from generative_agents.skills import SkillRunResult
+from generative_agents.skills import MemoryStream, SkillLoopError
 
 
 class _Tile:
@@ -328,6 +329,51 @@ def test_world_act_accepts_unencoded_activity_as_event_semantics():
     assert server.action.action_type == "ACT"
     assert server.action.arguments["predicate"] == "喝"
     assert server.action.arguments["object"] == "咖啡"
+    assert server.action.arguments["target_coord"] == [1, 1]
+    assert server.action.arguments["target_address"] == _Tile.address
+
+
+@pytest.mark.parametrize(
+    "arguments,error_fragment",
+    [
+        (
+            {
+                "action_type": "ACT",
+                "predicate": "喝",
+                "object": "咖啡",
+                "target_coord": [2, 1],
+            },
+            "current coordinate",
+        ),
+        (
+            {
+                "action_type": "ACT",
+                "predicate": "喝",
+                "object": "咖啡",
+                "target_address": ["用户世界", "社区", "咖啡馆", "水吧"],
+            },
+            "current address",
+        ),
+        (
+            {
+                "action_type": "ACT",
+                "predicate": "喝",
+                "object": "咖啡",
+                "object_key": "other-object",
+            },
+            "current Game Object",
+        ),
+    ],
+)
+def test_world_act_rejects_activity_that_claims_another_location(
+    arguments, error_fragment
+):
+    server = _server()
+    result = server.call("world-act", arguments)
+
+    assert result["isError"] is True
+    assert error_fragment in result["content"][0]["text"]
+    assert server.action is None
 
 
 @pytest.mark.parametrize(
@@ -532,3 +578,135 @@ def test_brain_quality_report_flags_repeated_read_without_changing_execution_sta
     assert any(
         issue["code"] == "REPEATED_READ_WITHOUT_PROGRESS" for issue in report["issues"]
     )
+
+
+def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
+    tmp_path, monkeypatch
+):
+    run_id, attempt_id = uuid4(), uuid4()
+    now = datetime(2026, 8, 27, 11, 20, tzinfo=timezone.utc)
+    memory = MemoryStream(
+        tmp_path / "brain-memory.sqlite",
+        run_id=run_id,
+        attempt_id=attempt_id,
+    )
+    memory.begin_step(1, now)
+
+    class _PartiallyFailingSkillRuntime:
+        def __init__(self, *_args, mcp, **_kwargs):
+            self.mcp = mcp
+
+        def run(self, _skill, _task, *, context):
+            self.mcp.call(
+                "memory-stream-append",
+                {"content": "尚未提交却被提前写成完成事实"},
+            )
+            self.mcp.call(
+                "world-act",
+                {
+                    "action_type": "ACT",
+                    "predicate": "完成",
+                    "object": "错误动作",
+                },
+            )
+            raise SkillLoopError(
+                "no semantic progress",
+                trace=(
+                    {
+                        "event": "mcp.call",
+                        "skill": "test-brain",
+                        "tool": "memory-stream-append",
+                        "input_text": '{}',
+                        "output_text": '{}',
+                        "is_error": False,
+                    },
+                    {
+                        "event": "loop.detected",
+                        "skill": "test-brain",
+                        "tool": "call_skill",
+                    },
+                ),
+            )
+
+    monkeypatch.setattr(
+        "generative_agents.runtime.brain.SkillRuntime",
+        _PartiallyFailingSkillRuntime,
+    )
+    agent = _Agent()
+    agent.scratch = SimpleNamespace(currently="准备行动")
+    agent.associate = SimpleNamespace(abstract=lambda: {})
+    agent.schedule = SimpleNamespace(abstract=lambda: {})
+    agent.spatial = SimpleNamespace(tree={}, address={})
+    agent.concepts = []
+    agent.chats = []
+    game = SimpleNamespace(
+        context=SimpleNamespace(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            clock=SimpleNamespace(get_date=lambda: now),
+        ),
+        get_agent=lambda _key: agent,
+        agents={"agent-1": agent},
+        agent_keys_by_name={agent.name: "agent-1"},
+        maze=_Maze(),
+        game_object_interactions=_Objects(),
+    )
+    registry = SimpleNamespace(
+        normalize_name=lambda name: name,
+        get=lambda _name: SimpleNamespace(kind="brain", revision="revision-1"),
+    )
+    brain = BrainRuntime(
+        registry,
+        brain_skill="test-brain",
+        model_config={"model": "test-model"},
+        memory_stream=memory,
+    )
+
+    outcome = brain.run_step(
+        game,
+        "agent-1",
+        step_no=1,
+        total_steps=3,
+        stride_minutes=10,
+    )
+
+    assert outcome["world_action"]["action_type"] == "WAIT"
+    assert memory.search(agent_key="agent-1") == []
+    assert memory.drain_result_events() == ()
+    trace = outcome["events"][0]["trace"]
+    assert [item["event"] for item in trace] == [
+        "mcp.call",
+        "loop.detected",
+        "brain.rollback",
+        "brain.fallback",
+    ]
+
+
+def test_failed_execution_quality_is_partial_and_does_not_call_model():
+    brain = BrainRuntime.__new__(BrainRuntime)
+    brain.brain_skill = "test-brain"
+    brain.model_client = SimpleNamespace(
+        chat_completion=lambda *_args, **_kwargs: pytest.fail(
+            "failed execution quality must be deterministic"
+        )
+    )
+    brain.logger = None
+    brain._audit_records = []
+
+    report = brain.evaluate_quality(
+        include_model=False,
+        execution_error={"code": "SKILL_LOOP", "message": "budget exhausted"},
+    )
+
+    assert report["quality_status"] == "WARNING"
+    assert report["evaluator"]["status"] == "SKIPPED"
+    assert report["issues"] == [
+        {
+            "code": "RUN_EXECUTION_FAILED",
+            "severity": "ERROR",
+            "agent_key": None,
+            "step_no": None,
+            "message": "运行在完成全部 Step 前失败；报告仅覆盖已执行部分。",
+            "evidence": {"code": "SKILL_LOOP", "message": "budget exhausted"},
+        }
+    ]
