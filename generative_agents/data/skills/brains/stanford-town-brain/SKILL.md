@@ -31,8 +31,10 @@ example_input: "生命周期事件：2026-08-19 07:00，简在公寓里刚刚醒
 2. 调用 `world-perceive` 获取当前空间语义与可交互对象；需要历史时调用 `memory-stream-search`。
 3. 检查已有排程。新一天、没有排程或发生中断时调用 `$daily-planning`；否则沿用并细化当前计划。
 4. 按情境选择其余最少 Skill Pack，并把前一个 Skill 的输出原样交给后一个 Skill。
-5. 通过 `world-act` 提交且只提交一个动作；起床、洗漱、吃饭、办公等普通活动使用 `ACT` 并直接写 Event 的 `predicate`、`object`、`description`；只有真实等待时才提交 `WAIT`。
-6. 值得长期保留的事实通过 `memory-stream-append` 保存；反思只在情境确实需要时执行。
+5. 在动作提交前，把已经发生的、值得长期保留的事实通过 `memory-stream-append` 保存；不要提前把本轮尚未提交的候选动作写成已完成事实。反思只在情境确实需要时执行。
+6. 最后由当前 Brain 亲自通过 `world-act` 提交且只提交一个动作；子 Skill 只提供候选参数。起床、洗漱、吃饭、办公等普通活动使用 `ACT` 并直接写 Event 的 `predicate`、`object`、`description`；`ACT` 只能描述当前位置的活动，目标在别处时先 `MOVE`；只有真实等待时才提交 `WAIT`。`world-act` 成功后本轮立即结束，不再调用其他工具。
+
+`IterationContext.total_steps` 是整个 Run 的总步数，可能跨越多天；它不是某一天排程必须填满的时间槽数量。日程必须以虚拟时间和步长计算实际覆盖范围，不能把“单日时间窗”和“整个 Run 步数”强行当成同一个数量。
 
 Scripts 负责确定性计算，MCP 负责公共读写与真实世界变化。Skill 的文本输出只驱动 Agent，不承担回放协议。
 

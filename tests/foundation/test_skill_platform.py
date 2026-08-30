@@ -465,6 +465,177 @@ def test_repeated_identical_child_call_is_stopped_before_third_execution():
         runtime.run("daily-planning", "plan today")
 
 
+def test_semantically_repeated_child_call_with_paraphrased_input_is_stopped():
+    registry = SkillRegistry()
+
+    def call_wake_up(call_id, input_text):
+        return {
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": call_id,
+                    "function": {
+                        "name": "call_skill",
+                        "arguments": json.dumps(
+                            {"name": "wake-up", "input_text": input_text}
+                        ),
+                    },
+                }
+            ],
+        }
+
+    runtime = ScriptedSkillRuntime(
+        registry,
+        responses=[
+            call_wake_up("first", "请判断几点起床"),
+            {"content": "7"},
+            call_wake_up("second", "换一种说法再判断起床时间"),
+            {"content": "7"},
+            call_wake_up("third", "最后再确认一次"),
+        ],
+        max_hops=12,
+        max_identical_tool_calls=2,
+    )
+
+    with pytest.raises(SkillLoopError, match="semantic progress") as raised:
+        runtime.run("daily-planning", "plan today")
+
+    assert raised.value.trace[-1]["event"] == "loop.detected"
+    assert raised.value.trace[-1]["tool"] == "call_skill"
+
+
+def test_nested_skill_cannot_receive_world_act_and_mcp_errors_are_explicit():
+    class _MCP:
+        def tools(self):
+            return [
+                {
+                    "name": "world-perceive",
+                    "description": "read",
+                    "inputSchema": {"type": "object"},
+                },
+                {
+                    "name": "world-act",
+                    "description": "write",
+                    "inputSchema": {"type": "object"},
+                },
+            ]
+
+        def call(self, name, _arguments):
+            assert name == "world-act"
+            return {
+                "content": [{"type": "text", "text": "MCP error: rejected"}],
+                "isError": True,
+            }
+
+    registry = SkillRegistry()
+    runtime = ScriptedSkillRuntime(
+        registry,
+        mcp=_MCP(),
+        responses=[
+            {
+                "content": "",
+                "tool_calls": [
+                    {
+                        "id": "child",
+                        "function": {
+                            "name": "call_skill",
+                            "arguments": json.dumps(
+                                {
+                                    "name": "action-and-space",
+                                    "input_text": "propose an action",
+                                }
+                            ),
+                        },
+                    }
+                ],
+            },
+            {"content": "候选 MOVE 参数"},
+            {
+                "content": "",
+                "tool_calls": [
+                    {
+                        "id": "act",
+                        "function": {
+                            "name": "world-act",
+                            "arguments": json.dumps({"action_type": "WAIT"}),
+                        },
+                    }
+                ],
+            },
+            {"content": "已根据明确错误重新规划"},
+        ],
+    )
+
+    result = runtime.run("stanford-town-brain", "drive one iteration")
+
+    child_tools = {
+        item["function"]["name"] for item in runtime.requests[1]["tools"]
+    }
+    assert "world-perceive" in child_tools
+    assert "world-act" not in child_tools
+    error_call = next(item for item in result.trace if item["event"] == "mcp.call")
+    assert error_call["is_error"] is True
+    assert json.loads(error_call["output_text"]) == {
+        "isError": True,
+        "error": "MCP error: rejected",
+    }
+    assert result.output_text == "已根据明确错误重新规划"
+
+
+def test_successful_world_act_is_terminal_for_root_brain():
+    class _MCP:
+        def tools(self):
+            return [
+                {
+                    "name": "world-act",
+                    "description": "write",
+                    "inputSchema": {"type": "object"},
+                }
+            ]
+
+        def call(self, name, arguments):
+            assert name == "world-act"
+            return {
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(
+                            {"accepted": True, "action": arguments}
+                        ),
+                    }
+                ],
+                "isError": False,
+            }
+
+    runtime = ScriptedSkillRuntime(
+        SkillRegistry(),
+        mcp=_MCP(),
+        responses=[
+            {
+                "content": "",
+                "tool_calls": [
+                    {
+                        "id": "final-action",
+                        "function": {
+                            "name": "world-act",
+                            "arguments": json.dumps({"action_type": "WAIT"}),
+                        },
+                    }
+                ],
+            }
+        ],
+    )
+
+    result = runtime.run("stanford-town-brain", "drive one iteration")
+
+    assert result.output_text == "world-act accepted; this Agent iteration is complete."
+    assert len(runtime.requests) == 1
+    assert [item["event"] for item in result.trace[-2:]] == [
+        "mcp.call",
+        "skill.result",
+    ]
+
+
 def test_save_preserves_existing_example_input(tmp_path):
     """回归验证 ``test_save_preserves_existing_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")

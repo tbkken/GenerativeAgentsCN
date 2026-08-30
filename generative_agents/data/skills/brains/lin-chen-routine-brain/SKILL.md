@@ -28,8 +28,8 @@ description: "驱动林晨完成日常作息演示的独立 Brain：从起床、
 2. 仅在需要确认已完成阶段或偏差时调用 `memory-stream-search`，检索当天作息记录。
 3. 把虚拟时间、完整观察、已知进度和上一动作结果交给 `$routine-execution`。
 4. 校验建议中的地址和对象确实来自观察或权威地址；不合法时改为 `WAIT`。
-5. 调用 `world-act` 且只调用一次，提交 `MOVE`、`ACT`、`WAIT` 或 `INTERACT`。普通日常活动使用 `ACT` 并直接写 `predicate`、`object`、`description`；`WAIT` 只用于真实等待。
-6. 动作提交成功后，若进度记录包含新的事实，再调用一次 `memory-stream-append`；失败动作必须按失败事实记录。
+5. 提交前，若上下文中包含上一轮已经提交的新事实，可调用一次 `memory-stream-append`；不能把本轮候选动作提前记录成已完成事实。
+6. 最后调用 `world-act` 且只调用一次，提交 `MOVE`、`ACT`、`WAIT` 或 `INTERACT`，成功后立即结束本轮。普通日常活动使用 `ACT` 并直接写 `predicate`、`object`、`description`，且只能发生在当前坐标和地址；目标在别处时先 `MOVE`、后续迭代再 `ACT`；`WAIT` 只用于真实等待。
 
 ## 行为红线
 

@@ -43,13 +43,13 @@ example_input: "07:00，林晓在公寓卧室的床与闹钟旁醒来，09:00 �
 
 ## 公共 MCP
 
-使用 `world-perceive` 读取真实空间；使用 `memory-stream-search` 与 `memory-stream-append` 管理当前 Agent 记忆；每一步必须通过 `world-act` 且只通过一次提交 `MOVE`、`WAIT`、`INTERACT` 或其他允许动作。
+使用 `world-perceive` 读取真实空间；使用 `memory-stream-search` 与 `memory-stream-append` 管理当前 Agent 记忆；子 Skill 只返回候选动作，每一步最终由根 Brain 通过 `world-act` 且只通过一次提交 `MOVE`、`WAIT`、`INTERACT` 或其他允许动作。提交成功后本轮立即结束。
 
 ## 每一步的决策顺序
 
 1. 读取当前虚拟时间、四层地址、正在执行的故事阶段和未完成目标。
 2. 若当前阶段尚未完成，优先完成同一地点内的自然动作，不跳到后续地点。
-3. 需要换地点时，通过 `$action-and-space` 选择地图中真实存在的下一地址并沿路径移动，禁止瞬移。
+3. 需要换地点时，通过 `$action-and-space` 选择地图中真实存在的下一地址并沿路径移动，禁止瞬移。普通 `ACT` 只能发生在当前坐标和当前四层地址；目标在别处时本轮先 `MOVE`，后续迭代再 `ACT`。
 4. 只有 `world-perceive` 返回附近可用信号灯且当前阶段确实需要过街时，才通过 `world-act(INTERACT)` 主动查询。
 5. 把 Game Object 返回的自然语言作为后续思考上下文：
    - 红灯：留在等候区，并在后续世界步再次观察；

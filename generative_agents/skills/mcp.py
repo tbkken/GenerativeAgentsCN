@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import sqlite3
 import hashlib
 import json
@@ -124,6 +125,53 @@ class MemoryStream:
             raise ValueError("virtual_time must be timezone-aware")
         self._step_no = int(step_no)
         self._virtual_time = virtual_time
+
+    def begin_iteration(self, agent_key: str) -> dict[str, Any]:
+        """Capture the current Agent memory state for one atomic Brain iteration."""
+
+        normalized_agent_key = str(agent_key).strip()
+        if not normalized_agent_key:
+            raise ValueError("agent_key must not be empty")
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "SELECT * FROM run_memories WHERE run_id = ? AND agent_key = ?",
+                (self.run_id, normalized_agent_key),
+            )
+            columns = tuple(str(item[0]) for item in cursor.description or ())
+            rows = tuple(tuple(row) for row in cursor.fetchall())
+        return {
+            "run_id": self.run_id,
+            "agent_key": normalized_agent_key,
+            "columns": columns,
+            "rows": rows,
+            "pending_events": copy.deepcopy(self._pending_events),
+        }
+
+    def rollback_iteration(self, snapshot: dict[str, Any]) -> None:
+        """Restore memory and pending result events after a failed Brain iteration."""
+
+        if str(snapshot.get("run_id") or "") != self.run_id:
+            raise ValueError("memory iteration snapshot belongs to another run")
+        agent_key = str(snapshot.get("agent_key") or "").strip()
+        columns = tuple(str(item) for item in snapshot.get("columns") or ())
+        rows = tuple(tuple(row) for row in snapshot.get("rows") or ())
+        if not agent_key or not columns:
+            raise ValueError("memory iteration snapshot is incomplete")
+        placeholders = ", ".join("?" for _ in columns)
+        column_sql = ", ".join(f'"{column}"' for column in columns)
+        with self._connect() as connection:
+            connection.execute(
+                "DELETE FROM run_memories WHERE run_id = ? AND agent_key = ?",
+                (self.run_id, agent_key),
+            )
+            if rows:
+                connection.executemany(
+                    f"INSERT INTO run_memories ({column_sql}) VALUES ({placeholders})",
+                    rows,
+                )
+        self._pending_events = copy.deepcopy(
+            list(snapshot.get("pending_events") or ())
+        )
 
     def _scope(self) -> tuple[int, datetime]:
         """执行`scope`的内部处理，供当前模块或类复用。

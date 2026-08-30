@@ -8,9 +8,10 @@ import logging
 import random
 import shutil
 import threading
-from datetime import datetime
+from datetime import UTC, datetime
 from datetime import timedelta
 from pathlib import Path
+from typing import Any, Mapping
 from uuid import UUID
 
 from filelock import FileLock
@@ -262,6 +263,7 @@ def main(argv=None) -> int:
     execution_finalized = False
     logger = _logger(args.run_id, "INFO")
     recorder: ModelTraceWriter | None = None
+    brain_runtime: BrainRuntime | None = None
     try:
         # 导入旧仿真引擎前先续租持久化所有权；这些导入在 Windows 上可能超过常规心跳期限。
         if repository.heartbeat(str(args.run_id), str(args.attempt_id)) is None:
@@ -521,6 +523,25 @@ def main(argv=None) -> int:
         worker_error_code = getattr(exc, "code", "WORKER_EXECUTION_FAILED")
         worker_error_message = str(exc) or exc.__class__.__name__
         logger.exception("worker attempt failed")
+        try:
+            execution_error = {
+                "code": worker_error_code,
+                "message": worker_error_message,
+                "attempt_id": str(args.attempt_id),
+            }
+            quality_report = (
+                brain_runtime.evaluate_quality(
+                    include_model=False,
+                    execution_error=execution_error,
+                )
+                if brain_runtime is not None
+                else _failed_run_quality_report(execution_error)
+            )
+            _persist_quality_report(paths, database, quality_report)
+        except Exception:
+            # A broken diagnostic path must never hide or replace the original
+            # execution failure recorded by the scheduler.
+            logger.exception("partial quality report could not be persisted")
     finally:
         # 无论仿真是否成功，都尽量投影最后的模型轨迹并释放调度器所有权。
         stop_monitor.set()
@@ -578,6 +599,34 @@ def _persist_quality_report(paths: RunPaths, database, report: dict) -> None:
                 },
             )
         )
+
+
+def _failed_run_quality_report(execution_error: Mapping[str, Any]) -> dict[str, Any]:
+    """Build a deterministic report when failure precedes Brain construction."""
+
+    return {
+        "schema_version": 1,
+        "quality_status": "WARNING",
+        "execution_status_affected": False,
+        "brain_skill": None,
+        "evaluated_at": datetime.now(UTC).isoformat(),
+        "evaluated_agent_steps": 0,
+        "summary": "运行失败，未进入可审计的 Agent Step。",
+        "issues": [
+            {
+                "code": "RUN_EXECUTION_FAILED",
+                "severity": "ERROR",
+                "agent_key": None,
+                "step_no": None,
+                "message": "运行在 Brain 初始化或 Agent Step 执行前失败。",
+                "evidence": dict(execution_error),
+            }
+        ],
+        "evaluator": {
+            "status": "SKIPPED",
+            "error": "model evaluation skipped for failed execution",
+        },
+    }
 
 
 def _persist_post_processing_event(

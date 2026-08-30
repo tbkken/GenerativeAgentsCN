@@ -18,8 +18,8 @@ description: "驱动林晨配置版完成起床、洗漱、早餐、安全通勤
 2. 需要确认当天进度时再用 `memory-stream-search`。
 3. 将虚拟时间、观察、进度和上一动作结果交给 `$lin-chen-workday-step`。
 4. 校验地址和选择键来自观察或权威目的地；非法建议改为 WAIT。
-5. 用 `world-act` 且只用一次提交 MOVE、ACT、WAIT 或 INTERACT；普通日常活动用 ACT 直接写 Event 语义，WAIT 只表示真实等待。
-6. 动作成功后，如有新事实，再用 `memory-stream-append` 保存；失败必须按失败事实记录。
+5. 提交前，仅把上下文中上一轮已提交的新事实用 `memory-stream-append` 保存；不要把本轮候选动作提前记成已完成。
+6. 最后由根 Brain 用 `world-act` 且只用一次提交 MOVE、ACT、WAIT 或 INTERACT，成功后本轮立即结束。普通日常活动用 ACT 直接写 Event 语义，且只能发生在当前位置；目标在别处时先 MOVE、后续迭代再 ACT。WAIT 只表示真实等待。
 
 家与办公室往返必须走西侧斑马线；红灯等待，绿灯通行，未知状态先查询。禁止瞬移、穿墙和发明地址。上午咖啡、午餐、下午咖啡都是必经阶段，迟到时只能压缩工作或等待。
 

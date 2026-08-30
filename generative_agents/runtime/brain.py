@@ -117,8 +117,18 @@ class BrainRuntime:
             "驱动当前 Agent 完成一个仿真迭代。按照 Brain SOP 自主选择并串联子 Skill；"
             "每个子 Skill 都会共享 IterationContext，上一个 Skill 的自然语言输出应作为"
             "下一个 Skill 的输入。可任意调用只读感知和记忆 MCP。结束前必须且只能调用"
-            "一次 world-act，选择本轮唯一真实世界动作。普通日常活动使用 ACT "
+            "一次 world-act，选择本轮唯一真实世界动作；world-act 一旦成功，本轮立即结束。"
+            "子 Skill 只能提出候选动作，不能替 Brain 提交动作。若动作目标不在当前位置，"
+            "本轮先 MOVE，后续迭代到达后再 ACT，不能用 ACT 的文本假装已经移动。"
+            "IterationContext.total_steps 表示整个 Run 的步数，不等于一天内的时间槽数量。"
+            "普通日常活动使用 ACT "
             "并直接写 Event 的 predicate、object 和 description；WAIT 只用于真实等待。"
+        )
+        memory_snapshot = (
+            self.memory_stream.begin_iteration(agent_key)
+            if self.memory_stream is not None
+            and callable(getattr(self.memory_stream, "begin_iteration", None))
+            else None
         )
         try:
             result = runtime.run(
@@ -128,9 +138,46 @@ class BrainRuntime:
             )
             self._consecutive_fallbacks[agent_key] = 0
         except RecoverableSkillRuntimeError as exc:
+            discarded_action = mcp.action.as_dict() if mcp.action is not None else None
+            mcp.discard_action()
+            if memory_snapshot is not None:
+                self.memory_stream.rollback_iteration(memory_snapshot)
             failures = self._consecutive_fallbacks.get(agent_key, 0) + 1
             self._consecutive_fallbacks[agent_key] = failures
+            fallback_signal = {
+                "event": "brain.fallback",
+                "skill": self.brain_skill,
+                "reason": str(exc),
+                "consecutive_failures": failures,
+                "fatal": failures > 3,
+            }
+            rollback_signal = {
+                "event": "brain.rollback",
+                "skill": self.brain_skill,
+                "discarded_action": discarded_action,
+                "memory_restored": memory_snapshot is not None,
+            }
+            failed_trace = (
+                *tuple(getattr(exc, "trace", ())),
+                rollback_signal,
+                fallback_signal,
+            )
             if failures > 3:
+                self._append_audit_record(
+                    agent_key=agent_key,
+                    agent_name=agent.name,
+                    iteration=iteration,
+                    trace=failed_trace,
+                    action=PlannedWorldAction(
+                        action_type="WAIT",
+                        arguments={
+                            "action_type": "WAIT",
+                            "description": "Brain Skill 连续失败，当前迭代未提交",
+                        },
+                    ),
+                    total_steps=total_steps,
+                    stride_minutes=stride_minutes,
+                )
                 raise
             if self.logger is not None:
                 self.logger.warning(
@@ -142,12 +189,25 @@ class BrainRuntime:
             result = SkillRunResult(
                 skill=self.brain_skill,
                 output_text=f"Brain runtime fallback: {exc}",
+                trace=failed_trace,
+            )
+        except BaseException:
+            mcp.discard_action()
+            if memory_snapshot is not None:
+                self.memory_stream.rollback_iteration(memory_snapshot)
+            raise
+        if mcp.action is None and not any(
+            item.get("event") == "brain.fallback" for item in result.trace
+        ):
+            result = SkillRunResult(
+                skill=result.skill,
+                output_text=result.output_text,
                 trace=(
+                    *result.trace,
                     {
-                        "event": "brain.fallback",
+                        "event": "brain.missing_action",
                         "skill": self.brain_skill,
-                        "reason": str(exc),
-                        "consecutive_failures": failures,
+                        "reason": "Brain returned without calling world-act",
                     },
                 ),
             )
@@ -158,30 +218,14 @@ class BrainRuntime:
                 "description": "Brain Skill 未选择世界变化，本轮等待",
             },
         )
-        self._audit_records.append(
-            {
-                "agent_key": agent_key,
-                "agent_name": agent.name,
-                "step_no": step_no,
-                "now": iteration.now.isoformat(),
-                "mcp_calls": [
-                    {
-                        "skill": item.get("skill"),
-                        "tool": item.get("tool"),
-                        "input": item.get("input_text"),
-                        "output": item.get("output_text"),
-                    }
-                    for item in result.trace
-                    if item.get("event") == "mcp.call"
-                ],
-                "runtime_signals": [
-                    dict(item)
-                    for item in result.trace
-                    if item.get("event")
-                    in {"brain.fallback", "loop.detected", "loop.budget_exhausted"}
-                ],
-                "action": action.as_dict(),
-            }
+        self._append_audit_record(
+            agent_key=agent_key,
+            agent_name=agent.name,
+            iteration=iteration,
+            trace=result.trace,
+            action=action,
+            total_steps=total_steps,
+            stride_minutes=stride_minutes,
         )
         events: list[dict[str, Any]] = [
             {
@@ -234,11 +278,35 @@ class BrainRuntime:
             "events": tuple(events),
         }
 
-    def evaluate_quality(self) -> dict[str, Any]:
+    def evaluate_quality(
+        self,
+        *,
+        include_model: bool = True,
+        execution_error: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Evaluate Brain conformance without changing execution completion state."""
 
         deterministic_issues = self._deterministic_quality_issues()
-        evaluator = self._llm_quality_evaluation()
+        if execution_error:
+            deterministic_issues.append(
+                {
+                    "code": "RUN_EXECUTION_FAILED",
+                    "severity": "ERROR",
+                    "agent_key": None,
+                    "step_no": None,
+                    "message": "运行在完成全部 Step 前失败；报告仅覆盖已执行部分。",
+                    "evidence": dict(execution_error),
+                }
+            )
+        evaluator = (
+            self._llm_quality_evaluation()
+            if include_model
+            else {
+                "status": "SKIPPED",
+                "error": "model evaluation skipped for failed execution",
+                "issues": [],
+            }
+        )
         issues = [*deterministic_issues, *evaluator.get("issues", [])]
         if issues:
             status = "WARNING"
@@ -255,7 +323,13 @@ class BrainRuntime:
             "evaluated_agent_steps": len(self._audit_records),
             "summary": (
                 evaluator.get("summary")
-                or ("发现需要观察的行为偏差" if issues else "质量评估不可用")
+                or (
+                    "运行失败，已生成部分执行质量诊断"
+                    if execution_error
+                    else "发现需要观察的行为偏差"
+                    if issues
+                    else "质量评估不可用"
+                )
             ),
             "issues": issues,
             "evaluator": {
@@ -264,20 +338,102 @@ class BrainRuntime:
             },
         }
 
+    def _append_audit_record(
+        self,
+        *,
+        agent_key: str,
+        agent_name: str,
+        iteration: IterationContext,
+        trace,
+        action: PlannedWorldAction,
+        total_steps: int,
+        stride_minutes: int,
+    ) -> None:
+        trace_items = tuple(dict(item) for item in trace)
+        self._audit_records.append(
+            {
+                "agent_key": agent_key,
+                "agent_name": agent_name,
+                "step_no": iteration.step_no,
+                "total_steps": int(total_steps),
+                "stride_minutes": int(stride_minutes),
+                "now": iteration.now.isoformat(),
+                "skill_calls": [
+                    {
+                        "skill": item.get("skill"),
+                        "child": item.get("child"),
+                        "input": item.get("input_text"),
+                    }
+                    for item in trace_items
+                    if item.get("event") == "skill.call"
+                ],
+                "mcp_calls": [
+                    {
+                        "skill": item.get("skill"),
+                        "tool": item.get("tool"),
+                        "input": item.get("input_text"),
+                        "output": item.get("output_text"),
+                        "is_error": bool(item.get("is_error", False)),
+                    }
+                    for item in trace_items
+                    if item.get("event") == "mcp.call"
+                ],
+                "runtime_signals": [
+                    dict(item)
+                    for item in trace_items
+                    if item.get("event")
+                    in {
+                        "brain.fallback",
+                        "brain.missing_action",
+                        "brain.rollback",
+                        "loop.detected",
+                        "loop.budget_exhausted",
+                    }
+                ],
+                "action": action.as_dict(),
+            }
+        )
+
     def _deterministic_quality_issues(self) -> list[dict[str, Any]]:
         issues: list[dict[str, Any]] = []
         previous_reads: dict[str, dict[str, Any]] = {}
         for record in self._audit_records:
             agent_key = str(record["agent_key"])
             for signal in record.get("runtime_signals", []):
+                signal_event = str(signal.get("event") or "")
                 issues.append(
                     {
-                        "code": "BRAIN_RUNTIME_DEGRADED",
+                        "code": (
+                            "NO_WORLD_ACTION_SELECTED"
+                            if signal_event == "brain.missing_action"
+                            else "BRAIN_ITERATION_ROLLED_BACK"
+                            if signal_event == "brain.rollback"
+                            else "BRAIN_RUNTIME_DEGRADED"
+                        ),
                         "severity": "WARNING",
                         "agent_key": agent_key,
                         "step_no": record["step_no"],
-                        "message": "Brain 发生回退或循环保护，当前步行为可能偏离 SOP。",
+                        "message": (
+                            "Brain 未提交 world-act，系统安全收敛为 WAIT。"
+                            if signal_event == "brain.missing_action"
+                            else "失败的 Brain 迭代已回滚未提交动作和记忆副作用。"
+                            if signal_event == "brain.rollback"
+                            else "Brain 发生回退或循环保护，当前步行为可能偏离 SOP。"
+                        ),
                         "evidence": signal,
+                    }
+                )
+            for call in record.get("mcp_calls", []):
+                if not call.get("is_error"):
+                    continue
+                issues.append(
+                    {
+                        "code": "MCP_TOOL_ERROR",
+                        "severity": "WARNING",
+                        "agent_key": agent_key,
+                        "step_no": record["step_no"],
+                        "message": f"{call.get('tool')} 调用被能力边界拒绝。",
+                        "evidence": call,
                     }
                 )
             reads = [

@@ -22,7 +22,7 @@ example_input: "2026-08-19 09:30，咖啡馆里简正在吧台后做拿铁，马
 
 ## 执行方法
 
-先用 `world-perceive` MCP 确认对方确实可交互。保留完整对话历史作为自然语言上下文，每轮只选择当前需要的一个 Skill；要让话语进入仿真与回放，必须通过 `world-act` MCP 提交 `SPEAK`。对话总结可通过 `memory-stream-append` 保存。
+先用 `world-perceive` MCP 确认对方确实可交互。保留完整对话历史作为自然语言上下文，每轮只选择当前需要的一个 Skill。当前 Skill 不调用 `world-act`，而是把 `SPEAK` 候选参数交回 Brain；只有根 Brain 能把话语提交进仿真与回放。对话总结可在提交动作前通过 `memory-stream-append` 保存。
 
 ## 返回结果
 

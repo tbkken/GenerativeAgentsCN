@@ -47,6 +47,11 @@ class SimulationMCPServer:
     def action(self) -> PlannedWorldAction | None:
         return self._action
 
+    def discard_action(self) -> None:
+        """Discard an uncommitted choice when the enclosing Brain iteration fails."""
+
+        self._action = None
+
     def tools(self) -> list[dict[str, Any]]:
         tools = [
             {
@@ -96,12 +101,20 @@ class SimulationMCPServer:
                         "target_address": {
                             "type": "array",
                             "items": {"type": "string"},
+                            "description": (
+                                "For MOVE, the destination. For ACT, when supplied, "
+                                "it must equal the Agent's current four-layer address."
+                            ),
                         },
                         "target_coord": {
                             "type": "array",
                             "items": {"type": "integer"},
                             "minItems": 2,
                             "maxItems": 2,
+                            "description": (
+                                "For MOVE, the destination. For ACT, when supplied, "
+                                "it must equal the Agent's current coordinate."
+                            ),
                         },
                         "participant_agent_keys": {
                             "type": "array",
@@ -544,8 +557,46 @@ class SimulationMCPServer:
             object_value = str(payload.get("object") or "").strip()
             if not predicate or not object_value:
                 raise ValueError("ACT requires non-empty Event predicate and object")
+            current_coord = tuple(self.iteration.coord)
+            current_address = tuple(self.iteration.address)
+            requested_coord = payload.get("target_coord")
+            if requested_coord is not None:
+                if not isinstance(requested_coord, (list, tuple)) or len(requested_coord) != 2:
+                    raise ValueError("ACT target_coord must contain exactly two integers")
+                if tuple(int(item) for item in requested_coord) != current_coord:
+                    raise ValueError(
+                        "ACT can only occur at the current coordinate; use MOVE first "
+                        "and ACT in a later iteration"
+                    )
+            requested_address = payload.get("target_address")
+            if requested_address is not None:
+                if not isinstance(requested_address, (list, tuple)):
+                    raise ValueError("ACT target_address must be a four-layer address array")
+                if tuple(str(item) for item in requested_address) != current_address:
+                    raise ValueError(
+                        "ACT can only occur at the current address; use MOVE first "
+                        "and ACT in a later iteration"
+                    )
+            object_key = str(payload.get("object_key") or "").strip()
+            if object_key:
+                current_object_keys = {
+                    str(item.get("id") or "").strip()
+                    for item in self.iteration.spatial_semantics
+                    if str(item.get("kind") or "").upper() == "GAME_OBJECT"
+                    and str(item.get("id") or "").strip()
+                }
+                if object_key not in current_object_keys:
+                    raise ValueError(
+                        "ACT object_key is not the current Game Object; use MOVE first "
+                        "and ACT in a later iteration"
+                    )
+                payload["object_key"] = object_key
             payload["predicate"] = predicate
             payload["object"] = object_value
+            # ACT is a current-location fact.  Persist the authoritative values
+            # even when the model omitted these optional hints.
+            payload["target_coord"] = list(current_coord)
+            payload["target_address"] = list(current_address)
         elif action_type == "SPEAK":
             participants = self._participant_keys(
                 payload.get("participant_agent_keys") or ()

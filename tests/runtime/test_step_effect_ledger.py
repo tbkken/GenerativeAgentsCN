@@ -158,6 +158,45 @@ def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
     }
 
 
+def test_memory_iteration_rollback_restores_rows_and_pending_events(tmp_path):
+    run_id, attempt_id = uuid4(), uuid4()
+    now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
+    memory = MemoryStream(
+        tmp_path / "atomic-memory.sqlite",
+        run_id=run_id,
+        attempt_id=attempt_id,
+    )
+    memory.begin_step(1, now)
+    committed = memory.append(
+        agent_key="resident-001",
+        content="提交前已经存在的事实",
+    )
+    baseline_events = memory.drain_result_events()
+    snapshot = memory.begin_iteration("resident-001")
+
+    memory.search(agent_key="resident-001", query="存在")
+    memory.supersede(
+        agent_key="resident-001",
+        memory_id=committed["id"],
+        content="失败调用产生的替代事实",
+    )
+    memory.append(
+        agent_key="resident-001",
+        content="失败调用产生的新事实",
+    )
+    memory.rollback_iteration(snapshot)
+
+    found = memory.search(agent_key="resident-001", query="事实")
+    assert [item["id"] for item in found] == [committed["id"]]
+    assert found[0]["content"] == "提交前已经存在的事实"
+    # The baseline had already been drained.  Rollback removes only events
+    # emitted by the failed iteration; this final search emits one access event.
+    assert baseline_events[0]["memory_id"] == committed["id"]
+    assert [item["memory_kind"] for item in memory.drain_result_events()] == [
+        MemoryDeltaKind.ACCESSED.value
+    ]
+
+
 def test_memory_supersede_and_invalidate_preserve_history_but_hide_stale_versions(
     tmp_path,
 ):

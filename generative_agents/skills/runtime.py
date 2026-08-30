@@ -27,6 +27,10 @@ class SkillRuntimeError(RuntimeError):
 class RecoverableSkillRuntimeError(SkillRuntimeError):
     """A transient model failure or no-progress loop can degrade one step."""
 
+    def __init__(self, message: str, *, trace=()) -> None:
+        super().__init__(message)
+        self.trace = tuple(trace)
+
 
 class SkillModelError(RecoverableSkillRuntimeError):
     """The configured model gateway exhausted its retry policy."""
@@ -129,6 +133,8 @@ class SkillRuntime:
         self._active_skill_name: str | None = None
         self._total_tool_calls = 0
         self._tool_progress: dict[str, tuple[str, int]] = {}
+        self._semantic_tool_progress: dict[str, tuple[str, int, int]] = {}
+        self._state_epoch = 0
 
     def run(
         self,
@@ -150,13 +156,20 @@ class SkillRuntime:
         trace: list[dict[str, Any]] = []
         self._total_tool_calls = 0
         self._tool_progress = {}
-        output = self._run(
-            self.registry.get(skill_name),
-            str(input_text),
-            dict(context or {}),
-            trace,
-            depth=0,
-        )
+        self._semantic_tool_progress = {}
+        self._state_epoch = 0
+        try:
+            output = self._run(
+                self.registry.get(skill_name),
+                str(input_text),
+                dict(context or {}),
+                trace,
+                depth=0,
+            )
+        except RecoverableSkillRuntimeError as exc:
+            if not exc.trace:
+                exc.trace = tuple(trace)
+            raise
         return SkillRunResult(
             skill=self.registry.normalize_name(skill_name),
             output_text=output,
@@ -215,6 +228,12 @@ class SkillRuntime:
                 tool
                 for tool in self.mcp.tools()
                 if str(tool.get("name") or "") in document.markdown
+                # One Agent iteration has exactly one action owner: the root
+                # Brain.  Child packs propose an action in natural language;
+                # they cannot commit it behind the Brain's back.
+                and not (
+                    str(tool.get("name") or "") == "world-act" and depth != 0
+                )
             ]
             if self.mcp
             else []
@@ -377,6 +396,30 @@ class SkillRuntime:
                     raise SkillLoopError(
                         f"Skill {document.name} repeated {tool_name} without progress"
                     )
+                semantic_fingerprint = self._semantic_tool_fingerprint(
+                    document.name, tool_name, arguments
+                )
+                semantic_previous = self._semantic_tool_progress.get(
+                    semantic_fingerprint
+                )
+                if (
+                    semantic_previous is not None
+                    and semantic_previous[1] >= self.max_identical_tool_calls
+                    and semantic_previous[2] == self._state_epoch
+                ):
+                    trace.append(
+                        {
+                            "event": "loop.detected",
+                            "skill": document.name,
+                            "tool": tool_name,
+                            "arguments": arguments,
+                            "repeat_count": semantic_previous[1],
+                            "semantic_scope": semantic_fingerprint,
+                        }
+                    )
+                    raise SkillLoopError(
+                        f"Skill {document.name} repeated {tool_name} without semantic progress"
+                    )
                 self._total_tool_calls += 1
                 if self._total_tool_calls > self.max_hops:
                     trace.append(
@@ -390,6 +433,8 @@ class SkillRuntime:
                     raise SkillLoopError(
                         f"Brain exceeded the configured {self.max_hops} tool-call budget"
                     )
+                tool_result_is_error = False
+                state_changed = False
                 if tool_name == "call_skill":
                     # 子 Skill 获得自然语言上下文，但仍共享本次运行的审计轨迹。
                     child_name = arguments.get("name")
@@ -436,11 +481,28 @@ class SkillRuntime:
                 elif self.mcp and any(tool["name"] == tool_name for tool in mcp_tools):
                     # MCP 工具也必须出现在当前 Skill 声明的允许列表中。
                     result = self.mcp.call(tool_name, arguments)
-                    tool_output = "\n".join(
+                    raw_output = "\n".join(
                         str(item.get("text") or "")
                         for item in result.get("content", [])
                         if item.get("type") == "text"
                     ).strip()
+                    is_error = bool(result.get("isError"))
+                    tool_result_is_error = is_error
+                    state_changed = tool_name in {
+                        "world-act",
+                        "memory-stream-append",
+                        "memory-stream-supersede",
+                        "memory-stream-invalidate",
+                    } and not is_error
+                    tool_output = (
+                        json.dumps(
+                            {"isError": True, "error": raw_output},
+                            ensure_ascii=False,
+                            separators=(",", ":"),
+                        )
+                        if is_error
+                        else raw_output
+                    )
                     trace.append(
                         {
                             "event": "mcp.call",
@@ -448,6 +510,7 @@ class SkillRuntime:
                             "tool": tool_name,
                             "input_text": json.dumps(arguments, ensure_ascii=False),
                             "output_text": tool_output,
+                            "is_error": is_error,
                         }
                     )
                 else:
@@ -465,6 +528,27 @@ class SkillRuntime:
                     output_fingerprint,
                     repeat_count,
                 )
+                if state_changed:
+                    # A committed mutation is genuine progress.  Repeating a
+                    # capability after it must be judged against the new state,
+                    # not against pre-mutation outputs.
+                    self._state_epoch += 1
+                    self._tool_progress.clear()
+                    self._semantic_tool_progress.clear()
+                    semantic_previous = None
+                if (
+                    semantic_previous is not None
+                    and semantic_previous[0] == output_fingerprint
+                    and semantic_previous[2] == self._state_epoch
+                ):
+                    semantic_repeat_count = semantic_previous[1] + 1
+                else:
+                    semantic_repeat_count = 1
+                self._semantic_tool_progress[semantic_fingerprint] = (
+                    output_fingerprint,
+                    semantic_repeat_count,
+                    self._state_epoch,
+                )
                 messages.append(
                     {
                         "role": "tool",
@@ -473,6 +557,24 @@ class SkillRuntime:
                         "content": tool_output,
                     }
                 )
+                if (
+                    tool_name == "world-act"
+                    and self.mcp is not None
+                    and not tool_result_is_error
+                ):
+                    # world-act is the terminal mutation choice for an Agent
+                    # iteration.  Returning immediately prevents a later model
+                    # turn from replacing it or spending the remaining budget
+                    # after the decision is already complete.
+                    output = "world-act accepted; this Agent iteration is complete."
+                    trace.append(
+                        {
+                            "event": "skill.result",
+                            "skill": document.name,
+                            "output_text": output,
+                        }
+                    )
+                    return output
         raise SkillLoopError(
             f"Skill {document.name} did not finish within {self.max_hops} calls"
         )
@@ -553,6 +655,25 @@ class SkillRuntime:
             sort_keys=True,
             separators=(",", ":"),
             allow_nan=False,
+        ).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
+
+    @staticmethod
+    def _semantic_tool_fingerprint(
+        skill_name: str, tool_name: str, arguments: Mapping[str, Any]
+    ) -> str:
+        """Identify the capability being repeated independently of paraphrased input."""
+
+        target = ""
+        if tool_name == "call_skill":
+            target = str(arguments.get("name") or "")
+        elif tool_name == "run_skill_script":
+            target = str(arguments.get("function") or "")
+        encoded = json.dumps(
+            {"skill": skill_name, "tool": tool_name, "target": target},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
         ).encode("utf-8")
         return hashlib.sha256(encoded).hexdigest()
 
