@@ -11,7 +11,7 @@ from generative_agents.persistence.models import ExperimentRevision, Run, RunEve
 from generative_agents.web import create_app
 from tests.support import (
     brain_revision_via_api,
-    first_builtin_crowd_revision_id,
+    first_user_crowd_revision_id,
     publish_user_map_via_api,
 )
 
@@ -87,14 +87,14 @@ def test_experiment_api_create_list_validate_and_conflict(database_url):
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
             },
         )
         assert created_response.status_code == 201
         assert created_response.headers["X-Request-ID"]
         created = created_response.json()
 
-        listing = client.get("/api/v1/experiments", params={"page_size": 10}).json()
+        listing = client.get("/api/v1/experiments").json()
         assert listing["total"] == 1
         assert listing["items"][0]["id"] == created["id"]
 
@@ -129,14 +129,14 @@ def test_publish_and_run_resolves_auto_models_without_manual_probe(database_url)
         session = _AutoModelSession()
         app.state.model_probe_service._session = session
         map_revision = publish_user_map_via_api(client)
-        crowd_revision_id = first_builtin_crowd_revision_id(client)
+        crowd_revision_id = first_user_crowd_revision_id(client)
         created = client.post(
             "/api/v1/experiments",
             json={
                 "name": "Auto model run",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
         ).json()
@@ -213,7 +213,7 @@ def test_offline_model_probe_is_counted_once_as_a_publish_warning(database_url):
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
             },
         ).json()
         draft = client.get(f"/api/v1/experiments/{created['id']}/draft").json()
@@ -242,14 +242,14 @@ def test_metadata_agent_prompt_and_world_draft_routes_are_optimistic(database_ur
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         map_revision = publish_user_map_via_api(client)
-        crowd_revision_id = first_builtin_crowd_revision_id(client)
+        crowd_revision_id = first_user_crowd_revision_id(client)
         created = client.post(
             "/api/v1/experiments",
             json={
                 "name": "Editable",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
         ).json()
@@ -300,7 +300,7 @@ def test_duplicate_experiment_deep_copies_the_selected_definition(database_url):
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
             },
         ).json()
         duplicate_response = client.post(
@@ -421,7 +421,7 @@ def test_global_event_cursor_exposes_run_activity_with_experiment_identity(datab
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
             },
         ).json()
         run_id = "global-event-run"

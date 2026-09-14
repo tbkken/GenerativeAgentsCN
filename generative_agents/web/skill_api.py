@@ -1,4 +1,4 @@
-"""数据库 Skill/Revision 平台的 REST 与 MCP 路由。"""
+"""Studio 可变 Skill 资源的 REST 与 MCP 试运行路由。"""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ class CreateSkillRequest(RequestModel):
 
 
 class SaveSkillRequest(RequestModel):
-    """保存已有 Skill 新版本的 Markdown 与私有 Script 内容。"""
+    """直接保存已有 Skill 的 Markdown 与私有 Script 内容。"""
 
     markdown: str = Field(min_length=1, max_length=200_000)
     scripts: dict[str, str] | None = None
@@ -51,7 +51,7 @@ def create_skill_router(
     """创建技能`router`。
 
     参数:
-        registry: 以数据库 Revision 为事实来源的 Skill 注册表。
+        registry: 以 Studio 当前可变资源为事实来源的 Skill 注册表。
         runtime: 传入当前算法的`runtime`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`SkillRuntime`。
         mcp: 技能调用使用的 MCP 服务端或客户端适配器。 类型：`SkillMCPServer`。
 
@@ -234,7 +234,7 @@ def create_skill_router(
             "handoff": "natural-language",
             "business_schema_required": False,
             "skill_storage": "database",
-            "run_snapshot": "immutable-manifest-bundle",
+            "run_snapshot": "physical-experiment-copy",
         }
 
     @router.post("/api/v1/skills/{skill_name}/archive")

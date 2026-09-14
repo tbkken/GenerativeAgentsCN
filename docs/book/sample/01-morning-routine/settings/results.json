@@ -1,0 +1,4 @@
+{
+  "agent_step_projection_interval_steps": 1,
+  "capture_model_payloads": true
+}

@@ -36,7 +36,7 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
             "brain_skill": brain["name"],
             "brain_revision_id": brain["revision_id"],
             "source": source,
-            "map_revision_id": map_revision["id"],
+            "map_id": map_revision["id"],
             "crowd_revision_ids": crowd_revision_ids,
         },
     )
@@ -44,8 +44,8 @@ def _create(client: TestClient, name: str, source_type: str = "CROWD", **metadat
     return response.json()
 
 
-def test_crowd_based_creation_metadata_filters_views_and_lifecycle(database_url):
-    """回归验证 ``test_crowd_based_creation_metadata_filters_views_and_lifecycle`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_crowd_based_creation_metadata_and_archive_lifecycle(database_url):
+    """回归验证 ``test_crowd_based_creation_metadata_and_archive_lifecycle`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         first = _create(client, "人群实验 A")
@@ -56,26 +56,13 @@ def test_crowd_based_creation_metadata_filters_views_and_lifecycle(database_url)
         assert len(first_draft["definition"]["agents"]) == 25
         assert len(second_draft["definition"]["agents"]) == 25
 
-        by_owner = client.get("/api/v1/experiments", params={"owner": "产品研究员", "page_size": 5}).json()
-        by_tag = client.get("/api/v1/experiments", params={"tag": "UX验收", "page_size": 5}).json()
-        tag_search = client.get("/api/v1/experiments", params={"q": "UX验收", "page_size": 5}).json()
-        assert [item["id"] for item in by_owner["items"]] == [first["id"]]
-        assert {item["id"] for item in by_tag["items"]} == {first["id"], second["id"]}
-        assert {item["id"] for item in tag_search["items"]} == {first["id"], second["id"]}
+        listing = client.get("/api/v1/experiments").json()
+        assert listing["page_size"] == 5
+        by_id = {item["id"]: item for item in listing["items"]}
+        assert by_id[first["id"]]["owner"] == "产品研究员"
+        assert by_id[second["id"]]["owner"] == "另一位研究员"
+        assert by_id[first["id"]]["tags"] == ["UX验收"]
 
-        saved = client.post(
-            "/api/v1/experiment-saved-views",
-            json={"name": "UX验收视图", "query": {"tag": "UX验收", "sort": "-updated_at", "page_size": 5}},
-        )
-        assert saved.status_code == 201
-        shared = client.get(f"/api/v1/experiment-saved-views/shared/{saved.json()['share_key']}")
-        assert shared.json()["query"]["page_size"] == 5
-
-        batch = client.post(
-            "/api/v1/experiments/batch",
-            json={"experiment_ids": [first["id"], second["id"]], "action": "ADD_TAGS", "tags": ["批次一"]},
-        )
-        assert batch.json()["affected"] == 2
         archived = client.post(f"/api/v1/experiments/{first['id']}/archive", json={})
         assert archived.status_code == 200
         assert client.get("/api/v1/experiments", params={"archived": "active"}).json()["total"] == 1
@@ -102,7 +89,7 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
                 "goal": "验证创建入口组合大脑、地图和一个或多个人群",
                 "brain_skill": "pedestrian-crossing-brain",
                 "brain_revision_id": brain.json()["revision_id"],
-                "map_revision_id": public_map["id"],
+                "map_id": public_map["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },
         )
@@ -112,12 +99,12 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
         ).json()
         assert len(draft["definition"]["agents"]) == 25
         assert draft["definition"]["engine"]["brain_skill"] == "pedestrian-crossing-brain"
-        assert draft["definition"]["world"]["map_revision_id"] == public_map["id"]
+        assert draft["definition"]["world"]["map_id"] == public_map["id"]
         assert draft["definition"]["engine"]["brain_revision_id"] == brain.json()["revision_id"]
         assert draft["definition"]["engine"]["brain_revision_hash"] == brain.json()["revision"]
         assert draft["provenance"]["brain_revision_id"] == brain.json()["revision_id"]
-        assert draft["provenance"]["world_map_revision_id"] == public_map["id"]
-        assert draft["provenance"]["world_map_revision_hash"] == public_map["world_hash"]
+        assert draft["provenance"]["world_map_id"] == public_map["id"]
+        assert "world_map_snapshot_hash" not in draft["provenance"]
         assert draft["provenance"]["crowd_revision_ids"] == [crowd["current_published"]["id"]]
 
         missing_crowd = client.post(
@@ -126,7 +113,7 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
                 "name": "缺少人群",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": public_map["id"],
+                "map_id": public_map["id"],
             },
         )
         assert missing_crowd.status_code == 422
@@ -139,7 +126,7 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
                 "name": "错误大脑类型",
                 "brain_skill": "wake-up",
                 "brain_revision_id": atomic["revision_id"],
-                "map_revision_id": public_map["id"],
+                "map_id": public_map["id"],
                 "crowd_revision_ids": [crowd["current_published"]["id"]],
             },
         )
@@ -147,26 +134,14 @@ def test_resource_first_creation_selects_skill_brain_map_and_multiple_crowds(dat
         assert wrong_kind.json()["error"]["code"] == "BRAIN_SKILL_KIND_REQUIRED"
 
 
-def test_experiment_and_saved_view_have_real_delete_lifecycle(database_url):
+def test_experiment_has_real_delete_lifecycle(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         experiment = _create(client, "可删除实验")
-        saved_view = client.post(
-            "/api/v1/experiment-saved-views",
-            json={"name": "临时视图", "query": {"q": "可删除"}},
-        ).json()
-
-        deleted_experiment = client.delete(f"/api/v1/experiments/{experiment['id']}")
-        deleted_view = client.delete(
-            f"/api/v1/experiment-saved-views/{saved_view['id']}"
-        )
-        missing_experiment = client.get(f"/api/v1/experiments/{experiment['id']}")
-        views = client.get("/api/v1/experiment-saved-views").json()["items"]
-
-    assert deleted_experiment.status_code == 204
-    assert deleted_view.status_code == 204
-    assert missing_experiment.status_code == 404
-    assert saved_view["id"] not in {item["id"] for item in views}
+        deleted = client.delete(f"/api/v1/experiments/{experiment['id']}")
+        missing = client.get(f"/api/v1/experiments/{experiment['id']}")
+    assert deleted.status_code == 204
+    assert missing.status_code == 404
 
 
 def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_url):
@@ -196,16 +171,28 @@ def test_blank_publish_is_blocked_and_blank_map_is_fully_initialized(database_ur
             json={"name": "原子空白地图", "width": 7, "height": 6, "tile_size": 24},
         )
         assert created.status_code == 201, created.text
-        draft = client.get(f"/api/v1/maps/{created.json()['id']}/draft").json()
-        world = draft["world"]
+        current = client.get(f"/api/v1/maps/{created.json()['id']}").json()
+        world = current["world"]
         assert world["definition"]["size"] == [6, 7]
+        assert world["definition"]["size_unit"] == "TILE"
         assert world["definition"]["tile_size"] == 24
         assert len(world["definition"]["tiles"]) == 42
         assert all(isinstance(tile["collision"], bool) for tile in world["definition"]["tiles"])
 
+        one_tile = client.post(
+            "/api/v1/maps",
+            json={"name": "单格地图", "width": 1, "height": 1, "tile_size": 32},
+        )
+        assert one_tile.status_code == 201, one_tile.text
+        one_tile_world = one_tile.json()["world"]["definition"]
+        assert one_tile_world["size"] == [1, 1]
+        assert one_tile_world["size_unit"] == "TILE"
+        assert one_tile_world["tile_size"] == 32
+        assert [tile["coord"] for tile in one_tile_world["tiles"]] == [[0, 0]]
 
-def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
-    """回归验证 ``test_agent_batch_estimate_compare_and_persisted_model_state`` 所描述的业务结果、故障边界和隔离约束。"""
+
+def test_agent_batch_estimate_and_persisted_model_state(database_url):
+    """回归验证 ``test_agent_batch_estimate_and_persisted_model_state`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         first = _create(client, "Agent 批量 A")
@@ -241,14 +228,6 @@ def test_agent_batch_estimate_compare_and_persisted_model_state(database_url):
         assert estimate["estimate"]["model_calls"]["high"] >= estimate["estimate"]["model_calls"]["low"]
         assert estimate["estimate_version"] == 2
         assert estimate["estimate"]["model_calls"] == {"low": 50001, "high": 150003}
-
-        comparison = client.post(
-            "/api/v1/experiments/compare",
-            json={"experiment_ids": [first["id"], second["id"]]},
-        )
-        assert comparison.status_code == 200
-        assert comparison.json()["difference_count"] > 0
-        assert any(group["key"] == "agents" for group in comparison.json()["groups"])
 
         statuses = client.get(f"/api/v1/experiments/{second['id']}/draft/models/status").json()
         assert statuses["counts"]["UNTESTED"] == 2

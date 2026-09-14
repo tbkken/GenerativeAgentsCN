@@ -9,6 +9,7 @@ from types import MappingProxyType
 from typing import Any, Mapping
 from uuid import NAMESPACE_URL, UUID, uuid5
 
+from generative_agents.ga_protocol.movement import movement_activity_from_predicate
 from generative_agents.modules import utils
 from generative_agents.modules import memory
 from generative_agents.modules.agent import Agent
@@ -68,7 +69,6 @@ class Game:
         self.maze = Maze(copy.deepcopy(maze_definition), self.logger, context.random)
         self.game_object_interactions = GameObjectInteractionSystem(
             maze_definition,
-            skill_executor=getattr(context, "passive_skills", None),
             clock=context.clock,
         )
         self.conversation = conversation
@@ -130,10 +130,8 @@ class Game:
         self.agent_keys_by_name: Mapping[str, str] = MappingProxyType(
             agent_keys_by_name
         )
-        # Game Object passive Skills produce observations, not world mutations.
-        # Keep them in a run-private one-step inbox so the response that was
-        # returned at the end of one Brain turn becomes explicit input to the
-        # next IterationContext.  The inbox is checkpointed below.
+        # Only committed object replies enter this Agent-isolated inbox. It is
+        # checkpointed so each reply reaches exactly one next IterationContext.
         self._external_observation_inbox: dict[str, list[dict[str, Any]]] = {
             agent_key: [] for agent_key in self.agents
         }
@@ -158,7 +156,7 @@ class Game:
     def queue_external_observation(
         self, agent_key: str, observation: Mapping[str, Any]
     ) -> None:
-        """Queue one passive world response for the Agent's next iteration."""
+        """Queue one committed object response for the Agent's next iteration."""
 
         if agent_key not in self.agents:
             raise KeyError(f"unknown Agent for external observation: {agent_key}")
@@ -190,6 +188,34 @@ class Game:
         self._external_observation_inbox[agent_key] = []
         return observations
 
+    def validate_conversation_message(
+        self,
+        agent_key: str,
+        participant_agent_keys,
+        *,
+        requested_conversation_id: str | None = None,
+        start_new: bool = False,
+    ):
+        """Validate a conversation without creating a thread or consuming a message."""
+        participants = tuple(sorted({agent_key, *participant_agent_keys}))
+        if len(participants) != 2:
+            raise ValueError("SPEAK currently requires exactly two distinct Agents")
+        requested_id = str(requested_conversation_id or "").strip()
+        if requested_id:
+            try:
+                UUID(requested_id)
+            except ValueError as exc:
+                raise ValueError("conversation_id must be a UUID; omit it for a new conversation") from exc
+            if start_new:
+                raise ValueError("omit conversation_id when start_new_conversation is true")
+            thread = self._conversation_threads.get(requested_id)
+            if thread is None:
+                raise ValueError("conversation_id is unknown; omit it for a new conversation")
+            if tuple(thread["participants"]) != participants:
+                raise ValueError("conversation_id belongs to different participants; omit it to talk to the selected participant")
+            if not bool(thread.get("open", True)):
+                raise ValueError("conversation_id is already closed; omit it for a new conversation")
+
     def record_conversation_message(
         self,
         agent_key: str,
@@ -202,6 +228,11 @@ class Game:
     ) -> dict[str, Any]:
         """Return a stable thread id and monotonically increasing message number."""
 
+        self.validate_conversation_message(
+            agent_key, participant_agent_keys,
+            requested_conversation_id=requested_conversation_id,
+            start_new=start_new,
+        )
         participants = tuple(sorted({agent_key, *participant_agent_keys}))
         if len(participants) != 2:
             raise ValueError("SPEAK currently requires exactly two distinct Agents")
@@ -336,23 +367,32 @@ class Game:
         consumed = planned_path[:movement_budget] if action_type == "MOVE" else ()
         remaining = planned_path[len(consumed) :] if action_type == "MOVE" else ()
         target_address = tuple(arguments.get("target_address") or ())
-        description = str(arguments.get("description") or "").strip()
-        predicate = str(arguments.get("predicate") or "").strip()
-        object_value = str(arguments.get("object") or "").strip()
+        requested_description = str(arguments.get("description") or "").strip()
+        requested_predicate = str(arguments.get("predicate") or "").strip()
+        requested_object = str(arguments.get("object") or "").strip()
+        description = requested_description
+        predicate = requested_predicate
+        object_value = requested_object
         emoji = str(arguments.get("emoji") or "").strip()
         object_event = None
+        movement_activity = None
         extra_events: list[dict] = []
 
         if action_type == "MOVE":
-            destination = tuple(consumed[-1]) if consumed else from_coord
-            destination_address = tuple(
-                self.maze.tile_at(destination).get_address()
+            movement_activity = movement_activity_from_predicate(arguments.get("predicate"))
+            if not planned_path:
+                raise ValueError("MOVE requires a non-empty validated path")
+            if movement_budget < 1 or not consumed:
+                raise ValueError("MOVE requires a positive movement budget")
+            planned_destination = tuple(planned_path[-1])
+            if tuple(arguments.get("target_coord") or ()) != planned_destination:
+                raise ValueError("MOVE target_coord does not match its validated path")
+            planned_destination_address = tuple(
+                self.maze.tile_at(planned_destination).get_address()
             )
-            target_address = target_address or destination_address
-            predicate = predicate or "移动到"
-            object_value = object_value or ":".join(target_address)
-            description = description or f"{agent.name} 前往 {object_value}"
-            emoji = emoji or "🚶"
+            if target_address != planned_destination_address:
+                raise ValueError("MOVE target_address does not match its target_coord")
+            emoji = emoji or "➡️"
         elif action_type == "ACT":
             if not predicate or not object_value:
                 raise ValueError(
@@ -401,7 +441,17 @@ class Game:
             description = description or f"{agent.name} 与 {object_key} 交互"
             emoji = emoji or "🤝"
             if observation:
-                self.queue_external_observation(agent_key, observation)
+                step_no = int(outcome["info"]["iteration_context"]["step"]["number"])
+                request_id = str(uuid5(self.context.run_id, f"interaction:{step_no}:{agent_key}:{object_key}"))
+                observation = self.game_object_interactions.enqueue_request(observation, request_id)
+                action["observation"] = observation
+                outcome["world_action"] = action
+                extra_events.append(self._world_domain_event(
+                    "GAME_OBJECT_INTERACTION_REQUESTED", (agent_key,),
+                    subject=agent_key, predicate="请求", object_value=object_key,
+                    structured_payload={**observation, "address": list(before_address),
+                                        "description": description},
+                ))
         elif action_type == "SET_OBJECT_STATE":
             object_key = str(arguments.get("object_key") or "")
             before, after = self.game_object_interactions.apply_state_patch(
@@ -444,7 +494,32 @@ class Game:
             description = description or f"{agent.name} 原地等待"
             emoji = emoji or "⏳"
 
-        event_address = list(target_address if action_type == "MOVE" else before_address)
+        to_coord = tuple(consumed[-1]) if consumed else from_coord
+        current_address = tuple(self.maze.tile_at(to_coord).get_address())
+        if action_type == "MOVE":
+            if to_coord == from_coord:
+                raise ValueError("MOVE must commit an actual coordinate change")
+            current_label = ":".join(str(part) for part in current_address if str(part))
+            reached_target = not remaining and to_coord == tuple(planned_path[-1])
+            predicate = "移动到"
+            object_value = current_label
+            # Only the actual location is public. A planned destination may be
+            # outside a nearby observer's view and is not an arrival fact.
+            description = f"{agent.name} 移动到 {current_label}"
+            if movement_activity:
+                description = (
+                    f"{agent.name} 移动活动：{movement_activity['text']}；"
+                    f"移动到 {current_label}"
+                )
+            arguments["requested_description"] = requested_description or None
+            arguments["requested_predicate"] = requested_predicate or None
+            arguments["requested_object"] = requested_object or None
+            arguments["description"] = description
+            arguments["predicate"] = predicate
+            arguments["object"] = object_value
+            action["arguments"] = arguments
+            outcome["world_action"] = action
+        event_address = list(current_address if action_type == "MOVE" else before_address)
         agent.action = memory.Action(
             memory.Event(
                 agent.name,
@@ -453,17 +528,16 @@ class Game:
                 address=event_address,
                 describe=description,
                 emoji=emoji,
+                movement_activity=movement_activity,
             ),
             object_event,
             duration=stride_minutes,
             clock=self.context.clock,
         )
-        if consumed:
-            agent.move(tuple(consumed[-1]), list(remaining))
-        else:
-            agent.move(from_coord, list(remaining))
-        to_coord = tuple(agent.coord)
-        current_address = tuple(agent.get_tile().get_address())
+        # Moving also projects the current action into the map's event index.
+        # Install this committed action first so an old event is never carried
+        # to the new coordinate (or left one action behind for an in-place ACT).
+        agent.move(to_coord, list(remaining))
         address_text = ":".join(str(part) for part in current_address if str(part))
         current_status = (
             f"{description}（位置：{address_text}）" if address_text else description
@@ -500,6 +574,11 @@ class Game:
                 "currently": current_status,
                 "arguments": arguments,
             }
+            if action_type == "MOVE":
+                structured_payload["movement_activity"] = movement_activity
+                # This is arrival at this MOVE's explicit target, not the
+                # completion of the actor's task or intended whole journey.
+                structured_payload["reached_target"] = reached_target
             if action.get("observation"):
                 structured_payload["observation"] = dict(action["observation"])
             extra_events.append(
@@ -519,6 +598,95 @@ class Game:
             "executed_path": executed_path,
             "remaining_path": tuple(remaining),
         }
+
+    def run_game_object_skills(self, *, step_no: int, total_steps: int,
+                              stride_minutes: int, observed_facts=()):
+        """Objects execute after Agent actions, before the same Step is frozen."""
+        bindings = sorted(self.game_object_interactions.affordances, key=lambda item: item.object_key)
+        runtime = getattr(self.context, "object_skill_runtime", None)
+        if bindings and runtime is None:
+            raise ValueError("bound Game Objects require ObjectSkillRuntime")
+        for binding in bindings:
+            outcome = runtime.run_step(
+                self, binding, step_no=step_no, total_steps=total_steps,
+                stride_minutes=stride_minutes, observed_facts=observed_facts,
+            )
+            yield from self.commit_game_object_action(outcome)
+
+    def commit_game_object_action(self, outcome: Mapping) -> list[dict]:
+        """Commit an object's MCP-selected action, replies and recovery progress."""
+        iteration = outcome["iteration"]
+        object_key = iteration.object_key
+        system = self.game_object_interactions
+        action = outcome["action"]
+        args = copy.deepcopy(dict(action.arguments))
+        state = system.runtime_state(object_key)
+        if state["last_step"] >= iteration.step_no:
+            raise ValueError("Game Object already committed this Step")
+        key = args.get("idempotency_key")
+        if key and key in state["action_keys"]:
+            raise ValueError("Game Object activity is already committed")
+        requests = {request["request_id"]: request for request in state["requests"]}
+        responses = args.get("responses", [])
+        if any(reply["request_id"] not in requests for reply in responses):
+            raise ValueError("object reply does not belong to a pending request")
+        predicate = str(args.get("predicate") or "")
+        object_value = str(args.get("object") or "")
+        payload = {
+            "actor_kind": "GAME_OBJECT", "actor_object_key": object_key,
+            "object_key": object_key, "action_type": action.action_type,
+            "coord": list(iteration.coord), "address": list(iteration.address),
+            "arguments": args, "description": str(args.get("description") or ""),
+            "target_agent_key": args.get("target_agent_key"),
+            "evidence": args.get("evidence", []), "idempotency_key": key,
+        }
+        if action.action_type == "SET_OBJECT_STATE":
+            before, after = system.apply_state_patch(object_key, args["state_patch"])
+            payload.update(before=before, after=after, state_patch=args["state_patch"])
+            predicate = "状态变为"
+            object_value = json.dumps(after, ensure_ascii=False, sort_keys=True)
+            event_type = "GAME_OBJECT_STATE_CHANGED"
+        elif action.action_type == "ACT":
+            event_type = "GAME_OBJECT_ACTED"
+        elif action.action_type == "WAIT":
+            predicate, object_value = predicate or "等待", object_value or "下一轮"
+            event_type = "GAME_OBJECT_WAITED"
+        else:
+            raise ValueError("invalid Game Object action")
+        if not predicate or not object_value:
+            raise ValueError("Game Object action requires SPO")
+        payload["description"] = payload["description"] or f"{iteration.object_name}{predicate}{object_value}"
+        events = [self._world_domain_event(
+            event_type, (args["target_agent_key"],) if args.get("target_agent_key") else (),
+            subject=object_key, predicate=predicate, object_value=object_value,
+            structured_payload=payload,
+        )]
+        for reply in responses:
+            request = requests[reply["request_id"]]
+            observation = {
+                "object_key": object_key, "object_name": iteration.object_name,
+                "request_id": reply["request_id"], "request": request["request"],
+                "interaction_key": request["interaction_key"],
+                "skill_name": outcome["skill_name"], "skill_content_hash": outcome["skill_content_hash"],
+                "response": reply["message"], "observed_step": iteration.step_no,
+                "observed_at": iteration.now.isoformat(),
+            }
+            self.queue_external_observation(request["agent_key"], observation)
+            events.append(self._world_domain_event(
+                "GAME_OBJECT_SKILL_RESPONDED", (request["agent_key"],),
+                subject=object_key, predicate="回应", object_value=request["agent_key"],
+                structured_payload={**observation, "recipient_agent_key": request["agent_key"],
+                                    "address": list(iteration.address), "description": reply["message"]},
+            ))
+        system.commit_iteration(object_key, step_no=iteration.step_no, action=action.as_dict(),
+                                responses=responses, fallback=outcome["fallback"])
+        events.append({
+            "kind": "object_skill_execution", "object_key": object_key,
+            "skill_name": outcome["skill_name"], "skill_content_hash": outcome["skill_content_hash"],
+            "input_text": outcome["input_text"], "output_text": outcome["output_text"],
+            "trace": outcome["trace"], "fallback": outcome["fallback"],
+        })
+        return events
 
     @staticmethod
     def _world_domain_event(
@@ -549,7 +717,8 @@ class Game:
         initialized here, otherwise the removed hard-coded cognition pipeline
         would remain an accidental production dependency.
         """
-        self.logger.info("BrainRuntime ready for %d Agents", len(self.agents))
+        self.logger.info("Skill runtimes ready for %d Agents and %d Game Objects",
+                         len(self.agents), len(self.game_object_interactions.affordances))
 
     def snapshot_state(self) -> dict:
         """执行 `Game` 的快照状态操作。
@@ -571,6 +740,7 @@ class Game:
             # 因此调用 setstate() 前必须恢复原有嵌套形状。
             "rng_state": self.context.random.getstate(),
             "game_object_states": self.game_object_interactions.snapshot_state(),
+            "game_object_runtime": self.game_object_interactions.snapshot_runtime(),
             "external_observation_inbox": copy.deepcopy(
                 getattr(
                     self,
@@ -607,6 +777,9 @@ class Game:
         if object_states is None:
             raise ValueError("checkpoint is missing game_object_states")
         self.game_object_interactions.restore_state(object_states)
+        self.game_object_interactions.restore_runtime(
+            snapshot.get("game_object_runtime", {}), agent_keys=set(self.agents),
+        )
         inbox = snapshot.get("external_observation_inbox") or {}
         if not isinstance(inbox, Mapping):
             raise ValueError("checkpoint external observation inbox is invalid")

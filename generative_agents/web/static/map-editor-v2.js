@@ -51,11 +51,15 @@
       this.childrenByParent = new Map();
       this.layerUsage = new Map();
       this.passiveSkillCatalog = [];
+      this.skillCatalogScope = '';
+      this.skillCatalogGeneration = 0;
+      this.skillCatalogController = null;
       this.workspace = 'world';
       this.depth = 4;
       this.semanticVisible = false;
       this.selectedNodeId = '';
       this.nodeMaterialPreview = null;
+      this.nodeEditDraft = null;
       this.expandedNodes = new Set();
       this.expandedSources = new Set();
       this.selectedSourceId = '';
@@ -63,6 +67,7 @@
       this.selectedCanvasId = '';
       this.materialView = 'source';
       this.editingSlice = false;
+      this.sliceNameDraft = null;
       this.sliceRotationPreview = null;
       this.selectedPaintSliceId = '';
       this.brushPaletteOpen = false;
@@ -87,6 +92,7 @@
       this.viewportHeight = 620;
       this.renderTile = 16;
       this.buildShell();
+      this.navigation = new window.MapNavigationEditor(this);
       this.bind();
       this.resizeObserver = new ResizeObserver(() => this.resize());
       this.resizeObserver.observe(this.canvasHost);
@@ -121,6 +127,7 @@
         <nav class="me2-tabs" aria-label="地图工作区">
           <button class="active" data-me2-tab="world"><span>◎</span>世界</button>
           <button data-me2-tab="materials"><span>◇</span>素材</button>
+          <button class="me2-panel-toggle" data-toggle-resource-panel aria-expanded="false">资源栏</button>
         </nav>
         <section class="map-build-guide me2-build-guide" id="mapBuildGuide" hidden>
           <div class="map-build-guide-head"><div><span>SCENE BUILD GUIDE</span><h3 id="mapBuildGuideTitle">地图构建向导</h3></div><strong id="mapBuildGuideProgress">0 / 0</strong></div>
@@ -150,7 +157,7 @@
               </div>
               <div class="me2-tool-group" data-material-tools hidden>
                 <button data-material-pan type="button" aria-pressed="false" title="激活后拖动画布">✋ 拖动画布</button>
-                <span class="me2-material-grid-hint">32 × 32 px / 格</span>
+                <span class="me2-material-grid-hint">Tile 像素 / 格</span>
               </div>
               <span class="me2-spacer"></span>
               <label class="me2-depth"><span>显示至</span><select data-depth>
@@ -160,6 +167,7 @@
                 <option value="4" selected>第 4 层 · Game Object</option>
               </select></label>
               <button data-semantics>⌘ 语义</button>
+              <button data-navigation aria-pressed="false">通路</button>
               <span class="me2-divider"></span>
               <button data-zoom-out>−</button><span class="me2-zoom" data-zoom>100%</span>
               <button data-zoom-in>＋</button><button data-fit>适配</button>
@@ -184,11 +192,17 @@
     }
 
     bind() {
+      this.root.querySelector('[data-toggle-resource-panel]').addEventListener('click', event => {
+        const expanded = this.root.classList.toggle('me2-resource-panel-open');
+        event.currentTarget.setAttribute('aria-expanded', String(expanded));
+      });
       this.root.querySelector('#applyMapBlueprintStep').addEventListener('click', () => {
         this.root.dispatchEvent(new CustomEvent('map-editor-v2:apply-blueprint-step', { bubbles: true }));
       });
       this.root.querySelectorAll('[data-me2-tab]').forEach(button => button.addEventListener('click', () => {
         if (this.activeMapEdit) this.commitMapEdit();
+        this.clearNodeEditDraft();
+        this.clearSliceNameDraft();
         this.clearSliceRotationPreview();
         this.nodeMaterialPreview = null;
         this.treeScroll[this.workspace] = this.leftContent.scrollTop;
@@ -277,27 +291,23 @@
       });
       this.root.addEventListener('keyup', event => { if (event.code === 'Space') this.spaceDown = false; });
       this.root.querySelector('[data-source-upload]').addEventListener('change', event => {
-        this.importSourceFile(event.target.files?.[0]);
+        this.importSourceFile(event.target.files?.[0]).catch(error => {
+          this.toast('原图导入失败', error?.message || '无法读取或上传图片');
+        });
         event.target.value = '';
       });
       this.root.tabIndex = -1;
     }
 
     async loadDocument() {
-      // 内置 Ville 文档和原子 Skill 目录并行加载，失败时不留下半初始化编辑器。
+      // Skill 目录独立刷新，不通过重新加载地图覆盖正在编辑的节点。
       try {
-        const [response, skillResponse] = await Promise.all([
-          fetch('/api/v1/map-editor/ville-document'),
-          fetch('/api/v1/skills?kind=atomic').catch(() => null),
+        const [response] = await Promise.all([
+          fetch(window.ResourceScope?.url('/map-editor/ville-document') || '/api/studio/resources/map-editor/ville-document'),
+          this.refreshSkillCatalog(),
         ]);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const bundled = await response.json();
-        if (skillResponse?.ok) {
-          const skillCatalog = await skillResponse.json();
-          // Text-only atomic Skills are valid passive feedback Skills. The
-          // frozen runtime supplies their model gateway; scripts are optional.
-          this.passiveSkillCatalog = skillCatalog.items || [];
-        }
         this.bundledDocument = bundled;
         const saved = this.world?.definition?.editor_v2;
         this.document = saved?.schema_version === 'ga-map-editor/v2'
@@ -313,6 +323,59 @@
         this.root.querySelector('[data-empty]').hidden = false;
         this.root.querySelector('[data-empty]').innerHTML = `<span>!</span><strong>地图编辑器载入失败</strong><small>${escapeHtml(error.message)}</small>`;
       }
+    }
+
+    skillCatalogUrl() {
+      return window.ResourceScope?.url('/skills?kind=atomic') || '/api/studio/resources/skills?kind=atomic';
+    }
+
+    async refreshSkillCatalog() {
+      const scope = this.skillCatalogUrl();
+      const generation = this.skillCatalogGeneration = (this.skillCatalogGeneration || 0) + 1;
+      this.skillCatalogController?.abort();
+      const controller = this.skillCatalogController = new AbortController();
+      if (this.skillCatalogScope !== scope) {
+        this.skillCatalogScope = scope;
+        this.passiveSkillCatalog = [];
+        this.refreshSkillSelector();
+      }
+      const current = () => generation === this.skillCatalogGeneration && scope === this.skillCatalogUrl();
+      try {
+        const response = await fetch(scope, { signal: controller.signal, cache: 'no-store' });
+        if (!current()) return false;
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const catalog = await response.json();
+        if (!current()) return false;
+        if (!Array.isArray(catalog.items)) throw new Error('Skill 目录响应缺少列表');
+        this.passiveSkillCatalog = catalog.items;
+        this.refreshSkillSelector();
+        return true;
+      } catch (error) {
+        if (current() && error.name !== 'AbortError') {
+          this.toast('对象 Skill 列表刷新失败', `${error.message}；返回地图页可重试，当前列表可能不是最新。`);
+        }
+        return false;
+      } finally {
+        if (generation === this.skillCatalogGeneration) this.skillCatalogController = null;
+      }
+    }
+
+    skillOptions(selectedSkillName) {
+      const skillNames = new Set(this.passiveSkillCatalog.map(item => item.name));
+      if (selectedSkillName) skillNames.add(selectedSkillName);
+      return [...skillNames].sort((a, b) => a.localeCompare(b)).map(name => {
+        const item = this.passiveSkillCatalog.find(candidate => candidate.name === name);
+        return `<option value="${escapeHtml(name)}" ${selectedSkillName === name ? 'selected' : ''}>${escapeHtml(name)}${item?.description ? ` · ${escapeHtml(item.description)}` : ''}</option>`;
+      }).join('');
+    }
+
+    refreshSkillSelector() {
+      const selector = this.inspector?.querySelector('[data-node-skill]');
+      if (!selector) return;
+      // Keep the select element and its listeners/focus; never rerender other form fields.
+      const selected = selector.value;
+      selector.innerHTML = '<option value="">不绑定 Skill</option>' + this.skillOptions(selected);
+      selector.value = selected;
     }
 
     mergeVilleAuthoringState(bundled) {
@@ -335,13 +398,29 @@
       this.document.tile_overrides ||= {};
       this.document.tile_override_parts ||= {};
       this.normalizeTileOverrideLayers();
+      for (const source of this.document.material_sources || []) {
+        const metrics = this.sourceGridMetrics(source);
+        source.tile_width = metrics.tileWidth;
+        source.tile_height = metrics.tileHeight;
+        if (source.kind !== 'BUNDLED') {
+          source.columns = metrics.columns;
+          source.rows = metrics.rows;
+          source.tile_count = Math.max(1, metrics.columns * metrics.rows);
+        }
+      }
+      const sources = new Map((this.document.material_sources || []).map(item => [item.id, item]));
       for (const slice of this.document.material_slices || []) {
         const rotation = Number(slice.rotation_degrees || 0);
         slice.rotation_degrees = [0, 90, 180, 270].includes(rotation) ? rotation : 0;
+        const source = sources.get(slice.source_id);
+        if (source) {
+          slice.grid_rect = this.sliceGridRect(slice, source);
+          slice.pixel_rect = this.pixelRectFromGridRect(source, slice.grid_rect);
+        }
         delete slice.purpose;
       }
       for (const canvas of this.document.material_canvases) {
-        canvas.tile_size = Math.max(1, Number(canvas.tile_size || MATERIAL_GRID_SIZE));
+        canvas.tile_size = Math.max(1, Number(canvas.tile_size || this.mapTileSizePx()));
         canvas.width_tiles = Math.max(1, Number(canvas.width_tiles || 1));
         canvas.height_tiles = Math.max(1, Number(canvas.height_tiles || 1));
         canvas.cells ||= {};
@@ -365,10 +444,9 @@
     }
 
     documentForWorld(world, bundled = this.bundledDocument) {
-      if (!bundled) return null;
       const saved = world?.definition?.editor_v2;
       if (saved?.schema_version === 'ga-map-editor/v2') return deepClone(saved);
-      if (!world || world.world_key === 'the-ville') return deepClone(bundled);
+      if ((!world || world.world_key === 'the-ville') && bundled) return deepClone(bundled);
       const size = Array.isArray(world.definition?.size) ? world.definition.size : [32, 48];
       const height = Math.max(1, Number(size[0]) || 32);
       const width = Math.max(1, Number(size[1]) || 48);
@@ -412,8 +490,10 @@
       this.sliceTransparency.clear();
       const jobs = (this.document.material_sources || []).map(async source => {
         if (source.kind === 'CANVAS') return;
-        const url = source.asset_id
-          ? `/api/v1/assets/${encodeURIComponent(source.asset_id)}/content`
+        const url = window.ResourceScope?.experimentId && source.bundled_path
+          ? window.ResourceScope.assetUrl(source.bundled_path)
+          : source.asset_id
+          ? `/api/studio/resources/assets/${encodeURIComponent(source.asset_id)}/content`
           : (source.bundled_path ? `${VILLAGE_URL}${source.bundled_path}` : '');
         if (!url) return;
         this.imageUrls.set(source.id, url);
@@ -451,7 +531,7 @@
             renderCanvas(this.canvasBySourceId.get(slice?.source_id));
           }
         }
-        const tileSize = Math.max(1, Number(canvas.tile_size || MATERIAL_GRID_SIZE));
+        const tileSize = Math.max(1, Number(canvas.tile_size || this.mapTileSizePx()));
         const target = document.createElement('canvas');
         target.width = canvas.width_tiles * tileSize;
         target.height = canvas.height_tiles * tileSize;
@@ -520,6 +600,7 @@
     }
 
     setWorld(world) {
+      this.navigation?.reset();
       this.world = deepClone(world || {});
       this.world.definition ||= {};
       const saved = this.world.definition.editor_v2;
@@ -528,13 +609,16 @@
       } else if (this.bundledDocument) {
         this.document = this.documentForWorld(this.world, this.bundledDocument);
         this.world.definition.editor_v2 = deepClone(this.document);
-      } else this.document = null;
+      } else {
+        this.document = this.documentForWorld(this.world);
+        if (this.document) this.world.definition.editor_v2 = deepClone(this.document);
+      }
       this.normalizeMaterials();
       this.workspace = 'world'; this.depth = 4; this.semanticVisible = false;
-      this.selectedNodeId = ''; this.nodeMaterialPreview = null; this.selectedSourceId = ''; this.selectedSliceId = '';
+      this.selectedNodeId = ''; this.nodeMaterialPreview = null; this.nodeEditDraft = null; this.selectedSourceId = ''; this.selectedSliceId = '';
       this.selectedCanvasId = '';
       this.expandedNodes.clear(); this.expandedSources.clear(); this.materialView = 'source';
-      this.editingSlice = false; this.sliceRotationPreview = null; this.mapTool = 'brush'; this.tool = 'world'; this.materialPan = false; this.treeScroll = { world: 0, materials: 0 };
+      this.editingSlice = false; this.sliceNameDraft = null; this.sliceRotationPreview = null; this.mapTool = 'brush'; this.tool = 'world'; this.materialPan = false; this.treeScroll = { world: 0, materials: 0 };
       this.activeScrollKey = 'world'; this.brushPaletteOpen = false; this.brushFilter = ''; this.expandedBrushSources.clear();
       this.resetMapHistory();
       this.root.querySelectorAll('[data-me2-tab]').forEach(item => item.classList.toggle('active', item.dataset.me2Tab === 'world'));
@@ -549,9 +633,12 @@
     acceptSavedWorld(world, savedRevision) {
       this.world = deepClone(world || {});
       if (Number(savedRevision) === this._changeRevision) this._changed = false;
+      this.navigation?.details();
     }
 
     getWorld() {
+      this.navigation?.initialize();
+      this.navigation?.remapMasks();
       const world = deepClone(this.world || {});
       world.definition ||= {};
       if (this.document) {
@@ -630,12 +717,17 @@
 
     renderAll() {
       if (!this.document) return;
+      this.navigation?.remapMasks();
       this.renderLeft();
       this.renderInspector();
       const material = this.workspace === 'materials';
       const canvasEditing = this.isCanvasEditing();
       this.root.querySelector('[data-map-tools]').hidden = !canvasEditing;
       this.root.querySelector('[data-material-tools]').hidden = !material || canvasEditing;
+      const selectedSource = this.sourceById.get(this.selectedSourceId);
+      const grid = this.sourceGridMetrics(selectedSource);
+      const gridHint = this.root.querySelector('.me2-material-grid-hint');
+      if (gridHint) gridHint.textContent = `${grid.tileWidth} × ${grid.tileHeight} px / 格`;
       const materialPan = this.root.querySelector('[data-material-pan]');
       materialPan.classList.toggle('active', material && !canvasEditing && this.materialPan);
       materialPan.setAttribute('aria-pressed', String(material && !canvasEditing && this.materialPan));
@@ -649,6 +741,7 @@
       this.renderBrushPalette();
       this.updateCanvasCursor();
       this.updateMapHistoryControls();
+      this.navigation?.synchronize();
       this.renderCanvas();
     }
 
@@ -815,10 +908,13 @@
             <button class="me2-disclosure${expanded ? ' expanded' : ''}" data-toggle-source="${escapeHtml(source.id)}">›</button>
             <span class="me2-source-icon">▧</span><span><strong>${escapeHtml(source.name)}</strong><small>${source.width_px} × ${source.height_px}px · ${slices.length} 个切片</small></span>
           </div>
-          ${expanded ? `<div class="me2-material-children">${slices.map(slice => `
+          ${expanded ? `<div class="me2-material-children">${slices.map(slice => {
+            const gridRect = this.sliceGridRect(slice, source);
+            return `
             <button class="me2-material-slice${slice.id === this.selectedSliceId && this.materialView === 'slice' ? ' selected' : ''}" data-slice-id="${escapeHtml(slice.id)}">
-              ${this.sliceThumb(slice)}<span><strong>${escapeHtml(slice.name)}</strong><small>${slice.pixel_rect.x}, ${slice.pixel_rect.y} · ${slice.pixel_rect.width}×${slice.pixel_rect.height}px</small></span>
-            </button>`).join('') || '<div class="me2-tree-empty">还没有切片</div>'}</div>` : ''}
+              ${this.sliceThumb(slice)}<span><strong>${escapeHtml(slice.name)}</strong><small>${gridRect.x}, ${gridRect.y} · ${gridRect.width}×${gridRect.height} 格</small></span>
+            </button>`;
+          }).join('') || '<div class="me2-tree-empty">还没有切片</div>'}</div>` : ''}
         </div>`;
       }).join('');
       return group('canvases', '画布', `${canvases.length} 个可编辑画布`, '▦', canvasRows)
@@ -840,12 +936,14 @@
       }));
       this.leftContent.querySelectorAll('[data-source-id]').forEach(row => row.addEventListener('click', event => {
         if (event.target.closest('[data-toggle-source]')) return;
+        this.clearSliceNameDraft();
         this.clearSliceRotationPreview();
         this.selectedCanvasId = ''; this.selectedSourceId = row.dataset.sourceId; this.selectedSliceId = ''; this.materialView = 'source'; this.editingSlice = false;
         this.renderAll(); requestAnimationFrame(() => this.fit());
       }));
       this.leftContent.querySelectorAll('[data-canvas-id]').forEach(row => row.addEventListener('click', () => {
         const canvas = this.canvasById.get(row.dataset.canvasId); if (!canvas) return;
+        this.clearSliceNameDraft();
         this.clearSliceRotationPreview();
         this.selectedCanvasId = canvas.id; this.selectedSourceId = canvas.source_id; this.selectedSliceId = canvas.slice_id;
         this.materialView = 'canvas'; this.editingSlice = false; this.materialPan = false; this.mapTool = 'brush'; this.tool = 'brush';
@@ -854,6 +952,7 @@
         this.resetMapHistory(); this.renderAll(); requestAnimationFrame(() => this.fit());
       }));
       this.leftContent.querySelectorAll('[data-slice-id]').forEach(row => row.addEventListener('click', () => {
+        this.clearSliceNameDraft();
         this.clearSliceRotationPreview();
         const slice = this.sliceById.get(row.dataset.sliceId);
         this.selectedSliceId = row.dataset.sliceId; this.selectedSourceId = slice.source_id;
@@ -863,6 +962,7 @@
     }
 
     renderInspector() {
+      if (this.navigation?.renderInspector()) return;
       const title = this.root.querySelector('[data-inspector-title]');
       const kind = this.root.querySelector('[data-inspector-kind]');
       if (this.workspace === 'world') {
@@ -894,10 +994,65 @@
       return result.sort((left, right) => left.name.localeCompare(right.name, 'zh') || left.id.localeCompare(right.id));
     }
 
+    nodeDraftValue(node, key, fallback = '') {
+      return node && this.nodeEditDraft?.nodeId === node.id && Object.hasOwn(this.nodeEditDraft, key)
+        ? this.nodeEditDraft[key]
+        : fallback;
+    }
+
+    rememberNodeDraftValue(node, key, value) {
+      if (!node) return;
+      if (this.nodeEditDraft?.nodeId !== node.id) this.nodeEditDraft = { nodeId: node.id };
+      this.nodeEditDraft[key] = value;
+    }
+
+    clearNodeEditDraft(nodeId = null) {
+      if (nodeId && this.nodeEditDraft?.nodeId !== nodeId) return;
+      this.nodeEditDraft = null;
+    }
+
+    nodeDisplayBounds(node) {
+      const bounds = node?.bounds || { x: 0, y: 0, width: 1, height: 1 };
+      const numberValue = (key, fallback) => {
+        const value = Number(this.nodeDraftValue(node, key, fallback));
+        return Number.isFinite(value) ? value : fallback;
+      };
+      return {
+        x: Math.max(0, numberValue('x', Number(bounds.x || 0))),
+        y: Math.max(0, numberValue('y', Number(bounds.y || 0))),
+        width: Math.max(1, numberValue('width', Number(bounds.width || 1))),
+        height: Math.max(1, numberValue('height', Number(bounds.height || 1))),
+      };
+    }
+
+    nodeUsesDefaultName(node) {
+      const name = String(this.nodeDraftValue(node, 'name', node?.name || '')).trim();
+      return !name || name === `未命名 ${LEVEL_LABEL[node?.kind] || '节点'}`;
+    }
+
+    applyNodeMaterialDraft(node, slice) {
+      if (!node || !slice) return this.nodeDisplayBounds(node);
+      // A material is a visual appearance for a node, not a spatial edit.
+      // Keep the node's semantic bounds (and the user's in-progress edits)
+      // unchanged.  Rendering already scales the selected slice into the
+      // node bounds, while the slice footprint remains available as material
+      // metadata.  Adapting X/Y/W/H here made selecting a full-map canvas
+      // silently move and resize an unrelated Game Object.
+      const next = this.nodeDisplayBounds(node);
+      if (this.nodeUsesDefaultName(node)) {
+        this.rememberNodeDraftValue(node, 'name', slice.name);
+        const nameInput = this.inspector?.querySelector('[data-node-name]');
+        if (nameInput) nameInput.value = slice.name;
+      }
+      return next;
+    }
+
     nodeMaterialSlice(node) {
       const sliceId = this.nodeMaterialPreview?.nodeId === node?.id
         ? this.nodeMaterialPreview.sliceId
-        : node?.material_slice_id;
+        : (typeof node?.initial_state?.state === 'string'
+          ? node?.state_appearance?.cases?.find(item => item.value === node.initial_state.state)?.material_slice_id || node?.material_slice_id
+          : node?.material_slice_id);
       return sliceId ? this.sliceById.get(sliceId) : null;
     }
 
@@ -908,36 +1063,62 @@
         <div class="me2-property-list"><div><span>素材</span><strong>${escapeHtml(slice.name)}</strong></div><div><span>占格</span><strong>${footprint.columns} × ${footprint.rows}</strong></div><div><span>旋转</span><strong>${this.sliceRotation(slice)}°</strong></div></div>`;
     }
 
+    stateMaterialNote(node, materialId) {
+      const selected = this.sliceById.get(materialId);
+      if (!selected) return '';
+      const base = this.sliceById.get(String(this.nodeDraftValue(node, 'materialId', node.material_slice_id || '')));
+      const mismatch = base && base.pixel_rect.width * selected.pixel_rect.height !== selected.pixel_rect.width * base.pixel_rect.height;
+      return `${this.sliceThumb(selected)}${mismatch ? '<div class="me2-inspector-note">两种素材宽高比不同，切换时内容大小可能变化；均按当前节点范围显示。</div>' : ''}`;
+    }
+
+    stateAppearanceHtml(node, materials) {
+      if (node.kind !== 'GAME_OBJECT') return '';
+      const cases = this.nodeDraftValue(node, 'stateCases', node.state_appearance?.cases || []);
+      return `<div data-state-appearance>
+        <div class="me2-inspector-note">状态名会与对象状态 JSON 的顶层 <code>state</code> 字符串精确匹配，例如状态名 <code>tidy</code> 对应 <code>{"state":"tidy"}</code>。未匹配时使用默认显示素材；修改初始状态 JSON 后点击“保存”才刷新地图预览。</div>
+        ${cases.map((item, index) => `<div class="me2-form-section" data-state-row="${index}">
+        <label>状态名<input class="control" data-state-name maxlength="128" value="${escapeHtml(item.value)}" ${this.readonly ? 'disabled' : ''}></label>
+        <label>显示素材<select class="control" data-state-material ${this.readonly ? 'disabled' : ''}><option value="">请选择素材</option>${materials.map(slice => `<option value="${escapeHtml(slice.id)}" ${slice.id === item.material_slice_id ? 'selected' : ''}>${escapeHtml(slice.name)}</option>`).join('')}</select></label>
+        <div data-state-material-note>${this.stateMaterialNote(node, item.material_slice_id)}</div>
+        ${this.readonly ? '' : '<button class="me2-danger" data-state-remove>删除状态</button>'}</div>`).join('')}
+        ${this.readonly ? '' : '<button class="me2-ghost" data-state-add>＋ 增加状态</button>'}</div>`;
+    }
+
     nodeInspector(node) {
-      const rect = node.bounds;
+      const rect = {
+        x: this.nodeDraftValue(node, 'x', node.bounds.x),
+        y: this.nodeDraftValue(node, 'y', node.bounds.y),
+        width: this.nodeDraftValue(node, 'width', node.bounds.width),
+        height: this.nodeDraftValue(node, 'height', node.bounds.height),
+      };
       const address = this.nodeAddress(node).join(' → ');
       const materials = this.worldMaterialSlices(node);
       const selectedMaterial = this.nodeMaterialSlice(node);
-      const selectedMaterialId = selectedMaterial?.id || '';
+      const selectedMaterialId = String(this.nodeDraftValue(node, 'materialId', node.material_slice_id || ''));
       const materialOptions = materials.map(slice => {
         const footprint = this.sliceFootprint(slice);
         return `<option value="${escapeHtml(slice.id)}" ${slice.id === selectedMaterialId ? 'selected' : ''}>${escapeHtml(slice.name)} · ${footprint.columns}×${footprint.rows} 格 · ${this.sliceRotation(slice)}°</option>`;
       }).join('');
       const binding = node.kind === 'GAME_OBJECT' ? (node.skill_bindings?.[0] || null) : null;
-      const skillNames = new Set(this.passiveSkillCatalog.map(item => item.name));
-      if (binding?.skill_name) skillNames.add(binding.skill_name);
-      const skillOptions = [...skillNames].sort((a, b) => a.localeCompare(b)).map(name => {
-        const item = this.passiveSkillCatalog.find(candidate => candidate.name === name);
-        return `<option value="${escapeHtml(name)}" ${binding?.skill_name === name ? 'selected' : ''}>${escapeHtml(name)}${item?.description ? ` · ${escapeHtml(item.description)}` : ''}</option>`;
-      }).join('');
-      const skillSection = node.kind === 'GAME_OBJECT' ? `<div class="me2-form-section"><div class="me2-section-title"><strong>被动 Skill</strong><span>Agent 主动请求</span></div>
-          <label>Skill<select class="control" data-node-skill ${this.readonly ? 'disabled' : ''}><option value="">不提供交互</option>${skillOptions}</select></label>
-          <label>交互键<input class="control" data-node-interaction-key value="${escapeHtml(binding?.interaction_key || 'query-state')}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>交互说明<input class="control" data-node-interaction-description value="${escapeHtml(binding?.description || '查询对象当前状态')}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>交互距离（米）<input class="control" type="number" min="0.1" step="0.1" data-node-interaction-radius value="${Number(binding?.interaction_radius_m || 2)}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>默认请求<textarea class="control" rows="3" data-node-interaction-request ${this.readonly ? 'disabled' : ''}>${escapeHtml(binding?.default_request || '请提供当前状态和可执行信息。')}</textarea></label>
-          <div class="me2-inspector-note">靠近只会向 Agent 暴露此交互；只有 Agent 明确选择后才执行 Skill。</div></div>
+      const selectedSkillName = String(this.nodeDraftValue(node, 'skillName', binding?.skill_name || ''));
+      const skillOptions = this.skillOptions(selectedSkillName);
+      const skillSection = node.kind === 'GAME_OBJECT' ? `<div class="me2-form-section"><div class="me2-section-title"><strong>对象 Skill</strong><span>自主运行 · 响应交互</span></div>
+          <label>Skill<select class="control" data-node-skill ${this.readonly ? 'disabled' : ''}><option value="">不绑定 Skill</option>${skillOptions}</select></label>
+          <div class="me2-inspector-note">绑定后，对象每轮按自然语言 Skill 自主感知和行动，同时处理交互请求，无需编写脚本或设置触发方式。</div>
+          <details><summary>感知与交互参数</summary>
+          <label>感知范围（格）<input class="control" type="number" min="0" max="100" data-node-vision-radius value="${escapeHtml(this.nodeDraftValue(node, 'visionRadius', binding?.vision_radius ?? 4))}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>注意力带宽<input class="control" type="number" min="0" max="100" data-node-attention-bandwidth value="${escapeHtml(this.nodeDraftValue(node, 'attentionBandwidth', binding?.attention_bandwidth ?? 8))}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>交互说明<input class="control" data-node-interaction-description value="${escapeHtml(this.nodeDraftValue(node, 'interactionDescription', binding?.description || '查询对象当前状态'))}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>交互距离（格）<input class="control" type="number" min="0.1" step="0.1" data-node-interaction-radius value="${escapeHtml(this.nodeDraftValue(node, 'interactionRadius', Number(binding?.interaction_radius_tiles || 2)))}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>默认请求<textarea class="control" rows="3" data-node-interaction-request ${this.readonly ? 'disabled' : ''}>${escapeHtml(this.nodeDraftValue(node, 'interactionRequest', binding?.default_request || '请提供当前状态和可执行信息。'))}</textarea></label>
+          </details></div>
         <div class="me2-form-section"><div class="me2-section-title"><strong>初始状态</strong><span>可回放事实</span></div>
-          <label>状态对象<textarea class="control" rows="5" data-node-initial-state ${this.readonly ? 'disabled' : ''} placeholder='{"state":"RED","powered":true}'>${escapeHtml(JSON.stringify(node.initial_state || {}, null, 2))}</textarea></label>
-          <div class="me2-inspector-note">请输入 JSON 对象。运行从这里建立对象状态；名称和空间语义不再代替真实状态。</div></div>` : '';
+          <label>状态对象<textarea class="control" rows="5" data-node-initial-state ${this.readonly ? 'disabled' : ''} placeholder='{"state":"RED","powered":true}'>${escapeHtml(this.nodeDraftValue(node, 'initialState', JSON.stringify(node.initial_state || {}, null, 2)))}</textarea></label>
+          <div class="me2-inspector-note">请输入 JSON 对象。绑定 Skill 的对象仅公开 state 外观标签；其余字段供对象自己使用。</div></div>` : '';
       return `<div class="me2-address-path">${escapeHtml(address)}</div>
-        <div class="me2-form-section"><label>节点名称<input class="control" data-node-name value="${escapeHtml(node.name)}" ${this.readonly ? 'disabled' : ''}></label></div>
+        <div class="me2-form-section"><label>节点名称<input class="control" data-node-name value="${escapeHtml(this.nodeDraftValue(node, 'name', node.name))}" ${this.readonly ? 'disabled' : ''}></label></div>
         <div class="me2-form-section"><label>显示素材<select class="control" data-node-material ${this.readonly ? 'disabled' : ''}><option value="">不叠加素材</option>${materialOptions}</select></label>
+          ${this.stateAppearanceHtml(node, materials)}
           <div data-node-material-preview>${this.nodeMaterialPreviewHtml(selectedMaterial)}</div>
           ${materials.length ? '' : '<div class="me2-inspector-note">暂无素材；请先到素材页新建画布或导入原图并创建切片。</div>'}</div>
         <div class="me2-form-section"><div class="me2-section-title"><strong>空间范围</strong><span>Tile 坐标</span></div>
@@ -947,7 +1128,7 @@
             <label>W<input class="control" type="number" min="1" data-node-w value="${rect.width}" ${this.readonly ? 'disabled' : ''}></label>
             <label>H<input class="control" type="number" min="1" data-node-h value="${rect.height}" ${this.readonly ? 'disabled' : ''}></label>
           </div></div>
-        <div class="me2-form-section"><label>空间语义<textarea class="control" rows="5" data-node-semantic ${this.readonly ? 'disabled' : ''}>${escapeHtml(node.semantic || '')}</textarea></label></div>
+        <div class="me2-form-section"><label>空间语义<textarea class="control" rows="5" data-node-semantic ${this.readonly ? 'disabled' : ''}>${escapeHtml(this.nodeDraftValue(node, 'semantic', node.semantic || ''))}</textarea></label></div>
         ${skillSection}
         ${this.readonly ? '' : (node.kind === 'WORLD'
           ? '<button class="me2-save" data-save-node>保存</button>'
@@ -956,14 +1137,60 @@
 
     bindNodeInspector(node) {
       if (!node) return;
+      const readCases = () => [...(this.inspector.querySelectorAll?.('[data-state-row]') || [])].map(row => ({value: row.querySelector('[data-state-name]').value, material_slice_id: row.querySelector('[data-state-material]').value}));
+      const rememberCases = event => {
+        this.rememberNodeDraftValue(node, 'stateCases', readCases());
+        if (event?.target?.matches?.('[data-state-material]')) {
+          const row = event.target.closest('[data-state-row]');
+          row.querySelector('[data-state-material-note]').innerHTML = this.stateMaterialNote(node, event.target.value);
+        }
+      };
+      this.inspector.querySelectorAll?.('[data-state-name], [data-state-material]').forEach(input => input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', rememberCases));
+      this.inspector.querySelector('[data-state-add]')?.addEventListener('click', () => {
+        const cases = readCases(); if (cases.length >= 32) return this.toast('最多配置 32 种状态');
+        cases.push({value: '', material_slice_id: ''}); this.rememberNodeDraftValue(node, 'stateCases', cases); this.renderInspector();
+      });
+      this.inspector.querySelectorAll?.('[data-state-remove]').forEach(button => button.addEventListener('click', () => {
+        const cases = readCases(); cases.splice(Number(button.closest('[data-state-row]').dataset.stateRow), 1);
+        this.rememberNodeDraftValue(node, 'stateCases', cases); this.renderInspector();
+      }));
       this.inspector.querySelector('[data-node-material]')?.addEventListener('change', event => {
         const sliceId = this.sliceById.has(event.target.value) ? event.target.value : '';
+        this.rememberNodeDraftValue(node, 'materialId', sliceId);
         this.nodeMaterialPreview = { nodeId: node.id, sliceId };
+        const slice = this.nodeMaterialSlice(node);
+        if (slice) this.applyNodeMaterialDraft(node, slice);
         const preview = this.inspector.querySelector('[data-node-material-preview]');
-        if (preview) preview.innerHTML = this.nodeMaterialPreviewHtml(this.nodeMaterialSlice(node));
-        this.renderCanvas();
+        if (preview) preview.innerHTML = this.nodeMaterialPreviewHtml(slice);
+        if (slice) this.focusNode(node);
+        else this.renderCanvas();
+      });
+      [
+        ['[data-node-name]', 'name'],
+        ['[data-node-x]', 'x'],
+        ['[data-node-y]', 'y'],
+        ['[data-node-w]', 'width'],
+        ['[data-node-h]', 'height'],
+        ['[data-node-semantic]', 'semantic'],
+        ['[data-node-skill]', 'skillName'],
+        ['[data-node-vision-radius]', 'visionRadius'],
+        ['[data-node-attention-bandwidth]', 'attentionBandwidth'],
+        ['[data-node-interaction-description]', 'interactionDescription'],
+        ['[data-node-interaction-radius]', 'interactionRadius'],
+        ['[data-node-interaction-request]', 'interactionRequest'],
+        ['[data-node-initial-state]', 'initialState'],
+      ].forEach(([selector, key]) => {
+        const input = this.inspector.querySelector(selector);
+        input?.addEventListener(input.matches?.('select') ? 'change' : 'input', event => {
+          this.rememberNodeDraftValue(node, key, event.target.value);
+        });
       });
       this.inspector.querySelector('[data-save-node]')?.addEventListener('click', () => {
+        const stateCases = readCases().map(item => ({...item, value: item.value.trim()}));
+        if (stateCases.some(item => !item.value || !this.sliceById.has(item.material_slice_id))) return this.toast('状态外观未保存', '请填写状态名并选择有效素材，或删除未完成的状态行');
+        if (new Set(stateCases.map(item => item.value)).size !== stateCases.length) return this.toast('状态外观未保存', '状态名重复，请保留一条');
+        if (stateCases.length && !this.inspector.querySelector('[data-node-material]')?.value) return this.toast('状态外观未保存', '请选择默认显示素材');
+        const previousNode = deepClone(node);
         const maxW = Number(this.document.import_metadata.width || 140);
         const maxH = Number(this.document.import_metadata.height || 100);
         const x = Math.max(0, Math.min(maxW - 1, Number(this.inspector.querySelector('[data-node-x]').value) || 0));
@@ -988,16 +1215,22 @@
             return;
           }
           node.initial_state = initialState;
+          node.state_appearance = {cases: stateCases};
           const skillName = this.inspector.querySelector('[data-node-skill]')?.value || '';
           node.skill_bindings = skillName ? [{
-            interaction_key: this.inspector.querySelector('[data-node-interaction-key]').value.trim() || 'query-state',
+            interaction_key: node.skill_bindings?.[0]?.interaction_key || 'interact',
             skill_name: skillName,
             description: this.inspector.querySelector('[data-node-interaction-description]').value.trim() || '查询对象当前状态',
-            interaction_radius_m: Math.max(.1, Number(this.inspector.querySelector('[data-node-interaction-radius]').value) || 2),
+            interaction_radius_tiles: Math.max(.1, Number(this.inspector.querySelector('[data-node-interaction-radius]').value) || 2),
+            vision_radius: Number(this.inspector.querySelector('[data-node-vision-radius]').value),
+            attention_bandwidth: Number(this.inspector.querySelector('[data-node-attention-bandwidth]').value),
             default_request: this.inspector.querySelector('[data-node-interaction-request]').value.trim() || '请提供当前状态和可执行信息。',
           }] : [];
           node.interaction_mode = skillName ? 'SKILL_BOUND' : 'STATIC';
         }
+        (this.undoStack ||= []).push({kind: 'node-edit', label: `编辑“${node.name}”`, nodeId: node.id, before: previousNode, after: deepClone(node)});
+        this.redoStack = [];
+        this.clearNodeEditDraft(node.id);
         this.nodeMaterialPreview = null;
         node.extensions ||= {}; delete node.extensions.mask;
         this.changed = true; this.reindex(); this.renderAll();
@@ -1012,7 +1245,7 @@
       const applications = slice ? this.sliceApplications(slice) : [];
       return `<div class="me2-inspector-preview">${slice ? this.sliceThumb(slice, true) : ''}</div>
         <div class="me2-form-section"><label>画布名称<input class="control" data-canvas-name value="${escapeHtml(canvas.name)}" ${this.readonly ? 'disabled' : ''}></label></div>
-        <div class="me2-form-section"><div class="me2-section-title"><strong>画布尺寸</strong><span>32px / 格</span></div>
+        <div class="me2-form-section"><div class="me2-section-title"><strong>画布尺寸</strong><span>${canvas.tile_size}px / 格</span></div>
           <div class="me2-four-fields"><label>宽度<input class="control" type="number" min="1" max="256" data-canvas-width value="${canvas.width_tiles}" ${this.readonly ? 'disabled' : ''}></label>
           <label>高度<input class="control" type="number" min="1" max="256" data-canvas-height value="${canvas.height_tiles}" ${this.readonly ? 'disabled' : ''}></label></div></div>
         <div class="me2-property-list"><div><span>当前画笔</span><strong>${escapeHtml(brush?.name || '尚未选择')}</strong></div><div><span>已绘制格</span><strong>${Object.keys(canvas.cells || {}).length}</strong></div><div><span>输出素材</span><strong>${canvas.width_tiles * canvas.tile_size} × ${canvas.height_tiles * canvas.tile_size}px</strong></div></div>
@@ -1057,7 +1290,9 @@
           source.columns = width; source.rows = height; source.tile_count = width * height;
         }
         if (slice) {
-          slice.name = name; slice.pixel_rect = { x: 0, y: 0, width: width * canvas.tile_size, height: height * canvas.tile_size };
+          slice.name = name;
+          slice.grid_rect = { x: 0, y: 0, width, height };
+          slice.pixel_rect = this.pixelRectFromGridRect(source, slice.grid_rect);
         }
         this.changed = true; this.reindex(); this.refreshCanvasImages(); this.renderAll(); requestAnimationFrame(() => this.fit());
         this.toast('画布已保存', `${name} · ${width} × ${height} 格`);
@@ -1078,14 +1313,15 @@
       const name = String(options.name || '').trim().slice(0, 255) || '新画布';
       const width = Math.max(1, Math.min(256, Number(options.width) || 32));
       const height = Math.max(1, Math.min(256, Number(options.height) || 32));
+      const tileSize = this.mapTileSizePx();
       const source = { id: sourceId, name, kind: 'CANVAS', asset_id: null, asset_hash: null, bundled_path: null,
-        generated_color: null, media_type: 'image/png', width_px: width * MATERIAL_GRID_SIZE, height_px: height * MATERIAL_GRID_SIZE,
-        tile_width: MATERIAL_GRID_SIZE, tile_height: MATERIAL_GRID_SIZE, columns: width, rows: height,
+        generated_color: null, media_type: 'image/png', width_px: width * tileSize, height_px: height * tileSize,
+        tile_width: tileSize, tile_height: tileSize, columns: width, rows: height,
         tile_count: width * height, margin: 0, spacing: 0, first_gid: null };
       const slice = { id: sliceId, source_id: sourceId, name, kind: 'STAMP', rotation_degrees: 0,
-        grid_rect: null, pixel_rect: { x: 0, y: 0, width: source.width_px, height: source.height_px },
+        grid_rect: { x: 0, y: 0, width, height }, pixel_rect: { x: 0, y: 0, width: source.width_px, height: source.height_px },
         trim_transparent: true, indexed_gid: null, local_tile_id: null, readonly_indexed: false };
-      const canvas = { id, source_id: sourceId, slice_id: sliceId, name, width_tiles: width, height_tiles: height, tile_size: MATERIAL_GRID_SIZE, cells: {} };
+      const canvas = { id, source_id: sourceId, slice_id: sliceId, name, width_tiles: width, height_tiles: height, tile_size: tileSize, cells: {} };
       this.document.material_sources.push(source); this.document.material_slices.push(slice); this.document.material_canvases.push(canvas);
       this.workspace = 'materials'; this.selectedCanvasId = id; this.selectedSourceId = sourceId; this.selectedSliceId = sliceId; this.materialView = 'canvas';
       this.expandedMaterialGroups.add('canvases'); this.mapTool = 'brush'; this.tool = 'brush'; this.materialPan = false;
@@ -1099,9 +1335,9 @@
       this.toast('画布已新建', `${width} × ${height} 格 · 从画笔选择素材开始绘制`);
     }
 
-    deleteMaterialCanvas(canvas) {
+    async deleteMaterialCanvas(canvas) {
       if (this.readonly || !canvas || !this.canvasById.has(canvas.id)) return;
-      if (!window.confirm(`确定删除画布“${canvas.name}”及其输出素材吗？`)) return;
+      if (!await window.confirmResourceDeletion({ type: '画布', name: canvas.name, message: '同时删除该画布的输出素材，并清理相关引用。' })) return;
       this.removeMaterialReferences(new Set([canvas.slice_id]));
       this.document.material_canvases = this.document.material_canvases.filter(item => item.id !== canvas.id);
       this.document.material_slices = this.document.material_slices.filter(item => item.id !== canvas.slice_id);
@@ -1123,33 +1359,40 @@
           <div class="me2-section-title me2-app-title"><strong>应用列表</strong><span>${applications.length}</span></div>${this.applicationList(applications)}`;
       }
       const applications = this.sliceApplications(slice);
+      const gridRect = this.sliceGridRect(slice, source);
       return `<div class="me2-inspector-preview">${this.sliceThumb(slice, true)}</div>
-        <div class="me2-form-section"><label>切片名称<input class="control" data-slice-name value="${escapeHtml(slice.name)}" ${this.readonly ? 'disabled' : ''}></label></div>
+        <div class="me2-form-section"><label>切片名称<input class="control" data-slice-name value="${escapeHtml(this.sliceDraftName(slice))}" ${this.readonly ? 'disabled' : ''}></label></div>
         <div class="me2-form-section"><label>旋转<select class="control" data-slice-rotation ${this.readonly ? 'disabled' : ''}><option value="0" ${this.sliceRotation(slice) === 0 ? 'selected' : ''}>0° · 原方向</option><option value="90" ${this.sliceRotation(slice) === 90 ? 'selected' : ''}>90° · 顺时针</option><option value="180" ${this.sliceRotation(slice) === 180 ? 'selected' : ''}>180°</option><option value="270" ${this.sliceRotation(slice) === 270 ? 'selected' : ''}>270° · 顺时针</option></select></label></div>
-        <div class="me2-form-section"><div class="me2-section-title"><strong>切片范围</strong><span>像素</span></div>
-          <div class="me2-four-fields"><label>X<input class="control" type="number" data-slice-x value="${slice.pixel_rect.x}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>Y<input class="control" type="number" data-slice-y value="${slice.pixel_rect.y}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>W<input class="control" type="number" min="1" data-slice-w value="${slice.pixel_rect.width}" ${this.readonly ? 'disabled' : ''}></label>
-          <label>H<input class="control" type="number" min="1" data-slice-h value="${slice.pixel_rect.height}" ${this.readonly ? 'disabled' : ''}></label></div></div>
+        <div class="me2-form-section"><div class="me2-section-title"><strong>切片范围</strong><span>Tile 格</span></div>
+          <div class="me2-four-fields"><label>X<input class="control" type="number" min="0" step="1" data-slice-x value="${gridRect.x}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>Y<input class="control" type="number" min="0" step="1" data-slice-y value="${gridRect.y}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>W<input class="control" type="number" min="1" step="1" data-slice-w value="${gridRect.width}" ${this.readonly ? 'disabled' : ''}></label>
+          <label>H<input class="control" type="number" min="1" step="1" data-slice-h value="${gridRect.height}" ${this.readonly ? 'disabled' : ''}></label></div></div>
         ${this.readonly ? '' : `<div class="me2-inline-actions"><button class="me2-outline" data-edit-crop>${this.editingSlice ? '完成框选' : '在原图中编辑'}</button><button class="me2-save" data-save-slice>保存</button></div><button class="me2-danger me2-danger-block" data-delete-slice>删除切片</button>`}
         <div class="me2-section-title me2-app-title"><strong>应用列表</strong><span>${applications.length}</span></div>${this.applicationList(applications)}`;
     }
 
     bindMaterialInspector(source, slice) {
       this.inspector.querySelector('[data-new-slice]')?.addEventListener('click', () => {
+        this.clearSliceNameDraft();
         this.clearSliceRotationPreview();
         const item = this.newMaterialSlice(source, {
           x: 0, y: 0,
-          width: Math.min(MATERIAL_GRID_SIZE, source.width_px),
-          height: Math.min(MATERIAL_GRID_SIZE, source.height_px),
+          width: Math.min(this.sourceGridMetrics(source).tileWidth, source.width_px),
+          height: Math.min(this.sourceGridMetrics(source).tileHeight, source.height_px),
         });
         this.document.material_slices.push(item); this.selectedSliceId = item.id; this.materialView = 'slice'; this.editingSlice = true;
         this.changed = true; this.reindex(); this.renderAll(); requestAnimationFrame(() => this.fit());
       });
       this.inspector.querySelector('[data-edit-crop]')?.addEventListener('click', () => {
+        const nameInput = this.inspector.querySelector('[data-slice-name]');
+        if (slice && nameInput) this.rememberSliceNameDraft(slice, nameInput.value);
         this.editingSlice = !this.editingSlice;
         if (this.editingSlice) { this.materialView = 'slice'; requestAnimationFrame(() => this.fit()); }
         this.renderAll();
+      });
+      this.inspector.querySelector('[data-slice-name]')?.addEventListener('input', event => {
+        if (slice) this.rememberSliceNameDraft(slice, event.target.value);
       });
       this.inspector.querySelector('[data-slice-rotation]')?.addEventListener('change', event => {
         if (!slice) return;
@@ -1168,40 +1411,44 @@
         slice.name = this.inspector.querySelector('[data-slice-name]').value.trim() || slice.name;
         const rotation = Number(this.inspector.querySelector('[data-slice-rotation]').value);
         slice.rotation_degrees = [0, 90, 180, 270].includes(rotation) ? rotation : 0;
+        this.clearSliceNameDraft(slice.id);
         this.clearSliceRotationPreview(slice.id);
-        const x = Math.max(0, Math.min(source.width_px - 1, Number(this.inspector.querySelector('[data-slice-x]').value) || 0));
-        const y = Math.max(0, Math.min(source.height_px - 1, Number(this.inspector.querySelector('[data-slice-y]').value) || 0));
-        slice.pixel_rect = { x, y,
-          width: Math.max(1, Math.min(source.width_px - x, Number(this.inspector.querySelector('[data-slice-w]').value) || 1)),
-          height: Math.max(1, Math.min(source.height_px - y, Number(this.inspector.querySelector('[data-slice-h]').value) || 1)) };
-        slice.grid_rect = null; this.changed = true; this.editingSlice = false; this.reindex(); this.renderAll();
-        this.toast('切片已保存', `${slice.name} · ${slice.pixel_rect.width}×${slice.pixel_rect.height}px`);
+        const metrics = this.sourceGridMetrics(source);
+        const x = Math.max(0, Math.min(metrics.columns - 1, Math.floor(Number(this.inspector.querySelector('[data-slice-x]').value) || 0)));
+        const y = Math.max(0, Math.min(metrics.rows - 1, Math.floor(Number(this.inspector.querySelector('[data-slice-y]').value) || 0)));
+        slice.grid_rect = { x, y,
+          width: Math.max(1, Math.min(metrics.columns - x, Math.floor(Number(this.inspector.querySelector('[data-slice-w]').value) || 1))),
+          height: Math.max(1, Math.min(metrics.rows - y, Math.floor(Number(this.inspector.querySelector('[data-slice-h]').value) || 1))) };
+        slice.pixel_rect = this.pixelRectFromGridRect(source, slice.grid_rect);
+        this.changed = true; this.editingSlice = false; this.reindex(); this.renderAll();
+        this.toast('切片已保存', `${slice.name} · ${slice.grid_rect.width}×${slice.grid_rect.height} 格`);
       });
       this.inspector.querySelector('[data-delete-slice]')?.addEventListener('click', () => this.deleteMaterialSlice(slice));
       this.inspector.querySelector('[data-delete-source]')?.addEventListener('click', () => this.deleteMaterialSource(source));
     }
 
-    deleteMaterialSlice(slice) {
+    async deleteMaterialSlice(slice) {
       if (this.readonly || !slice || !this.sliceById.has(slice.id)) return;
       const referenceCount = this.sliceApplications(slice).reduce((total, item) => total + item.count, 0);
       const referenceText = referenceCount ? `，并清理 ${referenceCount} 处引用` : '';
-      if (!window.confirm(`确定删除切片“${slice.name}”${referenceText}吗？`)) return;
+      if (!await window.confirmResourceDeletion({ type: '切片', name: slice.name, message: `删除该切片${referenceText}。` })) return;
       this.removeMaterialReferences(new Set([slice.id]));
       this.document.material_slices = this.document.material_slices.filter(item => item.id !== slice.id);
       this.clearSliceTransparency(new Set([slice.id]));
+      this.clearSliceNameDraft(slice.id);
       this.clearSliceRotationPreview(slice.id);
       this.selectedSliceId = ''; this.materialView = 'source'; this.editingSlice = false;
       this.changed = true; this.reindex(); this.renderAll(); requestAnimationFrame(() => this.fit());
       this.toast('切片已删除', slice.name);
     }
 
-    deleteMaterialSource(source) {
+    async deleteMaterialSource(source) {
       if (this.readonly || !source || !this.sourceById.has(source.id)) return;
       const slices = this.document.material_slices.filter(item => item.source_id === source.id);
       const sliceIds = new Set(slices.map(item => item.id));
       const referenceCount = this.sourceApplications(source.id).reduce((total, item) => total + item.count, 0);
       const referenceText = referenceCount ? `，并清理 ${referenceCount} 处引用` : '';
-      if (!window.confirm(`确定删除原图“${source.name}”及其 ${slices.length} 个切片${referenceText}吗？`)) return;
+      if (!await window.confirmResourceDeletion({ type: '原图', name: source.name, message: `同时删除 ${slices.length} 个切片${referenceText}。` })) return;
       this.removeMaterialReferences(sliceIds);
       this.document.material_slices = this.document.material_slices.filter(item => !sliceIds.has(item.id));
       this.document.material_sources = this.document.material_sources.filter(item => item.id !== source.id);
@@ -1272,9 +1519,10 @@
     }
 
     newMaterialSlice(source, pixelRect) {
+      const gridRect = this.gridRectFromPixelRect(source, pixelRect);
       return { id: uid('slice'), source_id: source.id, name: '未命名切片', kind: 'STAMP',
-        rotation_degrees: 0, pixel_rect: pixelRect,
-        grid_rect: null, trim_transparent: true, indexed_gid: null, local_tile_id: null, readonly_indexed: false };
+        rotation_degrees: 0, pixel_rect: this.pixelRectFromGridRect(source, gridRect),
+        grid_rect: gridRect, trim_transparent: true, indexed_gid: null, local_tile_id: null, readonly_indexed: false };
     }
 
     applicationList(items) {
@@ -1349,7 +1597,25 @@
       return `<button class="me2-slice-card${slice.id === this.selectedPaintSliceId ? ' selected' : ''}" data-paint-slice="${escapeHtml(slice.id)}">${this.sliceThumb(slice)}<span>${escapeHtml(slice.name.split(' · ')[0])}</span></button>`;
     }
 
+    sliceDraftName(slice) {
+      return slice && this.sliceNameDraft?.sliceId === slice.id
+        ? this.sliceNameDraft.value
+        : (slice?.name || '');
+    }
+
+    rememberSliceNameDraft(slice, value) {
+      if (!slice) return;
+      this.sliceNameDraft = { sliceId: slice.id, value: String(value ?? '') };
+    }
+
+    clearSliceNameDraft(sliceId = null) {
+      if (sliceId && this.sliceNameDraft?.sliceId !== sliceId) return;
+      this.sliceNameDraft = null;
+    }
+
     sliceRotation(slice) {
+      if (this.navigation?.active && this.workspace === 'materials'
+          && this.materialView === 'slice' && slice?.id === this.selectedSliceId) return 0;
       if (slice && this.sliceRotationPreview?.sliceId === slice.id) return this.sliceRotationPreview.rotation;
       const rotation = Number(slice?.rotation_degrees || 0);
       return [0, 90, 180, 270].includes(rotation) ? rotation : 0;
@@ -1360,18 +1626,114 @@
       this.sliceRotationPreview = null;
     }
 
+    mapTileSizePx() {
+      return Math.max(1, Number(
+        this.world?.definition?.tile_size
+        || this.document?.import_metadata?.tile_size
+        || MATERIAL_GRID_SIZE,
+      ));
+    }
+
+    sourceGridMetrics(source = null) {
+      const fallback = this.mapTileSizePx();
+      const tileWidth = Math.max(1, Number(source?.tile_width || fallback));
+      const tileHeight = Math.max(1, Number(source?.tile_height || fallback));
+      const margin = Math.max(0, Number(source?.margin || 0));
+      const spacing = Math.max(0, Number(source?.spacing || 0));
+      const derivedColumns = Math.max(1, Math.ceil(
+        Math.max(1, Number(source?.width_px || tileWidth) - margin) / (tileWidth + spacing),
+      ));
+      const derivedRows = Math.max(1, Math.ceil(
+        Math.max(1, Number(source?.height_px || tileHeight) - margin) / (tileHeight + spacing),
+      ));
+      const columns = source?.kind === 'BUNDLED'
+        ? Math.max(1, Number(source.columns || derivedColumns))
+        : derivedColumns;
+      const rows = source?.kind === 'BUNDLED'
+        ? Math.max(1, Number(source.rows || derivedRows))
+        : derivedRows;
+      return { tileWidth, tileHeight, margin, spacing, columns, rows };
+    }
+
+    gridRectFromPixelRect(source, pixelRect) {
+      const metrics = this.sourceGridMetrics(source);
+      const rect = pixelRect || { x: 0, y: 0, width: metrics.tileWidth, height: metrics.tileHeight };
+      const columnAt = value => Math.max(0, Math.min(
+        metrics.columns - 1,
+        Math.floor(Math.max(0, Number(value || 0) - metrics.margin) / (metrics.tileWidth + metrics.spacing)),
+      ));
+      const rowAt = value => Math.max(0, Math.min(
+        metrics.rows - 1,
+        Math.floor(Math.max(0, Number(value || 0) - metrics.margin) / (metrics.tileHeight + metrics.spacing)),
+      ));
+      const x = columnAt(rect.x);
+      const y = rowAt(rect.y);
+      const right = columnAt(Number(rect.x || 0) + Math.max(1, Number(rect.width || 1)) - 1);
+      const bottom = rowAt(Number(rect.y || 0) + Math.max(1, Number(rect.height || 1)) - 1);
+      return { x, y, width: right - x + 1, height: bottom - y + 1 };
+    }
+
+    sliceGridRect(slice, source = null) {
+      const resolvedSource = source || this.sourceById?.get(slice?.source_id);
+      const metrics = this.sourceGridMetrics(resolvedSource);
+      const raw = slice?.grid_rect || this.gridRectFromPixelRect(resolvedSource, slice?.pixel_rect);
+      const x = Math.max(0, Math.min(metrics.columns - 1, Math.floor(Number(raw?.x || 0))));
+      const y = Math.max(0, Math.min(metrics.rows - 1, Math.floor(Number(raw?.y || 0))));
+      return {
+        x,
+        y,
+        width: Math.max(1, Math.min(metrics.columns - x, Math.floor(Number(raw?.width || 1)))),
+        height: Math.max(1, Math.min(metrics.rows - y, Math.floor(Number(raw?.height || 1)))),
+      };
+    }
+
+    pixelRectFromGridRect(source, gridRect) {
+      const metrics = this.sourceGridMetrics(source);
+      const rect = this.sliceGridRect({ grid_rect: gridRect }, source);
+      const sourceWidth = Math.max(1, Number(source?.width_px || metrics.tileWidth));
+      const sourceHeight = Math.max(1, Number(source?.height_px || metrics.tileHeight));
+      const x = Math.min(sourceWidth - 1, metrics.margin + rect.x * (metrics.tileWidth + metrics.spacing));
+      const y = Math.min(sourceHeight - 1, metrics.margin + rect.y * (metrics.tileHeight + metrics.spacing));
+      const right = Math.min(
+        sourceWidth,
+        metrics.margin + (rect.x + rect.width - 1) * (metrics.tileWidth + metrics.spacing) + metrics.tileWidth,
+      );
+      const bottom = Math.min(
+        sourceHeight,
+        metrics.margin + (rect.y + rect.height - 1) * (metrics.tileHeight + metrics.spacing) + metrics.tileHeight,
+      );
+      return { x, y, width: Math.max(1, right - x), height: Math.max(1, bottom - y) };
+    }
+
     sliceDisplaySize(slice) {
-      const rect = slice?.pixel_rect || { width: MATERIAL_GRID_SIZE, height: MATERIAL_GRID_SIZE };
+      const fallback = this.mapTileSizePx();
+      const rect = slice?.pixel_rect || { width: fallback, height: fallback };
       return this.sliceRotation(slice) % 180 === 90
         ? { width: rect.height, height: rect.width }
         : { width: rect.width, height: rect.height };
     }
 
     sliceFootprint(slice) {
+      const gridRect = this.sliceGridRect(slice);
+      return this.sliceRotation(slice) % 180 === 90
+        ? { columns: gridRect.height, rows: gridRect.width }
+        : { columns: gridRect.width, rows: gridRect.height };
+    }
+
+    sliceThumbnailLayout(slice, size) {
+      const rect = slice?.pixel_rect || { width: 1, height: 1 };
+      const width = Math.max(1, Number(rect.width) || 1);
+      const height = Math.max(1, Number(rect.height) || 1);
       const display = this.sliceDisplaySize(slice);
+      const scale = Math.min(size / Math.max(1, display.width), size / Math.max(1, display.height));
+      const imageWidth = width * scale;
+      const imageHeight = height * scale;
       return {
-        columns: Math.max(1, Math.ceil(display.width / MATERIAL_GRID_SIZE)),
-        rows: Math.max(1, Math.ceil(display.height / MATERIAL_GRID_SIZE)),
+        scale,
+        width: imageWidth,
+        height: imageHeight,
+        left: (size - imageWidth) / 2,
+        top: (size - imageHeight) / 2,
       };
     }
 
@@ -1380,10 +1742,10 @@
       const url = this.imageUrls.get(slice.source_id);
       if (!source || !url) return `<span class="me2-thumb${large ? ' large' : ''}">◇</span>`;
       const rect = slice.pixel_rect;
-      const size = large ? 112 : 34;
-      const scale = Math.min(size / rect.width, size / rect.height);
-      const bgW = source.width_px * scale, bgH = source.height_px * scale;
-      return `<span class="me2-thumb${large ? ' large' : ''}"><span class="me2-thumb-image" style="background-image:url('${url.replaceAll("'", '%27')}');background-size:${bgW}px ${bgH}px;background-position:${-rect.x * scale}px ${-rect.y * scale}px;transform:rotate(${this.sliceRotation(slice)}deg)"></span></span>`;
+      const size = large ? 110 : 34;
+      const layout = this.sliceThumbnailLayout(slice, size);
+      const bgW = source.width_px * layout.scale, bgH = source.height_px * layout.scale;
+      return `<span class="me2-thumb${large ? ' large' : ''}"><span class="me2-thumb-image" style="left:${layout.left}px;top:${layout.top}px;width:${layout.width}px;height:${layout.height}px;background-image:url('${url.replaceAll("'", '%27')}');background-size:${bgW}px ${bgH}px;background-position:${-rect.x * layout.scale}px ${-rect.y * layout.scale}px;transform:rotate(${this.sliceRotation(slice)}deg)"></span></span>`;
     }
 
     renderCanvas() {
@@ -1395,6 +1757,7 @@
       if (this.isCanvasEditing()) this.renderMaterialDrawingCanvas(ctx);
       else if (this.workspace === 'materials') this.renderMaterialCanvas(ctx);
       else this.renderMapCanvas(ctx);
+      this.navigation?.draw(ctx);
       this.root.querySelector('[data-zoom]').textContent = `${Math.round(this.zoom * 100)}%`;
       const context = this.root.querySelector('[data-context]');
       context.textContent = this.workspace === 'materials'
@@ -1440,13 +1803,23 @@
         }
       }
       if (this.workspace === 'world') this.drawWorldMaterials(ctx, tile);
+      this.drawSpatialAssets(ctx, tile);
       if (this.semanticVisible) this.drawSemantics(ctx, tile);
       const selected = this.nodeById.get(this.selectedNodeId);
       if (this.workspace === 'world' && selected) {
+        const selectedBounds = this.nodeDisplayBounds(selected);
         ctx.strokeStyle = '#fff'; ctx.lineWidth = 3 / this.zoom; ctx.setLineDash([]);
-        ctx.strokeRect(selected.bounds.x * tile, selected.bounds.y * tile, selected.bounds.width * tile, selected.bounds.height * tile);
+        ctx.strokeRect(selectedBounds.x * tile, selectedBounds.y * tile, selectedBounds.width * tile, selectedBounds.height * tile);
         ctx.strokeStyle = LEVEL_COLOR[selected.kind] || '#166b5c'; ctx.lineWidth = 1.5 / this.zoom;
-        ctx.strokeRect(selected.bounds.x * tile, selected.bounds.y * tile, selected.bounds.width * tile, selected.bounds.height * tile);
+        ctx.strokeRect(selectedBounds.x * tile, selectedBounds.y * tile, selectedBounds.width * tile, selectedBounds.height * tile);
+        if (!this.readonly && selected.kind !== 'WORLD') {
+          const handleSize = 10 / this.zoom;
+          const handleX = (selectedBounds.x + selectedBounds.width) * tile;
+          const handleY = (selectedBounds.y + selectedBounds.height) * tile;
+          ctx.fillStyle = '#fff'; ctx.strokeStyle = LEVEL_COLOR[selected.kind] || '#166b5c'; ctx.lineWidth = 2 / this.zoom;
+          ctx.fillRect(handleX - handleSize / 2, handleY - handleSize / 2, handleSize, handleSize);
+          ctx.strokeRect(handleX - handleSize / 2, handleY - handleSize / 2, handleSize, handleSize);
+        }
       }
       ctx.restore();
     }
@@ -1488,16 +1861,61 @@
           || left.id.localeCompare(right.id));
       for (const node of nodes) {
         const slice = this.nodeMaterialSlice(node);
-        const footprint = this.sliceFootprint(slice);
+        const bounds = this.nodeDisplayBounds(node);
         this.drawSliceRect(
           ctx,
           slice,
           0,
-          Number(node.bounds.x || 0) * tile,
-          Number(node.bounds.y || 0) * tile,
-          footprint.columns * tile,
-          footprint.rows * tile,
+          bounds.x * tile,
+          bounds.y * tile,
+          bounds.width * tile,
+          bounds.height * tile,
+          this.sliceRotation(this.sliceById.get(node.material_slice_id) || slice),
         );
+      }
+    }
+
+    drawSpatialAssets(ctx, tile) {
+      // 空间素材按稳定 asset id 从服务端水合；重新打开地图即可显示素材的最新外观。
+      const scene = this.definition.spatial_scene;
+      const assets = this.editor.spatial_assets || {};
+      if (!scene || !Array.isArray(scene.placements)) return;
+      for (const placement of scene.placements) {
+        const contract = assets[String(placement.spatial_asset_id || '')];
+        if (!contract) continue;
+        const state = { ...(contract.initial_state || {}), ...(placement.state_overrides || {}) };
+        let appearance = { ...(contract.appearance || {}) };
+        const variants = appearance.state_variants || {};
+        for (const value of Object.values(state)) {
+          const key = String(value ?? '').toLowerCase().replaceAll('_', '-');
+          if (variants[key]) { appearance = { ...appearance, ...variants[key] }; break; }
+        }
+        const x = (Number(placement.x_tiles || 0) + 0.5) * tile;
+        const y = (Number(placement.y_tiles || 0) + 0.5) * tile;
+        const width = Math.max(tile * 0.7, Number(contract.physics?.width_tiles || 1) * tile);
+        const height = Math.max(tile * 0.7, Number(contract.physics?.height_tiles || 1) * tile);
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Number(placement.rotation_degrees || 0) * Math.PI / 180);
+        ctx.globalAlpha = 0.94;
+        if (appearance.color) {
+          ctx.fillStyle = appearance.color;
+          ctx.fillRect(-width / 2, -height / 2, width, height);
+          ctx.strokeStyle = 'rgba(19,62,55,.45)';
+          ctx.lineWidth = 1 / this.zoom;
+          ctx.strokeRect(-width / 2, -height / 2, width, height);
+        } else if (appearance.emoji) {
+          ctx.font = `${Math.max(tile, Math.min(width, height))}px system-ui`;
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(appearance.emoji, 0, 0);
+        } else {
+          ctx.fillStyle = '#d8e5df';
+          ctx.fillRect(-width / 2, -height / 2, width, height);
+          ctx.fillStyle = '#244b43'; ctx.font = `${Math.max(8, tile * 0.32)}px system-ui`;
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(contract.name || placement.instance_key || '素材', 0, 0);
+        }
+        ctx.restore();
       }
     }
 
@@ -1532,7 +1950,7 @@
       const visibleKinds = this.depth === 1 ? ['WORLD'] : this.depth === 2 ? ['SECTOR'] : this.depth === 3 ? ['SECTOR', 'ARENA'] : ['SECTOR', 'ARENA', 'GAME_OBJECT'];
       const nodes = this.document.hierarchy_nodes.filter(node => visibleKinds.includes(node.kind) && kindDepth[node.kind] <= this.depth);
       for (const node of nodes) {
-        const rect = node.bounds; const color = LEVEL_COLOR[node.kind];
+        const rect = this.nodeDisplayBounds(node); const color = LEVEL_COLOR[node.kind];
         ctx.fillStyle = `${color}22`; ctx.fillRect(rect.x * tile, rect.y * tile, rect.width * tile, rect.height * tile);
         ctx.strokeStyle = `${color}bb`; ctx.lineWidth = 1 / this.zoom; ctx.setLineDash(node.kind === 'GAME_OBJECT' ? [2 / this.zoom, 2 / this.zoom] : []);
         ctx.strokeRect(rect.x * tile, rect.y * tile, rect.width * tile, rect.height * tile);
@@ -1603,12 +2021,15 @@
     }
 
     drawMaterialGrid(ctx, source) {
-      if (this.zoom * MATERIAL_GRID_SIZE < 8) return;
+      const metrics = this.sourceGridMetrics(source);
+      if (this.zoom * Math.min(metrics.tileWidth, metrics.tileHeight) < 8) return;
       ctx.save(); ctx.beginPath();
-      for (let x = MATERIAL_GRID_SIZE; x < source.width_px; x += MATERIAL_GRID_SIZE) {
+      for (let column = 1; column < metrics.columns; column += 1) {
+        const x = metrics.margin + column * (metrics.tileWidth + metrics.spacing);
         ctx.moveTo(x, 0); ctx.lineTo(x, source.height_px);
       }
-      for (let y = MATERIAL_GRID_SIZE; y < source.height_px; y += MATERIAL_GRID_SIZE) {
+      for (let row = 1; row < metrics.rows; row += 1) {
+        const y = metrics.margin + row * (metrics.tileHeight + metrics.spacing);
         ctx.moveTo(0, y); ctx.lineTo(source.width_px, y);
       }
       ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1 / this.zoom; ctx.stroke(); ctx.restore();
@@ -1625,15 +2046,24 @@
         this.updateCanvasCursor(point); return;
       }
       if (event.button !== 0) return;
+      if (this.navigation?.pointerDown(point)) return;
       if (this.workspace === 'materials' && !canvasEditing) { this.materialPointerDown(point); return; }
       if (this.workspace === 'world') {
         const position = this.mapPosition(point);
         const selected = this.nodeById.get(this.selectedNodeId);
-        if (!this.readonly && selected?.kind !== 'WORLD' && this.pointInNode(position, selected)) {
+        if (!this.readonly && selected?.kind !== 'WORLD' && this.worldNodeResizeHit(point, selected)) {
+          const selectedBounds = this.nodeDisplayBounds(selected);
+          this.drag = {
+            type: 'resize-node', nodeId: selected.id,
+            startMapX: position.x, startMapY: position.y,
+            startWidth: selectedBounds.width, startHeight: selectedBounds.height,
+          };
+        } else if (!this.readonly && selected?.kind !== 'WORLD' && this.pointInNode(position, selected)) {
+          const selectedBounds = this.nodeDisplayBounds(selected);
           this.drag = {
             type: 'move-node', nodeId: selected.id,
             startMapX: position.x, startMapY: position.y,
-            startNodeX: selected.bounds.x, startNodeY: selected.bounds.y,
+            startNodeX: selectedBounds.x, startNodeY: selectedBounds.y,
             moved: false,
           };
         } else {
@@ -1663,6 +2093,7 @@
 
     pointerMove(event) {
       const point = this.localPoint(event);
+      if (this.navigation?.pointerMove(point)) return;
       if (this.drag?.type === 'pan') {
         if (this.drag.worldInteraction) {
           const distance = Math.hypot(point.x - this.drag.startX, point.y - this.drag.startY);
@@ -1673,6 +2104,7 @@
         this.offsetY = this.drag.offsetY + point.y - this.drag.startY; this.renderCanvas(); this.updateCanvasCursor(point); return;
       }
       if (this.drag?.type === 'move-node') { this.dragWorldNode(point); return; }
+      if (this.drag?.type === 'resize-node') { this.dragWorldNodeResize(point); return; }
       if (this.drag?.type === 'paint') { const p = this.mapPoint(point); this.paintAt(p.x, p.y); return; }
       if (this.drag?.type === 'erase') { const p = this.mapPoint(point); this.eraseAt(p.x, p.y); return; }
       if (this.drag?.type === 'crop-select') { this.dragMaterialSelection(point); return; }
@@ -1684,6 +2116,7 @@
 
     pointerUp(event) {
       if (this.canvas.hasPointerCapture(event.pointerId)) this.canvas.releasePointerCapture(event.pointerId);
+      if (this.navigation?.pointerUp()) return;
       const completedDrag = this.drag;
       if (this.drag?.type === 'paint' || this.drag?.type === 'erase') this.commitMapEdit();
       if (this.drag?.type === 'crop-select' || this.drag?.type === 'crop-resize') this.renderLeft();
@@ -1699,8 +2132,9 @@
       const position = this.mapPosition(point);
       const mapWidth = Number(this.document.import_metadata.width || 140);
       const mapHeight = Number(this.document.import_metadata.height || 100);
-      const maxX = Math.max(0, mapWidth - Number(node.bounds.width || 1));
-      const maxY = Math.max(0, mapHeight - Number(node.bounds.height || 1));
+      const displayBounds = this.nodeDisplayBounds(node);
+      const maxX = Math.max(0, mapWidth - displayBounds.width);
+      const maxY = Math.max(0, mapHeight - displayBounds.height);
       const x = Math.max(0, Math.min(maxX, this.drag.startNodeX + Math.round(position.x - this.drag.startMapX)));
       const y = Math.max(0, Math.min(maxY, this.drag.startNodeY + Math.round(position.y - this.drag.startMapY)));
       if (x === node.bounds.x && y === node.bounds.y) { this.updateCanvasCursor(point); return; }
@@ -1711,6 +2145,37 @@
       const yInput = this.inspector.querySelector('[data-node-y]');
       if (xInput) xInput.value = String(x);
       if (yInput) yInput.value = String(y);
+      this.rememberNodeDraftValue(node, 'x', String(x));
+      this.rememberNodeDraftValue(node, 'y', String(y));
+      this.changed = true;
+      this.renderCanvas(); this.updateCanvasCursor(point);
+    }
+
+    dragWorldNodeResize(point) {
+      const node = this.nodeById.get(this.drag?.nodeId); if (!node) return;
+      const position = this.mapPosition(point);
+      const mapWidth = Number(this.document.import_metadata.width || 140);
+      const mapHeight = Number(this.document.import_metadata.height || 100);
+      const displayBounds = this.nodeDisplayBounds(node);
+      const width = Math.max(1, Math.min(
+        mapWidth - displayBounds.x,
+        this.drag.startWidth + Math.round(position.x - this.drag.startMapX),
+      ));
+      const height = Math.max(1, Math.min(
+        mapHeight - displayBounds.y,
+        this.drag.startHeight + Math.round(position.y - this.drag.startMapY),
+      ));
+      if (width === displayBounds.width && height === displayBounds.height) {
+        this.updateCanvasCursor(point); return;
+      }
+      node.bounds.width = width; node.bounds.height = height;
+      node.extensions ||= {}; delete node.extensions.mask;
+      const widthInput = this.inspector.querySelector('[data-node-w]');
+      const heightInput = this.inspector.querySelector('[data-node-h]');
+      if (widthInput) widthInput.value = String(width);
+      if (heightInput) heightInput.value = String(height);
+      this.rememberNodeDraftValue(node, 'width', String(width));
+      this.rememberNodeDraftValue(node, 'height', String(height));
       this.changed = true;
       this.renderCanvas(); this.updateCanvasCursor(point);
     }
@@ -1727,11 +2192,14 @@
       let slice = selected && this.editingSlice && selected.source_id === source.id ? selected : null;
       const pixelRect = this.materialGridRect(source, p, p);
       if (!slice) {
+        this.clearSliceNameDraft();
         slice = this.newMaterialSlice(source, pixelRect);
         this.document.material_slices.push(slice); this.selectedSliceId = slice.id; this.materialView = 'slice'; this.editingSlice = true;
         this.reindex(); this.renderAll();
       } else {
-        slice.pixel_rect = pixelRect; slice.grid_rect = null; this.renderCanvas(); this.renderInspector();
+        slice.grid_rect = this.gridRectFromPixelRect(source, pixelRect);
+        slice.pixel_rect = this.pixelRectFromGridRect(source, slice.grid_rect);
+        this.renderCanvas(); this.renderInspector();
       }
       this.changed = true;
       this.drag = { type: 'crop-select', start: p, sliceId: slice.id, sourceId: source.id };
@@ -1740,36 +2208,36 @@
     dragMaterialSelection(point) {
       const source = this.sourceById.get(this.drag.sourceId); const slice = this.sliceById.get(this.drag.sliceId); if (!source || !slice) return;
       slice.pixel_rect = this.materialGridRect(source, this.drag.start, this.materialPoint(point));
-      slice.grid_rect = null; this.changed = true; this.renderCanvas(); this.renderInspector();
+      slice.grid_rect = this.gridRectFromPixelRect(source, slice.pixel_rect);
+      this.changed = true; this.renderCanvas(); this.renderInspector();
     }
 
     dragCropResize(point) {
       const source = this.sourceById.get(this.selectedSourceId); const slice = this.sliceById.get(this.selectedSliceId); if (!source || !slice) return;
       const p = this.materialPoint(point); const base = this.drag.rect;
-      slice.pixel_rect.width = this.snapMaterialSpan(p.x - base.x, source.width_px - base.x);
-      slice.pixel_rect.height = this.snapMaterialSpan(p.y - base.y, source.height_px - base.y);
-      slice.grid_rect = null;
+      slice.pixel_rect = this.materialGridRect(source, { x: base.x, y: base.y }, p);
+      slice.grid_rect = this.gridRectFromPixelRect(source, slice.pixel_rect);
       this.changed = true; this.renderCanvas(); this.renderInspector();
     }
 
     materialGridRect(source, start, end) {
-      const maxColumn = Math.max(0, Math.ceil(source.width_px / MATERIAL_GRID_SIZE) - 1);
-      const maxRow = Math.max(0, Math.ceil(source.height_px / MATERIAL_GRID_SIZE) - 1);
-      const column = point => Math.max(0, Math.min(maxColumn, Math.floor(point.x / MATERIAL_GRID_SIZE)));
-      const row = point => Math.max(0, Math.min(maxRow, Math.floor(point.y / MATERIAL_GRID_SIZE)));
+      const metrics = this.sourceGridMetrics(source);
+      const maxColumn = metrics.columns - 1;
+      const maxRow = metrics.rows - 1;
+      const column = point => Math.max(0, Math.min(maxColumn, Math.floor(
+        Math.max(0, point.x - metrics.margin) / (metrics.tileWidth + metrics.spacing),
+      )));
+      const row = point => Math.max(0, Math.min(maxRow, Math.floor(
+        Math.max(0, point.y - metrics.margin) / (metrics.tileHeight + metrics.spacing),
+      )));
       const left = Math.min(column(start), column(end)); const right = Math.max(column(start), column(end));
       const top = Math.min(row(start), row(end)); const bottom = Math.max(row(start), row(end));
-      const x = left * MATERIAL_GRID_SIZE; const y = top * MATERIAL_GRID_SIZE;
-      return { x, y,
-        width: Math.min(source.width_px, (right + 1) * MATERIAL_GRID_SIZE) - x,
-        height: Math.min(source.height_px, (bottom + 1) * MATERIAL_GRID_SIZE) - y };
-    }
-
-    snapMaterialSpan(value, available) {
-      if (available <= MATERIAL_GRID_SIZE) return Math.max(1, available);
-      const max = Math.max(MATERIAL_GRID_SIZE, Math.floor(available / MATERIAL_GRID_SIZE) * MATERIAL_GRID_SIZE);
-      const snapped = Math.max(1, Math.round(value / MATERIAL_GRID_SIZE)) * MATERIAL_GRID_SIZE;
-      return Math.max(MATERIAL_GRID_SIZE, Math.min(max, snapped));
+      return this.pixelRectFromGridRect(source, {
+        x: left,
+        y: top,
+        width: right - left + 1,
+        height: bottom - top + 1,
+      });
     }
 
     materialResizeHit(point) {
@@ -1781,12 +2249,15 @@
 
     updateCanvasCursor(point = null) {
       if (!this.canvasHost) return;
+      const nodeResizing = this.drag?.type === 'resize-node';
+      const nodeResize = !this.drag && point && this.worldNodeResizeHit(point);
       const nodeMoving = this.drag?.type === 'move-node';
-      const nodeMove = !nodeMoving && point && this.worldNodeMoveHit(point);
+      const nodeMove = !this.drag && !nodeResize && point && this.worldNodeMoveHit(point);
+      const worldNodeInteraction = nodeResize || nodeResizing || nodeMove || nodeMoving;
       const panMode = this.workspace === 'materials' && !this.isCanvasEditing()
         ? this.materialPan
-        : (this.workspace === 'world' ? !nodeMove && !nodeMoving : this.tool === 'pan');
-      const resizing = this.drag?.type === 'crop-resize' || (!this.drag && point && this.materialResizeHit(point));
+        : (this.workspace === 'world' ? !worldNodeInteraction : this.tool === 'pan');
+      const resizing = nodeResize || nodeResizing || this.drag?.type === 'crop-resize' || (!this.drag && point && this.materialResizeHit(point));
       this.canvasHost.classList.toggle('is-pan', panMode);
       this.canvasHost.classList.toggle('is-panning', this.drag?.type === 'pan');
       this.canvasHost.classList.toggle('is-node-move', Boolean(nodeMove));
@@ -1800,9 +2271,20 @@
     materialPoint(point) { return { x: (point.x - this.offsetX) / this.zoom, y: (point.y - this.offsetY) / this.zoom }; }
 
     pointInNode(position, node) {
-      const bounds = node?.bounds; if (!bounds) return false;
+      const bounds = node ? this.nodeDisplayBounds(node) : null; if (!bounds) return false;
       return position.x >= bounds.x && position.x < bounds.x + bounds.width
         && position.y >= bounds.y && position.y < bounds.y + bounds.height;
+    }
+
+    worldNodeResizeHit(point, node = null) {
+      if (this.workspace !== 'world' || this.readonly || !point) return false;
+      const selected = node || this.nodeById.get(this.selectedNodeId);
+      if (!selected || selected.kind === 'WORLD') return false;
+      const bounds = this.nodeDisplayBounds(selected);
+      const position = this.mapPosition(point);
+      const radius = 10 / Math.max(1, this.renderTile * this.zoom);
+      return Math.abs(position.x - (bounds.x + bounds.width)) <= radius
+        && Math.abs(position.y - (bounds.y + bounds.height)) <= radius;
     }
 
     worldNodeMoveHit(point) {
@@ -1913,6 +2395,12 @@
     }
 
     applyMapHistoryEntry(entry, valueKey) {
+      if (entry.kind === 'node-edit') {
+        const index = this.document.hierarchy_nodes.findIndex(node => node.id === entry.nodeId);
+        if (index >= 0) this.document.hierarchy_nodes[index] = deepClone(entry[valueKey]);
+        this.clearNodeEditDraft(entry.nodeId); this.changed = true; this.reindex(); this.renderAll(); return;
+      }
+      if (this.navigation?.applyHistory(entry, valueKey)) return;
       if (entry.kind === 'canvas-create') {
         this.applyCanvasCreationHistory(entry, valueKey === 'after');
         return;
@@ -2072,6 +2560,7 @@
     }
 
     selectNode(id, locate) {
+      if (this.nodeEditDraft?.nodeId !== id) this.clearNodeEditDraft();
       if (this.nodeMaterialPreview?.nodeId !== id) this.nodeMaterialPreview = null;
       this.selectedNodeId = id; let node = this.nodeById.get(id);
       while (node?.parent_id) { this.expandedNodes.add(node.parent_id); node = this.nodeById.get(node.parent_id); }
@@ -2080,7 +2569,7 @@
     }
 
     focusNode(node) {
-      if (!node) return; const r = node.bounds; const width = r.width * this.renderTile; const height = r.height * this.renderTile;
+      if (!node) return; const r = this.nodeDisplayBounds(node); const width = r.width * this.renderTile; const height = r.height * this.renderTile;
       this.zoom = Math.min(3, Math.max(.15, Math.min((this.viewportWidth - 160) / width, (this.viewportHeight - 160) / height)));
       this.offsetX = this.viewportWidth / 2 - (r.x * this.renderTile + width / 2) * this.zoom;
       this.offsetY = this.viewportHeight / 2 - (r.y * this.renderTile + height / 2) * this.zoom; this.renderCanvas();
@@ -2095,6 +2584,7 @@
 
     addChildNode(parentId) {
       const parent = this.nodeById.get(parentId); if (!parent || parent.kind === 'GAME_OBJECT') return;
+      this.clearNodeEditDraft();
       const next = { WORLD: 'SECTOR', SECTOR: 'ARENA', ARENA: 'GAME_OBJECT' }[parent.kind];
       const siblings = this.childrenByParent.get(parent.id) || [];
       const node = { id: uid(next.toLowerCase()), kind: next, parent_id: parent.id, name: `未命名 ${LEVEL_LABEL[next]}`, sort_order: siblings.length,
@@ -2104,7 +2594,7 @@
       requestAnimationFrame(() => this.inspector.querySelector('[data-node-name]')?.select());
     }
 
-    deleteWorldNode(node) {
+    async deleteWorldNode(node) {
       if (this.readonly || !node || node.kind === 'WORLD' || !this.nodeById.has(node.id)) return;
       const nodeIds = new Set([node.id]);
       let collecting = true;
@@ -2118,10 +2608,11 @@
       }
       const descendantCount = nodeIds.size - 1;
       const descendantText = descendantCount ? `及其 ${descendantCount} 个下级节点` : '';
-      if (!window.confirm(`确定删除节点“${node.name}”${descendantText}吗？`)) return;
+      if (!await window.confirmResourceDeletion({ type: '节点', name: node.name, message: `删除该节点${descendantText}，保存地图后生效。` })) return;
       const parentId = node.parent_id || this.document.root_node_id;
       this.document.hierarchy_nodes = this.document.hierarchy_nodes.filter(item => !nodeIds.has(item.id));
       for (const id of nodeIds) this.expandedNodes.delete(id);
+      this.clearNodeEditDraft(node.id);
       this.nodeMaterialPreview = null; this.selectedNodeId = parentId;
       this.changed = true; this.reindex(); this.renderAll();
       this.toast('节点已删除', descendantCount ? `${node.name} · 含 ${descendantCount} 个下级节点` : node.name);
@@ -2130,24 +2621,51 @@
     wheel(event) { event.preventDefault(); const point = this.localPoint(event); this.changeZoom(event.deltaY < 0 ? 1.12 : 1 / 1.12, point.x, point.y); }
 
     async importSourceFile(file) {
-      if (!file || !file.type.startsWith('image/')) return;
-      const dataUrl = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file); });
-      const image = await loadImage(dataUrl); const id = uid('source');
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        throw new Error('请选择 PNG、JPEG、WebP 等图片文件');
+      }
+      const maxBytes = 50 * 1024 * 1024;
+      if (Number(file.size || 0) > maxBytes) {
+        throw new Error(`图片不能超过 50 MiB；当前为 ${(file.size / 1024 / 1024).toFixed(1)} MiB`);
+      }
+      // Object URL keeps the compressed Blob outside the JavaScript heap.
+      // Converting a large PNG to Base64 first adds ~33% memory and used to
+      // reject otherwise valid files before the upload even started.
+      const localUrl = URL.createObjectURL(file);
+      let image;
+      try {
+        image = await loadImage(localUrl);
+      } catch (error) {
+        throw new Error(`浏览器无法解码该图片：${error?.message || file.name}`);
+      } finally {
+        URL.revokeObjectURL(localUrl);
+      }
+      const id = uid('source');
       const body = new FormData(); body.append('file', file);
       let uploaded;
       try {
-        const response = await fetch('/api/v1/assets', { method: 'POST', body });
-        const result = await response.json();
+        if (window.ResourceScope?.experimentId) body.append('expected_content_sha256', window.ResourceScope.digest);
+        const response = await fetch(window.ResourceScope?.url('/assets') || '/api/studio/resources/assets', { method: 'POST', body });
+        const result = await response.json().catch(() => null);
         if (!response.ok) throw new Error(result?.message || result?.error?.message || `HTTP ${response.status}`);
+        if (!result?.asset_id) throw new Error('素材服务没有返回 asset_id');
         uploaded = result;
+        if (window.ResourceScope?.experimentId) {
+          window.dispatchEvent(new CustomEvent('experiment-map:uploaded', { detail: result }));
+          window.ResourceScope.saved(result);
+        }
       } catch (error) {
         this.toast('原图导入失败', error.message || '素材上传失败'); return;
       }
-      const source = { id, name: file.name.replace(/\.[^.]+$/, ''), kind: 'UPLOADED', asset_id: uploaded.asset_id, asset_hash: uploaded.sha256, bundled_path: null,
+      const tileSize = this.mapTileSizePx();
+      const columns = Math.max(1, Math.ceil(image.naturalWidth / tileSize));
+      const rows = Math.max(1, Math.ceil(image.naturalHeight / tileSize));
+      const source = { id, name: file.name.replace(/\.[^.]+$/, ''), kind: uploaded.logical_path ? 'BUNDLED' : 'UPLOADED', asset_id: uploaded.logical_path ? null : uploaded.asset_id, asset_hash: uploaded.sha256, bundled_path: uploaded.logical_path || null,
         generated_color: null, media_type: uploaded.media_type || file.type, width_px: image.naturalWidth, height_px: image.naturalHeight,
-        tile_width: 32, tile_height: 32, columns: Math.max(1, Math.floor(image.naturalWidth / 32)), rows: Math.max(1, Math.floor(image.naturalHeight / 32)),
-        tile_count: Math.max(1, Math.floor(image.naturalWidth / 32) * Math.floor(image.naturalHeight / 32)), margin: 0, spacing: 0, first_gid: null };
-      this.document.material_sources.unshift(source); this.images.set(id, image); this.imageUrls.set(id, `/api/v1/assets/${encodeURIComponent(uploaded.asset_id)}/content`); this.selectedCanvasId = ''; this.selectedSourceId = id; this.selectedSliceId = '';
+        tile_width: tileSize, tile_height: tileSize, columns, rows,
+        tile_count: columns * rows, margin: 0, spacing: 0, first_gid: null };
+      this.document.material_sources.unshift(source); this.images.set(id, image); this.imageUrls.set(id, uploaded.logical_path ? window.ResourceScope.assetUrl(uploaded.logical_path) : `/api/studio/resources/assets/${encodeURIComponent(uploaded.asset_id)}/content`); this.selectedCanvasId = ''; this.selectedSourceId = id; this.selectedSliceId = '';
       this.expandedMaterialGroups.add('sources');
       this.expandedSources.add(id); this.materialView = 'source'; this.changed = true; this.reindex(); this.renderAll(); requestAnimationFrame(() => this.fit());
       this.toast('原图已导入', `${source.name} · ${source.width_px}×${source.height_px}px`);

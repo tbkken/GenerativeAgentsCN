@@ -1,4 +1,4 @@
-"""Versioned experiment configuration primitives."""
+"""Simulation-kernel configuration primitives loaded from physical packages."""
 
 from .algorithm import AlgorithmProfile, get_algorithm_profile
 from .bootstrap import make_builtin_definition

@@ -1,0 +1,10 @@
+.model-center-head {display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+.model-center-head h1 {margin:0 0 8px}.model-center-head p {color:#61706a;margin:0}
+#page-model-catalog .inline-actions {display:flex;gap:8px;flex-wrap:wrap}
+#modelServiceForm label:has(#modelServiceClearKey) {display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-top:8px}
+.model-center-grid {display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:24px;align-items:start}
+.model-service-list {display:grid;gap:10px}.model-service-card {display:grid;gap:8px;text-align:left;padding:18px;border:1px solid #dce4df;border-radius:12px;background:white;cursor:pointer;color:inherit}
+.model-service-card span {overflow-wrap:anywhere}.model-service-card small {color:#65736d}.model-service-card.selected {border-color:#377866;box-shadow:0 0 0 1px #377866}
+.model-service-editor {padding:24px;background:white;border:1px solid #dce4df;border-radius:14px}.model-service-editor h2 {margin-top:0}
+#modelServiceStatus {white-space:pre-wrap;overflow-wrap:anywhere;color:#365e50;line-height:1.6}
+@media(max-width:850px){.model-center-grid{grid-template-columns:1fr}.model-center-head{align-items:flex-start;flex-direction:column}}

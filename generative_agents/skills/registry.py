@@ -10,6 +10,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Iterable, Literal, Mapping
 
+from .dependencies import referenced_mcp_tools
+
 
 SkillKind = Literal["atomic", "pack", "brain"]
 _KINDS: tuple[SkillKind, ...] = ("atomic", "pack", "brain")
@@ -41,13 +43,12 @@ class SkillDocument:
     prompt_template: str
     children: tuple[str, ...]
     scripts: tuple[str, ...]
-    revision: str
+    content_hash: str
     updated_at: str
     example_input: str = ""
     storage: str = "filesystem"
     storage_ref: str | None = None
-    revision_id: str | None = None
-    revision_no: int | None = None
+    resource_id: str | None = None
     is_builtin: bool = False
     archived_at: str | None = None
 
@@ -65,13 +66,12 @@ class SkillDocument:
             "path": self.storage_ref or self.path.as_posix(),
             "storage": self.storage,
             "storage_ref": self.storage_ref,
-            "revision_id": self.revision_id,
-            "revision_no": self.revision_no,
+            "resource_id": self.resource_id,
             "is_builtin": self.is_builtin,
             "archived_at": self.archived_at,
             "children": list(self.children),
             "scripts": list(self.scripts),
-            "revision": self.revision,
+            "content_hash": self.content_hash,
             "updated_at": self.updated_at,
         }
 
@@ -268,7 +268,7 @@ class SkillRegistry:
         current = self.get(name)
         items = [
             {
-                "revision": current.revision,
+                "content_hash": current.content_hash,
                 "created_at": current.updated_at,
                 "source": "current",
             }
@@ -276,10 +276,10 @@ class SkillRegistry:
         directory = self.history_root / current.name
         if directory.exists():
             for path in sorted(directory.glob("*.md"), reverse=True):
-                timestamp, _, revision = path.stem.partition("-")
+                timestamp, _, content_hash = path.stem.partition("-")
                 items.append(
                     {
-                        "revision": revision,
+                        "content_hash": content_hash,
                         "created_at": timestamp.replace("_", ":"),
                         "source": path.as_posix(),
                     }
@@ -306,7 +306,7 @@ class SkillRegistry:
             "skill": document.name,
             "scripts": list(document.scripts),
             "skills": children,
-            "mcp": ["memory-stream"] if "memory-stream" in document.markdown else [],
+            "mcp": referenced_mcp_tools(document.body),
         }
 
     def snapshot(
@@ -342,7 +342,7 @@ class SkillRegistry:
                 "kind": document.kind,
                 "description": document.description,
                 "markdown": document.markdown,
-                "revision": document.revision,
+                "content_hash": document.content_hash,
                 "scripts": {
                     relative_path: (document.path.parent / relative_path).read_text(
                         encoding="utf-8-sig"
@@ -475,7 +475,7 @@ class SkillRegistry:
             digest_builder.update(relative_path.encode("utf-8"))
             digest_builder.update(b"\x00")
             digest_builder.update((path.parent / relative_path).read_bytes())
-        digest = digest_builder.hexdigest()[:12]
+        digest = digest_builder.hexdigest()
         updated = datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat()
         return SkillDocument(
             name=name,
@@ -487,7 +487,7 @@ class SkillRegistry:
             prompt_template=prompt_template,
             children=children,
             scripts=scripts,
-            revision=digest,
+            content_hash=digest,
             updated_at=updated,
             example_input=example_input,
         )
@@ -504,7 +504,7 @@ class SkillRegistry:
         target_dir = self.history_root / document.name
         target_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(UTC).strftime("%Y%m%dT%H_%M_%S.%fZ")
-        target = target_dir / f"{timestamp}-{document.revision}.md"
+        target = target_dir / f"{timestamp}-{document.content_hash}.md"
         target.write_text(document.markdown, encoding="utf-8")
 
 
@@ -524,8 +524,8 @@ class SnapshotSkillRegistry:
     ) -> None:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
-        self._revisions = {
-            self.normalize_name(name): str(snapshot.get("revision") or "")
+        self._content_hashes = {
+            self.normalize_name(name): str(snapshot.get("content_hash") or "")
             for name, snapshot in skills.items()
         }
         self._registry = SkillRegistry(
@@ -540,15 +540,15 @@ class SnapshotSkillRegistry:
 
     def get(self, name: str) -> SkillDocument:
         document = self._registry.get(name)
-        revision = self._revisions.get(document.name)
-        return replace(document, revision=revision) if revision else document
+        content_hash = self._content_hashes.get(document.name)
+        return replace(document, content_hash=content_hash) if content_hash else document
 
     def list(
         self, *, kind: SkillKind | None = None, query: str = ""
     ) -> list[SkillDocument]:
         return [
-            replace(document, revision=self._revisions[document.name])
-            if self._revisions.get(document.name)
+            replace(document, content_hash=self._content_hashes[document.name])
+            if self._content_hashes.get(document.name)
             else document
             for document in self._registry.list(kind=kind, query=query)
         ]

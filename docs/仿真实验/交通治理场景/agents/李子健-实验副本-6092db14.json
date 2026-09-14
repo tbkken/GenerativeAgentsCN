@@ -1,0 +1,57 @@
+{
+  "format": "实验录入资料副本（公共文字档案与本次浏览器已确认的实验差异整理；非系统导出协议）",
+  "recorded_date": "2026-09-13",
+  "name": "李子健",
+  "age": 28,
+  "currently": "已经从西段进入南侧东行非机动车道，正骑电动自行车向东前往“东端办公报到入口”。本次出发时间为 2026-01-01T08:00:00+08:00；任务截止时间 task_deadline 为 2026-01-01T08:50:00+08:00，需要在此之前到达并办理报到。根据真实路况和个人判断安排行程；到达后先停稳车辆并下车，再办理报到。本次观察结束时间为 2026-01-01T09:00:00+08:00；报到完成后留在目的地有原因地等待至观察结束，不重新出发。",
+  "innate": "理性、效率导向、风险厌恶，重视责任，愿意了解新信息。",
+  "learned": "新港西路某互联网公司后端开发工程师，工作3年；计算机本科，习惯比较时间和风险成本。未婚，与大学同学合租。熟悉一般道路通行规则及沿线出行，但当前设施及道路状态仍需观察确认。",
+  "lifestyle": "日常骑电动自行车通勤，习惯查看路况再选择路线。通常重视交通规则，时间充裕时倾向规范骑行，认为处理违规的时间成本可能超过短暂等待。具体路线选择仍取决于当时情况。",
+  "daily_plan": "本次只完成从西段到东端办公入口的通勤行程。当前已经进入骑行阶段，不重新演绎起床和出门，也不扩展购买早餐等支线。",
+  "goals": [
+    "完成当前项目上线工作",
+    "准备后续职业发展",
+    "评估电动自行车电池维护或更换"
+  ],
+  "sprite_display_tiles": 2,
+  "vision_radius": 20,
+  "attention_bandwidth": 8,
+  "assets": {
+    "portrait": {
+      "file": "map/李子健-头像-128.png",
+      "sha256": "33372cb20facab4292e1e89d018c965f703df95882de7e9612a35f3582d470dd",
+      "size_px": [
+        128,
+        128
+      ],
+      "experiment_ui_resource": "/api/studio/experiments/6092db14-4f63-4986-8dd8-b5c81b07ffca/assets/agents/agent-mtzlbf8j-5yfte2/portrait.png"
+    },
+    "sprite": {
+      "file": "map/李子健-骑行行走图-128.png",
+      "sha256": "63c2cf76586f2d9a7eaa197728698672cbcf49c7cabd1b175d01ae0b0b8bb538",
+      "size_px": [
+        128,
+        128
+      ],
+      "experiment_ui_resource": "/api/studio/experiments/6092db14-4f63-4986-8dd8-b5c81b07ffca/assets/agents/agent-mtzlbf8j-5yfte2/sprite.png"
+    }
+  },
+  "ui_verification": "原实验保存后整页刷新重开，初始位置与任务文字一致；首步模型上下文再次确认。图片均为128×128、4x4布局、显示大小2格。",
+  "experiment_id": "6092db14-4f63-4986-8dd8-b5c81b07ffca",
+  "agent_key": "agent-mtzlbf8j-5yfte2",
+  "source_author_key_for_record_only": "agent-mtzlbf8j-5yfte2",
+  "coord": [
+    8,
+    26
+  ],
+  "initial_address": [
+    "新港西路交通治理·核心街区",
+    "新港西路沿街街区",
+    "南侧东行非机动车道",
+    "西段骑行出发区"
+  ],
+  "known_space": "新港西路交通治理·核心街区 > 新港西路沿街街区 > 南侧东行非机动车道；已知物件：西段骑行出发区",
+  "task_deadline": "2026-01-01T08:50:00+08:00",
+  "observation_end": "2026-01-01T09:00:00+08:00",
+  "sprite_layout": "4x4"
+}

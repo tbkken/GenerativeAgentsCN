@@ -1,0 +1,12 @@
+{
+  "case_key": "book-case01-morning-routine",
+  "checks": [
+    {"id":"map-schema","file":"map/map-definition.json","expect":"definition.editor_v2 validates as MapEditorDocumentV2; 24x24 and 576 tiles"},
+    {"id":"walkable-start","file":"agents/陈明远/experiment-placement.json","expect":"coord [3,4] is walkable and Tile address equals initial_location"},
+    {"id":"route-stations","file":"map/collision-and-placements.json","expect":"书房 [18,4]、厨房 [3,18]、餐区 [18,20] are walkable and connected"},
+    {"id":"agent-schema","file":"agents/陈明远/studio-definition.json","expect":"StudioAgentDefinition validates"},
+    {"id":"brain-tools","file":"skill/brain/book-case01-morning-routine/SKILL.md","expect":["world-perceive","world-navigate","world-act"],"forbidden":["sub-skill","memory-stream","SET_OBJECT_STATE"]},
+    {"id":"runtime-settings","file":"settings/simulation-settings.json","expect":"max_steps=16, stride_minutes=5, start_time=07:00+08:00"}
+  ]
+}
+

@@ -206,8 +206,7 @@ def build_world() -> dict[str, Any]:
         },
         "assets": [],
         "map_id": None,
-        "map_revision_id": None,
-        "map_revision_hash": None,
+        "map_snapshot_hash": None,
     }
 
 
@@ -230,36 +229,35 @@ def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = No
 
 
 def seed(base_url: str) -> dict[str, Any]:
-    """幂等创建、更新并发布中大南校区公共地图。"""
+    """幂等创建、更新并校验中大南校区公共地图。"""
 
     existing = _request(base_url, f"/maps?{urlencode({'page': 1, 'page_size': 100})}")
     match = next((item for item in existing["items"] if item["map_key"] == MAP_KEY), None)
-    if match is not None:
-        return {"created": False, "map": match}
-    public_map = _request(
-        base_url,
-        "/maps",
-        method="POST",
-        payload={
-            "map_key": MAP_KEY,
-            "name": MAP_NAME,
-            "description": "依据校园示意图构建的近似地图，包含主要校门、道路、教学建筑、运动场、水体与空间语义。",
-        },
-    )
-    draft = _request(base_url, f"/maps/{public_map['id']}/draft")
+    created = match is None
+    public_map = match or _request(
+            base_url,
+            "/maps",
+            method="POST",
+            payload={
+                "map_key": MAP_KEY,
+                "name": MAP_NAME,
+                "description": "依据校园示意图构建的近似地图，包含主要校门、道路、教学建筑、运动场、水体与空间语义。",
+            },
+        )
+    current = _request(base_url, f"/maps/{public_map['id']}")
     saved = _request(
         base_url,
-        f"/maps/{public_map['id']}/draft",
+        f"/maps/{public_map['id']}",
         method="PUT",
-        payload={"lock_version": draft["lock_version"], "world": build_world()},
+        payload={"lock_version": current["lock_version"], "world": build_world()},
     )
-    published = _request(
+    validated = _request(
         base_url,
-        f"/maps/{public_map['id']}/draft/publish",
+        f"/maps/{public_map['id']}/validate",
         method="POST",
-        payload={"draft_revision_id": saved["id"], "lock_version": saved["lock_version"]},
+        payload={"lock_version": saved["lock_version"]},
     )
-    return {"created": True, "map": public_map, "published": published}
+    return {"created": created, "map": validated}
 
 
 def main() -> int:
@@ -270,7 +268,6 @@ def main() -> int:
     args = parser.parse_args()
     result = seed(args.base_url)
     public_map = result["map"]
-    published = result.get("published") or public_map.get("current_published") or {}
     print(
         json.dumps(
             {
@@ -278,8 +275,8 @@ def main() -> int:
                 "map_id": public_map["id"],
                 "map_key": public_map["map_key"],
                 "name": public_map["name"],
-                "revision_id": published.get("id"),
-                "revision_no": published.get("revision_no"),
+                "row_version": public_map.get("row_version"),
+                "world_hash": public_map.get("world_hash"),
             },
             ensure_ascii=False,
             indent=2,

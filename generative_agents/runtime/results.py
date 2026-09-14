@@ -9,6 +9,7 @@ from typing import Any, Iterable, Mapping
 from uuid import UUID, uuid5
 
 from generative_agents.status import MemoryDeltaKind
+from generative_agents.ga_protocol.movement import normalize_movement_activity
 
 
 class ActivityKind(StrEnum):
@@ -44,6 +45,10 @@ class ActionSnapshot:
     description: str
     emoji: str | None = None
     object_description: str | None = None
+    movement_activity: Mapping[str, Any] | None = None
+
+    def __post_init__(self) -> None:
+        normalize_movement_activity(self.movement_activity)
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,7 +156,7 @@ class StepEffectRecord:
     payload: Mapping[str, Any]
     source_effect_id: UUID | None = None
     skill_name: str | None = None
-    skill_revision: str | None = None
+    skill_content_hash: str | None = None
     call_id: UUID | None = None
 
 
@@ -248,8 +253,56 @@ class StepResult:
         agent_keys = [item.agent_key for item in self.agents]
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agents must contain at most one result per agent_key")
+        self._validate_world_fact_consistency()
         if not self.effects:
             object.__setattr__(self, "effects", self._project_effects())
+
+    def _validate_world_fact_consistency(self) -> None:
+        """Reject replay facts that disagree with the committed Agent state."""
+
+        agents = {item.agent_key: item for item in self.agents}
+        for event in self.domain_events:
+            if event.event_type != "AGENT_MOVED":
+                continue
+            if len(event.agent_keys) != 1 or event.agent_keys[0] not in agents:
+                raise ValueError("AGENT_MOVED must identify exactly one Agent result")
+            agent = agents[event.agent_keys[0]]
+            payload = event.payload
+            structured = payload.get("structured_payload")
+            if not isinstance(structured, Mapping) or not structured:
+                raise ValueError("AGENT_MOVED requires structured_payload")
+            from_coord = tuple(structured.get("from_coord") or ())
+            to_coord = tuple(structured.get("to_coord") or ())
+            executed_path = tuple(
+                tuple(coord) for coord in (structured.get("executed_path") or ())
+            )
+            after_address = tuple(structured.get("after_address") or ())
+            if from_coord != tuple(agent.from_coord) or to_coord != tuple(agent.to_coord):
+                raise ValueError("AGENT_MOVED coordinates disagree with AgentStepResult")
+            if from_coord == to_coord or not executed_path:
+                raise ValueError("AGENT_MOVED must contain an actual displacement")
+            if executed_path != tuple(agent.path):
+                raise ValueError("AGENT_MOVED executed_path disagrees with AgentStepResult")
+            if executed_path[0] != from_coord or executed_path[-1] != to_coord:
+                raise ValueError("AGENT_MOVED executed_path endpoints are inconsistent")
+            if after_address != tuple(agent.location):
+                raise ValueError("AGENT_MOVED address disagrees with AgentStepResult")
+            canonical_object = ":".join(str(part) for part in after_address if str(part))
+            if str(payload.get("predicate") or "") != "移动到":
+                raise ValueError("AGENT_MOVED predicate must be canonical")
+            if str(payload.get("object") or "") != canonical_object:
+                raise ValueError("AGENT_MOVED object must equal the committed address")
+            description = str(structured.get("description") or "")
+            if not description or description != agent.action.description:
+                raise ValueError("AGENT_MOVED description disagrees with AgentStepResult")
+            activity = normalize_movement_activity(structured.get("movement_activity"))
+            if activity != agent.action.movement_activity:
+                raise ValueError("AGENT_MOVED movement_activity disagrees with AgentStepResult")
+            if "reached_target" in structured:
+                target = tuple((structured.get("arguments") or {}).get("target_coord") or ())
+                reached = not structured.get("remaining_path") and to_coord == target
+                if type(structured["reached_target"]) is not bool or structured["reached_target"] != reached:
+                    raise ValueError("AGENT_MOVED reached_target disagrees with the committed displacement")
 
     def _project_effects(self) -> tuple[StepEffectRecord, ...]:
         """执行`project``effects`的内部处理，供当前模块或类复用。
@@ -499,7 +552,7 @@ class StepResult:
                     payload=dict(item.get("payload", {})),
                     source_effect_id=optional_uuid(item.get("source_effect_id")),
                     skill_name=item.get("skill_name"),
-                    skill_revision=item.get("skill_revision"),
+                    skill_content_hash=item.get("skill_content_hash"),
                     call_id=optional_uuid(item.get("call_id")),
                 )
                 for item in value.get("effects", ())
@@ -523,6 +576,11 @@ class StepResultBuilder:
     _model_usage: list[ModelUsageDelta] = field(default_factory=list)
     _effects: list[StepEffectRecord] = field(default_factory=list)
     _frozen: bool = False
+
+    @property
+    def domain_events(self) -> tuple[DomainEventRecord, ...]:
+        """Facts already produced in this Step, for bounded object observations."""
+        return tuple(self._domain_events)
 
     def _append(self, target: list[Any], value: Any) -> None:
         """执行`append`的内部处理，供当前模块或类复用。

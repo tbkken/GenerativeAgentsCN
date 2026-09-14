@@ -7,6 +7,7 @@ import re
 from datetime import UTC, datetime
 from typing import Any, Mapping
 
+from generative_agents.ga_protocol.quality import deterministic_quality_issues
 from generative_agents.skills import (
     RecoverableSkillRuntimeError,
     SkillRunResult,
@@ -232,14 +233,14 @@ class BrainRuntime:
                 "kind": "skill_execution",
                 "agent_key": agent_key,
                 "skill_name": self.brain_skill,
-                "skill_revision": self.registry.get(self.brain_skill).revision,
+                "skill_content_hash": self.registry.get(self.brain_skill).content_hash,
                 "execution_source": "BRAIN_RUNTIME",
                 "input_text": task,
                 "output_text": result.output_text,
                 "trace": list(result.trace),
             }
         ]
-        if action.observation:
+        if action.observation and action.observation.get("agent_decision") != "PENDING":
             observation = dict(action.observation)
             events.append(
                 {
@@ -303,13 +304,16 @@ class BrainRuntime:
             if include_model
             else {
                 "status": "SKIPPED",
-                "error": "model evaluation skipped for failed execution",
+                "error": None,
+                "summary": "基础诊断未发现告警；本次未执行业务评估。",
                 "issues": [],
             }
         )
         issues = [*deterministic_issues, *evaluator.get("issues", [])]
         if issues:
             status = "WARNING"
+        elif evaluator.get("status") == "SKIPPED":
+            status = "NOT_EVALUATED"
         elif evaluator.get("status") == "PASS":
             status = "PASS"
         else:
@@ -322,7 +326,7 @@ class BrainRuntime:
             "evaluated_at": datetime.now(UTC).isoformat(),
             "evaluated_agent_steps": len(self._audit_records),
             "summary": (
-                evaluator.get("summary")
+                (evaluator.get("summary") if not issues else None)
                 or (
                     "运行失败，已生成部分执行质量诊断"
                     if execution_error
@@ -395,100 +399,7 @@ class BrainRuntime:
         )
 
     def _deterministic_quality_issues(self) -> list[dict[str, Any]]:
-        issues: list[dict[str, Any]] = []
-        previous_reads: dict[str, dict[str, Any]] = {}
-        for record in self._audit_records:
-            agent_key = str(record["agent_key"])
-            for signal in record.get("runtime_signals", []):
-                signal_event = str(signal.get("event") or "")
-                issues.append(
-                    {
-                        "code": (
-                            "NO_WORLD_ACTION_SELECTED"
-                            if signal_event == "brain.missing_action"
-                            else "BRAIN_ITERATION_ROLLED_BACK"
-                            if signal_event == "brain.rollback"
-                            else "BRAIN_RUNTIME_DEGRADED"
-                        ),
-                        "severity": "WARNING",
-                        "agent_key": agent_key,
-                        "step_no": record["step_no"],
-                        "message": (
-                            "Brain 未提交 world-act，系统安全收敛为 WAIT。"
-                            if signal_event == "brain.missing_action"
-                            else "失败的 Brain 迭代已回滚未提交动作和记忆副作用。"
-                            if signal_event == "brain.rollback"
-                            else "Brain 发生回退或循环保护，当前步行为可能偏离 SOP。"
-                        ),
-                        "evidence": signal,
-                    }
-                )
-            for call in record.get("mcp_calls", []):
-                if not call.get("is_error"):
-                    continue
-                issues.append(
-                    {
-                        "code": "MCP_TOOL_ERROR",
-                        "severity": "WARNING",
-                        "agent_key": agent_key,
-                        "step_no": record["step_no"],
-                        "message": f"{call.get('tool')} 调用被能力边界拒绝。",
-                        "evidence": call,
-                    }
-                )
-            reads = [
-                call
-                for call in record.get("mcp_calls", [])
-                if call.get("tool") in {"memory-stream-search", "world-perceive"}
-            ]
-            for call in reads:
-                fingerprint = json.dumps(
-                    [call.get("tool"), call.get("input")],
-                    ensure_ascii=False,
-                    sort_keys=True,
-                )
-                previous = previous_reads.get(agent_key)
-                if (
-                    previous
-                    and previous["fingerprint"] == fingerprint
-                    and int(record["step_no"]) == int(previous["step_no"]) + 1
-                ):
-                    issues.append(
-                        {
-                            "code": "REPEATED_READ_WITHOUT_PROGRESS",
-                            "severity": "WARNING",
-                            "agent_key": agent_key,
-                            "step_no": record["step_no"],
-                            "message": (
-                                f"连续两步重复调用 {call.get('tool')}，"
-                                "需要检查 Brain 排程是否偏离或缺少进展。"
-                            ),
-                            "evidence": {
-                                "previous_step": previous["step_no"],
-                                "tool": call.get("tool"),
-                                "input": call.get("input"),
-                            },
-                        }
-                    )
-                previous_reads[agent_key] = {
-                    "fingerprint": fingerprint,
-                    "step_no": record["step_no"],
-                }
-                if (
-                    call.get("tool") == "memory-stream-search"
-                    and str(call.get("output") or "").strip() == "[]"
-                ):
-                    issues.append(
-                        {
-                            "code": "EMPTY_MEMORY_RETRIEVAL",
-                            "severity": "WARNING",
-                            "agent_key": agent_key,
-                            "step_no": record["step_no"],
-                            "message": "Brain 请求了记忆检索，但没有召回任何记忆。",
-                            "evidence": {"input": call.get("input")},
-                        }
-                    )
-        return issues
+        return deterministic_quality_issues(self._audit_records)
 
     def _llm_quality_evaluation(self) -> dict[str, Any]:
         if self.model_client is None:
@@ -566,6 +477,9 @@ class BrainRuntime:
     ) -> dict[str, Any]:
         return {
             "currently": agent.scratch.currently,
+            "profile": {key: agent.scratch.config.get(key, '') for key in
+                        ('age', 'innate', 'learned', 'lifestyle', 'daily_plan')},
+            "daily_plan": agent.scratch.config.get('daily_plan', ''),
             "current_action": agent.get_event().to_dict(),
             "schedule": agent.schedule.abstract(),
             "known_spatial_memory": {

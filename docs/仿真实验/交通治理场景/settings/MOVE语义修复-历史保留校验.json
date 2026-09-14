@@ -1,0 +1,137 @@
+{
+  "verified_at": "2026-09-13T21:35:58.6024276+08:00",
+  "run_id": "3cb1414a-be8e-4d7b-bace-38f4e3b8d540",
+  "status_after_browser_resume": {
+    "active_attempt_id": "6e715d66-2007-4416-bb8d-9040975fd9aa",
+    "committed_step": 5,
+    "reason": "pause requested at a complete Step boundary",
+    "run_id": "3cb1414a-be8e-4d7b-bace-38f4e3b8d540",
+    "status": "PAUSED",
+    "total_steps": 60,
+    "updated_at": "2026-09-13T13:33:46.160257Z"
+  },
+  "checked_count": 20,
+  "changed_count": 0,
+  "files": [
+    {
+      "path": "run.json",
+      "baseline_sha256": "b7013afe8659f11ea097568228a56ee09ad61547a9e6b52f50c4bbec27df6e93",
+      "current_sha256": "b7013afe8659f11ea097568228a56ee09ad61547a9e6b52f50c4bbec27df6e93",
+      "unchanged": true
+    },
+    {
+      "path": "frames/step-000001.json.gz",
+      "baseline_sha256": "7902a705a9e3ef51c5ebd389f85787b58d42b805951acbd7f2c51989d74fe24f",
+      "current_sha256": "7902a705a9e3ef51c5ebd389f85787b58d42b805951acbd7f2c51989d74fe24f",
+      "unchanged": true
+    },
+    {
+      "path": "frames/step-000002.json.gz",
+      "baseline_sha256": "6ddbd562bca1de0513196dc02132d84eaaf742f152d3953a9b6a2b1c7f62dcae",
+      "current_sha256": "6ddbd562bca1de0513196dc02132d84eaaf742f152d3953a9b6a2b1c7f62dcae",
+      "unchanged": true
+    },
+    {
+      "path": "frames/step-000003.json.gz",
+      "baseline_sha256": "b86a86f80b7081bfcb8cc38f4f2b92d5337bea3364b876f99b587af7ebd31ee2",
+      "current_sha256": "b86a86f80b7081bfcb8cc38f4f2b92d5337bea3364b876f99b587af7ebd31ee2",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/agents/index.json",
+      "baseline_sha256": "288c304b43d929533e8118b896d9c72479ff6c8a2f3816b04e0d0f98c3d210f9",
+      "current_sha256": "288c304b43d929533e8118b896d9c72479ff6c8a2f3816b04e0d0f98c3d210f9",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/assets/agents/agent-mtzlbf8j-5yfte2/portrait.png",
+      "baseline_sha256": "33372cb20facab4292e1e89d018c965f703df95882de7e9612a35f3582d470dd",
+      "current_sha256": "33372cb20facab4292e1e89d018c965f703df95882de7e9612a35f3582d470dd",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/assets/agents/agent-mtzlbf8j-5yfte2/sprite.png",
+      "baseline_sha256": "63c2cf76586f2d9a7eaa197728698672cbcf49c7cabd1b175d01ae0b0b8bb538",
+      "current_sha256": "63c2cf76586f2d9a7eaa197728698672cbcf49c7cabd1b175d01ae0b0b8bb538",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/assets/maps/6f263cf18fb92e5411cead8c74b7fefe1c50be4ac3f3d6c7efa24ee3166d033e.png",
+      "baseline_sha256": "6f263cf18fb92e5411cead8c74b7fefe1c50be4ac3f3d6c7efa24ee3166d033e",
+      "current_sha256": "6f263cf18fb92e5411cead8c74b7fefe1c50be4ac3f3d6c7efa24ee3166d033e",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/assets/maps/8abc86dfb27a4ed5f256481dfa0a5c1c8f83aa002444ed617250af5f7fc0a3e3.png",
+      "baseline_sha256": "8abc86dfb27a4ed5f256481dfa0a5c1c8f83aa002444ed617250af5f7fc0a3e3",
+      "current_sha256": "8abc86dfb27a4ed5f256481dfa0a5c1c8f83aa002444ed617250af5f7fc0a3e3",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/evaluation/evaluators.json",
+      "baseline_sha256": "5e448718a52818709e0948fd7db3eeef552ebe0938fc642c40c5be314dc85c4e",
+      "current_sha256": "5e448718a52818709e0948fd7db3eeef552ebe0938fc642c40c5be314dc85c4e",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/integrity/sha256.json",
+      "baseline_sha256": "1940e8a23c061d2be1fda751ca42ee02ab0d3b3a0cb1f11270d77c277b69cf52",
+      "current_sha256": "1940e8a23c061d2be1fda751ca42ee02ab0d3b3a0cb1f11270d77c277b69cf52",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/manifest.json",
+      "baseline_sha256": "0b54f30246b60859894284caaa01f6bd67ae73c18c61812a90dbf2b0a6b19d83",
+      "current_sha256": "0b54f30246b60859894284caaa01f6bd67ae73c18c61812a90dbf2b0a6b19d83",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/models/models.json",
+      "baseline_sha256": "143c880f4476a776857f1a25f105e3d643cf48b729ae469f262796368c201602",
+      "current_sha256": "143c880f4476a776857f1a25f105e3d643cf48b729ae469f262796368c201602",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/runtime/engine.json",
+      "baseline_sha256": "e42141b4796da6915eb1dc2f0d6c9da83c21e8a51f4e59819a8c52714711c938",
+      "current_sha256": "e42141b4796da6915eb1dc2f0d6c9da83c21e8a51f4e59819a8c52714711c938",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/runtime/simulation.json",
+      "baseline_sha256": "3c272ff078e3d8171a421af4693381109413bfb03c4bea5058cfe9f84be247e6",
+      "current_sha256": "3c272ff078e3d8171a421af4693381109413bfb03c4bea5058cfe9f84be247e6",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/skills/items/s0001/SKILL.md",
+      "baseline_sha256": "813c5410e03c644932f896a724939c9cdd8b69cf2526e5013ed3e2bdfc077b96",
+      "current_sha256": "813c5410e03c644932f896a724939c9cdd8b69cf2526e5013ed3e2bdfc077b96",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/skills/items/s0002/SKILL.md",
+      "baseline_sha256": "5ef01c57de801905501a79171688046aedebe9880bb459c38f24e6b8687f3d62",
+      "current_sha256": "5ef01c57de801905501a79171688046aedebe9880bb459c38f24e6b8687f3d62",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/skills/registry.json",
+      "baseline_sha256": "c550d36481b27892ee9e56beb04cc2479d5e4771cc2b857ac15706518d67a1a1",
+      "current_sha256": "c550d36481b27892ee9e56beb04cc2479d5e4771cc2b857ac15706518d67a1a1",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/world/semantic-index.json",
+      "baseline_sha256": "1bc7e32b876dc52968d62217f189e4a69d853728f89924da1bcd3a23827060c3",
+      "current_sha256": "1bc7e32b876dc52968d62217f189e4a69d853728f89924da1bcd3a23827060c3",
+      "unchanged": true
+    },
+    {
+      "path": "experiment/world/world.json",
+      "baseline_sha256": "47b9830a96c8d679f3832092c67a61ab0750a3aa8a2c431b87fbfeab3b3d6433",
+      "current_sha256": "47b9830a96c8d679f3832092c67a61ab0750a3aa8a2c431b87fbfeab3b3d6433",
+      "unchanged": true
+    }
+  ]
+}

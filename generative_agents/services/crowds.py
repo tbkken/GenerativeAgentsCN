@@ -17,9 +17,8 @@ from sqlalchemy.orm import Session
 from generative_agents.config import (
     AgentTemplateDefinition,
     canonical_json_bytes,
-    make_builtin_definition,
 )
-from generative_agents.config.schema import AgentDefinition, WorldConfig
+from generative_agents.config.schema import WorldConfig
 from generative_agents.config.spatial import validate_agent_spatial
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
@@ -29,7 +28,6 @@ from generative_agents.persistence.models import (
     CrowdRevisionMember,
     CrowdTemplate,
     ExperimentRevision,
-    SeedResourceTombstone,
 )
 from generative_agents.status import RevisionState
 
@@ -153,19 +151,6 @@ def _validate_agent_template_for_publish(
     return warnings
 
 
-def _template_from_agent(agent: AgentDefinition) -> AgentTemplateDefinition:
-    """执行`template``from`智能体的内部处理，供当前模块或类复用。
-
-    参数:
-        agent: 参与当前操作的智能体实例。 类型：`AgentDefinition`。
-
-    返回:
-        返回 `AgentTemplateDefinition` 类型的处理结果。
-    """
-    payload = agent.model_dump(mode="json", exclude_none=False)
-    return AgentTemplateDefinition.model_validate(payload)
-
-
 class CrowdService:
     """Own public Agent identities and crowd membership snapshots."""
 
@@ -179,253 +164,6 @@ class CrowdService:
             无返回值。
         """
         self.database = database
-
-    def ensure_builtin_resources(self) -> dict[str, Any]:
-        """确保`builtin``resources`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-
-        with self.database.session_factory.begin() as session:
-            definition = make_builtin_definition(
-                key="builtin-agent-catalog", name="斯坦福小镇居民"
-            )
-            deleted_seed = session.get(
-                SeedResourceTombstone,
-                {"resource_type": "crowd", "resource_key": "stanford-town-residents"},
-            )
-            if deleted_seed is not None:
-                return {"deleted": True, "crowd_key": "stanford-town-residents"}
-            existing_crowd = session.scalar(
-                select(CrowdTemplate).where(
-                    CrowdTemplate.crowd_key == "stanford-town-residents"
-                )
-            )
-            if existing_crowd is not None:
-                return self._upgrade_builtin_agent_spatial(
-                    session, existing_crowd, definition.agents
-                )
-            now = _utc_now()
-            agent_revisions: list[AgentTemplateRevision] = []
-            for source_agent in definition.agents:
-                reusable = _template_from_agent(source_agent)
-                normalized_name = normalize_agent_name(reusable.name)
-                existing_agent = session.scalar(
-                    select(AgentTemplate).where(
-                        AgentTemplate.normalized_name == normalized_name
-                    )
-                )
-                if existing_agent is not None:
-                    if not existing_agent.current_published_revision_id:
-                        raise ServiceError(
-                            "BUILTIN_AGENT_CONFLICT",
-                            f"系统 Agent“{reusable.name}”存在同名未发布模板",
-                            status_code=409,
-                        )
-                    revision = session.get(
-                        AgentTemplateRevision,
-                        existing_agent.current_published_revision_id,
-                    )
-                    if revision is None:
-                        raise ServiceError(
-                            "BUILTIN_AGENT_CONFLICT",
-                            f"系统 Agent“{reusable.name}”缺少已发布版本",
-                            status_code=409,
-                        )
-                    agent_revisions.append(revision)
-                    continue
-                payload = reusable.model_dump(mode="json", exclude_none=False)
-                agent = AgentTemplate(
-                    id=str(uuid4()),
-                    agent_key=reusable.agent_key,
-                    name=reusable.name,
-                    normalized_name=normalized_name,
-                    description=f"系统内置 Agent：{reusable.name}",
-                    status=RevisionState.PUBLISHED.value,
-                    is_builtin=True,
-                    row_version=1,
-                    created_at=now,
-                    updated_at=now,
-                )
-                session.add(agent)
-                session.flush()
-                revision = AgentTemplateRevision(
-                    id=str(uuid4()),
-                    agent_id=agent.id,
-                    revision_no=1,
-                    state=RevisionState.PUBLISHED.value,
-                    schema_version=1,
-                    definition_json=payload,
-                    definition_hash=_document_hash(payload),
-                    validation_json={"valid": True, "errors": [], "warnings": []},
-                    lock_version=1,
-                    created_at=now,
-                    updated_at=now,
-                    published_at=now,
-                )
-                session.add(revision)
-                session.flush()
-                agent.current_published_revision_id = revision.id
-                agent_revisions.append(revision)
-            crowd = CrowdTemplate(
-                id=str(uuid4()),
-                crowd_key="stanford-town-residents",
-                name="斯坦福小镇居民",
-                description="系统内置的 25 位斯坦福小镇居民。",
-                status=RevisionState.PUBLISHED.value,
-                is_builtin=True,
-                row_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(crowd)
-            session.flush()
-            member_ids = [item.id for item in agent_revisions]
-            revision = CrowdRevision(
-                id=str(uuid4()),
-                crowd_id=crowd.id,
-                revision_no=1,
-                state=RevisionState.PUBLISHED.value,
-                membership_hash=_document_hash(member_ids),
-                validation_json={"valid": True, "errors": [], "warnings": []},
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-                published_at=now,
-            )
-            session.add(revision)
-            session.flush()
-            self._replace_members(session, crowd, revision, agent_revisions, now)
-            crowd.current_published_revision_id = revision.id
-            return self._crowd_detail(session, crowd)
-
-    def _upgrade_builtin_agent_spatial(
-        self,
-        session: Session,
-        crowd: CrowdTemplate,
-        source_agents: list[AgentDefinition],
-    ) -> dict[str, Any]:
-        """执行`upgrade``builtin`智能体空间数据的内部处理，供当前模块或类复用。
-
-        参数:
-            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-            crowd: 当前读取、修改或物化的人群模板记录。 类型：`CrowdTemplate`。
-            source_agents: 传入当前算法的`source``agents`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`list[AgentDefinition]`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-
-        now = _utc_now()
-        changed = False
-        agent_revisions: list[AgentTemplateRevision] = []
-        for source_agent in source_agents:
-            reusable = _template_from_agent(source_agent)
-            agent = session.scalar(
-                select(AgentTemplate).where(
-                    AgentTemplate.normalized_name == normalize_agent_name(reusable.name)
-                )
-            )
-            if (
-                agent is None
-                or not agent.is_builtin
-                or not agent.current_published_revision_id
-            ):
-                raise ServiceError(
-                    "BUILTIN_AGENT_CONFLICT",
-                    f"系统 Agent“{reusable.name}”缺少可升级的已发布模板",
-                    status_code=409,
-                )
-            current = session.get(
-                AgentTemplateRevision, agent.current_published_revision_id
-            )
-            if current is None:
-                raise ServiceError(
-                    "BUILTIN_AGENT_CONFLICT",
-                    f"系统 Agent“{reusable.name}”缺少已发布版本",
-                    status_code=409,
-                )
-            if (
-                "coord" not in current.definition_json
-                or "spatial" not in current.definition_json
-            ):
-                payload = reusable.model_dump(mode="json", exclude_none=False)
-                revision_no = (
-                    int(
-                        session.scalar(
-                            select(func.max(AgentTemplateRevision.revision_no)).where(
-                                AgentTemplateRevision.agent_id == agent.id
-                            )
-                        )
-                        or 0
-                    )
-                    + 1
-                )
-                upgraded = AgentTemplateRevision(
-                    id=str(uuid4()),
-                    agent_id=agent.id,
-                    revision_no=revision_no,
-                    state=RevisionState.PUBLISHED.value,
-                    base_revision_id=current.id,
-                    schema_version=current.schema_version,
-                    definition_json=payload,
-                    definition_hash=_document_hash(payload),
-                    validation_json={"valid": True, "errors": [], "warnings": []},
-                    lock_version=1,
-                    created_at=now,
-                    updated_at=now,
-                    published_at=now,
-                )
-                session.add(upgraded)
-                session.flush()
-                agent.current_published_revision_id = upgraded.id
-                agent.row_version += 1
-                agent.updated_at = now
-                current = upgraded
-                changed = True
-            agent_revisions.append(current)
-
-        if changed:
-            current_crowd_revision_id = crowd.current_published_revision_id
-            revision_no = (
-                int(
-                    session.scalar(
-                        select(func.max(CrowdRevision.revision_no)).where(
-                            CrowdRevision.crowd_id == crowd.id
-                        )
-                    )
-                    or 0
-                )
-                + 1
-            )
-            member_ids = [item.id for item in agent_revisions]
-            upgraded_crowd = CrowdRevision(
-                id=str(uuid4()),
-                crowd_id=crowd.id,
-                revision_no=revision_no,
-                state=RevisionState.PUBLISHED.value,
-                base_revision_id=current_crowd_revision_id,
-                membership_hash=_document_hash(member_ids),
-                validation_json={"valid": True, "errors": [], "warnings": []},
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-                published_at=now,
-            )
-            session.add(upgraded_crowd)
-            session.flush()
-            self._replace_members(session, crowd, upgraded_crowd, agent_revisions, now)
-            crowd.current_published_revision_id = upgraded_crowd.id
-            crowd.row_version += 1
-            crowd.updated_at = now
-        return self._crowd_detail(session, crowd)
 
     def list_agents(
         self,
@@ -496,11 +234,7 @@ class CrowdService:
             total = int(session.scalar(count_statement) or 0)
             rows = list(
                 session.scalars(
-                    statement.order_by(
-                        AgentTemplate.is_builtin.desc(),
-                        AgentTemplate.name,
-                        AgentTemplate.id,
-                    )
+                    statement.order_by(AgentTemplate.name, AgentTemplate.id)
                     .offset((page - 1) * page_size)
                     .limit(page_size)
                 )
@@ -518,12 +252,6 @@ class CrowdService:
             agent = session.get(AgentTemplate, agent_id)
             if agent is None:
                 raise not_found("agent_template", agent_id)
-            if agent.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_AGENT_IMMUTABLE",
-                    "系统内置 Agent 不能归档",
-                    status_code=409,
-                )
             agent.archived_at = _utc_now() if archived else None
             agent.updated_at = _utc_now()
             agent.row_version += 1
@@ -547,12 +275,6 @@ class CrowdService:
                     "AGENT_IN_USE",
                     "Agent 仍被 Crowd Revision 引用；请先删除引用它的人群",
                     status_code=409,
-                )
-            if agent.is_builtin:
-                session.merge(
-                    SeedResourceTombstone(
-                        resource_type="agent", resource_key=agent.agent_key
-                    )
                 )
             agent.current_draft_revision_id = None
             agent.current_published_revision_id = None
@@ -623,7 +345,6 @@ class CrowdService:
                 normalized_name=normalized_name,
                 description=description.strip()[:10_000],
                 status=RevisionState.DRAFT.value,
-                is_builtin=False,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
@@ -740,12 +461,6 @@ class CrowdService:
         normalized_name = normalize_agent_name(definition.name)
         with self.database.session_factory.begin() as session:
             agent, revision = self._require_agent_draft(session, agent_id)
-            if agent.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_AGENT_IMMUTABLE",
-                    "系统 Agent 模板不可直接修改",
-                    status_code=409,
-                )
             if revision.lock_version != expected_lock_version:
                 raise ServiceError(
                     "AGENT_REVISION_CONFLICT",
@@ -850,12 +565,6 @@ class CrowdService:
             agent, source = self._require_agent_revision(session, agent_id, revision_id)
             if source.state != RevisionState.PUBLISHED.value:
                 raise not_found("agent_revision", revision_id)
-            if agent.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_AGENT_IMMUTABLE",
-                    "系统 Agent 模板不可直接修改；请新建自定义 Agent",
-                    status_code=409,
-                )
             if agent.current_draft_revision_id:
                 raise ServiceError(
                     "AGENT_DRAFT_EXISTS", "该 Agent 已有编辑中的草稿", status_code=409
@@ -957,7 +666,6 @@ class CrowdService:
                 name=name,
                 description=description.strip()[:10_000],
                 status=RevisionState.DRAFT.value,
-                is_builtin=False,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
@@ -1061,9 +769,7 @@ class CrowdService:
             rows = list(
                 session.scalars(
                     statement.order_by(
-                        CrowdTemplate.is_builtin.desc(),
-                        CrowdTemplate.updated_at.desc(),
-                        CrowdTemplate.id.desc(),
+                        CrowdTemplate.updated_at.desc(), CrowdTemplate.id.desc()
                     )
                     .offset((page - 1) * page_size)
                     .limit(page_size)
@@ -1083,12 +789,6 @@ class CrowdService:
             crowd = session.get(CrowdTemplate, crowd_id)
             if crowd is None:
                 raise not_found("crowd", crowd_id)
-            if crowd.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_CROWD_IMMUTABLE",
-                    "系统内置 Crowd 不能归档",
-                    status_code=409,
-                )
             crowd.archived_at = _utc_now() if archived else None
             crowd.updated_at = _utc_now()
             crowd.row_version += 1
@@ -1104,12 +804,6 @@ class CrowdService:
                     "CROWD_IN_USE",
                     "人群仍被实验 Revision 引用；请先删除引用它的实验",
                     status_code=409,
-                )
-            if crowd.is_builtin:
-                session.merge(
-                    SeedResourceTombstone(
-                        resource_type="crowd", resource_key=crowd.crowd_key
-                    )
                 )
             crowd.current_draft_revision_id = None
             crowd.current_published_revision_id = None
@@ -1220,10 +914,6 @@ class CrowdService:
         """
         with self.database.session_factory.begin() as session:
             crowd, revision = self._require_crowd_draft(session, crowd_id)
-            if crowd.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_CROWD_IMMUTABLE", "系统人群不可直接修改", status_code=409
-                )
             if revision.lock_version != expected_lock_version:
                 raise ServiceError(
                     "CROWD_REVISION_CONFLICT",
@@ -1308,12 +998,6 @@ class CrowdService:
             crowd, source = self._require_crowd_revision(session, crowd_id, revision_id)
             if source.state != RevisionState.PUBLISHED.value:
                 raise not_found("crowd_revision", revision_id)
-            if crowd.is_builtin:
-                raise ServiceError(
-                    "BUILTIN_CROWD_IMMUTABLE",
-                    "系统人群不可直接修改；请新建人群并选择系统 Agent",
-                    status_code=409,
-                )
             if crowd.current_draft_revision_id:
                 raise ServiceError(
                     "CROWD_DRAFT_EXISTS", "该人群已有编辑中的草稿", status_code=409
@@ -1745,7 +1429,6 @@ class CrowdService:
             "name": agent.name,
             "description": agent.description,
             "status": agent.status,
-            "is_builtin": agent.is_builtin,
             "row_version": agent.row_version,
             "archived_at": iso_utc(agent.archived_at) if agent.archived_at else None,
             "current_draft": self._agent_revision_summary(draft),
@@ -1800,7 +1483,6 @@ class CrowdService:
             **self._agent_revision_summary(revision),
             "agent_key": agent.agent_key,
             "description": agent.description,
-            "is_builtin": agent.is_builtin,
             "definition": copy.deepcopy(revision.definition_json),
             "validation": copy.deepcopy(revision.validation_json),
         }
@@ -1832,7 +1514,6 @@ class CrowdService:
             "name": crowd.name,
             "description": crowd.description,
             "status": crowd.status,
-            "is_builtin": crowd.is_builtin,
             "row_version": crowd.row_version,
             "archived_at": iso_utc(crowd.archived_at) if crowd.archived_at else None,
             "current_draft": self._crowd_revision_summary(session, draft),
@@ -1944,7 +1625,6 @@ class CrowdService:
                     "name": AgentTemplateDefinition.model_validate(
                         agent_revision.definition_json
                     ).name,
-                    "is_builtin": agent.is_builtin,
                     "agent_revision": self._agent_revision_summary(agent_revision),
                 }
             )
@@ -1953,7 +1633,6 @@ class CrowdService:
             "crowd_key": crowd.crowd_key,
             "name": crowd.name,
             "description": crowd.description,
-            "is_builtin": crowd.is_builtin,
             "members": members,
             "validation": copy.deepcopy(revision.validation_json),
         }

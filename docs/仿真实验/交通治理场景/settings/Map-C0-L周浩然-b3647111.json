@@ -1,0 +1,501 @@
+{
+  "format": "基于已保存作者资料和浏览器差异操作的实验地图资料副本（非原生实验包导出）",
+  "date": "2026-09-13",
+  "key": "xingang-road-traffic-governance",
+  "grid": [
+    120,
+    40
+  ],
+  "tile_px": 32,
+  "nodes": [
+    {
+      "id": "world-xingang-road-traffic-governance",
+      "parent_id": null,
+      "name": "新港西路交通治理·核心街区",
+      "bounds": [
+        0,
+        0,
+        120,
+        40
+      ],
+      "semantic": "新港西路沿线的校园与居住街区。东西向主干道贯穿地图，北侧为高校校园，南侧为一排沿街住区和公共服务建筑，道路两侧设有出入口与通行空间。",
+      "material": "slice-mtzfbfge-sfl41o"
+    },
+    {
+      "id": "sector-mtzfl3wy-y8j1j8",
+      "parent_id": "world-xingang-road-traffic-governance",
+      "name": "新港西路沿街街区",
+      "bounds": [
+        0,
+        0,
+        120,
+        40
+      ],
+      "semantic": "连接高校校园、沿街住宅与公共服务建筑的城市街区。东西向道路贯通两端，过街设施连接南北两侧，道路边界与不同用途的通行区域分别标注。",
+      "material": null
+    },
+    {
+      "id": "arena-mtzfoy26-l7dzou",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "北侧高校校园",
+      "bounds": [
+        0,
+        0,
+        120,
+        12
+      ],
+      "semantic": "道路北侧的高校校园，包含教学建筑、校园入口和绿化空间。校园与沿街道路之间通过校门相连，建筑实体和围墙不作为任意穿行通道。",
+      "material": null
+    },
+    {
+      "id": "arena-mtzfpe75-7h3uc4",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "北侧人行道",
+      "bounds": [
+        0,
+        12,
+        120,
+        2
+      ],
+      "semantic": "位于高校校园与北侧机动车道之间的步行区域，连接校园入口和过街设施的北侧出入口。行人沿人行道通行，不能把机动车道当作普通步行通道。",
+      "material": null
+    },
+    {
+      "id": "arena-mtzfqejb-id9g18",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "北侧西行机动车道",
+      "bounds": [
+        0,
+        14,
+        120,
+        5
+      ],
+      "semantic": "位于中央绿化隔离带北侧，机动车自东向西通行。电动自行车应使用非机动车道，不得借用本机动车道骑行。",
+      "material": null
+    },
+    {
+      "id": "arena-mtzfrfxu-fh454x",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "中央绿化隔离带",
+      "bounds": [
+        0,
+        19,
+        120,
+        2
+      ],
+      "semantic": "位于两侧机动车道之间的连续绿化隔离空间，包含灌木与实体隔离设施，不是骑行或步行通道。南北过街应使用可通行的过街设施。",
+      "material": null
+    },
+    {
+      "id": "arena-mtzfrv0g-nc4ikx",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "南侧东行机动车道",
+      "bounds": [
+        0,
+        21,
+        120,
+        4
+      ],
+      "semantic": "中央绿化隔离带南侧的东行机动车道，机动车自西向东通行。电动自行车应在相邻的非机动车道内行驶，不得借用机动车道骑行。",
+      "material": null
+    },
+    {
+      "id": "game_object-mtzl5t2h-4dkd2f",
+      "parent_id": "arena-mtzfrv0g-nc4ikx",
+      "name": "西侧护栏开口",
+      "bounds": [
+        37,
+        24,
+        3,
+        1
+      ],
+      "semantic": "机动车道与绿色非机动车道之间护栏的一处物理开口，可通向北侧同向东行机动车道。开口不属于正式过街通道；本实验规则不允许电动自行车借用机动车道骑行。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl5u9f-3adstq",
+      "parent_id": "arena-mtzfrv0g-nc4ikx",
+      "name": "东侧护栏开口",
+      "bounds": [
+        72,
+        24,
+        3,
+        1
+      ],
+      "semantic": "公交站下游护栏的一处物理开口，连通东行机动车道和南侧绿色非机动车道。开口不属于正式过街通道；存在开口不改变电动自行车不得借用机动车道骑行的规则。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "arena-mtzfsire-31qkoa",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "南侧东行非机动车道",
+      "bounds": [
+        0,
+        25,
+        120,
+        3
+      ],
+      "semantic": "沿南侧街区由西向东延伸的绿色非机动车道及其南侧路缘，供自行车和电动自行车按规定方向通行。固定设施立于南侧路缘，骑行保持在绿色路面内。沿途与街巷、建筑出入口相连；遇到实际障碍时可减速、等待或经允许通行的支路绕行。",
+      "material": null
+    },
+    {
+      "id": "game_object-mtzl5qol-mqj17m",
+      "parent_id": "arena-mtzfsire-31qkoa",
+      "name": "西段骑行出发区",
+      "bounds": [
+        8,
+        25,
+        8,
+        2
+      ],
+      "semantic": "南侧绿色非机动车道西段的正常骑行路段，可沿车道向东前往沿街目的地。这里距中段支路和护栏开口仍有一段接近行程。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl5vfs-7t7r5z",
+      "parent_id": "arena-mtzfsire-31qkoa",
+      "name": "公交站旁固定占用带",
+      "bounds": [
+        61,
+        25,
+        10,
+        1
+      ],
+      "semantic": "公交站旁的固定设施占用带，不可穿行。其南侧仍有连续绿色路面供非机动车通过。实际有无排队、车辆或行人应以当前观察为准。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "arena-mtzft5yj-44x9c7",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "南侧沿街服务区",
+      "bounds": [
+        0,
+        28,
+        120,
+        10
+      ],
+      "semantic": "道路南侧的一排住宅、商铺与公共服务建筑，以及它们的入口和连接街巷。建筑实体不可穿越，进入建筑或穿行街区应走实际出入口和开放通道。",
+      "material": null
+    },
+    {
+      "id": "game_object-mtzl2fq5-jpyqrm",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "西侧支路通道",
+      "bounds": [
+        37,
+        28,
+        3,
+        10
+      ],
+      "semantic": "沿街建筑之间的南北向开放支路，北接南侧东行非机动车道，南接商铺后方街巷。本实验允许自行车、电动自行车从此低速通过；经过人行区域时让行行人。可经后方街巷和东侧支路回到下游非机动车道。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl2zyl-11k2st",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "东侧支路通道",
+      "bounds": [
+        80,
+        28,
+        4,
+        10
+      ],
+      "semantic": "沿街建筑之间的南北向开放支路，南接商铺后方街巷，北接公交站下游的南侧东行非机动车道。本实验允许自行车、电动自行车从此低速通过；经过人行区域时让行行人。向北可返回东行非机动车道并继续向东。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl4xst-gu4m0y",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "东端办公报到入口",
+      "bounds": [
+        104,
+        28,
+        2,
+        2
+      ],
+      "semantic": "东端办公楼前的报到入口，位于建筑北侧可走空地。到达入口后可停稳、下车并办理报到；入口不占用绿色骑行路面。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl4yzi-xe7vrk",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "东端早餐交付点",
+      "bounds": [
+        108,
+        28,
+        2,
+        2
+      ],
+      "semantic": "东端沿街建筑前的早餐订单交付位置，位于建筑北侧可走空地。到达后可停稳、下车并交付已领取的订单；交付点不占用绿色骑行路面。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl5060-k2zmnc",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "东端文件接收点",
+      "bounds": [
+        112,
+        28,
+        2,
+        2
+      ],
+      "semantic": "东端客户建筑前的文件接收位置，位于建筑北侧可走空地。到达后可停稳、下车并交付携带的文件；接收点不占用绿色骑行路面。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl51d7-e2xxgb",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "东端住宅预约入口",
+      "bounds": [
+        116,
+        28,
+        2,
+        2
+      ],
+      "semantic": "东端住宅的预约到访入口，位于建筑北侧可走空地。到达后可停稳、下车并进行预约保洁报到；入口不占用绿色骑行路面。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "game_object-mtzl5rw4-iuvt1l",
+      "parent_id": "arena-mtzft5yj-44x9c7",
+      "name": "上游临时停留处",
+      "bounds": [
+        32,
+        28,
+        3,
+        2
+      ],
+      "semantic": "位于绿色非机动车道南侧、建筑前缘的可走空地，可驶离骑行主线后停稳等待，不占用主线通行空间。起步返回车道前观察来往行人和车辆；是否等待及等待多久由实际出行情况决定。",
+      "material": null,
+      "skill_key": null,
+      "initial_state": {},
+      "ui_unbound_defaults": {
+        "vision_radius": 4,
+        "attention_bandwidth": 8,
+        "interaction_radius": 2,
+        "interaction_description": "查询对象当前状态",
+        "interaction_request": "请提供当前状态和可执行信息。"
+      }
+    },
+    {
+      "id": "arena-mtzftkfg-97pn2h",
+      "parent_id": "sector-mtzfl3wy-y8j1j8",
+      "name": "南侧街巷",
+      "bounds": [
+        0,
+        38,
+        120,
+        2
+      ],
+      "semantic": "沿街建筑南侧的东西向街巷，通过建筑间的开放通道与北侧骑行走廊连接。这里可供行人和非机动车缓行，是可选择的沿街绕行空间，经过出入口时应注意其他使用者。",
+      "material": null
+    }
+  ],
+  "materials": [
+    {
+      "id": "slice-mtzfbfge-sfl41o",
+      "name": "交通治理·完整背景",
+      "file": "map/交通治理-核心街区背景-v3-实验路线.png",
+      "crop_tiles": [
+        0,
+        0,
+        68,
+        23
+      ],
+      "rotation": 0
+    },
+    {
+      "id": "slice-mtzmu1kj-95j95i",
+      "name": "交通治理·道路摄像头",
+      "file": "map/道路摄像头-32.png",
+      "crop_tiles": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "rotation": 0
+    }
+  ],
+  "manual_blocked_ranges_closed": [
+    {
+      "y": [
+        19,
+        20
+      ],
+      "x": [
+        [
+          0,
+          17
+        ],
+        [
+          21,
+          92
+        ],
+        [
+          96,
+          119
+        ]
+      ]
+    },
+    {
+      "y": [
+        24,
+        24
+      ],
+      "x": [
+        [
+          0,
+          17
+        ],
+        [
+          21,
+          36
+        ],
+        [
+          40,
+          71
+        ],
+        [
+          75,
+          92
+        ],
+        [
+          96,
+          119
+        ]
+      ]
+    },
+    {
+      "y": [
+        25,
+        25
+      ],
+      "x": [
+        [
+          61,
+          70
+        ]
+      ]
+    },
+    {
+      "y": [
+        30,
+        37
+      ],
+      "x": [
+        [
+          0,
+          36
+        ],
+        [
+          40,
+          79
+        ],
+        [
+          84,
+          119
+        ]
+      ]
+    }
+  ],
+  "notes": [
+    "本草稿由UI复制C1-L周浩然实验后，仅删除实验自有地图内的东行道路摄像头节点。",
+    "保存、地图校验通过、整页刷新后21节点及摄像头搜索空结果已在浏览器确认。",
+    "公共地图及其他实验的摄像头保持完整。",
+    "未绑定素材文件不构成可感知世界对象；本文件不是.gaexp，C0尚未运行。"
+  ],
+  "source_author_map_id": "c333e061-c5df-4dc3-b9f9-3182671f550c",
+  "experiment_id": "b3647111-f1df-4f36-912e-922397a10659",
+  "condition": "C0-L"
+}

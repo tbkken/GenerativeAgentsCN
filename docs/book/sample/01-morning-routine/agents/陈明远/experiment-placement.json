@@ -1,0 +1,45 @@
+{
+  "agent_key": "book-case01-chen-mingyuan",
+  "coord": [
+    3,
+    4
+  ],
+  "currently": "刚在卧室睡醒，准备起身开始一天。",
+  "spatial": {
+    "address": {
+        "initial_location": [
+        "陈明远的家",
+        "居住区",
+        "卧室",
+        "卧室生活空间"
+      ]
+    },
+    "tree": {
+      "陈明远的家": {
+        "居住区": {
+          "卧室": ["卧室生活空间"],
+          "书房": ["书房工作区"],
+          "通道": ["家中通道"],
+          "厨房": ["厨房工作区"],
+          "餐区": ["早餐桌区"]
+        }
+      }
+    }
+  },
+  "perception": {
+    "mode": "box",
+    "vision_radius": 4,
+    "attention_bandwidth": 6
+  },
+  "asset_paths": {
+    "portrait": "assets/portrait.png",
+    "sprite": "assets/texture.png",
+    "sprite_layout": "4x3",
+    "sprite_grid": {
+      "columns": 3,
+      "rows": 4,
+      "frame_width": 32,
+      "frame_height": 32
+    }
+  }
+}

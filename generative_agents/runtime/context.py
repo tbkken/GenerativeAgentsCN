@@ -380,6 +380,17 @@ class RunPaths:
             path.mkdir(parents=True, exist_ok=True)
 
 
+class RecoveryPaths(RunPaths):
+    """Rolling durable recovery snapshots, separate from periodic checkpoints."""
+    @property
+    def checkpoints(self) -> Path:
+        return self.root / "recovery"
+
+    @property
+    def checkpoint_lock(self) -> Path:
+        return self.root / "recovery.lock"
+
+
 class SkillInstructionRepository(Protocol):
     """按稳定键读取本次运行已经固定版本的 Skill 指令。"""
 
@@ -394,8 +405,8 @@ class SkillInstructionRepository(Protocol):
         """
         ...
 
-    def revision(self, key: str) -> str:
-        """执行 `SkillInstructionRepository` 的修订版本操作。
+    def content_hash(self, key: str) -> str:
+        """Return the frozen Skill content hash.
 
         参数:
             key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
@@ -414,29 +425,6 @@ class ModelRegistry(Protocol):
 
         参数:
             purpose: 模型用途键，用于从运行私有模型注册表选择对应模型。 类型：`str`。
-
-        返回:
-            返回 `Any` 类型的处理结果。
-        """
-        ...
-
-
-class PassiveSkillExecutor(Protocol):
-    """执行由世界事件触发、无需智能体主动选择的被动 Skill。"""
-
-    def run(
-        self,
-        skill_name: str,
-        input_text: str,
-        *,
-        context: Mapping[str, Any],
-    ) -> Any:
-        """执行当前组件负责的完整流程，并返回本次执行结果。
-
-        参数:
-            skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。 类型：`str`。
-            input_text: 传给模型或技能处理的原始输入文本。 类型：`str`。
-            context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any]`。
 
         返回:
             返回 `Any` 类型的处理结果。
@@ -475,8 +463,8 @@ class FileSkillInstructionRepository:
         """
         return self.registry.prompt(key)
 
-    def revision(self, key: str) -> str:
-        """执行 `FileSkillInstructionRepository` 的修订版本操作。
+    def content_hash(self, key: str) -> str:
+        """Return the current file content hash.
 
         参数:
             key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
@@ -484,7 +472,7 @@ class FileSkillInstructionRepository:
         返回:
             返回处理后的文本或稳定标识。
         """
-        return self.registry.get(str(key).replace("_", "-")).revision
+        return self.registry.get(str(key).replace("_", "-")).content_hash
 
 
 @dataclass(frozen=True, slots=True)
@@ -543,8 +531,8 @@ class SnapshotSkillInstructionRepository:
             else markdown
         )
 
-    def revision(self, key: str) -> str:
-        """执行 `SnapshotSkillInstructionRepository` 的修订版本操作。
+    def content_hash(self, key: str) -> str:
+        """Return the Skill hash physically embedded in this Run.
 
         参数:
             key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
@@ -557,7 +545,7 @@ class SnapshotSkillInstructionRepository:
         """
         name = str(key).replace("_", "-")
         try:
-            return str(self.skills[name]["revision"])
+            return str(self.skills[name]["content_hash"])
         except KeyError as exc:
             raise KeyError(f"Skill is not present in run manifest: {name}") from exc
 
@@ -568,7 +556,6 @@ class SimulationContext:
 
     run_id: UUID
     experiment_id: UUID
-    revision_id: UUID
     attempt_id: UUID
     definition_hash: str
     algorithm: AlgorithmProfile
@@ -579,8 +566,8 @@ class SimulationContext:
     models: ModelRegistry
     control: RunControl
     logger: logging.LoggerAdapter
-    passive_skills: PassiveSkillExecutor | None = None
     memory_stream: Any | None = None
     skill_mcp: Any | None = None
     brain_runtime: Any | None = None
+    object_skill_runtime: Any | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)

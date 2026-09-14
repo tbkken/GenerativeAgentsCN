@@ -78,7 +78,7 @@ def test_auto_model_probe_pins_resolved_model_into_the_same_draft(
     """回归验证 ``test_auto_model_probe_pins_resolved_model_into_the_same_draft`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(
         name="Probe", source_type="BLANK",
-        map_revision_id=publish_user_map(database)["id"],
+        map_id=publish_user_map(database)["id"],
         **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
@@ -115,7 +115,7 @@ def test_publish_preflight_resolves_all_auto_models_with_one_draft_write(
     """回归验证 ``test_publish_preflight_resolves_all_auto_models_with_one_draft_write`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(
         name="Auto publish", source_type="BLANK",
-        map_revision_id=publish_user_map(database)["id"],
+        map_id=publish_user_map(database)["id"],
         **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
@@ -155,7 +155,7 @@ def test_publish_preflight_does_not_partially_pin_models_on_probe_failure(
     """回归验证 ``test_publish_preflight_does_not_partially_pin_models_on_probe_failure`` 所描述的业务结果、故障边界和隔离约束。"""
     created = service.create_experiment(
         name="Atomic auto publish", source_type="BLANK",
-        map_revision_id=publish_user_map(database)["id"],
+        map_id=publish_user_map(database)["id"],
         **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])
@@ -185,7 +185,7 @@ def test_local_unsloth_key_is_validated_and_encrypted_without_browser_exposure(
     created = service.create_experiment(
         name="Local Unsloth auth",
         source_type="BLANK",
-        map_revision_id=publish_user_map(database)["id"],
+        map_id=publish_user_map(database)["id"],
         **brain_selection_for_database(database),
     )
     draft = service.get_draft(created["id"])

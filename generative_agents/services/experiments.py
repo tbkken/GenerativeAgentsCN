@@ -8,7 +8,7 @@ from math import ceil
 from typing import Any, Literal
 from uuid import uuid4
 
-from sqlalchemy import Text, cast, delete, exists, func, or_, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -21,9 +21,7 @@ from generative_agents.config.schema import make_blank_definition
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
     Experiment,
-    ExperimentComparisonGroup,
     ExperimentRevision,
-    ExperimentSavedView,
     ModelProbeStatus,
     ResourceDeletionGrant,
     Run,
@@ -32,12 +30,11 @@ from generative_agents.persistence.models import (
     Secret,
     SkillDefinition,
     SkillRevision,
-    WorldMapRevision,
+    WorldMap,
 )
 from generative_agents.status import (
     ArtifactState,
     ExperimentStatus,
-    ExperimentStatusFilter,
     RevisionState,
 )
 
@@ -89,27 +86,6 @@ def _normalize_tags(tags: list[str] | None) -> list[str]:
     return normalized[:20]
 
 
-def _flatten_document(value: Any, prefix: str = "") -> dict[str, Any]:
-    """执行`flatten``document`的内部处理，供当前模块或类复用。
-
-    参数:
-        value: 当前操作使用的`value`。 类型：`Any`。
-        prefix: 生成稳定键、日志名或路径名时使用的前缀。 类型：`str`。 默认值：`''`。
-
-    返回:
-        返回以字段名或业务键组织的结构化映射。
-    """
-    if isinstance(value, dict):
-        result: dict[str, Any] = {}
-        for key in sorted(value):
-            path = f"{prefix}.{key}" if prefix else key
-            result.update(_flatten_document(value[key], path))
-        return result
-    if isinstance(value, list):
-        return {prefix: value}
-    return {prefix: value}
-
-
 class ExperimentService:
     """Owns short, synchronous SQLAlchemy transactions for experiment definitions."""
 
@@ -128,31 +104,29 @@ class ExperimentService:
         session: Session,
         definition: ExperimentDefinition,
         *,
-        map_revision_id: str,
+        map_id: str,
     ) -> tuple[ExperimentDefinition, dict[str, str]]:
         """执行仿真定义`with`地图的内部处理，供当前模块或类复用。
 
         参数:
             session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
             definition: 已校验的仿真定义，描述地图、智能体、模型与执行参数。 类型：`ExperimentDefinition`。
-            map_revision_id: 地图修订版本的唯一标识。 类型：`str`。
+            map_id: 地图的稳定标识。 类型：`str`。
 
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
-        map_revision = session.get(WorldMapRevision, map_revision_id)
-        if map_revision is None or map_revision.state != RevisionState.PUBLISHED:
-            raise not_found("map_revision", map_revision_id)
+        public_map = session.get(WorldMap, map_id)
+        if public_map is None:
+            raise not_found("map", map_id)
         from .maps import WorldMapService
 
         payload = definition.model_dump(mode="json", exclude_none=False)
-        payload["world"] = WorldMapService.materialize_world(map_revision).model_dump(
-            mode="json", exclude_none=False
-        )
+        payload["world"] = WorldMapService.materialize_world(
+            session, public_map
+        ).model_dump(mode="json", exclude_none=False)
         return ExperimentDefinition.model_validate(payload), {
-            "world_map_id": map_revision.map_id,
-            "world_map_revision_id": map_revision.id,
-            "world_map_revision_hash": map_revision.world_hash,
+            "world_map_id": public_map.id,
         }
 
     @staticmethod
@@ -183,7 +157,7 @@ class ExperimentService:
         source_revision_id: str | None = None,
         owner: str = "",
         tags: list[str] | None = None,
-        map_revision_id: str,
+        map_id: str,
         brain_skill: str,
         brain_revision_id: str,
         brain_revision_hash: str,
@@ -198,7 +172,7 @@ class ExperimentService:
             source_revision_id: `source`修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
             owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str`。 默认值：`''`。
             tags: 用于分类、检索或展示目标对象的去重标签集合。 类型：`list[str] | None`。 默认值：`None`。
-            map_revision_id: 必须显式选择的已发布用户地图修订版本标识。 类型：`str`。
+            map_id: 必须显式选择的用户地图标识。 类型：`str`。
             brain_skill: 驱动当前实验的 Brain Skill 稳定键。 类型：`str`。
             brain_revision_id: 用户明确选择的不可变 Brain Revision 标识。
             brain_revision_hash: 所选 Brain Revision 的完整内容哈希。
@@ -215,10 +189,10 @@ class ExperimentService:
             raise ServiceError(
                 "INVALID_EXPERIMENT_NAME", "实验名称不能为空", status_code=422
             )
-        if not map_revision_id:
+        if not map_id:
             raise ServiceError(
-                "MAP_REVISION_REQUIRED",
-                "新仿真必须显式选择一个已发布的用户地图版本",
+                "MAP_REQUIRED",
+                "新仿真必须显式选择一张用户地图",
                 status_code=422,
             )
         key = _make_key(name)
@@ -284,7 +258,7 @@ class ExperimentService:
             )
             definition = ExperimentDefinition.model_validate(definition_payload)
             definition, map_provenance = self._definition_with_map(
-                session, definition, map_revision_id=map_revision_id
+                session, definition, map_id=map_id
             )
             provenance = {
                 **provenance,
@@ -465,175 +439,26 @@ class ExperimentService:
     def list_experiments(
         self,
         *,
-        status: str | None = None,
-        query: str | None = None,
-        owner: str | None = None,
-        tag: str | None = None,
-        model: str | None = None,
-        map_key: str | None = None,
         archived: str = "active",
         page: int = 1,
         page_size: int = 5,
-        sort: str = "-updated_at",
     ) -> dict[str, Any]:
-        """查询`experiments`。
-
-        参数:
-            status: 实验或修订版本状态。允许值：`DRAFT`、`QUEUED`、`RUNNING`、`PAUSED`、`COMPLETED`、`CANCELLED`、`FAILED`；聚合查询还可使用 `ABNORMAL`（失败或取消）。 类型：`str | None`。 默认值：`None`。
-            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
-            owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str | None`。 默认值：`None`。
-            tag: 标签筛选值；为空时不限制标签。 类型：`str | None`。 默认值：`None`。
-            model: 当前调用、筛选或序列化的模型配置或模型实例。 类型：`str | None`。 默认值：`None`。
-            map_key: 用于稳定定位地图的键。 类型：`str | None`。 默认值：`None`。
-            archived: 归档范围筛选值：`active`、`archived` 或 `all`。 类型：`str`。 默认值：`'active'`。
-            page: 从 1 开始的分页页码。 类型：`int`。 默认值：`1`。
-            page_size: 每页最多返回的记录数量。 类型：`int`。 默认值：`5`。
-            sort: 列表排序表达式；前缀 `-` 表示降序。 类型：`str`。 默认值：`'-updated_at'`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-        if page < 1 or page_size not in {5, 10, 20, 25, 50}:
-            raise ServiceError("INVALID_PAGINATION", "分页参数无效", status_code=422)
-        sort_field = sort.removeprefix("-")
-        if sort_field not in {
-            "updated_at",
-            "created_at",
-            "name",
-            "status",
-            "run_count",
-        }:
-            raise ServiceError("INVALID_SORT", "排序字段无效", status_code=422)
+        """按最近更新顺序分页返回实验及卡片元数据，每页固定 5 条。"""
+        if page < 1 or page_size != 5:
+            raise ServiceError("INVALID_PAGINATION", "每页固定 5 条，页码必须为正整数", status_code=422)
         if archived not in {"active", "archived", "all"}:
-            raise ServiceError(
-                "INVALID_ARCHIVE_FILTER", "归档筛选无效", status_code=422
-            )
-        try:
-            status_filter = ExperimentStatusFilter(status) if status else None
-        except ValueError as exc:
-            raise ServiceError("INVALID_STATUS", "??????", status_code=422) from exc
-
+            raise ServiceError("INVALID_ARCHIVE_FILTER", "归档筛选无效", status_code=422)
         with self.database.session_factory() as session:
             filters = []
             if archived == "active":
                 filters.append(Experiment.archived_at.is_(None))
             elif archived == "archived":
                 filters.append(Experiment.archived_at.is_not(None))
-            definition_text = cast(ExperimentRevision.definition_json, Text)
-            if query and query.strip():
-                term = f"%{query.strip()}%"
-                tag_search_values = func.json_each(Experiment.tags).table_valued(
-                    "key", "value"
-                )
-                filters.append(
-                    or_(
-                        Experiment.name.ilike(term),
-                        Experiment.experiment_key.ilike(term),
-                        Experiment.goal.ilike(term),
-                        Experiment.owner.ilike(term),
-                        exists(
-                            select(1)
-                            .select_from(tag_search_values)
-                            .where(tag_search_values.c.value.ilike(term))
-                        ),
-                        ExperimentRevision.definition_json["models"]["chat"]["model"]
-                        .as_string()
-                        .ilike(term),
-                        ExperimentRevision.definition_json["models"]["chat"][
-                            "resolved_model"
-                        ]
-                        .as_string()
-                        .ilike(term),
-                        ExperimentRevision.definition_json["models"]["embedding"][
-                            "model"
-                        ]
-                        .as_string()
-                        .ilike(term),
-                        ExperimentRevision.definition_json["models"]["embedding"][
-                            "resolved_model"
-                        ]
-                        .as_string()
-                        .ilike(term),
-                        ExperimentRevision.definition_json["world"]["world_name"]
-                        .as_string()
-                        .ilike(term),
-                    )
-                )
-            if owner and owner.strip():
-                filters.append(Experiment.owner == owner.strip())
-            if tag and tag.strip():
-                tag_values = func.json_each(Experiment.tags).table_valued(
-                    "key", "value"
-                )
-                filters.append(
-                    exists(
-                        select(1)
-                        .select_from(tag_values)
-                        .where(tag_values.c.value == tag.strip())
-                    )
-                )
-            if model and model.strip():
-                filters.append(definition_text.ilike(f"%{model.strip()}%"))
-            if map_key and map_key.strip():
-                filters.append(definition_text.ilike(f"%{map_key.strip()}%"))
-
-            revision_join = ExperimentRevision.id == func.coalesce(
-                Experiment.current_draft_revision_id,
-                Experiment.current_published_revision_id,
-            )
-
-            counts_stmt = (
-                select(Experiment.status, func.count())
-                .select_from(Experiment)
-                .outerjoin(ExperimentRevision, revision_join)
-                .group_by(Experiment.status)
-            )
-            if filters:
-                counts_stmt = counts_stmt.where(*filters)
-            grouped = dict(session.execute(counts_stmt).all())
-            status_counts = {
-                state.value: int(grouped.get(state.value, 0))
-                for state in ExperimentStatus
-            }
-            status_counts["ALL"] = sum(status_counts.values())
-
-            page_filters = [*filters]
-            if status_filter:
-                page_filters.append(
-                    Experiment.status.in_(
-                        {ExperimentStatus.FAILED, ExperimentStatus.CANCELLED}
-                    )
-                    if status_filter == ExperimentStatusFilter.ABNORMAL
-                    else Experiment.status == status_filter.value
-                )
-            total = (
-                session.scalar(
-                    select(func.count())
-                    .select_from(Experiment)
-                    .outerjoin(ExperimentRevision, revision_join)
-                    .where(*page_filters)
-                )
-                or 0
-            )
-            order_column = (
-                select(func.count(Run.id))
-                .where(Run.experiment_id == Experiment.id)
-                .correlate(Experiment)
-                .scalar_subquery()
-                if sort_field == "run_count"
-                else getattr(Experiment, sort_field)
-            )
-            order_by = (
-                order_column.desc() if sort.startswith("-") else order_column.asc()
-            )
+            total = session.scalar(select(func.count()).select_from(Experiment).where(*filters)) or 0
             experiments = session.scalars(
                 select(Experiment)
-                .outerjoin(ExperimentRevision, revision_join)
-                .where(*page_filters)
-                .order_by(order_by, Experiment.id.asc())
+                .where(*filters)
+                .order_by(Experiment.updated_at.desc(), Experiment.id.asc())
                 .offset((page - 1) * page_size)
                 .limit(page_size)
             ).all()
@@ -696,7 +521,6 @@ class ExperimentService:
             ]
             return {
                 "items": items,
-                "status_counts": status_counts,
                 "page": page,
                 "page_size": page_size,
                 "total": total,
@@ -1014,6 +838,34 @@ class ExperimentService:
             current_definition = ExperimentDefinition.model_validate(
                 current.definition_json
             )
+            base_revision = (
+                session.get(ExperimentRevision, current.base_revision_id)
+                if current.base_revision_id
+                else None
+            )
+            if (
+                base_revision is not None
+                and base_revision.experiment_id == experiment_id
+            ):
+                base_definition = ExperimentDefinition.model_validate(
+                    base_revision.definition_json
+                )
+                fixed_changes = [
+                    label
+                    for label, changed in (
+                        ("engine", definition.engine != base_definition.engine),
+                        ("world", definition.world != base_definition.world),
+                        ("agents", definition.agents != base_definition.agents),
+                    )
+                    if changed
+                ]
+                if fixed_changes:
+                    raise ServiceError(
+                        "EXPERIMENT_RESOURCES_LOCKED",
+                        "实验执行后，大脑、地图和 Agent 不可修改；请复制实验后再更换固定资源",
+                        status_code=409,
+                        details={"fixed_sections": fixed_changes},
+                    )
             if not allow_resource_reselection and (
                 definition.engine != current_definition.engine
                 or definition.world != current_definition.world
@@ -1058,8 +910,6 @@ class ExperimentService:
                     "brain_revision_id": definition.engine.brain_revision_id,
                     "brain_revision_hash": definition.engine.brain_revision_hash,
                     "world_map_id": definition.world.map_id,
-                    "world_map_revision_id": definition.world.map_revision_id,
-                    "world_map_revision_hash": definition.world.map_revision_hash,
                 }
             result = session.execute(
                 update(ExperimentRevision)
@@ -1376,6 +1226,17 @@ class ExperimentService:
         with self.database.session_factory.begin() as session:
             _, revision = self._require_draft(session, experiment_id)
             definition = ExperimentDefinition.model_validate(revision.definition_json)
+            if definition.world.map_id:
+                from .maps import WorldMapService
+
+                snapshot_world = WorldMapService(
+                    self.database
+                ).materialize_for_publish_in_session(session, definition.world)
+                payload = definition.model_dump(mode="json", exclude_none=False)
+                payload["world"] = snapshot_world.model_dump(
+                    mode="json", exclude_none=False
+                )
+                definition = ExperimentDefinition.model_validate(payload)
             refs = set(session.scalars(select(Secret.id)).all())
             report = validate_for_publish(definition, existing_secret_refs=refs)
             revision.validation_json = report.model_dump(mode="json")
@@ -1478,7 +1339,7 @@ class ExperimentService:
                 "实验必须引用一个存在且哈希匹配的 Brain Skill Revision",
                 status_code=409,
             )
-        if definition.world.map_revision_id:
+        if definition.world.map_id:
             from .maps import WorldMapService
 
             materialized_world = WorldMapService(
@@ -1503,6 +1364,12 @@ class ExperimentService:
             mode="json", exclude_none=False
         )
         flag_modified(revision, "definition_json")
+        revision.provenance_json = {
+            **(revision.provenance_json or {}),
+            "world_map_id": definition.world.map_id,
+            "world_map_snapshot_hash": definition.world.map_snapshot_hash,
+        }
+        flag_modified(revision, "provenance_json")
         revision.definition_hash = report.definition_hash
         revision.validation_json = report.model_dump(mode="json")
         revision.validated_hash = report.definition_hash
@@ -1723,16 +1590,6 @@ class ExperimentService:
                     ExperimentRevision.experiment_id == experiment_id
                 )
             )
-            groups = list(session.scalars(select(ExperimentComparisonGroup)))
-            for group in groups:
-                ids = list(group.experiment_ids_json or [])
-                if experiment_id not in ids:
-                    continue
-                group.experiment_ids_json = [
-                    item for item in ids if item != experiment_id
-                ]
-                flag_modified(group, "experiment_ids_json")
-                group.updated_at = _utc_now()
             session.delete(experiment)
             session.flush()
             session.execute(
@@ -1746,24 +1603,9 @@ class ExperimentService:
         self,
         experiment_ids: list[str],
         *,
-        action: Literal["ARCHIVE", "RESTORE", "ADD_TAGS", "SET_OWNER"],
-        owner: str | None = None,
-        tags: list[str] | None = None,
+        action: Literal["ARCHIVE", "RESTORE"],
     ) -> dict[str, Any]:
-        """执行 `ExperimentService` 的`batch``manage`操作。
-
-        参数:
-            experiment_ids: 需要批量处理的实验唯一标识集合。 类型：`list[str]`。
-            action: 智能体当前选择或已经执行的行为记录。 类型：`Literal['ARCHIVE', 'RESTORE', 'ADD_TAGS', 'SET_OWNER']`。
-            owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str | None`。 默认值：`None`。
-            tags: 用于分类、检索或展示目标对象的去重标签集合。 类型：`list[str] | None`。 默认值：`None`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
+        """批量归档或恢复实验，保留各实验的其他元数据。"""
         ids = list(dict.fromkeys(experiment_ids))
         if not ids or len(ids) > 200:
             raise ServiceError("INVALID_BATCH", "请选择 1–200 个实验", status_code=422)
@@ -1795,12 +1637,6 @@ class ExperimentService:
                     experiment.archived_at = now
                 elif action == "RESTORE":
                     experiment.archived_at = None
-                elif action == "ADD_TAGS":
-                    experiment.tags = _normalize_tags(
-                        [*(experiment.tags or []), *(tags or [])]
-                    )
-                elif action == "SET_OWNER":
-                    experiment.owner = (owner or "").strip()[:120]
                 else:
                     raise ServiceError(
                         "INVALID_BATCH_ACTION", "批量操作无效", status_code=422
@@ -1929,247 +1765,6 @@ class ExperimentService:
             "storage_bytes": int(storage),
             "completed_steps": run.completed_steps if run else None,
         }
-
-    def compare_experiments(self, experiment_ids: list[str]) -> dict[str, Any]:
-        """执行 `ExperimentService` 的`compare``experiments`操作。
-
-        参数:
-            experiment_ids: 需要批量处理的实验唯一标识集合。 类型：`list[str]`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-        ids = list(dict.fromkeys(experiment_ids))
-        if len(ids) < 2 or len(ids) > 12:
-            raise ServiceError(
-                "INVALID_COMPARISON", "请选择 2–12 个实验进行比较", status_code=422
-            )
-        with self.database.session_factory() as session:
-            experiments = list(
-                session.scalars(select(Experiment).where(Experiment.id.in_(ids)))
-            )
-            by_id = {item.id: item for item in experiments}
-            if len(by_id) != len(ids):
-                raise ServiceError(
-                    "COMPARISON_TARGET_MISSING", "部分实验不存在", status_code=404
-                )
-            documents = []
-            flattened = []
-            for experiment_id in ids:
-                experiment = by_id[experiment_id]
-                revision_id = (
-                    experiment.current_draft_revision_id
-                    or experiment.current_published_revision_id
-                )
-                revision = (
-                    session.get(ExperimentRevision, revision_id)
-                    if revision_id
-                    else None
-                )
-                if revision is None:
-                    raise ServiceError(
-                        "REVISION_NOT_FOUND", "实验缺少可比较版本", status_code=409
-                    )
-                definition = ExperimentDefinition.model_validate(
-                    revision.definition_json
-                ).model_dump(mode="json", exclude_none=False)
-                documents.append(
-                    {
-                        "experiment_id": experiment.id,
-                        "name": experiment.name,
-                        "revision_id": revision.id,
-                        "revision_no": revision.revision_no,
-                        "state": revision.state,
-                    }
-                )
-                flattened.append(_flatten_document(definition))
-            paths = sorted(set().union(*(item.keys() for item in flattened)))
-            groups = {
-                name: []
-                for name in (
-                    "experiment",
-                    "agents",
-                    "models",
-                    "world",
-                    "behavior",
-                    "simulation",
-                    "results",
-                    "other",
-                )
-            }
-            same_count = 0
-            for path in paths:
-                values = [item.get(path) for item in flattened]
-                encoded = [repr(value) for value in values]
-                if len(set(encoded)) == 1:
-                    same_count += 1
-                    continue
-                root = path.split(".", 1)[0]
-                group = root if root in groups else "other"
-                groups[group].append({"path": path, "values": values})
-            return {
-                "experiments": documents,
-                "groups": [
-                    {"key": key, "differences": value}
-                    for key, value in groups.items()
-                    if value
-                ],
-                "same_field_count": same_count,
-                "difference_count": sum(len(value) for value in groups.values()),
-            }
-
-    def save_comparison_group(
-        self, name: str, experiment_ids: list[str]
-    ) -> dict[str, Any]:
-        """保存`comparison``group`。
-
-        参数:
-            name: 目标对象的人类可读名称。 类型：`str`。
-            experiment_ids: 需要批量处理的实验唯一标识集合。 类型：`list[str]`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        comparison = self.compare_experiments(experiment_ids)
-        now = _utc_now()
-        with self.database.session_factory.begin() as session:
-            row = ExperimentComparisonGroup(
-                name=name.strip()[:120] or "未命名对照组",
-                experiment_ids_json=list(dict.fromkeys(experiment_ids)),
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(row)
-            session.flush()
-            return {
-                "id": row.id,
-                "name": row.name,
-                "experiment_ids": row.experiment_ids_json,
-                "comparison": comparison,
-            }
-
-    def list_comparison_groups(self) -> list[dict[str, Any]]:
-        """查询`comparison``groups`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            rows = list(
-                session.scalars(
-                    select(ExperimentComparisonGroup).order_by(
-                        ExperimentComparisonGroup.updated_at.desc()
-                    )
-                )
-            )
-            return [
-                {
-                    "id": row.id,
-                    "name": row.name,
-                    "experiment_ids": row.experiment_ids_json,
-                    "created_at": row.created_at,
-                    "updated_at": row.updated_at,
-                }
-                for row in rows
-            ]
-
-    def delete_comparison_group(self, group_id: str) -> None:
-        with self.database.session_factory.begin() as session:
-            row = session.get(ExperimentComparisonGroup, group_id)
-            if row is None:
-                raise not_found("comparison_group", group_id)
-            session.delete(row)
-
-    def save_view(self, name: str, query: dict[str, Any]) -> dict[str, Any]:
-        """保存`view`。
-
-        参数:
-            name: 目标对象的人类可读名称。 类型：`str`。
-            query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`dict[str, Any]`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        now = _utc_now()
-        with self.database.session_factory.begin() as session:
-            row = ExperimentSavedView(
-                name=name.strip()[:120] or "未命名视图",
-                query_json=query,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(row)
-            session.flush()
-            return {
-                "id": row.id,
-                "name": row.name,
-                "share_key": row.share_key,
-                "query": row.query_json,
-                "created_at": row.created_at,
-                "updated_at": row.updated_at,
-            }
-
-    def list_views(self) -> list[dict[str, Any]]:
-        """查询`views`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            rows = list(
-                session.scalars(
-                    select(ExperimentSavedView).order_by(
-                        ExperimentSavedView.updated_at.desc()
-                    )
-                )
-            )
-            return [
-                {
-                    "id": row.id,
-                    "name": row.name,
-                    "share_key": row.share_key,
-                    "query": row.query_json,
-                    "created_at": row.created_at,
-                    "updated_at": row.updated_at,
-                }
-                for row in rows
-            ]
-
-    def delete_view(self, view_id: str) -> None:
-        with self.database.session_factory.begin() as session:
-            row = session.get(ExperimentSavedView, view_id)
-            if row is None:
-                raise not_found("saved_view", view_id)
-            session.delete(row)
-
-    def get_view_by_share_key(self, share_key: str) -> dict[str, Any]:
-        """获取`view``by``share``key`。
-
-        参数:
-            share_key: 用于稳定定位`share`的键。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            row = session.scalar(
-                select(ExperimentSavedView).where(
-                    ExperimentSavedView.share_key == share_key
-                )
-            )
-            if row is None:
-                raise not_found("saved_view", share_key)
-            return {
-                "id": row.id,
-                "name": row.name,
-                "share_key": row.share_key,
-                "query": row.query_json,
-                "created_at": row.created_at,
-                "updated_at": row.updated_at,
-            }
 
     @staticmethod
     def _require_draft(

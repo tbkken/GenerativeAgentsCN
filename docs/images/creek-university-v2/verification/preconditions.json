@@ -1,0 +1,110 @@
+{
+  "checked_at": "2026-09-05T02:52:52.380658+00:00",
+  "scope": "read-only APIs and synthetic model tool protocol",
+  "checks": [
+    {
+      "name": "studio_health",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "runtime_truth": "files",
+        "database_owner": "ga_studio"
+      }
+    },
+    {
+      "name": "skill_run_route_registered",
+      "present": false
+    },
+    {
+      "name": "skill_run_route_response",
+      "status": 404
+    },
+    {
+      "name": "studio_maps",
+      "status": 200,
+      "count": 0,
+      "names": []
+    },
+    {
+      "name": "studio_agents",
+      "status": 200,
+      "count": 4,
+      "names": [
+        "赵悦",
+        "王建国",
+        "林晨",
+        "陈明远"
+      ]
+    },
+    {
+      "name": "studio_model-presets",
+      "status": 200,
+      "count": 1,
+      "names": [
+        "本机默认模型"
+      ]
+    },
+    {
+      "name": "embedding_models",
+      "status": 200,
+      "models": [
+        "qwen3-embedding-0.6b"
+      ]
+    },
+    {
+      "name": "embedding_request",
+      "status": 200,
+      "seconds": 0.288,
+      "vector_count": 2,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "chat_without_auth",
+      "status": 401
+    },
+    {
+      "name": "chat_cached_auth",
+      "success": true,
+      "models": [
+        "Qwen3.8-27B-UD-Q4_K_XL"
+      ]
+    },
+    {
+      "name": "chat_tool_call",
+      "expected": 17,
+      "status": 200,
+      "seconds": 5.121,
+      "valid": true,
+      "call_count": 1,
+      "finish_reason": "tool_calls"
+    },
+    {
+      "name": "chat_tool_result_continuation",
+      "status": 200,
+      "seconds": 2.769,
+      "valid": true,
+      "output": "已收到17。"
+    },
+    {
+      "name": "chat_tool_call",
+      "expected": 29,
+      "status": 200,
+      "seconds": 2.685,
+      "valid": true,
+      "call_count": 1,
+      "finish_reason": "tool_calls"
+    },
+    {
+      "name": "chat_tool_call",
+      "expected": 43,
+      "status": 200,
+      "seconds": 2.627,
+      "valid": true,
+      "call_count": 1,
+      "finish_reason": "tool_calls"
+    }
+  ]
+}

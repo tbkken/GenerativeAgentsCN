@@ -1,4 +1,4 @@
-"""Contracts for passive Skills exposed by map Game Objects."""
+"""One natural-language Skill gives an object autonomous and interactive behavior."""
 
 from __future__ import annotations
 
@@ -28,19 +28,17 @@ SkillName = Annotated[
 
 
 class GameObjectSkillBinding(StrictModel):
-    """One Agent-initiated request endpoint exposed by a Game Object.
+    """Binding enables both execution each Step and responses to interactions."""
 
-    Proximity only makes the binding discoverable.  The runtime must not invoke
-    the Skill until an Agent explicitly selects ``interaction_key``.
-    """
-
-    interaction_key: InteractionKey
+    interaction_key: InteractionKey = "interact"
     skill_name: SkillName
     description: Annotated[
         str,
         StringConstraints(strip_whitespace=True, min_length=1, max_length=1_000),
-    ]
-    interaction_radius_m: float = Field(default=2.0, gt=0, le=1_000)
+    ] = "与对象交互"
+    interaction_radius_tiles: float = Field(default=2.0, gt=0, le=1_000)
+    vision_radius: int = Field(default=4, ge=0, le=100)
+    attention_bandwidth: int = Field(default=8, ge=0, le=100)
     default_request: Annotated[
         str,
         StringConstraints(strip_whitespace=True, min_length=1, max_length=2_000),
@@ -62,6 +60,8 @@ def validate_unique_skill_bindings(
         ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
     """
     keys = [item.interaction_key for item in bindings]
+    if len(bindings) > 1:
+        raise ValueError("a Game Object binds one root Skill; compose child Skills in its SOP")
     if len(keys) != len(set(keys)):
         raise ValueError("Game Object interaction_key values must be unique")
     return bindings

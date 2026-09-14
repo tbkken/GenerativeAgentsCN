@@ -50,8 +50,7 @@ def publishable_definition() -> ExperimentDefinition:
     payload["world"].update(
         {
             "map_id": "map-test",
-            "map_revision_id": "map-revision-test",
-            "map_revision_hash": "b" * 64,
+            "map_snapshot_hash": "b" * 64,
         }
     )
     payload["world"]["definition"] = {

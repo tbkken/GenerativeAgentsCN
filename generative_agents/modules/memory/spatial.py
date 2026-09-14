@@ -25,13 +25,6 @@ class Spatial:
         self._rng = random_source
         self.tree = tree
         self.address = dict(address or {})
-        if (
-            "sleeping" not in self.address
-            and "睡觉" not in self.address
-            and "living_area" in self.address
-        ):
-            # self.address["sleeping"] = self.address["living_area"] + ["bed"]
-            self.address["睡觉"] = self.address["living_area"] + ["床"]
 
     def __str__(self):
         """执行`str`的内部处理，供当前模块或类复用。

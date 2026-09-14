@@ -724,6 +724,8 @@ class ResultQueryService:
             return {
                 "run_id": run_id,
                 "run_status": run.status,
+                "usage_consistency": "COMMITTED_STEP_RESULTS",
+                "usage_committed_through_step": int(run.completed_steps or 0),
                 "attempts": [
                     {
                         "attempt_id": item.id,

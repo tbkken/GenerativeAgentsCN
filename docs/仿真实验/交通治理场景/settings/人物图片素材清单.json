@@ -1,0 +1,194 @@
+[
+  {
+    "name": "李子健",
+    "assets": [
+      {
+        "path": "map/李子健-骑行图-v2-透明修正未通过.png",
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGB",
+        "sha256": "0bac688513e233c5c2d302902f2e5cdb3f0d55f42d83517818e83d5820b2095c"
+      },
+      {
+        "path": "map/李子健-骑行行走图-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGBA",
+        "sha256": "63c2cf76586f2d9a7eaa197728698672cbcf49c7cabd1b175d01ae0b0b8bb538"
+      },
+      {
+        "path": "map/李子健-头像-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGB",
+        "sha256": "33372cb20facab4292e1e89d018c965f703df95882de7e9612a35f3582d470dd"
+      }
+    ],
+    "sprite_layout": {
+      "columns": 4,
+      "rows": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "frame_px": [
+        32,
+        32
+      ]
+    },
+    "portrait_source": "正面第一帧头肩部裁切",
+    "uploaded": true,
+    "ui_verification": "整页刷新并重开，两张预览均128×128"
+  },
+  {
+    "name": "周浩然",
+    "assets": [
+      {
+        "path": "map/周浩然-骑行图-v1-生成原稿.png",
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGB",
+        "sha256": "01ed1a511adf0fc8ca38081f6643bcc16c80cf5a4c7e45954dcb80bd94841dd6"
+      },
+      {
+        "path": "map/周浩然-骑行行走图-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGBA",
+        "sha256": "9b4f1b252e418386b46cbc3d99e403c46de60e32547b398acea2717e98d08d6c"
+      },
+      {
+        "path": "map/周浩然-头像-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGB",
+        "sha256": "d01e5fc3ae615db1239549c557df8f02babf52686834b1d6d275ee3c72f09e9c"
+      }
+    ],
+    "sprite_layout": {
+      "columns": 4,
+      "rows": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "frame_px": [
+        32,
+        32
+      ]
+    },
+    "portrait_source": "正面第一帧头肩部裁切",
+    "uploaded": true,
+    "ui_verification": "整页刷新并重开，两张预览均128×128"
+  },
+  {
+    "name": "小王",
+    "assets": [
+      {
+        "path": "map/小王-骑行图-v1-生成原稿.png",
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGB",
+        "sha256": "79ad8c7681febc4db3a2c6c3190232e8209156d64b557549043c552e6e8809d7"
+      },
+      {
+        "path": "map/小王-骑行行走图-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGBA",
+        "sha256": "f55825a279bd81d9a0e629f792a12760091b23a2b840ba1631085ca44699a23d"
+      },
+      {
+        "path": "map/小王-头像-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGB",
+        "sha256": "b9b0b33d3c561634a6031e4238c0b5bdd8eefdcc022e701c17a3bb6f7e7853a9"
+      }
+    ],
+    "sprite_layout": {
+      "columns": 4,
+      "rows": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "frame_px": [
+        32,
+        32
+      ]
+    },
+    "portrait_source": "正面第一帧头肩部裁切",
+    "uploaded": true,
+    "ui_verification": "整页刷新并重开，两张预览均128×128"
+  },
+  {
+    "name": "刘桂芳",
+    "assets": [
+      {
+        "path": "map/刘桂芳-骑行图-v1-生成原稿.png",
+        "size": [
+          1254,
+          1254
+        ],
+        "mode": "RGB",
+        "sha256": "200f5aa34406686786760c5b331f767229645abdd803f086aea38f47aefe598e"
+      },
+      {
+        "path": "map/刘桂芳-骑行行走图-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGBA",
+        "sha256": "1b5f689a83a61e35e31e0d06353bd91cd326d2d3a3a932fb6dec884ac311260f"
+      },
+      {
+        "path": "map/刘桂芳-头像-128.png",
+        "size": [
+          128,
+          128
+        ],
+        "mode": "RGB",
+        "sha256": "4005ea323b2548656531407b9f23361938671def24d3dafc39b0effe03b94fc7"
+      }
+    ],
+    "sprite_layout": {
+      "columns": 4,
+      "rows": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "frame_px": [
+        32,
+        32
+      ]
+    },
+    "portrait_source": "正面第一帧头肩部裁切",
+    "uploaded": true,
+    "ui_verification": "整页刷新并重开，两张预览均128×128"
+  }
+]

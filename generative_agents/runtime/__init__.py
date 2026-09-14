@@ -37,9 +37,6 @@ from .results import (
     StepResult,
     StepResultBuilder,
 )
-from .result_projector import ResultProjectionError, SqliteResultProjector
-from .trace_projector import ModelTraceProjectionError, ModelTraceProjector
-
 __all__ = [
     "ActionSnapshot",
     "ActivityKind",
@@ -83,3 +80,28 @@ __all__ = [
     "build_manifest_document",
     "get_algorithm_profile",
 ]
+
+
+def __getattr__(name: str):
+    """Load legacy Studio database projectors only when explicitly requested.
+
+    The portable Runtime is file-only.  This compatibility shim prevents a plain
+    Runtime import from importing SQLAlchemy while the old Studio worker is being
+    retired.
+    """
+
+    if name in {"ResultProjectionError", "SqliteResultProjector"}:
+        from .result_projector import ResultProjectionError, SqliteResultProjector
+
+        return {
+            "ResultProjectionError": ResultProjectionError,
+            "SqliteResultProjector": SqliteResultProjector,
+        }[name]
+    if name in {"ModelTraceProjectionError", "ModelTraceProjector"}:
+        from .trace_projector import ModelTraceProjectionError, ModelTraceProjector
+
+        return {
+            "ModelTraceProjectionError": ModelTraceProjectionError,
+            "ModelTraceProjector": ModelTraceProjector,
+        }[name]
+    raise AttributeError(name)

@@ -1,0 +1,55 @@
+{
+  "agent_count": 4,
+  "agent_schema_valid": true,
+  "simulation_schema_valid": true,
+  "images": [
+    {
+      "person": "林晨",
+      "portrait": [
+        32,
+        32
+      ],
+      "sprite": [
+        96,
+        128
+      ],
+      "front_frame_matches": true
+    },
+    {
+      "person": "王建国",
+      "portrait": [
+        32,
+        32
+      ],
+      "sprite": [
+        96,
+        128
+      ],
+      "front_frame_matches": true
+    },
+    {
+      "person": "赵悦",
+      "portrait": [
+        32,
+        32
+      ],
+      "sprite": [
+        96,
+        128
+      ],
+      "front_frame_matches": true
+    },
+    {
+      "person": "陈明远",
+      "portrait": [
+        32,
+        32
+      ],
+      "sprite": [
+        96,
+        128
+      ],
+      "front_frame_matches": true
+    }
+  ]
+}

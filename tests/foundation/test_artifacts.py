@@ -26,7 +26,7 @@ def _published(service, definition: ExperimentDefinition):
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
-        map_revision_id=map_revision["id"],
+        map_id=map_revision["id"],
         **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(experiment["id"])

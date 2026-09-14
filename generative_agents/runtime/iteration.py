@@ -61,4 +61,45 @@ class IterationContext:
         }
 
 
-__all__ = ["IterationContext"]
+@dataclass(frozen=True, slots=True)
+class ObjectIterationContext:
+    """Object identity is distinct from Agent identity and never model-supplied."""
+
+    run_id: UUID
+    attempt_id: UUID
+    object_key: str
+    object_name: str
+    step_no: int
+    total_steps: int
+    now: datetime
+    stride_minutes: int
+    coord: tuple[int, int]
+    address: tuple[str, ...]
+    spatial_semantics: tuple[Mapping[str, Any], ...] = ()
+    variables: Mapping[str, Any] = field(default_factory=dict)
+
+    @property
+    def memory_owner_key(self) -> str:
+        # The prefix contains ':' which Agent keys cannot contain.
+        return f"game-object:{self.object_key}"
+
+    def __post_init__(self) -> None:
+        if not self.object_key or not 1 <= self.step_no <= self.total_steps:
+            raise ValueError("invalid Game Object iteration identity or step")
+        if self.stride_minutes < 1 or self.now.tzinfo is None or self.now.utcoffset() is None:
+            raise ValueError("Game Object iteration requires aware virtual time and positive stride")
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "run_id": str(self.run_id), "attempt_id": str(self.attempt_id),
+            "game_object": {"object_key": self.object_key, "name": self.object_name,
+                            "coord": list(self.coord), "address": list(self.address)},
+            "step": {"number": self.step_no, "total": self.total_steps,
+                     "stride_minutes": self.stride_minutes},
+            "now": self.now.isoformat(),
+            "spatial_semantics": [dict(item) for item in self.spatial_semantics],
+            "variables": dict(self.variables),
+        }
+
+
+__all__ = ["IterationContext", "ObjectIterationContext"]

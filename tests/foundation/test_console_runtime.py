@@ -32,15 +32,6 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
             "/api/v1/maps",
             json={"name": "Console user map", "map_key": "console-user-map"},
         ).json()
-        map_draft = client.get(f"/api/v1/maps/{public_map['id']}/draft").json()
-        map_revision = client.post(
-            f"/api/v1/maps/{public_map['id']}/draft/publish",
-            json={
-                "draft_revision_id": map_draft["id"],
-                "lock_version": map_draft["lock_version"],
-            },
-        )
-        assert map_revision.status_code == 200, map_revision.text
         brain = brain_revision_via_api(client)
         created = client.post(
             "/api/v1/experiments",
@@ -50,7 +41,7 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": map_revision.json()["id"],
+                "map_id": public_map["id"],
             },
         )
         assert created.status_code == 201
@@ -351,9 +342,12 @@ def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab
     )
 
     assert 'data-result-tab="agents">Agent</button>' in shell
+    assert 'data-result-tab="quality">行为质量' in shell
+    assert 'data-result-tab="parameters">时间与执行参数</button>' in shell
+    assert 'data-result-tab="models">模型配置</button>' in shell
     assert 'data-result-tab="conversations"' not in shell
     assert 'data-result-tab="memories"' not in shell
-    assert 'data-result-tab="operations">运行诊断</button>' in shell
+    assert 'data-result-tab="operations">仿真诊断</button>' in shell
     assert 'data-result-tab="artifacts">结果与导出</button>' in shell
     assert 'class="agent-result-list" id="resultAgentButtons"' in shell
     assert 'id="resultAgentButtons" role="tablist"' in shell
@@ -503,7 +497,7 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "syncWorkspaceUrl();" in route
     assert "openExperiment(id, targetPage = 'overview', preferredRunId = null)" in source
     assert "preferredRunId || state.latestRunId" in source
-    assert "['overview', 'results', 'agents', 'models'].includes(requestedView)" in bootstrap
+    assert "['overview', 'results'].includes(requestedView)" in bootstrap
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
 
 
@@ -526,7 +520,12 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert 'data-content-tabs="world"' not in shell
     assert 'data-content-tabs="advanced"' not in shell
     overview = shell[shell.index('id="page-overview"') : shell.index('id="page-results"')]
+    results = shell[shell.index('id="page-results"') : shell.index('id="page-agents"')]
     agents = shell[shell.index('id="page-agents"') : shell.index('id="page-models"')]
+    current_navigation_start = shell.index('<div class="nav-label experiment-scope">当前实验</div>')
+    current_navigation = shell[
+        current_navigation_start : shell.index('</aside>', current_navigation_start)
+    ]
     topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
     assert 'data-content-tabs="overview"' not in overview
     assert 'role="tablist"' not in overview
@@ -534,9 +533,13 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert 'id="overviewRevisionState"' not in overview
     assert 'id="overviewRevisionCode"' not in overview
     assert 'id="overviewRevisionTime"' not in overview
-    assert 'class="stats overview-stats"' in overview
-    assert 'id="overviewReleaseDetails" hidden' in overview
-    assert 'id="publishBtn">发布版本并启动实验</button>' in overview
+    assert 'class="stats overview-stats"' not in overview
+    assert 'id="overviewReleaseDetails"' not in overview
+    assert '配置快照' not in overview
+    assert '已发布版本' not in overview
+    assert 'id="publishBtn"' not in overview
+    assert 'id="experimentNameDraft"' in overview
+    assert 'id="experimentGoalDraft"' in overview
     assert 'Agent 编组' not in overview
     assert 'for="expName"' not in overview
     assert 'for="expKey"' not in overview
@@ -548,9 +551,50 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert 'id="expTags"' not in shell
     assert topbar.index('id="topbarTitle"') < topbar.index('id="experimentHeaderMeta"')
     assert 'id="experimentBrainRevisionSelect"' in overview
-    assert 'id="experimentMapRevisionSelect"' in overview
+    assert 'id="experimentMapSelect"' in overview
+    assert 'id="overviewResourceAgents"' in overview
+    assert 'id="overviewResourceModels"' not in overview
+    assert '发布检查' not in overview
+    assert 'id="overviewValidationCount"' not in overview
+    assert 'id="startTime"' not in overview
+    assert 'id="simulationConfiguration"' not in results
+    assert '下一次仿真设置' not in results
+    assert '这些参数只作用于下一次仿真' not in results
+    assert 'id="overviewConfigStatus"' not in results
+    assert 'id="startTime"' in results
+    assert 'id="simulationModelConfigurationHost"' in results
+    assert '2 个服务未检测' not in results
+    assert '测试连接' not in results
+    assert 'class="model-configuration-meta"' not in results
+    assert 'id="publishBtn">执行实验</button>' in results
+    assert 'data-result-panel="parameters"' in results
+    assert 'data-result-panel="models"' in results
+    result_tab_order = [
+        'data-result-tab="timeline"',
+        'data-result-tab="agents"',
+        'data-result-tab="operations"',
+        'data-result-tab="quality"',
+        'data-result-tab="parameters"',
+        'data-result-tab="models"',
+        'data-result-tab="artifacts"',
+    ]
+    result_tab_positions = [results.index(marker) for marker in result_tab_order]
+    assert result_tab_positions == sorted(result_tab_positions)
+    assert results.index('data-result-panel="quality"') < results.index(
+        'id="runQualityBanner"'
+    ) < results.index('data-result-panel="parameters"')
+    assert 'id="resultQualityCount"' in results
+    assert "qualityCount.hidden = count === 0;" in script
+    assert 'Revision Pinning' not in results
+    assert '连接配置哈希' not in results
+    assert 'id="resultExecutionHash"' not in shell
+    assert '执行指纹' not in shell
+    assert 'data-page="agents"' not in current_navigation
+    assert 'data-page="models"' not in current_navigation
+    assert 'data-page="results"' in current_navigation
+    assert '仿真与结果' in current_navigation
     assert '状态记录间隔' not in overview
-    assert 'id="overviewLatestRunCode"' in overview
+    assert 'id="overviewLatestRunCode"' not in overview
     assert 'class="result-metrics"' not in shell
     assert '<h1>Agent 配置</h1>' not in agents
     assert 'Agent 配置说明' not in agents
@@ -558,6 +602,9 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert "$('selectedAgentCount')" not in script
     assert "function setContentTab" in script
     assert "definition.simulation.log_level = 'INFO';" in script
+    assert "duplicateExperiment(state.selectedExperimentId)" in script
+    assert "forkCurrentRevision" not in script
+    assert "$('saveBtn').hidden = pageName === 'results';" in script
     latest_summary = script[
         script.index("async function fillLatestRunSummary") : script.index("function setSwitch")
     ]
@@ -590,13 +637,11 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
         "deleteCrowdBtn",
         "skillDelete",
         "deleteSpatialAsset",
-        "deleteSavedExperimentView",
     ):
         assert f'id="{element_id}"' in shell
     assert "window.confirmResourceDeletion" in console
     assert "deleteExperimentById" in console
     assert "deleteCurrentRun" in console
-    assert "deleteSelectedSavedView" in console
     assert 'class="experiment-delete-button"' in console
     assert 'aria-label="删除实验"' in console
     assert "async deleteMap" in maps
@@ -617,6 +662,29 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     assert "border:0;background:transparent;color:#9b746d" in ux
     assert "font-size:9px;font-weight:560" in ux
     assert ".experiment-card-actions>.experiment-delete-button{min-height:0;padding:0;border:0;background:transparent" in ux
+
+
+def test_editor_and_observability_ui_state_is_revision_scoped_and_user_visible():
+    root = Path(__file__).parents[2]
+    static = root / "generative_agents" / "web" / "static"
+    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
+    console = (static / "console-api.js").read_text(encoding="utf-8")
+    skills = (static / "skill-workspace.js").read_text(encoding="utf-8")
+    maps = (static / "map-workspace.js").read_text(encoding="utf-8")
+    editor = (static / "map-editor-v2.js").read_text(encoding="utf-8")
+
+    assert "$('skillSave').disabled = false" in skills
+    assert "host()?.querySelector('#skillSource')" in skills
+    assert "inactiveHost.replaceChildren()" in skills
+    assert "URL.createObjectURL(file)" in editor
+    assert "readAsDataURL(file)" not in editor
+    assert "浏览器无法解码该图片" in editor
+    assert "indexedDB.open(MAP_RECOVERY_DB" in maps
+    assert "本地恢复暂不可用" in maps
+    assert 'id="modelUsageWatermark"' in shell
+    assert "usage_committed_through_step" in console
+    assert "page.inert = !active" in console
+    assert "formRevisionId !== state.draft.id" in console
 
 
 def test_running_duration_uses_utc_instants_and_a_live_execution_label():
@@ -881,10 +949,10 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     assert "prepareExperimentBrainChoices()" in source
     assert "brain_skill: brainSkill" in source
     assert "brain_revision_id: brainRevisionId" in source
-    assert "saveExperimentComposition" in source
+    assert "saveExperimentComposition" not in source
+    assert 'id="experimentBrainRevisionSelect" disabled' in shell
+    assert 'id="experimentMapSelect" disabled' in shell
     assert "enqueueDraftMutation(() => saveDraftUnlocked(options))" in source
-    assert "if (state.formDirty) await saveDraftUnlocked({ silent: true });" in source
-    assert "transportRetries: 1" in source
     assert "CONTROL_PLANE_NETWORK_ERROR" in source
     assert "await acceptSavedDraft(saved);" in source
     assert "state.runEstimate = null;" in source
@@ -895,7 +963,7 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
         )
     ]
     assert "'6 / 6'" not in overview
-    assert "renderOverviewValidation(cachedValidation)" in overview
+    assert "renderOverviewValidation(cachedValidation)" not in overview
 
 
 def test_uploaded_agent_images_become_canonical_ui_state_without_reload():
@@ -933,9 +1001,8 @@ def test_chat_output_limit_is_not_presented_as_the_model_context_window():
 
     assert "单次最大输出" in shell
     assert "不是模型的上下文窗口" in shell
-    assert 'id="chatServiceStatus"' in shell
-    assert "result.service?.context_window" in script
-    assert "chat.context_window" in script
+    assert 'id="chatServiceStatus"' not in shell
+    assert "testModelConnection" not in script
 
 
 def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():
@@ -1272,6 +1339,7 @@ const destroyArgs = [];
 const chain = {
   setDepth(){return this}, setVisible(){return this}, setInteractive(){return this},
   setOrigin(){return this}, on(){return this}, setTint(){return this}, clearTint(){return this},
+  setStrokeStyle(){return this}, setDisplaySize(){return this},
 };
 const layer = {setDepth(){return this},setVisible(){return this}};
 function sceneFor(config) {
@@ -1279,7 +1347,7 @@ function sceneFor(config) {
     make:{tilemap(){return {widthInPixels:3200,heightInPixels:2400,addTilesetImage(name){return name},createLayer(){return layer}}}},
     cameras:{main:{setBounds(){},setZoom(){},startFollow(){},stopFollow(){}}},
     input:{on(){}}, scale:{resize(){}},
-    add:{sprite(){return Object.create(chain)},rectangle(){return Object.create(chain)},text(){return Object.create(chain)},graphics(){return Object.create(chain)}},
+    add:{sprite(){return Object.create(chain)},circle(){return Object.create(chain)},rectangle(){return Object.create(chain)},text(){return Object.create(chain)},graphics(){return Object.create(chain)}},
   };
 }
 global.Phaser = {

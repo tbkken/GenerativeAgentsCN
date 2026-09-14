@@ -1,0 +1,79 @@
+[
+  {
+    "file": "map/room-base.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGB",
+    "alpha_extrema": null,
+    "alpha_bbox": null,
+    "source": "exec-0f4661f6-34f9-4e1e-aae3-bdb02e2afcdd.png"
+  },
+  {
+    "file": "objects/desk-empty.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "alpha_bbox": [
+      39,
+      40,
+      1212,
+      1200
+    ],
+    "source": "exec-f8efe413-c98d-4dd5-8226-6ee2194b7f01.png"
+  },
+  {
+    "file": "objects/study-materials-scattered.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "alpha_bbox": [
+      87,
+      39,
+      1192,
+      1182
+    ],
+    "source": "exec-bb3206f2-d51c-4b32-ac30-3ab70d05adb5.png"
+  },
+  {
+    "file": "objects/study-materials-stacked.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "alpha_bbox": [
+      49,
+      53,
+      1216,
+      1230
+    ],
+    "source": "exec-2e9806a7-2036-4192-81d4-cec2d33c32f4.png"
+  },
+  {
+    "file": "agents/xu-zhixing-reference.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "alpha_bbox": [
+      103,
+      17,
+      1194,
+      1238
+    ],
+    "source": "exec-80f736d9-9dbc-42ca-bd32-5201627b3c03.png"
+  }
+]

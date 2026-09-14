@@ -1,4 +1,4 @@
-"""Agent-initiated, passive interaction with nearby map Game Objects."""
+"""Object identities, interaction inboxes and committed state owned by one Run."""
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ class GameObjectAffordance:
     object_name: str
     interaction_key: str
     skill_name: str
-    skill_revision: str | None
     description: str
     default_request: str
     interaction_radius_tiles: float
@@ -24,6 +23,8 @@ class GameObjectAffordance:
     bounds: tuple[float, float, float, float]
     address: tuple[str, ...]
     object_state: Mapping[str, Any]
+    vision_radius: int = 4
+    attention_bandwidth: int = 8
 
     @property
     def selection_key(self) -> str:
@@ -70,22 +71,31 @@ class GameObjectAffordance:
 
 
 class GameObjectInteractionSystem:
-    """Expose nearby affordances and invoke one only after Agent selection."""
+    """Own object bindings, state and requests without executing model code."""
 
-    def __init__(self, world: Mapping[str, Any], *, skill_executor, clock) -> None:
+    def __init__(self, world: Mapping[str, Any], *, clock) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
         参数:
             world: 当前运行使用的世界配置或运行时世界对象。 类型：`Mapping[str, Any]`。
-            skill_executor: 执行运行私有技能调用的适配器。
             clock: 提供当前时间的可替换时钟，便于测试并避免直接依赖系统时间。
 
         返回:
             无返回值。
         """
-        self._executor = skill_executor
         self._clock = clock
         self._affordances = tuple(self._from_world(world))
+        keys = [item.object_key for item in self._affordances]
+        if len(keys) != len(set(keys)):
+            raise ValueError("each Game Object must bind exactly one root Skill")
+        for item in self._affordances:
+            if not 0 <= item.vision_radius <= 100 or not 0 <= item.attention_bandwidth <= 100:
+                raise ValueError("Game Object perception limits must be between 0 and 100")
+        self._runtime_state = {
+            key: {"requests": [], "last_action": None, "action_keys": {},
+                  "last_step": 0, "consecutive_fallbacks": 0}
+            for key in keys
+        }
         self._object_states = {
             object_key: copy.deepcopy(dict(initial_state))
             for object_key, initial_state in self._initial_states_from_world(world)
@@ -139,7 +149,7 @@ class GameObjectInteractionSystem:
         step_no: int,
         request: str | None = None,
     ) -> dict[str, Any]:
-        """Invoke exactly one nearby Game Object passive Skill selected by the Agent."""
+        """Validate an interaction; execution waits for the object's own turn."""
 
         nearby = self.nearby(tuple(agent.coord))
         selected = next(
@@ -150,47 +160,95 @@ class GameObjectInteractionSystem:
             raise ValueError(
                 f"Game Object interaction is not available nearby: {selection_key}"
             )
-        if self._executor is None:
-            raise ValueError("Game Object passive Skill runtime is unavailable")
         request = str(request or selected.default_request).strip()
         if not request:
             raise ValueError("Game Object interaction request cannot be empty")
-        context = {
-            "interaction_mode": "PASSIVE_REQUEST_RESPONSE",
-            "step_no": step_no,
-            "virtual_time": self._clock.get_date().isoformat(),
-            "agent": {
-                "agent_key": agent.agent_key,
-                "name": agent.name,
-                "coord": list(agent.coord),
-                "current_action": agent.get_event().get_describe(),
-            },
-            "game_object": {
-                "object_key": selected.object_key,
-                "name": selected.object_name,
-                "coord": list(selected.coord),
-                "address": list(selected.address),
-            },
-            "object_state": copy.deepcopy(dict(selected.object_state)),
-        }
-        result = self._executor.run(
-            selected.skill_name,
-            request,
-            context=context,
-        )
         return {
             "object_key": selected.object_key,
             "object_name": selected.object_name,
             "interaction_key": selected.interaction_key,
-            "skill_name": result.skill,
-            "skill_revision": result.revision,
+            "skill_name": selected.skill_name,
             "observed_step": step_no,
             "observed_at": self._clock.get_date().isoformat(),
             "request": request,
-            "response": result.output_text,
-            "agent_decision": "COMPLETED",
-            "trace": list(result.trace),
+            "agent_key": agent.agent_key,
+            "agent_name": agent.name,
+            "coord": list(agent.coord),
+            "agent_decision": "PENDING",
         }
+
+    def binding(self, object_key: str) -> GameObjectAffordance:
+        for item in self._affordances:
+            if item.object_key == object_key:
+                return item
+        raise ValueError(f"Game Object has no bound Skill: {object_key}")
+
+    def has_skill(self, object_key: str) -> bool:
+        return object_key in self._runtime_state
+
+    def runtime_state(self, object_key: str) -> dict[str, Any]:
+        return copy.deepcopy(self._runtime_state[object_key])
+
+    def enqueue_request(self, observation: Mapping[str, Any], request_id: str) -> dict:
+        value = {**copy.deepcopy(dict(observation)), "request_id": request_id}
+        pending = self._runtime_state[str(value["object_key"])]["requests"]
+        if any(item["request_id"] == request_id for item in pending):
+            raise ValueError("interaction request is already committed")
+        pending.append(value)
+        return copy.deepcopy(value)
+
+    def commit_iteration(self, object_key: str, *, step_no: int, action: Mapping,
+                         responses: list[dict], fallback: bool) -> None:
+        state = self._runtime_state[object_key]
+        if step_no <= state["last_step"]:
+            raise ValueError("Game Object already committed this Step")
+        key = str((action.get("arguments") or {}).get("idempotency_key") or "")
+        if key:
+            if key in state["action_keys"]:
+                raise ValueError("Game Object action idempotency key is already committed")
+            state["action_keys"][key] = step_no
+        replied = {item["request_id"] for item in responses}
+        state["requests"] = [item for item in state["requests"] if item["request_id"] not in replied]
+        state["last_action"] = {"step_no": step_no, **copy.deepcopy(dict(action))}
+        state["last_step"] = step_no
+        state["consecutive_fallbacks"] = state["consecutive_fallbacks"] + 1 if fallback else 0
+
+    def snapshot_runtime(self) -> dict:
+        return copy.deepcopy(self._runtime_state)
+
+    def restore_runtime(self, snapshot: Mapping, *, agent_keys: set[str]) -> None:
+        if not isinstance(snapshot, Mapping) or set(snapshot) != set(self._runtime_state):
+            raise ValueError("checkpoint Game Object runtime keys do not match the map")
+        for key, value in snapshot.items():
+            if (not isinstance(value, Mapping) or type(value.get("last_step")) is not int
+                    or value["last_step"] < 0 or not isinstance(value.get("action_keys"), dict)
+                    or not isinstance(value.get("requests"), list)
+                    or type(value.get("consecutive_fallbacks")) is not int
+                    or value["consecutive_fallbacks"] < 0):
+                raise ValueError("invalid Game Object runtime checkpoint")
+            for action_key, step in value["action_keys"].items():
+                if not isinstance(action_key, str) or not action_key or type(step) is not int or not 1 <= step <= value["last_step"]:
+                    raise ValueError("invalid Game Object activity ledger checkpoint")
+            last = value.get("last_action")
+            if ((value["last_step"] == 0 and last is not None)
+                    or (value["last_step"] > 0 and (not isinstance(last, Mapping) or last.get("step_no") != value["last_step"]))):
+                raise ValueError("Game Object last action disagrees with its checkpoint Step")
+            ids = set()
+            for request in value["requests"]:
+                if (not isinstance(request, Mapping) or request.get("object_key") != key
+                        or request.get("agent_key") not in agent_keys
+                        or not request.get("request_id") or request["request_id"] in ids):
+                    raise ValueError("invalid Game Object request checkpoint")
+                ids.add(request["request_id"])
+        self._runtime_state = copy.deepcopy(dict(snapshot))
+
+    def public_state(self, object_key: str) -> dict:
+        state = self.object_state(object_key)
+        # An autonomous object's parameters/ledger are not visible merely because
+        # someone can see its appearance. The visual state label is public.
+        return {"state": state["state"]} if self.has_skill(object_key) and "state" in state else (
+            {} if self.has_skill(object_key) else state
+        )
 
     def object_state(self, object_key: str) -> dict[str, Any]:
         """Return a defensive copy of one replayable Game Object state."""
@@ -271,11 +329,11 @@ class GameObjectInteractionSystem:
         for placement in scene.get("placements") or ():
             if not isinstance(placement, Mapping):
                 continue
-            revision_id = str(placement.get("spatial_asset_revision_id") or "")
-            contract = assets.get(revision_id)
+            asset_id = str(placement.get("spatial_asset_id") or "")
+            contract = assets.get(asset_id)
             if not isinstance(contract, Mapping) or contract.get("kind") != "OBJECT":
                 continue
-            object_key = str(placement.get("instance_key") or revision_id)
+            object_key = str(placement.get("instance_key") or asset_id)
             state = copy.deepcopy(dict(contract.get("initial_state") or {}))
             state.update(copy.deepcopy(dict(placement.get("state_overrides") or {})))
             if object_key:
@@ -337,18 +395,19 @@ class GameObjectInteractionSystem:
                 yield GameObjectAffordance(
                     object_key=str(node["id"]),
                     object_name=str(node.get("name") or node["id"]),
-                    interaction_key=str(binding.get("interaction_key") or ""),
+                    interaction_key=str(binding.get("interaction_key") or "interact"),
                     skill_name=str(binding.get("skill_name") or ""),
-                    skill_revision=None,
-                    description=str(binding.get("description") or ""),
-                    default_request=str(binding.get("default_request") or ""),
+                    description=str(binding.get("description") or "与对象交互"),
+                    default_request=str(binding.get("default_request") or "请提供当前状态和可执行信息。"),
                     interaction_radius_tiles=float(
-                        binding.get("interaction_radius_m", 2.0)
+                        binding.get("interaction_radius_tiles", 2.0)
                     ),
                     coord=(x + width / 2.0, y + height / 2.0),
                     bounds=(x, y, width, height),
                     address=address(node),
                     object_state=copy.deepcopy(dict(state)),
+                    vision_radius=int(binding.get("vision_radius", 4)),
+                    attention_bandwidth=int(binding.get("attention_bandwidth", 8)),
                 )
 
     @staticmethod
@@ -364,42 +423,49 @@ class GameObjectInteractionSystem:
         scene = world.get("spatial_scene")
         if not isinstance(scene, Mapping):
             return
-        meters_per_tile = max(0.000001, float(scene.get("meters_per_tile", 1.0)))
         editor = world.get("editor") or {}
         assets = editor.get("spatial_assets") if isinstance(editor, Mapping) else {}
         assets = assets if isinstance(assets, Mapping) else {}
         for placement in scene.get("placements") or ():
             if not isinstance(placement, Mapping):
                 continue
-            revision_id = str(placement.get("spatial_asset_revision_id") or "")
-            contract = assets.get(revision_id)
+            asset_id = str(placement.get("spatial_asset_id") or "")
+            contract = assets.get(asset_id)
             if not isinstance(contract, Mapping) or contract.get("kind") != "OBJECT":
                 continue
-            x = float(placement.get("x_m", 0)) / meters_per_tile
-            y = float(placement.get("y_m", 0)) / meters_per_tile
+            x = float(placement.get("x_tiles", 0))
+            y = float(placement.get("y_tiles", 0))
+            physics = contract.get("physics") or {}
+            width = max(1.0, float(physics.get("width_tiles", 1)))
+            height = max(1.0, float(physics.get("height_tiles", 1)))
             state = copy.deepcopy(dict(contract.get("initial_state") or {}))
             state.update(copy.deepcopy(dict(placement.get("state_overrides") or {})))
             for binding in contract.get("skill_bindings") or ():
                 if not isinstance(binding, Mapping):
                     continue
                 yield GameObjectAffordance(
-                    object_key=str(placement.get("instance_key") or revision_id),
+                    object_key=str(placement.get("instance_key") or asset_id),
                     object_name=str(
                         contract.get("name") or placement.get("instance_key")
                     ),
-                    interaction_key=str(binding.get("interaction_key") or ""),
+                    interaction_key=str(binding.get("interaction_key") or "interact"),
                     skill_name=str(binding.get("skill_name") or ""),
-                    skill_revision=None,
-                    description=str(binding.get("description") or ""),
-                    default_request=str(binding.get("default_request") or ""),
-                    interaction_radius_tiles=(
-                        float(binding.get("interaction_radius_m", 2.0))
-                        / meters_per_tile
+                    description=str(binding.get("description") or "与对象交互"),
+                    default_request=str(binding.get("default_request") or "请提供当前状态和可执行信息。"),
+                    interaction_radius_tiles=float(
+                        binding.get("interaction_radius_tiles", 2.0)
                     ),
                     coord=(x, y),
-                    bounds=(x, y, 1.0, 1.0),
+                    bounds=(
+                        x - (width - 1.0) / 2.0,
+                        y - (height - 1.0) / 2.0,
+                        width,
+                        height,
+                    ),
                     address=(),
                     object_state=state,
+                    vision_radius=int(binding.get("vision_radius", 4)),
+                    attention_bandwidth=int(binding.get("attention_bandwidth", 8)),
                 )
 
 

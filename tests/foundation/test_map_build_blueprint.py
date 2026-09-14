@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from generative_agents.web import create_app
 
 
-def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
+def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
     database_url,
 ):
     """回归验证 ``test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step`` 所描述的业务结果、故障边界和隔离约束。"""
@@ -44,28 +44,25 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
         )
         assert created.status_code == 201, created.text
         public_map = created.json()
-        draft = client.get(f"/api/v1/maps/{public_map['id']}/draft").json()
-        definition = draft["world"]["definition"]
+        current = client.get(f"/api/v1/maps/{public_map['id']}").json()
+        definition = current["world"]["definition"]
         assert definition["size"] == [56, 96]
         assert definition["editor"]["build_guide"]["current_step"] == 0
         assert definition["editor"]["build_guide"]["complete"] is False
 
         incomplete = client.post(
-            f"/api/v1/maps/{public_map['id']}/draft/publish",
-            json={
-                "draft_revision_id": draft["id"],
-                "lock_version": draft["lock_version"],
-            },
+            f"/api/v1/maps/{public_map['id']}/validate",
+            json={"lock_version": current["lock_version"]},
         )
-        assert incomplete.status_code == 422, incomplete.text
+        assert incomplete.status_code == 200, incomplete.text
         assert {
             item["code"]
-            for item in incomplete.json()["error"]["details"]["errors"]
+            for item in incomplete.json()["validation"]["errors"]
         } >= {"MAP_BLUEPRINT_INCOMPLETE"}
 
         out_of_order = client.post(
-            f"/api/v1/maps/{public_map['id']}/draft/blueprint-steps/2",
-            json={"lock_version": draft["lock_version"]},
+            f"/api/v1/maps/{public_map['id']}/blueprint-steps/2",
+            json={"lock_version": current["lock_version"]},
         )
         assert out_of_order.status_code == 409, out_of_order.text
         assert out_of_order.json()["error"]["code"] == (
@@ -74,16 +71,16 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
 
         for step in range(1, 9):
             response = client.post(
-                f"/api/v1/maps/{public_map['id']}/draft/blueprint-steps/{step}",
-                json={"lock_version": draft["lock_version"]},
+                f"/api/v1/maps/{public_map['id']}/blueprint-steps/{step}",
+                json={"lock_version": current["lock_version"]},
             )
             assert response.status_code == 200, response.text
-            draft = response.json()
-            assert draft["world"]["definition"]["editor"]["build_guide"][
+            current = response.json()
+            assert current["world"]["definition"]["editor"]["build_guide"][
                 "current_step"
             ] == step
 
-        definition = draft["world"]["definition"]
+        definition = current["world"]["definition"]
         guide = definition["editor"]["build_guide"]
         assert guide["complete"] is True
         editor_v2 = definition["editor_v2"]
@@ -96,7 +93,7 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
         }
         assert len(definition["editor"]["module_instances"]) == 2
         assert all(
-            item["source_map_revision_id"] is None
+            item["source_map_id"] is None
             for item in definition["editor"]["module_instances"]
         )
         assert definition["traffic_layout"]["lanes_per_direction"] == 3
@@ -114,29 +111,21 @@ def test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step(
             "company.vehicle.enter"
         )
 
-        published = client.post(
-            f"/api/v1/maps/{public_map['id']}/draft/publish",
-            json={
-                "draft_revision_id": draft["id"],
-                "lock_version": draft["lock_version"],
-            },
+        validated = client.post(
+            f"/api/v1/maps/{public_map['id']}/validate",
+            json={"lock_version": current["lock_version"]},
         )
-        assert published.status_code == 200, published.text
-        revision = published.json()
-        assert revision["state"] == "PUBLISHED"
-        assert revision["world_hash"]
-        assert revision["world"]["world_key"] == "commute-blueprint-acceptance"
-        signal_tile = next(
-            tile
-            for tile in revision["world"]["definition"]["tiles"]
-            if tile["coord"] == [29, 22]
+        assert validated.status_code == 200, validated.text
+        current = validated.json()
+        assert current["validation"]["valid"] is True
+        assert current["world_hash"]
+        assert current["world"]["world_key"] == "commute-blueprint-acceptance"
+        # Runtime addresses are compiled into the immutable experiment snapshot,
+        # not written back into the mutable authoring map during validation.
+        assert any(
+            node["id"] == "object-signal-a-north"
+            for node in editor_v2["hierarchy_nodes"]
         )
-        assert signal_tile["address"] == [
-            "两日通勤验收地图",
-            "城市道路",
-            "东西向通勤主路",
-            "路口 A north 信号灯",
-        ]
 
 
 def test_map_workspace_exposes_persisted_build_guide_controls():
@@ -155,5 +144,5 @@ def test_map_workspace_exposes_persisted_build_guide_controls():
     assert "map-editor-v2:apply-blueprint-step" in editor_javascript
     assert "grid-template-rows: 54px auto minmax(0, 1fr)" in stylesheet
     assert "async applyBlueprintStep()" in javascript
-    assert "/draft/blueprint-steps/${nextStep}" in javascript
+    assert "/blueprint-steps/${nextStep}" in javascript
     assert "current_step" in javascript

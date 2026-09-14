@@ -1,38 +1,113 @@
 /**
- * 公共地图工作区：负责目录、草稿、自动保存、本地恢复、发布和 MapEditorV2 挂载。
+ * 公共地图工作区：负责目录、直接编辑、自动保存、本地恢复、校验和 MapEditorV2 挂载。
  *
- * manager 是页面级状态机。服务器草稿始终带 lock_version，
- * localStorage 只保存尚未同步的恢复副本，不能覆盖服务端已经更新的权威 Revision。
+ * manager 是页面级状态机。服务器地图始终带 row_version，
+ * 本地恢复副本只保护尚未同步的编辑，不能覆盖服务端当前地图。
  */
 (() => {
   'use strict';
 
-  const API = '/api/v1';
+  const API = window.ResourceScope?.base || '/api/studio/resources';
+  const experimentScope = Boolean(window.ResourceScope?.experimentId);
   const MAP_AUTO_SAVE_DELAY_MS = 1200;
   const MAP_RECOVERY_WRITE_DELAY_MS = 180;
   const MAP_RECOVERY_SCHEMA = 'ga-map-draft-recovery/v1';
+  const MAP_RECOVERY_DB = 'ga-map-recovery';
+  const MAP_RECOVERY_STORE = 'drafts';
+  let recoveryDatabasePromise = null;
   const deepClone = value => JSON.parse(JSON.stringify(value));
   const escapeHtml = value => String(value ?? '')
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
   const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
 
+  function normalizeOptionalMapKey(value) {
+    const raw = String(value ?? '').trim().toLowerCase();
+    if (!raw) return null;
+    const normalized = raw
+      .replace(/[\s_]+/g, '-')
+      .replace(/[^a-z0-9-]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 64)
+      .replace(/-+$/g, '');
+    return /^[a-z0-9][a-z0-9-]{1,63}$/.test(normalized) ? normalized : null;
+  }
+
+  function recoveryDatabase() {
+    if (!('indexedDB' in window)) return Promise.resolve(null);
+    if (recoveryDatabasePromise) return recoveryDatabasePromise;
+    recoveryDatabasePromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open(MAP_RECOVERY_DB, 1);
+      request.onupgradeneeded = () => {
+        const database = request.result;
+        if (!database.objectStoreNames.contains(MAP_RECOVERY_STORE)) {
+          database.createObjectStore(MAP_RECOVERY_STORE);
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('无法打开地图恢复存储'));
+      request.onblocked = () => reject(new Error('地图恢复存储被其他页面占用'));
+    });
+    return recoveryDatabasePromise;
+  }
+
+  async function recoveryStoreRequest(mode, operation) {
+    const database = await recoveryDatabase();
+    if (!database) return null;
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(MAP_RECOVERY_STORE, mode);
+      const request = operation(transaction.objectStore(MAP_RECOVERY_STORE));
+      request.onsuccess = () => resolve(request.result ?? null);
+      request.onerror = () => reject(request.error || new Error('地图恢复存储操作失败'));
+      transaction.onabort = () => reject(transaction.error || new Error('地图恢复存储事务已中止'));
+    });
+  }
+
+  async function writeRecovery(key, value) {
+    const database = await recoveryDatabase();
+    if (database) {
+      await recoveryStoreRequest('readwrite', store => store.put(value, key));
+      try { localStorage.removeItem(key); } catch (_error) { /* optional migration cleanup */ }
+      return;
+    }
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  async function readRecovery(key) {
+    const database = await recoveryDatabase();
+    if (database) {
+      const indexed = await recoveryStoreRequest('readonly', store => store.get(key));
+      if (indexed) return indexed;
+    }
+    return JSON.parse(localStorage.getItem(key) || 'null');
+  }
+
+  async function deleteRecovery(key) {
+    try { localStorage.removeItem(key); } catch (_error) { /* optional legacy cleanup */ }
+    const database = await recoveryDatabase();
+    if (database) await recoveryStoreRequest('readwrite', store => store.delete(key));
+  }
+
   async function request(path, options = {}) {
-    // 地图端点统一使用 /api/v1 前缀和业务错误信封。
-    const response = await fetch(`${API}${path}`, {
+    // 地图是 Studio 公共作者资源；实验创建时复制内容，运行时不回查这里。
+    options = window.ResourceScope?.options(options) || options;
+      const response = await fetch(`${API}${path}`, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const error = new Error(body.error?.message || `请求失败（${response.status}）`);
-      error.code = body.error?.code;
-      error.details = body.error?.details;
+      const detail = body.detail;
+      const error = new Error(detail?.message || (typeof detail === 'string' ? detail : '') || body.error?.message || `请求失败（${response.status}）`);
+      error.code = detail?.code || body.error?.code;
+      error.details = detail?.details || body.error?.details;
       error.requestId = body.error?.request_id || response.headers.get('X-Request-ID');
       error.status = response.status;
       error.path = path;
       throw error;
     }
+    if (experimentScope && options.method && options.method !== 'GET') window.ResourceScope.saved(body);
     return body;
   }
 
@@ -51,7 +126,6 @@
     selectedMapId: null,
     detail: null,
     draft: null,
-    revisions: [],
     experiment: null,
     publicEditor: null,
     status: '',
@@ -74,13 +148,17 @@
       document.getElementById('createMapBtn').addEventListener('click', () => this.openCreate());
       document.getElementById('backToMapsBtn').addEventListener('click', () => this.showCatalog().catch(error => this.fail(error)));
       document.getElementById('saveMapBtn').addEventListener('click', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
-      document.getElementById('publishMapBtn').addEventListener('click', () => this.publishOrFork().catch(error => this.fail(error)));
+      document.getElementById('publishMapBtn').addEventListener('click', () => this.validateMap().catch(error => this.fail(error)));
       document.getElementById('deleteMapBtn').addEventListener('click', () => this.deleteMap(this.selectedMapId, this.detail?.name).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:change', () => this.handlePublicEditorChange());
+      publicEditorRoot.addEventListener('map-editor-v2:save', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:request-edit', event => this.handlePublicEditorEditRequest(event).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:apply-blueprint-step', () => this.applyBlueprintStep().catch(error => this.fail(error)));
+      window.addEventListener('experiment-map:uploaded', event => {
+        if (experimentScope && this.draft) this.draft.row_version = event.detail.content_sha256;
+      });
       window.addEventListener('beforeunload', event => this.handleBeforeUnload(event));
-      window.addEventListener('pagehide', () => this.persistLocalRecovery());
+      window.addEventListener('pagehide', () => { this.persistLocalRecovery().catch(() => {}); });
       window.addEventListener('online', () => {
         if (this.publicEditor?.changed) this.scheduleAutoSave(0);
       });
@@ -102,14 +180,34 @@
       document.getElementById('confirmCreateCanvas').addEventListener('click', () => this.confirmCreateCanvas().catch(error => this.fail(error)));
       document.getElementById('newMapBlueprint').addEventListener('change', () => this.updateCreateMode('blueprint'));
       document.getElementById('newMapSource').addEventListener('change', () => this.updateCreateMode('source'));
+      ['newMapWidth', 'newMapHeight', 'newMapTileSize'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => this.updateCreatePixelSize());
+      });
+      document.getElementById('experimentMapSelect')?.addEventListener('change', () => {
+        this.selectExperimentMap().catch(error => this.fail(error));
+      });
       document.querySelectorAll('[data-map-tab]').forEach(tab => tab.addEventListener('click', () => this.setTab(tab.dataset.mapTab)));
       window.addEventListener('spatial-asset-workspace:add-to-map', event => this.addSpatialAsset(event.detail?.asset));
+      window.addEventListener('spatial-asset-workspace:updated', () => {
+        if (this.selectedMapId && !this.publicEditor?.changed && !this.savePromise) {
+          this.openMap(this.selectedMapId, false).catch(error => this.fail(error));
+        }
+      });
     },
 
     async activate() {
       this.init();
-      this.query = document.getElementById('mapSearch').value.trim();
-      await Promise.all([this.loadMaps(), this.loadBlueprints()]);
+      const skillCatalogRefresh = this.publicEditor.refreshSkillCatalog();
+      if (experimentScope) {
+        await this.openMap(window.ResourceScope.experimentId, false);
+        await skillCatalogRefresh;
+        return;
+      }
+      const saved = window.ResourceList.read('maps');
+      this.query = saved.query;
+      this.page = saved.page;
+      document.getElementById('mapSearch').value = this.query;
+      await Promise.all([this.loadMaps(), this.loadBlueprints(), skillCatalogRefresh]);
       const mapId = new URLSearchParams(location.search).get('map_id');
       if (mapId && mapId !== this.selectedMapId) await this.openMap(mapId, false);
     },
@@ -127,6 +225,7 @@
 
     async loadMaps() {
       this.init();
+      if (!experimentScope) return this.loadAuthorMaps();
       const generation = ++this.listGeneration;
       const requestState = { status: this.status, query: this.query };
       const grid = document.getElementById('mapCatalogGrid');
@@ -164,7 +263,7 @@
       this.selectorMaps = selectorResult.items;
       grid.innerHTML = this.maps.length ? this.maps.map(item => `
         <article class="resource-card-shell"><button class="map-card" data-map-id="${item.id}">
-          <span class="map-card-top"><span class="map-state ${item.current_draft ? 'draft' : ''}">${item.current_draft ? '编辑中' : '已发布'}</span><code>${escapeHtml(item.map_key)}</code></span>
+          <span class="map-card-top"><span class="map-state draft">实时地图</span><code>${escapeHtml(item.map_key)}</code></span>
           <h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.description || '暂无用途说明')}</p>
           <span class="map-card-foot"><span>${item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]}` : '待设置尺寸'}</span><span>${item.usage_count} 个实验使用</span></span>
         </button><button class="resource-card-delete" type="button" aria-label="删除地图" title="删除地图" data-delete-map-id="${item.id}" data-delete-map-name="${escapeHtml(item.name)}">删除</button></article>`).join('') : '<div class="empty-state"><strong>没有符合条件的地图</strong><span>可以清除搜索词、切换状态，或新建一张地图。</span></div>';
@@ -177,11 +276,56 @@
       this.populateMapSelectors();
     },
 
+    async loadAuthorMaps() {
+      const list = window.ResourceList;
+      const generation = ++this.listGeneration;
+      const grid = document.getElementById('mapCatalogGrid');
+      grid.classList.add('resource-rows');
+      list.loading(grid, '地图');
+      const saved = list.read('maps');
+      this.page = this.query !== saved.query ? 1 : (this.page || saved.page);
+      list.remember('maps', {query: this.query, page: this.page});
+      const params = new URLSearchParams({page: this.page, page_size: 5, q: this.query});
+      try {
+        const [result, selector] = await Promise.all([request(`/maps?${params}`), request('/maps?page=1&page_size=100')]);
+        if (generation !== this.listGeneration) return;
+        if (this.page > Math.max(1, result.total_pages)) {
+          this.page = Math.max(1, result.total_pages);
+          return this.loadAuthorMaps();
+        }
+        this.maps = result.items;
+        this.selectorMaps = selector.items;
+        for (let page = 2; page <= (selector.total_pages || 1); page++) {
+          const next = await request(`/maps?page=${page}&page_size=100`);
+          if (generation !== this.listGeneration) return;
+          this.selectorMaps.push(...next.items);
+        }
+        grid.innerHTML = this.maps.map(item => list.row({
+          name: item.name, description: item.description, icon: '▧',
+          meta: [item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]} 格` : '待设置尺寸'],
+          open: {'data-map-id': item.id},
+          actions: [{label: '删除地图', danger: true, attributes: {'data-delete-map-id': item.id, 'data-delete-map-name': item.name}}],
+        })).join('') || list.empty('地图', Boolean(this.query));
+        grid.querySelectorAll('[data-map-id]').forEach(button => button.onclick = () => this.openMap(button.dataset.mapId).catch(error => this.fail(error)));
+        grid.querySelectorAll('[data-delete-map-id]').forEach(button => button.onclick = () => this.deleteMap(button.dataset.deleteMapId, button.dataset.deleteMapName).catch(error => this.fail(error)));
+        list.remember('maps', {page: this.page});
+        list.pager(document.getElementById('mapListFooter'), {page: this.page, total: result.total, onPage: page => {
+          this.page = page;
+          list.remember('maps', {page, scroll: 0});
+          this.loadMaps().catch(error => this.fail(error));
+        }});
+        this.populateMapSelectors();
+        if (!new URLSearchParams(location.search).has('map_id')) list.restore('maps');
+      } catch (error) {
+        if (generation !== this.listGeneration) return;
+        list.error(grid, '地图', error, () => this.loadMaps().catch(next => this.fail(next)));
+        document.getElementById('mapListFooter').hidden = true;
+      } finally { if (generation === this.listGeneration) grid.removeAttribute('aria-busy'); }
+    },
+
     async deleteMap(mapId, name = '当前地图') {
       if (!mapId) return;
-      const confirmed = window.confirmResourceDeletion
-        ? await window.confirmResourceDeletion({ type: '地图', name, message: '地图及其全部草稿和发布 Revision 将被删除。仍被实验 Revision 引用时，系统会拒绝操作。' })
-        : window.confirm(`确认删除地图“${name}”？`);
+      const confirmed = await window.confirmResourceDeletion({ type: '地图', name, message: '删除基础地图不会影响已创建实验中的独立副本。' });
       if (!confirmed) return;
       await request(`/maps/${encodeURIComponent(mapId)}`, { method: 'DELETE' });
       this.clearLocalRecovery(mapId, this.draft?.id);
@@ -200,68 +344,77 @@
     },
 
     updateMapStatusCounts(counts) {
-      const labels = { all: '全部', draft: '编辑中', published: '已发布' };
       document.querySelectorAll('[data-map-filter]').forEach(tab => {
         const key = tab.dataset.mapFilter;
-        const count = key === 'all' ? counts.ALL : counts[key.toUpperCase()];
-        tab.textContent = Number.isFinite(count) ? `${labels[key]} ${count}` : labels[key];
+        tab.hidden = key !== 'all';
+        if (key === 'all') tab.textContent = `全部地图 ${counts.ALL || 0}`;
       });
     },
 
     populateMapSelectors() {
       const catalog = this.selectorMaps.length ? this.selectorMaps : this.maps;
-      const published = catalog.filter(item => item.current_published);
       const source = document.getElementById('newMapSource');
       const currentSource = source.value;
-      source.innerHTML = '<option value="">不复制</option>' + published
-        .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
+      source.innerHTML = '<option value="">不复制</option>' + catalog
+        .map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join('');
       source.value = currentSource;
       const experimentCreateSelect = document.getElementById('newExperimentMap');
       if (experimentCreateSelect) {
         const previousCreateValue = experimentCreateSelect.value;
-        experimentCreateSelect.innerHTML = '<option value="">请选择已发布地图</option>' + published
-          .map(item => `<option value="${item.current_published.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
-        experimentCreateSelect.value = published.some(item => item.current_published.id === previousCreateValue)
+        experimentCreateSelect.innerHTML = '<option value="">请选择地图</option>' + catalog
+          .map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join('');
+        experimentCreateSelect.value = catalog.some(item => item.id === previousCreateValue)
           ? previousCreateValue
           : '';
       }
-      const compositionSelect = document.getElementById('experimentMapRevisionSelect');
+      const compositionSelect = document.getElementById('experimentMapSelect');
       if (compositionSelect) {
-        const selectedRevision = this.experiment?.world?.map_revision_id || compositionSelect.value;
-        compositionSelect.innerHTML = '<option value="">请选择已发布地图 Revision</option>' + published
-          .map(item => `<option value="${item.current_published.id}" data-map-id="${item.id}">${escapeHtml(item.name)} · v${item.current_published.revision_no}</option>`).join('');
-        compositionSelect.value = selectedRevision || '';
+        if (this.experiment?.world) {
+          compositionSelect.innerHTML = `<option value="__embedded__">${escapeHtml(this.experiment.world.world_name || '实验内置世界')}</option>`;
+          compositionSelect.value = '__embedded__';
+          compositionSelect.disabled = true;
+        } else {
+          compositionSelect.innerHTML = '<option value="">未选择地图</option>';
+          compositionSelect.disabled = true;
+        }
       }
     },
 
     async prepareExperimentCreate() {
       this.init();
+      if (experimentScope) {
+        const selector = document.getElementById('experimentMapSelect');
+        selector.replaceChildren(new Option(context.world?.world_name || '实验地图', 'world'));
+        selector.disabled = true;
+        document.getElementById('experimentMapMeta').textContent = '当前实验的独立地图副本';
+        return;
+      }
       if (!this.selectorMaps.length) await this.loadMaps();
       this.populateMapSelectors();
     },
 
-    recoveryKey(mapId = this.selectedMapId, draftId = this.draft?.id) {
-      return mapId && draftId ? `ga:map-draft-recovery:${mapId}:${draftId}` : '';
+    recoveryKey(mapId = this.selectedMapId) {
+      return mapId ? `ga:map-recovery:${experimentScope ? 'experiment:' : 'public:'}${mapId}` : '';
     },
 
     setAutoSaveStatus(state, detail = '') {
       const status = document.getElementById('mapAutosaveStatus');
       const saveButton = document.getElementById('saveMapBtn');
-      const editable = this.draft?.state === 'DRAFT' && !this.publicEditor?.readonly;
+      const editable = Boolean(this.draft) && !this.publicEditor?.readonly;
       if (saveButton) saveButton.disabled = !editable || state === 'saving';
       if (!status) return;
       const labels = {
-        saved: detail ? `已自动保存 ${detail}` : '草稿已保存',
+        saved: detail ? `已自动保存 ${detail}` : '地图已保存',
         dirty: '未保存',
         saving: '保存中…',
         error: '自动保存失败',
         recovered: '已恢复本地内容 · 待保存',
-        readonly: '只读版本',
+        readonly: '只读',
       };
       status.dataset.state = state;
       status.textContent = labels[state] || detail;
       status.title = state === 'error'
-        ? `${detail || '网络或版本冲突'}；点击“保存草稿”重试。`
+        ? `${detail || '网络或并发冲突'}；点击“保存地图”重试。`
         : (detail || status.textContent);
     },
 
@@ -272,7 +425,7 @@
     },
 
     handlePublicEditorChange() {
-      if (!this.selectedMapId || this.draft?.state !== 'DRAFT') return;
+      if (!this.selectedMapId || !this.draft) return;
       this.setAutoSaveStatus(this.savePromise ? 'saving' : 'dirty');
       this.scheduleLocalRecovery();
       this.scheduleAutoSave();
@@ -294,70 +447,77 @@
       clearTimeout(this.recoveryTimer);
       this.recoveryTimer = setTimeout(() => {
         this.recoveryTimer = null;
-        this.persistLocalRecovery();
+        this.persistLocalRecovery().catch(error => this.reportRecoveryFailure(error));
       }, MAP_RECOVERY_WRITE_DELAY_MS);
     },
 
-    persistLocalRecovery() {
+    async persistLocalRecovery() {
       // 恢复副本绑定 mapId、draftId 和基础 lockVersion，不能跨草稿自动套用。
-      if (!this.publicEditor?.changed || this.draft?.state !== 'DRAFT') return;
+      if (!this.publicEditor?.changed || !this.draft) return;
       const key = this.recoveryKey();
       if (!key) return;
       try {
-        localStorage.setItem(key, JSON.stringify({
+        await writeRecovery(key, {
           schema: MAP_RECOVERY_SCHEMA,
           mapId: this.selectedMapId,
-          draftId: this.draft.id,
-          baseLockVersion: this.draft.lock_version,
+          baseLockVersion: this.draft.row_version,
           changedAt: new Date().toISOString(),
           world: this.publicEditor.getWorld(),
-        }));
+        });
+        this.recoveryStorageWarningShown = false;
       } catch (error) {
-        if (!this.recoveryStorageWarningShown) {
-          this.recoveryStorageWarningShown = true;
-          console.warn('地图本地恢复副本写入失败', error);
-        }
+        this.reportRecoveryFailure(error);
       }
     },
 
-    clearLocalRecovery(mapId = this.selectedMapId, draftId = this.draft?.id) {
-      const key = this.recoveryKey(mapId, draftId);
-      if (!key) return;
-      try { localStorage.removeItem(key); } catch (_error) { /* 浏览器禁用存储时忽略。 */ }
+    reportRecoveryFailure(error) {
+      console.warn('地图本地恢复副本写入失败', error);
+      if (this.recoveryStorageWarningShown) return;
+      this.recoveryStorageWarningShown = true;
+      notify(
+         '浏览器无法保存本地恢复副本；服务端自动保存不受影响，请在离开页面前确认显示“地图已保存”。',
+        '本地恢复暂不可用',
+      );
     },
 
-    restoreLocalRecovery(mapId, draft) {
+    clearLocalRecovery(mapId = this.selectedMapId) {
+      const key = this.recoveryKey(mapId);
+      if (!key) return;
+      deleteRecovery(key).catch(error => console.warn('清理地图本地恢复副本失败', error));
+    },
+
+    async restoreLocalRecovery(mapId, draft) {
       // 只有服务器仍处于同一乐观锁版本时才自动恢复，冲突内容保留但不覆盖。
-      const key = this.recoveryKey(mapId, draft?.id);
-      if (!key || draft?.state !== 'DRAFT') return false;
+      const key = this.recoveryKey(mapId);
+      if (!key || !draft) return false;
       let recovery;
       try {
-        recovery = JSON.parse(localStorage.getItem(key) || 'null');
+        recovery = await readRecovery(key);
       } catch (_error) {
-        this.clearLocalRecovery(mapId, draft.id);
+        this.clearLocalRecovery(mapId);
         return false;
       }
       if (!recovery || recovery.schema !== MAP_RECOVERY_SCHEMA || !recovery.world) {
-        this.clearLocalRecovery(mapId, draft.id);
+        this.clearLocalRecovery(mapId);
         return false;
       }
       if (same(recovery.world, draft.world)) {
-        this.clearLocalRecovery(mapId, draft.id);
+        this.clearLocalRecovery(mapId);
         return false;
       }
-      if (Number(recovery.baseLockVersion) !== Number(draft.lock_version)) {
-        notify('服务器草稿已发生变化，本地恢复副本已保留，但不会自动覆盖服务器内容。', '检测到草稿版本冲突');
+      if (String(recovery.baseLockVersion) !== String(draft.row_version)) {
+         notify('服务器地图已发生变化，本地恢复副本已保留，但不会自动覆盖服务器内容。', '检测到并发修改');
         return false;
       }
       this.publicEditor.setWorld(recovery.world);
       this.publicEditor.changed = true;
       this.setAutoSaveStatus('recovered');
-      notify('已从浏览器恢复上次未完成的地图修改，并将自动保存。', '已恢复本地草稿');
+       notify('已从浏览器恢复上次未完成的地图修改，并将自动保存。', '已恢复本地修改');
       return true;
     },
 
     handleBeforeUnload(event) {
-      if (!this.publicEditor?.changed || this.draft?.state !== 'DRAFT') return;
+      if (!this.publicEditor?.changed || !this.draft) return;
       this.persistLocalRecovery();
       event.preventDefault();
       event.returnValue = '';
@@ -370,18 +530,26 @@
       this.recoveryTimer = null;
     },
 
+    requireCompleteMap(detail, operation = '加载') {
+      if (!detail?.world || !detail.world.definition || typeof detail.world.definition !== 'object') {
+        throw new Error(`地图${operation}响应缺少完整 world；请重启后端服务并确认数据库已升级到当前基线`);
+      }
+      return detail;
+    },
+
     async openMap(mapId, push = true) {
       this.init();
+      if (!experimentScope && push) window.ResourceList.capture('maps');
+      const generation = this.openGeneration = (this.openGeneration || 0) + 1;
       if (this.selectedMapId && this.selectedMapId !== mapId && (this.publicEditor.changed || this.savePromise)) {
         await this.savePublic({ manual: false });
       }
       this.cancelScheduledSaves();
-      this.detail = await request(`/maps/${mapId}`);
+      const detail = this.requireCompleteMap(await request(`/maps/${mapId}`), '加载');
+      if (generation !== this.openGeneration) return;
+      this.detail = detail;
       this.selectedMapId = mapId;
-      this.revisions = (await request(`/maps/${mapId}/revisions`)).items;
-      this.draft = this.detail.current_draft
-        ? await request(`/maps/${mapId}/draft`)
-        : await request(`/maps/${mapId}/revisions/${this.detail.current_published.id}`);
+      this.draft = this.detail;
       this.publicEditor.setWorld(this.draft.world);
       document.getElementById('mapCatalogShell').hidden = true;
       document.getElementById('mapEditorShell').hidden = false;
@@ -390,20 +558,22 @@
         this.publicEditor.fit();
       });
       document.getElementById('mapEditorTitle').textContent = this.detail.name;
-      document.getElementById('mapEditorMeta').textContent = `${this.detail.map_key} · ${this.draft.world.definition.size[1]} × ${this.draft.world.definition.size[0]} · Revision ${this.draft.revision_no}`;
-      const editable = this.draft.state === 'DRAFT';
+      document.getElementById('mapEditorMeta').textContent = `${this.detail.map_key} · ${this.draft.world.definition.size[1]} × ${this.draft.world.definition.size[0]} 格 · 实时编辑`;
+      const editable = this.detail.editable !== false;
+      document.getElementById('mapEditorMeta').textContent = `${this.detail.map_key} · ${this.draft.world.definition.size[1]} × ${this.draft.world.definition.size[0]} 格 · ${editable ? '可编辑' : '只读'}`;
       this.publicEditor.setReadOnly(!editable);
       const state = document.getElementById('mapEditorState');
-      state.textContent = editable ? '草稿' : '已发布';
-      state.classList.toggle('draft', editable);
-      document.getElementById('publishMapBtn').textContent = editable ? '发布版本' : '创建新修订';
+      state.textContent = experimentScope ? (editable ? '实验地图' : '已封存 · 只读') : '实时地图';
+      state.classList.add('draft');
+      document.getElementById('publishMapBtn').textContent = '校验地图';
       this.lastSavedAt = null;
-      const recovered = editable && this.restoreLocalRecovery(mapId, this.draft);
-      if (!recovered) this.setAutoSaveStatus(editable ? 'saved' : 'readonly');
+      const recovered = editable && await this.restoreLocalRecovery(mapId, this.draft);
+      if (!recovered) this.setAutoSaveStatus('saved');
       this.renderBuildGuide();
       this.renderAudit();
       window.dispatchEvent(new CustomEvent('map-workspace:selection', { detail: { mapId } }));
       if (push) this.replaceMapUrl(mapId);
+      if (!experimentScope && push) window.scrollTo({top: 0, behavior: 'instant'});
     },
 
     async showCatalog() {
@@ -414,9 +584,11 @@
       document.getElementById('mapEditorShell').hidden = true;
       window.dispatchEvent(new CustomEvent('map-workspace:selection', { detail: { mapId: null } }));
       this.replaceMapUrl(null);
+      if (!experimentScope) { await this.loadMaps(); window.ResourceList.restore('maps'); }
     },
 
     replaceMapUrl(mapId) {
+      if (!experimentScope) { window.ResourceList.route('maps', mapId ? {map_id: mapId} : {}); return; }
       const url = new URL(location.href);
       url.search = '';
       url.searchParams.set('view', 'maps');
@@ -439,19 +611,19 @@
     },
 
     addSpatialAsset(asset) {
-      if (!asset || !this.draft || this.draft.state !== 'DRAFT') {
-        notify('请先打开一个可编辑的地图草稿。', '无法加入地图');
+      if (!asset || !this.draft) {
+        notify('请先打开一张地图。', '无法加入地图');
         return;
       }
       const contract = asset.contract;
       const definition = this.publicEditor.definition;
       const scene = definition.spatial_scene ||= {
-        schema_version: 'ga-spatial-scene/v1', meters_per_tile: 1,
+        schema_version: 'ga-spatial-scene/v2',
         palette_refs: {}, placements: [],
       };
-      this.publicEditor.editor.spatial_assets[asset.revision_id] = deepClone(contract);
+      this.publicEditor.editor.spatial_assets[asset.id] = deepClone(contract);
       if (['TILE', 'MARKING'].includes(contract.kind)) {
-        scene.palette_refs[asset.asset_key] = asset.revision_id;
+        scene.palette_refs[asset.asset_key] = asset.id;
         const palette = this.publicEditor.editor.palette;
         const visual = {
           id: asset.asset_key,
@@ -459,7 +631,7 @@
           color: contract.appearance.color || '#eef2ef',
           emoji: contract.appearance.emoji || '',
           collision: Boolean(contract.physics.collision),
-          spatial_asset_revision_id: asset.revision_id,
+          spatial_asset_id: asset.id,
         };
         const index = palette.findIndex(item => item.id === asset.asset_key);
         if (index >= 0) palette[index] = visual; else palette.push(visual);
@@ -472,13 +644,13 @@
         while (existing.has(key)) key = `${base}-${suffix++}`;
         scene.placements.push({
           instance_key: key,
-          spatial_asset_revision_id: asset.revision_id,
-          x_m: (definition.size[1] * scene.meters_per_tile) / 2,
-          y_m: (definition.size[0] * scene.meters_per_tile) / 2,
+          spatial_asset_id: asset.id,
+          x_tiles: (definition.size[1] - 1) / 2,
+          y_tiles: (definition.size[0] - 1) / 2,
           rotation_degrees: 0,
           state_overrides: {},
         });
-        notify(`${asset.name} 已放置在地图中心；保存后会锁定其版本引用。`, '物件已加入地图');
+        notify(`${asset.name} 已放置在地图中心；以后素材修改会直接同步。`, '物件已加入地图');
       }
       this.publicEditor.changed = true;
       this.publicEditor.render();
@@ -497,10 +669,11 @@
         ? Object.keys(spatialScene.palette_refs || {}).length + (spatialScene.placements || []).length
         : 0;
       document.querySelector('[data-map-audit-cards]').innerHTML = `
-        <div class="map-audit-card"><span>地图尺寸</span><strong>${definition.size[1]} × ${definition.size[0]}</strong></div>
+        <div class="map-audit-card"><span>地图尺寸（格）</span><strong>${definition.size[1]} × ${definition.size[0]}</strong></div>
+        <div class="map-audit-card"><span>渲染尺寸（px）</span><strong>${definition.size[1] * definition.tile_size} × ${definition.size[0] * definition.tile_size}</strong></div>
         <div class="map-audit-card"><span>碰撞 Tile</span><strong>${collisions.toLocaleString('zh-CN')}</strong></div>
         <div class="map-audit-card"><span>语义 Tile</span><strong>${addressed.toLocaleString('zh-CN')}</strong></div>
-        <div class="map-audit-card"><span>版本化空间资产</span><strong>${spatialAssets.toLocaleString('zh-CN')}</strong></div>`;
+        <div class="map-audit-card"><span>关联空间素材</span><strong>${spatialAssets.toLocaleString('zh-CN')}</strong></div>`;
       const validationRoot = document.querySelector('[data-map-validation]');
       const validation = this.draft.validation;
       if (validationRoot) {
@@ -509,15 +682,16 @@
         const warnings = validation?.warnings || [];
         const issueMessage = issue => typeof issue === 'string' ? issue : (issue.message || issue.code || '未知问题');
         validationRoot.innerHTML = validation ? `
-          <div class="map-validation-heading"><div><h3>发布校验明细</h3><p>${validation.valid ? '当前 Revision 已通过发布校验' : '当前草稿未通过发布校验'}</p></div><span class="map-state ${validation.valid ? '' : 'draft'}">${errors.length} 阻断 · ${warnings.length} 警告</span></div>
+          <div class="map-validation-heading"><div><h3>地图校验明细</h3><p>${validation.valid ? '当前地图已通过校验' : '当前地图未通过校验'}</p></div><span class="map-state ${validation.valid ? '' : 'draft'}">${errors.length} 阻断 · ${warnings.length} 警告</span></div>
           <div class="map-validation-list">
             ${checks.map(item => `<div class="map-validation-row ${item.status === 'PASSED' ? 'passed' : 'failed'}"><b>${item.status === 'PASSED' ? '✓' : '×'}</b><span><strong>${escapeHtml(item.message)}</strong><code>${escapeHtml(item.code)}</code></span></div>`).join('')}
             ${errors.map(item => `<div class="map-validation-row failed"><b>×</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.code || item.path || '')}</code></span></div>`).join('')}
             ${warnings.map(item => `<div class="map-validation-row warning"><b>!</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.code || item.path || '')}</code></span></div>`).join('')}
-          </div>` : '<div class="map-validation-empty"><strong>尚未执行发布校验</strong><span>发布时会逐项展示四层语义、Tile、空间资产与被动 Skill 校验结果。</span></div>';
+          </div>` : '<div class="map-validation-empty"><strong>尚未执行地图校验</strong><span>将地图选入实验时会完整复制地图、空间素材与被动 Skill；实验封存前还会校验包内内容。</span></div>';
       }
-      document.querySelector('[data-map-revisions]').innerHTML = '<h3>版本记录</h3>' + this.revisions.map(item => `
-        <div class="map-revision-row"><strong>v${item.revision_no}</strong><code>${item.world_hash.slice(0, 16)}…</code><span>${new Date(item.updated_at).toLocaleString('zh-CN')}</span><span class="map-state ${item.state === 'DRAFT' ? 'draft' : ''}">${item.state === 'DRAFT' ? '草稿' : '已发布'}</span></div>`).join('');
+      document.querySelector('[data-map-revisions]').innerHTML = `
+        <h3>当前内容</h3>
+        <div class="map-revision-row"><strong>${experimentScope ? '实验包内当前内容' : `第 ${this.draft.row_version} 次保存`}</strong><code>${escapeHtml((this.draft.world_hash || '').slice(0, 16))}…</code><span>${this.draft.updated_at ? new Date(this.draft.updated_at).toLocaleString('zh-CN') : ''}</span><span class="map-state draft">实时生效</span></div>`;
     },
 
     renderBuildGuide() {
@@ -535,35 +709,35 @@
         return `<div class="map-build-guide-step ${status}"><span>${item.step <= current ? '✓' : item.step}</span><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.tool)}工具</small></div></div>`;
       }).join('');
       const button = document.getElementById('applyMapBlueprintStep');
-      button.disabled = this.draft.state !== 'DRAFT' || Boolean(guide.complete);
-      button.textContent = guide.complete ? '构建完成，可发布' : `应用第 ${current + 1} 步`;
+      button.disabled = Boolean(guide.complete);
+      button.textContent = guide.complete ? '构建完成' : `应用第 ${current + 1} 步`;
       document.getElementById('mapBuildGuideHint').textContent = guide.complete
-        ? '完整地图已经写入 Draft；发布后实验将锁定同一 Revision。'
-        : '每一步都由服务器写入当前 Draft，刷新页面不会丢失进度。';
+        ? '完整地图已经保存；仍可继续编辑，已有实验不受影响。'
+        : '每一步都由服务器直接写入当前地图，刷新页面不会丢失进度。';
     },
 
     async applyBlueprintStep() {
       const guide = this.draft?.world?.definition?.editor?.build_guide;
-      if (!guide || guide.complete || this.draft.state !== 'DRAFT') return;
+      if (!guide || guide.complete) return;
       const nextStep = Number(guide.current_step || 0) + 1;
       const button = document.getElementById('applyMapBlueprintStep');
       button.disabled = true;
       button.textContent = `正在应用第 ${nextStep} 步…`;
       try {
         if (this.publicEditor.changed || this.savePromise) await this.savePublic({ manual: false });
-        const saved = await request(`/maps/${this.selectedMapId}/draft/blueprint-steps/${nextStep}`, {
+        const saved = this.requireCompleteMap(await request(`/maps/${this.selectedMapId}/blueprint-steps/${nextStep}`, {
           method: 'POST',
-          body: JSON.stringify({ lock_version: this.draft.lock_version }),
-        });
+          body: JSON.stringify({ row_version: this.draft.row_version }),
+        }), '构建');
         this.draft = saved;
         this.publicEditor.setWorld(saved.world);
-        this.clearLocalRecovery(this.selectedMapId, saved.id);
+        this.clearLocalRecovery(this.selectedMapId);
         this.lastSavedAt = new Date();
         this.setAutoSaveStatus('saved', this.formatSaveTime(this.lastSavedAt));
         this.renderBuildGuide();
         this.renderAudit();
         const step = saved.world.definition.editor.build_guide.steps[nextStep - 1];
-        notify(`${step.name} 已写入地图 Draft。`, `构建进度 ${nextStep} / ${guide.total_steps}`);
+        notify(`${step.name} 已写入当前地图。`, `构建进度 ${nextStep} / ${guide.total_steps}`);
       } catch (error) {
         this.renderBuildGuide();
         throw error;
@@ -590,6 +764,21 @@
       ['newMapWidth', 'newMapHeight', 'newMapTileSize'].forEach(id => {
         document.getElementById(id).disabled = fixedDimensions;
       });
+      this.updateCreatePixelSize();
+    },
+
+    updateCreatePixelSize() {
+      const widthTiles = Number(document.getElementById('newMapWidth').value);
+      const heightTiles = Number(document.getElementById('newMapHeight').value);
+      const tileSizePx = Number(document.getElementById('newMapTileSize').value);
+      const preview = document.getElementById('newMapPixelSize');
+      if (!preview) return;
+      if (![widthTiles, heightTiles, tileSizePx].every(Number.isInteger)
+        || widthTiles < 1 || heightTiles < 1 || tileSizePx < 1) {
+        preview.textContent = '1 表示 1 个 Tile；请输入正整数格数后由系统计算像素尺寸。';
+        return;
+      }
+      preview.textContent = `1 表示 1 个 Tile；最终像素尺寸：${widthTiles * tileSizePx} × ${heightTiles * tileSizePx} px（系统自动换算）`;
     },
 
     openCreate() {
@@ -609,14 +798,34 @@
     async create() {
       const name = document.getElementById('newMapName').value.trim();
       if (!name) return document.getElementById('newMapName').focus();
+      const keyInput = document.getElementById('newMapKey');
+      const rawKey = keyInput.value.trim();
+      const normalizedKey = normalizeOptionalMapKey(rawKey);
+      keyInput.value = normalizedKey || '';
+      const dimensions = [
+        { id: 'newMapWidth', label: '宽度（格）', min: 1, max: 240 },
+        { id: 'newMapHeight', label: '高度（格）', min: 1, max: 240 },
+        { id: 'newMapTileSize', label: 'Tile 尺寸', min: 8, max: 128 },
+      ];
+      for (const dimension of dimensions) {
+        const input = document.getElementById(dimension.id);
+        const value = Number(input.value);
+        input.setCustomValidity('');
+        if (!Number.isInteger(value) || value < dimension.min || value > dimension.max) {
+          input.setCustomValidity(`${dimension.label}必须是 ${dimension.min}–${dimension.max} 的整数`);
+          input.reportValidity();
+          input.focus();
+          return;
+        }
+      }
       const created = await request('/maps', {
         method: 'POST',
         body: JSON.stringify({
           name,
           description: document.getElementById('newMapDescription').value.trim(),
-          source_revision_id: document.getElementById('newMapSource').value || null,
+          source_map_id: document.getElementById('newMapSource').value || null,
           blueprint_key: document.getElementById('newMapBlueprint').value || null,
-          map_key: document.getElementById('newMapKey').value.trim() || null,
+          map_key: normalizedKey,
           width: Number(document.getElementById('newMapWidth').value),
           height: Number(document.getElementById('newMapHeight').value),
           tile_size: Number(document.getElementById('newMapTileSize').value),
@@ -625,45 +834,47 @@
       modal('close', 'createMapModal');
       await this.loadMaps();
       await this.openMap(created.id);
-      notify('已创建独立地图草稿。', '地图已创建');
+      const keyMessage = rawKey && normalizedKey !== rawKey
+        ? normalizedKey
+          ? `稳定键已规范为 ${normalizedKey}。`
+          : `输入的稳定键不符合格式，已自动生成 ${created.map_key}。`
+        : '';
+      notify(`${keyMessage}已创建独立地图，可直接编辑。`, '地图已创建');
     },
 
     async savePublic({ manual = false } = {}) {
       // 同一时间只允许一个保存 Promise；保存期间发生的新编辑会在响应后再次排队。
-      if (!this.draft || this.draft.state !== 'DRAFT') return this.draft;
+      if (!this.draft || this.publicEditor.readonly) return this.draft;
       clearTimeout(this.autoSaveTimer);
       this.autoSaveTimer = null;
 
       if (this.savePromise) {
         await this.savePromise;
         if (this.publicEditor.changed) return this.savePublic({ manual });
-        if (manual) notify('当前地图草稿已经是最新状态。', '草稿已保存');
+        if (manual) notify('当前地图已经是最新状态。', '地图已保存');
         return this.draft;
       }
       if (!this.publicEditor.changed) {
         this.setAutoSaveStatus('saved', this.lastSavedAt ? this.formatSaveTime(this.lastSavedAt) : '');
-        if (manual) notify('当前地图草稿已经是最新状态。', '草稿已保存');
+        if (manual) notify('当前地图已经是最新状态。', '地图已保存');
         return this.draft;
       }
 
       const mapId = this.selectedMapId;
       const draftId = this.draft.id;
-      const lockVersion = this.draft.lock_version;
+      const lockVersion = this.draft.row_version;
       const editorRevision = this.publicEditor.changeRevision;
       const world = this.publicEditor.getWorld();
       this.setAutoSaveStatus('saving');
 
       const operation = (async () => {
-        const saved = await request(`/maps/${mapId}/draft`, {
-          method: 'PUT', body: JSON.stringify({ lock_version: lockVersion, world }),
-        });
+        const saved = this.requireCompleteMap(await request(`/maps/${mapId}`, {
+          method: 'PUT', body: JSON.stringify({ row_version: lockVersion, world }),
+        }), '保存');
         if (this.selectedMapId !== mapId || this.draft?.id !== draftId) return saved;
         this.draft = saved;
         // 仅确认请求发出时的 editorRevision；更晚发生的编辑仍保持 changed=true。
         this.publicEditor.acceptSavedWorld(saved.world, editorRevision);
-        const revisionIndex = this.revisions.findIndex(item => item.id === saved.id);
-        if (revisionIndex >= 0) this.revisions[revisionIndex] = saved;
-        else this.revisions.unshift(saved);
         this.lastSavedAt = new Date();
         if (this.publicEditor.changed) {
           this.persistLocalRecovery();
@@ -695,40 +906,37 @@
         return this.savePublic({ manual: true });
       }
       if (manual && this.selectedMapId === mapId) {
-        notify('地图结构、语义和画块已写入当前 Draft。', '草稿已保存');
+        notify('地图结构、语义和画块已写入当前地图。', '地图已保存');
       }
       return saved;
     },
 
-    async publishOrFork() {
-      if (this.draft.state === 'PUBLISHED') {
-        await request(`/maps/${this.selectedMapId}/revisions/${this.draft.id}/fork`, { method: 'POST' });
-        await this.openMap(this.selectedMapId, false);
-        notify('已从只读版本创建新草稿。', '修订已创建');
-        return;
-      }
+    async validateMap() {
       const publishButton = document.getElementById('publishMapBtn');
       publishButton.disabled = true;
-      this.publicEditor.setReadOnly(true);
       try {
         if (this.publicEditor.changed || this.savePromise) await this.savePublic({ manual: false });
-        const published = await request(`/maps/${this.selectedMapId}/draft/publish`, {
-          method: 'POST', body: JSON.stringify({ draft_revision_id: this.draft.id, lock_version: this.draft.lock_version }),
+        const validated = await request(`/maps/${this.selectedMapId}/validate?row_version=${encodeURIComponent(this.draft.row_version)}`, {
+          method: 'POST', body: JSON.stringify({ row_version: this.draft.row_version }),
         });
-        this.clearLocalRecovery(this.selectedMapId, this.draft.id);
-        await this.loadMaps();
-        await this.openMap(this.selectedMapId, false);
+        this.draft = validated;
+        this.detail = validated;
+        this.clearLocalRecovery(this.selectedMapId);
         this.setTab('audit');
-        notify(`Revision v${published.revision_no} 已锁定，可被实验引用。`, '地图已发布');
+        const report = validated.validation || {};
+        if (report.valid) {
+          notify('当前地图已通过校验。', '地图校验通过');
+        } else {
+          notify(`${(report.errors || []).length} 个阻断问题、${(report.warnings || []).length} 个警告，请查看校验明细。`, '地图校验未通过');
+        }
       } catch (error) {
         if (error.code === 'MAP_VALIDATION_FAILED' && error.details) {
           this.draft.validation = error.details;
           this.renderAudit();
           this.setTab('audit');
-          notify(`${(error.details.errors || []).length} 个阻断问题、${(error.details.warnings || []).length} 个警告，请查看校验明细。`, '地图发布失败');
+          notify(`${(error.details.errors || []).length} 个阻断问题、${(error.details.warnings || []).length} 个警告，请查看校验明细。`, '地图校验失败');
         }
-        this.publicEditor.setReadOnly(false);
-        if (this.publicEditor.changed) this.setAutoSaveStatus('error', error.message || '发布失败');
+        if (this.publicEditor.changed) this.setAutoSaveStatus('error', error.message || '校验失败');
         else this.setAutoSaveStatus('saved', this.lastSavedAt ? this.formatSaveTime(this.lastSavedAt) : '');
         throw error;
       } finally {
@@ -737,8 +945,9 @@
     },
 
     async handlePublicEditorEditRequest(event) {
+      if (this.publicEditor?.readonly) return;
       if (event.detail?.intent !== 'new-canvas' || !this.draft) return;
-      if (!['DRAFT', 'PUBLISHED'].includes(this.draft.state) || this.editTransitionPromise) return;
+      if (this.editTransitionPromise) return;
       const count = this.publicEditor.document?.material_canvases?.length || 0;
       document.getElementById('newCanvasName').value = `画布 ${count + 1}`;
       document.getElementById('newCanvasWidth').value = '32';
@@ -758,8 +967,6 @@
       const confirmButton = document.getElementById('confirmCreateCanvas');
       const action = (async () => {
         confirmButton.disabled = true;
-        if (this.draft.state === 'PUBLISHED') await this.publishOrFork();
-        if (this.draft?.state !== 'DRAFT') throw new Error('无法创建地图修订草稿');
         this.publicEditor.createMaterialCanvas({ name, width, height });
         modal('close', 'createCanvasModal');
       })();
@@ -775,25 +982,24 @@
     async setExperimentContext(context) {
       this.init();
       this.experiment = context;
+      if (experimentScope) {
+        const selector = document.getElementById('experimentMapSelect');
+        selector.replaceChildren(new Option(context.world?.world_name || '实验地图', 'world'));
+        selector.disabled = true;
+        document.getElementById('experimentMapMeta').textContent = '当前实验的独立地图副本';
+        return;
+      }
       if (!this.selectorMaps.length) await this.loadMaps();
       this.populateMapSelectors();
       const world = context.world || {};
-      const map = this.selectorMaps.find(item => item.id === world.map_id);
-      const meta = document.getElementById('experimentMapRevisionMeta');
-      if (meta) meta.textContent = map
-        ? `${map.name} · 已锁定 Revision ${map.current_published?.revision_no || '—'}`
-        : '必须选择已发布地图 Revision';
+      const meta = document.getElementById('experimentMapMeta');
+      if (meta) meta.textContent = world.world_name
+        ? '实验持有完整世界副本；公共地图后续变化不会影响这里'
+        : '尚未导入地图';
     },
 
     async selectExperimentMap() {
-      if (!this.experiment?.editable) throw new Error('已发布实验不可修改地图');
-      const revisionId = document.getElementById('experimentMapRevisionSelect').value;
-      if (!revisionId) throw new Error('请先选择一个已发布地图版本');
-      const draft = await request(`/experiments/${this.experiment.experimentId}/draft/map`, {
-        method: 'PUT', body: JSON.stringify({ lock_version: this.experiment.lockVersion, map_revision_id: revisionId }),
-      });
-      this.emitExperimentDraft(draft);
-      notify('已切换实验引用的地图 Revision。', '地图已应用');
+      throw new Error('实验中的地图是物理副本；如需更换，请执行一次新的完整地图导入');
     },
 
     emitExperimentDraft(draft) {

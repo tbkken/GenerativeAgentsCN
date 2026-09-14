@@ -8,7 +8,7 @@ from pathlib import Path
 
 import uvicorn
 
-from .app import create_app
+from generative_agents.ga_studio.web import create_studio_app
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -57,9 +57,9 @@ def main(argv=None) -> int:
         raise SystemExit("--max-concurrent-runs must be positive")
     if args.var_dir:
         Path(args.var_dir).expanduser().resolve().mkdir(parents=True, exist_ok=True)
-    app = create_app(
+    app = create_studio_app(
         database_url=args.database_url,
-        var_dir=args.var_dir,
+        var_dir=args.var_dir or "var",
         max_concurrent_runs=args.max_concurrent_runs,
     )
     uvicorn.run(

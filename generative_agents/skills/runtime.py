@@ -13,11 +13,18 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping, Protocol
 from uuid import uuid4
 
 from .registry import SkillDocument, SkillRegistry
-from .mcp import SkillMCPServer
+
+if TYPE_CHECKING:
+    from .mcp import SkillMCPServer
+else:
+    class SkillMCPServer(Protocol):
+        """Structural type; concrete MCP storage is selected by the caller."""
+
+        def handle(self, request: dict[str, Any]) -> dict[str, Any]: ...
 
 
 class SkillRuntimeError(RuntimeError):
@@ -203,8 +210,8 @@ class SkillRuntime:
         if depth > self.max_hops:
             raise SkillRuntimeError("Skill call depth exceeded the configured limit")
         script_path = document.path.parent / "scripts" / "main.py"
-        # 带 main.py 的原子 Skill 是确定性快路径，不需要额外调用语言模型。
-        if script_path.is_file():
+        # 对象根 Skill 始终由模型执行；可选脚本仍可用于它组合的子 Skill。
+        if script_path.is_file() and not (depth == 0 and getattr(self.mcp, "default_tools", False)):
             trace.append(
                 {
                     "event": "skill.start",
@@ -227,10 +234,10 @@ class SkillRuntime:
             [
                 tool
                 for tool in self.mcp.tools()
-                if str(tool.get("name") or "") in document.markdown
-                # One Agent iteration has exactly one action owner: the root
-                # Brain.  Child packs propose an action in natural language;
-                # they cannot commit it behind the Brain's back.
+                if (getattr(self.mcp, "default_tools", False)
+                    or str(tool.get("name") or "") in document.markdown)
+                # Only the root Brain or object Skill owns the iteration action.
+                # Child Skills return advice without committing world changes.
                 and not (
                     str(tool.get("name") or "") == "world-act" and depth != 0
                 )
@@ -238,7 +245,10 @@ class SkillRuntime:
             if self.mcp
             else []
         )
-        script_handlers = self._script_handlers(document)
+        script_handlers = (
+            {} if depth == 0 and getattr(self.mcp, "default_tools", False)
+            else self._script_handlers(document)
+        )
         # 没有任何可调用依赖的叶子 Skill，只需要一次普通聊天完成。
         if not children and not mcp_tools and not script_handlers:
             system_prompt = document.markdown

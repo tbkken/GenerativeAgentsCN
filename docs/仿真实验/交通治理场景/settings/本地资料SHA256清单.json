@@ -1,0 +1,442 @@
+{
+  "format": "本地资料核对清单，非.gaexp/.garun完整性协议",
+  "created_at": "2026-09-13T23:40:18.052519+08:00",
+  "files": [
+    {
+      "path": "map/交通治理-抓拍提示牌-v1-素材说明.md",
+      "bytes": 2239,
+      "sha256": "e2a298aec891813f87491497e164a57dc9cab55786ab0d9827aad6884513eabe"
+    },
+    {
+      "path": "map/交通治理-抓拍提示牌-v1.png",
+      "bytes": 190612,
+      "sha256": "9d9de22f02c8d73bbbc8f4e500a3c2db1ec143ab4f589b8f01c566f851618b5c"
+    },
+    {
+      "path": "map/交通治理-核心街区背景-v1.png",
+      "bytes": 3200770,
+      "sha256": "7ff264bf585a4799d09bccc375941658c00bedad19bb65ffc96f423b7112e386"
+    },
+    {
+      "path": "map/交通治理-核心街区背景-v2-宽幅.png",
+      "bytes": 2816035,
+      "sha256": "f807c8ea8fac3379b170ebf75ea11e20012f5d9d01d2f6fe12a99f6c810d320c"
+    },
+    {
+      "path": "map/交通治理-核心街区背景-v3-实验路线.png",
+      "bytes": 2619652,
+      "sha256": "6f263cf18fb92e5411cead8c74b7fefe1c50be4ac3f3d6c7efa24ee3166d033e"
+    },
+    {
+      "path": "map/刘桂芳-头像-128.png",
+      "bytes": 22344,
+      "sha256": "4005ea323b2548656531407b9f23361938671def24d3dafc39b0effe03b94fc7"
+    },
+    {
+      "path": "map/刘桂芳-骑行图-v1-生成原稿.png",
+      "bytes": 1623367,
+      "sha256": "200f5aa34406686786760c5b331f767229645abdd803f086aea38f47aefe598e"
+    },
+    {
+      "path": "map/刘桂芳-骑行图-生成提示词.txt",
+      "bytes": 1400,
+      "sha256": "d85957439d6a940b93511aa658c27335479e16ffc54addc12dd17c4c68f13ff7"
+    },
+    {
+      "path": "map/刘桂芳-骑行图-透明高清.png",
+      "bytes": 1296413,
+      "sha256": "77aa966b02f25534d0c073ccec7d1c72775d43fa512f1190913b3770166d947e"
+    },
+    {
+      "path": "map/刘桂芳-骑行行走图-128.png",
+      "bytes": 23347,
+      "sha256": "1b5f689a83a61e35e31e0d06353bd91cd326d2d3a3a932fb6dec884ac311260f"
+    },
+    {
+      "path": "map/周浩然-头像-128.png",
+      "bytes": 24065,
+      "sha256": "d01e5fc3ae615db1239549c557df8f02babf52686834b1d6d275ee3c72f09e9c"
+    },
+    {
+      "path": "map/周浩然-骑行图-v1-生成原稿.png",
+      "bytes": 1633710,
+      "sha256": "01ed1a511adf0fc8ca38081f6643bcc16c80cf5a4c7e45954dcb80bd94841dd6"
+    },
+    {
+      "path": "map/周浩然-骑行图-生成提示词.txt",
+      "bytes": 1366,
+      "sha256": "2d5a91440976de3a040a540625e394ae2c50707a485c29a6713a66aa2b238660"
+    },
+    {
+      "path": "map/周浩然-骑行图-透明高清.png",
+      "bytes": 1336088,
+      "sha256": "b87a9d843c91d1cae214869d7422a28a9e0580f6bcc643e4cb1f2ebef6af98c2"
+    },
+    {
+      "path": "map/周浩然-骑行行走图-128.png",
+      "bytes": 23385,
+      "sha256": "9b4f1b252e418386b46cbc3d99e403c46de60e32547b398acea2717e98d08d6c"
+    },
+    {
+      "path": "map/四位骑行者-素材检查.png",
+      "bytes": 199640,
+      "sha256": "09e1f6210e3059bec11d8e42440b42910c377e7ddce5d546c58eca296b58b6b8"
+    },
+    {
+      "path": "map/小王-头像-128.png",
+      "bytes": 23237,
+      "sha256": "b9b0b33d3c561634a6031e4238c0b5bdd8eefdcc022e701c17a3bb6f7e7853a9"
+    },
+    {
+      "path": "map/小王-骑行图-v1-生成原稿.png",
+      "bytes": 1648517,
+      "sha256": "79ad8c7681febc4db3a2c6c3190232e8209156d64b557549043c552e6e8809d7"
+    },
+    {
+      "path": "map/小王-骑行图-生成提示词.txt",
+      "bytes": 1345,
+      "sha256": "5daeba6f2a2cd3e2a4e7864af16e280412f868809c8dca8dfd3940ce003b81c6"
+    },
+    {
+      "path": "map/小王-骑行图-透明高清.png",
+      "bytes": 1331717,
+      "sha256": "6d9f711160d9cd65e5ea797a1103a6cfce79390593a7c082732d3c64c3f3bee8"
+    },
+    {
+      "path": "map/小王-骑行行走图-128.png",
+      "bytes": 23431,
+      "sha256": "f55825a279bd81d9a0e629f792a12760091b23a2b840ba1631085ca44699a23d"
+    },
+    {
+      "path": "map/李子健-头像-128.png",
+      "bytes": 21638,
+      "sha256": "33372cb20facab4292e1e89d018c965f703df95882de7e9612a35f3582d470dd"
+    },
+    {
+      "path": "map/李子健-骑行图-v1-生成原稿.png",
+      "bytes": 2237524,
+      "sha256": "508573d4b8665a40f6da76d3a518e7fe8c4ad6c193f5760c99c865dd6412636f"
+    },
+    {
+      "path": "map/李子健-骑行图-v2-透明修正未通过.png",
+      "bytes": 2268152,
+      "sha256": "0bac688513e233c5c2d302902f2e5cdb3f0d55f42d83517818e83d5820b2095c"
+    },
+    {
+      "path": "map/李子健-骑行图-生成提示词.txt",
+      "bytes": 2531,
+      "sha256": "8eebe137c9755e24f88cf12b6de06597a1e717350f6e27e7b8a74b6763f509f6"
+    },
+    {
+      "path": "map/李子健-骑行图-透明高清.png",
+      "bytes": 2452128,
+      "sha256": "e644ebba12ce97d5cca8f8d52f6c3f44df9b746008da708c4e6cae07ab8bc0c1"
+    },
+    {
+      "path": "map/李子健-骑行行走图-128.png",
+      "bytes": 22198,
+      "sha256": "63c2cf76586f2d9a7eaa197728698672cbcf49c7cabd1b175d01ae0b0b8bb538"
+    },
+    {
+      "path": "map/背景图生成提示词-v1.txt",
+      "bytes": 7359,
+      "sha256": "6a57ded8297066ec1c6bd7be321db7c0276178474bf99e8347a8a81cdf3e6dcc"
+    },
+    {
+      "path": "map/背景图生成提示词-v2.txt",
+      "bytes": 5290,
+      "sha256": "e2e4aa8059bfcadb562268145b8effbe9e32bfa8e23712da579a80d1c7fcf16c"
+    },
+    {
+      "path": "map/背景图生成提示词-v3-入口补正.txt",
+      "bytes": 1636,
+      "sha256": "3f27d4c33ab23323f7e991aa5a0e56356a482f0c80ed4df45e276d7e533cbe9e"
+    },
+    {
+      "path": "map/背景图生成提示词-v3-多余缺口清理.txt",
+      "bytes": 1033,
+      "sha256": "3b1d416a98789c31c5066d179523f17fc78e7ba77931f56795c9a74dfcdbce19"
+    },
+    {
+      "path": "map/背景图生成提示词-v3-定稿修正.txt",
+      "bytes": 3084,
+      "sha256": "bf30b16c69f07f71cb5d34a16a3260d931f81b78883ca82b928a7d5fea464be1"
+    },
+    {
+      "path": "map/背景图生成提示词-v3.txt",
+      "bytes": 7033,
+      "sha256": "d023e1a9c7d71d35e50449620882c58346084f3b67b211ff71f9341d11fa8066"
+    },
+    {
+      "path": "map/道路摄像头-32.png",
+      "bytes": 2006,
+      "sha256": "8abc86dfb27a4ed5f256481dfa0a5c1c8f83aa002444ed617250af5f7fc0a3e3"
+    },
+    {
+      "path": "map/道路摄像头-生成原稿.png",
+      "bytes": 1144336,
+      "sha256": "359617528a607843109732246611eb83c699b72bb83224d9ee9d5ba9c5886b37"
+    },
+    {
+      "path": "map/道路摄像头-生成提示词.txt",
+      "bytes": 903,
+      "sha256": "ce696b1911c027aa95cec6d5b4e69bfac82e82eb78ae0f4f65176f0e63a3c6c1"
+    },
+    {
+      "path": "map/道路摄像头-透明高清.png",
+      "bytes": 469100,
+      "sha256": "11038964b3795bfe7f8814ab560ae84a0262f8eb87e0737aa3ca6fb72262ba12"
+    },
+    {
+      "path": "map/道路摄像头-预览.png",
+      "bytes": 3306,
+      "sha256": "586ba7cc125275809d3364a21684a7a9e223ae9c0078964d739b0ff990d18bb9"
+    },
+    {
+      "path": "agents/刘桂芳-实验副本-34a74e3b.json",
+      "bytes": 2541,
+      "sha256": "9075eeb0633cefe4ec8e5d4ecdaa0a16581f237be6369b2980107321644bc281"
+    },
+    {
+      "path": "agents/刘桂芳-实验副本-b4cbddb6.json",
+      "bytes": 2680,
+      "sha256": "c6e124e2374c08689235d1b112ec10395bae92f2acdb6958573f45cda34d9925"
+    },
+    {
+      "path": "agents/刘桂芳.json",
+      "bytes": 2815,
+      "sha256": "112c4c8dc41c77b50f99ee8aa122712d6f071a7ec1d677fd3b9e39b5853a2867"
+    },
+    {
+      "path": "agents/单人人群-作者配置.json",
+      "bytes": 2021,
+      "sha256": "61173b1a5d5d0a2012233d690c090f3fceb0cd0c435a783287c4214bc9ea130f"
+    },
+    {
+      "path": "agents/周浩然-实验副本-5ee7f560.json",
+      "bytes": 2523,
+      "sha256": "f47e919042abf8094c01502a31f5ecff8172a65f5423a9606b59d5554c7adfa1"
+    },
+    {
+      "path": "agents/周浩然.json",
+      "bytes": 3352,
+      "sha256": "1c8e947fc314303bad251f3f6df247c1bb2f426859267fc7da0a6e74646d398a"
+    },
+    {
+      "path": "agents/小王-实验副本-73d9458d.json",
+      "bytes": 2535,
+      "sha256": "6671390fa01c6c8520fd63fab95d0244a261617d43b8a90fa3ad6af41d0b0d91"
+    },
+    {
+      "path": "agents/小王-实验副本-a021c7d3.json",
+      "bytes": 2674,
+      "sha256": "afc52efbe03cc48e3a08f7be626e772f3edded7f8684263d6fdda7b2f840814e"
+    },
+    {
+      "path": "agents/小王.json",
+      "bytes": 2763,
+      "sha256": "c5b6ef35d56247e5d7d9603e63f131ad6e73f830191454fd5ba841261611367e"
+    },
+    {
+      "path": "agents/李子健-实验副本-6092db14.json",
+      "bytes": 3382,
+      "sha256": "669cc4143ec846b3ac090af92b94751a2c0960327dbadbd7481659f05ad1ba3c"
+    },
+    {
+      "path": "agents/李子健-实验副本-9c4f9024.json",
+      "bytes": 4194,
+      "sha256": "afb729dcff3c32848b03d3f508e99cfba55a2850d497bb99e071da196cce470c"
+    },
+    {
+      "path": "agents/李子健.json",
+      "bytes": 2948,
+      "sha256": "61a1577b659d12b9b608f29bc0f3f2d5a6ecc36486425fbc20e0be4bc84d87a8"
+    },
+    {
+      "path": "agents/角色录入记录-2026-09-13.md",
+      "bytes": 9237,
+      "sha256": "f858e1dd39db3e500da7e74cabab3cc2bf467c41f3daf6c5c9acac1fab3d9159"
+    },
+    {
+      "path": "skill/traffic-camera-observe/SKILL.md",
+      "bytes": 3642,
+      "sha256": "bf2b43f7c2f65a49ed4d8075c137e048c526beb036967e3d9d443437c0d6977d"
+    },
+    {
+      "path": "skill/traffic-camera-observe/作者资源.json",
+      "bytes": 517,
+      "sha256": "1b3961e6a10d40a73673ec50c54d7e4f8863ebb99f46a995d22fdbfdf802dd96"
+    },
+    {
+      "path": "skill/traffic-rider-brain/SKILL.md",
+      "bytes": 6013,
+      "sha256": "74536ad090e7ca65be3f33960fa2faec9e3fa8d5950f22347c1c5e0ece359559"
+    },
+    {
+      "path": "skill/traffic-rider-brain/作者资源.json",
+      "bytes": 532,
+      "sha256": "4afbf7d995bdc72fb9bd3b12f58aea3507af3370b2890832e357e75ddec793e5"
+    },
+    {
+      "path": "settings/Agent显示大小导入缺失-2026-09-13.md",
+      "bytes": 8448,
+      "sha256": "49d6c7b05c4d85003abe4d9677b36e22a2253a59ca24feaec5e4ec90b7f3dfed"
+    },
+    {
+      "path": "settings/Brain与素材进展-2026-09-13.md",
+      "bytes": 6297,
+      "sha256": "251edee5023403daaa5ece495f9e1b42e171f211d1a6b7095cf8a2c2727d30ed"
+    },
+    {
+      "path": "settings/C0-H周浩然-独立草稿-bbdbb2cc.json",
+      "bytes": 3060,
+      "sha256": "f447980ab5dc99fac7b2a57a07be5078c41da0152943b4ed8c62f194027df610"
+    },
+    {
+      "path": "settings/C0-L周浩然-独立草稿-b3647111.json",
+      "bytes": 2955,
+      "sha256": "4a97602418dc65038415ae9bc7cfca7a7c9985e1562cfcfb344d210a377a7c0c"
+    },
+    {
+      "path": "settings/C1-H周浩然-独立草稿-7155e37a.json",
+      "bytes": 2813,
+      "sha256": "0c8347dcf73941f8b45496bd79948d677223106075338e8a09a82a94349a8943"
+    },
+    {
+      "path": "settings/C1-L新增角色草稿-2026-09-13.json",
+      "bytes": 8537,
+      "sha256": "4ffa6ab1097c4ec8c4ec0ee36d58986631d31a5077151ebd5478118d88d339cd"
+    },
+    {
+      "path": "settings/C2-H周浩然-独立草稿-976c779c.json",
+      "bytes": 3460,
+      "sha256": "42ffbd8e8a74efe3b6fd9d81a6598a1b040a6d80d558af848b83a4a58c903d5e"
+    },
+    {
+      "path": "settings/C2-L周浩然-独立草稿-5235728a.json",
+      "bytes": 3229,
+      "sha256": "3a18ddef5c5106421714dbb992c1fb164db177b69106a03505d10c01b8c85df9"
+    },
+    {
+      "path": "settings/Map-C0-L周浩然-b3647111.json",
+      "bytes": 15951,
+      "sha256": "1a1056ddb1817995a087ff3beaff9510f9b6749e4bbb3af053ea01e8211f82de"
+    },
+    {
+      "path": "settings/Map-C2-L周浩然-5235728a.json",
+      "bytes": 17267,
+      "sha256": "e31ce0b7ba276d218648181648d6c28b6421783a80407f845fd44318da0f1986"
+    },
+    {
+      "path": "settings/Map-作者配置.json",
+      "bytes": 16172,
+      "sha256": "0106bc7aa3a5a67b6fd516212d05b031f8fe3f384bcfa7540e698196bbcf487d"
+    },
+    {
+      "path": "settings/MOVE语义修复-历史保留校验.json",
+      "bytes": 6216,
+      "sha256": "a6eba4ee34da3319433c6c4591a0b2a906a34869bcd43239b576f7a841f0b9bc"
+    },
+    {
+      "path": "settings/MOVE语义修复-浏览器验收-2026-09-13.md",
+      "bytes": 5584,
+      "sha256": "83a1ebcbcc72948e4b43c26764deb66625b6f171afe0b361643756a3ce95e793"
+    },
+    {
+      "path": "settings/MOVE语义修复-验收基线.json",
+      "bytes": 4155,
+      "sha256": "7caa405a18becb88477c50abdcf270c12736904785d71956f3f4b32eece2f6af"
+    },
+    {
+      "path": "settings/MOVE骑行语义被覆盖-2026-09-13.md",
+      "bytes": 13055,
+      "sha256": "a15f1db027f182af0596801edee9d333365a5f8683692c91fdec2adfa25ba803"
+    },
+    {
+      "path": "settings/prepare_camera_asset.py",
+      "bytes": 1132,
+      "sha256": "aaa9335c0daccf5a4714965cf19dc5be7b72b5d96472d818ce607a20652589ac"
+    },
+    {
+      "path": "settings/prepare_rider_assets.py",
+      "bytes": 4559,
+      "sha256": "3a60df3df3518d0afac02c44f97d31b26f74badc9028ab69f2a43300beba56b3"
+    },
+    {
+      "path": "settings/人物图片素材清单.json",
+      "bytes": 4658,
+      "sha256": "65dbb6e4ae3b1143a116fc97a6c644c90a24b95d684e6aabab381ceaf525e215"
+    },
+    {
+      "path": "settings/保存本地作者副本.py",
+      "bytes": 3347,
+      "sha256": "2928b177bce9dd86323ecf459cfaf9135af371059e012d1e949a404c35d0a090"
+    },
+    {
+      "path": "settings/同步当前素材状态.py",
+      "bytes": 1467,
+      "sha256": "4d60f2b644d674dc7ff497ed006763b0e7a4c6a549bd8d12841fcbe2da6fef60"
+    },
+    {
+      "path": "settings/同步首份草稿状态.py",
+      "bytes": 3621,
+      "sha256": "d38a26745cb97ea8096c7bb8fb5b6100547800941031bdb0ab9cd8ffdc3b2c9e"
+    },
+    {
+      "path": "settings/地图Skill目录刷新修复记录-2026-09-13.md",
+      "bytes": 6727,
+      "sha256": "1b994975b39ea3f650e3b5bf92aba471ad8791c0a707e60a5e737c1ea8ffed79"
+    },
+    {
+      "path": "settings/地图与设施录入记录-2026-09-13.md",
+      "bytes": 9959,
+      "sha256": "7db12b8097aa7b79574e14f7ca87b2cc814cbdd9dc732d8f51ec3363531631b0"
+    },
+    {
+      "path": "settings/导航目标误用-修复后复验-2026-09-13.md",
+      "bytes": 3738,
+      "sha256": "46e50f3710217f35a976d73235d47cd2fd295bff67da6de1fc33153dedc5e519"
+    },
+    {
+      "path": "settings/报到重复-模型行为观察-2026-09-13.md",
+      "bytes": 3742,
+      "sha256": "78d5bb689b58a736548dc22c56026a786cdcf00e7e4906977e7fcf22e7c38fd5"
+    },
+    {
+      "path": "settings/摄像头绑定保存阻断-2026-09-13.md",
+      "bytes": 9698,
+      "sha256": "774cc6f2da9bddc993864a8a34f5b5f12d1cf4995a56de8d4bee4307411f5c3a"
+    },
+    {
+      "path": "settings/新建实验向导修复记录-2026-09-13.md",
+      "bytes": 5497,
+      "sha256": "7e0ecb1873073cd36a5bfb22b63425f3fb484db2457306fc4c55cf0d7c14d46a"
+    },
+    {
+      "path": "settings/时间条件计算-2026-09-13.md",
+      "bytes": 2238,
+      "sha256": "e7005024a0c23c4ce43ac85ece7373c7e7c3f0f9bd37bce055b7deda84d5876c"
+    },
+    {
+      "path": "settings/本地副本索引.md",
+      "bytes": 5035,
+      "sha256": "443a99b839b0c118c4932f1f102afe3eabd958a185baed991d2966f353e03852"
+    },
+    {
+      "path": "settings/继续运行与新增配置-2026-09-13.md",
+      "bytes": 8410,
+      "sha256": "8e0c6dc9c1561f1daccf0e9079e44fd76799f4a3de22f5e42e6ba2940b078fbf"
+    },
+    {
+      "path": "settings/首份实验草稿-6092db14.json",
+      "bytes": 6387,
+      "sha256": "5b5ccc1114263eb9791ef8ccc4cfd36c6cf26c2efc4cc314ce44f464cb65db45"
+    },
+    {
+      "path": "settings/首份运行验收-3cb1414a-2026-09-13.md",
+      "bytes": 5266,
+      "sha256": "8951a7dd6c3da0bd8c832d1a6281c26b5bac54ee9ec9b52cecdd54e14d7bb0b7"
+    }
+  ],
+  "json_parse_errors": []
+}

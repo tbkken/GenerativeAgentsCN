@@ -1,0 +1,11 @@
+Edit the attached map with ONE very small surgical change. Preserve all other pixels and details as closely as possible.
+
+The image is 2172 pixels wide and 724 pixels tall. There is a white metal guardrail running horizontally around y=450, between the lower gray motor road and the lower green bicycle lane.
+
+REMOVE A SHORT SECTION OF THIS WHITE RAIL at x=704 through x=750, around y=443 through y=458. This position is immediately above and just to the right of the LEFT north-south side-street entrance, which runs down between the breakfast/rider shops and the convenience/print shop block. Erase the railing ONLY at this position to expose a smooth gray asphalt connection to the green bicycle lane. This must create a clearly visible OPEN GAP in the white rail, not just a darkened section and not a gate. The opening is about the width of one small service-road connector. Keep the green bicycle lane itself continuous below the gap. Do not draw a raised curb or anything blocking the opening.
+
+The existing second gap on the RIGHT side of the bus shelter, near 61% of image width, must REMAIN exactly as it is. Do not close or move it.
+
+After this one change there are TWO separate small midblock openings in the LOWER rail: the new LEFT entry opening immediately after the left side street, and the existing RIGHT return opening after the bus shelter. These are separate from the far-left and far-right zebra crossings.
+
+DO NOT change anything else. No new labels, roads, markings, characters, vehicles, signs, cameras, lights, buildings, vegetation or overlays. Same full-bleed 3:1 ultrawide raster and identical composition.

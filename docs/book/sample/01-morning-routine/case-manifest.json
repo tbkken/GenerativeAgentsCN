@@ -1,0 +1,48 @@
+{
+  "case_key": "book-case01-morning-routine",
+  "title": "案例 1：醒来后的晨间工作启动",
+  "status": "draft",
+  "steps": 16,
+  "stride_minutes": 5,
+  "timezone": "Asia/Shanghai",
+  "directories": [
+    "map",
+    "agents",
+    "skill",
+    "settings"
+  ],
+  "resources": {
+    "map": "map/map-definition.json",
+    "agent": "agents/陈明远/studio-definition.json",
+    "placement": "agents/陈明远/experiment-placement.json",
+    "brain": "skill/brain/book-case01-morning-routine/SKILL.md",
+    "settings": "settings/authoring-selection.json"
+  },
+  "mcp": [
+    "world-perceive",
+    "world-navigate",
+    "world-act"
+  ],
+  "action_primitives": [
+    "MOVE",
+    "ACT"
+  ],
+  "excluded": [
+    "WAIT",
+    "SPEAK",
+    "INTERACT",
+    "SET_OBJECT_STATE",
+    "memory-stream-*",
+    "sub-skills",
+    "passive-skills",
+    "crowds",
+    "evaluators"
+  ],
+  "acceptance": [
+    "Scheduler 在 16 个 5 分钟迭代内推进虚拟时间，不由 Skill 自行推进时间",
+    "每个 Agent 每 Step 最多一次 world-act；MOVE 前可用 world-navigate 检查已知地址的可达性",
+    "每条提交事实包含 Event(SPO) 与非空 structured_payload",
+    "回放从 StepResult 读取事实，不调用模型重建状态",
+    "是否完成早餐和首项工作由观察指标读取事实，不把业务目标硬编码为 Run 成功条件"
+  ]
+}

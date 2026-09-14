@@ -106,6 +106,7 @@ class StepResultCollector:
                 action=ActionSnapshot(
                     description=description,
                     emoji=getattr(event, "emoji", None),
+                    movement_activity=getattr(event, "movement_activity", None),
                     object_description=(
                         agent.get_event(False).get_describe()
                         if agent.get_event(False) is not None
@@ -367,7 +368,7 @@ class StepResultCollector:
                 "object_name": event["object_name"],
                 "interaction_key": event["interaction_key"],
                 "skill_name": event["skill_name"],
-                "skill_revision": event.get("skill_revision"),
+                "skill_content_hash": event.get("skill_content_hash"),
                 "location": str(location),
                 "source_type": "GAME_OBJECT_SKILL",
                 "source_id": event["object_key"],
@@ -410,9 +411,19 @@ class StepResultCollector:
                     f"{event['interaction_key']}"
                 ),
                 skill_name=event["skill_name"],
-                skill_revision=event.get("skill_revision"),
+                skill_content_hash=event.get("skill_content_hash"),
             )
 
+        elif kind == "object_skill_execution":
+            self._add_effect(
+                StepEffectKind.SKILL_EXECUTED, (),
+                {"source_type": "GAME_OBJECT_SKILL", "source_id": event["object_key"],
+                 "execution_source": "OBJECT_SKILL_RUNTIME", "object_key": event["object_key"],
+                 "input_text": event.get("input_text"), "output_text": event.get("output_text"),
+                 "trace": list(event.get("trace") or ()), "fallback": bool(event.get("fallback"))},
+                key=f"object-skill:{event['object_key']}", skill_name=event["skill_name"],
+                skill_content_hash=event["skill_content_hash"],
+            )
         elif kind == "skill_execution":
             self._add_effect(
                 StepEffectKind.SKILL_EXECUTED,
@@ -429,7 +440,7 @@ class StepResultCollector:
                     f"{self._sequences['effect'] + 1}"
                 ),
                 skill_name=event["skill_name"],
-                skill_revision=event.get("skill_revision"),
+                skill_content_hash=event.get("skill_content_hash"),
             )
         elif kind == "world_domain_event":
             structured_payload = event.get("structured_payload")
@@ -515,7 +526,7 @@ class StepResultCollector:
         key: str,
         source_effect_id: UUID | None = None,
         skill_name: str | None = None,
-        skill_revision: str | None = None,
+        skill_content_hash: str | None = None,
     ) -> None:
         """执行`add``effect`的内部处理，供当前模块或类复用。
 
@@ -526,7 +537,7 @@ class StepResultCollector:
             key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
             source_effect_id: `source``effect`的唯一标识。 类型：`UUID | None`。 默认值：`None`。
             skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。 类型：`str | None`。 默认值：`None`。
-            skill_revision: 当前运行固定使用的技能修订标识。 类型：`str | None`。 默认值：`None`。
+            skill_content_hash: 当前 Run 内物理 Skill 内容的完整性哈希。 类型：`str | None`。 默认值：`None`。
 
         返回:
             无返回值。
@@ -546,7 +557,7 @@ class StepResultCollector:
                 payload=payload,
                 source_effect_id=source_effect_id,
                 skill_name=skill_name,
-                skill_revision=skill_revision,
+                skill_content_hash=skill_content_hash,
             )
         )
 

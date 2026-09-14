@@ -1,5 +1,7 @@
 """generative_agents.memory.event"""
 
+from generative_agents.ga_protocol.movement import normalize_movement_activity
+
 
 class Event:
     """发生在某个语义地址上的主语—谓语—宾语事件。"""
@@ -12,6 +14,7 @@ class Event:
         address=None,
         describe=None,
         emoji=None,
+        movement_activity=None,
     ):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -34,6 +37,7 @@ class Event:
         self._describe = describe or ""
         self.address = address or []
         self.emoji = emoji or ""
+        self.movement_activity = normalize_movement_activity(movement_activity)
 
     def __str__(self):
         """执行`str`的内部处理，供当前模块或类复用。
@@ -64,6 +68,7 @@ class Event:
                 self.object,
                 self._describe,
                 ":".join(self.address),
+                tuple((self.movement_activity or {}).items()),
             )
         )
 
@@ -103,7 +108,8 @@ class Event:
         返回:
             返回函数计算得到的结果。
         """
-        return self.subject, self.predicate, self.object, self._describe
+        return (self.subject, self.predicate, self.object, self._describe,
+                tuple((self.movement_activity or {}).items()))
 
     def fit(self, subject=None, predicate=None, object=None):
         """执行 `Event` 的`fit`操作。
@@ -137,6 +143,7 @@ class Event:
             "describe": self._describe,
             "address": self.address,
             "emoji": self.emoji,
+            "movement_activity": dict(self.movement_activity) if self.movement_activity else None,
         }
 
     def get_describe(self, with_subject=True):

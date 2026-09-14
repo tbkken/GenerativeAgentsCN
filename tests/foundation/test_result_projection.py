@@ -57,7 +57,7 @@ def _publish(service, definition: ExperimentDefinition):
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
-        map_revision_id=map_revision["id"],
+        map_id=map_revision["id"],
         **brain_selection_for_database(service.database),
     )
     draft = service.get_draft(created["id"])
@@ -262,7 +262,10 @@ def test_complete_step_frame_projects_all_query_facts_idempotently(
     assert queries.memories(run["run_id"], agent_key="a-agent")["items"][0][
         "description"
     ] == "talked to b"
-    assert queries.operations(run["run_id"])["attempts"][0]["attempt_no"] == 1
+    operations = queries.operations(run["run_id"])
+    assert operations["attempts"][0]["attempt_no"] == 1
+    assert operations["usage_consistency"] == "COMMITTED_STEP_RESULTS"
+    assert operations["usage_committed_through_step"] == 1
 
     isolated_experiment, isolated_revision = _publish(service, publishable_definition)
     isolated = RunService(database, var_dir=var_dir).create_from_published(

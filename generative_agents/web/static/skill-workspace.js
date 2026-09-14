@@ -19,6 +19,8 @@
     activeFile: 'SKILL.md',
     run: null,
     catalogGeneration: 0,
+    editorGeneration: 0,
+    selectedModelId: '',
   };
 
   const $ = id => document.getElementById(id);
@@ -26,13 +28,22 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[character]));
 
+  const experimentScope = Boolean(window.ResourceScope?.experimentId);
   async function api(path, options = {}) {
+    if (experimentScope) path = path.replace('/api/studio/resources', window.ResourceScope.base);
+    options = window.ResourceScope?.options(options) || options;
     const response = await fetch(path, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,
     });
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.detail || body.error?.message || `请求失败（${response.status}）`);
+    if (!response.ok) {
+      const detail = body.detail;
+      const error = new Error(detail?.message || (typeof detail === 'string' ? detail : '') || body.error?.message || `请求失败（${response.status}）`);
+      error.trace = detail?.trace || [];
+      throw error;
+    }
+    if (experimentScope && options.method && options.method !== 'GET' && !path.endsWith('/run')) window.ResourceScope.saved(body);
     return body;
   }
 
@@ -44,24 +55,34 @@
     skillsPage.innerHTML = '<div id="skillWorkspace" class="skill-workspace"></div>';
     brainsPage.innerHTML = '<div id="brainSkillWorkspace" class="skill-workspace"></div>';
     state.mounted = true;
-    $('createSkillBtn')?.addEventListener('click', () => showCreate('atomic'));
+    $('createSkillBtn')?.addEventListener('click', () => showCreate(state.kind === 'pack' ? 'pack' : 'atomic'));
     $('createBrainBtn')?.addEventListener('click', () => showCreate('brain'));
   }
 
   async function activate(page = 'skills') {
     mount();
+    const activation = state.activationGeneration = (state.activationGeneration || 0) + 1;
+    state.editorGeneration += 1;
     state.page = page;
     state.current = null;
+    const inactiveHost = page === 'brains' ? $('skillWorkspace') : $('brainSkillWorkspace');
+    if (inactiveHost) inactiveHost.replaceChildren();
     state.kind = page === 'brains' ? 'brain' : (state.kind === 'brain' ? 'atomic' : state.kind);
     deactivateTopbar();
     await loadCatalog();
+    if (activation !== state.activationGeneration || page !== state.page) return;
+    if (!experimentScope) {
+      const name = new URLSearchParams(location.search).get('skill_key');
+      if (name) await openSkill(name, false);
+    }
   }
 
   async function loadCatalog() {
+    if (!experimentScope) return loadAuthorCatalog();
     const generation = ++state.catalogGeneration;
     let result;
     try {
-      result = await api(`/api/v1/skills?kind=${encodeURIComponent(state.kind)}&q=${encodeURIComponent(state.query)}`);
+      result = await api(`/api/studio/resources/skills?kind=${encodeURIComponent(state.kind)}&q=${encodeURIComponent(state.query)}`);
     } catch (error) {
       if (generation !== state.catalogGeneration) return;
       const target = host();
@@ -75,6 +96,52 @@
     state.items = result.items || [];
     state.counts = result.counts || state.counts;
     renderCatalog();
+  }
+
+  async function loadAuthorCatalog() {
+    const list = window.ResourceList, page = state.page, saved = list.read(page);
+    const generation = ++state.catalogGeneration;
+    const isBrain = page === 'brains', label = isBrain ? '大脑' : '技能';
+    state.items = [];
+    state.query = saved.query;
+    state.kind = isBrain ? 'brain' : saved.kind;
+    const target = host();
+    target.innerHTML = `<div class="resource-catalog" data-resource-catalog><div class="resource-toolbar"><div class="search"><input class="control" id="skillSearchInput" aria-label="搜索${label}" placeholder="搜索${label}名称或说明…" value="${escapeHtml(state.query)}"></div>${isBrain?'':`<label>类型<select class="control" id="skillKindFilter"><option value="">全部类型</option><option value="atomic">单个技能</option><option value="pack">技能包</option></select></label>`}</div><div class="resource-rows" id="authorSkillRows"></div><div class="resource-list-footer" id="authorSkillFooter"></div></div>`;
+    if ($('skillKindFilter')) {
+      $('skillKindFilter').value = saved.kind;
+      $('skillKindFilter').onchange = event => {state.kind = event.target.value; list.remember(page, {kind: state.kind, page: 1, scroll: 0}); renderAuthorRows();};
+    }
+    $('skillSearchInput').oninput = event => {state.query = event.target.value; list.remember(page, {query: state.query, page: 1, scroll: 0}); renderAuthorRows();};
+    const grid = $('authorSkillRows');
+    list.loading(grid, label);
+    try {
+      const result = await api('/api/studio/resources/skills');
+      if (generation !== state.catalogGeneration || page !== state.page) return;
+      state.items = (result.items || []).filter(item => isBrain ? item.kind === 'brain' : item.kind !== 'brain');
+      renderAuthorRows();
+      if (!new URLSearchParams(location.search).has('skill_key')) list.restore(page);
+    } catch (error) {
+      if (generation !== state.catalogGeneration || page !== state.page) return;
+      list.error(grid, label, error, () => loadAuthorCatalog().catch(report));
+      $('authorSkillFooter').hidden = true;
+    } finally { if (generation === state.catalogGeneration) grid.removeAttribute('aria-busy'); }
+  }
+
+  function renderAuthorRows() {
+    const list = window.ResourceList, saved = list.read(state.page), query = saved.query.toLocaleLowerCase();
+    const label = state.page === 'brains' ? '大脑' : '技能';
+    const items = list.sorted(state.items).filter(item => (!saved.kind || item.kind === saved.kind) && (!query || `${item.name} ${item.description || ''}`.toLocaleLowerCase().includes(query)));
+    const data = list.slice(items, saved.page), grid = $('authorSkillRows');
+    if (!grid) return;
+    list.remember(state.page, {page: data.page});
+    grid.innerHTML = data.items.map(item => list.row({name: titleCase(item.name), description: item.description, icon: state.page === 'brains' ? '⌬' : '◇',
+      badges: state.page === 'skills' ? [item.kind === 'pack' ? '技能包' : '单个技能'] : [],
+      meta: [(item.children || []).length ? `${item.children.length} 个子技能` : '', (item.scripts || []).length ? `${item.scripts.length} 个脚本` : '文本技能'],
+      open: {'data-skill-name': item.name}, actions: [{label: `删除${label}`, danger: true, attributes: {'data-delete-skill': item.name, 'data-delete-skill-label': titleCase(item.name), 'data-delete-skill-kind': item.kind}}],
+    })).join('') || list.empty(label, Boolean(query || saved.kind));
+    grid.querySelectorAll('[data-skill-name]').forEach(button => button.onclick = () => openSkill(button.dataset.skillName).catch(report));
+    grid.querySelectorAll('[data-delete-skill]').forEach(button => button.onclick = () => deleteSkill(button.dataset.deleteSkill, button.dataset.deleteSkillLabel, button.dataset.deleteSkillKind).catch(report));
+    list.pager($('authorSkillFooter'), {...data, onPage: page => {list.remember(state.page, {page, scroll: 0}); renderAuthorRows();}});
   }
 
   function host() {
@@ -95,9 +162,9 @@
           ${kindButton('pack', 'Skill 包', state.counts.pack)}
         </div>
         <label class="skill-search"><span>⌕</span><input id="skillSearchInput" value="${escapeHtml(state.query)}" placeholder="搜索名称、用途或执行说明…"></label>
-        <button class="btn btn-primary" id="skillCreateInline">＋ 新建${isBrain ? '大脑' : state.kind === 'pack' ? ' Skill 包' : ' Skill'}</button>
+        <button class="btn btn-primary" id="skillCreateInline" ${experimentScope && (isBrain || !window.ResourceScope.editable) ? 'hidden' : ''}>＋ 新建${isBrain ? '大脑' : state.kind === 'pack' ? ' Skill 包' : ' Skill'}</button>
       </div>
-      <div class="skill-catalog-summary"><strong>${state.items.length}</strong><span>${isBrain ? '个可用大脑' : state.kind === 'pack' ? '个技能包' : '个原子技能'} · 数据库 Revision 是唯一事实源</span></div>
+      <div class="skill-catalog-summary"><strong>${state.items.length}</strong><span>${isBrain ? '个可用大脑' : state.kind === 'pack' ? '个技能包' : '个原子技能'} · ${experimentScope ? '当前实验的独立副本' : '当前内容可直接编辑，加入实验时物理复制'}</span></div>
       <section class="skill-card-grid">${cards || '<div class="skill-empty"><strong>没有找到 Skill</strong><span>换一个搜索词，或创建新的数据库 Skill。</span></div>'}</section>`;
 
     target.querySelectorAll('[data-skill-kind]').forEach(button => button.addEventListener('click', async () => {
@@ -133,21 +200,30 @@
       <h2>${escapeHtml(titleCase(item.name))}</h2>
       <p>${escapeHtml(item.description)}</p>
       ${flow ? `<span class="skill-card-flow-real">${flow}</span>` : ''}
-      <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'database' ? `DB Revision #${item.revision_no || 1}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
-    </button><button class="resource-card-delete" type="button" aria-label="${deleteLabel}" title="${deleteLabel}" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}" data-delete-skill-kind="${escapeHtml(item.kind)}">删除</button></article>`;
+      <span class="skill-card-footer"><code>${escapeHtml(item.storage === 'experiment' ? `实验技能 · ${String(item.content_hash || '').slice(0, 12)}` : item.storage === 'database' ? `Studio Skill · ${String(item.content_hash || '').slice(0, 12)}` : `skills/${item.kind === 'atomic' ? 'atomic' : `${item.kind}s`}/${item.name}/`)}</code><span>${children.length ? `${children.length} 个子 Skill` : scripts.length ? `${scripts.length} 个 Script` : '文本 Skill'}</span></span>
+    </button><button class="resource-card-delete" ${experimentScope && (item.kind === 'brain' || !window.ResourceScope.editable) ? 'hidden' : ''} type="button" aria-label="${deleteLabel}" title="${deleteLabel}" data-delete-skill="${escapeHtml(item.name)}" data-delete-skill-label="${escapeHtml(titleCase(item.name))}" data-delete-skill-kind="${escapeHtml(item.kind)}">删除</button></article>`;
   }
 
-  async function openSkill(name) {
+  async function openSkill(name, push = true) {
+    state.catalogGeneration += 1;
+    if (!experimentScope && push) window.ResourceList.capture(state.page);
+    const generation = ++state.editorGeneration;
+    const requestedPage = state.page;
     const [detail, dependencies] = await Promise.all([
-      api(`/api/v1/skills/${encodeURIComponent(name)}`),
-      api(`/api/v1/skills/${encodeURIComponent(name)}/dependencies`),
+      api(`/api/studio/resources/skills/${encodeURIComponent(name)}`),
+      api(`/api/studio/resources/skills/${encodeURIComponent(name)}/dependencies`),
     ]);
+    if (generation !== state.editorGeneration || requestedPage !== state.page) return;
     state.current = detail;
     state.dependencies = dependencies;
     state.activeTab = 'definition';
     state.activeFile = 'SKILL.md';
     state.run = null;
     renderEditor();
+    if (!experimentScope && push) {
+      window.ResourceList.route(state.page, {skill_key: name});
+      window.scrollTo({top: 0, behavior: 'instant'});
+    }
   }
 
   function renderEditor() {
@@ -160,7 +236,7 @@
         ${tabButton('definition', 'SKILL.md')}
         ${tabButton('dependencies', `Scripts 与 MCP <span>${dependencyCount()}</span>`)}
         ${tabButton('run', '试运行')}
-        ${tabButton('history', '版本')}
+        ${tabButton('history', '内容')}
         <code>${escapeHtml(item.path)}</code>
       </nav>
       <main id="skillEditorPanel">${renderPanel()}</main>`;
@@ -170,6 +246,9 @@
       renderEditor();
     }));
     bindPanel();
+    if (item.editable === false) {
+      target.querySelectorAll('textarea, [data-add-skill-script], [data-delete-skill-script]').forEach(control => { control.disabled = true; });
+    }
   }
 
   function editorKind(item) {
@@ -182,8 +261,10 @@
   }
 
   function backToCatalog() {
+    state.editorGeneration += 1;
     state.current = null;
     deactivateTopbar();
+    if (!experimentScope) window.ResourceList.route(state.page);
     loadCatalog().catch(report);
   }
 
@@ -198,23 +279,23 @@
     $('skillEditorTitle').textContent = titleCase(item.name);
     $('skillEditorKind').textContent = editorKind(item);
     $('skillEditorDescription').textContent = item.description || '';
-    $('skillEditorRevision').textContent = `REV ${item.revision}`;
+    $('skillEditorRevision').textContent = `内容 ${String(item.content_hash || '').slice(0, 12)}`;
     $('skillEditorBack').onclick = backToCatalog;
-    $('skillSave').textContent = '保存 Revision';
+    $('skillSave').textContent = '保存内容';
+    $('skillSave').disabled = item.editable === false;
     $('skillSave').onclick = saveSkill;
-    $('skillDelete').hidden = false;
+    $('skillDelete').hidden = item.editable === false || (experimentScope && item.kind === 'brain');
     $('skillDelete').textContent = item.kind === 'brain' ? '删除大脑' : item.kind === 'pack' ? '删除技能包' : '删除技能';
     $('skillDelete').onclick = () => deleteSkill(item.name, titleCase(item.name), item.kind).catch(report);
   }
 
   async function deleteSkill(name, label = name, kind = state.kind) {
     const type = kind === 'brain' ? '大脑' : kind === 'pack' ? '技能包' : '技能';
-    const confirmed = window.confirmResourceDeletion
-      ? await window.confirmResourceDeletion({ type, name: label, message: `${type}的全部数据库 Revision 将被删除。仍被实验、地图或其他 Skill Revision 引用时，系统会拒绝操作。` })
-      : window.confirm(`确认删除${type}“${label}”？`);
+    const confirmed = await window.confirmResourceDeletion({ type, name: label, message: experimentScope ? '从当前实验移除此技能。仍被大脑或对象使用的技能不能移除。' : `${type}基础配置将被删除；已有实验不受影响。` });
     if (!confirmed) return;
-    await api(`/api/v1/skills/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    await api(`/api/studio/resources/skills/${encodeURIComponent(name)}`, { method: 'DELETE' });
     if (state.current?.name === name) state.current = null;
+    if (!experimentScope) window.ResourceList.route(state.page);
     deactivateTopbar();
     await loadCatalog();
     toast(`${type}“${label}”已删除`);
@@ -252,15 +333,15 @@
       <section class="skill-definition-layout">
         <aside class="skill-definition-guide">
           <span>WHY THIS FILE</span><h2>一份说明，就是一项能力</h2>
-          <p>Frontmatter 让大脑发现它；需要确定性处理时，可在同一 Revision 中加入私有 Python Script。</p>
+          <p>Frontmatter 让大脑发现它；需要确定性处理时，可在当前 Skill 中加入私有 Python Script。</p>
           <dl><dt>名称</dt><dd><code>${escapeHtml(item.name)}</code></dd><dt>类型</dt><dd>${kindName(item.kind)}</dd><dt>结果交接</dt><dd>自然语言</dd></dl>
-          <div class="skill-source-truth"><i>✓</i><div><strong>唯一事实源</strong><span>SKILL.md 与 scripts/ 一起保存到数据库新 Revision，并共同参与完整哈希。</span></div></div>
+          <div class="skill-source-truth"><i>✓</i><div><strong>${experimentScope ? '当前实验的独立副本' : '基础配置'}</strong><span>${experimentScope ? '保存仅修改当前实验内的 SKILL.md 与 scripts/，不会改变基础配置。' : 'SKILL.md 与 scripts/ 直接保存；加入实验时复制当前内容。'}</span></div></div>
         </aside>
         <div class="skill-markdown-editor">
           <header><span><i></i>${escapeHtml(activeFile)}</span><span class="skill-source-actions"><small>${activeFile === 'SKILL.md' ? 'Markdown' : 'Python'} · UTF-8</small>${activeFile === 'SKILL.md' ? '' : '<button type="button" data-delete-skill-script>删除脚本</button>'}</span></header>
           <textarea id="skillSource" spellcheck="false">${escapeHtml(source)}</textarea>
         </div>
-        <aside class="skill-file-outline"><span>文件结构</span><button class="${activeFile === 'SKILL.md' ? 'active' : ''}" data-skill-file="SKILL.md">SKILL.md</button>${fileButtons}<button class="skill-add-script" data-add-skill-script>＋ scripts/main.py</button><p>Script 必须返回自然语言；地图被动 Skill 也可以只使用 SKILL.md。</p></aside>
+        <aside class="skill-file-outline"><span>文件结构</span><button class="${activeFile === 'SKILL.md' ? 'active' : ''}" data-skill-file="SKILL.md">SKILL.md</button>${fileButtons}<button class="skill-add-script" data-add-skill-script>＋ scripts/main.py</button><p>对象 Skill 默认由大模型执行，只需编写 SKILL.md；子 Skill 可选用脚本返回自然语言。</p></aside>
       </section>`;
     }
     if (state.activeTab === 'dependencies') return renderDependencies();
@@ -269,22 +350,23 @@
         <div class="skill-run-input"><span class="skill-kicker">NATURAL LANGUAGE TEST</span><h2>直接描述当前情境</h2><p>输入框已按该 SKILL 定义里的「示例输入」预填贴近真实运行时的内容，可直接修改后运行。</p>
           <textarea id="skillRunInput" placeholder="可直接修改上方示例，再点运行">${escapeHtml(item.example_input || '例如：现在是早上 7 点，简刚刚醒来，她今天上午要去咖啡馆工作，请为她安排接下来的行动。')}</textarea>
           <details><summary>可选运行时上下文</summary><textarea id="skillRunContext" spellcheck="false" placeholder='{"agent_key":"jane","virtual_time":"2026-08-19T07:00:00+08:00"}'></textarea></details>
-          <button class="btn btn-primary" id="skillRunButton" ${runRunning() ? 'disabled' : ''}>${runRunning() ? '正在运行…' : '使用 Qwen3.8 27B 运行'}</button>
+          <label for="skillRunModel">聊天模型</label><select class="control" id="skillRunModel"><option value="">请选择已配置模型</option></select><p>在左侧“模型”菜单中配置服务地址和 API Key。</p>
+          <button class="btn btn-primary" id="skillRunButton" ${runRunning() ? 'disabled' : ''}>${runRunning() ? '正在运行…' : '使用当前模型配置运行'}</button>
         </div>
         <div class="skill-run-output" id="skillRunOutput">${runOutputHtml()}</div>
       </section>`;
-    return '<section class="skill-history-panel" id="skillHistory"><div class="skill-run-placeholder"><strong>正在读取版本…</strong></div></section>';
+    return '<section class="skill-history-panel" id="skillHistory"><div class="skill-run-placeholder"><strong>正在读取当前内容…</strong></div></section>';
   }
 
   function renderDependencies() {
     const dependencies = state.dependencies || { scripts: [], skills: [], mcp: [] };
     const scripts = dependencies.scripts.map(path => dependencyCard('SCRIPT', path, '技能私有的确定性实现，可独立测试。')).join('');
-    const mcp = dependencies.mcp.map(name => dependencyCard('MCP', name, '跨 Skill 共享的持久化公共能力。')).join('');
+    const mcp = dependencies.mcp.map(name => dependencyCard('MCP', name, '正文引用的公共工具；由 Runtime 注入当前 Agent 身份并校验调用。')).join('');
     const skills = dependencies.skills.map(item => dependencyCard(item.kind === 'pack' ? 'SKILL PACK' : 'SKILL', item.name, item.missing ? '引用缺失，请修正 SKILL.md。' : item.description)).join('');
     return `<section class="skill-dependency-panel">
-      <div class="skill-dependency-heading"><div><span class="skill-kicker">RUNTIME DEPENDENCIES</span><h2>需要精确执行时才调用代码</h2><p>SKILL.md 保持可读；持久化、检索和确定性计算放进 Script，通过 MCP 公开复用。</p></div><span class="skill-natural-badge">Skill 间：自然语言</span></div>
+      <div class="skill-dependency-heading"><div><span class="skill-kicker">RUNTIME DEPENDENCIES</span><h2>Skill 调用的脚本与公共能力</h2><p>Skill 决定调用顺序；Script 执行确定性计算；感知、寻路、记忆和世界动作由 Runtime 公共 MCP 提供。下方列出正文引用的可用工具。</p></div><span class="skill-natural-badge">Skill 间：自然语言</span></div>
       <div class="skill-dependency-columns"><section><header><span>子 Skills</span><strong>${dependencies.skills.length}</strong></header>${skills || emptyDependency('未引用子 Skill')}</section><section><header><span>私有 Scripts</span><strong>${dependencies.scripts.length}</strong></header>${scripts || emptyDependency('暂无私有 Script')}</section><section><header><span>公共 MCP</span><strong>${dependencies.mcp.length}</strong></header>${mcp || emptyDependency('暂无 MCP 依赖')}</section></div>
-      <div class="skill-mcp-note"><code>POST /mcp</code><span>已提供 <b>memory-stream-append</b> 与 <b>memory-stream-search</b>；数据持久化到独立 SQLite，不塞进 Skill 文本。</span></div>
+      <div class="skill-mcp-note"><code>Runtime MCP</code><span>感知与寻路只读，记忆按 Agent 隔离；世界动作经 <b>world-act</b> 校验与 World Commit 提交。记忆、StepResult、检查点和审计信息保存在 Run 工作目录中，可封存为 <b>.garun</b>；Runtime 不连接 Studio 数据库。</span></div>
     </section>`;
   }
 
@@ -310,21 +392,28 @@
         state.activeFile = 'scripts/main.py';
         renderEditor();
       });
-      document.querySelector('[data-delete-skill-script]')?.addEventListener('click', () => {
+      document.querySelector('[data-delete-skill-script]')?.addEventListener('click', async () => {
         if (state.activeFile === 'SKILL.md') return;
         const path = state.activeFile;
-        if (!window.confirm(`删除私有脚本“${path}”？保存 Revision 后生效。`)) return;
+        if (!await window.confirmResourceDeletion({ type: '私有脚本', name: path, message: '保存内容后生效。' })) return;
         delete state.current.script_sources[path];
         state.activeFile = 'SKILL.md';
         renderEditor();
       });
     }
-    if (state.activeTab === 'run') $('skillRunButton')?.addEventListener('click', runSkill);
+    if (state.activeTab === 'run') {
+      $('skillRunButton')?.addEventListener('click', runSkill);
+      if (experimentScope) {
+        $('skillRunModel').replaceChildren(new Option('使用当前实验的聊天模型', ''));
+        $('skillRunModel').disabled = true;
+      } else window.ModelWorkspace.loadChoices($('skillRunModel'), 'chat', state.selectedModelId);
+      $('skillRunModel').onchange = event => { state.selectedModelId = event.target.value; };
+    }
     if (state.activeTab === 'history') loadHistory().catch(report);
   }
 
   function captureActiveSource() {
-    const source = $('skillSource');
+    const source = host()?.querySelector('#skillSource');
     if (!source || !state.current) return;
     if (state.activeFile === 'SKILL.md') state.current.markdown = source.value;
     else {
@@ -337,17 +426,22 @@
     captureActiveSource();
     const markdown = state.current?.markdown;
     if (typeof markdown !== 'string') return;
+    const skillName = state.current.name;
+    const generation = state.editorGeneration;
     const button = $('skillSave');
     button.disabled = true;
     button.textContent = '正在保存…';
     try {
-      state.current = await api(`/api/v1/skills/${encodeURIComponent(state.current.name)}`, {
-        method: 'PUT', body: JSON.stringify({ markdown, scripts: state.current.script_sources || {} }),
+      const saved = await api(`/api/studio/resources/skills/${encodeURIComponent(skillName)}`, {
+        method: 'PUT', body: JSON.stringify({ markdown, scripts: state.current.script_sources || {}, ...(experimentScope ? { row_version: state.current.row_version } : {}) }),
       });
-      state.dependencies = await api(`/api/v1/skills/${encodeURIComponent(state.current.name)}/dependencies`);
+      const dependencies = await api(`/api/studio/resources/skills/${encodeURIComponent(skillName)}/dependencies`);
+      if (generation !== state.editorGeneration || state.current?.name !== skillName) return;
+      state.current = saved;
+      state.dependencies = dependencies;
       renderEditor();
-      toast('SKILL.md 与私有 Scripts 已保存为新的数据库 Revision');
-    } catch (error) { report(error); button.disabled = false; button.textContent = '保存 Revision'; }
+      toast('SKILL.md 与私有 Scripts 已保存');
+    } catch (error) { report(error); button.disabled = false; button.textContent = '保存内容'; }
   }
 
   function runRunning() {
@@ -356,8 +450,8 @@
 
   function runOutputHtml() {
     const run = state.run;
-    if (run?.status === 'running') return '<div class="skill-running"><span></span><div><strong>Qwen3.8 正在执行 Skill</strong><small>可能会继续调用子 Skill，请稍候…</small></div></div>';
-    if (run?.status === 'error') return `<div class="skill-run-error"><strong>运行失败</strong><span>${escapeHtml(run.message)}</span></div>`;
+    if (run?.status === 'running') return '<div class="skill-running"><span></span><div><strong>模型正在执行 Skill</strong><small>可能会继续调用子 Skill，请稍候…</small></div></div>';
+    if (run?.status === 'error') return `<div class="skill-run-error"><strong>运行失败</strong><span>${escapeHtml(run.message)}</span></div>${run.trace?.length ? `<div class="skill-trace"><strong>调用轨迹</strong>${run.trace.map(traceRow).join('')}</div>` : ''}`;
     if (run?.status === 'done') {
       const trace = run.result.trace || [];
       const prompts = trace
@@ -372,7 +466,7 @@
           </details>`).join('')
         : '<div class="skill-prompt-empty">本次运行结果未包含 Prompt（请重启 web 服务加载新版 Skill 运行时后重试）。</div>';
       return `
-        <div class="skill-result-text"><span>FINAL RESULT</span><p>${escapeHtml(run.result.output_text)}</p></div>
+        <div class="skill-result-text"><span>FINAL RESULT${run.result.model ? ` · ${escapeHtml(run.result.model)}` : ''}</span><p>${escapeHtml(run.result.output_text)}</p></div>
         <div class="skill-trace"><strong>调用轨迹</strong>${trace.map(traceRow).join('')}</div>
         <div class="skill-run-prompts"><strong>发送给模型的 Prompt</strong><p class="skill-prompt-hint">这就是本次执行实际发给模型的消息：system 来自 SKILL.md，user 来自试运行输入。对照这里的内容调整 SKILL.md 或示例输入，可以精确定位模型输出不符合预期的原因。</p>${promptHtml}</div>`;
     }
@@ -382,30 +476,34 @@
   async function runSkill() {
     if (runRunning()) return toast('已有试运行正在进行，请稍候', true);
     const name = state.current.name;
+    const generation = state.editorGeneration;
     const input = $('skillRunInput').value.trim();
+    const modelPresetId = $('skillRunModel').value;
+    if (!modelPresetId && !experimentScope) return toast('请选择聊天模型；尚未配置时请前往模型中心添加。', true);
     if (!input) return toast('请先描述一个要测试的情境', true);
     let context = {};
     const rawContext = $('skillRunContext').value.trim();
     try { if (rawContext) context = JSON.parse(rawContext); }
     catch { return toast('可选上下文不是有效 JSON', true); }
     state.run = { status: 'running' };
-    const live = () => state.activeTab === 'run' && state.current?.name === name && $('skillRunOutput');
+    const current = () => state.current?.name === name && state.editorGeneration === generation;
+    const live = () => state.activeTab === 'run' && current() && $('skillRunOutput');
     if (live()) {
       $('skillRunButton').disabled = true;
       $('skillRunButton').textContent = '正在运行…';
       $('skillRunOutput').innerHTML = runOutputHtml();
     }
     try {
-      const result = await api(`/api/v1/skills/${encodeURIComponent(name)}/run`, {
-        method: 'POST', body: JSON.stringify({ input_text: input, context }),
+      const result = await api(`/api/studio/resources/skills/${encodeURIComponent(name)}/run`, {
+        method: 'POST', body: JSON.stringify({ input_text: input, context, model_preset_id: modelPresetId }),
       });
-      if (state.current?.name === name) state.run = { status: 'done', result };
+      if (current()) state.run = { status: 'done', result };
     } catch (error) {
-      if (state.current?.name === name) state.run = { status: 'error', message: error.message };
+      if (current()) state.run = { status: 'error', message: error.message, trace: error.trace };
     }
     if (live()) {
       $('skillRunButton').disabled = false;
-      $('skillRunButton').textContent = '使用 Qwen3.8 27B 运行';
+      $('skillRunButton').textContent = '使用当前模型配置运行';
       $('skillRunOutput').innerHTML = runOutputHtml();
     }
   }
@@ -416,26 +514,36 @@
   }
 
   async function loadHistory() {
-    const result = await api(`/api/v1/skills/${encodeURIComponent(state.current.name)}/history`);
-    $('skillHistory').innerHTML = `<div class="skill-dependency-heading"><div><span class="skill-kicker">FILE HISTORY</span><h2>SKILL.md 版本记录</h2><p>每次保存前自动快照旧文件；运行时始终读取当前文件。</p></div></div><div class="skill-history-list">${result.items.map((item, index) => `<article><span class="skill-history-dot"></span><div><strong>${index === 0 ? '当前版本' : '历史快照'}</strong><code>${escapeHtml(item.revision)}</code><small>${escapeHtml(item.created_at)}</small></div></article>`).join('')}</div>`;
+    const result = await api(`/api/studio/resources/skills/${encodeURIComponent(state.current.name)}/history`);
+    $('skillHistory').innerHTML = `<div class="skill-dependency-heading"><div><span class="skill-kicker">CURRENT CONTENT</span><h2>SKILL.md 当前内容</h2><p>公共 Skill 直接编辑；加入实验时复制完整内容与依赖闭包。</p></div></div><div class="skill-history-list">${result.items.map(item => `<article><span class="skill-history-dot"></span><div><strong>当前内容</strong><code>${escapeHtml(item.content_hash)}</code><small>${escapeHtml(item.updated_at)}</small></div></article>`).join('')}</div>`;
   }
 
   function showCreate(kind) {
     mount();
+    if (!experimentScope) window.ResourceList.capture(kind === 'brain' ? 'brains' : 'skills');
+    state.catalogGeneration += 1;
+    state.editorGeneration += 1;
     state.page = kind === 'brain' ? 'brains' : 'skills';
+    const inactiveHost = state.page === 'brains' ? $('skillWorkspace') : $('brainSkillWorkspace');
+    if (inactiveHost) inactiveHost.replaceChildren();
     deactivateTopbar();
     const target = host();
-    target.innerHTML = `<section class="skill-create-screen"><button class="skill-back" id="skillCreateBack">← 返回</button><div class="skill-create-card"><span class="skill-kicker">NEW ${kind === 'brain' ? 'BRAIN' : kind === 'pack' ? 'SKILL PACK' : 'SKILL'}</span><h1>从一句清楚的用途开始</h1><p>创建后会生成数据库 Draft Revision；运行时再物化为标准 SKILL.md 快照。你可以继续补充子 Skill、Script 与 MCP。</p><label>稳定名称<input id="skillCreateName" placeholder="例如 daily-review"></label><label>用途说明<textarea id="skillCreateDescription" placeholder="说明它能做什么，以及在什么情境下应该使用。"></textarea></label><button class="btn btn-primary" id="skillCreateConfirm">创建数据库 Skill</button></div></section>`;
-    $('skillCreateBack').addEventListener('click', () => activate(state.page).catch(report));
+    target.innerHTML = `<section class="skill-create-screen"><button class="skill-back" id="skillCreateBack">← 返回</button><div class="skill-create-card"><span class="skill-kicker">NEW ${kind === 'brain' ? 'BRAIN' : kind === 'pack' ? 'SKILL PACK' : 'SKILL'}</span><h1>从一句清楚的用途开始</h1><p>${experimentScope ? '创建当前实验专用的技能；不会加入基础配置。' : '创建后编辑基础 Skill，加入实验时复制文档、脚本与递归依赖。'}</p><label>稳定名称<input id="skillCreateName" placeholder="例如 daily-review"></label><label>用途说明<textarea id="skillCreateDescription" placeholder="说明它能做什么，以及在什么情境下应该使用。"></textarea></label><button class="btn btn-primary" id="skillCreateConfirm">${experimentScope ? '创建实验技能' : '创建基础技能'}</button></div></section>`;
+    if (!experimentScope && kind !== 'brain') {
+      $('skillCreateConfirm').insertAdjacentHTML('beforebegin', `<label>技能类型<select class="control" id="skillCreateKind"><option value="atomic">单个技能</option><option value="pack">技能包</option></select></label>`);
+      $('skillCreateKind').value = kind;
+    }
+    $('skillCreateBack').addEventListener('click', backToCatalog);
     $('skillCreateConfirm').addEventListener('click', async () => {
       const name = $('skillCreateName').value.trim();
       const description = $('skillCreateDescription').value.trim();
       if (!name || !description) return toast('请填写稳定名称和用途说明', true);
       try {
-        const created = await api('/api/v1/skills', { method: 'POST', body: JSON.stringify({ name, description, kind }) });
+        const created = await api('/api/studio/resources/skills', { method: 'POST', body: JSON.stringify({ name, description, kind: $('skillCreateKind')?.value || kind }) });
         state.current = created;
-        state.dependencies = await api(`/api/v1/skills/${encodeURIComponent(created.name)}/dependencies`);
+        state.dependencies = await api(`/api/studio/resources/skills/${encodeURIComponent(created.name)}/dependencies`);
         renderEditor();
+        if (!experimentScope) window.ResourceList.route(state.page, {skill_key: created.name});
       } catch (error) { report(error); }
     });
   }
@@ -448,6 +556,6 @@
   }
   function report(error) { toast(error?.message || String(error), true); }
 
-  window.SkillWorkspace = { activate, openSkill, showCreate, deactivateTopbar };
+  window.SkillWorkspace = { activate, openSkill, showCreate, deactivateTopbar, invalidate() {state.catalogGeneration++; state.editorGeneration++; state.activationGeneration = (state.activationGeneration || 0) + 1;} };
   document.addEventListener('DOMContentLoaded', mount);
 }());

@@ -60,6 +60,7 @@ class ReplayAgentDefinition(StrictModel):
     display_name: str
     initial_coord: tuple[int, int]
     sprite_asset: dict[str, Any]
+    sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     role: str | None = None
     actor_key: str | None = None
     active_tool_instance_key: str | None = None
@@ -271,12 +272,11 @@ def _grid_render_asset(raw_definition: Mapping[str, Any]) -> dict[str, Any]:
     spatial_scene = raw_definition.get("spatial_scene")
     spatial_assets = editor.get("spatial_assets") if isinstance(editor, Mapping) else {}
     if isinstance(spatial_scene, Mapping) and isinstance(spatial_assets, Mapping):
-        meters_per_tile = max(0.000001, float(spatial_scene.get("meters_per_tile", 1)))
         for placement in spatial_scene.get("placements") or ():
             if not isinstance(placement, Mapping):
                 continue
             contract = spatial_assets.get(
-                str(placement.get("spatial_asset_revision_id") or "")
+                str(placement.get("spatial_asset_id") or "")
             )
             if not isinstance(contract, Mapping):
                 continue
@@ -287,8 +287,8 @@ def _grid_render_asset(raw_definition: Mapping[str, Any]) -> dict[str, Any]:
                     "instance_key": str(
                         placement.get("instance_key") or "spatial-object"
                     ),
-                    "x": float(placement.get("x_m", 0)) / meters_per_tile,
-                    "y": float(placement.get("y_m", 0)) / meters_per_tile,
+                    "x": float(placement.get("x_tiles", 0)),
+                    "y": float(placement.get("y_tiles", 0)),
                     "appearance": dict(contract.get("appearance") or {}),
                     "state": state,
                 }
@@ -299,7 +299,7 @@ def _grid_render_asset(raw_definition: Mapping[str, Any]) -> dict[str, Any]:
         "status": ReplayAssetStatus.READY.value,
         "source": ReplayAssetSource.WORLD_GRID.value,
         "renderer": "SPATIAL_GRID",
-        "pixels_per_meter": max(8, min(tile_size, 64)),
+        "pixels_per_tile": max(8, min(tile_size, 64)),
         "palette": palette,
         "objects": objects,
     }
@@ -366,6 +366,7 @@ def _agents(
                 "display_name": agent.name,
                 "initial_coord": agent.coord,
                 "sprite_asset": sprite,
+                "sprite_display_tiles": agent.sprite_display_tiles,
                 "role": role,
             }
         )
@@ -406,6 +407,7 @@ def _step_document(
                     "description": agent.action.description,
                     "emoji": agent.action.emoji,
                     "object_description": agent.action.object_description,
+                    "movement_activity": agent.action.movement_activity,
                 },
                 "address": list(agent.location),
                 "currently": agent.currently,

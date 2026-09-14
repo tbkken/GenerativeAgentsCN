@@ -159,13 +159,13 @@ def validate_agent_spatial(
     """
 
     issues: list[AgentSpatialIssue] = []
-    living = address.get("living_area")
-    sleeping = address.get("sleeping") or address.get("睡觉")
-    if not living and not sleeping:
+    initial = address.get("initial_location") or address.get("初始位置")
+    if not initial:
         return [
             AgentSpatialIssue(
                 code="AGENT_SPATIAL_ADDRESS_REQUIRED",
-                message="Agent 必须配置居住地或睡觉地址",
+                message="实验中的 Agent 必须配置与初始坐标一致的真实空间地址",
+                purpose="initial_location",
             )
         ]
     if not tree:
@@ -191,23 +191,6 @@ def validate_agent_spatial(
         else:
             valid_paths.append((purpose, raw_path))
 
-    sleeping_path: Any = sleeping
-    if sleeping_path is None and _valid_path(living):
-        sleeping_path = [*living, "床"]
-    if not _valid_path(sleeping_path) or not spatial_path_exists(tree, sleeping_path):
-        issues.append(
-            AgentSpatialIssue(
-                code="AGENT_SLEEPING_ADDRESS_INVALID",
-                message=(
-                    "Agent 睡觉地址必须指向可用空间中的床；可填写睡觉地址，"
-                    "或在居住地中添加“床”"
-                ),
-                purpose="sleeping",
-                path=tuple(sleeping_path) if isinstance(sleeping_path, list) else (),
-                details={"path": sleeping_path},
-            )
-        )
-
     if world_tiles is not None or world_address_index is not None:
         roots = {root for root in (world_roots or ()) if root}
         address_index = world_address_index
@@ -218,8 +201,6 @@ def validate_agent_spatial(
             )
         checked: set[tuple[str, ...]] = set()
         map_paths = [*valid_paths]
-        if _valid_path(sleeping_path) and spatial_path_exists(tree, sleeping_path):
-            map_paths.append(("sleeping", sleeping_path))
         map_paths.extend(("空间树", list(path)) for path in _iter_leaf_paths(tree))
         for purpose, path in map_paths:
             path_key = tuple(path)

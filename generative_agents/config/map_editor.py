@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import Field, StringConstraints, field_validator, model_validator
+from pydantic import Field, StrictBool, StringConstraints, field_validator, model_validator
 from typing_extensions import Annotated
 
 from .schema import StrictModel
@@ -37,6 +37,14 @@ RecipeTransform = Literal[
 
 class GridRect(StrictModel):
     """以 Tile 为单位的矩形区域，用于裁剪素材或界定空间节点。"""
+    x: int = Field(ge=0)
+    y: int = Field(ge=0)
+    width: int = Field(ge=1)
+    height: int = Field(ge=1)
+
+
+class PixelRect(StrictModel):
+    """仅供内部图像裁剪和渲染使用的像素矩形。"""
     x: int = Field(ge=0)
     y: int = Field(ge=0)
     width: int = Field(ge=1)
@@ -94,6 +102,16 @@ class MaterialSource(StrictModel):
             (self.asset_id, self.bundled_path, self.generated_color)
         ):
             raise ValueError("canvas material source cannot declare an external origin")
+        if self.tile_count != self.columns * self.rows:
+            raise ValueError("material source tile_count must equal columns * rows")
+        last_column_x = self.margin + (self.columns - 1) * (
+            self.tile_width + self.spacing
+        )
+        last_row_y = self.margin + (self.rows - 1) * (
+            self.tile_height + self.spacing
+        )
+        if last_column_x >= self.width_px or last_row_y >= self.height_px:
+            raise ValueError("material source Tile grid exceeds its pixel image")
         return self
 
 
@@ -106,12 +124,20 @@ class MaterialSlice(StrictModel):
     ]
     kind: MaterialSliceKind
     rotation_degrees: Literal[0, 90, 180, 270] = 0
-    grid_rect: GridRect | None = None
-    pixel_rect: GridRect
+    grid_rect: GridRect
+    pixel_rect: PixelRect
     trim_transparent: bool = True
     indexed_gid: int | None = Field(default=None, ge=1)
     local_tile_id: int | None = Field(default=None, ge=0)
     readonly_indexed: bool = False
+    collision_cells: dict[int, StrictBool] = Field(default_factory=dict, max_length=1_000_000)
+
+    @model_validator(mode="after")
+    def validate_collision_cells(self) -> "MaterialSlice":
+        if any(i < 0 or i >= self.grid_rect.width * self.grid_rect.height
+               for i in self.collision_cells):
+            raise ValueError("material collision cell is outside its Tile grid")
+        return self
 
     @model_validator(mode="before")
     @classmethod
@@ -293,6 +319,23 @@ class VisualLayer(StrictModel):
         return self
 
 
+class StateAppearanceCase(StrictModel):
+    """An exact semantic state name and a map-local static material."""
+    value: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=128)]
+    material_slice_id: Identifier
+
+
+class StateAppearance(StrictModel):
+    cases: list[StateAppearanceCase] = Field(default_factory=list, max_length=32)
+
+    @model_validator(mode="after")
+    def unique_names(self):
+        names = [case.value for case in self.cases]
+        if len(names) != len(set(names)):
+            raise ValueError("状态名重复，请保留一条")
+        return self
+
+
 class HierarchyNode(StrictModel):
     """世界、区域、场所或游戏对象组成的空间语义树节点。"""
     id: Identifier
@@ -308,6 +351,7 @@ class HierarchyNode(StrictModel):
     render_recipe_id: Identifier | None = None
     render_mode: Literal["LAYER_BACKED", "PLACED_RECIPE"] = "LAYER_BACKED"
     interaction_mode: Literal["STATIC", "SKILL_BOUND"] = "STATIC"
+    state_appearance: StateAppearance = Field(default_factory=StateAppearance)
     initial_state: dict[str, Any] = Field(default_factory=dict, max_length=100)
     skill_bindings: list[GameObjectSkillBinding] = Field(
         default_factory=list, max_length=20
@@ -339,24 +383,31 @@ class HierarchyNode(StrictModel):
         异常:
             ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
         """
+        if self.state_appearance.cases and (self.kind != "GAME_OBJECT" or not self.material_slice_id):
+            raise ValueError("状态外观仅用于 Game Object，并须选择默认显示素材")
         if self.skill_bindings and self.kind != "GAME_OBJECT":
-            raise ValueError("only GAME_OBJECT nodes may bind passive Skills")
+            raise ValueError("only GAME_OBJECT nodes may bind Skills")
         if self.initial_state and self.kind != "GAME_OBJECT":
             raise ValueError("only GAME_OBJECT nodes may define initial state")
         if self.kind != "GAME_OBJECT" and self.interaction_mode != "STATIC":
             raise ValueError("only GAME_OBJECT nodes may be Skill-bound")
         if self.kind == "GAME_OBJECT":
-            if self.interaction_mode == "SKILL_BOUND" and not self.skill_bindings:
-                raise ValueError("SKILL_BOUND Game Objects require a passive Skill")
-            if self.interaction_mode == "STATIC" and self.skill_bindings:
-                raise ValueError("STATIC Game Objects cannot bind passive Skills")
+            object.__setattr__(self, "interaction_mode", "SKILL_BOUND" if self.skill_bindings else "STATIC")
         return self
+
+
+class MapNavigation(StrictModel):
+    """Imported static collision baseline plus explicit map corrections."""
+
+    base_blocked: list[int] = Field(default_factory=list, max_length=1_000_000)
+    overrides: dict[int, StrictBool] = Field(default_factory=dict, max_length=1_000_000)
 
 
 class MapEditorDocumentV2(StrictModel):
     """地图编辑器 V2 的完整草稿文档，也是发布编译的唯一输入。"""
     schema_version: Literal["ga-map-editor/v2"] = "ga-map-editor/v2"
     root_node_id: Identifier
+    navigation: MapNavigation | None = None
     material_sources: list[MaterialSource] = Field(
         default_factory=list, max_length=10_000
     )
@@ -435,9 +486,59 @@ class MapEditorDocumentV2(StrictModel):
             raise ValueError(
                 "map editor document requires exactly one matching WORLD root"
             )
+        if self.navigation:
+            width = self.import_metadata.get("width", roots[0].bounds.width)
+            height = self.import_metadata.get("height", roots[0].bounds.height)
+            if any(i < 0 or i >= width * height for i in
+                   [*self.navigation.base_blocked, *self.navigation.overrides]):
+                raise ValueError("map navigation cell is outside the map")
         for item in self.material_slices:
             if item.source_id not in sources:
                 raise ValueError(f"material slice {item.id} references missing source")
+            source = source_by_id[item.source_id]
+            if (
+                item.grid_rect.x + item.grid_rect.width > source.columns
+                or item.grid_rect.y + item.grid_rect.height > source.rows
+            ):
+                raise ValueError(
+                    f"material slice {item.id} grid rect exceeds its source"
+                )
+            expected_x = source.margin + item.grid_rect.x * (
+                source.tile_width + source.spacing
+            )
+            expected_y = source.margin + item.grid_rect.y * (
+                source.tile_height + source.spacing
+            )
+            expected_right = min(
+                source.width_px,
+                source.margin
+                + (item.grid_rect.x + item.grid_rect.width - 1)
+                * (source.tile_width + source.spacing)
+                + source.tile_width,
+            )
+            expected_bottom = min(
+                source.height_px,
+                source.margin
+                + (item.grid_rect.y + item.grid_rect.height - 1)
+                * (source.tile_height + source.spacing)
+                + source.tile_height,
+            )
+            expected_pixel_rect = (
+                expected_x,
+                expected_y,
+                expected_right - expected_x,
+                expected_bottom - expected_y,
+            )
+            actual_pixel_rect = (
+                item.pixel_rect.x,
+                item.pixel_rect.y,
+                item.pixel_rect.width,
+                item.pixel_rect.height,
+            )
+            if actual_pixel_rect != expected_pixel_rect:
+                raise ValueError(
+                    f"material slice {item.id} pixel rect must be derived from its Tile grid rect"
+                )
         for canvas in self.material_canvases:
             source = source_by_id.get(canvas.source_id)
             material_slice = slice_by_id.get(canvas.slice_id)
@@ -448,6 +549,28 @@ class MapEditorDocumentV2(StrictModel):
             if material_slice is None or material_slice.source_id != canvas.source_id:
                 raise ValueError(
                     f"material canvas {canvas.id} requires its matching slice"
+                )
+            if (
+                source.tile_width != canvas.tile_size
+                or source.tile_height != canvas.tile_size
+                or source.columns != canvas.width_tiles
+                or source.rows != canvas.height_tiles
+                or source.width_px != canvas.width_tiles * canvas.tile_size
+                or source.height_px != canvas.height_tiles * canvas.tile_size
+            ):
+                raise ValueError(
+                    f"material canvas {canvas.id} source geometry must match its Tile canvas"
+                )
+            expected_grid_rect = (0, 0, canvas.width_tiles, canvas.height_tiles)
+            actual_grid_rect = (
+                material_slice.grid_rect.x,
+                material_slice.grid_rect.y,
+                material_slice.grid_rect.width,
+                material_slice.grid_rect.height,
+            )
+            if actual_grid_rect != expected_grid_rect:
+                raise ValueError(
+                    f"material canvas {canvas.id} slice grid must match its Tile canvas"
                 )
             expected_size = (
                 canvas.width_tiles * canvas.tile_size,
@@ -504,6 +627,23 @@ class MapEditorDocumentV2(StrictModel):
                     raise ValueError(
                         "tile override layer part anchor requires a matching placement"
                     )
+        canvas_by_source = {canvas.source_id: canvas for canvas in self.material_canvases}
+        visited, visiting = set(), set()
+        def visit_canvas(canvas):
+            if canvas.id in visiting:
+                raise ValueError(f"画布素材循环引用：{canvas.name}")
+            if canvas.id in visited:
+                return
+            visiting.add(canvas.id)
+            for layers in canvas.cells.values():
+                for layer in layers:
+                    nested = canvas_by_source.get(slice_by_id[layer.slice_id].source_id)
+                    if nested is not None:
+                        visit_canvas(nested)
+            visiting.remove(canvas.id)
+            visited.add(canvas.id)
+        for canvas in self.material_canvases:
+            visit_canvas(canvas)
         for recipe in self.render_recipes:
             if any(entry.slice_id not in slices for entry in recipe.entries):
                 raise ValueError(f"render recipe {recipe.id} references missing slice")
@@ -513,6 +653,9 @@ class MapEditorDocumentV2(StrictModel):
             "GAME_OBJECT": "ARENA",
         }
         for node in self.hierarchy_nodes:
+            for case in node.state_appearance.cases:
+                if case.material_slice_id not in slices:
+                    raise ValueError(f"对象 {node.name} 状态 {case.value} 的素材已不可用")
             if node.material_slice_id and node.material_slice_id not in slices:
                 raise ValueError(
                     f"hierarchy node {node.id} references missing material slice"
@@ -536,6 +679,7 @@ __all__ = [
     "MaterialCanvas",
     "MaterialSlice",
     "MaterialSource",
+    "PixelRect",
     "TileOverrideLayer",
     "TileOverridePart",
     "RecipeEntry",

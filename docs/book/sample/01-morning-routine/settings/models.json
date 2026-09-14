@@ -1,0 +1,26 @@
+{
+  "chat": {
+    "provider": "vllm",
+    "model": "Qwen3.8-27B-UD-Q4_K_XL",
+    "resolved_model": null,
+    "base_url": "http://127.0.0.1:8888/v1",
+    "context_window": null,
+    "enable_thinking": false,
+    "temperature": 0.2,
+    "timeout_seconds": 90,
+    "retry_attempts": 1,
+    "retry_backoff_seconds": 5,
+    "credential_env": "GA_CHAT_API_KEY"
+  },
+  "embedding": {
+    "provider": "openai_compatible",
+    "model": "auto",
+    "resolved_model": null,
+    "base_url": "http://127.0.0.1:5002/v1",
+    "timeout_seconds": 120,
+    "transport_retry_attempts": 3,
+    "index_operation_retry_attempts": 3,
+    "retry_backoff_seconds": 5,
+    "credential_env": "GA_EMBEDDING_API_KEY"
+  }
+}

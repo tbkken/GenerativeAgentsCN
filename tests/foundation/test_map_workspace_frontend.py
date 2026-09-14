@@ -40,18 +40,18 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert 'id="page-maps"' in shell
     assert 'id="publicMapEditor"' in shell
     assert 'id="experimentMapEditor"' not in shell
-    assert 'id="experimentMapRevisionSelect"' in shell
+    assert 'id="experimentMapSelect"' in shell
     assert 'id="tuneExperimentMapBtn"' not in shell
     assert 'id="mapStatusFilters"' in shell
-    assert 'data-map-filter="draft"' in shell
+    assert 'data-map-filter="draft"' not in shell
     assert 'id="mapPagination"' not in shell
     assert 'id="createMapBtn" hidden' in shell
     assert shell.count("map-workspace.js") == 1
     assert shell.count("map-workspace.css") == 1
 
 
-def test_map_workspace_edits_public_revisions_and_experiments_only_select_them():
-    """地图编辑只属于资源中心；实验页只保留 Revision 选择。"""
+def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
+    """地图编辑只属于资源中心；实验页只保留稳定地图选择。"""
     source = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
     editor = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
 
@@ -59,8 +59,9 @@ def test_map_workspace_edits_public_revisions_and_experiments_only_select_them()
     assert "pointermove" in editor
     assert "event.deltaY" in editor
     assert "/draft/map-overlay" not in source
-    assert "experimentMapRevisionSelect" in source
-    assert "/draft/map`" in source
+    assert "experimentMapSelect" in source
+    assert "method: 'PUT'" in source
+    assert "/draft/publish" not in source
     assert "this.publicEditor.resize();" in source
     assert "this.publicEditor.fit();" in source
     assert "page_size: '100'" in source
@@ -91,17 +92,40 @@ def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
     assert "window.addEventListener('beforeunload'" in workspace
     assert "if (this.publicEditor.changed || this.savePromise)" in workspace
     assert "acceptSavedWorld(saved.world, editorRevision)" in workspace
+    assert "requireCompleteMap(await request(`/maps/${mapId}`), '加载')" in workspace
+    assert "requireCompleteMap(await request(`/maps/${mapId}`," in workspace
+    assert "地图${operation}响应缺少完整 world" in workspace
     assert "get changeRevision()" in editor
     assert "this.root.dispatchEvent(new CustomEvent('map-editor-v2:change'" in editor
 
 
-def test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas():
-    """回归验证 ``test_readonly_map_can_create_a_draft_and_continue_with_a_new_canvas`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_new_map_form_normalizes_optional_key_and_validates_dimensions():
+    """无效的可选稳定键不应把新建地图流程变成 422 异常。"""
+    shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
+    workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
+
+    assert "稳定键（可选）" in shell
+    assert "留空或无法规范化时自动生成" in shell
+    assert 'id="newMapKey" maxlength="64"' in shell
+    assert "function normalizeOptionalMapKey(value)" in workspace
+    assert ".replace(/[^a-z0-9-]+/g, '-')" in workspace
+    assert "map_key: normalizedKey" in workspace
+    assert "输入的稳定键不符合格式，已自动生成" in workspace
+    assert "input.reportValidity();" in workspace
+    assert "宽度（格）', min: 1, max: 240" in workspace
+    assert 'id="newMapWidth" type="number" min="1"' in shell
+    assert 'id="newMapPixelSize"' in shell
+    assert "updateCreatePixelSize()" in workspace
+    assert "widthTiles * tileSizePx" in workspace
+    assert "Tile 尺寸', min: 8, max: 128" in workspace
+
+
+def test_mutable_map_can_create_a_new_canvas_without_forking():
     workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
 
     assert "map-editor-v2:request-edit" in workspace
     assert "handlePublicEditorEditRequest(event)" in workspace
-    assert "await this.publishOrFork();" in workspace
+    assert "publishOrFork" not in workspace
     assert "modal('open', 'createCanvasModal', 'newCanvasName')" in workspace
     assert "this.publicEditor.createMaterialCanvas({ name, width, height });" in workspace
     assert "画布宽高必须是 1–256 的整数" in workspace

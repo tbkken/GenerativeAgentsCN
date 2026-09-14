@@ -1,4 +1,4 @@
-"""Canonical JSON and revision hashing."""
+"""Canonical JSON and content hashing."""
 
 from __future__ import annotations
 

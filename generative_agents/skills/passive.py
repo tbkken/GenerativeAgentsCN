@@ -17,7 +17,7 @@ class PassiveSkillResult:
     """一次被动 Skill 的输出文本和规范化状态更新。"""
 
     skill: str
-    revision: str
+    content_hash: str
     output_text: str
     trace: tuple[dict[str, Any], ...]
 
@@ -108,14 +108,14 @@ class SnapshotPassiveSkillRuntime:
                 "Text-only Game Object Skills require a frozen Skill registry "
                 f"and model gateway: {name}"
             )
-        revision = str(document.get("revision") or "")
-        handler = self._handler(name, revision, source)
+        content_hash = str(document.get("content_hash") or "")
+        handler = self._handler(name, content_hash, source)
         safe_context = copy.deepcopy(dict(context))
         trace = (
             {
                 "event": "game_object_skill.start",
                 "skill": name,
-                "revision": revision,
+                "content_hash": content_hash,
                 "input_text": str(input_text),
             },
         )
@@ -131,14 +131,14 @@ class SnapshotPassiveSkillRuntime:
             )
         return PassiveSkillResult(
             skill=name,
-            revision=revision,
+            content_hash=content_hash,
             output_text=output.strip(),
             trace=(
                 *trace,
                 {
                     "event": "game_object_skill.result",
                     "skill": name,
-                    "revision": revision,
+                    "content_hash": content_hash,
                     "output_text": output.strip(),
                 },
             ),
@@ -196,34 +196,34 @@ class SnapshotPassiveSkillRuntime:
             raise PassiveSkillRuntimeError(
                 f"Game Object Skill {name} must return non-empty text"
             )
-        revision = document.revision
+        content_hash = document.content_hash
         return PassiveSkillResult(
             skill=name,
-            revision=revision,
+            content_hash=content_hash,
             output_text=output,
             trace=(
                 {
                     "event": "game_object_skill.start",
                     "skill": name,
-                    "revision": revision,
+                    "content_hash": content_hash,
                     "input_text": input_text,
                 },
                 *result.trace,
                 {
                     "event": "game_object_skill.result",
                     "skill": name,
-                    "revision": revision,
+                    "content_hash": content_hash,
                     "output_text": output,
                 },
             ),
         )
 
-    def _handler(self, name: str, revision: str, source: str):
+    def _handler(self, name: str, content_hash: str, source: str):
         """执行`handler`的内部处理，供当前模块或类复用。
 
         参数:
             name: 目标对象的人类可读名称。 类型：`str`。
-            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`str`。
+            content_hash: 当前物理 Skill 内容的完整性哈希。 类型：`str`。
             source: 当前操作使用的`source`。 类型：`str`。
 
         返回:
@@ -232,14 +232,20 @@ class SnapshotPassiveSkillRuntime:
         异常:
             PassiveSkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
-        cache_key = (name, revision)
+        cache_key = (name, content_hash)
         cached = self._handlers.get(cache_key)
         if cached is not None:
             return cached
-        module = ModuleType(f"ga_snapshot_skill_{name.replace('-', '_')}_{revision}")
+        module = ModuleType(
+            f"ga_snapshot_skill_{name.replace('-', '_')}_{content_hash}"
+        )
         module.__dict__["__builtins__"] = __builtins__
         exec(
-            compile(source, f"<skill:{name}@{revision}/scripts/main.py>", "exec"),
+            compile(
+                source,
+                f"<skill:{name}@{content_hash}/scripts/main.py>",
+                "exec",
+            ),
             module.__dict__,
         )
         handler = getattr(module, "run", None)

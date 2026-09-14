@@ -21,6 +21,7 @@ from generative_agents.config.map_editor import (
     MapEditorDocumentV2,
     MaterialSlice,
     MaterialSource,
+    PixelRect,
     RecipeEntry,
     RenderRecipe,
     VisualLayer,
@@ -382,7 +383,7 @@ def import_ville_editor_document() -> MapEditorDocumentV2:
                 name=f"{tileset['name']} · {local}",
                 kind="TILE",
                 grid_rect=GridRect(x=column, y=row, width=1, height=1),
-                pixel_rect=GridRect(
+                pixel_rect=PixelRect(
                     x=margin + column * (tile_width + spacing),
                     y=margin + row * (tile_height + spacing),
                     width=tile_width,

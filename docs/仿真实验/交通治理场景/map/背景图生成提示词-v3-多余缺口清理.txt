@@ -1,0 +1,9 @@
+Make ONE tiny correction to this exact image. Do not redesign or regenerate the map.
+
+There are currently THREE small gaps in the white guardrail along the LOWER motor road, excluding the two zebra crossings. CLOSE ONLY THE LEFTMOST OF THESE THREE GAPS.
+
+The unwanted leftmost gap is at approximately x=561 to x=598 and y=442 to y=457 in this 2172 x 724 image. It is above the area just to the right of the shop with the sign "早餐", and well to the LEFT of the narrow north-south service street.
+
+Fill this one gap with continuous white metal railing identical to the railing immediately on each side. There must be NO opening remaining at this leftmost position.
+
+Preserve the MIDDLE opening (above the left north-south service street) and the RIGHT opening (to the right of the bus shelter) exactly as they are. Preserve every other detail, including the continuous green bicycle lane. Do not add or move any opening. Do not change the road arrows, buildings, trees or text. Keep the same 2172 x 724, 3:1 ultrawide composition.

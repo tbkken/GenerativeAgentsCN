@@ -113,8 +113,8 @@ class SpatialPhysics(StrictModel):
     """空间资产的碰撞、占地和运动相关物理属性。"""
 
     collision: bool = False
-    width_m: float = Field(default=1.0, gt=0, le=10_000)
-    height_m: float = Field(default=1.0, gt=0, le=10_000)
+    width_tiles: float = Field(default=1.0, gt=0, le=10_000)
+    height_tiles: float = Field(default=1.0, gt=0, le=10_000)
     z_index: int = Field(default=0, ge=-10_000, le=10_000)
     traversable_by: list[
         Literal["PEDESTRIAN", "CAR", "BICYCLE", "MOTORCYCLE", "ALL"]
@@ -174,7 +174,7 @@ class SpatialSemantics(StrictModel):
 class SpatialAssetContract(StrictModel):
     """可复用空间资产的完整版本化契约，组合外观、物理和语义。"""
 
-    schema_version: Literal["ga-spatial-asset/v1"] = "ga-spatial-asset/v1"
+    schema_version: Literal["ga-spatial-asset/v2"] = "ga-spatial-asset/v2"
     name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
     ]
@@ -218,26 +218,25 @@ class SpatialAssetContract(StrictModel):
         if self.kind == "MARKING" and self.physics.collision:
             raise ValueError("MARKING assets cannot be collidable")
         if self.skill_bindings and self.kind != "OBJECT":
-            raise ValueError("only OBJECT spatial assets may bind passive Skills")
+            raise ValueError("only OBJECT spatial assets may bind Skills")
         return self
 
 
 class SpatialPlacement(StrictModel):
-    """在具体地图坐标上实例化某个已发布空间资产。"""
+    """在 Tile 网格坐标上实例化一个可变空间资产。"""
 
     instance_key: StableKey
-    spatial_asset_revision_id: str = Field(min_length=1, max_length=36)
-    x_m: float
-    y_m: float
+    spatial_asset_id: str = Field(min_length=1, max_length=36)
+    x_tiles: float
+    y_tiles: float
     rotation_degrees: float = Field(default=0, ge=-360, le=360)
     state_overrides: dict[str, Any] = Field(default_factory=dict)
 
 
 class SpatialSceneExtension(StrictModel):
-    """附加到 WorldConfig 的版本化空间场景和全部资产实例。"""
+    """附加到 WorldConfig 的空间场景和全部资产实例。"""
 
-    schema_version: Literal["ga-spatial-scene/v1"] = "ga-spatial-scene/v1"
-    meters_per_tile: float = Field(default=1.0, gt=0, le=1_000)
+    schema_version: Literal["ga-spatial-scene/v2"] = "ga-spatial-scene/v2"
     palette_refs: dict[StableKey, str] = Field(default_factory=dict, max_length=1_000)
     placements: list[SpatialPlacement] = Field(default_factory=list, max_length=100_000)
 

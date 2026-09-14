@@ -39,8 +39,8 @@
   });
 
   class GAReplayPlayer {
-    static resolveAgentSelection(selectedKey, selectedRevisionId, runRevisionId, agents) {
-      if (!selectedKey || !selectedRevisionId || selectedRevisionId !== runRevisionId) return null;
+    static resolveAgentSelection(selectedKey, selectedExperimentId, runExperimentId, agents) {
+      if (!selectedKey || !selectedExperimentId || selectedExperimentId !== runExperimentId) return null;
       return agents.some(agent => agent.agent_key === selectedKey) ? selectedKey : null;
     }
 
@@ -53,6 +53,22 @@
           || Number(left.sort_order || 0) - Number(right.sort_order || 0)
           || String(left.id || '').localeCompare(String(right.id || ''))
         ));
+    }
+
+    static stateMaterial(node, state) {
+      return (typeof state?.state === 'string'
+        ? node?.state_appearance?.cases?.find(item => item.value === state.state)?.material_slice_id
+        : null) || node?.material_slice_id || null;
+    }
+
+    static agentDisplaySize({spatial = false, worldScale = 32, spriteDisplayTiles = null} = {}) {
+      const scale = Number(worldScale) > 0 ? Number(worldScale) : 32;
+      const configured = Number(spriteDisplayTiles);
+      const hasConfigured = spriteDisplayTiles !== null
+        && spriteDisplayTiles !== undefined
+        && String(spriteDisplayTiles).trim() !== '';
+      if (hasConfigured && Number.isFinite(configured)) return scale * Math.max(0.5, Math.min(6, configured));
+      return spatial ? Math.max(36, Math.min(52, scale * 2.4)) : 32;
     }
 
     constructor(options = {}) {
@@ -68,6 +84,7 @@
       this.availableStep = 0;
       this.resultVersion = 0;
       this.currentStep = 0;
+      this.currentStepFact = null;
       this.speed = 1;
       this.timer = null;
       this.ready = false;
@@ -83,6 +100,7 @@
       this.agentDefinitions = new Map();
       this.selectedAgentKey = null;
       this.followedAgentKey = null;
+      this.freeCameraZoom = null;
       this.layerVisibility = {
         agentNames: true,
         actionBubbles: true,
@@ -104,7 +122,7 @@
       this.pendingStep = null;
       if (signal) signal.addEventListener('abort', () => this.abortController?.abort(), { once: true });
       this.onStatus({ state: 'LOADING', runId });
-      const manifest = await this._json(`/api/v1/runs/${encodeURIComponent(runId)}/replay/manifest`, generation);
+      const manifest = await this._json(`/api/studio/runs/${encodeURIComponent(runId)}/replay/manifest`, generation);
       if (!this._owns(runId, generation)) return;
       this._validateManifest(manifest, runId);
       this.manifest = manifest;
@@ -142,6 +160,8 @@
       this.runId = null;
       this.manifest = null;
       this.currentStep = 0;
+      this.currentStepFact = null;
+      this.freeCameraZoom = null;
     }
 
     async play() {
@@ -194,10 +214,26 @@
     }
 
     followAgent(agentKey) {
+      const previousKey = this.followedAgentKey;
       this.followedAgentKey = agentKey || null;
       const object = this.agentObjects.get(this.followedAgentKey);
-      if (this.scene && object?.sprite) this.scene.cameras.main.startFollow(object.sprite, true, 0.12, 0.12);
-      else if (this.scene) this.scene.cameras.main.stopFollow();
+      const camera = this.scene?.cameras?.main;
+      if (camera && object?.sprite) {
+        if (!previousKey && Number.isFinite(Number(camera.zoom))) {
+          this.freeCameraZoom = Number(camera.zoom);
+        }
+        camera.startFollow(object.sprite, true, 0.12, 0.12);
+        if (Number(camera.zoom) < 0.85 && typeof camera.zoomTo === 'function') {
+          camera.zoomTo(0.85, 180);
+        }
+      } else if (camera) {
+        camera.stopFollow();
+        if (previousKey && Number.isFinite(this.freeCameraZoom)
+          && typeof camera.zoomTo === 'function') {
+          camera.zoomTo(this.freeCameraZoom, 180);
+        }
+        this.freeCameraZoom = null;
+      }
     }
 
     toggleAgentFollow(agentKey) {
@@ -212,6 +248,13 @@
       this.agentObjects.forEach((value, key) => {
         const sprite = value?.sprite;
         if (!sprite) return;
+        if (value.marker?.setStrokeStyle) {
+          value.marker.setStrokeStyle(
+            key === this.selectedAgentKey ? 4 : 2,
+            key === this.selectedAgentKey ? 0xffc857 : 0x176f63,
+            1,
+          );
+        }
         if (key === this.selectedAgentKey) {
           if (typeof sprite.setTint === 'function') sprite.setTint(0xffd166);
           else if (typeof sprite.setStrokeStyle === 'function') sprite.setStrokeStyle(3, 0xffd166, 1);
@@ -237,10 +280,10 @@
     }
 
     async refreshAvailable() {
-      if (!this.runId) return;
+      if (!this.runId || !this.ready) return;
       const runId = this.runId;
       const generation = this.generation;
-      const manifest = await this._json(`/api/v1/runs/${encodeURIComponent(runId)}/replay/manifest`, generation);
+      const manifest = await this._json(`/api/studio/runs/${encodeURIComponent(runId)}/replay/availability`, generation);
       if (!this._owns(runId, generation)) return;
       const previousAvailableStep = this.availableStep;
       if (manifest.available_step < this.availableStep) {
@@ -262,7 +305,8 @@
       }
       if (manifest.available_step !== this.availableStep) {
         this.availableStep = manifest.available_step;
-        this.manifest = manifest;
+        this.manifest = { ...this.manifest, ...manifest };
+        if (this.availableStep > 0 && this.currentStep === 0 && this.pendingStep === null) await this.seek(1);
         this.onStatus({ state: 'AVAILABLE_STEP', runId, availableStep: this.availableStep, partial: manifest.partial });
       }
     }
@@ -279,6 +323,7 @@
       this.pendingStep = null;
       if (!step || step.step_no !== target) return null;
       this.currentStep = target;
+      this.currentStepFact = step;
       this._renderStep(step);
       return step;
     }
@@ -293,7 +338,7 @@
         const runId = this.runId;
         const generation = this.generation;
         const page = await this._json(
-          `/api/v1/runs/${encodeURIComponent(runId)}/replay/steps?from_step=${from}&limit=${this.windowSize}`,
+          `/api/studio/runs/${encodeURIComponent(runId)}/replay/steps?from_step=${from}&limit=${this.windowSize}`,
           generation,
         );
         if (!this._owns(runId, generation)) return null;
@@ -313,6 +358,11 @@
     }
 
     _cachedStep(stepNo) {
+      // A growing Run invalidates its tail page, not the immutable facts that
+      // are already displayed. Keep selection/layer changes tied to that frame.
+      if (stepNo === this.currentStep && this.currentStepFact?.step_no === stepNo) {
+        return this.currentStepFact;
+      }
       const from = Math.floor((Math.max(1, stepNo) - 1) / this.windowSize) * this.windowSize + 1;
       return this.windows.get(from)?.find(item => item.step_no === stepNo) || null;
     }
@@ -323,14 +373,15 @@
       step.agents.forEach(fact => {
         const object = this.agentObjects.get(fact.agent_key);
         if (!object) return;
-        const motion = fact.decision_context?.motion;
-        const coord = motion && Number.isFinite(Number(motion.x_m)) && Number.isFinite(Number(motion.y_m))
-          ? [Number(motion.x_m), Number(motion.y_m)]
-          : fact.coord;
+        const coord = fact.coord;
         const [targetX, targetY] = this._worldPoint(coord);
         if (object.sprite) {
           this.scene.tweens.killTweensOf(object.sprite);
           this.scene.tweens.add({ targets: object.sprite, x: targetX, y: targetY, duration: 140 / this.speed });
+        }
+        if (object.marker) {
+          this.scene.tweens.killTweensOf(object.marker);
+          this.scene.tweens.add({ targets: object.marker, x: targetX, y: targetY, duration: 140 / this.speed });
         }
         if (object.glyph) {
           this.scene.tweens.killTweensOf(object.glyph);
@@ -343,15 +394,18 @@
           );
         }
         if (object.bubble) {
-          const actionDescription = fact.action?.description || '';
+          const fullDescription = fact.action?.description || '';
+          const letters = Array.from(fullDescription);
+          const actionDescription = letters.length > 28 ? letters.slice(0, 28).join('') + '…' : fullDescription;
           const actionEmoji = fact.action?.emoji || '';
           object.bubble.setText(
             actionDescription
               ? `${actionEmoji ? `${actionEmoji} ` : ''}${actionDescription}`
               : actionEmoji,
           );
+          const worldWidth = Number(this.manifest?.world?.definition?.width || this.manifest?.world?.definition?.size?.[1] || 0) * Number(this.manifest?.world?.render_asset?.pixels_per_tile || 16);
           object.bubble.setPosition(
-            targetX + ACTION_BUBBLE_OFFSET.x,
+            worldWidth ? Math.max(0, Math.min(targetX + ACTION_BUBBLE_OFFSET.x, worldWidth - object.bubble.width)) : targetX + ACTION_BUBBLE_OFFSET.x,
             targetY + ACTION_BUBBLE_OFFSET.y,
           );
         }
@@ -397,8 +451,40 @@
       });
       this.worldObjects.forEach((object, objectKey) => {
         object.state = { ...(object.initialState || {}), ...(state[objectKey] || {}) };
+        object.updateVisual?.(object.state);
         if (object.glyph) object.glyph.setText(this._appearanceGlyph(object.appearance, object.state));
       });
+    }
+
+    _withStartup(start) {
+      const signal = this.abortController?.signal;
+      return new Promise((resolve, reject) => {
+        const finish = (callback, value) => {
+          clearTimeout(timer);
+          signal?.removeEventListener('abort', abort);
+          callback(value);
+        };
+        const abort = () => finish(reject, new DOMException('replay loading cancelled', 'AbortError'));
+        const timer = setTimeout(() => finish(reject, new Error('地图或人物资源加载超时')), 45000);
+        signal?.addEventListener('abort', abort, { once: true });
+        if (signal?.aborted) return abort();
+        try { start(value => finish(resolve, value), error => finish(reject, error)); }
+        catch (error) { finish(reject, error); }
+      });
+    }
+
+    _bootScene(config, reject) {
+      for (const phase of ['preload', 'create']) {
+        const original = config.scene[phase];
+        config.scene[phase] = function () {
+          try {
+            if (phase === 'preload') this.load.on('loaderror', file => reject(new Error(`回放资源加载失败：${file.key}`)));
+            original.call(this);
+          } catch (error) { reject(error); }
+        };
+      }
+      this.game = new Phaser.Game(config);
+      this.game.events.once('destroy', () => reject(new Error('replay game destroyed before ready')));
     }
 
     async _createGame(manifest, generation) {
@@ -414,7 +500,7 @@
       const tileRoot = assets.base_url;
       const host = player.canvas?.parentElement;
       if (!host) throw new Error('REPLAY_CANVAS_HOST_MISSING');
-      await new Promise((resolve, reject) => {
+      await this._withStartup((resolve, reject) => {
         const config = {
           // The in-app browser is a custom environment where Phaser refuses
           // AUTO renderer probing.  Canvas is explicit, local and sufficient
@@ -482,8 +568,7 @@
           },
         };
         try {
-          player.game = new PhaserRuntime.Game(config);
-          player.game.events.once('destroy', () => reject(new Error('replay game destroyed before ready')));
+          player._bootScene(config, reject);
         } catch (error) { reject(error); }
       });
     }
@@ -497,7 +582,7 @@
       const size = Array.isArray(definition.size) ? definition.size : [];
       const width = Number(definition.width || size[1] || 48);
       const height = Number(definition.height || size[0] || 48);
-      const scale = Number(assets.pixels_per_meter || 16);
+      const scale = Number(assets.pixels_per_tile || 16);
       const tiles = definition.tiles || [];
       const editorV2 = definition.editor_v2 && typeof definition.editor_v2 === 'object'
         ? definition.editor_v2
@@ -521,14 +606,16 @@
         .map(item => [Number(item.indexed_gid), item]));
       const hierarchyById = new Map(hierarchyNodes.map(item => [String(item.id), item]));
       const sourceTextureKey = sourceId => `world-source:${sourceId}`;
-      const sourceTextureUrl = source => source?.asset_id
-        ? `/api/v1/assets/${encodeURIComponent(source.asset_id)}/content`
+      const sourceTextureUrl = source => source?.package_url
+        ? source.package_url
+        : source?.asset_id
+        ? `/api/studio/resources/assets/${encodeURIComponent(source.asset_id)}/content`
         : (source?.bundled_path
           ? `/generative_agents/frontend/static/assets/village/${source.bundled_path}`
           : '');
       const host = player.canvas?.parentElement;
       if (!host) throw new Error('REPLAY_CANVAS_HOST_MISSING');
-      await new Promise((resolve, reject) => {
+      await this._withStartup((resolve, reject) => {
         const config = {
           type: PhaserRuntime.CANVAS,
           parent: host,
@@ -556,6 +643,41 @@
             create() {
               if (!player._owns(manifest.run_id, generation)) return;
               player.scene = this;
+              materialSources.filter(source => source.kind === 'GENERATED' && source.generated_color).forEach(source => {
+                const target = document.createElement('canvas'); target.width = source.width_px; target.height = source.height_px;
+                const context = target.getContext('2d'); context.fillStyle = source.generated_color; context.fillRect(0, 0, target.width, target.height);
+                this.textures.addCanvas(sourceTextureKey(source.id), target);
+              });
+              const canvasBySource = new Map((editorV2.material_canvases || []).map(canvas => [canvas.source_id, canvas]));
+              const renderingCanvases = new Set();
+              const buildCanvas = canvas => {
+                const key = sourceTextureKey(canvas.source_id);
+                if (this.textures.exists(key)) return;
+                if (renderingCanvases.has(canvas.id)) throw new Error(`画布素材循环引用：${canvas.name}`);
+                renderingCanvases.add(canvas.id);
+                const target = document.createElement('canvas');
+                const unit = Number(canvas.tile_size || 32);
+                target.width = canvas.width_tiles * unit; target.height = canvas.height_tiles * unit;
+                const ctx = target.getContext('2d'); ctx.imageSmoothingEnabled = false;
+                Object.keys(canvas.cells || {}).map(Number).sort((a,b) => a-b).forEach(index => {
+                  const x = (index % canvas.width_tiles) * unit, y = Math.floor(index / canvas.width_tiles) * unit;
+                  (canvas.cells[index] || []).forEach(layer => {
+                    const slice = sliceById.get(layer.slice_id); if (!slice) return;
+                    const nested = canvasBySource.get(slice.source_id); if (nested) buildCanvas(nested);
+                    const textureKey = sourceTextureKey(slice.source_id); if (!this.textures.exists(textureKey)) return;
+                    const image = this.textures.get(textureKey).getSourceImage(), rect = slice.pixel_rect, part = layer.part;
+                    const w = Number(part?.columns || 1) * unit, h = Number(part?.rows || 1) * unit;
+                    const left = x - Number(part?.column || 0) * unit, top = y - Number(part?.row || 0) * unit;
+                    ctx.save(); ctx.beginPath(); ctx.rect(x,y,unit,unit); ctx.clip();
+                    ctx.translate(left+w/2, top+h/2); ctx.rotate(Number(part?.rotation_degrees ?? slice.rotation_degrees ?? 0)*Math.PI/180);
+                    const rotated = Number(part?.rotation_degrees ?? slice.rotation_degrees ?? 0) % 180 !== 0;
+                    ctx.drawImage(image,rect.x,rect.y,rect.width,rect.height,-(rotated?h:w)/2,-(rotated?w:h)/2,rotated?h:w,rotated?w:h);
+                    ctx.restore();
+                  });
+                });
+                this.textures.addCanvas(key,target); renderingCanvases.delete(canvas.id);
+              };
+              canvasBySource.forEach(buildCanvas);
               const graphics = this.add.graphics().setDepth(0);
               const drawTile = (paletteKey, x, y) => {
                 const appearance = assets.palette?.[paletteKey] || {};
@@ -574,7 +696,7 @@
                 const source = slice ? sourceById.get(String(slice.source_id || '')) : null;
                 const textureKey = source ? sourceTextureKey(String(source.id)) : '';
                 const rect = slice?.pixel_rect;
-                if (!slice || !sourceTextureUrl(source) || !rect || !this.textures.exists(textureKey)) return false;
+                if (!slice || !rect || !this.textures.exists(textureKey)) return false;
                 const frameKey = `slice-frame:${slice.id}`;
                 const texture = this.textures.get(textureKey);
                 if (!texture.has(frameKey)) {
@@ -593,13 +715,15 @@
                   textureKey,
                   frameKey,
                 );
+                const angle = Number(rotationDegrees ?? slice.rotation_degrees ?? 0);
+                const rotated = angle % 180 !== 0;
                 image.setDisplaySize(
-                  Math.max(1, Number(widthInTiles)) * scale,
-                  Math.max(1, Number(heightInTiles)) * scale,
+                  Math.max(1, Number(rotated ? heightInTiles : widthInTiles)) * scale,
+                  Math.max(1, Number(rotated ? widthInTiles : heightInTiles)) * scale,
                 );
-                image.setAngle(Number(rotationDegrees ?? slice.rotation_degrees ?? 0));
+                image.setAngle(angle);
                 image.setDepth(depth);
-                return true;
+                return image;
               };
               const compositeCanvas = document.createElement('canvas');
               compositeCanvas.width = Math.max(1, width * scale);
@@ -610,7 +734,7 @@
                 const source = slice ? sourceById.get(String(slice.source_id || '')) : null;
                 const textureKey = source ? sourceTextureKey(String(source.id)) : '';
                 const rect = slice?.pixel_rect;
-                if (!slice || !sourceTextureUrl(source) || !rect || !this.textures.exists(textureKey)) return false;
+                if (!slice || !rect || !this.textures.exists(textureKey)) return false;
                 const image = this.textures.get(textureKey).getSourceImage();
                 if (!image) return false;
                 const raw = Number(rawGid || 0) >>> 0;
@@ -749,32 +873,55 @@
                 const rightNode = hierarchyById.get(String(right.instance_key || ''));
                 return Number(leftNode?.sort_order || 0) - Number(rightNode?.sort_order || 0)
                   || String(left.instance_key || '').localeCompare(String(right.instance_key || ''));
-              }).forEach(item => {
+              }).forEach((item, objectOrder) => {
+                const objectDepth = 10 + objectOrder / Math.max(1, (assets.objects || []).length + 1);
                 const hierarchyNode = hierarchyById.get(String(item.instance_key || ''));
                 const bounds = hierarchyNode?.bounds || {};
-                const materialDrawn = hierarchyNode?.material_slice_id && drawMaterialSlice(
+                let materialDrawn = hierarchyNode?.material_slice_id && drawMaterialSlice(
                   hierarchyNode.material_slice_id,
-                  Number(bounds.x ?? item.x_m ?? item.x ?? 0),
-                  Number(bounds.y ?? item.y_m ?? item.y ?? 0),
+                  Number(bounds.x ?? item.x_tiles ?? item.x ?? 0),
+                  Number(bounds.y ?? item.y_tiles ?? item.y ?? 0),
                   {
                     widthInTiles: Number(bounds.width || 1),
                     heightInTiles: Number(bounds.height || 1),
-                    depth: 10,
+                    depth: objectDepth,
                   },
                 );
                 const [px, py] = player._worldPoint([
-                  item.x_m ?? item.x,
-                  item.y_m ?? item.y,
+                  item.x_tiles ?? item.x,
+                  item.y_tiles ?? item.y,
                 ]);
-                const glyph = materialDrawn ? null : this.add.text(
+                const glyph = this.add.text(
                     px,
                     py,
                     player._appearanceGlyph(item.appearance, item.state),
                     { fontFamily: REPLAY_FONT_FAMILY, fontSize: `${Math.max(14, scale)}px` },
-                  ).setOrigin(0.5).setDepth(10);
+                  ).setOrigin(0.5).setDepth(objectDepth);
+                glyph.setVisible(!materialDrawn);
                 if (typeof glyph?.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);
                 player.worldObjects.set(item.instance_key, {
                   glyph,
+                  updateVisual: (() => {
+                    let activeSlice = hierarchyNode?.material_slice_id || null;
+                    const failedSlices = new Set();
+                    return state => {
+                      const desired = GAReplayPlayer.stateMaterial(hierarchyNode, state);
+                      const selected = desired !== hierarchyNode?.material_slice_id;
+                      if (desired === activeSlice) return;
+                      let replacement = desired && drawMaterialSlice(desired, Number(bounds.x ?? item.x_tiles ?? 0), Number(bounds.y ?? item.y_tiles ?? 0), {widthInTiles: Number(bounds.width || 1), heightInTiles: Number(bounds.height || 1), depth: objectDepth, rotationDegrees: Number(sliceById.get(hierarchyNode?.material_slice_id)?.rotation_degrees || 0)});
+                      if (!replacement && selected) {
+                        if (!failedSlices.has(desired)) {
+                          failedSlices.add(desired);
+                          const detail = {run_id: manifest.run_id, object_key: item.instance_key, step: player.currentStep, state: state.state, material: desired};
+                          console.warn('状态外观加载失败，已回退默认素材', detail);
+                          player.onError({code: `状态外观加载失败：对象 ${item.instance_key}，状态 ${state.state}，素材 ${desired}；已回退默认素材`, nonFatal: true, ...detail});
+                        }
+                        replacement = drawMaterialSlice(hierarchyNode.material_slice_id, Number(bounds.x || 0), Number(bounds.y || 0), {widthInTiles: Number(bounds.width || 1), heightInTiles: Number(bounds.height || 1), depth: objectDepth});
+                      }
+                      materialDrawn?.destroy?.(); materialDrawn = replacement; activeSlice = desired;
+                      glyph?.setVisible?.(!replacement);
+                    };
+                  })(),
                   appearance: item.appearance || {},
                   initialState: { ...(item.state || {}) },
                   state: { ...(item.state || {}) },
@@ -806,15 +953,14 @@
           },
         };
         try {
-          player.game = new PhaserRuntime.Game(config);
-          player.game.events.once('destroy', () => reject(new Error('replay game destroyed before ready')));
+          player._bootScene(config, reject);
         } catch (error) { reject(error); }
       });
     }
 
     _worldPoint(coord) {
       const spatial = this.manifest?.world?.render_asset?.renderer === 'SPATIAL_GRID';
-      const scale = spatial ? Number(this.manifest.world.render_asset.pixels_per_meter || 16) : 32;
+      const scale = spatial ? Number(this.manifest.world.render_asset.pixels_per_tile || 16) : 32;
       return [Number(coord?.[0] || 0) * scale + scale / 2, Number(coord?.[1] || 0) * scale + scale / 2];
     }
 
@@ -848,13 +994,30 @@
       const [px, py] = this._worldPoint([x, y]);
       let sprite;
       let glyph = null;
+      const spatial = this.manifest?.world?.render_asset?.renderer === 'SPATIAL_GRID';
+      const worldScale = spatial
+        ? Number(this.manifest.world.render_asset.pixels_per_tile || 16)
+        : 32;
+      const marker = scene.add.circle(
+        px,
+        py,
+        Math.max(13, worldScale * 0.72),
+        0xffffff,
+        0.82,
+      ).setDepth(39).setStrokeStyle(2, 0x176f63, 1);
       if (definition.sprite_asset.status === 'READY') {
-        sprite = scene.add.sprite(px, py, `agent:${definition.agent_key}`, 'down-walk.000').setDepth(15).setInteractive();
+        sprite = scene.add.sprite(px, py, `agent:${definition.agent_key}`, 'down-walk.000').setDepth(40).setInteractive();
+        const displaySize = GAReplayPlayer.agentDisplaySize({
+          spatial,
+          worldScale,
+          spriteDisplayTiles: definition.sprite_display_tiles,
+        });
+        if (typeof sprite.setDisplaySize === 'function') sprite.setDisplaySize(displaySize, displaySize);
       } else {
         const roleGlyph = definition.role === 'DRIVER' ? '🚗' : definition.role === 'PEDESTRIAN' ? '🚶' : '!';
         const size = 26;
-        sprite = scene.add.circle(px, py, size / 2, definition.role === 'DRIVER' ? 0x315d8a : 0xb64b4b).setDepth(15).setInteractive();
-        glyph = scene.add.text(px, py, roleGlyph, { fontFamily: REPLAY_FONT_FAMILY, fontSize: '17px' }).setOrigin(0.5).setDepth(16);
+        sprite = scene.add.circle(px, py, size / 2, definition.role === 'DRIVER' ? 0x315d8a : 0xb64b4b).setDepth(40).setInteractive();
+        glyph = scene.add.text(px, py, roleGlyph, { fontFamily: REPLAY_FONT_FAMILY, fontSize: '17px' }).setOrigin(0.5).setDepth(41);
         if (typeof glyph.setResolution === 'function') glyph.setResolution(TEXT_RENDER_RESOLUTION);
         if (!definition.role) {
           this.onError({
@@ -871,19 +1034,19 @@
         {
         color: '#17352f', backgroundColor: '#fffffff2', fontFamily: REPLAY_FONT_FAMILY, fontSize: '11px', padding: { x: 3, y: 1 },
         },
-      ).setOrigin(0.5).setDepth(30).setVisible(this.layerVisibility.agentNames);
+      ).setOrigin(0.5).setDepth(42).setVisible(this.layerVisibility.agentNames);
       if (typeof label.setResolution === 'function') label.setResolution(TEXT_RENDER_RESOLUTION);
       const bubble = scene.add.text(
         px + ACTION_BUBBLE_OFFSET.x,
         py + ACTION_BUBBLE_OFFSET.y,
         '',
         {
-          color: '#17352f', backgroundColor: '#fffdf2f2', fontFamily: REPLAY_FONT_FAMILY, fontSize: '11px', padding: { x: 3, y: 1 },
+          color: '#17352f', backgroundColor: '#fffdf2f2', fontFamily: REPLAY_FONT_FAMILY, fontSize: '11px', padding: { x: 3, y: 1 }, wordWrap: {width: 140, useAdvancedWrap: true},
         },
-      ).setDepth(31).setVisible(this.layerVisibility.actionBubbles);
+      ).setDepth(43).setVisible(this.layerVisibility.actionBubbles);
       if (typeof bubble.setResolution === 'function') bubble.setResolution(TEXT_RENDER_RESOLUTION);
-      const trail = scene.add.graphics().setDepth(14).setVisible(this.layerVisibility.trails);
-      this.agentObjects.set(definition.agent_key, { sprite, glyph, label, bubble, trail });
+      const trail = scene.add.graphics().setDepth(38).setVisible(this.layerVisibility.trails);
+      this.agentObjects.set(definition.agent_key, { sprite, marker, glyph, label, bubble, trail });
     }
 
     async _json(url, generation) {

@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import copy
 import json
+import math
 from dataclasses import dataclass
 from typing import Any, Mapping
+
+from generative_agents.ga_protocol.movement import movement_activity_from_predicate
 
 from .iteration import IterationContext
 
@@ -52,6 +55,18 @@ class SimulationMCPServer:
 
         self._action = None
 
+    @property
+    def memory_owner_key(self) -> str:
+        return self.iteration.agent_key
+
+    def _observer(self):
+        return self.game.get_agent(self.iteration.agent_key)
+
+    def _public_object_state(self, object_key: str) -> dict:
+        system = self.game.game_object_interactions
+        reader = getattr(system, "public_state", system.object_state)
+        return reader(object_key)
+
     def tools(self) -> list[dict[str, Any]]:
         tools = [
             {
@@ -75,10 +90,35 @@ class SimulationMCPServer:
                 },
             },
             {
+                "name": "world-navigate",
+                "description": (
+                    "Read-only navigation from your current position. Query a coordinate "
+                    "within your vision radius, or an exact perceived or remembered arena/object address. "
+                    "Returns reachability, distance and next_coord (only the FIRST path tile), "
+                    "never undiscovered map semantics. Does not move you. To continue toward "
+                    "the queried destination, submit MOVE with the SAME target_coord or "
+                    "target_address; do not replace it with next_coord unless you intend "
+                    "to stop at that adjacent tile. The kernel applies the Step movement budget."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "target_coord": {"type": "array", "items": {"type": "integer"},
+                                         "minItems": 2, "maxItems": 2},
+                        "target_address": {"type": "array", "items": {"type": "string"},
+                                           "minItems": 3, "maxItems": 4},
+                    },
+                    "additionalProperties": False,
+                    "oneOf": [{"required": ["target_coord"]}, {"required": ["target_address"]}],
+                },
+            },
+            {
                 "name": "world-act",
                 "description": (
                     "Select the single replayable world-changing action for this "
-                    "Agent iteration. Call at most once."
+                    "Agent iteration. Call at most once. SET_OBJECT_STATE uses object_key and "
+                    "state_patch; use state_patch.state for an observed visual state name, "
+                    "or an empty string to restore the default appearance."
                 ),
                 "inputSchema": {
                     "type": "object",
@@ -95,7 +135,13 @@ class SimulationMCPServer:
                             ],
                         },
                         "description": {"type": "string"},
-                        "predicate": {"type": "string"},
+                        "predicate": {"type": "string", "description": (
+                            "For MOVE, an optional short natural-language phrase for the activity "
+                            "performed while moving (at most 240 characters), without locations, "
+                            "coordinates, plans or claims of arrival. The committed movement_activity "
+                            "preserves this phrase. Actual displacement and arrival at this MOVE's "
+                            "target are determined by the kernel. For ACT, the Event predicate."
+                        )},
                         "object": {"type": "string"},
                         "emoji": {"type": "string"},
                         "target_address": {
@@ -116,6 +162,13 @@ class SimulationMCPServer:
                                 "it must equal the Agent's current coordinate."
                             ),
                         },
+                        "target_node_id": {
+                            "type": "string",
+                            "description": (
+                                "Optional stable spatial node identity for MOVE. "
+                                "When supplied it must exist at the destination."
+                            ),
+                        },
                         "participant_agent_keys": {
                             "type": "array",
                             "items": {"type": "string"},
@@ -123,7 +176,11 @@ class SimulationMCPServer:
                         "message": {"type": "string"},
                         "conversation_id": {
                             "type": "string",
-                            "description": "Continue a known conversation UUID.",
+                            "description": (
+                                "Continue an open conversation UUID belonging to you "
+                                "and the selected participant. Omit for a new conversation "
+                                "or when changing participants. Do not invent an ID."
+                            ),
                         },
                         "start_new_conversation": {
                             "type": "boolean",
@@ -258,33 +315,43 @@ class SimulationMCPServer:
 
     def call(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         try:
+            tool = next((item for item in self.tools() if item["name"] == name), None)
+            if tool is None:
+                raise ValueError(f"Unknown simulation MCP tool: {name}")
+            schema = tool["inputSchema"]
+            if not isinstance(arguments, dict) or set(arguments) - set(schema.get("properties", {})):
+                raise ValueError("unknown arguments; actor identity is injected by the runtime")
+            if set(schema.get("required", [])) - set(arguments):
+                raise ValueError("required MCP arguments are missing")
             if name == "world-perceive":
                 value = self._perceive(arguments)
+            elif name == "world-navigate":
+                value = self._navigate(arguments)
             elif name == "world-act":
                 value = self._plan_action(arguments)
             elif name == "memory-stream-search" and self.memory_stream is not None:
                 value = self.memory_stream.search(
-                    agent_key=self.iteration.agent_key,
+                    agent_key=self.memory_owner_key,
                     query=str(arguments.get("query") or ""),
                     limit=int(arguments.get("limit") or 8),
                 )
             elif name == "memory-stream-append" and self.memory_stream is not None:
                 payload = dict(arguments)
-                payload["agent_key"] = self.iteration.agent_key
+                payload["agent_key"] = self.memory_owner_key
                 payload.setdefault("kind", "event")
                 payload.setdefault("poignancy", 1)
                 payload.setdefault("address", list(self.iteration.address))
                 value = self.memory_stream.append(**payload)
             elif name == "memory-stream-supersede" and self.memory_stream is not None:
                 value = self.memory_stream.supersede(
-                    agent_key=self.iteration.agent_key,
+                    agent_key=self.memory_owner_key,
                     memory_id=str(arguments.get("memory_id") or ""),
                     content=str(arguments.get("content") or ""),
                     reason=str(arguments.get("reason") or "").strip() or None,
                 )
             elif name == "memory-stream-invalidate" and self.memory_stream is not None:
                 value = self.memory_stream.invalidate(
-                    agent_key=self.iteration.agent_key,
+                    agent_key=self.memory_owner_key,
                     memory_id=str(arguments.get("memory_id") or ""),
                     reason=str(arguments.get("reason") or ""),
                 )
@@ -305,8 +372,58 @@ class SimulationMCPServer:
                 "isError": True,
             }
 
-    def _perceive(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+    def _navigate(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        if set(arguments) - {"target_coord", "target_address"} or len(arguments) != 1:
+            raise ValueError("navigation requires exactly one target; identity is injected")
         agent = self.game.get_agent(self.iteration.agent_key)
+        radius = max(0, int((getattr(agent, "percept_config", {}) or {}).get("vision_r", 4)))
+        current = tuple(self.iteration.coord)
+        coord = arguments.get("target_coord")
+        if coord is not None:
+            if not isinstance(coord, (list, tuple)) or len(coord) != 2 or any(type(v) is not int for v in coord):
+                raise ValueError("target_coord must contain exactly two integers")
+            if max(abs(coord[i] - current[i]) for i in (0, 1)) > radius:
+                raise ValueError("navigation target is outside this Agent's vision")
+        else:
+            address = arguments.get("target_address")
+            if (not isinstance(address, (list, tuple)) or not 3 <= len(address) <= 4
+                    or any(not isinstance(v, str) or not v.strip() for v in address)):
+                raise ValueError("navigation requires an exact arena/object address")
+            address = list(address)
+            known = address == list(self.iteration.address[:len(address)])
+            tree = getattr(getattr(agent, "spatial", None), "tree", {})
+            for part in address:
+                if isinstance(tree, dict) and part in tree:
+                    tree = tree[part]
+                elif isinstance(tree, list) and part == address[-1] and part in tree:
+                    tree = True
+                else:
+                    tree = None
+                    break
+            known = known or tree is not None
+            if not known:
+                perception = self._perceive({})
+                known = any(
+                    list(node.get("address") or []) == address
+                    for collection in ("spatial_nodes", "game_objects")
+                    for node in perception.get(collection, [])
+                )
+            if not known:
+                raise ValueError("navigation target is not perceived or remembered by this Agent")
+        try:
+            path = self._resolve_path(arguments, navigation=True)
+        except ValueError as exc:
+            if str(exc) in {"target_coord is not traversable", "navigation target is unreachable"}:
+                return {"reachable": False, "reason": "BLOCKED_OR_DISCONNECTED"}
+            raise
+        return {"reachable": True, "distance_tiles": len(path),
+                "next_coord": list(path[0]) if path else list(current),
+                "movement_required": bool(path),
+                "requested_target": copy.deepcopy(dict(arguments)),
+                "next_coord_role": "FIRST_PATH_TILE_NOT_DESTINATION"}
+
+    def _perceive(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        agent = self._observer()
         percept_config = getattr(agent, "percept_config", {}) or {}
         vision_radius = max(0, int(percept_config.get("vision_r", 4)))
         requested_radius = (
@@ -386,7 +503,7 @@ class SimulationMCPServer:
 
         agent_candidates = []
         for key, other in sorted(self.game.agents.items()):
-            if key == self.iteration.agent_key:
+            if key == self.memory_owner_key:
                 continue
             distance = max(
                 abs(int(other.coord[0]) - int(center[0])),
@@ -423,7 +540,8 @@ class SimulationMCPServer:
                 "address": list(item.get("address") or ()),
                 "distance_tiles": float(item.get("distance_tiles") or 0.0),
                 "relation": str(item.get("relation") or "NEARBY"),
-                "state": {},
+                "state": self._public_object_state(str(item.get("id") or "")),
+                **({"available_visual_states": list(item["available_visual_states"]), "default_visual_state": "", "state_change_radius_tiles": max([float(binding.get("interaction_radius_tiles", 2)) for binding in item.get("skill_bindings", [])] or [2])} if item.get("available_visual_states") else {}),
                 "interactions": [],
             }
             for item in nodes_by_id.values()
@@ -450,7 +568,7 @@ class SimulationMCPServer:
             object_item["distance_tiles"] = min(
                 float(object_item["distance_tiles"]), round(distance, 3)
             )
-            object_item["state"] = copy.deepcopy(dict(affordance.object_state))
+            object_item["state"] = self._public_object_state(affordance.object_key)
             object_item["interactions"].append(
                 {
                     "selection_key": affordance.selection_key,
@@ -491,7 +609,8 @@ class SimulationMCPServer:
         ]
         return {
             "now": self.iteration.now.isoformat(),
-            "agent": self.iteration.as_dict()["agent"],
+            **{key: value for key, value in self.iteration.as_dict().items()
+               if key in {"agent", "game_object"}},
             "requested_radius_tiles": requested_radius,
             "radius_tiles": radius,
             "vision_radius_tiles": vision_radius,
@@ -509,7 +628,7 @@ class SimulationMCPServer:
                     self.game,
                     "active_conversations_for",
                     lambda _agent_key: (),
-                )(self.iteration.agent_key)
+                )(self.memory_owner_key)
             ),
             "attention": {
                 "bandwidth": attention_bandwidth,
@@ -547,11 +666,29 @@ class SimulationMCPServer:
         path: tuple[tuple[int, int], ...] = ()
         observation: Mapping[str, Any] | None = None
         if action_type == "MOVE":
+            # This is still a planned request. Only World Commit can turn the
+            # activity into a formal fact after a real displacement succeeds.
+            movement_activity_from_predicate(payload.get("predicate"))
+            requested_address = payload.get("target_address")
+            requested_coord = payload.get("target_coord")
             path = self._resolve_path(payload)
-            payload["target_address"] = list(payload.get("target_address") or ())
-            payload["target_coord"] = (
-                list(path[-1]) if path else list(self.iteration.coord)
+            destination = tuple(path[-1])
+            destination_address = tuple(
+                str(part) for part in self.game.maze.tile_at(destination).get_address()
             )
+            if not destination_address:
+                raise ValueError("MOVE destination has no spatial address")
+            payload["requested_target_address"] = (
+                list(requested_address) if requested_address is not None else None
+            )
+            payload["requested_target_coord"] = (
+                list(requested_coord) if requested_coord is not None else None
+            )
+            # The planned action only exposes the canonical destination.  Raw
+            # model hints remain available under ``requested_*`` for audit, but
+            # can no longer masquerade as committed world facts.
+            payload["target_address"] = list(destination_address)
+            payload["target_coord"] = list(destination)
         elif action_type == "ACT":
             predicate = str(payload.get("predicate") or "").strip()
             object_value = str(payload.get("object") or "").strip()
@@ -615,6 +752,12 @@ class SimulationMCPServer:
                 payload.get("start_new_conversation", False)
             )
             payload["end_conversation"] = bool(payload.get("end_conversation", False))
+            self.game.validate_conversation_message(
+                self.iteration.agent_key,
+                participants,
+                requested_conversation_id=payload["conversation_id"],
+                start_new=payload["start_new_conversation"],
+            )
         elif action_type == "INTERACT":
             selection_key = str(payload.get("selection_key") or "").strip()
             if not selection_key:
@@ -628,6 +771,8 @@ class SimulationMCPServer:
             payload["selection_key"] = selection_key
         elif action_type == "SET_OBJECT_STATE":
             object_key = str(payload.get("object_key") or "").strip()
+            if getattr(self.game.game_object_interactions, "has_skill", lambda key: False)(object_key):
+                raise ValueError("a Skill-bound object controls its own state; use INTERACT to request a change")
             state_patch = payload.get("state_patch")
             nearby_keys = {
                 item.object_key
@@ -635,6 +780,22 @@ class SimulationMCPServer:
                     self.iteration.coord
                 )
             }
+            # State visuals are directly usable objects, independent of passive Skills.
+            # Keep the action local (two Tiles), and never turn visual states into
+            # a whitelist of legal business state values.
+            agent = self.game.get_agent(self.iteration.agent_key)
+            vision = max(0, int((getattr(agent, "percept_config", {}) or {}).get("vision_r", 4)))
+            for node in self.game.maze.semantic_nodes_in_scope(self.iteration.coord, min(2, vision)):
+                if node.get("kind") != "GAME_OBJECT" or not node.get("available_visual_states") or node.get("skill_bindings"):
+                    continue
+                bounds = node["bounds"]
+                x, y = self.iteration.coord
+                nearest = (
+                    min(max(x, bounds["x"]), bounds["x"] + bounds["width"] - 1),
+                    min(max(y, bounds["y"]), bounds["y"] + bounds["height"] - 1),
+                )
+                if math.dist((x, y), nearest) <= 2:
+                    nearby_keys.add(str(node["id"]))
             if object_key not in nearby_keys:
                 raise ValueError(f"Game Object is not available nearby: {object_key}")
             if not isinstance(state_patch, Mapping) or not state_patch:
@@ -649,33 +810,74 @@ class SimulationMCPServer:
         )
         return {"accepted": True, "action": self._action.as_dict()}
 
-    def _resolve_path(self, payload: Mapping[str, Any]) -> tuple[tuple[int, int], ...]:
+    def _resolve_path(self, payload: Mapping[str, Any], *, navigation=False) -> tuple[tuple[int, int], ...]:
         current = tuple(self.iteration.coord)
         target_coord = payload.get("target_coord")
         target_address = payload.get("target_address")
+        target_node_id = str(payload.get("target_node_id") or "").strip()
+        normalized_address: tuple[str, ...] = ()
+        if target_address is not None:
+            if not isinstance(target_address, (list, tuple)):
+                raise ValueError("target_address must be a spatial address array")
+            normalized_address = tuple(str(part).strip() for part in target_address)
+            if not normalized_address or any(not part for part in normalized_address):
+                raise ValueError("target_address must not contain empty levels")
+            if len(normalized_address) > 4:
+                raise ValueError("target_address cannot exceed four spatial levels")
         candidates: list[tuple[int, int]] = []
         if target_coord is not None:
-            if not isinstance(target_coord, (list, tuple)) or len(target_coord) != 2:
+            if (not isinstance(target_coord, (list, tuple)) or len(target_coord) != 2
+                    or any(type(v) is not int for v in target_coord)):
                 raise ValueError("target_coord must contain exactly two integers")
             candidate = (int(target_coord[0]), int(target_coord[1]))
             if not (
-                0 <= candidate[0] < self.game.maze.maze_width
-                and 0 <= candidate[1] < self.game.maze.maze_height
+                0 <= candidate[0] < self.game.maze.width_tiles
+                and 0 <= candidate[1] < self.game.maze.height_tiles
             ):
                 raise ValueError("target_coord is outside the map")
             if self.game.maze.tile_at(candidate).collision:
                 raise ValueError("target_coord is not traversable")
+            if normalized_address:
+                address_coords = set(
+                    self.game.maze.get_address_tiles(normalized_address)
+                )
+                if candidate not in address_coords:
+                    raise ValueError(
+                        "target_coord does not belong to target_address"
+                    )
             candidates = [candidate]
-        elif target_address:
-            if not isinstance(target_address, (list, tuple)):
-                raise ValueError("target_address must be a four-layer address array")
-            candidates = sorted(self.game.maze.get_address_tiles(target_address))
+        elif normalized_address:
+            candidates = sorted(
+                self.game.maze.get_address_tiles(normalized_address)
+            )
         else:
             raise ValueError("MOVE requires target_address or target_coord")
+        if target_node_id:
+            candidates = [
+                candidate
+                for candidate in candidates
+                if target_node_id
+                in {
+                    str(item.get("id") or "")
+                    for item in (
+                        self.game.maze.tile_at(candidate).spatial_semantics or ()
+                    )
+                }
+            ]
+            if not candidates:
+                raise ValueError(
+                    "target_node_id does not exist at the MOVE destination"
+                )
+        if navigation and current in candidates and not self.game.maze.tile_at(current).collision:
+            return ()
+        if target_coord is None and current in candidates:
+            raise ValueError(
+                "MOVE target_address is already the current location; "
+                "use ACT or WAIT, or provide a different target_coord"
+            )
         routes = []
         for candidate in candidates:
             if candidate == current:
-                routes.append((candidate, ()))
                 continue
             route = tuple(
                 tuple(coord) for coord in self.game.maze.find_path(current, candidate)
@@ -683,7 +885,12 @@ class SimulationMCPServer:
             if route:
                 routes.append((candidate, route[1:] if route[0] == current else route))
         if not routes:
-            raise ValueError("MOVE target is unreachable")
+            if navigation:
+                raise ValueError("navigation target is unreachable")
+            raise ValueError(
+                "MOVE target is the current coordinate or is unreachable; "
+                "use ACT or WAIT when no displacement is intended"
+            )
         _, path = min(routes, key=lambda item: (len(item[1]), item[0]))
         return path
 

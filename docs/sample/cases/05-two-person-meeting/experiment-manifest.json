@@ -1,0 +1,23 @@
+{
+  "case_key": "05-two-person-meeting",
+  "title": "两个人在阅读角见面",
+  "status": "draft",
+  "steps": 12,
+  "assets": [
+    "map",
+    "agents/陈明远",
+    "agents/林晨"
+  ],
+  "skills": [
+    "context-driven-simulation-brain",
+    "social-interaction-decision"
+  ],
+  "learning_goal": "两个人在阅读角见面",
+  "acceptance": [
+    "Run 正常结束",
+    "每个 Agent 每 Step 最多一次 world-act",
+    "已提交事实包含 Event SPO 与非空 structured_payload",
+    "Replay 可从 StepResult 重建状态"
+  ],
+  "source": "docs/sample"
+}

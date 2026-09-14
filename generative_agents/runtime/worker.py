@@ -22,7 +22,6 @@ from generative_agents.security import MasterKeyStore, SecretCipher
 from generative_agents.skills import (
     MemoryStream,
     SkillMCPServer,
-    SnapshotPassiveSkillRuntime,
     SnapshotSkillRegistry,
 )
 from generative_agents.status import RunStatus
@@ -385,10 +384,11 @@ def main(argv=None) -> int:
             control=control,
             logger=logger,
         )
-        passive_skill_runtime = SnapshotPassiveSkillRuntime(
-            manifest.skill_bundle,
-            registry=snapshot_skill_registry,
+        from generative_agents.runtime.object_skills import ObjectSkillRuntime
+        object_skill_runtime = ObjectSkillRuntime(
+            snapshot_skill_registry,
             model_config=chat_config,
+            memory_stream=memory_stream,
             model_client=chat_model,
             recorder=recorder,
             control=control,
@@ -398,7 +398,6 @@ def main(argv=None) -> int:
         context = SimulationContext(
             run_id=args.run_id,
             experiment_id=UUID(manifest.document["experiment_id"]),
-            revision_id=UUID(manifest.document["revision_id"]),
             attempt_id=args.attempt_id,
             definition_hash=manifest.document["definition_hash"],
             algorithm=get_algorithm_profile(definition.engine.algorithm_version),
@@ -409,7 +408,7 @@ def main(argv=None) -> int:
             models=model_registry,
             control=control,
             logger=logger,
-            passive_skills=passive_skill_runtime,
+            object_skill_runtime=object_skill_runtime,
             memory_stream=memory_stream,
             skill_mcp=SkillMCPServer(memory_stream),
             brain_runtime=brain_runtime,

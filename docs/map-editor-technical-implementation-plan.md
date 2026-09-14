@@ -1,11 +1,13 @@
 # 地图编辑器技术实现方案
 
-> 状态：Implementation Ready
+> 状态：历史实现记录；地图/素材 Revision 生命周期已由 2026-09-01 简化基线取代
 > 目标版本：地图工作区 V2
 > 交互基线：`docs/prototypes/map-design-interaction.html`
 > 适用仓库：GenerativeAgentsCN
 > 主要技术栈：FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、原生 HTML/CSS/JavaScript、Canvas 2D
 > 文档用途：直接交给 Claude Code / Qwen2.8 27B（256K 上下文）编码模型实施
+
+> 当前强制覆盖规则：`WorldMap` 和空间素材都是按稳定 ID 直接保存的可变资源，只使用 `row_version` 做并发控制；不存在地图/素材 Draft、Published Revision、发布或 fork。当前 API 是 `GET/PUT /api/v1/maps/{map_id}`、`POST /api/v1/maps/{map_id}/validate` 与 `GET/PUT /api/v1/spatial-assets/{asset_id}`。素材修改直接影响引用它的当前地图。实验草稿只引用 `map_id`，实验发布时冻结地图与素材完整快照，后续作者资源修改不影响已发布实验和 Run。本文后续出现的 `WorldMapRevision`、地图发布和地图 fork 内容仅供理解旧实现，不得作为新代码依据。
 
 ---
 

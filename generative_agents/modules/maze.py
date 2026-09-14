@@ -248,15 +248,15 @@ class Maze:
         返回:
             无返回值。
         """
-        self.maze_height, self.maze_width = config["size"]
-        self.tile_size = config["tile_size"]
+        self.height_tiles, self.width_tiles = config["size"]
+        self.tile_size_px = config["tile_size"]
         address_keys = config["tile_address_keys"]
         self.tiles = [
             [
                 Tile((x, y), config["world"], address_keys)
-                for x in range(self.maze_width)
+                for x in range(self.width_tiles)
             ]
-            for y in range(self.maze_height)
+            for y in range(self.height_tiles)
         ]
         for tile_definition in config["tiles"]:
             x, y = tile_definition["coord"]
@@ -275,8 +275,8 @@ class Maze:
 
         # define address
         self.address_tiles = dict()
-        for i in range(self.maze_height):
-            for j in range(self.maze_width):
+        for i in range(self.height_tiles):
+            for j in range(self.width_tiles):
                 for add in self.tile_at([j, i]).get_addresses():
                     self.address_tiles.setdefault(add, set()).add((j, i))
 
@@ -296,6 +296,29 @@ class Maze:
 
     def _build_semantic_nodes(self, config) -> dict[str, dict]:
         """Materialize one immutable runtime record for each semantic node."""
+
+        packaged_index = config.get("semantic_index")
+        packaged_nodes = (
+            packaged_index.get("nodes")
+            if isinstance(packaged_index, Mapping)
+            else None
+        )
+        if isinstance(packaged_nodes, list) and packaged_nodes:
+            return {
+                str(item["id"]): {
+                    "id": str(item["id"]),
+                    "kind": str(item["kind"]).upper(),
+                    "name": str(item.get("name") or item["id"]),
+                    "semantic": str(item.get("semantic") or ""),
+                    "parent_id": str(item.get("parent_id") or "") or None,
+                    "address": list(item.get("address") or ()),
+                    "bounds": dict(item.get("bounds") or {}),
+                    "available_visual_states": list(item.get("available_visual_states") or []),
+                    "skill_bindings": copy.deepcopy(item.get("skill_bindings") or []),
+                }
+                for item in packaged_nodes
+                if isinstance(item, Mapping) and str(item.get("id") or "").strip()
+            }
 
         editor = config.get("editor_v2")
         raw_nodes = (
@@ -336,6 +359,8 @@ class Maze:
                     "semantic": str(node.get("semantic") or ""),
                     "parent_id": str(node.get("parent_id") or "") or None,
                     "address": address_for(node),
+                    "available_visual_states": [case["value"] for case in (node.get("state_appearance") or {}).get("cases", [])],
+                    "skill_bindings": copy.deepcopy(node.get("skill_bindings") or []),
                     "bounds": {
                         "x": x,
                         "y": y,
@@ -406,11 +431,11 @@ class Maze:
             x_min = max(0, raw_x)
             y_min = max(0, raw_y)
             x_max = min(
-                self.maze_width - 1,
+                self.width_tiles - 1,
                 raw_x + width - 1,
             )
             y_max = min(
-                self.maze_height - 1,
+                self.height_tiles - 1,
                 raw_y + height - 1,
             )
             if x_max < x_min or y_max < y_min:
@@ -446,9 +471,9 @@ class Maze:
         radius = max(0, int(radius))
         bucket_size = self._semantic_bucket_size
         x_min = max(0, center[0] - radius)
-        x_max = min(self.maze_width - 1, center[0] + radius)
+        x_max = min(self.width_tiles - 1, center[0] + radius)
         y_min = max(0, center[1] - radius)
-        y_max = min(self.maze_height - 1, center[1] + radius)
+        y_max = min(self.height_tiles - 1, center[1] + radius)
         candidate_ids = set(self._broad_semantic_node_ids)
         for bucket in product(
             range(x_min // bucket_size, x_max // bucket_size + 1),
@@ -501,6 +526,7 @@ class Maze:
                     str(event_payload.get("object") or ""),
                     str(event_payload.get("describe") or ""),
                     tuple(event_payload.get("address") or ()),
+                    tuple((event_payload.get("movement_activity") or {}).items()),
                 )
                 previous = observed.get(fingerprint)
                 if previous is not None and previous[0] <= distance:
@@ -532,34 +558,13 @@ class Maze:
         返回:
             返回函数计算得到的结果。
         """
-        map = [[0 for _ in range(self.maze_width)] for _ in range(self.maze_height)]
-        frontier, visited = [src_coord], set()
-        map[src_coord[1]][src_coord[0]] = 1
-        while map[dst_coord[1]][dst_coord[0]] == 0:
-            new_frontier = []
-            for f in frontier:
-                for c in self.get_around(f):
-                    if (
-                        0 < c[0] < self.maze_width - 1
-                        and 0 < c[1] < self.maze_height - 1
-                        and map[c[1]][c[0]] == 0
-                        and c not in visited
-                    ):
-                        map[c[1]][c[0]] = map[f[1]][f[0]] + 1
-                        new_frontier.append(c)
-                        visited.add(c)
-            if not new_frontier:
-                return []
-            frontier = new_frontier
-        step = map[dst_coord[1]][dst_coord[0]]
-        path = [dst_coord]
-        while step > 1:
-            for c in self.get_around(path[-1]):
-                if map[c[1]][c[0]] == step - 1:
-                    path.append(c)
-                    break
-            step -= 1
-        return path[::-1]
+        from generative_agents.ga_protocol.navigation import grid_path
+
+        return grid_path(
+            self.width_tiles, self.height_tiles,
+            lambda x, y: self.tile_at((x, y)).collision,
+            src_coord, dst_coord,
+        )
 
     def tile_at(self, coord):
         """执行 `Maze` 的`tile``at`操作。
@@ -608,11 +613,11 @@ class Maze:
         if config["mode"] == "box":
             x_range = [
                 max(coord[0] - vision_r, 0),
-                min(coord[0] + vision_r + 1, self.maze_width),
+                min(coord[0] + vision_r + 1, self.width_tiles),
             ]
             y_range = [
                 max(coord[1] - vision_r, 0),
-                min(coord[1] + vision_r + 1, self.maze_height),
+                min(coord[1] + vision_r + 1, self.height_tiles),
             ]
             coords = list(product(list(range(*x_range)), list(range(*y_range))))
         return [self.tile_at(c) for c in coords]
@@ -621,7 +626,7 @@ class Maze:
         """获取`around`。
 
         参数:
-            coord: 地图坐标，按 `(行, 列)` 或项目约定的二维顺序表示。
+            coord: Tile 网格坐标，固定按 `(x, y)` 顺序表示。
             no_collision: 是否要求路径或放置结果完全不存在碰撞。 默认值：`True`。
 
         返回:
@@ -632,6 +637,11 @@ class Maze:
             (coord[0] + 1, coord[1]),
             (coord[0], coord[1] - 1),
             (coord[0], coord[1] + 1),
+        ]
+        coords = [
+            item
+            for item in coords
+            if 0 <= item[0] < self.width_tiles and 0 <= item[1] < self.height_tiles
         ]
         if no_collision:
             coords = [c for c in coords if not self.tile_at(c).collision]

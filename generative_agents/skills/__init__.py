@@ -1,7 +1,5 @@
 """File-backed Agent Skills and their natural-language runtime."""
 
-from .mcp import MemoryStream, SkillMCPServer
-from .database import DatabaseSkillRegistry
 from .passive import (
     PassiveSkillResult,
     PassiveSkillRuntimeError,
@@ -40,3 +38,22 @@ __all__ = [
     "SnapshotSkillRegistry",
     "SnapshotPassiveSkillRuntime",
 ]
+
+
+def __getattr__(name: str):
+    """Keep the Studio-only database registry behind an explicit lazy boundary.
+
+    Runtime and Replay may import ``generative_agents.skills`` without installing
+    or initializing SQLAlchemy.  Existing Studio code can continue importing the
+    registry by name while it is migrated to ``ga_studio``.
+    """
+
+    if name == "DatabaseSkillRegistry":
+        from .database import DatabaseSkillRegistry
+
+        return DatabaseSkillRegistry
+    if name in {"MemoryStream", "SkillMCPServer"}:
+        from .mcp import MemoryStream, SkillMCPServer
+
+        return {"MemoryStream": MemoryStream, "SkillMCPServer": SkillMCPServer}[name]
+    raise AttributeError(name)

@@ -47,10 +47,17 @@ class Action:
         返回:
             返回函数计算得到的结果。
         """
+        start, end = self.start, self.end
+        if self._clock is not None:
+            # Restored actions are normalized to UTC for instant comparisons;
+            # summaries use the Run's virtual clock zone, never the host zone.
+            display_timezone = self._clock.get_date().tzinfo
+            start = start.astimezone(display_timezone)
+            end = end.astimezone(display_timezone)
         status = "{} [{}~{}]".format(
             "已完成" if self.finished() else "进行中",
-            self.start.strftime("%Y%m%d-%H:%M"),
-            self.end.strftime("%Y%m%d-%H:%M"),
+            start.strftime("%Y%m%d-%H:%M"),
+            end.strftime("%Y%m%d-%H:%M"),
         )
         info = {"status": status, "event": str(self.event)}
         if self.obj_event:
@@ -91,7 +98,9 @@ class Action:
         return {
             "event": self.event.to_dict(),
             "obj_event": self.obj_event.to_dict() if self.obj_event else None,
-            "start": self.start.strftime("%Y%m%d-%H:%M:%S"),
+            # Keep the offset: a restored UTC value must not become a naive
+            # wall time that the next restore interprets in the Run's zone.
+            "start": self.start.isoformat(),
             "duration": self.duration,
         }
 

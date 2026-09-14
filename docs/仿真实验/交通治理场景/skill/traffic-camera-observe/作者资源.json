@@ -1,0 +1,11 @@
+{
+  "format": "作者资源录入资料副本（非系统导入协议）",
+  "skill_key": "traffic-camera-observe",
+  "kind": "ATOMIC",
+  "public_id": null,
+  "ui_content_hash_prefix": "525b1006cb52",
+  "source": "SKILL.md",
+  "source_sha256": "bf2b43f7c2f65a49ed4d8075c137e048c526beb036967e3d9d443437c0d6977d",
+  "public_id_note": "未记录的公共ID保留null，不编造",
+  "status": "已保存公共作者资源并绑定地图；已使用该地图创建首份草稿，实验内正文尚未核验"
+}

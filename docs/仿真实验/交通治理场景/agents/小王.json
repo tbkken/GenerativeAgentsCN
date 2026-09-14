@@ -1,0 +1,61 @@
+{
+  "format": "中文录入资料副本（非系统导入协议）",
+  "recorded_date": "2026-09-13",
+  "public_template_key": "agent-mtzlgonc-cvsohq",
+  "name": "小王",
+  "age": 29,
+  "currently": "已取好需要送达的文件，从西段进入南侧东行非机动车道，正骑电动自行车前往东端文件接收点。按本次送件任务给定的具体截止时间送达；到达后停稳、下车并交付文件。",
+  "innate": "灵活、外向，愿意尝试新办法，重视技术和实际效率。",
+  "learned": "新港西路打印复印店老板，开店3年，计算机大专毕业，与女朋友共同看店，服务周边学生和公司。熟悉送件路线，通常守规则，过去赶急单时曾有借道经历；当前道路和设施仍需实际观察。",
+  "lifestyle": "经常骑电动自行车送货取件，习惯比较可用路线。经营线下门店和网店，在效率、客户要求与风险之间作出实际权衡。",
+  "daily_plan": "本次文件已取好，只完成从西段到东端客户接收点的一次送件，不重新开店、打印或接待其他订单。",
+  "goals": [
+    "评估新增打印服务",
+    "改善门店经营成本",
+    "安排后续家庭生活"
+  ],
+  "sprite_display_tiles": 2,
+  "vision_radius": 20,
+  "attention_bandwidth": 8,
+  "assets": {
+    "portrait": {
+      "file": "map/小王-头像-128.png",
+      "public_asset_id": "2ff19446-9f3d-4517-86ff-70587951a77e",
+      "sha256": "b9b0b33d3c561634a6031e4238c0b5bdd8eefdcc022e701c17a3bb6f7e7853a9",
+      "size_px": [
+        128,
+        128
+      ]
+    },
+    "sprite": {
+      "file": "map/小王-骑行行走图-128.png",
+      "public_asset_id": "06333395-d79a-4338-8b2a-53909e022b7d",
+      "sha256": "f55825a279bd81d9a0e629f792a12760091b23a2b840ba1631085ca44699a23d",
+      "size_px": [
+        128,
+        128
+      ]
+    }
+  },
+  "ui_verification": "保存后整页刷新并重开，两个预览均加载为128×128，行走图4x4",
+  "experiment_preparation": {
+    "spawn": [
+      12,
+      26
+    ],
+    "destination": "东端文件接收点",
+    "spawn_status": "已通过浏览器录入对应独立实验，实际四层地址与坐标一致，详见同名实验副本资料。",
+    "display_scale_status": "实验内配置2格，图片已物理复制并刷新核对；李子健运行画面已见人物，其余角色尚未运行。"
+  },
+  "experiment_copies": [
+    {
+      "experiment_id": "73d9458d-207c-4bd5-ac66-1ef18a8c448f",
+      "name": "交通治理·C1-L·小王"
+    },
+    {
+      "experiment_id": "a021c7d3-a49a-4909-9f73-7ebd28c9bf59",
+      "name": "交通治理·C1-H·小王",
+      "status": "DRAFT，已预检未运行"
+    }
+  ]
+}

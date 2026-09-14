@@ -1,0 +1,147 @@
+{
+  "format": "浏览器已观察的实验草稿资料记录（非原生实验包）",
+  "experiment_id": "6092db14-4f63-4986-8dd8-b5c81b07ffca",
+  "name": "交通治理·C1-L·李子健",
+  "status": "SEALED",
+  "owner": "当前研究员",
+  "tags": [
+    "交通治理",
+    "C1-L",
+    "单人单次出行"
+  ],
+  "goal": "记录李子健从西段非机动车道前往东端办公报到入口的一次电动自行车通勤。以真实提交的路径、到达时间、等待和活动事实观察路线选择及出行成本，不预设是否违规或是否准时。先完成地图、人物图片、初始位置、Brain、时间与模型配置，再进行运行验收。",
+  "author_import_records": {
+    "map": "c333e061-c5df-4dc3-b9f9-3182671f550c",
+    "brain": "traffic-rider-brain",
+    "crowd": "9aa2ef27-53c4-4b78-9ec1-5bd714ae2b69",
+    "note": "仅作者录入溯源信息，不作为运行期外键"
+  },
+  "agent_key": "agent-mtzlbf8j-5yfte2",
+  "selected_models": {
+    "chat": "本机默认模型 · Qwen3.8-27B-UD-Q4_K_XL",
+    "embedding": "本机默认模型 · auto"
+  },
+  "untouched_ui_initial_values": {
+    "start_time": "2026-01-01T08:00",
+    "timezone": "Asia/Shanghai",
+    "stride_minutes": 10,
+    "max_steps": 1000,
+    "seed": 42,
+    "checkpoint_interval": 1,
+    "checkpoint_retention": 2,
+    "projection_interval": 1,
+    "note": "向导生成的初值，未经本实验设计确认，禁止当作已验收正式参数"
+  },
+  "agent_ui": {
+    "portrait_copied": true,
+    "sprite_copied": true,
+    "portrait_size": [
+      128,
+      128
+    ],
+    "sprite_size": [
+      128,
+      128
+    ],
+    "sprite_layout": "4x4",
+    "sprite_display_tiles": 2,
+    "sprite_display_tiles_expected": 2,
+    "vision_radius": 20,
+    "attention_bandwidth": 8,
+    "initial_position": "已通过浏览器保存 (8,26)，整页刷新重开核对坐标、四层地址与已知空间一致",
+    "task_deadline": "2026-01-01T08:50:00+08:00",
+    "coord": [
+      8,
+      26
+    ],
+    "initial_address": [
+      "新港西路交通治理·核心街区",
+      "新港西路沿街街区",
+      "南侧东行非机动车道",
+      "西段骑行出发区"
+    ],
+    "known_space": "新港西路交通治理·核心街区 > 新港西路沿街街区 > 南侧东行非机动车道；已知物件：西段骑行出发区",
+    "currently": "已经从西段进入南侧东行非机动车道，正骑电动自行车向东前往“东端办公报到入口”。本次出发时间为 2026-01-01T08:00:00+08:00；任务截止时间 task_deadline 为 2026-01-01T08:50:00+08:00，需要在此之前到达并办理报到。根据真实路况和个人判断安排行程；到达后先停稳车辆并下车，再办理报到。本次观察结束时间为 2026-01-01T09:00:00+08:00；报到完成后留在目的地有原因地等待至观察结束，不重新出发。",
+    "observation_end": "2026-01-01T09:00:00+08:00",
+    "initial_runtime_context_verified": true,
+    "runtime_context_note": "Step 1 模型调用审计确认起点、四层地址、人物背景、已知空间、截止时间与观察结束文字均已进入 IterationContext。"
+  },
+  "blocking_issue": null,
+  "resolved_issue_record": "Agent显示大小导入缺失-2026-09-13.md",
+  "diagnosis": {
+    "root_cause": "实验草稿编辑器独立回填分支遗漏 sprite_display_tiles；公共编辑器共享填充正常",
+    "package_sprite_display_tiles": 2.0,
+    "ui_input_value": "2",
+    "historical_ui_input_value_before_fix": "",
+    "import_lost_data": false,
+    "package_agents_sha256": "3ce834f8efcb887dec3d7812717c1c4dd6f84cd187ea057afc109b126a87b54e",
+    "saved_after_observation": true,
+    "source_status": "子 Agent 修复后已重启 Web，主 Agent 原草稿浏览器无修改保存、整页刷新重开验收通过",
+    "verified_at": "2026-09-13T19:09:09+08:00",
+    "web_pid_after_restart": 52016,
+    "related_frontend_tests_passed": 11,
+    "package_agents_sha256_after_ui_save": "3b6c3f71a54f22149c17f845e271656f5d485f345446e8763b615cd1d605b42e",
+    "complete_agents_document_semantically_unchanged": true
+  },
+  "run_id": "3cb1414a-be8e-4d7b-bace-38f4e3b8d540",
+  "attempt_id": "db473f27-110f-416e-99ec-b075aa02a4dd",
+  "step": 37,
+  "current_runtime_settings": {
+    "start_time": "2026-01-01T08:00:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "stride_minutes": 1,
+    "max_steps": 60,
+    "seed": 42,
+    "checkpoint_interval": 1,
+    "checkpoint_retention": 2,
+    "projection_interval": 1,
+    "capture_payloads": true,
+    "note": "1 分钟/步、60 步及 Payload 审计保存后已整页重载核对；08:50 截止时间已在当前目标中保存并刷新重开确认。此次为通畅道路单人功能验收，不作为已按 K_ref 校准的六组正式比较。"
+  },
+  "run_status": "RUNNING",
+  "run_verification_record": "继续运行与新增配置-2026-09-13.md",
+  "resolved_issue_records": [
+    "Agent显示大小导入缺失-2026-09-13.md",
+    "MOVE骑行语义被覆盖-2026-09-13.md"
+  ],
+  "move_activity_fix": {
+    "status": "工程及原 Run 浏览器复验通过",
+    "related_tests_passed": 101,
+    "web_pid_after_restart": 61096,
+    "verified_steps": [
+      4,
+      5
+    ],
+    "next_iteration_context_verified": true,
+    "historical_files_checked": 20,
+    "historical_files_changed": 0,
+    "record": "MOVE语义修复-浏览器验收-2026-09-13.md",
+    "camera_real_monitoring_decision_verified": false
+  },
+  "known_model_behavior": "导航目标误用-修复后复验-2026-09-13.md（用户明确要求继续，不再因此暂停）",
+  "continuation_instruction": "继续实验，不要停，然后往后继续配置",
+  "last_browser_observed_step": 37,
+  "behavior_verification": {
+    "arrival_step": 31,
+    "arrival_coord": [
+      104,
+      28
+    ],
+    "reached_target": true,
+    "stop_and_dismount_step": 32,
+    "check_in_action_steps": [
+      33,
+      34,
+      35
+    ],
+    "bounded_wait_verified_steps": [
+      36,
+      37
+    ],
+    "record": "报到重复-模型行为观察-2026-09-13.md",
+    "camera_observed_visible_legal_riding": true,
+    "positive_capture_verified": false,
+    "notice_perception_verified": false,
+    "full_run_completed": false
+  }
+}

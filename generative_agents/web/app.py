@@ -74,6 +74,7 @@ from generative_agents.skills import (
     SkillRuntime,
 )
 from generative_agents.web.skill_api import create_skill_router
+from generative_agents.web.portable_api import create_portable_router
 from generative_agents.web.observability_schemas import (
     AttemptListResponse,
     CheckpointDetailResponse,
@@ -115,7 +116,7 @@ class CreateExperimentRequest(StrictModel):
     )
     brain_revision_id: str
     source: SourceRequest | None = None
-    map_revision_id: str
+    map_id: str
     crowd_revision_ids: list[str] = Field(default_factory=list, max_length=50)
 
 
@@ -161,31 +162,10 @@ class ArchiveExperimentRequest(StrictModel):
 
 
 class BatchExperimentRequest(StrictModel):
-    """对一组实验执行统一整理操作。"""
+    """批量归档或恢复实验。"""
 
     experiment_ids: list[str] = Field(min_length=1, max_length=200)
-    action: Literal["ARCHIVE", "RESTORE", "ADD_TAGS", "SET_OWNER"]
-    owner: str | None = Field(default=None, max_length=120)
-    tags: list[str] = Field(default_factory=list, max_length=20)
-
-
-class CompareExperimentsRequest(StrictModel):
-    """指定需要并列比较的实验集合。"""
-
-    experiment_ids: list[str] = Field(min_length=2, max_length=12)
-
-
-class ComparisonGroupRequest(CompareExperimentsRequest):
-    """把一组实验比较条件保存为可复用分组。"""
-
-    name: str = Field(min_length=1, max_length=120)
-
-
-class SavedViewRequest(StrictModel):
-    """保存实验列表的筛选和排序条件。"""
-
-    name: str = Field(min_length=1, max_length=120)
-    query: dict[str, Any] = Field(default_factory=dict)
+    action: Literal["ARCHIVE", "RESTORE"]
 
 
 class PublishAndRunRequest(StrictModel):
@@ -229,30 +209,23 @@ class ModelProbeRequest(StrictModel):
 
 
 class CreateMapRequest(StrictModel):
-    """创建公共地图草稿，可从空白或蓝图开始。"""
+    """创建可直接编辑的公共地图，可从空白、复制或蓝图开始。"""
 
     name: str = Field(min_length=1, max_length=120)
     description: str = Field(default="", max_length=10_000)
-    source_revision_id: str | None = None
+    source_map_id: str | None = None
     blueprint_key: str | None = Field(default=None, min_length=1, max_length=80)
     map_key: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")
-    width: int = Field(default=48, ge=4, le=240)
-    height: int = Field(default=32, ge=4, le=240)
+    width: int = Field(default=48, ge=1, le=240, description="地图宽度，单位为 Tile 格")
+    height: int = Field(default=32, ge=1, le=240, description="地图高度，单位为 Tile 格")
     tile_size: int = Field(default=32, ge=8, le=128)
 
 
-class MapDraftUpdateRequest(StrictModel):
-    """保存地图草稿及其乐观锁版本。"""
+class MapUpdateRequest(StrictModel):
+    """保存地图当前内容及其乐观锁版本。"""
 
     lock_version: int = Field(ge=1)
     world: dict[str, Any]
-
-
-class PublishMapRequest(StrictModel):
-    """校验并发布地图 Revision。"""
-
-    draft_revision_id: str
-    lock_version: int = Field(ge=1)
 
 
 class PublishRevisionRequest(StrictModel):
@@ -269,10 +242,10 @@ class MapBlueprintStepRequest(StrictModel):
 
 
 class ExperimentMapSelectionRequest(StrictModel):
-    """为实验草稿选择一个已发布公共地图 Revision。"""
+    """为实验草稿选择一张公共地图。"""
 
     lock_version: int = Field(ge=1)
-    map_revision_id: str
+    map_id: str
 
 
 class ExperimentBrainSelectionRequest(StrictModel):
@@ -326,14 +299,14 @@ class CreateSpatialAssetRequest(StrictModel):
         default=None, pattern=r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
     )
     asset_kind: Literal["TILE", "OBJECT", "ZONE", "MARKING", "NETWORK"] = "TILE"
-    source_revision_id: str | None = None
+    source_asset_id: str | None = None
     contract: SpatialAssetContract | None = None
 
 
 class UpdateSpatialAssetRequest(StrictModel):
-    """更新空间资产草稿。"""
+    """直接更新空间资产。"""
 
-    lock_version: int = Field(ge=1)
+    row_version: int = Field(ge=1)
     contract: SpatialAssetContract
     name: str | None = Field(default=None, min_length=1, max_length=120)
     description: str | None = Field(default=None, max_length=10_000)
@@ -474,7 +447,6 @@ def create_app(
         if migrate:
             upgrade_database(database_url)
         skill_registry.ensure_builtin_skills(bundled_skill_registry)
-        crowd_service.ensure_builtin_resources()
         spatial_asset_service.ensure_builtin_assets()
         tool_service.ensure_builtin_tools()
         app.state.database = database
@@ -515,6 +487,13 @@ def create_app(
         title="GenerativeAgentsCN Experiment API", version="1.0", lifespan=lifespan
     )
     app.include_router(create_skill_router(skill_registry, skill_runtime, skill_mcp))
+    app.include_router(
+        create_portable_router(
+            database,
+            package_root=Path(var_dir) / "packages",
+            max_concurrent_runs=max_concurrent_runs,
+        )
+    )
     console_static = Path(__file__).resolve().parent / "static"
     app.mount(
         "/static/console", StaticFiles(directory=console_static), name="console-static"
@@ -700,14 +679,13 @@ def create_app(
             description=body.description,
             asset_key=body.asset_key,
             asset_kind=body.asset_kind,
-            source_revision_id=body.source_revision_id,
+            source_asset_id=body.source_asset_id,
             contract=body.contract,
         )
 
     @app.get("/api/v1/spatial-assets")
     def list_spatial_assets(
         q: str | None = None,
-        status: str | None = None,
         kind: str | None = None,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=50, ge=1, le=100),
@@ -716,7 +694,6 @@ def create_app(
 
         参数:
             q: 全文搜索关键字的简写；为空时不应用文本筛选。 类型：`str | None`。 默认值：`None`。
-            status: 目录对象状态筛选值。允许值：`DRAFT`（草稿）或 `PUBLISHED`（已发布）。 类型：`str | None`。 默认值：`None`。
             kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str | None`。 默认值：`None`。
             page: 从 1 开始的分页页码。 类型：`int`。
             page_size: 每页最多返回的记录数量。 类型：`int`。
@@ -726,7 +703,6 @@ def create_app(
         """
         return spatial_asset_service.list_assets(
             query=q,
-            status=status,
             asset_kind=kind,
             page=page,
             page_size=page_size,
@@ -749,21 +725,9 @@ def create_app(
         spatial_asset_service.delete_asset(asset_id)
         return Response(status_code=204)
 
-    @app.get("/api/v1/spatial-assets/{asset_id}/draft")
-    def get_spatial_asset_draft(asset_id: str):
-        """获取空间数据资源`draft`。
-
-        参数:
-            asset_id: 资源的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return spatial_asset_service.get_draft(asset_id)
-
-    @app.put("/api/v1/spatial-assets/{asset_id}/draft")
-    def update_spatial_asset_draft(asset_id: str, body: UpdateSpatialAssetRequest):
-        """更新空间数据资源`draft`。
+    @app.put("/api/v1/spatial-assets/{asset_id}")
+    def update_spatial_asset(asset_id: str, body: UpdateSpatialAssetRequest):
+        """直接更新空间数据资源。
 
         参数:
             asset_id: 资源的唯一标识。 类型：`str`。
@@ -772,71 +736,13 @@ def create_app(
         返回:
             返回函数计算得到的结果。
         """
-        return spatial_asset_service.update_draft(
+        return spatial_asset_service.update_asset(
             asset_id,
-            expected_lock_version=body.lock_version,
+            expected_row_version=body.row_version,
             contract=body.contract,
             name=body.name,
             description=body.description,
         )
-
-    @app.post("/api/v1/spatial-assets/{asset_id}/draft/publish")
-    def publish_spatial_asset_draft(asset_id: str, body: PublishRevisionRequest):
-        """发布空间数据资源`draft`。
-
-        参数:
-            asset_id: 资源的唯一标识。 类型：`str`。
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`PublishRevisionRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return spatial_asset_service.publish_draft(
-            asset_id,
-            draft_revision_id=body.draft_revision_id,
-            expected_lock_version=body.lock_version,
-        )
-
-    @app.get("/api/v1/spatial-assets/{asset_id}/revisions")
-    def list_spatial_asset_revisions(asset_id: str):
-        """查询空间数据资源`revisions`。
-
-        参数:
-            asset_id: 资源的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return {"items": spatial_asset_service.list_revisions(asset_id)}
-
-    @app.get("/api/v1/spatial-assets/{asset_id}/revisions/{revision_id}")
-    def get_spatial_asset_revision(asset_id: str, revision_id: str):
-        """获取空间数据资源修订版本。
-
-        参数:
-            asset_id: 资源的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return spatial_asset_service.get_revision(asset_id, revision_id)
-
-    @app.post(
-        "/api/v1/spatial-assets/{asset_id}/revisions/{revision_id}/fork",
-        status_code=201,
-    )
-    def fork_spatial_asset_revision(asset_id: str, revision_id: str):
-        """执行 的`fork`空间数据资源修订版本操作。
-
-        参数:
-            asset_id: 资源的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return spatial_asset_service.fork_revision(asset_id, revision_id)
 
     @app.post("/api/v1/tools", status_code=201)
     def create_tool(body: CreateToolRequest):
@@ -1019,7 +925,6 @@ def create_app(
         """
         return crowd_service.list_agents(
             query=q,
-            status=status,
             page=page,
             page_size=page_size,
             archived=archived,
@@ -1310,7 +1215,7 @@ def create_app(
         return map_service.create_map(
             name=body.name,
             description=body.description,
-            source_revision_id=body.source_revision_id,
+            source_map_id=body.source_map_id,
             blueprint_key=body.blueprint_key,
             map_key=body.map_key,
             width=body.width,
@@ -1330,7 +1235,6 @@ def create_app(
     @app.get("/api/v1/maps")
     def list_maps(
         q: str | None = None,
-        status: str | None = None,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=5, ge=1, le=100),
         archived: Literal["active", "archived", "all"] = "active",
@@ -1339,7 +1243,6 @@ def create_app(
 
         参数:
             q: 全文搜索关键字的简写；为空时不应用文本筛选。 类型：`str | None`。 默认值：`None`。
-            status: 目录对象状态筛选值。允许值：`DRAFT`（草稿）或 `PUBLISHED`（已发布）。 类型：`str | None`。 默认值：`None`。
             page: 从 1 开始的分页页码。 类型：`int`。
             page_size: 每页最多返回的记录数量。 类型：`int`。
 
@@ -1348,7 +1251,6 @@ def create_app(
         """
         return map_service.list_maps(
             query=q,
-            status=status,
             page=page,
             page_size=page_size,
             archived=archived,
@@ -1389,53 +1291,40 @@ def create_app(
         map_service.delete_map(map_id)
         return Response(status_code=204)
 
-    @app.get("/api/v1/maps/{map_id}/draft")
-    def get_map_draft(map_id: str):
-        """获取地图`draft`。
+    @app.put("/api/v1/maps/{map_id}")
+    def update_map(map_id: str, body: MapUpdateRequest):
+        """直接更新地图。
 
         参数:
             map_id: 地图的唯一标识。 类型：`str`。
+            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`MapUpdateRequest`。
 
         返回:
             返回函数计算得到的结果。
         """
-        return map_service.get_draft(map_id)
-
-    @app.put("/api/v1/maps/{map_id}/draft")
-    def update_map_draft(map_id: str, body: MapDraftUpdateRequest):
-        """更新地图`draft`。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`MapDraftUpdateRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return map_service.update_draft(
+        return map_service.update_map(
             map_id,
             expected_lock_version=body.lock_version,
             world=WorldConfig.model_validate(body.world),
         )
 
-    @app.post("/api/v1/maps/{map_id}/draft/publish")
-    def publish_map_draft(map_id: str, body: PublishMapRequest):
-        """发布地图`draft`。
+    @app.post("/api/v1/maps/{map_id}/validate")
+    def validate_map(map_id: str, body: MapBlueprintStepRequest):
+        """校验当前地图，但不锁定它。
 
         参数:
             map_id: 地图的唯一标识。 类型：`str`。
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`PublishMapRequest`。
+            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。
 
         返回:
             返回函数计算得到的结果。
         """
-        return map_service.publish_draft(
+        return map_service.validate_map(
             map_id,
-            draft_revision_id=body.draft_revision_id,
             expected_lock_version=body.lock_version,
         )
 
-    @app.post("/api/v1/maps/{map_id}/draft/blueprint-steps/{step}")
+    @app.post("/api/v1/maps/{map_id}/blueprint-steps/{step}")
     def apply_map_blueprint_step(map_id: str, step: int, body: MapBlueprintStepRequest):
         """应用地图`blueprint`仿真步。
 
@@ -1452,44 +1341,6 @@ def create_app(
             expected_lock_version=body.lock_version,
             step=step,
         )
-
-    @app.get("/api/v1/maps/{map_id}/revisions")
-    def list_map_revisions(map_id: str):
-        """查询地图`revisions`。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return {"items": map_service.list_revisions(map_id)}
-
-    @app.get("/api/v1/maps/{map_id}/revisions/{revision_id}")
-    def get_map_revision(map_id: str, revision_id: str):
-        """获取地图修订版本。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return map_service.get_revision(map_id, revision_id)
-
-    @app.post("/api/v1/maps/{map_id}/revisions/{revision_id}/fork", status_code=201)
-    def fork_map_revision(map_id: str, revision_id: str):
-        """执行 的`fork`地图修订版本操作。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return map_service.fork_revision(map_id, revision_id)
 
     @app.post("/api/v1/experiments", status_code=201)
     def create_experiment(body: CreateExperimentRequest):
@@ -1535,53 +1386,19 @@ def create_app(
             tags=body.tags,
             brain_skill=selected_brain.name,
             brain_revision_id=body.brain_revision_id,
-            brain_revision_hash=selected_brain.revision,
-            map_revision_id=body.map_revision_id,
+            brain_revision_hash=selected_brain.content_hash,
+            map_id=body.map_id,
             crowd_revision_ids=body.crowd_revision_ids,
         )
 
     @app.get("/api/v1/experiments")
     def list_experiments(
-        status: str | None = None,
-        q: str | None = None,
-        owner: str | None = None,
-        tag: str | None = None,
-        model: str | None = None,
-        map_key: str | None = None,
         archived: Literal["active", "archived", "all"] = "active",
         page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=5),
-        sort: str = "-updated_at",
+        page_size: int = Query(default=5, ge=5, le=5),
     ):
-        """查询`experiments`。
-
-        参数:
-            status: 实验或修订版本状态。允许值：`DRAFT`、`QUEUED`、`RUNNING`、`PAUSED`、`COMPLETED`、`CANCELLED`、`FAILED`；聚合查询还可使用 `ABNORMAL`（失败或取消）。 类型：`str | None`。 默认值：`None`。
-            q: 全文搜索关键字的简写；为空时不应用文本筛选。 类型：`str | None`。 默认值：`None`。
-            owner: 所有者名称筛选值；为空时不限制所有者。 类型：`str | None`。 默认值：`None`。
-            tag: 标签筛选值；为空时不限制标签。 类型：`str | None`。 默认值：`None`。
-            model: 当前调用、筛选或序列化的模型配置或模型实例。 类型：`str | None`。 默认值：`None`。
-            map_key: 用于稳定定位地图的键。 类型：`str | None`。 默认值：`None`。
-            archived: 归档范围筛选值：`active`、`archived` 或 `all`。 类型：`Literal['active', 'archived', 'all']`。 默认值：`'active'`。
-            page: 从 1 开始的分页页码。 类型：`int`。
-            page_size: 每页最多返回的记录数量。 类型：`int`。
-            sort: 列表排序表达式；前缀 `-` 表示降序。 类型：`str`。 默认值：`'-updated_at'`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.list_experiments(
-            status=status,
-            query=q,
-            owner=owner,
-            tag=tag,
-            model=model,
-            map_key=map_key,
-            archived=archived,
-            page=page,
-            page_size=page_size,
-            sort=sort,
-        )
+        """按最近更新顺序返回实验，每页固定 5 条。"""
+        return service.list_experiments(archived=archived, page=page, page_size=page_size)
 
     @app.get("/api/v1/experiments/{experiment_id}")
     def get_experiment(experiment_id: str):
@@ -1671,96 +1488,7 @@ def create_app(
 
     @app.post("/api/v1/experiments/batch")
     def batch_experiments(body: BatchExperimentRequest):
-        """执行 的`batch``experiments`操作。
-
-        参数:
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`BatchExperimentRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.batch_manage(
-            body.experiment_ids,
-            action=body.action,
-            owner=body.owner,
-            tags=body.tags,
-        )
-
-    @app.post("/api/v1/experiments/compare")
-    def compare_experiments(body: CompareExperimentsRequest):
-        """执行 的`compare``experiments`操作。
-
-        参数:
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`CompareExperimentsRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.compare_experiments(body.experiment_ids)
-
-    @app.post("/api/v1/experiment-comparison-groups", status_code=201)
-    def create_comparison_group(body: ComparisonGroupRequest):
-        """创建`comparison``group`。
-
-        参数:
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`ComparisonGroupRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.save_comparison_group(body.name, body.experiment_ids)
-
-    @app.get("/api/v1/experiment-comparison-groups")
-    def list_comparison_groups():
-        """查询`comparison``groups`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return {"items": service.list_comparison_groups()}
-
-    @app.delete("/api/v1/experiment-comparison-groups/{group_id}", status_code=204)
-    def delete_comparison_group(group_id: str):
-        service.delete_comparison_group(group_id)
-        return Response(status_code=204)
-
-    @app.post("/api/v1/experiment-saved-views", status_code=201)
-    def create_saved_view(body: SavedViewRequest):
-        """创建`saved``view`。
-
-        参数:
-            body: 已经解析的请求体或命令载荷；字段由对应接口模型定义。 类型：`SavedViewRequest`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.save_view(body.name, body.query)
-
-    @app.get("/api/v1/experiment-saved-views")
-    def list_saved_views():
-        """查询`saved``views`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return {"items": service.list_views()}
-
-    @app.delete("/api/v1/experiment-saved-views/{view_id}", status_code=204)
-    def delete_saved_view(view_id: str):
-        service.delete_view(view_id)
-        return Response(status_code=204)
-
-    @app.get("/api/v1/experiment-saved-views/shared/{share_key}")
-    def get_shared_view(share_key: str):
-        """获取`shared``view`。
-
-        参数:
-            share_key: 用于稳定定位`share`的键。 类型：`str`。
-
-        返回:
-            返回函数计算得到的结果。
-        """
-        return service.get_view_by_share_key(share_key)
+        return service.batch_manage(body.experiment_ids, action=body.action)
 
     @app.get("/api/v1/experiments/{experiment_id}/run-estimate")
     def get_run_estimate(experiment_id: str):
@@ -1837,7 +1565,7 @@ def create_app(
         return map_service.select_for_experiment(
             experiment_id,
             expected_lock_version=body.lock_version,
-            map_revision_id=body.map_revision_id,
+            map_id=body.map_id,
         )
 
     @app.put("/api/v1/experiments/{experiment_id}/draft/agents/{agent_key}")

@@ -9,6 +9,9 @@ description = "Experiment-isolated GenerativeAgentsCN Web service"
 readme = "README.md"
 requires-python = ">=3.11"
 
+[project.scripts]
+ga = "generative_agents.cli.main:main"
+
 [tool.setuptools]
 include-package-data = true
 

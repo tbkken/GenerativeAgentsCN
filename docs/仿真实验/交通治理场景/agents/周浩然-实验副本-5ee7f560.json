@@ -1,0 +1,73 @@
+{
+  "format": "浏览器录入与刷新复验资料（非原生导入协议）",
+  "experiment_id": "5ee7f560-ff6b-4471-816c-9d658941d95c",
+  "name": "交通治理·C1-L·周浩然",
+  "status": "DRAFT",
+  "agent_key": "agent-mtzlgmoe-pc5i1i",
+  "crowd_id": "0f667873-3900-4e05-bfba-e50ef076afd1",
+  "map_author_id": "c333e061-c5df-4dc3-b9f9-3182671f550c",
+  "brain_key": "traffic-rider-brain",
+  "coord": [
+    10,
+    26
+  ],
+  "initial_address": [
+    "新港西路交通治理·核心街区",
+    "新港西路沿街街区",
+    "南侧东行非机动车道",
+    "西段骑行出发区"
+  ],
+  "known_space": "新港西路交通治理·核心街区 > 新港西路沿街街区 > 南侧东行非机动车道",
+  "known_objects": [
+    "西段骑行出发区"
+  ],
+  "currently": "已领取本次早餐订单，从西段进入南侧东行非机动车道，正骑电动自行车前往“东端早餐交付点”。本次出发时间为 2026-01-01T08:00:00+08:00；订单截止时间 task_deadline 为 2026-01-01T08:50:00+08:00，需要在此之前到达并交付。根据真实路况、个人判断和剩余时间安排行程，不额外接单或重新取餐；到达后先停稳车辆并下车，再交付已经携带的早餐订单。本次观察结束时间为 2026-01-01T09:00:00+08:00；交付完成后留在目的地有原因地等待至观察结束，不重新出发。",
+  "sprite_display_tiles": 2,
+  "vision_radius": 20,
+  "attention_bandwidth": 8,
+  "images": {
+    "portrait": [
+      128,
+      128
+    ],
+    "sprite": [
+      128,
+      128
+    ],
+    "layout": "4x4",
+    "copied_and_reopened": true
+  },
+  "run_settings": {
+    "start_time": "2026-01-01T08:00:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "stride_minutes": 1,
+    "steps": 60,
+    "seed": 42,
+    "checkpoint_interval": 1,
+    "checkpoint_retention": 2,
+    "projection_interval": 1,
+    "capture_payloads": true
+  },
+  "models": {
+    "chat": "Qwen3.8-27B-UD-Q4_K_XL",
+    "embedding": "auto"
+  },
+  "verification": {
+    "reloaded": true,
+    "preflight": {
+      "blockers": 0,
+      "warnings": 0,
+      "automatic_checks": 0,
+      "passed": 1
+    },
+    "started": false
+  },
+  "scope": "按预定公式配置的单人独立草稿；尚未启动正式比较。",
+  "time_basis": {
+    "path_tiles": 100,
+    "movement_tiles_per_minute": 4,
+    "K_ref": 25,
+    "deadline": "2026-01-01T08:50:00+08:00",
+    "record": "时间条件计算-2026-09-13.md"
+  }
+}

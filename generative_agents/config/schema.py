@@ -83,7 +83,7 @@ class ExperimentMetadata(StrictModel):
 
 
 class EngineConfig(StrictModel):
-    """固定仿真内核与用户明确选择的 Brain Skill Revision。"""
+    """固定仿真内核与包内唯一 Brain Skill 名称。"""
     algorithm_version: Literal["ga-cn-v1"] = "ga-cn-v1"
     brain_skill: Key = "stanford-town-brain"
     brain_revision_id: str | None = None
@@ -152,6 +152,7 @@ class ResultsConfig(StrictModel):
 class ChatTransport(StrictModel):
     """所有聊天模型传输配置共享的超时、重试和输出限制。"""
     model: ModelName
+    credential_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
     resolved_model: ModelName | None = None
     context_window: int | None = Field(default=None, ge=1, le=10_000_000)
     timeout_seconds: int = Field(default=120, ge=1, le=600)
@@ -254,6 +255,7 @@ ChatModelConfig = Annotated[
 class EmbeddingTransport(StrictModel):
     """所有向量模型传输方式共享的超时和批处理配置。"""
     model: ModelName
+    credential_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
     resolved_model: ModelName | None = None
     timeout_seconds: int = Field(default=120, ge=1, le=1800)
     transport_retry_attempts: int = Field(default=3, ge=1, le=5)
@@ -419,7 +421,7 @@ class AssetReference(StrictModel):
 
 
 class WorldConfig(StrictModel):
-    """运行世界的权威定义；只能来自一个已发布地图 Revision。"""
+    """运行世界定义；可移植包只保存其完整物理内容。"""
     world_key: Key
     world_name: Annotated[
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)
@@ -427,14 +429,13 @@ class WorldConfig(StrictModel):
     definition: dict[str, Any] = Field(default_factory=dict)
     assets: list[AssetReference] = Field(default_factory=list)
     map_id: str | None = None
-    map_revision_id: str | None = None
-    map_revision_hash: (
+    map_snapshot_hash: (
         Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")] | None
     ) = None
 
     @model_validator(mode="after")
     def validate_map_reference(self) -> "WorldConfig":
-        """校验地图`reference`。
+        """校验地图引用与发布快照身份。
 
         返回:
             返回 `'WorldConfig'` 类型的处理结果。
@@ -442,11 +443,8 @@ class WorldConfig(StrictModel):
         异常:
             ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
         """
-        reference = (self.map_id, self.map_revision_id, self.map_revision_hash)
-        if any(reference) and not all(reference):
-            raise ValueError(
-                "map_id, map_revision_id and map_revision_hash must be set together"
-            )
+        if self.map_snapshot_hash and not self.map_id:
+            raise ValueError("map_snapshot_hash requires map_id")
         return self
 
 
@@ -466,7 +464,7 @@ class AgentSpatial(StrictModel):
 
 
 class AgentTemplateDefinition(StrictModel):
-    """Versioned public Agent data copied into experiment-owned Agents."""
+    """旧内核适配结构；新 Studio 公共 Agent 不含坐标与空间地址。"""
 
     agent_key: Key
     enabled: bool = True
@@ -476,6 +474,7 @@ class AgentTemplateDefinition(StrictModel):
     portrait_asset: str | None = None
     sprite_asset: str | None = None
     sprite_layout: Literal["4x3", "4x4"] = "4x4"
+    sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     model_override: str | None = None
     tags: list[str] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
@@ -496,6 +495,7 @@ class AgentDefinition(StrictModel):
     portrait_asset: str | None = None
     sprite_asset: str | None = None
     sprite_layout: Literal["4x3", "4x4"] = "4x4"
+    sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     model_override: str | None = None
     tags: list[str] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
@@ -507,7 +507,7 @@ class AgentDefinition(StrictModel):
 
 
 class ExperimentDefinition(StrictModel):
-    """一次实验 Revision 的完整、可哈希、可冻结定义。"""
+    """从物理实验包入口组装出的内核运行定义。"""
     schema_version: Literal[1] = 1
     experiment: ExperimentMetadata
     engine: EngineConfig = Field(default_factory=EngineConfig)

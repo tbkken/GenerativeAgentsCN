@@ -1,0 +1,19 @@
+溪谷大学四名 Agent 素材使用说明
+===============================
+
+请在系统页面中使用下列新目录内的文件：
+
+陈明远\portrait.png + 陈明远\texture.png + 陈明远\agent-definition.txt
+林晨\portrait.png + 林晨\texture.png + 林晨\agent-definition.txt
+赵悦\portrait.png + 赵悦\texture.png + 赵悦\agent-definition.txt
+王建国\portrait.png + 王建国\texture.png + 王建国\agent-definition.txt
+
+统一规格：
+1. portrait.png：32×32、真实透明 PNG。
+2. texture.png：96×128、真实透明 PNG，3 列×4 行，每帧 32×32。
+3. 四行方向顺序：下、左、右、上。
+4. 三列动作顺序：左脚步、静止、右脚步。
+5. portrait.png 与 texture.png 第一行中间的正面静止帧逐像素一致。
+
+agents 目录根部原有的 *-portrait.png 和 *-walk-4x4.png 是早期模糊版本，仅保留作历史对照，不应再上传到 Agent 定义。
+

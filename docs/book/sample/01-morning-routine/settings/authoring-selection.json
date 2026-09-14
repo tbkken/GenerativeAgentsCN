@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "experiment": {
+    "key": "book-case01-morning-routine",
+    "name": "案例1：陈明远的晨间生活（背景与桌面两态）",
+    "goal": "观察一个 Agent 从睡醒、整理昨日资料、准备并吃早餐，到回到书房开始第一项工作。",
+    "timezone": "Asia/Shanghai",
+    "ui_status": "按浏览器配置清单创建独立实例；实验ID不固定"
+  },
+  "map": "../map/README.md",
+  "agents": [
+    "../agents/陈明远/README.md"
+  ],
+  "brain": "../skill/brain/book-case01-morning-routine/SKILL.md",
+  "simulation": "simulation-settings.json",
+  "models": "models.json",
+  "results": "results.json",
+  "engine": "engine.json",
+  "crowds": [],
+  "passive_skills": [],
+  "sub_skills": [],
+  "evaluators": [],
+  "secrets_note": "凭据只从 credential_env 指定的目标环境变量读取，不写入本目录。",
+  "local_source_status": "map-definition.json 与其他旧 JSON 仅作历史作者参考，不能直接覆盖浏览器当前地图或实验。"
+}

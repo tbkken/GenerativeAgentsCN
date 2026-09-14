@@ -62,7 +62,7 @@ def _world() -> dict:
                             "interaction_key": "query-pedestrian-signal",
                             "skill_name": "traffic-signal-state",
                             "description": "查询当前行人信号",
-                            "interaction_radius_m": 2.5,
+                            "interaction_radius_tiles": 2.5,
                             "default_request": "现在可以过马路吗？",
                         }
                     ],
@@ -223,7 +223,7 @@ def test_editor_game_object_initial_state_is_real_even_without_a_passive_skill()
         }
     }
 
-    system = GameObjectInteractionSystem(world, skill_executor=None, clock=clock)
+    system = GameObjectInteractionSystem(world, clock=clock)
 
     assert system.affordances == ()
     assert system.object_state("fault-light") == {
@@ -235,11 +235,52 @@ def test_editor_game_object_initial_state_is_real_even_without_a_passive_skill()
     assert after == {"signal": "RED", "powered": False}
 
 
-def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
-    """回归验证 ``test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_spatial_asset_footprint_and_interaction_radius_share_tile_units():
+    clock = SimulationClock(datetime(2026, 8, 22, 8, 0, tzinfo=timezone.utc))
+    world = {
+        "spatial_scene": {
+            "schema_version": "ga-spatial-scene/v2",
+            "palette_refs": {},
+            "placements": [
+                {
+                    "instance_key": "wide-desk",
+                    "spatial_asset_id": "desk-asset",
+                    "x_tiles": 5,
+                    "y_tiles": 5,
+                }
+            ],
+        },
+        "editor": {
+            "spatial_assets": {
+                "desk-asset": {
+                    "kind": "OBJECT",
+                    "name": "三格办公桌",
+                    "physics": {"width_tiles": 3, "height_tiles": 1},
+                    "initial_state": {},
+                    "skill_bindings": [
+                        {
+                            "interaction_key": "inspect",
+                            "skill_name": "inspect-desk",
+                            "interaction_radius_tiles": 0.5,
+                        }
+                    ],
+                }
+            }
+        },
+    }
+
+    system = GameObjectInteractionSystem(world, clock=clock)
+
+    assert system.affordances[0].bounds == (4.0, 5.0, 3.0, 1.0)
+    assert len(system.nearby((4, 5))) == 1
+    assert system.nearby((3, 5)) == []
+
+
+def test_interaction_selection_prepares_request_without_running_object_in_agent_identity():
+    """An Agent queues a request; the object's own iteration performs execution."""
     clock = SimulationClock(datetime(2026, 8, 22, 8, 0, tzinfo=timezone.utc))
     runtime = _CountingPassiveRuntime()
-    system = GameObjectInteractionSystem(_world(), skill_executor=runtime, clock=clock)
+    system = GameObjectInteractionSystem(_world(), clock=clock)
     agent = _PassiveAgent()
 
     nearby = system.nearby(agent.coord)
@@ -253,11 +294,10 @@ def test_proximity_only_exposes_affordance_until_agent_explicitly_selects_it():
         agent, nearby[0].selection_key, step_no=2
     )
 
-    assert runtime.calls == 2
-    assert first["agent_decision"] == "COMPLETED"
-    assert "行人红灯" in first["response"]
-    assert second["agent_decision"] == "COMPLETED"
-    assert "行人绿灯" in second["response"]
+    assert runtime.calls == 0
+    assert first["agent_decision"] == second["agent_decision"] == "PENDING"
+    assert "response" not in first and "response" not in second
+    assert first["agent_key"] == agent.agent_key
 
 
 class _Tile:
@@ -441,22 +481,20 @@ def test_demo_resources_materialize_through_public_apis(database_url):
             },
         )
         assert public_map.status_code == 201, public_map.text
-        map_draft = client.get(
-            f"/api/v1/maps/{public_map.json()['id']}/draft"
-        ).json()
         saved_map = client.put(
-            f"/api/v1/maps/{public_map.json()['id']}/draft",
-            json={"lock_version": map_draft["lock_version"], "world": build_world()},
-        )
-        assert saved_map.status_code == 200, saved_map.text
-        map_revision = client.post(
-            f"/api/v1/maps/{public_map.json()['id']}/draft/publish",
+            f"/api/v1/maps/{public_map.json()['id']}",
             json={
-                "draft_revision_id": saved_map.json()["id"],
-                "lock_version": saved_map.json()["lock_version"],
+                "lock_version": public_map.json()["lock_version"],
+                "world": build_world(),
             },
         )
-        assert map_revision.status_code == 200, map_revision.text
+        assert saved_map.status_code == 200, saved_map.text
+        validated_map = client.post(
+            f"/api/v1/maps/{public_map.json()['id']}/validate",
+            json={"lock_version": saved_map.json()["lock_version"]},
+        )
+        assert validated_map.status_code == 200, validated_map.text
+        assert validated_map.json()["validation"]["valid"] is True
 
         agent = client.post(
             "/api/v1/agent-templates",
@@ -509,7 +547,7 @@ def test_demo_resources_materialize_through_public_apis(database_url):
                 "goal": "红灯等待，绿灯过街",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": map_revision.json()["id"],
+                "map_id": public_map.json()["id"],
                 "crowd_revision_ids": [crowd_revision.json()["id"]],
             },
         )
@@ -528,7 +566,7 @@ def test_demo_resources_materialize_through_public_apis(database_url):
         for node in definition["world"]["definition"]["editor_v2"]["hierarchy_nodes"]
         if node["id"] == "pedestrian-signal"
     )
-    assert definition["world"]["map_revision_id"] == map_revision.json()["id"]
+    assert definition["world"]["map_id"] == public_map.json()["id"]
     assert definition["agents"][0]["agent_key"] == "pedestrian-lin-xiao"
     assert definition["agents"][0]["coord"] == [4, 5]
     assert signal["skill_bindings"][0]["skill_name"] == "traffic-signal-state"

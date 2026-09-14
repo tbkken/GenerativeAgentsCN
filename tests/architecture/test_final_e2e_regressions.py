@@ -35,7 +35,7 @@ from generative_agents.runtime import worker
 from tests.support import (
     brain_selection_for_database,
     brain_revision_via_api,
-    first_builtin_crowd_revision_id,
+    first_user_crowd_revision_id,
     publish_user_map,
     publish_user_map_via_api,
 )
@@ -128,7 +128,7 @@ def _publish(database, definition: ExperimentDefinition):
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
-        map_revision_id=map_revision["id"],
+        map_id=map_revision["id"],
         **brain_selection_for_database(database),
     )
     draft = service.get_draft(experiment["id"])
@@ -788,14 +788,14 @@ def test_agent_crud_rejects_world_mutation_and_published_revision_rerun_http(tmp
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         map_revision = publish_user_map_via_api(client)
-        crowd_revision_id = first_builtin_crowd_revision_id(client)
+        crowd_revision_id = first_user_crowd_revision_id(client)
         experiment = client.post(
             "/api/v1/experiments",
             json={
                 "name": "CRUD",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_revision_id],
             },
         ).json()

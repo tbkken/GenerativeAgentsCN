@@ -1,0 +1,62 @@
+[
+  {
+    "name": "agent_context_injection",
+    "provided_on_agent": [
+      "age",
+      "innate",
+      "learned",
+      "lifestyle",
+      "daily_plan",
+      "goals",
+      "tags"
+    ],
+    "actual_variable_keys": [
+      "current_action",
+      "currently",
+      "external_observations",
+      "known_spatial_memory",
+      "recent_concepts",
+      "schedule"
+    ],
+    "full_profile_injected": false
+  },
+  {
+    "name": "skill_parse_and_dependencies",
+    "count": 11,
+    "missing": [],
+    "brain_children": [
+      "social-interaction-decision",
+      "reflection-synthesis"
+    ]
+  },
+  {
+    "name": "fresh_memory_and_isolation",
+    "fresh_count": 1,
+    "other_agent_count": 0,
+    "retrieval_method": "file_lexical"
+  },
+  {
+    "name": "invalidated_memory_excluded",
+    "active_results": 0
+  },
+  {
+    "name": "real_model_with_actual_skill_runtime_and_mcp",
+    "mcp_calls": [
+      {
+        "tool": "world-perceive",
+        "is_error": false
+      },
+      {
+        "tool": "world-act",
+        "is_error": false
+      }
+    ],
+    "selected_action": "ACT",
+    "world_committed": false,
+    "scope": "isolated fixture, current activity only; not four-agent campus behavior"
+  },
+  {
+    "name": "second_world_action_rejected",
+    "rejected": true
+  }
+]

@@ -68,6 +68,7 @@ class FileStepCommitter:
         frame_store: FrameStore,
         projection: StepProjection,
         checkpoint_writer: CheckpointWriter | None = None,
+        recovery_writer: CheckpointWriter | None = None,
     ):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -82,6 +83,7 @@ class FileStepCommitter:
         self._frame_store = frame_store
         self._projection = projection
         self._checkpoint_writer = checkpoint_writer
+        self._recovery_writer = recovery_writer
 
     def commit(self, result: StepResult, *, force_checkpoint: bool) -> CommitReceipt:
         """按照持久化顺序提交当前仿真步，并返回提交凭据。
@@ -102,6 +104,8 @@ class FileStepCommitter:
             if self._checkpoint_writer is None:
                 raise RuntimeError("force_checkpoint requires a checkpoint writer")
             checkpoint_path = self._checkpoint_writer.write(result, frame)
+        if self._recovery_writer is not None:
+            self._recovery_writer.write(result, frame)
         result_version = self._projection.commit_step(
             result,
             frame=frame,

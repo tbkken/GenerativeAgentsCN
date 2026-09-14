@@ -1,0 +1,21 @@
+{
+  "case_key": "01-desk-tidying",
+  "title": "一个人在活动室整理书桌",
+  "status": "draft",
+  "steps": 3,
+  "assets": [
+    "map",
+    "agents/陈明远"
+  ],
+  "skills": [
+    "context-driven-simulation-brain"
+  ],
+  "learning_goal": "一个人在活动室整理书桌",
+  "acceptance": [
+    "Run 正常结束",
+    "每个 Agent 每 Step 最多一次 world-act",
+    "已提交事实包含 Event SPO 与非空 structured_payload",
+    "Replay 可从 StepResult 重建状态"
+  ],
+  "source": "docs/sample"
+}

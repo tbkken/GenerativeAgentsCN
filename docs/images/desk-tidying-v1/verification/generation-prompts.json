@@ -1,0 +1,33 @@
+{
+  "tool": "built-in image_gen",
+  "prompts": [
+    [
+      "room",
+      "Use case: stylized-concept. Generate a production square 1024x1024 orthographic top-down 2D simulation room background asset for a Chinese educational desk-tidying experiment. Clean softly illustrated game art, muted sage and warm ivory palette, light maple plank floor, thin cream perimeter walls, simple doorway centered along bottom wall. Entire square room viewed exactly vertically from overhead, no perspective or isometric angle. Interior entirely empty, clean floor across central area where separate desk and character sprites will be placed. No furniture, no papers, no people, no plants, no signage, no lettering, no grid, no watermark. Even diffuse lighting, subtle wall contact shadows only. Opaque background. This is a usable isolated room map base, not concept sheet."
+    ],
+    [
+      "desk",
+      "Use case: stylized-concept. Single production game sprite: an EMPTY rectangular warm light-maple study desk, exact orthographic overhead view, long axis horizontal, softly illustrated detailed 2D cozy simulation game style. One desk only centered, desk occupies 80% canvas width and 48% canvas height, all edges visible with generous transparent margins. Subtle woodgrain and thin dark edge. No books, papers, pens, chair, room, floor, people, text, grids or watermark. Genuine transparent alpha background, not checkerboard baked into picture. Square canvas. No isometric perspective; no visible front drawers or legs. Intended overlay on a top-down room."
+    ],
+    [
+      "scattered",
+      "Use case: stylized-concept. Single transparent sprite for an educational desk-tidying game. Exact orthographic overhead view of ONE teal closed notebook and THREE loose ivory lecture sheets, all four items entirely visible, scattered untidily with small overlaps at different angles. Tiny faint gray illegible lines on paper, no readable text. Warm sage/ivory cozy hand-painted 2D game asset matching a maple desk. Composition within central 65% square canvas, generous clear margins, teal notebook on left, three sheets spread to right. No desk, floor, person, pens, other props, lettering or watermark. Genuine transparent alpha background. This is one collection of study materials, not a sheet of multiple variations."
+    ],
+    [
+      "actor",
+      "Use case: stylized-concept. Single standalone character reference sprite for Chinese educational simulation, fictional adult student Xu Zhixing 许知行 age 22, short black hair, sage-green overshirt over ivory T-shirt, dark charcoal trousers, off-white shoes, friendly quiet appearance. Full body centered, arms relaxed, facing viewer in a slightly overhead top-down RPG game viewpoint, clean softly illustrated cozy game art, restrained detail readable at small size. Only ONE character, no other poses or frames, no desk, room, accessories, text, name labels or watermark. Genuine transparent alpha background, square canvas with generous margins, no ground plane. This is a static character reference, not an animation atlas."
+    ],
+    [
+      "stack-state-edit",
+      "Use case: precise-object-edit. Edit the referenced study materials sprite into its tidied state. Preserve exactly the identity, colors, texture and scale of the teal notebook and three ivory lecture sheets. Arrange the three sheets neatly aligned in a vertical stack at center, with the teal notebook placed squarely on top, a little of the three paper edges visible. Keep EXACT SAME square canvas size and centered anchor as reference. Result occupies less area because the same items are stacked, not enlarged. Exact overhead orthographic view, same warm soft 2D game art. Genuine transparent alpha background. No desk, room, hands, labels, new objects, watermark or ground plane. A single final object state, not before/after panels."
+    ],
+    [
+      "stack-final",
+      "Create a PNG sprite with a TRANSPARENT BACKGROUND: one dark teal elastic-bound closed notebook on top of exactly three neatly aligned ivory loose sheets, tiny sheet edges visible underneath. Orthographic straight overhead 2D softly painted cozy game art, no perspective. Single object cluster centered occupying middle 55% width and 65% height of square canvas. Notebook has ivory page edges and dark teal elastic on its right, teal ribbon at bottom left. Transparent empty margins on all sides. No checkerboard, no white backdrop, no floor, no table, no shadow plane, no labels or text. This is a transparent game item sprite."
+    ],
+    [
+      "discarded-background-extraction",
+      "Background extraction edit. Remove the entire white/gray checkerboard surrounding this neatly stacked teal notebook and three papers. Output genuine transparent RGBA PNG alpha=0 around the object, NOT an illustration of transparency. Preserve the notebook, three sheet edges, position, object scale, exact square canvas dimensions 1254x1254 and all object details unchanged. Do not add anything. Only remove background."
+    ]
+  ]
+}

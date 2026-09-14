@@ -1,0 +1,11 @@
+{
+  "format": "作者资源录入资料副本（非系统导入协议）",
+  "skill_key": "traffic-rider-brain",
+  "kind": "BRAIN",
+  "public_id": "65214d64-20c3-4329-b57f-0e2aa9ee1843",
+  "ui_content_hash_prefix": "3db4f32c9b18",
+  "source": "SKILL.md",
+  "source_sha256": "74536ad090e7ca65be3f33960fa2faec9e3fa8d5950f22347c1c5e0ece359559",
+  "public_id_note": "未记录的公共ID保留null，不编造",
+  "status": "已保存公共作者资源；首份草稿概览显示已复制，实验内正文尚未再核验"
+}

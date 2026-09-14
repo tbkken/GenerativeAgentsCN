@@ -1,0 +1,21 @@
+{
+  "skill_key": "book-case01-morning-routine",
+  "kind": "brain",
+  "name": "案例 1：醒来后的晨间工作启动",
+  "description": "驱动陈明远完成一段跨卧室、书房、厨房和餐区的真实晨间流程。",
+  "entrypoint": "SKILL.md",
+  "dependencies": {
+    "mcp": ["world-perceive", "world-navigate", "world-act"],
+    "skills": [],
+    "passive_skills": []
+  },
+  "runtime": {
+    "agent_count": 1,
+    "steps": 16,
+    "timezone": "Asia/Shanghai"
+  },
+  "notes": [
+    "该 JSON 是随案例提供的资源声明，便于学员按字段在 Studio 中创建 Brain；实际 Skill 合同以 SKILL.md frontmatter 和正文为准。",
+    "不包含公共 Agent ID、Revision ID、数据库查询条件或外部路径。"
+  ]
+}

@@ -1,0 +1,16 @@
+Use case: precise-object-edit.
+The attached image is the EDIT TARGET: the accepted ultrawide traffic background, 2172 x 724 pixels. Keep the SAME 3:1 aspect ratio, viewpoint, artwork, buildings, one southern building row, shallow northern campus, roads, central median, zebra crossings, bus shelter, and both southern service-street connectors. This is a very SMALL LOCAL EDIT, not a redesign.
+
+Make exactly these changes to the WHITE METAL GUARDRAIL that separates the lower/eastbound motor carriageway from the lower green bicycle lane:
+A. CLOSE the existing guardrail gap at approximately 40–42% image width. Fill that gap with the same continuous white metal rail as its neighbors. The old gap must completely disappear.
+B. Create ONE small opening in that SAME white guardrail at approximately 33–35% image width, immediately to the right of the existing left service-street connector. Remove only about 1.5% image width of white railing, showing continuous asphalt pavement beneath. This is the entry from the green bicycle lane into the adjacent motor lane. DO NOT change or interrupt the green bicycle pavement underneath the gap.
+C. Create ONE small matching opening in that SAME guardrail at approximately 61–63% image width, downstream/right of the bus shelter. Again remove only a short section of railing, showing asphalt beneath. This is the return from the motor lane to the same bicycle lane. DO NOT change or interrupt the green bicycle pavement underneath this gap.
+D. There must now be EXACTLY TWO small midblock openings in the lower bicycle/motor guardrail: the entry at 34% width and the return at 62% width. The two existing full zebra-crossing openings near the outer ends are separate and unchanged. All remaining lower guardrail segments must be continuous, especially the OLD gap near 41% width which must be CLOSED.
+
+CRITICAL: The GREEN BICYCLE LANE must remain a CONTINUOUS horizontal strip from left to right, including underneath both new guardrail openings. Do not cut holes in the green strip, do not extend a raised sidewalk into it, do not add curbs or steps across it. Only the metal railing changes at the two gaps. Nothing crosses the central planted median at these gaps.
+
+Keep the existing U-shaped service street behind the southern shops and its two connectors at approximately 32% and 68% width. Make the short sidewalk sections linking these two connectors to the bicycle lane visually flush, with a subtle lowered curb if needed; no barrier or step blocks either link. Do not move the connectors or buildings. The compact left connector and nearby entry gap are the shared decision area. All routes rejoin before the right zebra crossing.
+
+Do not add ANY other openings, crossing stripes, road arrows, labels, equipment, vehicles, characters, cameras, traffic lights or signs. Preserve the existing bicycle symbols and travel-direction arrows. Preserve all existing scene details outside these small edited guardrail and connector areas.
+
+Return one clean 3:1 ultrawide background, preserving the input image's scale and resolution.

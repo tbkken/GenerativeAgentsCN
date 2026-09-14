@@ -129,48 +129,6 @@ def test_user_agent_and_crowd_support_archive_restore_and_delete(database_url):
     assert agent_deleted.status_code == 204
 
 
-def test_builtin_public_agents_and_crowd_are_seeded(database_url):
-    """回归验证 ``test_builtin_public_agents_and_crowd_are_seeded`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        agents = client.get("/api/v1/agent-templates?page_size=500").json()
-        crowds = client.get("/api/v1/crowds?page_size=100").json()
-
-        assert agents["total"] == 25
-        assert len({item["name"].strip().casefold() for item in agents["items"]}) == 25
-        assert all(item["is_builtin"] and item["current_published"] for item in agents["items"])
-        builtin_agent = agents["items"][0]
-        builtin_revision = client.get(
-            f"/api/v1/agent-templates/{builtin_agent['id']}/revisions/{builtin_agent['current_published']['id']}"
-        ).json()
-        assert len(builtin_revision["definition"]["coord"]) == 2
-        assert builtin_revision["definition"]["spatial"]["address"]["living_area"]
-        assert builtin_revision["definition"]["spatial"]["tree"]
-        builtin = next(item for item in crowds["items"] if item["is_builtin"])
-        assert builtin["agent_count"] == 25
-        assert builtin["current_published"]["state"] == "PUBLISHED"
-
-
-def test_seeded_crowd_can_be_deleted_and_is_not_recreated(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        builtin = next(
-            item
-            for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
-            if item["is_builtin"]
-        )
-        deleted = client.delete(f"/api/v1/crowds/{builtin['id']}")
-        assert deleted.status_code == 204, deleted.text
-
-    restarted = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(restarted) as client:
-        keys = {
-            item["crowd_key"]
-            for item in client.get("/api/v1/crowds?page_size=100").json()["items"]
-        }
-    assert "stanford-town-residents" not in keys
-
-
 def test_agent_name_is_globally_unique_after_normalization(database_url):
     """回归验证 ``test_agent_name_is_globally_unique_after_normalization`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
@@ -214,7 +172,7 @@ def test_multiple_crowds_dedupe_by_agent_name_and_isolate_experiment_copy(databa
                 "name": "多个人群去重实验",
                 "brain_skill": "stanford-town-brain",
                 "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_revision_id": map_revision["id"],
+                "map_id": map_revision["id"],
                 "crowd_revision_ids": [crowd_a["id"], crowd_b["id"]],
             },
         )

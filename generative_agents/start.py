@@ -203,6 +203,13 @@ class SimulationRunner:
                 # 不能直接跳到终点，也不能重新寻路，否则恢复前后的轨迹会分叉。
                 status["coord"] = tuple(agent.coord)
                 status["path"] = tuple(agent.path or ())
+            run_objects = getattr(self.game, "run_game_object_skills", None)
+            if callable(run_objects):
+                for event in run_objects(
+                    step_no=step_no, total_steps=target_step, stride_minutes=stride_minutes,
+                    observed_facts=builder.domain_events,
+                ):
+                    collector.capture_event(event)
             if memory_stream is not None:
                 for event in memory_stream.drain_result_events():
                     collector.capture_event(event)
@@ -251,7 +258,12 @@ class SimulationRunner:
         return max(1, stride_minutes * max(1, tiles_per_minute))
 
 
-def build_file_committer(context: SimulationContext, game: Game) -> FileStepCommitter:
+def build_file_committer(
+    context: SimulationContext,
+    game: Game,
+    *,
+    checkpoint_retention: int = 2,
+) -> FileStepCommitter:
     """构建只写运行目录的提交器，供独立命令行仿真使用。
 
     参数:
@@ -269,11 +281,22 @@ def build_file_committer(context: SimulationContext, game: Game) -> FileStepComm
             storage_exporters=game.storage_exporters(),
             runtime_storage_exporters=game.runtime_storage_exporters(),
         ),
+        retention=checkpoint_retention,
+    )
+    from generative_agents.runtime.context import RecoveryPaths
+    recovery = CheckpointBundleWriter(
+        RecoveryPaths(root=context.paths.root, run_id=context.paths.run_id),
+        lambda _result: CheckpointSnapshot(
+            state=game.snapshot_state(), conversation=game.conversation,
+            storage_exporters=game.storage_exporters(),
+            runtime_storage_exporters=game.runtime_storage_exporters(),
+        ), retention=2,
     )
     return FileStepCommitter(
         FrameStore(context.paths),
         FileResultProjector(context.paths),
         checkpoint,
+        recovery,
     )
 
 
@@ -317,7 +340,11 @@ def build_runner(
     return SimulationRunner(
         context=context,
         game=game,
-        committer=build_file_committer(context, game),
+        committer=build_file_committer(
+            context,
+            game,
+            checkpoint_retention=definition.simulation.checkpoint_retention,
+        ),
         checkpoint_interval_steps=definition.simulation.checkpoint_interval_steps,
     )
 

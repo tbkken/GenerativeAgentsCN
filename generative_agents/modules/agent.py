@@ -327,18 +327,18 @@ class Agent:
             msg = {"<PROMPT>": "\n" + res["prompt"] + "\n"}
             msg.update({"response": output})
         self.logger.debug(utils.block_msg(title, msg))
-        revision_resolver = getattr(self._skills, "revision", None)
-        skill_revision = (
-            revision_resolver(func_hint)
-            if callable(revision_resolver)
-            else "unversioned"
+        hash_resolver = getattr(self._skills, "content_hash", None)
+        skill_content_hash = (
+            hash_resolver(func_hint)
+            if callable(hash_resolver)
+            else "unknown-content"
         )
         self._result_events.append(
             {
                 "kind": "skill_execution",
                 "agent_key": self.agent_key,
                 "skill_name": str(func_hint).replace("_", "-"),
-                "skill_revision": skill_revision,
+                "skill_content_hash": skill_content_hash,
                 "output_text": str(output)[:8192],
                 "execution_source": "MODEL" if self.llm_available() else "FAILSAFE",
             }
@@ -465,8 +465,9 @@ class Agent:
                 addr = tile.get_address("game_object")
                 self.maze.update_obj(self.coord, memory.Event(addr[-1], address=addr))
             events.update({e: self.coord for e in tile.get_events()})
-        if not path:
-            events.update(_update_tile(coord))
+        # A remaining route is a future plan, not an absence from the current
+        # tile.  Publish the committed event here, including checkpoint restore.
+        events.update(_update_tile(coord))
         self.coord = coord
         self.path = path or []
 
@@ -710,7 +711,7 @@ class Agent:
         object_name,
         interaction_key,
         skill_name,
-        skill_revision,
+        skill_content_hash,
         request,
         response,
         address,
@@ -722,7 +723,7 @@ class Agent:
             object_name: 智能体准备交互的世界对象名称。
             interaction_key: 用于稳定定位`interaction`的键。
             skill_name: 需要调用的技能名称，必须能在当前运行的技能快照中解析。
-            skill_revision: 当前运行固定使用的技能修订标识。
+            skill_content_hash: 当前 Run 内物理 Skill 内容的完整性哈希。
             request: 待执行、记录或发送到外部模型的请求对象。
             response: 模型、HTTP 接口或下游组件返回的原始响应，尚待校验或转换。
             address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。
@@ -759,7 +760,7 @@ class Agent:
                 "object_name": object_name,
                 "interaction_key": interaction_key,
                 "skill_name": skill_name,
-                "skill_revision": skill_revision,
+                "skill_content_hash": skill_content_hash,
                 "request": request,
                 "response": response,
                 "agent_decision": directive,

@@ -1,0 +1,381 @@
+{
+  "case_key": "book-case01-morning-routine",
+  "levels": [
+    "WORLD",
+    "SECTOR",
+    "ARENA",
+    "GAME_OBJECT"
+  ],
+  "grid": {
+    "width": 24,
+    "height": 24,
+    "tile_size": 32
+  },
+  "nodes": [
+    {
+      "id": "book-case01-morning-home",
+      "kind": "WORLD",
+      "parent_id": null,
+      "name": "陈明远的家",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 24
+      },
+      "semantic": "陈明远居住的单人住宅，包含卧室、书房、厨房、餐区和连接它们的通道。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "visual_contract": "32px integer grid; room regions and furniture footprints align to whole tiles"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-sector",
+      "kind": "SECTOR",
+      "parent_id": "book-case01-morning-home",
+      "name": "居住区",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 24
+      },
+      "semantic": "陈明远的家是一个从起床到开始工作的连续生活空间。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {}
+    },
+    {
+      "id": "book-case01-morning-home-bedroom",
+      "kind": "ARENA",
+      "parent_id": "book-case01-morning-home-sector",
+      "name": "卧室",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "卧室用于醒来、穿衣和整理随身物品。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "bedroom"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-bedroom-object",
+      "kind": "GAME_OBJECT",
+      "parent_id": "book-case01-morning-home-bedroom",
+      "name": "卧室生活空间",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "卧室用于醒来、穿衣和整理随身物品。 这是一个可被 Agent 观察到的空间语义对象，站位由可通行网格决定。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "spatial-semantic-anchor"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-study",
+      "kind": "ARENA",
+      "parent_id": "book-case01-morning-home-sector",
+      "name": "书房",
+      "sort_order": 1,
+      "bounds": {
+        "x": 12,
+        "y": 0,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "书房用于查看昨天的资料、整理文件和开始当天的工作。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "study"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-study-object",
+      "kind": "GAME_OBJECT",
+      "parent_id": "book-case01-morning-home-study",
+      "name": "书房工作区",
+      "sort_order": 0,
+      "bounds": {
+        "x": 12,
+        "y": 0,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "书房用于查看昨天的资料、整理文件和开始当天的工作。 这是一个可被 Agent 观察到的空间语义对象，站位由可通行网格决定。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "spatial-semantic-anchor"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-corridor",
+      "kind": "ARENA",
+      "parent_id": "book-case01-morning-home-sector",
+      "name": "通道",
+      "sort_order": 2,
+      "bounds": {
+        "x": 0,
+        "y": 10,
+        "width": 24,
+        "height": 4
+      },
+      "semantic": "连接卧室、书房、厨房和餐区的家中通道。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "corridor"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-corridor-object",
+      "kind": "GAME_OBJECT",
+      "parent_id": "book-case01-morning-home-corridor",
+      "name": "家中通道",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 10,
+        "width": 24,
+        "height": 4
+      },
+      "semantic": "连接卧室、书房、厨房和餐区的家中通道。 这是一个可被 Agent 观察到的空间语义对象，站位由可通行网格决定。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "spatial-semantic-anchor"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-kitchen",
+      "kind": "ARENA",
+      "parent_id": "book-case01-morning-home-sector",
+      "name": "厨房",
+      "sort_order": 3,
+      "bounds": {
+        "x": 0,
+        "y": 14,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "厨房用于取用食材、煮早餐和收拾餐具。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "kitchen"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-kitchen-object",
+      "kind": "GAME_OBJECT",
+      "parent_id": "book-case01-morning-home-kitchen",
+      "name": "厨房工作区",
+      "sort_order": 0,
+      "bounds": {
+        "x": 0,
+        "y": 14,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "厨房用于取用食材、煮早餐和收拾餐具。 这是一个可被 Agent 观察到的空间语义对象，站位由可通行网格决定。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "spatial-semantic-anchor"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-dining",
+      "kind": "ARENA",
+      "parent_id": "book-case01-morning-home-sector",
+      "name": "餐区",
+      "sort_order": 4,
+      "bounds": {
+        "x": 12,
+        "y": 14,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "早餐桌区用于吃早餐、喝水和短暂停留。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "dining"
+      }
+    },
+    {
+      "id": "book-case01-morning-home-dining-object",
+      "kind": "GAME_OBJECT",
+      "parent_id": "book-case01-morning-home-dining",
+      "name": "早餐桌区",
+      "sort_order": 0,
+      "bounds": {
+        "x": 12,
+        "y": 14,
+        "width": 12,
+        "height": 10
+      },
+      "semantic": "早餐桌区用于吃早餐、喝水和短暂停留。 这是一个可被 Agent 观察到的空间语义对象，站位由可通行网格决定。",
+      "material_slice_id": null,
+      "render_recipe_id": null,
+      "render_mode": "LAYER_BACKED",
+      "interaction_mode": "STATIC",
+      "state_appearance": {
+        "cases": []
+      },
+      "initial_state": {},
+      "skill_bindings": [],
+      "extensions": {
+        "case_role": "spatial-semantic-anchor"
+      }
+    }
+  ],
+  "address_examples": [
+    {
+      "purpose": "起床后所在卧室",
+      "coord": [
+        3,
+        4
+      ],
+      "address": [
+        "book-case01-morning-home",
+        "book-case01-morning-home-sector",
+        "book-case01-morning-home-bedroom",
+        "book-case01-morning-home-bedroom-object"
+      ]
+    },
+    {
+      "purpose": "整理昨天资料的书房站位",
+      "coord": [
+        18,
+        4
+      ],
+      "address": [
+        "book-case01-morning-home",
+        "book-case01-morning-home-sector",
+        "book-case01-morning-home-study",
+        "book-case01-morning-home-study-object"
+      ]
+    },
+    {
+      "purpose": "取食材和煮早餐的厨房站位",
+      "coord": [
+        3,
+        18
+      ],
+      "address": [
+        "book-case01-morning-home",
+        "book-case01-morning-home-sector",
+        "book-case01-morning-home-kitchen",
+        "book-case01-morning-home-kitchen-object"
+      ]
+    },
+    {
+      "purpose": "吃早餐的餐区站位",
+      "coord": [
+        18,
+        20
+      ],
+      "address": [
+        "book-case01-morning-home",
+        "book-case01-morning-home-sector",
+        "book-case01-morning-home-dining",
+        "book-case01-morning-home-dining-object"
+      ]
+    }
+  ],
+  "address_contract": "运行时每个 Tile 都编译为 World / Sector / Arena / Game Object 四层名称；节点边界不重叠，通道只覆盖 y=10..13。"
+}

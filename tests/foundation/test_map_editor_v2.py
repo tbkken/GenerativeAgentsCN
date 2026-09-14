@@ -14,6 +14,7 @@ from generative_agents.config.map_editor import (
     GridRect,
     MapEditorDocumentV2,
     MaterialSlice,
+    PixelRect,
     TileOverridePart,
 )
 from generative_agents.config.schema import WorldConfig
@@ -167,29 +168,17 @@ def test_map_validation_warns_when_every_game_object_is_static():
     assert [warning["code"] for warning in warnings] == ["ALL_GAME_OBJECTS_STATIC"]
 
 
-def test_skill_bound_game_object_requires_a_passive_skill_binding():
-    with pytest.raises(ValidationError, match="require a passive Skill"):
-        MapEditorDocumentV2.model_validate(
-            {
-                "root_node_id": "world",
-                "hierarchy_nodes": [
-                    {
-                        "id": "world",
-                        "kind": "WORLD",
-                        "name": "World",
-                        "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
-                    },
-                    {
-                        "id": "object",
-                        "kind": "GAME_OBJECT",
-                        "parent_id": "world",
-                        "name": "Door",
-                        "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
-                        "interaction_mode": "SKILL_BOUND",
-                    },
-                ],
-            }
-        )
+def test_game_object_binding_derives_mode_without_a_separate_switch():
+    from generative_agents.config.map_editor import HierarchyNode
+    node = HierarchyNode.model_validate({
+        "id": "object", "kind": "GAME_OBJECT", "parent_id": "arena", "name": "Door",
+        "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
+        "skill_bindings": [{"skill_name": "door-skill"}],
+    })
+    assert node.interaction_mode == "SKILL_BOUND"
+    assert node.skill_bindings[0].interaction_key == "interact"
+    node.skill_bindings = []
+    assert node.interaction_mode == "STATIC"
 
 
 def test_ville_import_is_lossless_for_used_visual_materials():
@@ -388,6 +377,227 @@ assert.equal(editor.drag.type, 'pan', 'the World root is fixed and its surface p
     )
 
 
+def test_world_canvas_resizes_selected_node_from_bottom_right_handle():
+    """非根地址节点应能用右下角手柄调整空间范围并同步表单。"""
+    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+
+    assert "type: 'resize-node'" in source
+    assert "dragWorldNodeResize(point)" in source
+    assert "worldNodeResizeHit(point" in source
+    assert "selected.kind !== 'WORLD'" in source
+    assert ".me2-canvas-host.is-resize { cursor: nwse-resize; }" in styles
+
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+global.CustomEvent = class CustomEvent {{}};
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+const node = {{id:'sector',kind:'SECTOR',bounds:{{x:2,y:3,width:4,height:4}},extensions:{{mask:'old'}}}};
+editor.document = {{import_metadata:{{width:10,height:10}},hierarchy_nodes:[node]}};
+editor.nodeById = new Map([[node.id,node]]);
+editor.selectedNodeId = node.id;
+editor.workspace = 'world'; editor.readonly = false; editor.tool = 'world';
+editor.zoom = 1; editor.renderTile = 16; editor.offsetX = 0; editor.offsetY = 0;
+editor.nodeEditDraft = null;
+editor._changed = false; editor._changeRevision = 0; editor._changeNotificationQueued = false;
+const inputs = {{width:{{value:'4'}},height:{{value:'4'}}}};
+editor.root = {{focus:()=>{{}},dispatchEvent:()=>{{}}}};
+editor.inspector = {{querySelector: selector => selector.includes('node-w') ? inputs.width : selector.includes('node-h') ? inputs.height : null}};
+editor.canvas = {{setPointerCapture:()=>{{}},hasPointerCapture:()=>false,releasePointerCapture:()=>{{}}}};
+editor.canvasHost = null;
+editor.renderCanvas = () => {{}};
+editor.localPoint = event => ({{x:event.x,y:event.y}});
+
+editor.pointerDown({{button:0,pointerId:1,x:96,y:112}});
+assert.equal(editor.drag.type, 'resize-node');
+editor.pointerMove({{x:144,y:144}});
+assert.deepEqual(node.bounds, {{x:2,y:3,width:7,height:6}});
+assert.equal(inputs.width.value, '7');
+assert.equal(inputs.height.value, '6');
+assert.equal(node.extensions.mask, undefined);
+assert.equal(editor.changed, true);
+
+editor.pointerMove({{x:500,y:500}});
+assert.deepEqual(node.bounds, {{x:2,y:3,width:8,height:7}}, 'resize must stop at the map edge');
+editor.pointerUp({{pointerId:1,x:500,y:500}});
+assert.equal(editor.drag, null);
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_world_node_draft_survives_same_node_canvas_reselection_before_save():
+    """编辑 World 后点击其画布造成重绘时，第一次保存必须使用用户刚输入的值。"""
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+const worldNode = {{
+  id:'world',kind:'WORLD',parent_id:null,name:'未命名世界',sort_order:0,
+  bounds:{{x:0,y:0,width:20,height:12}},semantic:'旧语义',material_slice_id:null,
+  skill_bindings:[],initial_state:{{}},extensions:{{}},
+}};
+editor.document = {{
+  root_node_id:worldNode.id,
+  import_metadata:{{width:20,height:12}},
+  hierarchy_nodes:[worldNode],
+  material_slices:[],
+}};
+editor.nodeById = new Map([[worldNode.id, worldNode]]);
+editor.childrenByParent = new Map();
+editor.sliceById = new Map();
+editor.passiveSkillCatalog = [];
+editor.nodeEditDraft = null;
+editor.nodeMaterialPreview = null;
+editor.selectedNodeId = worldNode.id;
+editor.expandedNodes = new Set([worldNode.id]);
+editor.readonly = false;
+editor._changed = false;
+editor._changeRevision = 0;
+editor._changeNotificationQueued = false;
+editor.root = {{}};
+const handlers = {{}};
+const control = (key, value = '', tag = 'input') => ({{
+  value,
+  matches: selector => selector === tag,
+  addEventListener: (type, callback) => {{ handlers[`${{key}}:${{type}}`] = callback; }},
+}});
+const controls = {{
+  '[data-node-name]': control('name', '更新后的世界'),
+  '[data-node-material]': control('material', '', 'select'),
+  '[data-node-x]': control('x', '0'),
+  '[data-node-y]': control('y', '0'),
+  '[data-node-w]': control('w', '20'),
+  '[data-node-h]': control('h', '12'),
+  '[data-node-semantic]': control('semantic', '第一次输入的世界语义', 'textarea'),
+  '[data-save-node]': control('save', '', 'button'),
+}};
+editor.inspector = {{querySelector: selector => controls[selector] || null}};
+editor.reindex = () => {{}};
+editor.renderCanvas = () => {{}};
+editor.toast = () => {{}};
+let rendered = '';
+editor.renderAll = () => {{ rendered = editor.nodeInspector(worldNode); }};
+
+editor.bindNodeInspector(worldNode);
+handlers['name:input']({{target:controls['[data-node-name]']}});
+handlers['semantic:input']({{target:controls['[data-node-semantic]']}});
+editor.selectNode(worldNode.id, false);
+assert.equal(worldNode.name, '未命名世界', 'same-node re-render must keep the edit as a draft');
+assert.match(rendered, /data-node-name value="更新后的世界"/);
+assert.match(rendered, />第一次输入的世界语义<\\/textarea>/);
+
+editor.bindNodeInspector(worldNode);
+handlers['save:click']();
+assert.equal(worldNode.name, '更新后的世界');
+assert.equal(worldNode.semantic, '第一次输入的世界语义');
+assert.equal(editor.nodeEditDraft, null);
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_node_material_selection_preserves_bounds_and_default_name():
+    """地址节点选择素材后只替换默认名称，不能改写空间语义范围。"""
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+global.CustomEvent = class CustomEvent {{}};
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+const node = {{
+  id:'arena',kind:'ARENA',parent_id:'sector',name:'\\u672a\\u547d\\u540d Arena',sort_order:0,
+  bounds:{{x:9,y:9,width:1,height:1}},semantic:'',material_slice_id:null,
+  skill_bindings:[],initial_state:{{}},extensions:{{}},
+}};
+const slice = {{
+  id:'slice',source_id:'source',name:'\\u56fe\\u4e66\\u9605\\u89c8\\u533a',pixel_rect:{{x:0,y:0,width:96,height:64}},
+  grid_rect:{{x:0,y:0,width:3,height:2}},rotation_degrees:0,
+}};
+editor.document = {{import_metadata:{{width:10,height:10}},hierarchy_nodes:[node],material_slices:[slice]}};
+editor.nodeById = new Map([[node.id,node]]);
+editor.sliceById = new Map([[slice.id,slice]]);
+editor.sourceById = new Map([['source',{{id:'source',kind:'UPLOADED',width_px:96,height_px:64,tile_width:32,tile_height:32}}]]);
+editor.nodeEditDraft = null;
+editor.nodeMaterialPreview = null;
+editor.readonly = false;
+editor._changed = false;
+editor._changeRevision = 0;
+editor._changeNotificationQueued = false;
+const handlers = {{}};
+const control = (key, value = '', tag = 'input') => ({{
+  value,
+  innerHTML:'',
+  matches: selector => selector === tag,
+  addEventListener: (type, callback) => {{ handlers[`${{key}}:${{type}}`] = callback; }},
+}});
+const controls = {{
+  '[data-node-name]': control('name', node.name),
+  '[data-node-material]': control('material', slice.id, 'select'),
+  '[data-node-material-preview]': control('preview'),
+  '[data-node-x]': control('x', '9'),
+  '[data-node-y]': control('y', '9'),
+  '[data-node-w]': control('w', '1'),
+  '[data-node-h]': control('h', '1'),
+  '[data-node-semantic]': control('semantic', '', 'textarea'),
+  '[data-save-node]': control('save', '', 'button'),
+}};
+editor.inspector = {{querySelector: selector => controls[selector] || null}};
+editor.nodeMaterialPreviewHtml = () => '<span>preview</span>';
+let focused = false;
+editor.focusNode = () => {{ focused = true; }};
+editor.renderCanvas = () => {{}};
+editor.reindex = () => {{}};
+editor.renderAll = () => {{}};
+editor.toast = () => {{}};
+
+editor.bindNodeInspector(node);
+handlers['material:change']({{target:controls['[data-node-material]']}});
+assert.equal(controls['[data-node-name]'].value, '\\u56fe\\u4e66\\u9605\\u89c8\\u533a');
+assert.equal(controls['[data-node-w]'].value, '1');
+assert.equal(controls['[data-node-h]'].value, '1');
+assert.equal(controls['[data-node-x]'].value, '9');
+assert.equal(controls['[data-node-y]'].value, '9');
+assert.deepEqual(editor.nodeDisplayBounds(node), {{x:9,y:9,width:1,height:1}});
+assert.equal(editor.pointInNode({{x:9.5,y:9.5}}, node), true, 'the original semantic rectangle remains draggable');
+assert.equal(focused, true);
+
+handlers['save:click']();
+assert.equal(node.name, '\\u56fe\\u4e66\\u9605\\u89c8\\u533a');
+assert.equal(node.material_slice_id, slice.id);
+assert.deepEqual(node.bounds, {{x:9,y:9,width:1,height:1}});
+
+const manuallyNamed = {{...node,id:'manual',name:'\\u81ea\\u5b9a\\u4e49\\u9605\\u89c8\\u533a\\u57df',bounds:{{x:1,y:1,width:1,height:1}},material_slice_id:null}};
+editor.nodeEditDraft = null;
+editor.applyNodeMaterialDraft(manuallyNamed, slice);
+assert.equal(editor.nodeDraftValue(manuallyNamed, 'name', manuallyNamed.name), '\\u81ea\\u5b9a\\u4e49\\u9605\\u89c8\\u533a\\u57df');
+assert.deepEqual(manuallyNamed.bounds, {{x:1,y:1,width:1,height:1}}, 'manual spatial bounds are independent from material footprint');
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
 def test_world_and_material_inspectors_expose_safe_delete_actions():
     """回归验证 ``test_world_and_material_inspectors_expose_safe_delete_actions`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
@@ -406,7 +616,8 @@ def test_deleting_world_nodes_cascades_and_material_deletion_cleans_references()
     editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
-global.window = {{confirm: () => true}};
+global.window = {{confirmResourceDeletion: async () => true}};
+(async () => {{
 global.requestAnimationFrame = callback => callback();
 require({editor_path});
 const proto = window.MapEditorV2.prototype;
@@ -423,7 +634,16 @@ nodeEditor.expandedNodes = new Set(['root','sector','arena']); nodeEditor.readon
 nodeEditor._changed = false; nodeEditor._changeRevision = 0; nodeEditor._changeNotificationQueued = false;
 nodeEditor.root = {{}}; nodeEditor.renderAll = () => {{}}; nodeEditor.toast = () => {{}};
 nodeEditor.reindex = function () {{ this.nodeById = new Map(this.document.hierarchy_nodes.map(node => [node.id,node])); }};
-nodeEditor.deleteWorldNode(sector);
+let confirmOptions;
+window.confirmResourceDeletion = async options => {{ confirmOptions = options; return false; }};
+await nodeEditor.deleteWorldNode(object);
+assert.equal(confirmOptions.name, 'Object');
+assert.equal(nodeEditor.document.hierarchy_nodes.length, 5);
+assert.equal(nodeEditor.changed, false);
+window.confirmResourceDeletion = async options => {{ confirmOptions = options; return true; }};
+await nodeEditor.deleteWorldNode(sector);
+assert.equal(confirmOptions.name, 'Sector');
+assert.match(confirmOptions.message, /2/);
 assert.deepEqual(nodeEditor.document.hierarchy_nodes.map(node => node.id), ['root','sibling']);
 assert.equal(nodeEditor.selectedNodeId, 'root');
 assert.equal(nodeEditor.changed, true);
@@ -469,12 +689,13 @@ sourceEditor.expandedSources = new Set([sourceA.id]); sourceEditor.readonly = fa
 sourceEditor._changed = false; sourceEditor._changeRevision = 0; sourceEditor._changeNotificationQueued = false; sourceEditor.root = {{}};
 sourceEditor.reindex = function () {{ this.sourceById = new Map(this.document.material_sources.map(source => [source.id,source])); this.sliceById = new Map(this.document.material_slices.map(slice => [slice.id,slice])); }};
 sourceEditor.renderAll = () => {{}}; sourceEditor.fit = () => {{}}; sourceEditor.toast = () => {{}};
-sourceEditor.deleteMaterialSource(sourceA);
+await sourceEditor.deleteMaterialSource(sourceA);
 assert.deepEqual(sourceEditor.document.material_sources.map(source => source.id), ['source-b']);
 assert.deepEqual(sourceEditor.document.material_slices.map(slice => slice.id), ['keep']);
 assert.equal(sourceEditor.selectedSourceId, 'source-b');
 assert.equal(sourceEditor.images.has('source-a'), false);
 assert.equal(sourceEditor.changed, true);
+}})().catch(error => {{ console.error(error); process.exitCode = 1; }});
 """
     subprocess.run(
         ["node", "-e", script],
@@ -587,19 +808,73 @@ assert.deepEqual(calls.map(call => call[0]), ['slice-world', 'slice-sector']);
     )
 
 
-def test_material_canvas_uses_32px_grid_pan_and_resize_interactions():
-    """回归验证 ``test_material_canvas_uses_32px_grid_pan_and_resize_interactions`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_material_slice_range_uses_source_tile_units_and_internal_pixel_crop():
+    """切片表单和地图占地使用格数；像素矩形只由素材网格确定性派生。"""
     source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
     styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
 
-    assert "const MATERIAL_GRID_SIZE = 32" in source
     assert "data-material-pan" in source
-    assert "32 × 32 px / 格" in source
+    assert "<span>Tile 格</span>" in source
+    assert "slice.pixel_rect = this.pixelRectFromGridRect(source, slice.grid_rect)" in source
     assert "type: 'crop-select'" in source
     assert "materialGridRect(source, start, end)" in source
-    assert "snapMaterialSpan(value, available)" in source
     assert "materialResizeHit(point)" in source
     assert ".me2-canvas-host.is-resize { cursor: nwse-resize; }" in styles
+
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+editor.world = {{definition:{{tile_size:24}}}};
+editor.document = {{import_metadata:{{tile_size:24}}}};
+editor.readonly = false;
+editor.materialView = 'slice';
+editor.editingSlice = false;
+editor.sliceNameDraft = null;
+editor.sliceRotationPreview = null;
+editor.imageUrls = new Map();
+editor.sliceApplications = () => [];
+
+const uploaded = {{
+  id:'source-uploaded',name:'非整格原图',kind:'UPLOADED',width_px:50,height_px:35,
+  tile_width:24,tile_height:16,columns:3,rows:3,margin:0,spacing:0,
+}};
+const slice = {{
+  id:'slice-range',source_id:uploaded.id,name:'两格横条',rotation_degrees:0,
+  grid_rect:{{x:1,y:1,width:2,height:1}},
+  pixel_rect:{{x:24,y:16,width:26,height:16}},
+}};
+editor.sourceById = new Map([[uploaded.id, uploaded]]);
+assert.deepEqual(editor.pixelRectFromGridRect(uploaded, slice.grid_rect), {{x:24,y:16,width:26,height:16}});
+assert.deepEqual(editor.sliceFootprint(slice), {{columns:2,rows:1}});
+const inspector = editor.materialInspector(uploaded, slice);
+assert.match(inspector, /<strong>切片范围<\\/strong><span>Tile 格<\\/span>/);
+assert.match(inspector, /data-slice-x value="1"/);
+assert.match(inspector, /data-slice-y value="1"/);
+assert.match(inspector, /data-slice-w value="2"/);
+assert.match(inspector, /data-slice-h value="1"/);
+
+slice.rotation_degrees = 90;
+assert.deepEqual(editor.sliceFootprint(slice), {{columns:1,rows:2}});
+
+const spaced = {{
+  id:'source-spaced',kind:'BUNDLED',width_px:55,height_px:28,
+  tile_width:16,tile_height:12,columns:3,rows:2,margin:2,spacing:1,
+}};
+assert.deepEqual(
+  editor.pixelRectFromGridRect(spaced, {{x:1,y:0,width:2,height:2}}),
+  {{x:19,y:2,width:33,height:25}},
+);
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_material_slice_rotation_is_quarter_turn_only_and_rendered_by_the_editor():
@@ -609,7 +884,8 @@ def test_material_slice_rotation_is_quarter_turn_only_and_rendered_by_the_editor
         "source_id": "source-test",
         "name": "测试切片",
         "kind": "STAMP",
-        "pixel_rect": GridRect(x=0, y=0, width=32, height=32),
+        "grid_rect": GridRect(x=0, y=0, width=1, height=1),
+        "pixel_rect": PixelRect(x=0, y=0, width=32, height=32),
     }
 
     assert [MaterialSlice(**base, rotation_degrees=value).rotation_degrees for value in (0, 90, 180, 270)] == [0, 90, 180, 270]
@@ -659,13 +935,128 @@ assert.deepEqual(editor.sliceDisplaySize(slice), {{width: 32, height: 64}});
     )
 
 
-def test_large_material_slices_are_stamped_across_their_32px_map_footprint():
-    """回归验证 ``test_large_material_slices_are_stamped_across_their_32px_map_footprint`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_slice_name_draft_survives_finishing_crop_before_save():
+    """完成框选触发检查器重绘时，尚未保存的切片名称仍应留在输入框。"""
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+global.requestAnimationFrame = callback => callback();
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+const source = {{id:'source-table',name:'家具原图',kind:'UPLOADED',width_px:256,height_px:128,tile_width:32,tile_height:32,columns:8,rows:4,margin:0,spacing:0}};
+const slice = {{
+  id:'slice-table',source_id:source.id,name:'未命名切片',rotation_degrees:0,
+  grid_rect:{{x:1,y:1,width:2,height:1}},
+  pixel_rect:{{x:32,y:32,width:64,height:32}},
+}};
+const handlers = {{}};
+const control = (key, value = '') => ({{
+  value,
+  addEventListener: (type, callback) => {{ handlers[`${{key}}:${{type}}`] = callback; }},
+}});
+const controls = {{
+  '[data-slice-name]': control('name', '长桌切片'),
+  '[data-edit-crop]': control('crop'),
+  '[data-save-slice]': control('save'),
+  '[data-slice-rotation]': control('rotation', '0'),
+  '[data-slice-x]': control('x', '1'),
+  '[data-slice-y]': control('y', '1'),
+  '[data-slice-w]': control('w', '2'),
+  '[data-slice-h]': control('h', '1'),
+}};
+editor.inspector = {{querySelector: selector => controls[selector] || null}};
+editor.sourceById = new Map([[source.id, source]]);
+editor.imageUrls = new Map();
+editor.sliceNameDraft = null;
+editor.sliceRotationPreview = null;
+editor.materialView = 'slice';
+editor.editingSlice = true;
+editor.readonly = false;
+editor._changed = false;
+editor._changeRevision = 0;
+editor._changeNotificationQueued = false;
+editor.root = {{}};
+editor.sliceApplications = () => [];
+editor.reindex = () => {{}};
+editor.fit = () => {{}};
+editor.toast = () => {{}};
+let rendered = '';
+editor.renderAll = () => {{ rendered = editor.materialInspector(source, slice); }};
+
+editor.bindMaterialInspector(source, slice);
+handlers['crop:click']();
+assert.equal(editor.editingSlice, false);
+assert.equal(slice.name, '未命名切片', 'finishing the crop must not prematurely commit the form');
+assert.match(rendered, /data-slice-name value="长桌切片"/);
+
+editor.bindMaterialInspector(source, slice);
+handlers['save:click']();
+assert.equal(slice.name, '长桌切片');
+assert.equal(editor.sliceNameDraft, null);
+assert.deepEqual(slice.grid_rect, {{x:1,y:1,width:2,height:1}});
+assert.deepEqual(slice.pixel_rect, {{x:32,y:32,width:64,height:32}});
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_rectangular_slice_thumbnail_clips_to_the_exact_slice_bounds():
+    """矩形切片应按宽高比完整显示，缩略图不能暴露裁剪框之外的白色区域。"""
+    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    script = f"""
+const assert = require('node:assert/strict');
+global.window = {{}};
+require({editor_path});
+const editor = Object.create(window.MapEditorV2.prototype);
+const source = {{id:'source-wide',width_px:256,height_px:128}};
+const slice = {{
+  id:'slice-wide',source_id:source.id,rotation_degrees:0,
+  pixel_rect:{{x:32,y:32,width:64,height:32}},
+}};
+editor.sourceById = new Map([[source.id, source]]);
+editor.imageUrls = new Map([[source.id, '/assets/wide.png']]);
+editor.sliceRotationPreview = null;
+
+assert.deepEqual(editor.sliceThumbnailLayout(slice, 34), {{
+  scale: 0.53125,
+  width: 34,
+  height: 17,
+  left: 0,
+  top: 8.5,
+}});
+const thumbnail = editor.sliceThumb(slice);
+assert.match(thumbnail, /left:0px;top:8\\.5px;width:34px;height:17px/);
+assert.match(thumbnail, /background-size:136px 68px/);
+assert.match(thumbnail, /background-position:-17px -17px/);
+
+editor.sliceRotationPreview = {{sliceId:slice.id,rotation:90}};
+assert.match(editor.sliceThumb(slice), /transform:rotate\\(90deg\\)/);
+"""
+    subprocess.run(
+        ["node", "-e", script],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert ".me2-thumb-image {" in styles
+    assert "inset: 0" not in styles[styles.index(".me2-thumb-image {"):].split("}", 1)[0]
+
+
+def test_large_material_slices_are_stamped_across_their_tile_footprint():
+    """多格素材的地图占地由 grid_rect 决定，旋转时交换格数。"""
     source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
 
     assert "sliceFootprint(slice)" in source
-    assert "Math.ceil(display.width / MATERIAL_GRID_SIZE)" in source
-    assert "Math.ceil(display.height / MATERIAL_GRID_SIZE)" in source
+    assert "const gridRect = this.sliceGridRect(slice)" in source
+    assert "{ columns: gridRect.height, rows: gridRect.width }" in source
     assert "tile_override_parts" in source
     assert "stampSliceAt(x, y, slice, mapWidth, mapHeight" in source
     assert "drawTilePart(ctx, slice, part, dx, dy, size)" in source
@@ -726,6 +1117,16 @@ def test_map_editor_contract_persists_bottom_to_top_override_layers():
         MapEditorDocumentV2.model_validate(document)
 
 
+def test_material_slice_pixel_crop_must_match_its_tile_grid():
+    """服务端拒绝与 Tile 切片范围不一致的内部像素裁剪数据。"""
+    document = fresh_ville_editor_document().model_dump(mode="json")
+    material_slice = document["material_slices"][0]
+    material_slice["pixel_rect"]["width"] += 1
+
+    with pytest.raises(ValidationError, match="must be derived from its Tile grid rect"):
+        MapEditorDocumentV2.model_validate(document)
+
+
 def test_material_canvas_is_persisted_as_a_reusable_acyclic_material():
     """回归验证 ``test_material_canvas_is_persisted_as_a_reusable_acyclic_material`` 所描述的业务结果、故障边界和隔离约束。"""
     document = fresh_ville_editor_document().model_dump(mode="json")
@@ -761,7 +1162,7 @@ def test_material_canvas_is_persisted_as_a_reusable_acyclic_material():
             "name": "道路画布",
             "kind": "STAMP",
             "rotation_degrees": 0,
-            "grid_rect": None,
+            "grid_rect": {"x": 0, "y": 0, "width": 2, "height": 2},
             "pixel_rect": {"x": 0, "y": 0, "width": 64, "height": 64},
             "trim_transparent": True,
             "indexed_gid": None,
@@ -875,6 +1276,7 @@ require({editor_path});
 const editor = Object.create(window.MapEditorV2.prototype);
 const largeSlice = {{
   id: 'slice-large', source_id: 'source', rotation_degrees: 0,
+  grid_rect: {{x: 0, y: 0, width: 2, height: 2}},
   pixel_rect: {{x: 0, y: 0, width: 64, height: 64}}
 }};
 const canvas = {{id:'canvas',source_id:'canvas-source',slice_id:'canvas-slice',width_tiles:6,height_tiles:6,tile_size:32,cells:{{}}}};
@@ -882,6 +1284,7 @@ editor.document = {{
   material_canvases: [canvas]
 }};
 editor.sliceById = new Map([[largeSlice.id, largeSlice]]);
+editor.sourceById = new Map([['source', {{id:'source',kind:'UPLOADED',width_px:64,height_px:64,tile_width:32,tile_height:32,columns:2,rows:2,margin:0,spacing:0}}]]);
 editor.canvasById = new Map([[canvas.id, canvas]]);
 editor.selectedPaintSliceId = largeSlice.id;
 editor.selectedCanvasId = canvas.id; editor.materialView = 'canvas';
@@ -902,6 +1305,7 @@ editor.redoMapEdit();
 assert.equal(Object.keys(canvas.cells).length, 0);
 
 largeSlice.pixel_rect = {{x: 0, y: 0, width: 64, height: 32}};
+largeSlice.grid_rect = {{x: 0, y: 0, width: 2, height: 1}};
 largeSlice.rotation_degrees = 90;
 assert.deepEqual(editor.sliceFootprint(largeSlice), {{columns: 1, rows: 2}});
 """
@@ -924,10 +1328,12 @@ require({editor_path});
 const editor = Object.create(window.MapEditorV2.prototype);
 const road = {{
   id: 'slice-road', source_id: 'source-road', rotation_degrees: 0,
+  grid_rect: {{x: 0, y: 0, width: 1, height: 1}},
   pixel_rect: {{x: 0, y: 0, width: 32, height: 32}}
 }};
 const light = {{
   id: 'slice-light', source_id: 'source-light', rotation_degrees: 0,
+  grid_rect: {{x: 0, y: 0, width: 1, height: 2}},
   pixel_rect: {{x: 0, y: 0, width: 32, height: 64}}
 }};
 const canvas = {{id:'canvas',source_id:'canvas-source',slice_id:'canvas-slice',width_tiles:4,height_tiles:4,tile_size:32,cells:{{}}}};
@@ -935,6 +1341,10 @@ editor.document = {{
   material_canvases: [canvas]
 }};
 editor.sliceById = new Map([[road.id, road], [light.id, light]]);
+editor.sourceById = new Map([
+  [road.source_id, {{id:road.source_id,kind:'UPLOADED',width_px:32,height_px:32,tile_width:32,tile_height:32,columns:1,rows:1,margin:0,spacing:0}}],
+  [light.source_id, {{id:light.source_id,kind:'UPLOADED',width_px:32,height_px:64,tile_width:32,tile_height:32,columns:1,rows:2,margin:0,spacing:0}}],
+]);
 editor.canvasById = new Map([[canvas.id, canvas]]);
 editor.sliceHasTransparency = slice => slice.id === light.id;
 editor.selectedCanvasId = canvas.id; editor.materialView = 'canvas';

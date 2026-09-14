@@ -1,4 +1,4 @@
-"""可复用公共地图的生命周期与已发布 Revision 选择。"""
+"""可直接编辑的公共地图，以及实验发布时的自包含快照编译。"""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from generative_agents.config import ExperimentDefinition, canonical_json_bytes
 from generative_agents.config.map_editor import MapEditorDocumentV2
+from generative_agents.ga_protocol.navigation import compile_collision
 from generative_agents.config.schema import WorldConfig
 from generative_agents.config.spatial_assets import (
     SpatialAssetContract,
@@ -23,18 +24,13 @@ from generative_agents.config.spatial_assets import (
 )
 from generative_agents.persistence import Database
 from generative_agents.persistence.models import (
-    ExperimentRevision,
     SpatialAssetDefinition,
-    SpatialAssetRevision,
     WorldMap,
-    WorldMapRevision,
 )
 from generative_agents.skills import (
     DatabaseSkillRegistry,
     SkillRegistryError,
 )
-from generative_agents.status import RevisionState
-
 from .errors import ServiceError, not_found
 from .timestamps import iso_utc
 
@@ -73,11 +69,19 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
     payload = WorldConfig.model_validate(world).model_dump(
         mode="json", exclude_none=False
     )
+    payload["definition"] = copy.deepcopy(payload.get("definition") or {})
+    payload["definition"]["size_unit"] = "TILE"
+    if payload["definition"].get("editor_v2"):
+        try:
+            document = MapEditorDocumentV2.model_validate(payload["definition"]["editor_v2"])
+            payload["definition"]["editor_v2"] = document.model_dump(mode="json")
+            compile_collision(payload["definition"])
+        except ValueError as exc:
+            raise ServiceError("MAP_NAVIGATION_INVALID", str(exc), status_code=422) from exc
     payload.update(
         {
             "map_id": None,
-            "map_revision_id": None,
-            "map_revision_hash": None,
+            "map_snapshot_hash": None,
         }
     )
     return WorldConfig.model_validate(payload)
@@ -343,7 +347,7 @@ def _commute_blueprint_editor_document(
             "arena-home",
             "住宅建筑",
             (7, 41, 9, 9),
-            "住宅建筑本体；可被感知，但不绑定被动 Skill。",
+            "住宅建筑本体；可被感知，但不绑定对象 Skill。",
             0,
         )
         add_node(
@@ -467,7 +471,6 @@ def _commute_blueprint_editor_document(
             "visible": True,
             "opacity": 1.0,
         }
-
     document = {
         "schema_version": "ga-map-editor/v2",
         "root_node_id": root_id,
@@ -549,20 +552,11 @@ def _commute_blueprint_world(
             )
         )
     )
-    revisions = {
-        asset.asset_key: session.get(
-            SpatialAssetRevision, asset.current_published_revision_id
-        )
-        for asset in assets
-        if asset.current_published_revision_id
-    }
-    if set(revisions) != required_asset_keys or any(
-        revision is None or revision.state != RevisionState.PUBLISHED.value
-        for revision in revisions.values()
-    ):
+    assets_by_key = {asset.asset_key: asset for asset in assets}
+    if set(assets_by_key) != required_asset_keys:
         raise ServiceError(
             "MAP_BLUEPRINT_ASSET_UNAVAILABLE",
-            "两日通勤蓝图依赖的地图资产尚未全部发布",
+            "两日通勤蓝图依赖的地图资产不完整",
             status_code=503,
         )
 
@@ -636,9 +630,7 @@ def _commute_blueprint_world(
     module_map = session.scalar(
         select(WorldMap).where(WorldMap.map_key == "standard-3lane-intersection")
     )
-    module_revision_id = (
-        module_map.current_published_revision_id if module_map is not None else None
-    )
+    module_map_id = module_map.id if module_map is not None else None
     module_instances: list[dict[str, Any]] = []
     intersections: list[dict[str, Any]] = []
     placements: list[dict[str, Any]] = []
@@ -667,9 +659,9 @@ def _commute_blueprint_world(
         placements.append(
             {
                 "instance_key": key,
-                "spatial_asset_revision_id": revisions[asset_key].id,
-                "x_m": x,
-                "y_m": y,
+                "spatial_asset_id": assets_by_key[asset_key].id,
+                "x_tiles": x,
+                "y_tiles": y,
                 "rotation_degrees": rotation,
                 "state_overrides": state or {},
             }
@@ -729,7 +721,7 @@ def _commute_blueprint_world(
             {
                 "instance_key": f"intersection-{key.casefold()}",
                 "module_key": "standard-3lane-intersection",
-                "source_map_revision_id": module_revision_id,
+                "source_map_id": module_map_id,
                 "center": [cx, 28],
                 "rotation_degrees": 0,
             }
@@ -739,7 +731,7 @@ def _commute_blueprint_world(
                 "intersection_key": key.casefold(),
                 "center": [cx, 28],
                 "lanes_per_direction": 3,
-                "lane_width_m": 1.0,
+                "lane_width_tiles": 1.0,
                 "crosswalk_keys": [
                     f"{key.casefold()}-{side}"
                     for side in ("north", "east", "south", "west")
@@ -870,18 +862,17 @@ def _commute_blueprint_world(
         "intersection_type": "FOUR_WAY",
         "approaches": ["NORTH", "EAST", "SOUTH", "WEST"],
         "lanes_per_direction": 3,
-        "lane_width_m": 1.0,
+        "lane_width_tiles": 1.0,
         "intersection_instances": intersections,
         "crosswalk_count": len(intersections) * 4,
     }
     definition["spatial_scene"] = {
-        "schema_version": "ga-spatial-scene/v1",
-        "meters_per_tile": 1.0,
+        "schema_version": "ga-spatial-scene/v2",
         "palette_refs": {
-            "ground": revisions["tile-ground"].id,
-            "road": revisions["tile-road-asphalt"].id,
-            "sidewalk": revisions["tile-sidewalk"].id,
-            "crosswalk": revisions["marking-crosswalk"].id,
+            "ground": assets_by_key["tile-ground"].id,
+            "road": assets_by_key["tile-road-asphalt"].id,
+            "sidewalk": assets_by_key["tile-sidewalk"].id,
+            "crosswalk": assets_by_key["marking-crosswalk"].id,
         },
         "placements": placements,
     }
@@ -890,8 +881,8 @@ def _commute_blueprint_world(
         "palette": palette,
         "cells": cells,
         "spatial_assets": {
-            revision.id: copy.deepcopy(revision.contract_json)
-            for revision in revisions.values()
+            asset.id: copy.deepcopy(asset.contract_json)
+            for asset in assets_by_key.values()
         },
         "module_instances": module_instances,
         "build_guide": {
@@ -922,9 +913,9 @@ def _blank_public_world(
     参数:
         name: 目标对象的人类可读名称。 类型：`str`。
         stable_key: 用于稳定定位`stable`的键。 类型：`str`。
-        width: 地图、图像或矩形区域的宽度。 类型：`int`。
-        height: 地图、图像或矩形区域的高度。 类型：`int`。
-        tile_size: `tile`的数量或容量。 类型：`int`。
+        width: 地图宽度，单位为 Tile 格数。 类型：`int`。
+        height: 地图高度，单位为 Tile 格数。 类型：`int`。
+        tile_size: 每个 Tile 的像素边长。 类型：`int`。
 
     返回:
         返回 `WorldConfig` 类型的处理结果。
@@ -947,6 +938,7 @@ def _blank_public_world(
             "definition": {
                 "world": name,
                 "size": [height, width],
+                "size_unit": "TILE",
                 "tile_size": tile_size,
                 "tile_address_keys": ["world", "sector", "arena", "object"],
                 "tiles": tiles,
@@ -991,6 +983,14 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
         )
         return errors
     height, width = size
+    if definition.get("size_unit") != "TILE":
+        errors.append(
+            {
+                "code": "WORLD_SIZE_UNIT_INVALID",
+                "path": "definition.size_unit",
+                "message": "地图尺寸单位必须是 TILE；1 表示一个 Tile",
+            }
+        )
     if not isinstance(definition.get("world"), str) or not definition["world"].strip():
         errors.append(
             {
@@ -1157,17 +1157,17 @@ def _validate_spatial_scene(
         and all(isinstance(value, int) and value >= 0 for value in size)
         else [0, 0]
     )
-    max_x = width * scene.meters_per_tile
-    max_y = height * scene.meters_per_tile
-    for palette_key, revision_id in scene.palette_refs.items():
-        revision = session.get(SpatialAssetRevision, revision_id)
-        kind = (revision.contract_json or {}).get("kind") if revision else None
-        if revision is None or revision.state != RevisionState.PUBLISHED.value:
+    max_x = width
+    max_y = height
+    for palette_key, asset_id in scene.palette_refs.items():
+        asset = session.get(SpatialAssetDefinition, asset_id)
+        kind = (asset.contract_json or {}).get("kind") if asset else None
+        if asset is None:
             errors.append(
                 {
-                    "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
+                    "code": "SPATIAL_ASSET_UNAVAILABLE",
                     "path": f"definition.spatial_scene.palette_refs.{palette_key}",
-                    "message": "画块必须引用已发布的空间资产版本",
+                    "message": "画块引用的空间资产不存在",
                 }
             )
         elif kind not in {"TILE", "MARKING"}:
@@ -1203,19 +1203,17 @@ def _validate_spatial_scene(
             }
         )
     for index, placement in enumerate(scene.placements):
-        revision = session.get(
-            SpatialAssetRevision, placement.spatial_asset_revision_id
-        )
-        if revision is None or revision.state != RevisionState.PUBLISHED.value:
+        asset = session.get(SpatialAssetDefinition, placement.spatial_asset_id)
+        if asset is None:
             errors.append(
                 {
-                    "code": "SPATIAL_ASSET_REVISION_UNAVAILABLE",
-                    "path": f"definition.spatial_scene.placements.{index}.spatial_asset_revision_id",
-                    "message": "地图物件必须引用已发布的空间资产版本",
+                    "code": "SPATIAL_ASSET_UNAVAILABLE",
+                    "path": f"definition.spatial_scene.placements.{index}.spatial_asset_id",
+                    "message": "地图物件引用的空间资产不存在",
                 }
             )
             continue
-        kind = (revision.contract_json or {}).get("kind")
+        kind = (asset.contract_json or {}).get("kind")
         if kind == "TILE":
             errors.append(
                 {
@@ -1225,29 +1223,63 @@ def _validate_spatial_scene(
                 }
             )
         try:
-            contract = SpatialAssetContract.model_validate(revision.contract_json)
+            contract = SpatialAssetContract.model_validate(asset.contract_json)
         except ValidationError:
             contract = None
         if contract is not None:
             errors.extend(
-                _validate_passive_skill_bindings(
+                _validate_object_skill_bindings(
                     contract.skill_bindings,
                     path=f"definition.spatial_scene.placements.{index}",
                     registry=skill_registry,
                 )
             )
-        if not (0 <= placement.x_m < max_x and 0 <= placement.y_m < max_y):
+        width_tiles = contract.physics.width_tiles if contract is not None else 1.0
+        height_tiles = contract.physics.height_tiles if contract is not None else 1.0
+        left = placement.x_tiles + 0.5 - width_tiles / 2.0
+        right = placement.x_tiles + 0.5 + width_tiles / 2.0
+        top = placement.y_tiles + 0.5 - height_tiles / 2.0
+        bottom = placement.y_tiles + 0.5 + height_tiles / 2.0
+        if not (left >= 0 and top >= 0 and right <= max_x and bottom <= max_y):
             errors.append(
                 {
                     "code": "SPATIAL_PLACEMENT_OUT_OF_BOUNDS",
                     "path": f"definition.spatial_scene.placements.{index}",
-                    "message": "地图物件坐标超出米制地图边界",
+                    "message": "地图物件坐标超出 Tile 网格边界",
                 }
             )
     return errors
 
 
-def _validate_passive_skill_bindings(
+def _referenced_spatial_asset_ids(world: WorldConfig) -> set[str]:
+    raw_scene = world.definition.get("spatial_scene")
+    if not isinstance(raw_scene, dict):
+        return set()
+    ids = {str(value) for value in (raw_scene.get("palette_refs") or {}).values()}
+    ids.update(
+        str(item.get("spatial_asset_id"))
+        for item in raw_scene.get("placements") or []
+        if isinstance(item, dict) and item.get("spatial_asset_id")
+    )
+    return ids
+
+
+def _hydrate_spatial_assets(session: Session, world: WorldConfig) -> WorldConfig:
+    """Resolve mutable authoring asset ids into a self-contained world document."""
+    payload = world.model_dump(mode="json", exclude_none=False)
+    definition = payload["definition"]
+    editor = definition.setdefault("editor", {})
+    asset_ids = _referenced_spatial_asset_ids(world)
+    rows = session.scalars(
+        select(SpatialAssetDefinition).where(SpatialAssetDefinition.id.in_(asset_ids))
+    ) if asset_ids else ()
+    editor["spatial_assets"] = {
+        asset.id: copy.deepcopy(asset.contract_json) for asset in rows
+    }
+    return WorldConfig.model_validate(payload)
+
+
+def _validate_object_skill_bindings(
     bindings, *, path: str, registry
 ) -> list[dict[str, str]]:
     """校验`passive`技能`bindings`。
@@ -1276,11 +1308,11 @@ def _validate_passive_skill_bindings(
         if document.kind == "brain":
             errors.append(
                 {
-                    "code": "GAME_OBJECT_SKILL_NOT_PASSIVE",
+                    "code": "GAME_OBJECT_SKILL_INVALID_KIND",
                     "path": f"{binding_path}.skill_name",
                     "message": (
                         f"Game Object 不能绑定 Brain Skill {binding.skill_name}；"
-                        "请绑定返回文本反馈的 atomic 或 pack Skill"
+                        "请绑定以自然语言描述对象行为的 atomic 或 pack Skill"
                     ),
                 }
             )
@@ -1320,7 +1352,7 @@ def _validate_map_editor_v2(
     game_objects = []
     for index, node in enumerate(document.hierarchy_nodes):
         errors.extend(
-            _validate_passive_skill_bindings(
+            _validate_object_skill_bindings(
                 node.skill_bindings,
                 path=f"definition.editor_v2.hierarchy_nodes.{index}",
                 registry=skill_registry,
@@ -1336,7 +1368,7 @@ def _validate_map_editor_v2(
                 "code": "ALL_GAME_OBJECTS_STATIC",
                 "path": "definition.editor_v2.hierarchy_nodes",
                 "message": (
-                    f"地图包含 {len(game_objects)} 个 Game Object，但没有任何对象绑定被动 Skill；"
+                    f"地图包含 {len(game_objects)} 个 Game Object，但没有任何对象绑定对象 Skill；"
                     "Agent 只能感知这些对象，不能与其交互。"
                 ),
             }
@@ -1345,7 +1377,7 @@ def _validate_map_editor_v2(
 
 
 class WorldMapService:
-    """管理地图草稿、发布版本、实验引用和编辑器文档编译。"""
+    """管理可直接编辑的地图，并在实验发布时编译完整快照。"""
 
     def __init__(self, database: Database, *, skill_registry=None) -> None:
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
@@ -1376,7 +1408,7 @@ class WorldMapService:
         *,
         name: str,
         description: str = "",
-        source_revision_id: str | None = None,
+        source_map_id: str | None = None,
         blueprint_key: str | None = None,
         map_key: str | None = None,
         width: int = 48,
@@ -1388,12 +1420,12 @@ class WorldMapService:
         参数:
             name: 目标对象的人类可读名称。 类型：`str`。
             description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str`。 默认值：`''`。
-            source_revision_id: `source`修订版本的唯一标识。 类型：`str | None`。 默认值：`None`。
+            source_map_id: 需要复制的源地图标识。 类型：`str | None`。 默认值：`None`。
             blueprint_key: 用于稳定定位`blueprint`的键。 类型：`str | None`。 默认值：`None`。
             map_key: 用于稳定定位地图的键。 类型：`str | None`。 默认值：`None`。
-            width: 地图、图像或矩形区域的宽度。 类型：`int`。 默认值：`48`。
-            height: 地图、图像或矩形区域的高度。 类型：`int`。 默认值：`32`。
-            tile_size: `tile`的数量或容量。 类型：`int`。 默认值：`32`。
+            width: 地图宽度，单位为 Tile 格数。 类型：`int`。 默认值：`48`。
+            height: 地图高度，单位为 Tile 格数。 类型：`int`。 默认值：`32`。
+            tile_size: 每个 Tile 的像素边长。 类型：`int`。 默认值：`32`。
 
         返回:
             返回以字段名或业务键组织的结构化映射。
@@ -1411,16 +1443,16 @@ class WorldMapService:
                 "地图稳定键必须由小写字母、数字和连字符组成",
                 status_code=422,
             )
-        if not (4 <= width <= 240 and 4 <= height <= 240 and 8 <= tile_size <= 128):
+        if not (1 <= width <= 240 and 1 <= height <= 240 and 8 <= tile_size <= 128):
             raise ServiceError(
                 "INVALID_MAP_DIMENSIONS",
-                "地图宽高需在 4–240 之间，Tile 尺寸需在 8–128 像素之间",
+                "地图宽高必须是 1–240 的整数格数；1 表示一个 Tile。Tile 尺寸需在 8–128 像素之间",
                 status_code=422,
             )
-        if source_revision_id and blueprint_key:
+        if source_map_id and blueprint_key:
             raise ServiceError(
                 "MAP_CREATE_SOURCE_CONFLICT",
-                "复制已发布地图与使用构建蓝图不能同时选择",
+                "复制地图与使用构建蓝图不能同时选择",
                 status_code=422,
             )
         blueprint = _map_blueprint(blueprint_key) if blueprint_key else None
@@ -1437,15 +1469,11 @@ class WorldMapService:
                 raise ServiceError(
                     "MAP_KEY_CONFLICT", "地图稳定键已被使用", status_code=409
                 )
-            base_revision: WorldMapRevision | None = None
-            if source_revision_id:
-                base_revision = session.get(WorldMapRevision, source_revision_id)
-                if (
-                    base_revision is None
-                    or base_revision.state != RevisionState.PUBLISHED.value
-                ):
-                    raise not_found("map_revision", source_revision_id)
-                world = normalize_public_world(base_revision.world_json)
+            source_map = session.get(WorldMap, source_map_id) if source_map_id else None
+            if source_map_id:
+                if source_map is None:
+                    raise not_found("map", source_map_id)
+                world = normalize_public_world(source_map.world_json)
             elif blueprint is not None:
                 world = normalize_public_world(
                     _commute_blueprint_world(
@@ -1471,30 +1499,16 @@ class WorldMapService:
                 map_key=stable_key,
                 name=name,
                 description=description,
-                status=RevisionState.DRAFT.value,
+                schema_version=1,
+                world_json=world.model_dump(mode="json", exclude_none=False),
+                world_hash=world_hash(world),
+                validation_json=None,
                 row_version=1,
                 created_at=now,
                 updated_at=now,
             )
             session.add(public_map)
             session.flush()
-            revision = WorldMapRevision(
-                id=str(uuid4()),
-                map_id=public_map.id,
-                revision_no=1,
-                state=RevisionState.DRAFT.value,
-                base_revision_id=base_revision.id if base_revision else None,
-                schema_version=1,
-                world_json=world.model_dump(mode="json", exclude_none=False),
-                world_hash=world_hash(world),
-                validation_json=None,
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(revision)
-            session.flush()
-            public_map.current_draft_revision_id = revision.id
             return self._map_detail(session, public_map)
 
     def apply_blueprint_step(
@@ -1520,25 +1534,27 @@ class WorldMapService:
 
         now = _utc_now()
         with self.database.session_factory.begin() as session:
-            public_map, revision = self._require_draft(session, map_id)
-            if revision.lock_version != expected_lock_version:
+            public_map = session.get(WorldMap, map_id)
+            if public_map is None:
+                raise not_found("map", map_id)
+            if public_map.row_version != expected_lock_version:
                 raise ServiceError(
-                    "MAP_REVISION_CONFLICT",
-                    "地图草稿已变化，请重新载入后继续构建",
+                    "MAP_CONFLICT",
+                    "地图已变化，请重新载入后继续构建",
                     status_code=409,
                     details={
                         "expected_lock_version": expected_lock_version,
-                        "actual_lock_version": revision.lock_version,
+                        "actual_lock_version": public_map.row_version,
                     },
                 )
-            current_world = WorldConfig.model_validate(revision.world_json)
+            current_world = WorldConfig.model_validate(public_map.world_json)
             editor = current_world.definition.get("editor") or {}
             guide = editor.get("build_guide") or {}
             blueprint_key = guide.get("blueprint_key")
             if blueprint_key != "two-day-commute":
                 raise ServiceError(
                     "MAP_BLUEPRINT_NOT_ATTACHED",
-                    "当前地图草稿没有两日通勤构建向导",
+                    "当前地图没有两日通勤构建向导",
                     status_code=409,
                 )
             current_step = int(guide.get("current_step") or 0)
@@ -1558,39 +1574,29 @@ class WorldMapService:
                 )
             )
             digest = world_hash(world)
-            result = session.execute(
-                update(WorldMapRevision)
-                .where(
-                    WorldMapRevision.id == revision.id,
-                    WorldMapRevision.state == RevisionState.DRAFT.value,
-                    WorldMapRevision.lock_version == expected_lock_version,
-                )
-                .values(
-                    world_json=world.model_dump(mode="json", exclude_none=False),
-                    world_hash=digest,
-                    validation_json=None,
-                    lock_version=WorldMapRevision.lock_version + 1,
-                    updated_at=now,
-                )
-            )
+            result = session.execute(update(WorldMap).where(
+                WorldMap.id == map_id,
+                WorldMap.row_version == expected_lock_version,
+            ).values(
+                world_json=world.model_dump(mode="json", exclude_none=False),
+                world_hash=digest,
+                validation_json=None,
+                row_version=WorldMap.row_version + 1,
+                updated_at=now,
+            ))
             if result.rowcount != 1:
                 raise ServiceError(
-                    "MAP_REVISION_CONFLICT",
-                    "地图草稿已变化，请重新载入后继续构建",
+                    "MAP_CONFLICT",
+                    "地图已变化，请重新载入后继续构建",
                     status_code=409,
                 )
-            public_map.updated_at = now
-            public_map.row_version += 1
             session.flush()
-            return self._revision_detail(
-                session.get(WorldMapRevision, revision.id), public_map
-            )
+            return self._map_detail(session, session.get(WorldMap, map_id))
 
     def list_maps(
         self,
         *,
         query: str | None = None,
-        status: RevisionState | str | None = None,
         page: int = 1,
         page_size: int = 5,
         archived: str = "active",
@@ -1599,7 +1605,6 @@ class WorldMapService:
 
         参数:
             query: 用于名称、正文或标识模糊匹配的搜索文本。 类型：`str | None`。 默认值：`None`。
-            status: 目录对象状态筛选值。允许值：`DRAFT`（草稿）或 `PUBLISHED`（已发布）。 类型：`RevisionState | str | None`。 默认值：`None`。
             page: 从 1 开始的分页页码。 类型：`int`。 默认值：`1`。
             page_size: 每页最多返回的记录数量。 类型：`int`。 默认值：`5`。
 
@@ -1617,20 +1622,9 @@ class WorldMapService:
             raise ServiceError(
                 "INVALID_ARCHIVE_FILTER", "地图归档筛选无效", status_code=422
             )
-        try:
-            normalized_status = (
-                RevisionState(str(status).upper()).value if status else None
-            )
-        except ValueError as exc:
-            raise ServiceError(
-                "INVALID_MAP_STATUS", "地图状态筛选无效", status_code=422
-            ) from exc
         with self.database.session_factory() as session:
             statement = select(WorldMap)
             count_statement = select(func.count()).select_from(WorldMap)
-            status_count_statement = select(WorldMap.status, func.count()).group_by(
-                WorldMap.status
-            )
             archive_predicate = (
                 WorldMap.archived_at.is_(None)
                 if archived == "active"
@@ -1641,29 +1635,14 @@ class WorldMapService:
             if archive_predicate is not None:
                 statement = statement.where(archive_predicate)
                 count_statement = count_statement.where(archive_predicate)
-                status_count_statement = status_count_statement.where(
-                    archive_predicate
-                )
             if query and query.strip():
                 pattern = f"%{query.strip()}%"
                 predicate = or_(
-                    WorldMap.name.ilike(pattern), WorldMap.map_key.ilike(pattern)
+                    WorldMap.name.ilike(pattern), WorldMap.map_key.ilike(pattern),
+                    WorldMap.description.ilike(pattern),
                 )
                 statement = statement.where(predicate)
                 count_statement = count_statement.where(predicate)
-                status_count_statement = status_count_statement.where(predicate)
-            status_counts = {
-                RevisionState.DRAFT.value: 0,
-                RevisionState.PUBLISHED.value: 0,
-            }
-            for item_status, item_count in session.execute(status_count_statement):
-                status_counts[item_status] = int(item_count)
-            status_counts["ALL"] = sum(status_counts.values())
-            if normalized_status:
-                statement = statement.where(WorldMap.status == normalized_status)
-                count_statement = count_statement.where(
-                    WorldMap.status == normalized_status
-                )
             total = int(session.scalar(count_statement) or 0)
             rows = list(
                 session.scalars(
@@ -1678,7 +1657,7 @@ class WorldMapService:
                 "page_size": page_size,
                 "total": total,
                 "total_pages": max(1, ceil(total / page_size)),
-                "status_counts": status_counts,
+                "status_counts": {"ALL": total},
             }
 
     def set_archived(self, map_id: str, *, archived: bool) -> dict[str, Any]:
@@ -1696,23 +1675,6 @@ class WorldMapService:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
                 raise not_found("map", map_id)
-            if self._usage_experiment_ids(session, map_id):
-                raise ServiceError(
-                    "MAP_IN_USE",
-                    "地图仍被实验 Revision 引用；请先删除引用它的实验",
-                    status_code=409,
-                )
-            public_map.current_draft_revision_id = None
-            public_map.current_published_revision_id = None
-            session.flush()
-            session.execute(
-                update(WorldMapRevision)
-                .where(WorldMapRevision.map_id == map_id)
-                .values(base_revision_id=None)
-            )
-            session.execute(
-                delete(WorldMapRevision).where(WorldMapRevision.map_id == map_id)
-            )
             session.delete(public_map)
 
     def get_map(self, map_id: str) -> dict[str, Any]:
@@ -1730,46 +1692,14 @@ class WorldMapService:
                 raise not_found("map", map_id)
             return self._map_detail(session, public_map)
 
-    def get_draft(self, map_id: str) -> dict[str, Any]:
-        """获取`draft`。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            public_map, revision = self._require_draft(session, map_id)
-            return self._revision_detail(revision, public_map)
-
-    def get_revision(self, map_id: str, revision_id: str) -> dict[str, Any]:
-        """获取修订版本。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            public_map = session.get(WorldMap, map_id)
-            revision = session.get(WorldMapRevision, revision_id)
-            if public_map is None:
-                raise not_found("map", map_id)
-            if revision is None or revision.map_id != map_id:
-                raise not_found("map_revision", revision_id)
-            return self._revision_detail(revision, public_map)
-
-    def update_draft(
+    def update_map(
         self,
         map_id: str,
         *,
         expected_lock_version: int,
         world: WorldConfig | dict[str, Any],
     ) -> dict[str, Any]:
-        """更新`draft`。
+        """直接更新地图当前内容。
 
         参数:
             map_id: 地图的唯一标识。 类型：`str`。
@@ -1786,56 +1716,44 @@ class WorldMapService:
         digest = world_hash(normalized)
         now = _utc_now()
         with self.database.session_factory.begin() as session:
-            public_map, revision = self._require_draft(session, map_id)
-            result = session.execute(
-                update(WorldMapRevision)
-                .where(
-                    WorldMapRevision.id == revision.id,
-                    WorldMapRevision.state == RevisionState.DRAFT.value,
-                    WorldMapRevision.lock_version == expected_lock_version,
-                )
-                .values(
-                    world_json=normalized.model_dump(mode="json", exclude_none=False),
-                    world_hash=digest,
-                    validation_json=None,
-                    lock_version=WorldMapRevision.lock_version + 1,
-                    updated_at=now,
-                )
-            )
+            result = session.execute(update(WorldMap).where(
+                WorldMap.id == map_id,
+                WorldMap.row_version == expected_lock_version,
+            ).values(
+                world_json=normalized.model_dump(mode="json", exclude_none=False),
+                world_hash=digest,
+                validation_json=None,
+                row_version=WorldMap.row_version + 1,
+                updated_at=now,
+            ))
             if result.rowcount != 1:
-                actual = session.scalar(
-                    select(WorldMapRevision.lock_version).where(
-                        WorldMapRevision.id == revision.id
-                    )
-                )
+                if session.get(WorldMap, map_id) is None:
+                    raise not_found("map", map_id)
+                actual = session.scalar(select(WorldMap.row_version).where(
+                    WorldMap.id == map_id
+                ))
                 raise ServiceError(
-                    "MAP_REVISION_CONFLICT",
-                    "地图草稿已被其他请求修改，请重新载入",
+                    "MAP_CONFLICT",
+                    "地图已被其他请求修改，请重新载入",
                     status_code=409,
                     details={
                         "expected_lock_version": expected_lock_version,
                         "actual_lock_version": actual,
                     },
                 )
-            public_map.updated_at = now
-            public_map.row_version += 1
             session.flush()
-            return self._revision_detail(
-                session.get(WorldMapRevision, revision.id), public_map
-            )
+            return self._map_detail(session, session.get(WorldMap, map_id))
 
-    def publish_draft(
+    def validate_map(
         self,
         map_id: str,
         *,
-        draft_revision_id: str,
         expected_lock_version: int,
     ) -> dict[str, Any]:
-        """发布`draft`。
+        """校验当前地图；校验不会把地图变成只读资源。
 
         参数:
             map_id: 地图的唯一标识。 类型：`str`。
-            draft_revision_id: 当前正在编辑且受乐观锁保护的草稿修订版本标识。 类型：`str`。
             expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
 
         返回:
@@ -1846,19 +1764,19 @@ class WorldMapService:
         """
         if hasattr(self.skill_registry, "ensure_builtin_skills"):
             self.skill_registry.ensure_builtin_skills()
-        validation_failure: dict[str, Any] | None = None
         with self.database.session_factory.begin() as session:
-            public_map, revision = self._require_draft(session, map_id)
-            if (
-                revision.id != draft_revision_id
-                or revision.lock_version != expected_lock_version
-            ):
+            public_map = session.get(WorldMap, map_id)
+            if public_map is None:
+                raise not_found("map", map_id)
+            if public_map.row_version != expected_lock_version:
                 raise ServiceError(
-                    "MAP_REVISION_CONFLICT",
-                    "地图草稿已变化，请重新载入",
+                    "MAP_CONFLICT",
+                    "地图已变化，请重新载入",
                     status_code=409,
                 )
-            world = normalize_public_world(revision.world_json)
+            world = _hydrate_spatial_assets(
+                session, normalize_public_world(public_map.world_json)
+            )
             editor_errors, editor_warnings = _validate_map_editor_v2(
                 world, skill_registry=self.skill_registry
             )
@@ -1872,7 +1790,7 @@ class WorldMapService:
             checks = [
                 {
                     "code": "EDITOR_V2_HIERARCHY_AND_SKILLS",
-                    "message": "四层空间层级、Game Object 与被动 Skill 引用",
+                    "message": "四层空间层级、Game Object 与对象 Skill 引用",
                     "status": "FAILED" if editor_errors else "PASSED",
                 },
                 {
@@ -1882,155 +1800,42 @@ class WorldMapService:
                 },
                 {
                     "code": "SPATIAL_SCENE_CONTRACTS",
-                    "message": "版本化空间资产、放置和初始状态合同",
+                    "message": "空间资产、放置和初始状态合同",
                     "status": "FAILED" if spatial_errors else "PASSED",
                 },
             ]
-            if errors:
-                revision.validation_json = {
-                    "valid": False,
-                    "errors": errors,
-                    "warnings": editor_warnings,
-                    "checks": checks,
-                }
-                revision.updated_at = _utc_now()
-                validation_failure = dict(revision.validation_json)
-            else:
-                now = _utc_now()
-                revision.world_json = world.model_dump(mode="json", exclude_none=False)
-                revision.world_hash = world_hash(world)
-                revision.validation_json = {
-                    "valid": True,
-                    "errors": [],
-                    "warnings": editor_warnings,
-                    "checks": checks,
-                }
-                revision.state = RevisionState.PUBLISHED.value
-                revision.published_at = now
-                revision.updated_at = now
-                public_map.current_draft_revision_id = None
-                public_map.current_published_revision_id = revision.id
-                public_map.status = RevisionState.PUBLISHED.value
-                public_map.row_version += 1
-                public_map.updated_at = now
-                session.flush()
-                return self._revision_detail(revision, public_map)
-        raise ServiceError(
-            "MAP_VALIDATION_FAILED",
-            "地图未通过发布校验",
-            status_code=422,
-            details=validation_failure or {},
-        )
-
-    def fork_revision(self, map_id: str, revision_id: str) -> dict[str, Any]:
-        """执行 `WorldMapService` 的`fork`修订版本操作。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            revision_id: 实验修订版本的唯一标识。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-        with self.database.session_factory.begin() as session:
-            public_map = session.get(WorldMap, map_id)
-            if public_map is None:
-                raise not_found("map", map_id)
-            if public_map.current_draft_revision_id:
-                raise ServiceError(
-                    "MAP_DRAFT_EXISTS", "该地图已有编辑中的草稿", status_code=409
-                )
-            source = session.get(WorldMapRevision, revision_id)
-            if (
-                source is None
-                or source.map_id != map_id
-                or source.state != RevisionState.PUBLISHED.value
-            ):
-                raise not_found("map_revision", revision_id)
-            number = (
-                int(
-                    session.scalar(
-                        select(func.max(WorldMapRevision.revision_no)).where(
-                            WorldMapRevision.map_id == map_id
-                        )
-                    )
-                    or 0
-                )
-                + 1
-            )
-            now = _utc_now()
-            draft = WorldMapRevision(
-                id=str(uuid4()),
-                map_id=map_id,
-                revision_no=number,
-                state=RevisionState.DRAFT.value,
-                base_revision_id=source.id,
-                schema_version=source.schema_version,
-                world_json=copy.deepcopy(source.world_json),
-                world_hash=source.world_hash,
-                validation_json=None,
-                lock_version=1,
-                created_at=now,
-                updated_at=now,
-            )
-            session.add(draft)
+            public_map.validation_json = {
+                "valid": not errors,
+                "errors": errors,
+                "warnings": editor_warnings,
+                "checks": checks,
+            }
+            public_map.updated_at = _utc_now()
             session.flush()
-            public_map.current_draft_revision_id = draft.id
-            public_map.status = RevisionState.DRAFT.value
-            public_map.row_version += 1
-            public_map.updated_at = now
-            return self._revision_detail(draft, public_map)
-
-    def list_revisions(self, map_id: str) -> list[dict[str, Any]]:
-        """查询`revisions`。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            public_map = session.get(WorldMap, map_id)
-            if public_map is None:
-                raise not_found("map", map_id)
-            revisions = list(
-                session.scalars(
-                    select(WorldMapRevision)
-                    .where(WorldMapRevision.map_id == map_id)
-                    .order_by(WorldMapRevision.revision_no.desc())
-                )
-            )
-            return [
-                self._revision_detail(item, public_map, include_world=False)
-                for item in revisions
-            ]
+            return self._map_detail(session, public_map)
 
     def select_for_experiment(
         self,
         experiment_id: str,
         *,
         expected_lock_version: int,
-        map_revision_id: str,
+        map_id: str,
     ) -> dict[str, Any]:
         """执行 `WorldMapService` 的`select``for`实验操作。
 
         参数:
             experiment_id: 实验记录的唯一标识。 类型：`str`。
             expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
-            map_revision_id: 地图修订版本的唯一标识。 类型：`str`。
+            map_id: 地图的稳定标识。 类型：`str`。
 
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
         with self.database.session_factory() as session:
-            revision = session.get(WorldMapRevision, map_revision_id)
-            if revision is None or revision.state != RevisionState.PUBLISHED.value:
-                raise not_found("map_revision", map_revision_id)
-            world = self.materialize_world(revision)
+            public_map = session.get(WorldMap, map_id)
+            if public_map is None:
+                raise not_found("map", map_id)
+            world = self.materialize_world(session, public_map)
         from .experiments import ExperimentService
 
         experiment_service = ExperimentService(self.database)
@@ -2047,99 +1852,56 @@ class WorldMapService:
     def materialize_for_publish_in_session(
         self, session: Session, world: WorldConfig
     ) -> WorldConfig:
-        """执行 `WorldMapService` 的`materialize``for``publish``in``session`操作。
-
-        参数:
-            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-            world: 当前运行使用的世界配置或运行时世界对象。 类型：`WorldConfig`。
-
-        返回:
-            返回 `WorldConfig` 类型的处理结果。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-        if not world.map_revision_id:
-            return world
-        revision = session.get(WorldMapRevision, world.map_revision_id)
-        if (
-            revision is None
-            or revision.state != RevisionState.PUBLISHED.value
-            or revision.map_id != world.map_id
-            or revision.world_hash != world.map_revision_hash
-        ):
+        """Resolve the latest mutable map and freeze it into the experiment."""
+        if not world.map_id:
+            raise ServiceError("MAP_REQUIRED", "实验必须选择地图", status_code=422)
+        public_map = session.get(WorldMap, world.map_id)
+        if public_map is None:
             raise ServiceError(
-                "MAP_REVISION_CONFLICT",
-                "实验引用的公共地图版本已失效",
-                status_code=409,
+                "MAP_UNAVAILABLE", "实验选择的地图已不存在", status_code=409
             )
-        return self.materialize_world(revision)
+        snapshot = self.materialize_world(session, public_map)
+        editor_errors, editor_warnings = _validate_map_editor_v2(
+            snapshot, skill_registry=self.skill_registry
+        )
+        if not editor_errors:
+            snapshot = _compile_editor_v2_runtime_addresses(snapshot)
+        errors = [
+            *_validate_world_definition(snapshot),
+            *_validate_spatial_scene(
+                session, snapshot, skill_registry=self.skill_registry
+            ),
+            *editor_errors,
+        ]
+        if errors:
+            raise ServiceError(
+                "MAP_VALIDATION_FAILED",
+                "地图当前内容无法用于实验",
+                status_code=422,
+                details={"errors": errors, "warnings": editor_warnings},
+            )
+        payload = snapshot.model_dump(mode="json", exclude_none=False)
+        payload["map_snapshot_hash"] = world_hash(snapshot)
+        return WorldConfig.model_validate(payload)
 
     @staticmethod
-    def materialize_world(revision: WorldMapRevision) -> WorldConfig:
-        """Materialize one immutable public map Revision for an experiment."""
-        base = normalize_public_world(revision.world_json)
+    def materialize_world(session: Session, public_map: WorldMap) -> WorldConfig:
+        """Resolve the current map and asset contracts for a draft or snapshot."""
+        base = _hydrate_spatial_assets(
+            session, normalize_public_world(public_map.world_json)
+        )
         return WorldConfig(
             world_key=base.world_key,
             world_name=base.world_name,
             definition=copy.deepcopy(base.definition),
             assets=list(base.assets),
-            map_id=revision.map_id,
-            map_revision_id=revision.id,
-            map_revision_hash=revision.world_hash,
+            map_id=public_map.id,
         )
-
-    def _require_draft(
-        self, session: Session, map_id: str
-    ) -> tuple[WorldMap, WorldMapRevision]:
-        """执行`require``draft`的内部处理，供当前模块或类复用。
-
-        参数:
-            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-            map_id: 地图的唯一标识。 类型：`str`。
-
-        返回:
-            返回按接口约定组织的结果集合。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-        public_map = session.get(WorldMap, map_id)
-        if public_map is None:
-            raise not_found("map", map_id)
-        revision = (
-            session.get(WorldMapRevision, public_map.current_draft_revision_id)
-            if public_map.current_draft_revision_id
-            else None
-        )
-        if (
-            revision is None
-            or revision.map_id != map_id
-            or revision.state != RevisionState.DRAFT.value
-        ):
-            raise ServiceError(
-                "MAP_DRAFT_UNAVAILABLE", "地图没有可编辑草稿", status_code=409
-            )
-        return public_map, revision
 
     def _usage_experiment_ids(self, session: Session, map_id: str) -> set[str]:
-        """执行`usage`实验`ids`的内部处理，供当前模块或类复用。
+        """Public Maps have no live experiment references in the package model."""
 
-        参数:
-            session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-            map_id: 地图的唯一标识。 类型：`str`。
-
-        返回:
-            返回按接口约定组织的结果集合。
-        """
-        result: set[str] = set()
-        revisions = session.execute(
-            select(ExperimentRevision.experiment_id, ExperimentRevision.definition_json)
-        )
-        for experiment_id, payload in revisions:
-            if ((payload or {}).get("world") or {}).get("map_id") == map_id:
-                result.add(experiment_id)
-        return result
+        return set()
 
     def _map_detail(self, session: Session, public_map: WorldMap) -> dict[str, Any]:
         """执行地图`detail`的内部处理，供当前模块或类复用。
@@ -2151,32 +1913,24 @@ class WorldMapService:
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
-        draft = (
-            session.get(WorldMapRevision, public_map.current_draft_revision_id)
-            if public_map.current_draft_revision_id
-            else None
+        world = _hydrate_spatial_assets(
+            session, normalize_public_world(public_map.world_json)
         )
-        published = (
-            session.get(WorldMapRevision, public_map.current_published_revision_id)
-            if public_map.current_published_revision_id
-            else None
-        )
-        source = draft or published
-        world = WorldConfig.model_validate(source.world_json) if source else None
-        definition = world.definition if world else {}
+        definition = world.definition
         size = definition.get("size") if isinstance(definition, dict) else None
         return {
             "id": public_map.id,
             "map_key": public_map.map_key,
             "name": public_map.name,
             "description": public_map.description,
-            "status": public_map.status,
             "row_version": public_map.row_version,
+            "lock_version": public_map.row_version,
+            "world_hash": world_hash(world),
+            "validation": copy.deepcopy(public_map.validation_json),
+            "world": world.model_dump(mode="json", exclude_none=False),
             "archived_at": iso_utc(public_map.archived_at)
             if public_map.archived_at
             else None,
-            "current_draft": self._revision_summary(draft),
-            "current_published": self._revision_summary(published),
             "usage_count": len(self._usage_experiment_ids(session, public_map.id)),
             "dimensions": size if isinstance(size, list) else None,
             "tile_size": definition.get("tile_size")
@@ -2185,59 +1939,3 @@ class WorldMapService:
             "updated_at": iso_utc(public_map.updated_at),
             "created_at": iso_utc(public_map.created_at),
         }
-
-    @staticmethod
-    def _revision_summary(revision: WorldMapRevision | None) -> dict[str, Any] | None:
-        """执行修订版本摘要的内部处理，供当前模块或类复用。
-
-        参数:
-            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision | None`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
-        """
-        if revision is None:
-            return None
-        return {
-            "id": revision.id,
-            "revision_no": revision.revision_no,
-            "state": revision.state,
-            "world_hash": revision.world_hash,
-            "lock_version": revision.lock_version,
-            "updated_at": iso_utc(revision.updated_at),
-            "published_at": iso_utc(revision.published_at)
-            if revision.published_at
-            else None,
-        }
-
-    def _revision_detail(
-        self,
-        revision: WorldMapRevision,
-        public_map: WorldMap,
-        *,
-        include_world: bool = True,
-    ) -> dict[str, Any]:
-        """执行修订版本`detail`的内部处理，供当前模块或类复用。
-
-        参数:
-            revision: 当前读取、发布、克隆或校验的修订版本记录。 类型：`WorldMapRevision`。
-            public_map: 传入当前算法的`public``map`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`WorldMap`。
-            include_world: 是否启用世界相关处理。 类型：`bool`。 默认值：`True`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        result = self._revision_summary(revision) or {}
-        result.update(
-            {
-                "map_id": public_map.id,
-                "map_key": public_map.map_key,
-                "map_name": public_map.name,
-                "base_revision_id": revision.base_revision_id,
-                "schema_version": revision.schema_version,
-                "validation": revision.validation_json,
-            }
-        )
-        if include_world:
-            result["world"] = revision.world_json
-        return result
