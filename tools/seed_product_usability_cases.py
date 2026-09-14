@@ -187,10 +187,10 @@ def api_request(method: str, path: str, payload: dict[str, Any] | None = None) -
 def seed() -> list[dict[str, Any]]:
     """幂等创建产品易用性评审所需的实验样例并返回创建结果。"""
 
-    map_items = api_request("GET", "/maps?status=PUBLISHED&page_size=100")["items"]
-    if not map_items or not map_items[0].get("current_published"):
-        raise RuntimeError("请先创建并发布一张用户地图，再运行 UX 样例种子")
-    map_revision_id = map_items[0]["current_published"]["id"]
+    map_items = api_request("GET", "/maps?page_size=100")["items"]
+    if not map_items:
+        raise RuntimeError("请先创建一张用户地图，再运行 UX 样例种子")
+    map_id = map_items[0]["id"]
     brain = api_request("GET", "/skills/stanford-town-brain")
     crowd_items = api_request("GET", "/crowds?status=PUBLISHED&page_size=100")["items"]
     if not crowd_items or not crowd_items[0].get("current_published"):
@@ -218,7 +218,7 @@ def seed() -> list[dict[str, Any]]:
                     "source": {"type": "BLANK"},
                     "brain_skill": brain["name"],
                     "brain_revision_id": brain["revision_id"],
-                    "map_revision_id": map_revision_id,
+                    "map_id": map_id,
                     "crowd_revision_ids": (
                         [] if case["source"] == "BLANK" else [crowd_revision_id]
                     ),

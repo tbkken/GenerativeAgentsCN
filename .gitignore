@@ -1,6 +1,9 @@
 .DS_Store
 ._*
 
+# Microsoft Office temporary lock files
+~$*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

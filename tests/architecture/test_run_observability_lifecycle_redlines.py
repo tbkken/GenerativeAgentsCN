@@ -206,7 +206,7 @@ def _publish_run(database, var_dir: Path, key: str):
         name=definition.experiment.name,
         goal=definition.experiment.goal,
         source_type="BLANK",
-        map_revision_id=map_revision["id"],
+        map_id=map_revision["id"],
         **brain_selection_for_database(database),
     )
     draft = experiments.get_draft(experiment["id"])

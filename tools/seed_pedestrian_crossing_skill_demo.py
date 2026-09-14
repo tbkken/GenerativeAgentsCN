@@ -63,6 +63,7 @@ def _materials() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
                 "name": name,
                 "kind": "TILE",
                 "purpose": "MAP",
+                "grid_rect": {"x": 0, "y": 0, "width": 1, "height": 1},
                 "pixel_rect": {"x": 0, "y": 0, "width": 32, "height": 32},
             }
         )
@@ -121,7 +122,7 @@ def _hierarchy_nodes() -> list[dict[str, Any]]:
                     "interaction_key": "query-pedestrian-signal",
                     "skill_name": "traffic-signal-state",
                     "description": "Agent 主动查询当前行人信号及安全通行建议",
-                    "interaction_radius_m": 2.5,
+                    "interaction_radius_tiles": 2.5,
                     "default_request": "现在可以安全通过斑马线吗？",
                 }
             ],
@@ -221,7 +222,7 @@ def build_world() -> dict[str, Any]:
                     "source": "pedestrian-crossing-skill-demo",
                     "width": WIDTH,
                     "height": HEIGHT,
-                    "meters_per_tile": 1.0,
+                    "size_unit": "TILE",
                 },
                 "tile_overrides": tile_overrides,
                 "tile_override_parts": {},
@@ -231,8 +232,7 @@ def build_world() -> dict[str, Any]:
         },
         "assets": [],
         "map_id": None,
-        "map_revision_id": None,
-        "map_revision_hash": None,
+        "map_snapshot_hash": None,
     }
 
 
@@ -312,12 +312,10 @@ def _published(resource: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def _ensure_map(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
-    """幂等创建演示地图，保存并发布其运行世界。"""
+    """幂等创建并更新演示地图；地图本身不再发布 Revision。"""
 
     listing = _request(base_url, f"/maps?{urlencode({'page': 1, 'page_size': 100})}")
     public_map = _find(listing["items"], "map_key", MAP_KEY)
-    if public_map is not None and _published(public_map):
-        return public_map, _published(public_map)  # type: ignore[return-value]
     if public_map is None:
         public_map = _request(
             base_url,
@@ -332,20 +330,20 @@ def _ensure_map(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
                 "tile_size": 32,
             },
         )
-    draft = _request(base_url, f"/maps/{public_map['id']}/draft")
+    current = _request(base_url, f"/maps/{public_map['id']}")
     saved = _request(
         base_url,
-        f"/maps/{public_map['id']}/draft",
+        f"/maps/{public_map['id']}",
         method="PUT",
-        payload={"lock_version": draft["lock_version"], "world": build_world()},
+        payload={"lock_version": current["lock_version"], "world": build_world()},
     )
-    published = _request(
+    validated = _request(
         base_url,
-        f"/maps/{public_map['id']}/draft/publish",
+        f"/maps/{public_map['id']}/validate",
         method="POST",
-        payload={"draft_revision_id": saved["id"], "lock_version": saved["lock_version"]},
+        payload={"lock_version": saved["lock_version"]},
     )
-    return public_map, published
+    return public_map, validated
 
 
 def _ensure_agent(base_url: str) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -410,7 +408,7 @@ def _ensure_crowd(
 def _ensure_experiment(
     base_url: str,
     *,
-    map_revision_id: str,
+    map_id: str,
     crowd_revision_id: str,
     chat_base_url: str | None = None,
     chat_model: str | None = None,
@@ -437,7 +435,7 @@ def _ensure_experiment(
             "tags": ["game-object-skill", "pedestrian-crossing", "end-to-end"],
             "brain_skill": brain["name"],
             "brain_revision_id": brain["revision_id"],
-            "map_revision_id": map_revision_id,
+            "map_id": map_id,
             "crowd_revision_ids": [crowd_revision_id],
         },
     )
@@ -485,12 +483,12 @@ def seed(
 ) -> dict[str, Any]:
     """按依赖顺序准备整套行人过街演示资源，并可选启动 Run。"""
 
-    public_map, map_revision = _ensure_map(base_url)
+    public_map, current_map = _ensure_map(base_url)
     agent, agent_revision = _ensure_agent(base_url)
     crowd, crowd_revision = _ensure_crowd(base_url, agent_revision["id"])
     experiment, created = _ensure_experiment(
         base_url,
-        map_revision_id=map_revision["id"],
+        map_id=current_map["id"],
         crowd_revision_id=crowd_revision["id"],
         chat_base_url=chat_base_url,
         chat_model=chat_model,
@@ -499,7 +497,7 @@ def seed(
     result = {
         "created": created,
         "map_id": public_map["id"],
-        "map_revision_id": map_revision["id"],
+        "map_snapshot_source_hash": current_map["world_hash"],
         "agent_id": agent["id"],
         "agent_revision_id": agent_revision["id"],
         "crowd_id": crowd["id"],

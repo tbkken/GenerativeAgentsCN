@@ -18,7 +18,14 @@ from generative_agents.runtime.brain import BrainRuntime
 from generative_agents.runtime.capabilities import SimulationMCPServer
 from generative_agents.runtime.iteration import IterationContext
 from generative_agents.runtime.result_collector import StepResultCollector
-from generative_agents.runtime.results import StepResultBuilder
+from generative_agents.runtime.results import (
+    ActionSnapshot,
+    ActivityKind,
+    AgentStepResult,
+    DomainEventRecord,
+    StepResult,
+    StepResultBuilder,
+)
 from generative_agents.skills import SkillRunResult
 from generative_agents.skills import MemoryStream, SkillLoopError
 
@@ -43,8 +50,8 @@ class _Tile:
 
 
 class _Maze:
-    maze_width = 4
-    maze_height = 4
+    width_tiles = 4
+    height_tiles = 4
 
     def __init__(self):
         self.tile = _Tile()
@@ -84,6 +91,9 @@ class _Maze:
 
 
 class _Objects:
+    def object_state(self, object_key):
+        return {}
+
     def nearby(self, coord):
         return []
 
@@ -310,6 +320,195 @@ def test_world_act_accepts_exactly_one_replayable_action_per_iteration():
     assert "already selected" in rejected["content"][0]["text"]
 
 
+@pytest.mark.parametrize(
+    "arguments,error_fragment",
+    [
+        (
+            {
+                "action_type": "MOVE",
+                "target_coord": [1, 1],
+            },
+            "current coordinate",
+        ),
+        (
+            {
+                "action_type": "MOVE",
+                "target_coord": [1, 1],
+                "target_address": ["用户世界", "社区", "公园", "长椅"],
+            },
+            "does not belong",
+        ),
+    ],
+)
+def test_world_act_rejects_move_without_a_consistent_displacement(
+    arguments, error_fragment
+):
+    server = _server()
+
+    result = server.call("world-act", arguments)
+
+    assert result["isError"] is True
+    assert error_fragment in result["content"][0]["text"]
+    assert server.action is None
+
+
+def test_world_act_replaces_model_hints_with_canonical_move_destination():
+    server = _server()
+
+    result = server.call(
+        "world-act",
+        {
+            "action_type": "MOVE",
+            "target_address": ["用户世界", "社区", "公园", "长椅"],
+            "description": "错误地声称去了别处",
+            "object": "另一个地点",
+        },
+    )
+
+    assert result["isError"] is False
+    assert server.action.arguments["target_coord"] == [2, 1]
+    assert server.action.arguments["target_address"] == _Tile.address
+    assert server.action.arguments["requested_target_coord"] is None
+    assert server.action.arguments["requested_target_address"] == _Tile.address
+
+
+def test_world_act_rejects_address_only_move_when_agent_is_already_there():
+    server = _server()
+    server.game.maze.address_tiles[":".join(_Tile.address)].add((1, 1))
+
+    result = server.call(
+        "world-act",
+        {"action_type": "MOVE", "target_address": list(_Tile.address)},
+    )
+
+    assert result["isError"] is True
+    assert "already the current location" in result["content"][0]["text"]
+    assert server.action is None
+
+
+def test_step_result_rejects_move_event_without_actual_displacement():
+    run_id = uuid4()
+    attempt_id = uuid4()
+    address = tuple(_Tile.address)
+    agent = AgentStepResult(
+        agent_key="agent-1",
+        from_coord=(1, 1),
+        to_coord=(1, 1),
+        path=(),
+        action=ActionSnapshot(description="小林移动到长椅"),
+        activity_kind=ActivityKind.OTHER,
+        location=address,
+    )
+    event = DomainEventRecord(
+        event_id=uuid4(),
+        sequence=1,
+        event_type="AGENT_MOVED",
+        agent_keys=("agent-1",),
+        payload={
+            "predicate": "移动到",
+            "object": ":".join(address),
+            "structured_payload": {
+                "from_coord": [1, 1],
+                "to_coord": [1, 1],
+                "executed_path": [],
+                "after_address": list(address),
+                "description": "小林移动到长椅",
+            },
+        },
+    )
+
+    with pytest.raises(ValueError, match="actual displacement"):
+        StepResult(
+            run_id=run_id,
+            attempt_id=attempt_id,
+            step_no=1,
+            virtual_time=datetime(2026, 8, 27, tzinfo=timezone.utc),
+            agents=(agent,),
+            conversations=(),
+            memory_deltas=(),
+            schedule_revisions=(),
+            domain_events=(event,),
+            committed_model_usage=(),
+        )
+
+
+def test_world_commit_uses_the_actual_move_endpoint_as_replay_fact():
+    class MoveTile:
+        def __init__(self, address):
+            self.address = address
+
+        def get_address(self):
+            return list(self.address)
+
+    class MoveMaze:
+        addresses = {
+            (1, 1): ("用户世界", "社区", "住宅", "床"),
+            (2, 1): ("用户世界", "社区", "住宅", "过道"),
+            (3, 1): ("用户世界", "社区", "住宅", "洗漱区"),
+        }
+
+        def tile_at(self, coord):
+            return MoveTile(self.addresses[tuple(coord)])
+
+    class MoveAgent:
+        name = "小林"
+
+        def __init__(self, maze):
+            self.maze = maze
+            self.coord = (1, 1)
+            self.path = []
+            self.scratch = SimpleNamespace(currently="准备起床")
+            self.action = None
+
+        def get_tile(self):
+            return self.maze.tile_at(self.coord)
+
+        def move(self, coord, path):
+            self.coord = tuple(coord)
+            self.path = list(path)
+
+    maze = MoveMaze()
+    agent = MoveAgent(maze)
+    game = Game.__new__(Game)
+    game.maze = maze
+    game.agents = {"agent-1": agent}
+    game.context = SimpleNamespace(
+        clock=SimpleNamespace(
+            get_date=lambda: datetime(2026, 8, 27, 8, 0, tzinfo=timezone.utc)
+        )
+    )
+    outcome = {
+        "world_action": {
+            "action_type": "MOVE",
+            "path": [[2, 1], [3, 1]],
+            "arguments": {
+                "target_coord": [3, 1],
+                "target_address": list(maze.addresses[(3, 1)]),
+                "description": "小林已经移动到洗漱区",
+                "object": "洗漱区",
+            },
+        },
+        "info": {},
+    }
+
+    committed = game.commit_world_action(
+        "agent-1", outcome, stride_minutes=10, movement_budget=1
+    )
+
+    event = committed["outcome"]["events"][0]
+    payload = event["structured_payload"]
+    current_address = maze.addresses[(2, 1)]
+    assert event["event_type"] == "AGENT_MOVED"
+    assert event["predicate"] == "移动到"
+    assert event["object"] == ":".join(current_address)
+    assert payload["to_coord"] == [2, 1]
+    assert payload["after_address"] == list(current_address)
+    assert payload["executed_path"] == [[1, 1], [2, 1]]
+    assert payload["arguments"]["target_coord"] == [3, 1]
+    assert payload["arguments"]["requested_description"] == "小林已经移动到洗漱区"
+    assert agent.action.event.address == list(current_address)
+
+
 def test_world_act_accepts_unencoded_activity_as_event_semantics():
     server = _server()
 
@@ -452,7 +651,7 @@ def test_game_object_skill_response_is_delivered_once_in_next_iteration_context(
         "generative_agents.runtime.brain.SkillRuntime", _CapturingSkillRuntime
     )
     agent = _Agent()
-    agent.scratch = SimpleNamespace(currently="刚刚查看红绿灯")
+    agent.scratch = SimpleNamespace(currently="刚刚查看红绿灯", config={"daily_plan": "09:00 授课；15:30 答疑"})
     agent.associate = SimpleNamespace(abstract=lambda: {})
     agent.schedule = SimpleNamespace(abstract=lambda: {})
     agent.spatial = SimpleNamespace(tree={}, address={})
@@ -486,7 +685,7 @@ def test_game_object_skill_response_is_delivered_once_in_next_iteration_context(
     brain = BrainRuntime(
         SimpleNamespace(
             normalize_name=lambda name: name,
-            get=lambda _name: SimpleNamespace(kind="brain", revision="revision-1"),
+            get=lambda _name: SimpleNamespace(kind="brain", content_hash="test-content-hash"),
         ),
         brain_skill="stanford-town-brain",
         model_config={"model": "test-model"},
@@ -547,7 +746,51 @@ def test_game_keeps_conversation_thread_and_message_sequence_across_steps():
     assert restarted["conversation_id"] != ended["conversation_id"]
 
 
-def test_brain_quality_report_flags_repeated_read_without_changing_execution_state():
+@pytest.mark.parametrize("invalid_kind", ["participants", "closed", "unknown", "malformed", "new_with_id"])
+def test_speak_rejects_invalid_thread_before_accepting_action_and_can_retry(invalid_kind):
+    import copy
+
+    server = _server()
+    game = Game.__new__(Game)
+    game.__dict__.update(server.game.__dict__)
+    game.context = SimpleNamespace(run_id=server.iteration.run_id)
+    game._conversation_threads = {}
+    game._open_conversation_by_participants = {}
+    game._conversation_sequence = 0
+    game.agents.update({"agent-2": _Agent(), "agent-3": _Agent()})
+    server.game = game
+    other = "agent-3" if invalid_kind == "participants" else "agent-2"
+    initial = game.record_conversation_message(
+        "agent-1", (other,), end_conversation=invalid_kind == "closed"
+    )
+    conversation_id = initial["conversation_id"]
+    if invalid_kind == "unknown":
+        conversation_id = str(uuid4())
+    elif invalid_kind == "malformed":
+        conversation_id = "not-a-uuid"
+    before = copy.deepcopy(game._conversation_threads)
+    sequence = game._conversation_sequence
+    arguments = {"action_type": "SPEAK", "participant_agent_keys": ["agent-2"],
+                 "message": "Hello", "conversation_id": conversation_id,
+                 "start_new_conversation": invalid_kind == "new_with_id"}
+    rejected = server.call("world-act", arguments)
+    assert rejected["isError"] is True
+    assert "conversation_id" in rejected["content"][0]["text"]
+    assert server.action is None
+    assert game._conversation_threads == before
+    assert game._conversation_sequence == sequence
+
+    arguments.pop("conversation_id")
+    accepted = server.call("world-act", arguments)
+    assert accepted["isError"] is False
+    assert game._conversation_threads == before  # Validation is read-only.
+    committed = game.record_conversation_message("agent-1", ("agent-2",),
+        start_new=arguments["start_new_conversation"])
+    assert committed["participants"] == ("agent-1", "agent-2")
+    assert server.call("world-act", arguments)["isError"] is True
+
+
+def test_brain_quality_report_does_not_flag_normal_reads_across_iterations():
     brain = BrainRuntime.__new__(BrainRuntime)
     brain.brain_skill = "test-brain"
     brain.registry = SimpleNamespace(
@@ -573,9 +816,9 @@ def test_brain_quality_report_flags_repeated_read_without_changing_execution_sta
 
     report = brain.evaluate_quality()
 
-    assert report["quality_status"] == "WARNING"
+    assert report["quality_status"] != "WARNING"
     assert report["execution_status_affected"] is False
-    assert any(
+    assert not any(
         issue["code"] == "REPEATED_READ_WITHOUT_PROGRESS" for issue in report["issues"]
     )
 
@@ -633,7 +876,7 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
         _PartiallyFailingSkillRuntime,
     )
     agent = _Agent()
-    agent.scratch = SimpleNamespace(currently="准备行动")
+    agent.scratch = SimpleNamespace(currently="准备行动", config={"daily_plan": "09:00 授课；15:30 答疑"})
     agent.associate = SimpleNamespace(abstract=lambda: {})
     agent.schedule = SimpleNamespace(abstract=lambda: {})
     agent.spatial = SimpleNamespace(tree={}, address={})
@@ -653,7 +896,7 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
     )
     registry = SimpleNamespace(
         normalize_name=lambda name: name,
-        get=lambda _name: SimpleNamespace(kind="brain", revision="revision-1"),
+        get=lambda _name: SimpleNamespace(kind="brain", content_hash="test-content-hash"),
     )
     brain = BrainRuntime(
         registry,
@@ -710,3 +953,69 @@ def test_failed_execution_quality_is_partial_and_does_not_call_model():
             "evidence": {"code": "SKILL_LOOP", "message": "budget exhausted"},
         }
     ]
+
+
+def test_brain_receives_authored_daily_plan_even_when_runtime_schedule_is_empty():
+    agent = _Agent()
+    agent.scratch = SimpleNamespace(currently='准备上课', config={'daily_plan': '09:00 授课；15:30 答疑', 'learned': '教师'})
+    agent.schedule = SimpleNamespace(abstract=lambda: {})
+    agent.spatial = SimpleNamespace(tree={}, address={})
+    agent.concepts = []
+    variables = BrainRuntime._agent_variables(agent)
+    assert variables['daily_plan'] == '09:00 授课；15:30 答疑'
+    assert variables['profile']['daily_plan'] == variables['daily_plan']
+    assert variables['profile']['learned'] == '教师'
+    assert variables['schedule'] == {}
+
+
+def test_visual_state_is_perceived_and_can_change_without_passive_skill():
+    server = _server()
+    query = server.game.maze.semantic_nodes_in_scope
+    obj = {"id": "desk", "kind": "GAME_OBJECT", "name": "书桌", "address": ["用户世界", "社区", "公园", "书桌"], "bounds": {"x": 1, "y": 1, "width": 1, "height": 1}, "available_visual_states": ["已整理"], "skill_bindings": [], "distance_tiles": 0, "relation": "NEARBY"}
+    server.game.maze.semantic_nodes_in_scope = lambda coord, radius: query(coord, radius) + [obj]
+    observation = server._perceive({})
+    assert observation["game_objects"][0]["available_visual_states"] == ["已整理"]
+    assert observation["game_objects"][0]["default_visual_state"] == ""
+    result = server.call("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})
+    assert not result["isError"]
+    assert server.call("world-act", {"action_type": "ACT", "predicate": "整理", "object": "桌面"})["isError"]
+    other = _server()
+    other.game.maze.semantic_nodes_in_scope = lambda coord, radius: [{**obj, "skill_bindings": [{"interaction_radius_tiles": 0.1}]}]
+    assert other.call("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})["isError"]
+
+
+def test_direct_visual_state_action_is_local_and_does_not_enable_plain_objects():
+    payload = {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}}
+    for distance, visual, vision, accepted in [(2, True, 4, True), (3, True, 4, False), (2, True, 1, False), (0, False, 4, False)]:
+        server = _server()
+        server.game.get_agent("agent-1").percept_config = {"vision_r": vision}
+        def query(coord, radius):
+            return [{"id": "desk", "kind": "GAME_OBJECT", "bounds": {"x": 1 + distance, "y": 1, "width": 1, "height": 1}, "available_visual_states": ["已整理"] if visual else [], "skill_bindings": []}] if distance <= radius else []
+        server.game.maze.semantic_nodes_in_scope = query
+        assert bool(server.call("world-act", payload)["isError"]) is not accepted
+
+
+def test_repeated_read_quality_respects_iteration_and_successful_progress():
+    brain = object.__new__(BrainRuntime)
+    read = {"tool": "world-perceive", "input": "{}", "output": "same", "is_error": False}
+    def record(step, calls):
+        return {"agent_key": "agent", "step_no": step, "mcp_calls": calls}
+    brain._audit_records = [record(1,[read]),record(2,[read]),record(3,[read])]
+    assert not brain._deterministic_quality_issues()
+    brain._audit_records = [record(1,[read,read])]
+    assert [issue["code"] for issue in brain._deterministic_quality_issues()] == ["REPEATED_READ_WITHOUT_PROGRESS"]
+    brain._audit_records = [record(1,[read,{"tool":"memory-stream-append","is_error":False},read])]
+    assert not brain._deterministic_quality_issues()
+    brain._audit_records = [record(1,[read,{**read,"output":"changed"}])]
+    assert not brain._deterministic_quality_issues()
+
+
+def test_skipped_business_evaluation_is_not_an_evaluator_failure():
+    brain = object.__new__(BrainRuntime)
+    brain.brain_skill = "test-brain"
+    brain._audit_records = []
+    report = brain.evaluate_quality(include_model=False)
+    assert report["quality_status"] == "NOT_EVALUATED"
+    assert report["evaluator"]["status"] == "SKIPPED"
+    assert report["evaluator"]["error"] is None
+    assert "未执行业务评估" in report["summary"]

@@ -28,7 +28,11 @@ def brain_selection_for_database(database) -> dict[str, str]:
 
 
 def publish_user_map(database, *, world=None, name: str = "Test user map") -> dict:
-    """Create and publish an isolated user map for a service-level test."""
+    """Create an isolated mutable user map for a service-level test.
+
+    The historical helper name is kept so unrelated tests do not need a noisy rename.
+    Experiments now freeze this current map only when the experiment is published.
+    """
     service = WorldMapService(database)
     suffix = uuid4().hex[:12]
     world_payload = None
@@ -82,22 +86,18 @@ def publish_user_map(database, *, world=None, name: str = "Test user map") -> di
         height=max(4, height),
         tile_size=tile_size,
     )
-    draft = service.get_draft(created["id"])
+    current = service.get_map(created["id"])
     if world_payload is not None:
-        draft = service.update_draft(
+        current = service.update_map(
             created["id"],
-            expected_lock_version=draft["lock_version"],
+            expected_lock_version=current["lock_version"],
             world=world_payload,
         )
-    return service.publish_draft(
-        created["id"],
-        draft_revision_id=draft["id"],
-        expected_lock_version=draft["lock_version"],
-    )
+    return current
 
 
 def publish_user_map_via_api(client, *, name: str = "Test user map") -> dict:
-    """Create and publish an isolated user map through the public API."""
+    """Create a valid mutable user map through the public API."""
     suffix = uuid4().hex[:12]
     created_response = client.post(
         "/api/v1/maps",
@@ -105,34 +105,90 @@ def publish_user_map_via_api(client, *, name: str = "Test user map") -> dict:
     )
     assert created_response.status_code == 201, created_response.text
     created = created_response.json()
-    draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
-    world = copy.deepcopy(draft["world"])
+    current = client.get(f"/api/v1/maps/{created['id']}").json()
+    world = copy.deepcopy(current["world"])
     root = str(world["definition"]["world"])
     for tile in world["definition"]["tiles"]:
         x, y = tile["coord"]
         tile["address"] = [root, "test-sector", "test-arena", f"tile-{x}-{y}"]
     updated_response = client.put(
-        f"/api/v1/maps/{created['id']}/draft",
-        json={"lock_version": draft["lock_version"], "world": world},
+        f"/api/v1/maps/{created['id']}",
+        json={"lock_version": current["lock_version"], "world": world},
     )
     assert updated_response.status_code == 200, updated_response.text
-    draft = updated_response.json()
-    published = client.post(
-        f"/api/v1/maps/{created['id']}/draft/publish",
+    current = updated_response.json()
+    validated = client.post(
+        f"/api/v1/maps/{created['id']}/validate",
+        json={"lock_version": current["lock_version"]},
+    )
+    assert validated.status_code == 200, validated.text
+    assert validated.json()["validation"]["valid"], validated.text
+    return validated.json()
+
+
+def first_user_crowd_revision_id(client) -> str:
+    """Create one user-owned crowd revision for legacy API integration tests."""
+    suffix = uuid4().hex[:10]
+    definition = {
+        "agent_key": f"test-agent-{suffix}",
+        "enabled": True,
+        "name": f"Test Agent {suffix}",
+        "portrait_asset": None,
+        "sprite_asset": None,
+        "model_override": None,
+        "tags": ["test"],
+        "goals": ["complete the test"],
+        "coord": [0, 0],
+        "currently": "testing",
+        "scratch": {
+            "age": 30,
+            "innate": "careful",
+            "learned": "test fixtures",
+            "lifestyle": "regular",
+            "daily_plan": "run tests",
+        },
+        "spatial": {
+            "address": {"living_area": ["test", "sector", "arena"]},
+            "tree": {"test": {"sector": {"arena": ["object"]}}},
+        },
+    }
+    agent = client.post(
+        "/api/v1/agent-templates",
+        json={"definition": definition, "description": "user-owned test Agent"},
+    )
+    assert agent.status_code == 201, agent.text
+    agent_id = agent.json()["id"]
+    agent_draft = client.get(f"/api/v1/agent-templates/{agent_id}/draft").json()
+    agent_revision = client.post(
+        f"/api/v1/agent-templates/{agent_id}/draft/publish",
         json={
-            "draft_revision_id": draft["id"],
-            "lock_version": draft["lock_version"],
+            "draft_revision_id": agent_draft["id"],
+            "lock_version": agent_draft["lock_version"],
         },
     )
-    assert published.status_code == 200, published.text
-    return published.json()
+    assert agent_revision.status_code == 200, agent_revision.text
 
-
-def first_builtin_crowd_revision_id(client) -> str:
-    """Return one seeded crowd revision for tests that need enabled Agents."""
-    crowds = client.get("/api/v1/crowds?page_size=100").json()["items"]
-    crowd = next(item for item in crowds if item["is_builtin"])
-    return crowd["current_published"]["id"]
+    crowd = client.post(
+        "/api/v1/crowds",
+        json={
+            "name": f"Test Crowd {suffix}",
+            "crowd_key": f"test-crowd-{suffix}",
+            "description": "user-owned test crowd",
+            "agent_revision_ids": [agent_revision.json()["id"]],
+        },
+    )
+    assert crowd.status_code == 201, crowd.text
+    crowd_id = crowd.json()["id"]
+    crowd_draft = client.get(f"/api/v1/crowds/{crowd_id}/draft").json()
+    crowd_revision = client.post(
+        f"/api/v1/crowds/{crowd_id}/draft/publish",
+        json={
+            "draft_revision_id": crowd_draft["id"],
+            "lock_version": crowd_draft["lock_version"],
+        },
+    )
+    assert crowd_revision.status_code == 200, crowd_revision.text
+    return crowd_revision.json()["id"]
 
 
 def brain_revision_via_api(client, name: str = "stanford-town-brain") -> dict:

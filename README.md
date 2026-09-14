@@ -10,6 +10,37 @@ Generative Agents的原始代码工程化程度较低，难以持续维护或拓
 
 如果你准备阅读或修改源码，建议先看[中文代码导览](docs/code-guide-cn.md)。它按“实验、运行、智能体、Skill、地图和回放”梳理了核心调用链与推荐阅读顺序。
 
+## 当前架构：实验就是可移植文件包
+
+当前主架构不再把实验定义、Run 或回放事实绑定到数据库：
+
+- `ga_protocol` 定义实验目录/`.gaexp` 与 Run 目录/`.garun` 的通用协议；
+- `ga_studio` 是唯一使用数据库的模块，数据库只保存可变公共作者资源和可重建的包位置目录；
+- `ga_runtime` 只读取实验包，并把新跑、续跑、重跑的全部状态写进 Run 目录；
+- `ga_replay` 只读取 Run 中已提交的 StepResult，不读取数据库、不运行 Brain、不调用模型。
+
+公共 Map、Agent、Crowd、Brain、Skill、模型预设和评估器在加入实验时会立即物理复制。公共 Agent 不保存坐标或 Sleeping 等地图地址；坐标和四层空间地址属于实验包内 placement。文件名和目录名不是身份，`experiment_id`、`run_id`、`attempt_id` 都写在包内清单中。
+
+不启动 Web 也可以直接操作：
+
+```bash
+ga experiment validate ./my-experiment
+ga experiment seal ./my-experiment ./my-experiment.gaexp
+ga run start ./my-experiment.gaexp ./my-run --steps 24
+ga run resume ./my-run
+ga run rerun ./my-run ./another-run
+ga run seal ./my-run ./my-run.garun
+ga replay state ./my-run.garun 12
+```
+
+Studio Web 使用完全相同的文件协议：
+
+```bash
+python -m generative_agents.web.main
+```
+
+完整设计见[可移植实验包与文件化 Run 架构](docs/capability-composition-platform-design.md)和[实验包构建 UX](docs/experiment-resource-composition-ux.md)。
+
 [wounderland](https://github.com/Archermmt/wounderland)项目是原[Generative Agents](https://github.com/joonspk-research/generative_agents)项目的重构版本，结构良好且代码质量远优于原版，因此本项目基于wounderland开发。
 
 更新：

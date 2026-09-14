@@ -127,7 +127,7 @@ def _skill_binding() -> list[dict[str, Any]]:
             "interaction_key": "query-crosswalk-signal",
             "skill_name": "crosswalk-signal-advisor",
             "description": "Agent 主动询问该人行横道实例的当前相位与安全动作",
-            "interaction_radius_m": 5.5,
+            "interaction_radius_tiles": 5.5,
             "default_request": "我已经接近人行横道，现在是否可以安全进入斑马线？",
         }
     ]
@@ -525,32 +525,32 @@ def update_map_metadata() -> None:
 
 
 def replace_map_draft() -> dict[str, Any]:
-    """读取当前地图草稿、生成新世界并用乐观锁完整替换。"""
+    """读取当前地图、生成新世界并用乐观锁完整替换。"""
 
-    draft = request_json("GET", f"/maps/{MAP_ID}/draft")
-    world = build_world(draft["world"])
+    current = request_json("GET", f"/maps/{MAP_ID}")
+    world = build_world(current["world"])
     saved = request_json(
         "PUT",
-        f"/maps/{MAP_ID}/draft",
-        {"lock_version": draft["lock_version"], "world": world},
+        f"/maps/{MAP_ID}",
+        {"lock_version": current["lock_version"], "world": world},
     )
     update_map_metadata()
     return saved
 
 
 def publish_map() -> dict[str, Any]:
-    """发布当前地图草稿并返回不可变 Revision。"""
+    """校验当前地图；实验发布时才冻结不可变快照。"""
 
-    draft = request_json("GET", f"/maps/{MAP_ID}/draft")
+    current = request_json("GET", f"/maps/{MAP_ID}")
     return request_json(
         "POST",
-        f"/maps/{MAP_ID}/draft/publish",
-        {"draft_revision_id": draft["id"], "lock_version": draft["lock_version"]},
+        f"/maps/{MAP_ID}/validate",
+        {"lock_version": current["lock_version"]},
     )
 
 
-def create_experiment(map_revision_id: str) -> dict[str, Any]:
-    """创建或复用演示实验，并绑定指定的已发布地图 Revision。"""
+def create_experiment(map_id: str) -> dict[str, Any]:
+    """创建或复用演示实验，并绑定指定地图。"""
 
     brain = request_json("GET", "/skills/pedestrian-crossing-brain")
     catalog = request_json(
@@ -576,7 +576,7 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
                 "source": {"type": "BLANK"},
                 "brain_skill": brain["name"],
                 "brain_revision_id": brain["revision_id"],
-                "map_revision_id": map_revision_id,
+                "map_id": map_id,
             },
         )
     experiment_id = created["id"]
@@ -591,11 +591,11 @@ def create_experiment(map_revision_id: str) -> dict[str, Any]:
             {},
         )
     draft = request_json("GET", f"/experiments/{experiment_id}/draft")
-    if draft["definition"]["world"]["map_revision_id"] != map_revision_id:
+    if draft["definition"]["world"]["map_id"] != map_id:
         draft = request_json(
             "PUT",
             f"/experiments/{experiment_id}/draft/map",
-            {"lock_version": draft["lock_version"], "map_revision_id": map_revision_id},
+            {"lock_version": draft["lock_version"], "map_id": map_id},
         )
     if draft["definition"]["engine"].get("brain_revision_id") != brain["revision_id"]:
         draft = request_json(
@@ -702,25 +702,21 @@ def main() -> None:
     parser.add_argument("--launch", action="store_true", help="publish the experiment and queue its run")
     args = parser.parse_args()
 
-    map_detail = request_json("GET", f"/maps/{MAP_ID}")
-    saved_map = replace_map_draft() if map_detail.get("current_draft") else None
-    active_revision = (
-        publish_map() if saved_map is not None and not args.map_only else map_detail.get("current_published")
-    )
+    saved_map = replace_map_draft()
+    current_map = saved_map if args.map_only else publish_map()
     result: dict[str, Any] = {
         "map_id": MAP_ID,
-        "map_draft_id": saved_map["id"] if saved_map else None,
-        "map_lock_version": saved_map["lock_version"] if saved_map else None,
+        "map_row_version": saved_map["row_version"],
         "dimensions": [HEIGHT, WIDTH],
     }
     if not args.map_only:
-        if active_revision is None:
-            raise RuntimeError("map has neither a draft nor a published revision")
-        built = create_experiment(active_revision["id"])
+        if not current_map.get("validation", {}).get("valid"):
+            raise RuntimeError("map validation failed")
+        built = create_experiment(MAP_ID)
         experiment_id = built["experiment"]["id"]
         result.update(
             {
-                "map_revision_id": active_revision["id"],
+                "map_snapshot_source_hash": current_map["world_hash"],
                 "experiment_id": experiment_id,
                 "experiment_draft_id": built["draft"]["id"],
                 "validation": built["validation"],

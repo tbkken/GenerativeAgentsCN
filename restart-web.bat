@@ -83,9 +83,9 @@ echo [INFO] Waiting for the health endpoint...
 
 for /L %%I in (1,1,30) do (
     powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-        "try { Invoke-RestMethod -Uri ('http://127.0.0.1:' + $env:GA_RESTART_PORT + '/api/v1/health/ready') -TimeoutSec 2 | Out-Null; exit 0 } catch { exit 1 }"
+        "try { Invoke-RestMethod -Uri ('http://127.0.0.1:' + $env:GA_RESTART_PORT + '/api/studio/health') -TimeoutSec 2 | Out-Null; exit 0 } catch { exit 1 }"
     if not errorlevel 1 goto service_ready
-    timeout /t 1 /nobreak >nul
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Sleep -Seconds 1"
 )
 
 echo [ERROR] The service did not pass its health check within 30 seconds.

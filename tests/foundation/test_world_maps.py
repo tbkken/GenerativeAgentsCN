@@ -1,7 +1,8 @@
-"""基础能力回归测试：覆盖 ``test_world_maps`` 对应的行为、故障边界和回归约束。"""
+"""Mutable map resources and experiment map-selection boundaries."""
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
@@ -9,8 +10,7 @@ from generative_agents.web import create_app
 from tests.support import brain_revision_via_api, publish_user_map_via_api
 
 
-def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
-    """回归验证 ``test_map_catalog_supports_status_filters_and_five_item_pages`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_map_catalog_is_a_single_mutable_resource_list(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
         for index in range(6):
@@ -22,30 +22,19 @@ def test_map_catalog_supports_status_filters_and_five_item_pages(database_url):
 
         first_page = client.get("/api/v1/maps?page=1&page_size=5").json()
         second_page = client.get("/api/v1/maps?page=2&page_size=5").json()
-        assert first_page["page_size"] == 5
-        assert len(first_page["items"]) == 5
-        assert first_page["total_pages"] >= 2
-        assert second_page["items"]
-        assert first_page["status_counts"]["ALL"] == first_page["total"]
-        assert (
-            first_page["status_counts"]["DRAFT"]
-            + first_page["status_counts"]["PUBLISHED"]
-            == first_page["status_counts"]["ALL"]
-        )
 
-        drafts = client.get("/api/v1/maps?status=DRAFT&page=1&page_size=5").json()
-        assert drafts["total"] == drafts["status_counts"]["DRAFT"]
-        assert all(item["status"] == "DRAFT" for item in drafts["items"])
-
-        invalid = client.get("/api/v1/maps?status=ARCHIVED")
-        assert invalid.status_code == 422
-        assert invalid.json()["error"]["code"] == "INVALID_MAP_STATUS"
+    assert first_page["page_size"] == 5
+    assert len(first_page["items"]) == 5
+    assert first_page["total_pages"] >= 2
+    assert second_page["items"]
+    assert first_page["status_counts"] == {"ALL": first_page["total"]}
+    assert all("current_draft" not in item for item in first_page["items"])
+    assert all("current_published" not in item for item in first_page["items"])
 
 
 def test_map_workspace_populates_experiment_creation_selector():
-    """回归验证 ``test_map_workspace_populates_experiment_creation_selector`` 所描述的业务结果、故障边界和隔离约束。"""
     javascript = (
-        __import__("pathlib").Path(__file__).parents[2]
+        Path(__file__).parents[2]
         / "generative_agents"
         / "web"
         / "static"
@@ -54,6 +43,8 @@ def test_map_workspace_populates_experiment_creation_selector():
 
     assert "newExperimentMap" in javascript
     assert "prepareExperimentCreate" in javascript
+    assert "map_" + "revision_id" not in javascript
+    assert "/draft/publish" not in javascript
 
 
 def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
@@ -80,196 +71,173 @@ def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
     assert missing.status_code == 404
 
 
-def test_experiment_selects_an_immutable_public_map_without_an_overlay(database_url):
-    """实验只引用公共地图 Revision，不能保存私有覆盖层。"""
+def test_experiment_draft_selects_map_id_without_private_overlay(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        catalog = client.get("/api/v1/maps").json()
-        assert catalog["total"] == 0
-        baseline_revision = publish_user_map_via_api(client, name="Baseline user map")
-
-        created_response = client.post(
-            "/api/v1/maps",
-            json={"name": "共享测试地图", "description": "供多个实验复用"},
-        )
-        assert created_response.status_code == 201, created_response.text
-        created = created_response.json()
-        draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
-        world = draft["world"]
-        world["world_key"] = "shared-test-map"
-        world["world_name"] = "共享测试地图"
-        world["definition"] = {
-            "world": "shared-test-map",
-            "tile_size": 32,
-            "size": [2, 2],
-            "map": [[0, 0], [0, 0]],
-            "camera": [0, 0],
-            "tile_address_keys": ["world", "sector", "arena", "game_object"],
-            "tiles": [
-                {"coord": [0, 0], "collision": False},
-                {"coord": [1, 0], "collision": False},
-                {"coord": [0, 1], "collision": False},
-                {"coord": [1, 1], "collision": False},
-            ],
-        }
-        saved = client.put(
-            f"/api/v1/maps/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "world": world},
-        )
-        assert saved.status_code == 200, saved.text
-        published = client.post(
-            f"/api/v1/maps/{created['id']}/draft/publish",
-            json={
-                "draft_revision_id": saved.json()["id"],
-                "lock_version": saved.json()["lock_version"],
-            },
-        )
-        assert published.status_code == 200, published.text
-        published_revision = published.json()
-        fetched_revision = client.get(
-            f"/api/v1/maps/{created['id']}/revisions/{published_revision['id']}"
-        )
-        assert fetched_revision.status_code == 200
-        assert fetched_revision.json()["world"]["definition"]["world"] == "shared-test-map"
-
+        first_map = publish_user_map_via_api(client, name="第一张实时地图")
+        second_map = publish_user_map_via_api(client, name="第二张实时地图")
         brain = brain_revision_via_api(client)
         experiment_response = client.post(
             "/api/v1/experiments",
             json={
-                "name": "地图 Revision 实验",
+                "name": "地图引用实验",
                 "brain_skill": brain["name"],
                 "brain_revision_id": brain["revision_id"],
                 "source": {"type": "BLANK"},
-                "map_revision_id": baseline_revision["id"],
+                "map_id": first_map["id"],
             },
         )
         assert experiment_response.status_code == 201, experiment_response.text
         experiment = experiment_response.json()
-        experiment_draft = client.get(
-            f"/api/v1/experiments/{experiment['id']}/draft"
-        ).json()
+        draft = client.get(f"/api/v1/experiments/{experiment['id']}/draft").json()
+
         selected = client.put(
             f"/api/v1/experiments/{experiment['id']}/draft/map",
-            json={
-                "lock_version": experiment_draft["lock_version"],
-                "map_revision_id": published_revision["id"],
-            },
+            json={"lock_version": draft["lock_version"], "map_id": second_map["id"]},
         )
         assert selected.status_code == 200, selected.text
         selected_world = selected.json()["definition"]["world"]
-        assert selected_world["map_id"] == created["id"]
-        assert selected_world["map_revision_id"] == published_revision["id"]
-        assert selected_world["map_revision_hash"] == published_revision["world_hash"]
+        assert selected_world["map_id"] == second_map["id"]
+        assert selected_world["map_snapshot_hash"] is None
         assert "overlay" not in selected_world
-        assert selected.json()["provenance"]["world_map_revision_id"] == (
-            published_revision["id"]
-        )
-        assert selected.json()["provenance"]["world_map_revision_hash"] == (
-            published_revision["world_hash"]
-        )
-
-        alternate_brain = brain_revision_via_api(
-            client, "pedestrian-crossing-brain"
-        )
-        selected_brain = client.put(
-            f"/api/v1/experiments/{experiment['id']}/draft/brain",
-            json={
-                "lock_version": selected.json()["lock_version"],
-                "brain_revision_id": alternate_brain["revision_id"],
-            },
-        )
-        assert selected_brain.status_code == 200, selected_brain.text
-        assert selected_brain.json()["definition"]["engine"][
-            "brain_revision_id"
-        ] == alternate_brain["revision_id"]
-        assert selected_brain.json()["provenance"]["brain_revision_id"] == (
-            alternate_brain["revision_id"]
-        )
-        selected = selected_brain
+        assert selected.json()["provenance"]["world_map_id"] == second_map["id"]
+        assert "world_map_" + "revision_id" not in selected.json()["provenance"]
 
         overlaid = client.put(
             f"/api/v1/experiments/{experiment['id']}/draft/map-overlay",
-            json={
-                "lock_version": selected.json()["lock_version"],
-                "overlay": {
-                    "definition_patch": {"editor": {"experiment_note": "only here"}},
-                    "asset_additions": [],
-                    "removed_asset_paths": [],
-                },
-            },
+            json={"lock_version": selected.json()["lock_version"], "overlay": {}},
         )
         assert overlaid.status_code in {404, 405}
-        direct_world_write = client.put(
-            f"/api/v1/experiments/{experiment['id']}/draft/world",
-            json={"lock_version": selected.json()["lock_version"], "data": selected_world},
-        )
-        assert direct_world_write.status_code in {404, 405}
-        tampered_definition = copy.deepcopy(selected.json()["definition"])
-        tampered_definition["world"]["world_name"] = "绕过 Revision 的私有世界"
-        full_bypass = client.put(
+
+        tampered = copy.deepcopy(selected.json()["definition"])
+        tampered["world"]["world_name"] = "绕过地图选择端点"
+        bypass = client.put(
             f"/api/v1/experiments/{experiment['id']}/draft",
-            json={
-                "lock_version": selected.json()["lock_version"],
-                "data": tampered_definition,
-            },
+            json={"lock_version": selected.json()["lock_version"], "data": tampered},
         )
-        assert full_bypass.status_code == 422
-        assert full_bypass.json()["error"]["code"] == (
-            "RESOURCE_SELECTION_ENDPOINT_REQUIRED"
-        )
-        generic_world_bypass = client.patch(
-            f"/api/v1/experiments/{experiment['id']}/draft/world",
-            json={
-                "lock_version": selected.json()["lock_version"],
-                "data": selected_world,
-            },
-        )
-        assert generic_world_bypass.status_code == 422
-        generic_engine_bypass = client.patch(
-            f"/api/v1/experiments/{experiment['id']}/draft/engine",
-            json={
-                "lock_version": selected.json()["lock_version"],
-                "data": selected.json()["definition"]["engine"],
-            },
-        )
-        assert generic_engine_bypass.status_code == 422
+        assert bypass.status_code == 422
+        assert bypass.json()["error"]["code"] == "RESOURCE_SELECTION_ENDPOINT_REQUIRED"
 
-        forked = client.post(
-            f"/api/v1/maps/{created['id']}/revisions/{published_revision['id']}/fork"
-        )
-        assert forked.status_code == 201, forked.text
-        assert "editor" not in forked.json()["world"]["definition"]
-
-        refreshed = client.get(f"/api/v1/maps/{created['id']}").json()
+        refreshed = client.get(f"/api/v1/maps/{second_map['id']}").json()
         assert refreshed["usage_count"] == 1
 
 
-def test_map_draft_uses_optimistic_locking(database_url):
-    """回归验证 ``test_map_draft_uses_optimistic_locking`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_map_update_uses_optimistic_row_version(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        created = client.post("/api/v1/maps", json={"name": "并发地图"}).json()
-        draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
+        current = client.post("/api/v1/maps", json={"name": "并发地图"}).json()
         first = client.put(
-            f"/api/v1/maps/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "world": draft["world"]},
+            f"/api/v1/maps/{current['id']}",
+            json={"lock_version": current["lock_version"], "world": current["world"]},
         )
-        assert first.status_code == 200
+        assert first.status_code == 200, first.text
         stale = client.put(
-            f"/api/v1/maps/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "world": draft["world"]},
+            f"/api/v1/maps/{current['id']}",
+            json={"lock_version": current["lock_version"], "world": current["world"]},
         )
-        assert stale.status_code == 409
-        assert stale.json()["error"]["code"] == "MAP_REVISION_CONFLICT"
+
+    assert stale.status_code == 409
+    assert stale.json()["error"]["code"] == "MAP_CONFLICT"
 
 
-def test_map_publish_rejects_runtime_invalid_tiles(database_url):
-    """回归验证 ``test_map_publish_rejects_runtime_invalid_tiles`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_map_editor_document_survives_save_and_fresh_detail_reload(database_url):
+    """地图保存响应和刷新后的详情都必须返回同一份完整 editor_v2 文档。"""
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        created = client.post("/api/v1/maps", json={"name": "无效地图"}).json()
-        draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
-        world = draft["world"]
+        created = client.post("/api/v1/maps", json={"name": "刷新回归地图"}).json()
+        world = copy.deepcopy(created["world"])
+        height, width = world["definition"]["size"]
+        editor = {
+            "schema_version": "ga-map-editor/v2",
+            "root_node_id": "world-refresh-roundtrip",
+            "material_sources": [],
+            "material_slices": [],
+            "material_canvases": [],
+            "render_recipes": [],
+            "visual_layers": [],
+            "hierarchy_nodes": [{
+                "id": "world-refresh-roundtrip",
+                "kind": "WORLD",
+                "parent_id": None,
+                "name": "保存后的世界",
+                "sort_order": 0,
+                "bounds": {"x": 0, "y": 0, "width": width, "height": height},
+                "semantic": "刷新后必须仍然存在的空间语义",
+                "material_slice_id": None,
+                "render_recipe_id": None,
+                "render_mode": "LAYER_BACKED",
+                "interaction_mode": "STATIC",
+                "initial_state": {},
+                "skill_bindings": [],
+                "extensions": {},
+            }],
+            "import_metadata": {
+                "importer": "refresh-regression/v2",
+                "width": width,
+                "height": height,
+                "tile_size": world["definition"]["tile_size"],
+            },
+            "tile_overrides": {},
+            "tile_override_parts": {},
+            "tile_override_layers": {},
+            "ui_state": {"roundtrip_marker": "map-refresh-regression"},
+        }
+        world["definition"]["editor_v2"] = editor
+        editor["material_sources"].append({
+            "id": "source-roundtrip",
+            "name": "矩形素材原图",
+            "kind": "GENERATED_COLOR",
+            "asset_id": None,
+            "asset_hash": None,
+            "bundled_path": None,
+            "generated_color": "#557766",
+            "media_type": "image/png",
+            "width_px": 96,
+            "height_px": 32,
+            "tile_width": 32,
+            "tile_height": 32,
+            "columns": 3,
+            "rows": 1,
+            "tile_count": 3,
+            "margin": 0,
+            "spacing": 0,
+            "first_gid": None,
+        })
+        editor["material_slices"].append({
+            "id": "slice-roundtrip",
+            "source_id": "source-roundtrip",
+            "name": "横向切片",
+            "kind": "STAMP",
+            "rotation_degrees": 0,
+            "pixel_rect": {"x": 0, "y": 0, "width": 96, "height": 32},
+            "grid_rect": {"x": 0, "y": 0, "width": 3, "height": 1},
+            "trim_transparent": True,
+            "indexed_gid": None,
+            "local_tile_id": None,
+            "readonly_indexed": False,
+        })
+
+        saved_response = client.put(
+            f"/api/v1/maps/{created['id']}",
+            json={"lock_version": created["lock_version"], "world": world},
+        )
+        assert saved_response.status_code == 200, saved_response.text
+        saved = saved_response.json()
+        refreshed_response = client.get(f"/api/v1/maps/{created['id']}")
+        assert refreshed_response.status_code == 200, refreshed_response.text
+        refreshed = refreshed_response.json()
+
+    assert saved["world"]["definition"]["editor_v2"] == editor
+    assert refreshed["world"]["definition"]["editor_v2"] == editor
+    assert refreshed["world_hash"] == saved["world_hash"]
+    assert refreshed["lock_version"] == saved["lock_version"]
+
+
+def test_map_validation_reports_invalid_tiles_without_locking_map(database_url):
+    app = create_app(database_url=database_url, supervisor_enabled=False)
+    with TestClient(app) as client:
+        current = client.post("/api/v1/maps", json={"name": "无效地图"}).json()
+        world = current["world"]
         world["world_key"] = "invalid-map"
         world["world_name"] = "无效地图"
         world["definition"] = {
@@ -280,68 +248,49 @@ def test_map_publish_rejects_runtime_invalid_tiles(database_url):
             "tiles": [{"coord": [11, 2], "address": ["越界"]}],
         }
         updated = client.put(
-            f"/api/v1/maps/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "world": world},
+            f"/api/v1/maps/{current['id']}",
+            json={"lock_version": current["lock_version"], "world": world},
         ).json()
-
         response = client.post(
-            f"/api/v1/maps/{created['id']}/draft/publish",
-            json={
-                "draft_revision_id": updated["id"],
-                "lock_version": updated["lock_version"],
-            },
+            f"/api/v1/maps/{current['id']}/validate",
+            json={"lock_version": updated["lock_version"]},
         )
+        assert response.status_code == 200, response.text
+        report = response.json()["validation"]
+        assert report["valid"] is False
+        assert report["errors"][0]["code"] == "WORLD_TILE_OUT_OF_BOUNDS"
 
-        assert response.status_code == 422
-        assert response.json()["error"]["code"] == "MAP_VALIDATION_FAILED"
-        details = response.json()["error"]["details"]
-        errors = details["errors"]
-        assert errors[0]["code"] == "WORLD_TILE_OUT_OF_BOUNDS"
-        assert {item["code"]: item["status"] for item in details["checks"]} == {
-            "EDITOR_V2_HIERARCHY_AND_SKILLS": "PASSED",
-            "WORLD_TILE_GRID": "FAILED",
-            "SPATIAL_SCENE_CONTRACTS": "PASSED",
-        }
-        persisted = client.get(f"/api/v1/maps/{created['id']}/draft").json()
-        assert persisted["validation"] == details
+        editable = client.put(
+            f"/api/v1/maps/{current['id']}",
+            json={"lock_version": updated["lock_version"], "world": updated["world"]},
+        )
+        assert editable.status_code == 200, editable.text
 
 
-def test_map_publish_accepts_address_using_every_declared_level(database_url):
-    """回归验证 ``test_map_publish_accepts_address_using_every_declared_level`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_map_validation_accepts_all_four_address_levels(database_url):
     app = create_app(database_url=database_url, supervisor_enabled=False)
     with TestClient(app) as client:
-        created = client.post("/api/v1/maps", json={"name": "Four-level map"}).json()
-        draft = client.get(f"/api/v1/maps/{created['id']}/draft").json()
-        world = draft["world"]
+        current = client.post("/api/v1/maps", json={"name": "Four-level map"}).json()
+        world = current["world"]
         world["definition"] = {
             "world": "four-level-map",
             "size": [1, 1],
             "tile_size": 32,
             "tile_address_keys": ["world", "sector", "arena", "game_object"],
-            "tiles": [
-                {
-                    "coord": [0, 0],
-                    "collision": False,
-                    "address": [
-                        "four-level-map",
-                        "sector",
-                        "arena",
-                        "game-object",
-                    ],
-                }
-            ],
+            "tiles": [{
+                "coord": [0, 0],
+                "collision": False,
+                "address": ["four-level-map", "sector", "arena", "game-object"],
+            }],
         }
         updated = client.put(
-            f"/api/v1/maps/{created['id']}/draft",
-            json={"lock_version": draft["lock_version"], "world": world},
+            f"/api/v1/maps/{current['id']}",
+            json={"lock_version": current["lock_version"], "world": world},
         ).json()
-
         response = client.post(
-            f"/api/v1/maps/{created['id']}/draft/publish",
-            json={
-                "draft_revision_id": updated["id"],
-                "lock_version": updated["lock_version"],
-            },
+            f"/api/v1/maps/{current['id']}/validate",
+            json={"lock_version": updated["lock_version"]},
         )
 
-        assert response.status_code == 200, response.text
+    assert response.status_code == 200, response.text
+    assert response.json()["validation"]["valid"] is True

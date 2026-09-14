@@ -69,6 +69,41 @@ def test_maze_never_falls_back_to_an_unrelated_random_address():
     assert caught.value.code == "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
 
 
+def test_maze_pathfinding_uses_the_full_zero_based_tile_grid():
+    """边缘 Tile 是合法空间；碰撞检测也必须使用同一格坐标合同。"""
+    maze = Maze(
+        {
+            "world": "tile-world",
+            "size": [3, 3],
+            "size_unit": "TILE",
+            "tile_size": 32,
+            "tile_address_keys": ["world", "sector", "arena", "object"],
+            "tiles": [
+                {
+                    "coord": [x, y],
+                    "collision": (x, y) == (1, 0),
+                    "address": [],
+                }
+                for y in range(3)
+                for x in range(3)
+            ],
+        },
+        logging.getLogger("test-maze-tile-grid"),
+        random.Random(1),
+    )
+
+    assert maze.find_path((0, 0), (0, 0)) == [(0, 0)]
+    assert maze.find_path((0, 0), (2, 0)) == [
+        (0, 0),
+        (0, 1),
+        (1, 1),
+        (2, 1),
+        (2, 0),
+    ]
+    assert maze.find_path((0, 0), (1, 0)) == []
+    assert maze.find_path((-1, 0), (0, 0)) == []
+
+
 def test_system_map_object_level_is_available_to_legacy_game_object_runtime():
     """回归验证 ``test_system_map_object_level_is_available_to_legacy_game_object_runtime`` 所描述的业务结果、故障边界和隔离约束。"""
     maze = Maze(
