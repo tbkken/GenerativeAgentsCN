@@ -1,87 +1,57 @@
-[简体中文](./README.md) | English
+[简体中文](README.md)
 
-# Generative Agents Chinesized
+# GenerativeAgentsCN
 
-## 1. Configure the environment
+A simulation project in which natural-language Brain Skills define agent behavior and Game Object Skills define object behavior. Studio edits author resources and experiments; Runtime executes self-contained packages; Replay reads committed facts.
 
-### 1.1 pull the source code:
+Start with the [documentation index](docs/README.md). [AGENTS.md](AGENTS.md) defines repository constraints and the current architecture.
 
-```
-git clone https://github.com/x-glacier/GenerativeAgentsCN.git
-cd GenerativeAgentsCN
-```
+**Install and run**
 
-### 1.2 configure the large language model
+Use Python 3.11 or later and run these commands from the repository root. Create and activate a virtual environment first; see the [Chinese quick start](README.md) for Windows and Unix activation commands.
 
-Modify the configuration file `generative_agents/data/config.json`:
-1. By default, the local chat model is called through vLLM's OpenAI-compatible API. See [vllm.md](docs/vllm.md) for configuration and endpoint details. When `model` is `auto`, the first model returned by `/v1/models` is selected automatically.
-2. The embedding model used for memory retrieval is configured separately and calls a local OpenAI-compatible endpoint by default. See [embedding.md](docs/embedding.md) for configuration details.
-3. To call another OpenAI-compatible API, set `provider` to `openai` and update `model`, `api_key`, and `base_url` according to its API documentation.
+~~~bash
+python -m pip install -r generative_agents/requirements.txt
+python -m pip install -e .
+python -m generative_agents.web.main
+~~~
 
-### 1.3 install python dependencies
+Open [Studio](http://127.0.0.1:8000/). The health endpoint is [api/studio/health](http://127.0.0.1:8000/api/studio/health). Defaults are var/generative-agents.db for Studio author data and var/ for local files.
 
-Use a virtual environment, e.g. with anaconda3:
+The editable install registers the ga command. It does not install the full runtime dependencies declared in requirements.txt; the current uv.lock is not a complete runtime dependency lock.
 
-```
-conda create -n generative_agents_cn python=3.12
-conda activate generative_agents_cn
-```
+**Configure an experiment**
 
-Install dependencies:
+Create a user map and agents, choose or author a Brain and its dependent Skills, and configure chat and embedding models in the model center. Provide explicit model IDs and test the connections. See [model configuration](docs/model-configuration.md).
 
-```
-pip install -r requirements.txt
-```
+Creating an experiment physically copies the selected map, assets, agents, model configuration and complete Skill dependencies. Editing public resources later does not update existing experiments. Validate the experiment draft and seal it before running. A sealed experiment is immutable; changes require a new independent experiment copy.
 
-## 2. Start a simulation
+The system has no default map or built-in public Agent catalog. Agent placement belongs to the experiment. Brain Skills decide the task sequence; the kernel validates perception, memory access and world actions.
 
-```
-cd generative_agents
-python start.py --name sim-test --start "20240213-09:30" --step 10 --stride 10
-```
+**Portable packages**
 
-arguments:
-- `name` - the name of the simulation
-- `start` - the starting time of the simulated ville
-- `resume` - resume running the simulation
-- `step` - how many steps to simulate
-- `stride` - how many minutes to forward after each step, e.g. 9:00->9:10->9:20 if stride=10
+| Module | Responsibility |
+| --- | --- |
+| ga_protocol | Package schemas, identity, integrity, safe archives and file contracts |
+| ga_studio | Author resources, experiment editing, package building and catalog |
+| ga_runtime | Execution, supervision, checkpoints and recovery |
+| ga_replay | Read-only reconstruction from committed Run facts |
 
-## 3. Replay a simulation
+Studio owns the author database. Runtime and Replay consume files and do not depend on Studio database state. The [code guide](docs/code-guide-cn.md) also identifies shared components still used from older directories.
 
-### 3.1 generate replay data
+For an existing complete experiment directory:
 
-```
-python compress.py --name <simulation-name>
-```
+~~~bash
+ga experiment seal ./my-experiment ./my-experiment.gaexp
+ga experiment validate ./my-experiment.gaexp
+ga run start ./my-experiment.gaexp ./my-run --steps 24
+ga run status ./my-run
+ga replay state ./my-run 12
+ga run seal ./my-run ./my-run.garun
+~~~
 
-After running, the replay data file `movement.json` will be generated in the `results/compressed/<simulation-name>` folder. At the same time, `simulation.md` will be generated to present the status and conversation of each agent in a timeline.
+Resume a paused Run with ga run resume ./my-run. Rerun a completed Run with ga run rerun ./my-run ./another-run. Resuming a .garun archive requires --destination for the writable directory. Model credentials are supplied on the execution host, not embedded in packages.
 
-### 3.2 start the replay server
+See the [operations guide](docs/operations-runbook.md), [tests](docs/test-strategy.md) and [teaching cases](docs/book/sample/README.md). Code and automated checks are not a substitute for the documented browser and model validation of each case.
 
-```
-python replay.py
-```
-
-Visit the server in browser (url: `http://127.0.0.1:5000/?name=<simulation-name>`),  you'll see agents walking around on time.
-
-arguments:  
-- `name` - the name of the simulation
-- `step` - the starting step of the simulated ville (greater than 0)
-- `speed` - replay speed (0-5)
-- `zoom` - zoom ratio (e.g. 0.8)
-
-For example, if the simulation name is `sim-test`, the url can be:
-http://127.0.0.1:5000/?name=sim-test&step=0&speed=2&zoom=0.6
-
-## 4. Reference
-
-### 4.1 paper
-
-[Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)
-
-### 4.2 gitHub repository
-
-[Generative Agents](https://github.com/joonspk-research/generative_agents)
-
-[wounderland](https://github.com/Archermmt/wounderland)
+Research origins: [Generative Agents](https://github.com/joonspk-research/generative_agents) and [wounderland](https://github.com/Archermmt/wounderland). See [LICENSE](LICENSE).

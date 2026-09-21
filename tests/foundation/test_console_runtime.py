@@ -9,11 +9,9 @@ import struct
 import subprocess
 from pathlib import Path
 
-import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.web import create_app
-from tests.support import brain_revision_via_api
+from tests.studio_support import create_test_studio
 
 
 def _png_size(payload: bytes) -> tuple[int, int]:
@@ -26,32 +24,15 @@ def _png_size(payload: bytes) -> tuple[int, int]:
 def test_console_shell_and_api_script_form_one_self_contained_runtime(database_url):
     """The packaged shell must satisfy every eagerly-bound production DOM lookup."""
 
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        public_map = client.post(
-            "/api/v1/maps",
-            json={"name": "Console user map", "map_key": "console-user-map"},
-        ).json()
-        brain = brain_revision_via_api(client)
-        created = client.post(
-            "/api/v1/experiments",
-            json={
-                "name": "Dynamic console experiment",
-                "goal": "Exercise the production list-to-detail path",
-                "brain_skill": "stanford-town-brain",
-                "brain_revision_id": brain["revision_id"],
-                "source": {"type": "BLANK"},
-                "map_id": public_map["id"],
-            },
-        )
-        assert created.status_code == 201
         shell = client.get("/").text
         script_response = client.get("/static/console/console-api.js")
         skill_script_response = client.get("/static/console/skill-workspace.js")
         skill_style_response = client.get("/static/console/skill-workspace.css")
         focus_script_response = client.get("/static/console/modal-focus.js")
         ux_style_response = client.get("/static/console/console-ux.css")
-        listing = client.get("/api/v1/experiments").json()
+        listing = client.get("/api/studio/experiments").json()
 
     assert script_response.status_code == 200
     assert skill_script_response.status_code == 200
@@ -63,7 +44,8 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     assert ux_style_response.status_code == 200
     script = script_response.text
     ux_style = ux_style_response.text
-    assert listing["items"][0]["id"] == created.json()["id"]
+    assert listing["items"] == []
+    assert "commute-demo" not in shell and "map-configuration-demo" not in shell
     assert shell.count('/static/console/console-api.js') == 1
     assert '/static/console/skill-workspace.js?v=' in shell
     assert '/static/console/skill-workspace.css?v=' in shell
@@ -75,7 +57,7 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     assert "grid-template-columns: 200px minmax(480px, 1fr) 300px" in ux_style
     assert 'id="sidebarToggle"' in shell
     assert '<span class="nav-text">实验</span>' in shell
-    assert "pageSize: 5" in script
+    assert "page_size: 5" in script
     assert "sidebar-collapsed" in ux_style
     assert not [body for body in re.findall(r"<script[^>]*>(.*?)</script>", shell, re.S) if body.strip()]
 
@@ -184,111 +166,9 @@ def test_console_ui_font_uses_sidebar_typography_as_the_global_baseline():
     assert ".crowd-editor-shell .control { font-size:12px; }" in crowd_style
 
 
-@pytest.mark.skip(reason="the graph workflow editor was intentionally removed")
-def test_removed_prompt_workspace_was_a_self_contained_workflow_editor(
-    database_url,
-):
-    """回归验证 ``test_removed_prompt_workspace_was_a_self_contained_workflow_editor`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        shell = client.get("/").text
-        editor_response = client.get("/static/console/workflow-editor.js")
-        style_response = client.get("/static/console/workflow-editor.css")
-        console_response = client.get("/static/console/console-api.js")
-
-    assert editor_response.status_code == 200
-    assert style_response.status_code == 200
-    assert console_response.status_code == 200
-    editor = editor_response.text
-    style = style_response.text
-    console = console_response.text
-    shell_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', shell))
-    lookups = set(re.findall(r"\$\('([A-Za-z0-9_-]+)'\)", editor))
-    dynamic_ids = {
-        "workflowFailurePolicy",
-        "workflowNodeBody",
-        "workflowNodeOperation",
-        "workflowNodeSubflow",
-        "workflowNodeTitle",
-        "workflowResponseSchema",
-        "workflowRetryAttempts",
-        "workflowRetrySchema",
-        "workflowSelectorMode",
-        "workflowTimeout",
-    }
-    assert lookups - dynamic_ids <= shell_ids, sorted(lookups - dynamic_ids - shell_ids)
-    assert all(f'id="{item}"' in editor for item in dynamic_ids)
-    assert 'id="workflowTabs" role="tablist"' in shell
-    for kind in (
-        "llm",
-        "code",
-        "selector",
-        "variable_assigner",
-        "variable_aggregator",
-        "subflow",
-    ):
-        assert f'data-workflow-add="{kind}"' in shell
-    assert 'data-workflow-add="script"' not in shell
-    assert 'id="workflowVersionPopover"' in shell
-    assert 'id="workflowFunctionPage"' in shell
-    assert 'id="workflowFunctionManagerBtn"' in shell
-    assert 'id="workflowExecutionMode"' in shell
-    assert 'id="workflowMigrateRouterBtn"' in shell
-    assert 'id="workflowConnectHint"' in shell
-    assert 'id="workflowCanvasScroller"' in shell
-    assert 'id="workflowHorizontalLayoutBtn"' in shell
-    assert 'id="promptList"' not in shell
-    assert 'id="promptEditor"' not in shell
-    assert "新建流程" not in shell
-    assert "Prompt 套件说明" not in shell
-    assert "function enableDrag" in editor
-    assert "data-node-drag-handle" in editor
-    assert "if (drag.moved && !editorState.readonly) setDirty(true)" in editor
-    assert "function enableCanvasPan" in editor
-    assert "function enableMinimapPan" in editor
-    assert "async function openBrain" in editor
-    assert "async function openExperiment" in editor
-    assert "function openCapability" in editor
-    assert "function refreshViewport" in editor
-    assert "minimap.classList.add('dragging')" in editor
-    assert "cursor:grab" in style
-    assert ".workflow-minimap.dragging { cursor:grabbing; }" in style
-    assert "cursor:crosshair" not in next(line for line in style.splitlines() if line.startswith(".workflow-minimap {"))
-    assert "scroller.scrollLeft = pan.scrollLeft - dx" in editor
-    assert "autoLayout('horizontal')" in editor
-    assert "function handleConnectionClick" in editor
-    assert "真实执行 · Prompt 路由" in editor
-    assert "/migrate-router" in editor
-    assert "data-remove-edge" in editor
-    assert "结构化输出 JSON Schema" in editor
-    assert "{step_context.agent.name}" in editor
-    assert "dataTypeOptions" in editor
-    assert "api('/workflow-functions')" in editor
-    assert "async function restoreVersion" in editor
-    assert "async function save" in editor
-    assert "一键恢复" in editor
-    assert "restored.restored_as_version_no" in editor
-    assert "flow.dirty = false" in editor
-    assert "默认流程" in editor
-    assert "function renderDirtyState()" in console
-    assert "state.dirty = Boolean(state.formDirty || state.workflowDirty)" in console
-    assert "state.formDirty = true" in console
-    assert "function discard()" in editor
-    assert "window.WorkflowEditor?.discard()" in console
-
-    node = shutil.which("node")
-    assert node, "Node.js is required for production JavaScript syntax checks"
-    subprocess.run(
-        [node, "--check", str(Path(__file__).parents[2] / "generative_agents" / "web" / "static" / "workflow-editor.js")],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-
-
 def test_skill_workspace_is_file_backed_and_self_contained(database_url):
     """回归验证 ``test_skill_workspace_is_file_backed_and_self_contained`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         shell = client.get("/").text
         script_response = client.get("/static/console/skill-workspace.js")
@@ -301,10 +181,10 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
     assert 'id="page-brains"' in shell
     assert 'id="page-experiment-brain"' not in shell
     assert "experiment-brain" not in script
-    assert "/api/v1/skills" in script
+    assert "/api/studio/resources/skills" in script
     assert "SKILL.md" in script
     assert "Scripts 与 MCP" in script
-    assert "使用 Qwen3.8 27B 运行" in script
+    assert "model_preset_id" in script
     assert "/dependencies" in script
     assert "/history" in script
     assert "workflow-editor.js" not in shell
@@ -442,9 +322,8 @@ def test_console_owns_global_activity_reconciliation_and_resume_hooks():
     ).read_text(encoding="utf-8")
 
     assert "async function startGlobalActivityStream()" in source
-    assert "new EventSource(`/api/v1/events/stream?after_id=" in source
-    assert "source.addEventListener('activity'" in source
-    assert "source.addEventListener('sync'" in source
+    assert "scheduleExperimentListPoll();" in source
+    assert "state.globalPollTimer = setInterval" in source
     assert "scheduleGlobalReconcile({ experimentId: activity.experiment_id })" in source
     assert "scheduleGlobalReconcile({ full: true })" in source
     assert "document.addEventListener('visibilitychange'" in source
@@ -495,9 +374,9 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     assert "if (pageName !== 'experiments'" in route
     assert "history[push ? 'pushState' : 'replaceState'](null, '', nextUrl)" in route
     assert "syncWorkspaceUrl();" in route
-    assert "openExperiment(id, targetPage = 'overview', preferredRunId = null)" in source
+    assert "openExperiment(id, targetPage = 'overview', preferredRunId = null," in source
     assert "preferredRunId || state.latestRunId" in source
-    assert "['overview', 'results'].includes(requestedView)" in bootstrap
+    assert "['overview', 'results', 'maps', 'agents', 'crowds', 'skills', 'brains', 'models'].includes(requestedView)" in bootstrap
     assert "openExperiment(experimentId, targetPage, params.get('run_id'))" in bootstrap
 
 
@@ -589,10 +468,9 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert '连接配置哈希' not in results
     assert 'id="resultExecutionHash"' not in shell
     assert '执行指纹' not in shell
-    assert 'data-page="agents"' not in current_navigation
-    assert 'data-page="models"' not in current_navigation
+    assert 'data-page="agents"' in current_navigation
+    assert 'data-page="models"' in current_navigation
     assert 'data-page="results"' in current_navigation
-    assert '仿真与结果' in current_navigation
     assert '状态记录间隔' not in overview
     assert 'id="overviewLatestRunCode"' not in overview
     assert 'class="result-metrics"' not in shell
@@ -642,19 +520,15 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     assert "window.confirmResourceDeletion" in console
     assert "deleteExperimentById" in console
     assert "deleteCurrentRun" in console
-    assert 'class="experiment-delete-button"' in console
-    assert 'aria-label="删除实验"' in console
     assert "async deleteMap" in maps
     assert 'aria-label="删除地图"' in maps
     assert "data-retry-map-list" in maps
     assert "async deleteCrowd" in crowds
     assert 'aria-label="删除人群"' in crowds
-    assert "byId('deleteCrowdBtn').hidden = false" in crowds
     assert "async deleteAgent" in crowds
     assert "async function deleteSkill" in skills
     assert "删除大脑" in skills
     assert "删除技能" in skills
-    assert "$('skillDelete').hidden = false" in skills
     assert "async deleteAsset" in assets
     assert 'aria-label="删除资产"' in assets
     assert "this.$('deleteSpatialAsset').hidden = false" in assets
@@ -673,7 +547,6 @@ def test_editor_and_observability_ui_state_is_revision_scoped_and_user_visible()
     maps = (static / "map-workspace.js").read_text(encoding="utf-8")
     editor = (static / "map-editor-v2.js").read_text(encoding="utf-8")
 
-    assert "$('skillSave').disabled = false" in skills
     assert "host()?.querySelector('#skillSource')" in skills
     assert "inactiveHost.replaceChildren()" in skills
     assert "URL.createObjectURL(file)" in editor
@@ -786,7 +659,7 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert 'id="replayLayerAgentNames"' not in results
     assert 'id="replayLayerActionBubbles"' not in results
     assert 'id="replayLayerConversations"' not in results
-    assert "const conversations = step.conversations;" in source
+    assert "const conversations = step.conversations || [];" in source
     assert 'id="replayCameraMode" aria-label="回放镜头模式" hidden' in results
     assert 'id="replayAgentSelect" aria-label="回放 Agent" hidden' in results
     assert 'id="replayCameraState">自由镜头' in results
@@ -845,16 +718,15 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert "state.checkpointPage = page" in source
     assert 'data-operation-list="${kind}"' in source
     assert ".trace-row[data-trace-id] { cursor: pointer; }" in shell
-    assert "document.querySelectorAll('.filter-tab[data-filter]')" in source
     assert "while (cursor)" in source
     assert 'id="runAgainBtn"' not in shell
     assert 'id="openReplayBtn"' not in shell
     assert 'id="resumeRunModal"' in shell
     assert 'id="resumeRunStep"' in shell
     assert 'id="resumeRunNextStep"' in shell
-    assert "function openResumeRunModal()" in source
+    assert "function openResumeRunModal(detail = null)" in source
     assert "['PAUSED', 'FAILED', 'INTERRUPTED'].includes(run.status)" in source
-    assert "controlRun('resume')" in source
+    assert "controlRun('resume', { checkpointStep:" in source
     assert "state.pendingResumeRunId !== state.selectedRunId" in source
 
     program = r"""
@@ -905,36 +777,6 @@ if (running.pauseHidden || running.cancelHidden || !running.continueHidden) proc
     )
 
 
-def test_console_reconciles_publish_actions_and_renders_artifact_job_states():
-    """回归验证 ``test_console_reconciles_publish_actions_and_renders_artifact_job_states`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (
-        Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
-    ).read_text(encoding="utf-8")
-
-    publish = source[
-        source.index("async function publishAndRun") : source.index(
-            "async function createResultBundle"
-        )
-    ]
-    assert "syncSelectedExperiment({ refreshDefinition: true" in publish
-    assert "state.selectedRunId = run.run_id" in publish
-    assert "/draft/validate" not in publish
-    assert "/actions/publish-and-run" in publish
-    assert "function modelAutoProbeMarkup" in source
-    assert "report.auto_model_probe" in source
-    assert "failureItems" not in source
-    assert "...(report.warnings || []).map" in source
-    assert "const report = await refreshValidation();" in source
-    assert "operations.artifact_jobs" in source
-    assert "artifact_queued" in source
-    assert "artifact_running" in source
-    assert "result_rewound" in source
-
-
 def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     root = Path(__file__).parents[2]
     shell = (
@@ -947,8 +789,8 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     assert 'id="newExperimentBrain"' in shell
     assert "固定使用当前文件型大脑" not in shell
     assert "prepareExperimentBrainChoices()" in source
-    assert "brain_skill: brainSkill" in source
-    assert "brain_revision_id: brainRevisionId" in source
+    assert "brain_skill: brainSkill" not in source
+    assert "brain_skill_id: brainResourceId" in source
     assert "saveExperimentComposition" not in source
     assert 'id="experimentBrainRevisionSelect" disabled' in shell
     assert 'id="experimentMapSelect" disabled' in shell
@@ -981,7 +823,7 @@ def test_uploaded_agent_images_become_canonical_ui_state_without_reload():
     ]
 
     assert "$(`agentEdit${prefix}`).value = images[kind]" in upload
-    assert "setAgentImagePreview(kind, images[kind], '已保存到数据库')" in upload
+    assert "setAgentImagePreview(kind, uploaded[kind].content_url" in upload
     assert "state.agentImageFiles[kind] = null" in upload
 
 
@@ -1060,8 +902,8 @@ if (JSON.stringify(composite) !== JSON.stringify(['world','sector','arena'])) {
     assert "Number(bounds.height || 1)) * scale" in source
 
 
-def test_replay_agent_selection_is_revision_owned_and_executable():
-    """回归验证 ``test_replay_agent_selection_is_revision_owned_and_executable`` 所描述的业务结果、故障边界和隔离约束。"""
+def test_replay_agent_selection_is_experiment_owned_and_executable():
+    """回归验证 ``test_replay_agent_selection_is_experiment_owned_and_executable`` 所描述的业务结果、故障边界和隔离约束。"""
     node = shutil.which("node")
     assert node, "Node.js is required for the replay selection contract"
     root = Path(__file__).parents[2]
@@ -1108,7 +950,7 @@ if (JSON.stringify(circleEvents) !== JSON.stringify([[0,0xffd166,0],[0,0xffd166,
         encoding="utf-8"
     )
     assert "clearReplayInspector();" in console
-    assert "selectedReplayRevisionId" in console
+    assert "selectedReplayExperimentId" in console
     assert "applyReplayAgentSelection(restoredAgentKey)" in console
     assert "sprite.on('pointerdown', () => this.toggleAgentFollow(definition.agent_key));" in player.read_text(encoding="utf-8")
     assert "if (!payload.selectedAgentKey)" in console
@@ -1126,7 +968,7 @@ global.Phaser = {};
 const { GAReplayPlayer } = require(process.argv[1]);
 const statuses = [];
 const manifest = {
-  schema_version:2,run_id:'run-1',revision_id:'revision-1',available_step:3,partial:false,
+  schema_version:2,run_id:'run-1',experiment_id:'revision-1',available_step:3,partial:false,
   world:{render_asset:{status:'READY'}},agents:[],
 };
 const steps = [1,2,3].map(step_no => ({step_no}));
@@ -1183,13 +1025,13 @@ const { GAReplayPlayer } = require(process.argv[1]);
 let availableStep = 63;
 let windowRequests = 0;
 const manifest = () => ({
-  schema_version:2,run_id:'run-growing',revision_id:'revision-1',available_step:availableStep,partial:true,
+  schema_version:2,run_id:'run-growing',experiment_id:'revision-1',available_step:availableStep,partial:true,
   world:{render_asset:{status:'READY'}},agents:[],
 });
 const fetchImpl = async url => ({
   ok:true,
   json:async() => {
-    if (url.includes('/manifest')) return manifest();
+    if (url.includes('/manifest') || url.includes('/availability')) return manifest();
     windowRequests += 1;
     const from = Number(new URL(url, 'http://localhost').searchParams.get('from_step'));
     const steps = Array.from(
@@ -1253,7 +1095,7 @@ const { GAReplayPlayer } = require(process.argv[1]);
 const host = {id:'resultMap',clientWidth:900,clientHeight:520};
 const canvas = {id:'resultMapCanvas',parentElement:host};
 const instance = new GAReplayPlayer({canvas});
-instance.runId = 'run-1'; instance.generation = 1; instance.abortController = {signal:{aborted:false}};
+instance.runId = 'run-1'; instance.generation = 1; instance.abortController = {signal:{aborted:false,addEventListener(){},removeEventListener(){}}};
 const manifest = {run_id:'run-1',world:{render_asset:{status:'READY',base_url:'/tilemap',tilemap_url:'/tilemap.json'}},agents:[]};
 instance._createGame(manifest, 1).then(() => {
   if (captured.parent !== host) throw new Error('root Phaser parent is not resultMap');
@@ -1276,9 +1118,6 @@ instance._createGame(manifest, 1).then(() => {
     assert "'Interior Furniture L2 '" in source
     assert "'Interior Furniture L2'," not in source
     assert "new ResizeObserver" in source
-    assert "label.setResolution(TEXT_RENDER_RESOLUTION)" in source
-    assert "bubble.setResolution(TEXT_RENDER_RESOLUTION)" in source
-    assert source.count("fontSize: '11px'") == 2
     shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(encoding="utf-8")
     result_canvas_css = re.search(r"\.result-map\s*>\s*canvas\s*\{([^}]*)\}", shell)
     assert result_canvas_css and "transform:" not in result_canvas_css.group(1)
@@ -1365,7 +1204,7 @@ global.Phaser = {
 const {GAReplayPlayer}=require(process.argv[1]);
 const agents=[{agent_key:'resident-001',display_name:'乔治',initial_coord:[1,1],sprite_asset:{status:'READY'}}];
 const manifest=runId=>({
-  schema_version:2,run_id:runId,revision_id:'revision-same',available_step:0,partial:runId!=='completed',
+  schema_version:2,run_id:runId,experiment_id:'revision-same',available_step:0,partial:runId!=='completed',
   world:{render_asset:{status:'READY',base_url:'/tilemap',tilemap_url:'/tilemap.json'}},agents,
 });
 const fetchImpl=async url=>({ok:true,json:async()=>manifest(decodeURIComponent(url.split('/')[4]))});
@@ -1435,21 +1274,16 @@ def test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_sou
         "2d7eab019f428df91dfe8a5861575b7fe15196c1832f2921872de0cd7cc17952"
     )
 
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         response = client.get("/static/console/replay-assets/interiors_pt3.png")
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/png"
     assert response.content == normalized
 
-    replay_contract = (root / "generative_agents" / "runtime" / "replay_v2.py").read_text(
-        encoding="utf-8"
-    )
     player = (root / "generative_agents" / "web" / "static" / "replay-player.js").read_text(
         encoding="utf-8"
     )
-    assert '"interiors_pt3": {' in replay_contract
-    assert '"texture_overrides"' in replay_contract
     assert "assets.texture_overrides?.[name]" in player
     assert "textureUrl || `${tileRoot}/${name}.png`" in player
 
@@ -1501,19 +1335,12 @@ def test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_correc
     restored["tilesets"][12]["imageheight"] = 10032
     assert restored == legacy, "Replay tilemap changed outside the controlled imageheight fix"
 
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         response = client.get("/static/console/replay-assets/tilemap.json")
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("application/json")
     assert response.content == normalized_bytes
-
-    replay_contract = (root / "generative_agents" / "runtime" / "replay_v2.py").read_text(
-        encoding="utf-8"
-    )
-    assert '"tilemap_url": _NORMALIZED_TILEMAP_URL' in replay_contract
-    assert '"tilemap_asset": {' in replay_contract
-    assert '"normalization": "INTERIORS_PT3_IMAGEHEIGHT_10016"' in replay_contract
 
 
 def test_replay_has_a_real_three_frame_agent_atlas():
@@ -1527,9 +1354,6 @@ def test_replay_has_a_real_three_frame_agent_atlas():
         / "agent-sprite-4x3.json"
     )
     atlas = json.loads(atlas_path.read_text(encoding="utf-8"))
-    replay_contract = (
-        root / "generative_agents" / "runtime" / "replay_v2.py"
-    ).read_text(encoding="utf-8")
     console = (
         root / "generative_agents" / "web" / "static" / "console-api.js"
     ).read_text(encoding="utf-8")
@@ -1542,5 +1366,4 @@ def test_replay_has_a_real_three_frame_agent_atlas():
         "right",
         "up",
     }
-    assert "agent-sprite-{layout}.json" in replay_contract
     assert "width === 96 ? '4x3' : '4x4'" in console

@@ -20,7 +20,6 @@ from generative_agents.runtime.capabilities import SimulationMCPServer
 from generative_agents.runtime.context import SimulationClock
 from generative_agents.runtime.iteration import IterationContext, ObjectIterationContext
 from generative_agents.runtime.object_skills import ObjectMCPServer
-from generative_agents.runtime.replay_v2 import _step_document
 from generative_agents.runtime.result_collector import StepResultCollector
 from generative_agents.runtime.results import StepResult, StepResultBuilder
 
@@ -141,9 +140,6 @@ def test_move_activity_commits_to_current_state_perception_and_replay(phrase):
 
     # Serialize exactly the committed fact, then use both replay projections.
     restored = StepResult.from_dict(json.loads(json.dumps(result.to_dict(), ensure_ascii=False)))
-    replay = _step_document(restored, checkpoint=True, attempt_boundary=True)
-    assert replay["agents"][0]["action"]["movement_activity"] == expected
-    assert replay["agents"][0]["action"]["description"] == payload["description"]
     reader = ReplayReader.__new__(ReplayReader)
     reader.iter_steps = lambda **kwargs: iter([restored.to_dict()])
     assert reader.state_at(1)["agents"]["rider"]["action"]["movement_activity"] == expected

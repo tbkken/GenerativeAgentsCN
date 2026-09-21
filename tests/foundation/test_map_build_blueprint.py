@@ -3,16 +3,16 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from generative_agents.web import create_app
+from tests.studio_support import create_test_studio
 
 
 def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
     database_url,
 ):
     """回归验证 ``test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        blueprints = client.get("/api/v1/map-blueprints")
+        blueprints = client.get("/api/studio/resources/map-blueprints")
         assert blueprints.status_code == 200, blueprints.text
         blueprint = next(
             item
@@ -32,7 +32,7 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         ]
 
         created = client.post(
-            "/api/v1/maps",
+            "/api/studio/resources/maps",
             json={
                 "name": "两日通勤验收地图",
                 "map_key": "commute-blueprint-acceptance",
@@ -44,15 +44,15 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         )
         assert created.status_code == 201, created.text
         public_map = created.json()
-        current = client.get(f"/api/v1/maps/{public_map['id']}").json()
+        current = client.get(f"/api/studio/resources/maps/{public_map['id']}").json()
         definition = current["world"]["definition"]
         assert definition["size"] == [56, 96]
         assert definition["editor"]["build_guide"]["current_step"] == 0
         assert definition["editor"]["build_guide"]["complete"] is False
 
         incomplete = client.post(
-            f"/api/v1/maps/{public_map['id']}/validate",
-            json={"lock_version": current["lock_version"]},
+            f"/api/studio/resources/maps/{public_map['id']}/validate",
+            params={"row_version": current["lock_version"]},
         )
         assert incomplete.status_code == 200, incomplete.text
         assert {
@@ -61,18 +61,18 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         } >= {"MAP_BLUEPRINT_INCOMPLETE"}
 
         out_of_order = client.post(
-            f"/api/v1/maps/{public_map['id']}/blueprint-steps/2",
-            json={"lock_version": current["lock_version"]},
+            f"/api/studio/resources/maps/{public_map['id']}/blueprint-steps/2",
+            json={"row_version": current["lock_version"]},
         )
         assert out_of_order.status_code == 409, out_of_order.text
-        assert out_of_order.json()["error"]["code"] == (
+        assert out_of_order.json()["detail"]["code"] == (
             "MAP_BLUEPRINT_STEP_OUT_OF_ORDER"
         )
 
         for step in range(1, 9):
             response = client.post(
-                f"/api/v1/maps/{public_map['id']}/blueprint-steps/{step}",
-                json={"lock_version": current["lock_version"]},
+                f"/api/studio/resources/maps/{public_map['id']}/blueprint-steps/{step}",
+                json={"row_version": current["lock_version"]},
             )
             assert response.status_code == 200, response.text
             current = response.json()
@@ -112,8 +112,8 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         )
 
         validated = client.post(
-            f"/api/v1/maps/{public_map['id']}/validate",
-            json={"lock_version": current["lock_version"]},
+            f"/api/studio/resources/maps/{public_map['id']}/validate",
+            params={"row_version": current["lock_version"]},
         )
         assert validated.status_code == 200, validated.text
         current = validated.json()

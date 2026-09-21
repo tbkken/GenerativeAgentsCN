@@ -1,5 +1,1 @@
-"""FastAPI entry point."""
-
-from .app import create_app
-
-__all__ = ["create_app"]
+"""Web adapters; the Studio application is created by ga_studio.web."""

@@ -67,7 +67,7 @@ def test_concurrent_saves_reject_stale_input_and_do_not_rebuild_world(database, 
     before = (root/'world/world.json').stat().st_mtime_ns
     definition['experiment']['goal'] = 'updated'
     monkeypatch.setattr('generative_agents.ga_studio.builder.build_semantic_index', lambda *_: pytest.fail('unchanged world rebuilt'))
-    monkeypatch.setattr('generative_agents.ga_studio.catalog.validate_experiment_directory', lambda *_: pytest.fail('catalog redundantly revalidated saved package'))
+    monkeypatch.setattr('generative_agents.ga_studio.catalog.validate_experiment_integrity', lambda *_: pytest.fail('catalog redundantly revalidated saved package'))
     barrier = threading.Barrier(2)
     def save():
         barrier.wait()
@@ -171,7 +171,7 @@ def test_run_overview_reads_live_status_without_full_replay_validation(tmp_path,
     RunService().start(source, root, requested_steps=2)
     with ReplayReader(root) as replay:
         expected = replay.summary()
-    monkeypatch.setattr('generative_agents.ga_replay.reader.validate_run_directory', lambda *_args, **_kw: pytest.fail('poll revalidated full replay'))
+    monkeypatch.setattr('generative_agents.ga_replay.reader.validate_run_integrity', lambda *_args, **_kw: pytest.fail('poll revalidated full replay'))
     assert read_run_overview(root)[0] == expected
     status = read_json(root/'status.json')
     status['committed_step'] = 1

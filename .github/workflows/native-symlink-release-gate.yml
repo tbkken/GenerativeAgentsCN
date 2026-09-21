@@ -1,9 +1,9 @@
-name: Native symlink release gate
+name: Portable release gates
 
 on:
   pull_request:
   push:
-    branches: [main, master]
+    branches: [main, master, 'codex/**']
   workflow_dispatch:
 
 permissions:
@@ -44,3 +44,40 @@ jobs:
           python -m pip install tzdata==2025.2
       - name: Require seven real native-symlink assertions with zero skips
         run: python tools/run_symlink_release_gate.py
+
+  installed-release:
+    name: installed-release (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            generative_agents/requirements.txt
+            generative_agents/requirements-dev.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install runtime, test and wheel dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r generative_agents/requirements.txt -r generative_agents/requirements-dev.txt
+          python -m pip install tzdata==2025.2 setuptools wheel
+      - name: Python regression suite
+        run: python -m pytest tests -q -p no:cacheprovider
+      - name: Frontend regression suite
+        run: node --test tests/frontend/*.test.cjs
+      - name: Build wheel from the current checkout
+        run: python -m pip wheel . --no-deps --no-build-isolation -w dist
+      - name: Verify wheel resources and installed CLI lifecycle
+        run: python tools/verify_wheel.py dist/generative_agents_cn-0.1.0-py3-none-any.whl

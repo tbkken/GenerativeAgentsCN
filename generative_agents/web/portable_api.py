@@ -12,7 +12,7 @@ from typing import Any, Literal
 from uuid import uuid4
 import zipfile
 
-from fastapi import APIRouter, File, Form, HTTPException, Query, Response, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Query, Request, Response, UploadFile
 from fastapi.responses import FileResponse
 from filelock import FileLock
 from starlette.concurrency import run_in_threadpool
@@ -31,7 +31,7 @@ from generative_agents.ga_protocol import (
     seal_directory,
     validate_experiment_directory,
 )
-from generative_agents.ga_protocol.io import canonical_json_bytes
+from generative_agents.ga_protocol.io import canonical_json_bytes, checked_package_path, iter_package_files
 from generative_agents.ga_protocol.artifacts import read_artifact_provenance, record_artifact_provenance
 from generative_agents.ga_runtime.service import RunService as PortableRunService
 from generative_agents.ga_runtime.supervisor import FileRunSupervisor
@@ -379,9 +379,9 @@ def create_portable_router(
                 and (path / "bundle.json").is_file()
             }
             artifacts = []
-            artifact_root = root / "artifacts"
+            artifact_root = checked_package_path(root / "artifacts")
             if artifact_root.is_dir():
-                for path in sorted(artifact_root.rglob("*")):
+                for _relative, path in iter_package_files(artifact_root):
                     if not path.is_file() or path.is_symlink() or path.name.startswith("."):
                         continue
                     content = path.read_bytes()
@@ -403,7 +403,7 @@ def create_portable_router(
                             "state": "READY",
                         }
                     )
-            log_path = root / "logs" / "runtime-process.log"
+            log_path = checked_package_path(root / "logs" / "runtime-process.log")
             log = {
                 "available": log_path.is_file(),
                 "size_bytes": log_path.stat().st_size if log_path.is_file() else 0,
@@ -1260,49 +1260,56 @@ def create_portable_router(
 
     def run_log_bytes(run_id: str) -> tuple[bytes, bool]:
         with open_package(run_location(run_id)) as root:
-            path = root / "logs" / "runtime-process.log"
+            path = checked_package_path(root / "logs" / "runtime-process.log")
             content = path.read_bytes() if path.is_file() else b""
             status = RunStatus.model_validate(read_json(root / "status.json"))
         terminal = status.status.value in {"PAUSED", "CANCELLED", "COMPLETED", "FAILED"}
-        decoded = []
-        for line in content.splitlines(keepends=True):
-            try:
-                decoded.append(line.decode('utf-8'))
-            except UnicodeDecodeError:
-                decoded.append(line.decode('gb18030', errors='replace'))
-        return ''.join(decoded).encode('utf-8'), terminal
+        return content, terminal
 
     @router.get("/runs/{run_id}/attempts/{attempt_id}/log")
     def run_attempt_log(
         run_id: str,
         attempt_id: str,
         cursor: int = Query(default=0, ge=0),
-        limit_bytes: int = Query(default=65_536, ge=1, le=1_048_576),
+        limit_bytes: int = Query(default=65_536, ge=1, le=262_144),
     ):
         facts = read_run_facts(run_id)
         if attempt_id not in {
             str(item.get("attempt_id")) for item in facts["summary"].get("attempts") or []
         }:
             raise HTTPException(status_code=404, detail="Attempt is not present in this Run package")
-        content, terminal = run_log_bytes(run_id)
-        cursor = min(cursor, len(content))
-        end = min(len(content), cursor + limit_bytes)
-        while end < len(content) and content[end] & 0xC0 == 0x80:
-            end += 1
-        chunk = content[cursor:end]
-        next_cursor = end
-        starts_mid_line = cursor > 0 and content[cursor - 1 : cursor] not in {b"\n", b"\r"}
+        from generative_agents.services.byte_windows import read_utf8_window
+        from generative_agents.services.errors import ServiceError
+
+        terminal = facts["status"]["status"] in {"PAUSED", "CANCELLED", "COMPLETED", "FAILED"}
+        with open_package(run_location(run_id)) as root:
+            path = checked_package_path(root / "logs" / "runtime-process.log")
+            if not path.is_file():
+                return {"content": "", "next_cursor": 0, "file_id": None,
+                        "starts_mid_line": False, "eof": True, "terminal": terminal}
+            try:
+                window = read_utf8_window(path, cursor=cursor, limit_bytes=limit_bytes)
+            except ServiceError as exc:
+                raise HTTPException(status_code=exc.status_code, detail={"code": exc.code, "message": exc.message}) from exc
+            starts_mid_line = False
+            if cursor:
+                with path.open("rb") as handle:
+                    handle.seek(cursor - 1)
+                    starts_mid_line = handle.read(1) not in {b"\n", b"\r"}
         return {
-            "content": chunk.decode("utf-8", errors="replace"),
-            "next_cursor": next_cursor,
-            "file_id": hashlib.sha256(content).hexdigest() if content else None,
+            "content": window.content,
+            "next_cursor": window.next_cursor,
+            "file_id": window.file_id,
             "starts_mid_line": starts_mid_line,
-            "eof": next_cursor >= len(content),
+            "eof": window.eof,
             "terminal": terminal,
         }
 
     @router.get("/runs/{run_id}/attempts/{attempt_id}/log/download")
     def download_run_attempt_log(run_id: str, attempt_id: str):
+        facts = read_run_facts(run_id)
+        if attempt_id not in {str(item.get("attempt_id")) for item in facts["summary"].get("attempts") or []}:
+            raise HTTPException(status_code=404, detail="Attempt is not present in this Run package")
         content, _terminal = run_log_bytes(run_id)
         return Response(
             content=content,
@@ -1456,8 +1463,8 @@ def create_portable_router(
     @router.get("/runs/{run_id}/artifacts/{artifact_id}/download")
     def download_run_artifact(run_id: str, artifact_id: str):
         with open_package(run_location(run_id)) as root:
-            artifact_root = (root / "artifacts").resolve()
-            for path in sorted(artifact_root.rglob("*")) if artifact_root.is_dir() else []:
+            artifact_root = checked_package_path(root / "artifacts")
+            for _relative, path in iter_package_files(artifact_root) if artifact_root.is_dir() else []:
                 if not path.is_file() or path.is_symlink() or path.name.startswith("."):
                     continue
                 content = path.read_bytes()
@@ -1487,6 +1494,7 @@ def create_portable_router(
         try:
             with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED) as archive:
                 for path in sorted(files):
+                    checked_package_path(path)
                     if path.is_file() and not path.is_symlink():
                         relative = path.relative_to(root).as_posix()
                         if relative not in (overrides or {}):
@@ -1721,7 +1729,15 @@ def create_portable_router(
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @router.get("/resources/assets/{asset_id}/content")
-    def public_asset_content(asset_id: str):
+    def public_asset_content(asset_id: str, request: Request):
+        # Apply the same immutable content identity to file and database assets.
+        try:
+            metadata = asset_service.get(asset_id)
+            etag = f'"{metadata["sha256"]}"'
+            if etag in request.headers.get("if-none-match", "").split(", "):
+                return Response(status_code=304, headers={"ETag": etag})
+        except Exception as exc:
+            raise HTTPException(status_code=404, detail="Asset is not available") from exc
         try:
             asset, content = asset_service.database_image_content(asset_id)
             return Response(
@@ -2088,7 +2104,7 @@ def create_portable_router(
         row = catalog.get(package_kind, package_id)
         if row is None:
             raise HTTPException(status_code=404, detail="package is not in the Studio catalog")
-        location = Path(row.location).resolve()
+        location = checked_package_path(Path(row.location))
         try:
             location.relative_to(package_root)
         except ValueError as exc:
@@ -2181,10 +2197,11 @@ def create_portable_router(
         return Response(status_code=204)
 
     def run_location(run_id: str) -> Path:
-        row = catalog.get("run", run_id)
-        if row is None:
-            raise HTTPException(status_code=404, detail="Run package is not in the Studio catalog")
-        return Path(row.location)
+        location = catalog_location("run", run_id)
+        with open_package(location) as root:
+            if read_json(root / "run.json").get("run_id") != run_id:
+                raise PackageError("catalog Run identity does not match its package")
+        return location
 
     def experiment_location(experiment_id: str) -> Path:
         return catalog_location("experiment", experiment_id)

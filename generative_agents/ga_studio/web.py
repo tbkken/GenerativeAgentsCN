@@ -10,10 +10,11 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from generative_agents.persistence import create_database
+from generative_agents.ga_protocol import PackageError
 from generative_agents.services.spatial_assets import SpatialAssetService
 from generative_agents.skills import DatabaseSkillRegistry, SkillRegistry
 from generative_agents.web.portable_api import create_portable_router
@@ -75,6 +76,10 @@ def create_studio_app(
         version="2.0",
         lifespan=lifespan,
     )
+    @app.exception_handler(PackageError)
+    async def invalid_package(_request, _exception):
+        return JSONResponse(status_code=409, content={"detail": "Package integrity or storage boundary validation failed"})
+
     @app.middleware("http")
     async def revalidate_console(request, call_next):
         response = await call_next(request)

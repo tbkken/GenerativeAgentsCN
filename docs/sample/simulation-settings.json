@@ -1,9 +1,0 @@
-{
-  "start_time": "2026-09-07T06:00:00+08:00",
-  "stride_minutes": 5,
-  "max_steps": 576,
-  "checkpoint_interval_steps": 12,
-  "checkpoint_retention": 2,
-  "random_seed": 20260907,
-  "log_level": "INFO"
-}

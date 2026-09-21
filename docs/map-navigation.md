@@ -15,6 +15,6 @@ Studio 保存和生成实验包时，使用 `ga_protocol.navigation` 中的纯�
 - 返回 `reachable`、`distance_tiles`、`next_coord`、`movement_required`；不会返回整张地图、沿途空间语义或其他 Agent 记忆。阻挡/断开返回不可达。
 - 查询不推进时间、不占用世界动作次数、不改位置。真实移动始终通过 `world-act` 的 `MOVE` 提交，并再次校验通路；每 Agent 每 Step 最多一次世界动作。
 
-本次能力处理静态通路与固定门洞。动态开关门仍须通过 Game Object 状态、合法动作及 World Commit 实现，不能让被动 Skill 修改碰撞数据。
+本次能力处理静态通路与固定门洞。动态开关门仍须通过 Game Object 状态、合法动作及 World Commit 实现，不能让对象 Skill 直接修改碰撞数据。
 
 回归：`pytest tests/foundation/test_navigation.py tests/test_portable_package_protocol.py tests/architecture/test_portable_module_boundaries.py`。浏览器验证可启动 `python -m uvicorn tests.frontend.navigation_fixture:app --port 8876`，再在已安装 Playwright 的 Node 环境执行 `node tests/frontend/map-navigation.browser.cjs`；它使用真实编辑器和只读 API，不修改公共作者资源。

@@ -205,8 +205,6 @@ def build_world() -> dict[str, Any]:
             "editor": {"schema_version": 1, "palette": palette, "cells": cells},
         },
         "assets": [],
-        "map_id": None,
-        "map_snapshot_hash": None,
     }
 
 
@@ -215,7 +213,7 @@ def _request(base_url: str, path: str, *, method: str = "GET", payload: Any = No
 
     data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
     request = Request(
-        f"{base_url.rstrip('/')}/api/v1{path}",
+        f"{base_url.rstrip('/')}/api/studio/resources{path}",
         method=method,
         data=data,
         headers={"Content-Type": "application/json; charset=utf-8"},
@@ -249,13 +247,13 @@ def seed(base_url: str) -> dict[str, Any]:
         base_url,
         f"/maps/{public_map['id']}",
         method="PUT",
-        payload={"lock_version": current["lock_version"], "world": build_world()},
+        payload={"row_version": current["row_version"], "world": build_world()},
     )
     validated = _request(
         base_url,
-        f"/maps/{public_map['id']}/validate",
+        f"/maps/{public_map['id']}/validate?row_version={saved['row_version']}",
         method="POST",
-        payload={"lock_version": saved["lock_version"]},
+        payload={},
     )
     return {"created": created, "map": validated}
 

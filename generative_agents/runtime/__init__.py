@@ -14,7 +14,6 @@ from .context import (
 )
 from .frame_store import FrameConflictError, FrameStore
 from .iteration import IterationContext
-from .manifest import RunManifestStore, VerifiedRunManifest, build_manifest_document
 from .model_trace import (
     ModelTraceEvent,
     ModelTraceEventType,
@@ -57,16 +56,12 @@ __all__ = [
     "ModelTraceEventType",
     "ModelTraceStatus",
     "ModelTraceWriter",
-    "ModelTraceProjectionError",
-    "ModelTraceProjector",
     "ModelUsageDelta",
     "PlannedWorldAction",
     "RunControl",
-    "RunManifestStore",
     "RunPaths",
     "FileSkillInstructionRepository",
     "SnapshotSkillInstructionRepository",
-    "ResultProjectionError",
     "ScheduleRevisionRecord",
     "StepEffectKind",
     "StepEffectRecord",
@@ -75,33 +70,5 @@ __all__ = [
     "SimulationMCPServer",
     "StepResult",
     "StepResultBuilder",
-    "SqliteResultProjector",
-    "VerifiedRunManifest",
-    "build_manifest_document",
     "get_algorithm_profile",
 ]
-
-
-def __getattr__(name: str):
-    """Load legacy Studio database projectors only when explicitly requested.
-
-    The portable Runtime is file-only.  This compatibility shim prevents a plain
-    Runtime import from importing SQLAlchemy while the old Studio worker is being
-    retired.
-    """
-
-    if name in {"ResultProjectionError", "SqliteResultProjector"}:
-        from .result_projector import ResultProjectionError, SqliteResultProjector
-
-        return {
-            "ResultProjectionError": ResultProjectionError,
-            "SqliteResultProjector": SqliteResultProjector,
-        }[name]
-    if name in {"ModelTraceProjectionError", "ModelTraceProjector"}:
-        from .trace_projector import ModelTraceProjectionError, ModelTraceProjector
-
-        return {
-            "ModelTraceProjectionError": ModelTraceProjectionError,
-            "ModelTraceProjector": ModelTraceProjector,
-        }[name]
-    raise AttributeError(name)

@@ -16,7 +16,7 @@ from uuid import uuid4
 from sqlalchemy import select
 
 from generative_agents.assets import AssetStore
-from generative_agents.config.schema import ModelsConfig, SimulationConfig, WorldConfig
+from generative_agents.config.schema import ModelsConfig, SimulationConfig
 from generative_agents.ga_protocol import (
     PackageError,
     atomic_write_bytes,
@@ -119,11 +119,9 @@ class ExperimentWorkspaceService:
         with self.database.session_factory() as session:
             public_map = session.get(WorldMap, selection.map_id)
             self._available(public_map, "Map", selection.map_id)
-            map_input = copy.deepcopy(public_map.world_json)
-            map_input["map_id"] = public_map.id
-            world = self.map_service.materialize_for_publish_in_session(
+            world = self.map_service.materialize_validated_world(
                 session,
-                WorldConfig.model_validate(map_input),
+                public_map.id,
             ).model_dump(mode="json", exclude_none=False)
 
             selected_agent_ids = self._expand_agents(

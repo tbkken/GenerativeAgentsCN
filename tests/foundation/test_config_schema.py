@@ -6,7 +6,7 @@ import copy
 import pytest
 from pydantic import ValidationError
 
-from generative_agents.config import definition_hash, get_algorithm_profile, validate_for_publish
+from generative_agents.config import definition_hash, get_algorithm_profile
 from generative_agents.config.hashing import canonical_json_bytes
 from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
 
@@ -121,78 +121,8 @@ def test_cross_field_constraints_reject_projection_larger_than_run():
         ExperimentDefinition.model_validate(payload)
 
 
-def test_publication_validation_keeps_incomplete_blank_draft_editable():
-    """回归验证 ``test_publication_validation_keeps_incomplete_blank_draft_editable`` 所描述的业务结果、故障边界和隔离约束。"""
-    draft = make_blank_definition(key="editable-draft", name="Editable")
-    report = validate_for_publish(draft)
-    assert not report.valid
-    assert {item.code for item in report.errors} >= {
-        "NO_ENABLED_AGENT",
-        "MODEL_NOT_RESOLVED",
-        "WORLD_EMPTY",
-    }
-
-
-def test_publication_warns_before_replay_when_agent_media_is_missing(
-    publishable_definition,
-):
-    report = validate_for_publish(publishable_definition)
-
-    assert {item.code for item in report.warnings} >= {
-        "AGENT_PORTRAIT_ASSET_MISSING",
-        "AGENT_SPRITE_ASSET_MISSING",
-    }
-    assert report.valid is True
-
-
-def test_publication_warns_when_structured_initial_address_is_not_declared(
-    publishable_definition,
-):
-    report = validate_for_publish(publishable_definition)
-
-    issue = next(
-        item
-        for item in report.warnings
-        if item.code == "AGENT_INITIAL_ADDRESS_UNDECLARED"
-    )
-    assert issue.path == "agents.0.spatial.address.initial_location"
-    assert "home > bedroom > bed" in issue.message
-
-
-def test_publication_rejects_initial_address_that_disagrees_with_coordinate(
-    publishable_definition,
-):
-    payload = copy.deepcopy(
-        publishable_definition.model_dump(mode="json", exclude_none=False)
-    )
-    payload["world"]["definition"]["tiles"].append(
-        {
-            "coord": [1, 0],
-            "collision": False,
-            "address": ["office", "desk"],
-        }
-    )
-    payload["world"]["definition"]["size"] = [1, 2]
-    payload["world"]["definition"]["map"] = [[0, 0]]
-    payload["agents"][0]["spatial"]["address"]["initial_location"] = [
-        "test",
-        "office",
-        "desk",
-    ]
-    payload["agents"][0]["spatial"]["tree"]["test"]["office"] = ["desk"]
-
-    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
-
-    issue = next(
-        item
-        for item in report.errors
-        if item.code == "AGENT_INITIAL_ADDRESS_MISMATCH"
-    )
-    assert "[0, 0]" in issue.message
-    assert "home > bedroom > bed" in issue.message
-
-
-def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
+def test_definition_hash_changes_with_algorithm_or_seed():
+    publishable_definition = make_blank_definition(key="seed", name="Seed")
     """回归验证 ``test_definition_hash_changes_with_algorithm_or_seed`` 所描述的业务结果、故障边界和隔离约束。"""
     original = definition_hash(publishable_definition)
     payload = copy.deepcopy(
@@ -200,89 +130,3 @@ def test_definition_hash_changes_with_algorithm_or_seed(publishable_definition):
     )
     payload["simulation"]["random_seed"] += 1
     assert definition_hash(ExperimentDefinition.model_validate(payload)) != original
-
-
-def test_publication_rejects_duplicate_enabled_agent_display_names(
-    publishable_definition,
-):
-    """回归验证 ``test_publication_rejects_duplicate_enabled_agent_display_names`` 所描述的业务结果、故障边界和隔离约束。"""
-    payload = copy.deepcopy(
-        publishable_definition.model_dump(mode="json", exclude_none=False)
-    )
-    duplicate = copy.deepcopy(payload["agents"][0])
-    duplicate["agent_key"] = "duplicate-agent-key"
-    payload["agents"].append(duplicate)
-
-    definition = ExperimentDefinition.model_validate(payload)
-    report = validate_for_publish(definition)
-    assert {item.code for item in report.errors} == {
-        "DUPLICATE_ENABLED_AGENT_NAME"
-    }
-
-    payload["agents"][-1]["enabled"] = False
-    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
-    assert "DUPLICATE_ENABLED_AGENT_NAME" not in {
-        item.code for item in report.errors
-    }
-
-
-def test_publication_rejects_agent_without_spatial_configuration(
-    publishable_definition,
-):
-    """回归验证 ``test_publication_rejects_agent_without_spatial_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
-    payload = copy.deepcopy(
-        publishable_definition.model_dump(mode="json", exclude_none=False)
-    )
-    payload["agents"][0]["spatial"] = {"address": {}, "tree": {}}
-
-    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
-
-    issue = next(
-        item for item in report.errors if item.code == "AGENT_SPATIAL_ADDRESS_REQUIRED"
-    )
-    assert issue.path == "agents.0.spatial"
-    assert "Test Agent" in issue.message
-
-
-def test_publication_rejects_agent_address_missing_from_selected_map(
-    publishable_definition,
-):
-    """回归验证 ``test_publication_rejects_agent_address_missing_from_selected_map`` 所描述的业务结果、故障边界和隔离约束。"""
-    payload = copy.deepcopy(
-        publishable_definition.model_dump(mode="json", exclude_none=False)
-    )
-    payload["agents"][0]["spatial"] = {
-        "address": {
-            "living_area": ["test", "elsewhere", "bedroom"],
-            "sleeping": ["test", "elsewhere", "bedroom", "bed"],
-        },
-        "tree": {"test": {"elsewhere": {"bedroom": ["bed"]}}},
-    }
-
-    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
-
-    assert "AGENT_SPATIAL_MAP_ADDRESS_INVALID" in {
-        item.code for item in report.errors
-    }
-
-
-def test_publication_names_incompatible_spatial_tree_path(
-    publishable_definition,
-):
-    """回归验证 ``test_publication_names_incompatible_spatial_tree_path`` 所描述的业务结果、故障边界和隔离约束。"""
-    payload = copy.deepcopy(
-        publishable_definition.model_dump(mode="json", exclude_none=False)
-    )
-    payload["agents"][0]["spatial"]["tree"]["test"]["elsewhere"] = {
-        "room": ["missing object"]
-    }
-
-    report = validate_for_publish(ExperimentDefinition.model_validate(payload))
-
-    issue = next(
-        item
-        for item in report.errors
-        if item.code == "AGENT_SPATIAL_MAP_ADDRESS_INVALID"
-    )
-    assert issue.path == "agents.0.spatial"
-    assert "test > elsewhere > room > missing object" in issue.message

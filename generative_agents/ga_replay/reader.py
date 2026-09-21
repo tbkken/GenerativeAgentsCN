@@ -23,6 +23,7 @@ from generative_agents.ga_protocol import (
     validate_package_path,
 )
 from generative_agents.ga_protocol.quality import project_run_quality
+from generative_agents.ga_protocol.io import checked_package_path
 
 
 _validated_runs = OrderedDict()
@@ -68,7 +69,7 @@ class ReplayReader:
     """Context-managed reader for both active directories and sealed archives."""
 
     def __init__(self, package: str | Path) -> None:
-        self.package = Path(package).resolve()
+        self.package = checked_package_path(Path(package))
         self.root: Path | None = None
         self.manifest: RunManifest | None = None
         self.status: RunStatus | None = None
@@ -150,7 +151,7 @@ class ReplayReader:
         if not relative.startswith("assets/"):
             raise PackageError("Replay assets must live under the experiment assets/ directory")
         experiment_root = (root / manifest.experiment.path).resolve()
-        target = (experiment_root / relative).resolve()
+        target = checked_package_path(experiment_root / relative)
         try:
             target.relative_to(experiment_root)
         except ValueError as exc:
@@ -167,7 +168,7 @@ class ReplayReader:
         # and immutable frames determine which Steps are visible.
         committed_frames = tuple(
             int(path.name.removeprefix("step-").removesuffix(".json.gz"))
-            for path in sorted((root / "frames").glob("step-*.json.gz"))
+            for path in sorted(checked_package_path(root / "frames").glob("step-*.json.gz"))
             if int(path.name.removeprefix("step-").removesuffix(".json.gz"))
             <= status.committed_step
         )
@@ -179,7 +180,7 @@ class ReplayReader:
         root, manifest, status = self._require_open()
         if step_no < 1 or step_no > status.committed_step:
             raise IndexError(f"step {step_no} is outside the committed Replay boundary")
-        path = root / "frames" / f"step-{step_no:06d}.json.gz"
+        path = checked_package_path(root / "frames" / f"step-{step_no:06d}.json.gz")
         compressed = path.read_bytes()
         projection_path = root / "projection.json"
         if projection_path.is_file():
@@ -284,7 +285,6 @@ def _run_summary(root, manifest, status):
         "attempts": attempts,
         "lineage": manifest.lineage.model_dump(mode="json"),
     }
-
 
 
 def read_run_quality(root: Path, manifest: RunManifest, status: RunStatus):

@@ -478,8 +478,6 @@ def test_studio_selection_physically_copies_map_agent_brain_and_skill(tmp_path: 
             ],
         },
         "assets": [],
-        "map_id": None,
-        "map_snapshot_hash": None,
     }
     try:
         with database.session_factory.begin() as session:

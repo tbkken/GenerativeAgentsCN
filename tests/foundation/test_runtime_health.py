@@ -1,11 +1,6 @@
-"""Preflight checks for deterministic failures in the simulation core."""
-
-import pytest
+"""Regressions for current shared kernel and Studio surfaces."""
 
 from generative_agents.runtime.health import runtime_health_issues
-from generative_agents.services import runs
-from generative_agents.services.errors import ServiceError
-
 
 class _BrokenGame:
     def __init__(self):
@@ -36,15 +31,3 @@ def test_preflight_detects_an_agent_think_attribute_missing_from_constructor():
 def test_current_game_core_passes_runtime_health_contract():
     assert runtime_health_issues(_HealthyGame) == []
     assert runtime_health_issues() == []
-
-
-def test_run_queue_rejects_a_runtime_health_failure(monkeypatch):
-    issue = runtime_health_issues(_BrokenGame)[0]
-    monkeypatch.setattr(runs, "runtime_health_issues", lambda: [issue])
-
-    with pytest.raises(ServiceError) as caught:
-        runs._assert_runtime_health()
-
-    assert caught.value.code == "RUNTIME_PREFLIGHT_FAILED"
-    assert caught.value.status_code == 422
-    assert caught.value.details == {"errors": [issue]}

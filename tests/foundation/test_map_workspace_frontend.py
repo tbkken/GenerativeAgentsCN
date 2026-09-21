@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from generative_agents.web.app import create_app
+from tests.studio_support import create_test_studio
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -134,7 +134,7 @@ def test_mutable_map_can_create_a_new_canvas_without_forking():
 
 def test_packaged_map_workspace_assets_are_served(database_url):
     """回归验证 ``test_packaged_map_workspace_assets_are_served`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         page = client.get("/?view=maps")
         css = client.get("/static/console/map-workspace.css")

@@ -11,7 +11,7 @@ from uuid import uuid4
 import pytest
 
 from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunPaths, SnapshotSkillInstructionRepository
+from generative_agents.runtime.context import RunPaths
 from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
 from generative_agents.runtime.frame_store import FrameConflictError, FrameStore
 from generative_agents.runtime.results import (
@@ -20,23 +20,12 @@ from generative_agents.runtime.results import (
     AgentStepResult,
     StepResultBuilder,
 )
-from generative_agents.config import (
-    canonical_json_bytes,
-    definition_hash,
-)
-from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
-from generative_agents.runtime.manifest import (
-    ManifestConflictError,
-    RunManifestStore,
-    build_manifest_document,
-)
 from generative_agents.runtime.model_trace import (
     ModelTraceEvent,
     ModelTraceEventType,
     ModelTraceStatus,
     ModelTraceWriter,
 )
-from generative_agents.skills import SkillRegistry
 
 
 def _builder(run_id, attempt_id, step_no=1):
@@ -390,174 +379,6 @@ def test_checkpoint_retention_survives_a_live_member_file_handle(tmp_path):
     writer.write(result4, store.write(result4))
     assert not (paths.checkpoints / "step-000001").exists()
     assert not list(paths.checkpoints.glob(".prune-*.tmp"))
-
-
-def test_run_manifest_is_verified_and_immutable(tmp_path):
-    """回归验证 ``test_run_manifest_is_verified_and_immutable`` 所描述的业务结果、故障边界和隔离约束。"""
-    import hashlib
-
-    run_id = uuid4()
-    experiment_id = uuid4()
-    revision_id = uuid4()
-    definition = make_blank_definition(key="manifest-test", name="Manifest Test")
-    skills = SkillRegistry().snapshot()
-    document = build_manifest_document(
-        run_id=run_id,
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_hash(definition),
-        code_build_id="test-build",
-        assets=[],
-        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
-        dependency_versions={"pydantic": "test"},
-        skill_bundle=skills,
-    )
-    store = RunManifestStore(RunPaths.under(tmp_path, run_id))
-
-    written = store.materialize(document)
-
-    assert written.definition.experiment.key == "manifest-test"
-    assert store.load_verified().manifest_hash == document["manifest_hash"]
-    changed = dict(document)
-    changed["materialized_at"] = "2026-01-02T00:00:00+00:00"
-    unsigned = dict(changed)
-    unsigned.pop("manifest_hash")
-    changed["manifest_hash"] = hashlib.sha256(
-        canonical_json_bytes(unsigned)
-    ).hexdigest()
-    with pytest.raises(ManifestConflictError):
-        store.materialize(changed)
-
-
-def test_run_manifest_resume_reuses_provenance_but_rejects_definition_change(tmp_path):
-    """回归验证 ``test_run_manifest_resume_reuses_provenance_but_rejects_definition_change`` 所描述的业务结果、故障边界和隔离约束。"""
-    run_id = uuid4()
-    experiment_id = uuid4()
-    revision_id = uuid4()
-    definition = make_blank_definition(key="resume-manifest", name="Resume Manifest")
-    definition_digest = definition_hash(definition)
-    skills = SkillRegistry().snapshot()
-    document = build_manifest_document(
-        run_id=run_id,
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_digest,
-        code_build_id="first-service-build",
-        assets=[],
-        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
-        dependency_versions={"pydantic": "first-service-version"},
-        skill_bundle=skills,
-    )
-    store = RunManifestStore(RunPaths.under(tmp_path, run_id))
-    store.materialize(document)
-    before = store.load_verified().path.read_bytes()
-
-    reused = store.reuse_for_revision(
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_digest,
-        assets=[],
-        skill_bundle=skills,
-    )
-
-    assert reused.document["code_build_id"] == "first-service-build"
-    assert reused.document["materialized_at"] == "2026-01-01T00:00:00+00:00"
-    assert reused.path.read_bytes() == before
-
-    changed_skills = dict(skills)
-    changed_skills["stanford-town-brain"] = {
-        **changed_skills["stanford-town-brain"],
-        "revision": "new-live-revision",
-    }
-    changed_document = build_manifest_document(
-        run_id=run_id,
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_digest,
-        code_build_id="first-service-build",
-        assets=[],
-        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
-        dependency_versions={"pydantic": "first-service-version"},
-        skill_bundle=changed_skills,
-    )
-    assert changed_document["definition_hash"] == document["definition_hash"]
-    assert changed_document["execution_input_hash"] != document["execution_input_hash"]
-    with pytest.raises(ManifestConflictError, match="Skill bundle"):
-        store.reuse_for_revision(
-            experiment_id=experiment_id,
-            revision_id=revision_id,
-            definition=definition,
-            expected_definition_hash=definition_digest,
-            assets=[],
-            skill_bundle=changed_skills,
-        )
-
-    changed_payload = definition.model_dump(mode="json", exclude_none=False)
-    changed_payload["experiment"]["goal"] = "material definition changed"
-    changed_definition = ExperimentDefinition.model_validate(changed_payload)
-    with pytest.raises(ManifestConflictError):
-        store.reuse_for_revision(
-            experiment_id=experiment_id,
-            revision_id=revision_id,
-            definition=changed_definition,
-            expected_definition_hash=definition_hash(changed_definition),
-            assets=[],
-            skill_bundle=skills,
-        )
-
-
-def test_run_manifest_pins_skill_bundle_and_runtime_instructions(tmp_path):
-    """回归验证 ``test_run_manifest_pins_skill_bundle_and_runtime_instructions`` 所描述的业务结果、故障边界和隔离约束。"""
-    import copy
-    import hashlib
-
-    run_id = uuid4()
-    experiment_id = uuid4()
-    revision_id = uuid4()
-    definition = make_blank_definition(key="skill-manifest", name="Skill Manifest")
-    registry = SkillRegistry()
-    skills = registry.snapshot()
-    document = build_manifest_document(
-        run_id=run_id,
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_hash(definition),
-        code_build_id="skill-build",
-        assets=[],
-        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
-        dependency_versions={},
-        skill_bundle=skills,
-    )
-    store = RunManifestStore(RunPaths.under(tmp_path, run_id))
-    verified = store.materialize(document)
-    assert verified.skill_bundle == skills
-    repository = SnapshotSkillInstructionRepository(verified.skill_bundle)
-    assert repository.get("decide_chat") == registry.prompt("decide-chat")
-    with pytest.raises(KeyError, match="not present"):
-        repository.get("missing-skill")
-
-    tampered = copy.deepcopy(document)
-    tampered["skill_bundle"]["decide-chat"]["markdown"] += "\nTampered\n"
-    unsigned = dict(tampered)
-    unsigned.pop("manifest_hash")
-    tampered["manifest_hash"] = hashlib.sha256(
-        canonical_json_bytes(unsigned)
-    ).hexdigest()
-    tampered_run_id = uuid4()
-    tampered_store = RunManifestStore(RunPaths.under(tmp_path, tampered_run_id))
-    tampered["run_id"] = str(tampered_run_id)
-    unsigned = dict(tampered)
-    unsigned.pop("manifest_hash")
-    tampered["manifest_hash"] = hashlib.sha256(
-        canonical_json_bytes(unsigned)
-    ).hexdigest()
-    with pytest.raises(ValueError, match="skill_bundle_hash mismatch"):
-        tampered_store.materialize(tampered)
 
 
 def test_model_trace_is_attempt_scoped_contiguous_and_redacted(tmp_path):

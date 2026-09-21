@@ -6,7 +6,7 @@
 
 ## 1. 产品定义
 
-Studio 是实验包 IDE，不是实验运行的事实源。公共地图、空间素材、Agent、Crowd、Brain、子 Skill、Game Object 被动 Skill、模型预设和评估器是可复用作者资源；加入实验的动作等同于“复制进实验目录”。
+Studio 是实验包 IDE，不是实验运行的事实源。公共地图、空间素材、Agent、Crowd、Brain、子 Skill、Game Object Skill、模型预设和评估器是可复用作者资源；加入实验的动作等同于“复制进实验目录”。
 
 用户在 Studio 之外手写同样的目录也能运行。Web 所有编辑最终都必须落到 `.gaexp` 协议文件，所有运行与回放页面最终都必须读取 Run 目录或 `.garun`。
 
@@ -15,7 +15,7 @@ Studio 是实验包 IDE，不是实验运行的事实源。公共地图、空间
 | 层次 | 用户心智 | 可写内容 | 身份 |
 | --- | --- | --- | --- |
 | 公共资源库 | 可反复使用的素材架 | Map、Agent、Crowd、Brain、Skill、模型、评估器 | Studio 资源 ID，仅用于选择 |
-| 实验工作区 | 一份自带全部材料、可以带走的项目目录 | 包内地图、Agent、Skill、模型和运行配置 | `manifest.json.experiment_id` |
+| 实验工作区 | 一份自带全部材料、可以带走的项目目录 | 包内地图、Agent、Skill、模型和运行配置 | `manifest.json.experiment.experiment_id` |
 | Run 工作区 | 一次执行及其恢复、审计和回放文件 | 状态、Attempt、Frame、Checkpoint、Trace、Artifact | `run.json.run_id` |
 
 公共资源 ID 不进入 Runtime 的依赖合同。选择完成后，即使公共资源被修改或删除，实验卡片也不能显示“引用丢失”，因为实验已经拥有自己的物理副本。
@@ -35,7 +35,7 @@ Studio 是实验包 IDE，不是实验运行的事实源。公共地图、空间
 - 解析地图及全部空间素材；
 - 展开 Crowd 为独立 Agent 副本；
 - 解析 Brain 的递归子 Skill 闭包；
-- 解析所有 Game Object 被动 Skill；
+- 解析所有 Game Object Skill；
 - 复制 Skill Markdown、脚本、地图资源和 Agent 资源；
 - 写入包内配置与完整性清单；
 - 返回 `experiment_id` 和实验目录。
@@ -151,7 +151,7 @@ content_sha256
 - ZIP 路径穿越、符号链接、重复成员或超限展开；
 - 清单入口缺失；
 - 内容哈希变化；
-- Brain、子 Skill 或被动 Skill 闭包不完整；
+- Brain、子 Skill 或对象 Skill 闭包不完整；
 - 地图四层结构、坐标、语义地址或资源路径无效；
 - Agent 初始位置不属于包内地图；
 - 模型密钥环境变量未提供；
@@ -167,7 +167,7 @@ content_sha256
 1. 创建实验后删除所有选中的公共资源，实验仍能校验和运行。
 2. 公共资源修改不改变现有实验根哈希。
 3. 实验内修改不改变公共资源。
-4. 所有 Brain、子 Skill、被动 Skill 与脚本在 `.gaexp` 中可见。
+4. 所有 Brain、子 Skill、对象 Skill 与脚本在 `.gaexp` 中可见。
 5. 实验配置和 UI 中不存在 Revision、跟随最新、升级映射或发布锁。
 6. `.gaexp` 改名、目录改名不改变 `experiment_id`。
 7. `.garun` 改名、目录改名不改变 `run_id`。

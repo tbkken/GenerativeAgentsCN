@@ -1,4 +1,4 @@
-"""运行级仿真循环与可安全导入的命令行适配器。
+"""供 ga_runtime 使用的仿真循环与依赖构建。
 
 Web 工作进程只根据已验证的运行清单构建依赖。本模块不读取启动目录，也不根据展示名
 回退查找路径，从而保证同一运行始终使用发布时冻结的输入。
@@ -6,14 +6,11 @@ Web 工作进程只根据已验证的运行清单构建依赖。本模块不读�
 
 from __future__ import annotations
 
-import argparse
 import copy
-import importlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from collections.abc import Mapping
 from typing import Protocol
-from uuid import UUID
 
 from generative_agents.modules.game import Game
 from generative_agents.modules.config_adapter import ConfigAdapter
@@ -22,9 +19,8 @@ from generative_agents.runtime.checkpoint import (
     CheckpointSnapshot,
 )
 from generative_agents.runtime.commit import FileStepCommitter
-from generative_agents.runtime.context import RunPaths, SimulationContext
+from generative_agents.runtime.context import SimulationContext
 from generative_agents.runtime.frame_store import FrameStore
-from generative_agents.runtime.manifest import RunManifestStore
 from generative_agents.runtime.result_collector import StepResultCollector
 from generative_agents.runtime.file_result_projector import FileResultProjector
 from generative_agents.runtime.results import StepResultBuilder
@@ -347,75 +343,3 @@ def build_runner(
         ),
         checkpoint_interval_steps=definition.simulation.checkpoint_interval_steps,
     )
-
-
-def build_parser() -> argparse.ArgumentParser:
-    """构建`parser`。
-
-    返回:
-        返回 `argparse.ArgumentParser` 类型的处理结果。
-    """
-    parser = argparse.ArgumentParser(description="run one isolated experiment worker")
-    parser.add_argument("--data-root", required=True)
-    parser.add_argument("--run-id", type=UUID, required=True)
-    parser.add_argument("--attempt-id", type=UUID, required=True)
-    parser.add_argument("--steps", type=int, required=True)
-    parser.add_argument("--stride-minutes", type=int, required=True)
-    parser.add_argument(
-        "--runner-factory",
-        required=True,
-        help="Dotted callable module:function that verifies the manifest and returns SimulationRunner",
-    )
-    return parser
-
-
-def _load_factory(path: str):
-    """加载`factory`。
-
-    参数:
-        path: 目标文件或目录路径；使用前会按调用场景进行存在性或归属校验。 类型：`str`。
-
-    返回:
-        返回函数计算得到的结果。
-
-    异常:
-        TypeError: 当参数类型不符合接口约定时抛出。
-        ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
-    """
-    module_name, separator, attribute = path.partition(":")
-    if not separator or not module_name or not attribute:
-        raise ValueError("runner factory must use module:function syntax")
-    factory = getattr(importlib.import_module(module_name), attribute)
-    if not callable(factory):
-        raise TypeError("runner factory is not callable")
-    return factory
-
-
-def main(argv=None) -> int:
-    """解析启动参数并执行当前模块的主流程。
-
-    参数:
-        argv: 命令行参数序列；为 `None` 时读取当前进程的命令行。 默认值：`None`。
-
-    返回:
-        返回计算得到的整数值或版本号。
-
-    异常:
-        TypeError: 当参数类型不符合接口约定时抛出。
-    """
-    args = build_parser().parse_args(argv)
-    paths = RunPaths.under(args.data_root, args.run_id)
-    manifest = RunManifestStore(paths).load_verified()
-    runner = _load_factory(args.runner_factory)(
-        paths=paths,
-        manifest=manifest,
-        attempt_id=args.attempt_id,
-    )
-    if not isinstance(runner, SimulationRunner):
-        raise TypeError("runner factory must return SimulationRunner")
-    runner.run(args.steps, stride_minutes=args.stride_minutes)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

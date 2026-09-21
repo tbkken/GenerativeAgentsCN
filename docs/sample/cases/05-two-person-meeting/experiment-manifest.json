@@ -19,5 +19,5 @@
     "已提交事实包含 Event SPO 与非空 structured_payload",
     "Replay 可从 StepResult 重建状态"
   ],
-  "source": "docs/sample"
+  "source": "docs/images/creek-university-v2"
 }

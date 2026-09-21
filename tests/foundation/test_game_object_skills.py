@@ -1,28 +1,14 @@
-"""基础能力回归测试：覆盖 ``test_game_object_skills`` 对应的行为、故障边界和回归约束。"""
-from __future__ import annotations
+"""Regressions for current shared kernel and Studio surfaces."""
 
+from __future__ import annotations
 from datetime import datetime, timezone
-import logging
-import random
 from types import SimpleNamespace
 from uuid import uuid4
-
-from fastapi.testclient import TestClient
-
-from generative_agents.modules.game_object_interaction import (
-    GameObjectInteractionSystem,
-)
+from generative_agents.modules.game_object_interaction import GameObjectInteractionSystem
 from generative_agents.modules.memory import Event
-from generative_agents.modules.maze import Maze
 from generative_agents.runtime.context import RunControl, SimulationClock
-from generative_agents.runtime.replay_v2 import build_replay_v2
 from generative_agents.skills import SkillRegistry, SnapshotPassiveSkillRuntime
 from generative_agents.start import SimulationRunner
-from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
-from generative_agents.web.app import create_app
-from tests.support import brain_revision_via_api
-from tools.seed_pedestrian_crossing_skill_demo import build_agent, build_world
-
 
 def _world() -> dict:
     """为本测试模块封装 ``_world`` 辅助步骤，减少重复的场景搭建代码。"""
@@ -186,7 +172,7 @@ def test_game_object_can_bind_a_text_only_skill(tmp_path):
     )
 
     assert result.output_text == "洗手台反馈：已出水，可以洗漱。"
-    assert result.revision == document.revision
+    assert result.content_hash == document.content_hash
     assert [item["event"] for item in result.trace] == [
         "game_object_skill.start",
         "skill.start",
@@ -465,150 +451,3 @@ def test_runner_waits_on_red_then_crosses_on_green_and_records_the_exchange():
     assert green.agents[0].decision_context["external_observations"][0][
         "agent_decision"
     ] == "CONTINUE"
-
-
-def test_demo_resources_materialize_through_public_apis(database_url):
-    """回归验证 ``test_demo_resources_materialize_through_public_apis`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        public_map = client.post(
-            "/api/v1/maps",
-            json={
-                "map_key": "pedestrian-crossing-skill-demo",
-                "name": "行人过街 Skill 演示",
-                "width": 9,
-                "height": 7,
-            },
-        )
-        assert public_map.status_code == 201, public_map.text
-        saved_map = client.put(
-            f"/api/v1/maps/{public_map.json()['id']}",
-            json={
-                "lock_version": public_map.json()["lock_version"],
-                "world": build_world(),
-            },
-        )
-        assert saved_map.status_code == 200, saved_map.text
-        validated_map = client.post(
-            f"/api/v1/maps/{public_map.json()['id']}/validate",
-            json={"lock_version": saved_map.json()["lock_version"]},
-        )
-        assert validated_map.status_code == 200, validated_map.text
-        assert validated_map.json()["validation"]["valid"] is True
-
-        agent = client.post(
-            "/api/v1/agent-templates",
-            json={"definition": build_agent(), "description": "行人过街演示 Agent"},
-        )
-        assert agent.status_code == 201, agent.text
-        agent_draft = client.get(
-            f"/api/v1/agent-templates/{agent.json()['id']}/draft"
-        ).json()
-        agent_revision = client.post(
-            f"/api/v1/agent-templates/{agent.json()['id']}/draft/publish",
-            json={
-                "draft_revision_id": agent_draft["id"],
-                "lock_version": agent_draft["lock_version"],
-            },
-        )
-        assert agent_revision.status_code == 200, agent_revision.text
-        assert {
-            item["code"] for item in agent_revision.json()["validation"]["warnings"]
-        } == {
-            "AGENT_PORTRAIT_ASSET_MISSING",
-            "AGENT_SPRITE_ASSET_MISSING",
-        }
-
-        crowd = client.post(
-            "/api/v1/crowds",
-            json={
-                "name": "行人过街演示人群",
-                "crowd_key": "pedestrian-crossing-demo-crowd",
-                "agent_revision_ids": [agent_revision.json()["id"]],
-            },
-        )
-        assert crowd.status_code == 201, crowd.text
-        crowd_draft = client.get(
-            f"/api/v1/crowds/{crowd.json()['id']}/draft"
-        ).json()
-        crowd_revision = client.post(
-            f"/api/v1/crowds/{crowd.json()['id']}/draft/publish",
-            json={
-                "draft_revision_id": crowd_draft["id"],
-                "lock_version": crowd_draft["lock_version"],
-            },
-        )
-        assert crowd_revision.status_code == 200, crowd_revision.text
-
-        experiment = client.post(
-            "/api/v1/experiments",
-            json={
-                "name": "Game Object Skill 端到端实验：行人过街",
-                "goal": "红灯等待，绿灯过街",
-                "brain_skill": "stanford-town-brain",
-                "brain_revision_id": brain_revision_via_api(client)["revision_id"],
-                "map_id": public_map.json()["id"],
-                "crowd_revision_ids": [crowd_revision.json()["id"]],
-            },
-        )
-        assert experiment.status_code == 201, experiment.text
-        draft = client.get(
-            f"/api/v1/experiments/{experiment.json()['id']}/draft"
-        )
-        assert draft.status_code == 200, draft.text
-        validation = client.post(
-            f"/api/v1/experiments/{experiment.json()['id']}/draft/validate"
-        )
-
-    definition = draft.json()["definition"]
-    signal = next(
-        node
-        for node in definition["world"]["definition"]["editor_v2"]["hierarchy_nodes"]
-        if node["id"] == "pedestrian-signal"
-    )
-    assert definition["world"]["map_id"] == public_map.json()["id"]
-    assert definition["agents"][0]["agent_key"] == "pedestrian-lin-xiao"
-    assert definition["agents"][0]["coord"] == [4, 5]
-    assert signal["skill_bindings"][0]["skill_name"] == "traffic-signal-state"
-    assert validation.status_code == 200, validation.text
-    assert validation.json()["valid"] is True
-
-
-def test_demo_map_editor_metadata_is_accepted_by_runtime_maze():
-    """回归验证 ``test_demo_map_editor_metadata_is_accepted_by_runtime_maze`` 所描述的业务结果、故障边界和隔离约束。"""
-    definition = build_world()["definition"]
-
-    maze = Maze(definition, logging.getLogger("pedestrian-crossing-test"), random.Random(7))
-
-    assert maze.tile_at((3, 4)).get_address()[-1] == "行人信号灯"
-    assert maze.tile_at((4, 5)).get_address()[-1] == "门口"
-
-
-def test_demo_map_and_signal_have_a_self_contained_replay_renderer():
-    """回归验证 ``test_demo_map_and_signal_have_a_self_contained_replay_renderer`` 所描述的业务结果、故障边界和隔离约束。"""
-    payload = make_blank_definition(key="crossing-replay", name="过街回放").model_dump(
-        mode="json"
-    )
-    payload["world"] = build_world()
-    payload["agents"] = [build_agent()]
-    definition = ExperimentDefinition.model_validate(payload)
-
-    replay = build_replay_v2(
-        run_id=str(uuid4()),
-        revision_id=str(uuid4()),
-        definition_hash="demo-definition-hash",
-        definition=definition,
-        source_step=0,
-        partial=True,
-        results=(),
-    )
-
-    render_asset = replay["world"]["render_asset"]
-    signal = next(
-        item for item in render_asset["objects"] if item["instance_key"] == "pedestrian-signal"
-    )
-    assert render_asset["status"] == "READY"
-    assert render_asset["renderer"] == "SPATIAL_GRID"
-    assert render_asset["palette"]["crosswalk"]["color"] == "#F5F1E8"
-    assert signal["appearance"]["emoji"] == "🚦"
-    assert replay["agents"][0]["role"] == "PEDESTRIAN"

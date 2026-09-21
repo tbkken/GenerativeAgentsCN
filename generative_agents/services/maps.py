@@ -10,11 +10,11 @@ from math import ceil
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import delete, func, or_, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.orm import Session
 from pydantic import ValidationError
 
-from generative_agents.config import ExperimentDefinition, canonical_json_bytes
+from generative_agents.config import canonical_json_bytes
 from generative_agents.config.map_editor import MapEditorDocumentV2
 from generative_agents.ga_protocol.navigation import compile_collision
 from generative_agents.config.schema import WorldConfig
@@ -78,12 +78,6 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
             compile_collision(payload["definition"])
         except ValueError as exc:
             raise ServiceError("MAP_NAVIGATION_INVALID", str(exc), status_code=422) from exc
-    payload.update(
-        {
-            "map_id": None,
-            "map_snapshot_hash": None,
-        }
-    )
     return WorldConfig.model_validate(payload)
 
 
@@ -1814,75 +1808,6 @@ class WorldMapService:
             session.flush()
             return self._map_detail(session, public_map)
 
-    def select_for_experiment(
-        self,
-        experiment_id: str,
-        *,
-        expected_lock_version: int,
-        map_id: str,
-    ) -> dict[str, Any]:
-        """执行 `WorldMapService` 的`select``for`实验操作。
-
-        参数:
-            experiment_id: 实验记录的唯一标识。 类型：`str`。
-            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
-            map_id: 地图的稳定标识。 类型：`str`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        with self.database.session_factory() as session:
-            public_map = session.get(WorldMap, map_id)
-            if public_map is None:
-                raise not_found("map", map_id)
-            world = self.materialize_world(session, public_map)
-        from .experiments import ExperimentService
-
-        experiment_service = ExperimentService(self.database)
-        draft = experiment_service.get_draft(experiment_id)
-        payload = draft["definition"]
-        payload["world"] = world.model_dump(mode="json", exclude_none=False)
-        return experiment_service.update_draft(
-            experiment_id=experiment_id,
-            expected_lock_version=expected_lock_version,
-            definition=ExperimentDefinition.model_validate(payload),
-            allow_resource_reselection=True,
-        )
-
-    def materialize_for_publish_in_session(
-        self, session: Session, world: WorldConfig
-    ) -> WorldConfig:
-        """Resolve the latest mutable map and freeze it into the experiment."""
-        if not world.map_id:
-            raise ServiceError("MAP_REQUIRED", "实验必须选择地图", status_code=422)
-        public_map = session.get(WorldMap, world.map_id)
-        if public_map is None:
-            raise ServiceError(
-                "MAP_UNAVAILABLE", "实验选择的地图已不存在", status_code=409
-            )
-        snapshot = self.materialize_world(session, public_map)
-        editor_errors, editor_warnings = _validate_map_editor_v2(
-            snapshot, skill_registry=self.skill_registry
-        )
-        if not editor_errors:
-            snapshot = _compile_editor_v2_runtime_addresses(snapshot)
-        errors = [
-            *_validate_world_definition(snapshot),
-            *_validate_spatial_scene(
-                session, snapshot, skill_registry=self.skill_registry
-            ),
-            *editor_errors,
-        ]
-        if errors:
-            raise ServiceError(
-                "MAP_VALIDATION_FAILED",
-                "地图当前内容无法用于实验",
-                status_code=422,
-                details={"errors": errors, "warnings": editor_warnings},
-            )
-        payload = snapshot.model_dump(mode="json", exclude_none=False)
-        payload["map_snapshot_hash"] = world_hash(snapshot)
-        return WorldConfig.model_validate(payload)
 
     @staticmethod
     def materialize_world(session: Session, public_map: WorldMap) -> WorldConfig:
@@ -1939,3 +1864,36 @@ class WorldMapService:
             "updated_at": iso_utc(public_map.updated_at),
             "created_at": iso_utc(public_map.created_at),
         }
+
+    def materialize_validated_world(
+        self, session: Session, map_id: str
+    ) -> WorldConfig:
+        """Read and validate the selected author map for one-time experiment import."""
+        if not map_id:
+            raise ServiceError("MAP_REQUIRED", "实验必须选择地图", status_code=422)
+        public_map = session.get(WorldMap, map_id)
+        if public_map is None:
+            raise ServiceError(
+                "MAP_UNAVAILABLE", "实验选择的地图已不存在", status_code=409
+            )
+        snapshot = self.materialize_world(session, public_map)
+        editor_errors, editor_warnings = _validate_map_editor_v2(
+            snapshot, skill_registry=self.skill_registry
+        )
+        if not editor_errors:
+            snapshot = _compile_editor_v2_runtime_addresses(snapshot)
+        errors = [
+            *_validate_world_definition(snapshot),
+            *_validate_spatial_scene(
+                session, snapshot, skill_registry=self.skill_registry
+            ),
+            *editor_errors,
+        ]
+        if errors:
+            raise ServiceError(
+                "MAP_VALIDATION_FAILED",
+                "地图当前内容无法用于实验",
+                status_code=422,
+                details={"errors": errors, "warnings": editor_warnings},
+            )
+        return snapshot

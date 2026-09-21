@@ -351,8 +351,6 @@
     $('experimentHeaderMeta').hidden = isGlobal;
     $('backToHub').classList.toggle('visible', !isGlobal);
     $('hubActions').hidden = !isGlobal;
-    $('commuteDemoBtn').hidden = pageName !== 'experiments';
-    $('mapConfigurationDemoBtn').hidden = pageName !== 'maps';
     $('createExperimentBtn').hidden = pageName !== 'experiments';
     $('createMapBtn').hidden = pageName !== 'maps';
     $('createBrainBtn').hidden = pageName !== 'brains';

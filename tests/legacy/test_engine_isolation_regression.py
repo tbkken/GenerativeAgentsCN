@@ -3,14 +3,11 @@ from __future__ import annotations
 
 import copy
 import json
-import logging
 import random
 from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from uuid import uuid4
 
-from generative_agents.compress import build_replay
-from generative_agents.config import definition_hash
 from generative_agents.config.schema import make_blank_definition
 from generative_agents.modules.config_adapter import ConfigAdapter
 from generative_agents.modules.game import Game
@@ -18,24 +15,8 @@ from generative_agents.modules.maze import Maze
 from generative_agents.modules.memory.action import Action
 from generative_agents.modules.memory.event import Event
 from generative_agents.modules.model.llm_model import LLMModel
-from generative_agents.runtime import (
-    ActionSnapshot,
-    ActivityKind,
-    AgentStepResult,
-    FrameStore,
-    ModelTraceWriter,
-    MemoryDeltaKind,
-    RunControl,
-    RunPaths,
-    SimulationClock,
-    StepResult,
-    StepResultBuilder,
-    RunManifestStore,
-    build_manifest_document,
-)
+from generative_agents.runtime import ModelTraceWriter, MemoryDeltaKind, RunControl, RunPaths, SimulationClock, StepResultBuilder
 from generative_agents.runtime.result_collector import StepResultCollector
-from generative_agents.runtime.replay_v2 import validate_replay_v2
-from generative_agents.skills import SkillRegistry
 from generative_agents.start import SimulationRunner, apply_checkpoint_state
 
 
@@ -210,7 +191,9 @@ def test_game_checkpoint_round_trip_restores_run_local_rng_state():
     game.agents = {}
     game.game_object_interactions = SimpleNamespace(
         snapshot_state=lambda: {},
+        snapshot_runtime=lambda: {},
         restore_state=lambda state: None,
+        restore_runtime=lambda state, **kwargs: None,
     )
     game.context.clock = SimulationClock(
         datetime(2026, 1, 1, tzinfo=timezone.utc)
@@ -461,84 +444,3 @@ def test_legacy_naive_checkpoint_index_dates_are_interpreted_as_simulation_utc()
     assert index.cleanup() == ["expired"]
     assert removed == ["expired"]
     assert index_module.utils.to_date("20260101-00:45:00").utcoffset() == timedelta(0)
-
-
-def test_replay_artifact_uses_observed_frame_path(tmp_path):
-    """回归验证 ``test_replay_artifact_uses_observed_frame_path`` 所描述的业务结果、故障边界和隔离约束。"""
-    run_id, attempt_id, experiment_id, revision_id = (
-        uuid4(),
-        uuid4(),
-        uuid4(),
-        uuid4(),
-    )
-    paths = RunPaths.under(tmp_path, run_id)
-    definition = make_blank_definition(key="replay-test", name="Replay")
-    document = build_manifest_document(
-        run_id=run_id,
-        experiment_id=experiment_id,
-        revision_id=revision_id,
-        definition=definition,
-        expected_definition_hash=definition_hash(definition),
-        code_build_id="test",
-        assets=[],
-        materialized_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
-        dependency_versions={},
-        skill_bundle=SkillRegistry().snapshot(),
-    )
-    manifest = RunManifestStore(paths).materialize(document)
-    result = StepResult(
-            run_id=run_id,
-            attempt_id=attempt_id,
-            step_no=1,
-            virtual_time=datetime(2026, 1, 1, tzinfo=timezone.utc),
-            agents=(
-                AgentStepResult(
-                    agent_key="agent-a",
-                    from_coord=(1, 1),
-                    to_coord=(2, 1),
-                    path=((1, 1), (2, 1)),
-                    action=ActionSnapshot("walk"),
-                    activity_kind=ActivityKind.MOVING,
-                    location=("world", "cafe"),
-                    path_source="OBSERVED",
-                ),
-            ),
-            conversations=(),
-            memory_deltas=(),
-            schedule_revisions=(),
-            domain_events=(),
-            committed_model_usage=(),
-        )
-    frame = FrameStore(paths).write(result)
-    from generative_agents.runtime.file_result_projector import FileResultProjector
-
-    FileResultProjector(paths).commit_step(
-        result,
-        frame=frame,
-        checkpoint_path=None,
-    )
-    # A crash can leave a durable frame that never reached the authoritative
-    # projection. Compression must not include that future/uncommitted fact.
-    FrameStore(paths).write(
-        StepResult(
-            run_id=run_id,
-            attempt_id=attempt_id,
-            step_no=2,
-            virtual_time=datetime(2026, 1, 1, 0, 10, tzinfo=timezone.utc),
-            agents=(),
-            conversations=(),
-            memory_deltas=(),
-            schedule_revisions=(),
-            domain_events=(),
-            committed_model_usage=(),
-        )
-    )
-    artifact = build_replay(paths, manifest)
-    replay = json.loads(artifact.path.read_text(encoding="utf-8"))
-    assert validate_replay_v2(replay) == replay
-    assert replay["schema_version"] == 2
-    assert replay["source_kind"] == "RUN_FRAMES"
-    assert replay["source_step"] == 1
-    agent = replay["steps"][0]["agents"][0]
-    assert agent["path_source"] == "OBSERVED"
-    assert {tuple(sample) for sample in agent["path"]} == {(1, 1), (2, 1)}

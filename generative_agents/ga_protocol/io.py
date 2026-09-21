@@ -10,7 +10,7 @@ import stat
 import tempfile
 import time
 import zipfile
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
 from uuid import uuid4
@@ -20,6 +20,23 @@ from .constants import INTEGRITY_MANIFEST
 
 class PackageError(ValueError):
     """Raised when a package violates the portable file protocol."""
+
+
+def checked_package_path(path: Path) -> Path:
+    """Reject links in every component before resolving a package-owned path.
+
+    Windows junctions are reparse points, not symbolic links. Checking only the
+    final file, or checking after resolve(), silently loses this boundary.
+    """
+    path = Path(path).absolute()
+    for component in (*reversed(path.parents), path):
+        try:
+            metadata = component.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(metadata.st_mode) or getattr(metadata, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+            raise PackageError("links and reparse points are not allowed in package paths")
+    return path.resolve()
 
 
 def canonical_json_bytes(value: object) -> bytes:
@@ -32,6 +49,7 @@ def canonical_json_bytes(value: object) -> bytes:
 
 
 def read_json(path: Path) -> object:
+    path = checked_package_path(path)
     try:
         with open_shared_reader(path) as handle:
             content = handle.read()
@@ -139,13 +157,12 @@ def _safe_relative_path(path: Path, root: Path) -> str:
 
 
 def iter_package_files(root: Path, *, exclude: set[str] | None = None) -> Iterator[tuple[str, Path]]:
-    root = root.resolve()
+    root = checked_package_path(root)
     excluded = exclude or set()
     if not root.is_dir():
         raise PackageError(f"package root is not a directory: {root}")
     for path in sorted(root.rglob("*"), key=lambda item: item.as_posix()):
-        if path.is_symlink():
-            raise PackageError(f"symbolic links are not allowed in packages: {path}")
+        checked_package_path(path)
         if path.is_dir():
             continue
         relative = _safe_relative_path(path.resolve(), root)
@@ -208,8 +225,8 @@ def verify_integrity(root: Path, *, require_exact_files: bool = True) -> dict:
 def copy_package_tree(source: Path, destination: Path) -> None:
     """Copy a package while rejecting links and pre-existing destinations."""
 
-    source = source.resolve()
-    destination = destination.resolve()
+    source = checked_package_path(source)
+    destination = checked_package_path(destination)
     if destination.exists():
         raise PackageError(f"destination already exists: {destination}")
     destination.mkdir(parents=True)
@@ -226,8 +243,8 @@ def copy_package_tree(source: Path, destination: Path) -> None:
 def seal_directory(source: Path, archive: Path) -> Path:
     """Create a deterministic ZIP representation of a package directory."""
 
-    source = source.resolve()
-    archive = archive.resolve()
+    source = checked_package_path(source)
+    archive = checked_package_path(archive)
     if archive.exists():
         raise PackageError(f"archive already exists: {archive}")
     archive.parent.mkdir(parents=True, exist_ok=True)
@@ -261,8 +278,8 @@ def extract_archive(
 ) -> Path:
     """Safely extract an archive without trusting ZIP member paths or links."""
 
-    archive = archive.resolve()
-    destination = destination.resolve()
+    archive = checked_package_path(archive)
+    destination = checked_package_path(destination)
     if destination.exists():
         raise PackageError(f"destination already exists: {destination}")
     destination.mkdir(parents=True)
@@ -305,7 +322,7 @@ def extract_archive(
 def open_package(path: Path) -> Iterator[Path]:
     """Yield a package directory for either directory or ZIP input."""
 
-    path = path.resolve()
+    path = checked_package_path(path)
     if path.is_dir():
         # Readers of immutable Run/SEALED content must not serialize one another.
         # Studio owns locking across mutations of editable workspaces.

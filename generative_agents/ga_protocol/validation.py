@@ -7,7 +7,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from .constants import EXPERIMENT_MANIFEST, RUN_MANIFEST
-from .io import PackageError, read_json, sha256_file, verify_integrity
+from .io import checked_package_path, PackageError, read_json, sha256_file, verify_integrity
 from .models import (
     ExperimentManifest,
     RunManifest,
@@ -262,7 +262,7 @@ def validate_experiment_integrity(root: Path, *, verify_hashes: bool = True) -> 
     Read-only views can inspect a sealed experiment without requiring its Skill
     or author configuration to satisfy today's execution contracts.
     """
-    root = root.resolve()
+    root = checked_package_path(root)
     if verify_hashes:
         verify_integrity(root)
     manifest = _load_model(root / EXPERIMENT_MANIFEST, ExperimentManifest)
@@ -278,7 +278,7 @@ def validate_experiment_integrity(root: Path, *, verify_hashes: bool = True) -> 
 
 
 def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> ExperimentManifest:
-    root = root.resolve()
+    root = checked_package_path(root)
     manifest = validate_experiment_integrity(root, verify_hashes=verify_hashes)
     entrypoint_paths = manifest.entrypoints.model_dump(exclude_none=True)
     documents: dict[str, object] = {}
@@ -406,7 +406,7 @@ def validate_run_integrity(root: Path, *, sealed: bool = False) -> RunManifest:
     configuration stay opaque here; their exact bytes are still covered by the
     embedded experiment hash. Execution additionally uses validate_run_directory.
     """
-    root = root.resolve()
+    root = checked_package_path(root)
     if sealed:
         verify_integrity(root)
     manifest = _load_model(root / RUN_MANIFEST, RunManifest)
@@ -428,7 +428,7 @@ def validate_run_integrity(root: Path, *, sealed: bool = False) -> RunManifest:
 
 def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
     """Validate a Run for execution, including the current experiment contracts."""
-    root = root.resolve()
+    root = checked_package_path(root)
     manifest = validate_run_integrity(root, sealed=sealed)
     validate_experiment_directory(root / manifest.experiment.path, verify_hashes=False)
     return manifest
