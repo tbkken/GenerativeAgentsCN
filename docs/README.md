@@ -34,7 +34,7 @@
 - [交通治理案例资料目录](仿真实验/交通治理场景/)保留实际作者素材、Skill、参数与逐问题验收记录；不因本次文档整理而改变实验状态。
 - [对象 Skill 验证](game-object-skill-verification-2026-09-13.md)、[回放与 Skill 加载工程记录](replay-skill-loading-engineering-2026-09-13.md)、[对应回归记录](replay-skill-loading-regression-2026-09-13.md)属于指定时间和范围的证据，不代表全项目验收完成。
 
-docs/images 下是素材及相关来源资料；[早期校园案例草案](sample/README.md)统一引用 creek-university-v2 的共享源素材。[交通治理历史底稿](交通治理场景_back/README.md)保留独有内容，重复图表指向现存原件；这些草稿不作为现行配置教程。
+docs/images 下维护当前作者素材及相关来源资料。早期校园草案、交通治理历史底稿和旧演示截图已删除；案例配置以以上正式入口为准。
 
 源素材可以只维护一份，但正式案例、实验包和 Run 要保留各自的物理副本。合并源素材不能改写验收证据、导出包或哈希清单。
 
