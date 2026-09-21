@@ -1,0 +1,4 @@
+interface:
+  display_name: "Describe Object"
+  short_description: "Run the Describe Object agent skill"
+  default_prompt: "Use $describe-object to handle the current agent context and return the result directly."

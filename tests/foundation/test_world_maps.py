@@ -34,10 +34,7 @@ def test_map_catalog_is_a_single_mutable_resource_list(database_url):
 def test_map_workspace_populates_experiment_creation_selector():
     javascript = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "map-workspace.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'resources/map-workspace.js'
     ).read_text(encoding="utf-8")
 
     assert "newExperimentMap" in javascript
@@ -175,7 +172,7 @@ def test_map_editor_document_survives_save_and_fresh_detail_reload(database_url)
         assert refreshed_response.status_code == 200, refreshed_response.text
         refreshed = refreshed_response.json()
 
-    from generative_agents.config.map_editor import MapEditorDocumentV2
+    from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
     expected_editor = MapEditorDocumentV2.model_validate(editor).model_dump(mode="json", exclude_none=False)
     expected_editor["navigation"] = {"base_blocked": [], "overrides": {}}
     assert saved["world"]["definition"]["editor_v2"] == expected_editor

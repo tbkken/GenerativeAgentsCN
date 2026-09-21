@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schedule Decompose"
+  short_description: "Run the Schedule Decompose agent skill"
+  default_prompt: "Use $schedule-decompose to handle the current agent context and return the result directly."

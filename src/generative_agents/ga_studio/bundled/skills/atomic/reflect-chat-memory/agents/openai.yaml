@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect Chat Memory"
+  short_description: "Run the Reflect Chat Memory agent skill"
+  default_prompt: "Use $reflect-chat-memory to handle the current agent context and return the result directly."

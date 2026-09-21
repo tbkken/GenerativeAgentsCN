@@ -1,0 +1,4 @@
+interface:
+  display_name: "Describe Event"
+  short_description: "Run the Describe Event agent skill"
+  default_prompt: "Use $describe-event to handle the current agent context and return the result directly."

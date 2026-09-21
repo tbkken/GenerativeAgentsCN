@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync('generative_agents/web/static/resource-list.js', 'utf8');
+const source = fs.readFileSync('src/generative_agents/adapters/web/static/resources/resource-list.js', 'utf8');
 
 function setup(storage = new Map(), experimentId = null) {
   const handlers = {}, nodes = {}, scrolls = [], frames = [];
@@ -67,7 +67,7 @@ test('a model with chat and embedding capabilities has one row and one deletion 
   context.$ = id => nodes[id] ||= {innerHTML:'',querySelectorAll:()=>[]};
   context.items = [{id:'combined',name:'模型配置',config:{chat:{model:'chat-a'},embedding:{model:'embed-a'}},credential_configured:{chat:true}}];
   context.openEditor = () => {}; context.deleteModel = () => {}; context.report = () => {};
-  const models = fs.readFileSync('generative_agents/web/static/model-workspace.js','utf8');
+  const models = fs.readFileSync('src/generative_agents/adapters/web/static/resources/model-workspace.js','utf8');
   vm.runInContext(models.slice(models.indexOf('  function renderList()'), models.indexOf('  function report(')),context);
   context.renderList();
   const html = nodes.modelServiceList.innerHTML;

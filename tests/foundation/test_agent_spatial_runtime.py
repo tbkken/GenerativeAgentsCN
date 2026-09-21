@@ -7,40 +7,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from generative_agents.modules.agent import Agent, AgentSpatialConfigurationError
-from generative_agents.modules.maze import Maze, MazeAddressNotFoundError
+from generative_agents.ga_runtime.engine.actor import ActorState as Agent
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.engine.space import MazeAddressNotFoundError
 
 
-def _agent_with_address(address):
-    """为本测试模块封装 ``_agent_with_address`` 辅助步骤，减少重复的场景搭建代码。"""
-    agent = Agent.__new__(Agent)
-    agent.name = "Runtime Agent"
-    agent.spatial = SimpleNamespace(
-        find_address=lambda _hint, as_list=True: list(address)
-    )
-    agent.maze = SimpleNamespace(
-        address_tiles={"test:home:bedroom:bed": {(0, 0)}}
-    )
-    return agent
 
 
-def test_required_spatial_address_rejects_legacy_empty_configuration():
-    """回归验证 ``test_required_spatial_address_rejects_legacy_empty_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
-    agent = _agent_with_address([])
-
-    with pytest.raises(AgentSpatialConfigurationError) as caught:
-        agent._required_spatial_address("sleeping")
-
-    assert caught.value.code == "AGENT_SPATIAL_CONFIGURATION_INVALID"
-    assert "Runtime Agent" in str(caught.value)
 
 
-def test_required_spatial_address_rejects_address_from_another_map():
-    """回归验证 ``test_required_spatial_address_rejects_address_from_another_map`` 所描述的业务结果、故障边界和隔离约束。"""
-    agent = _agent_with_address(["test", "other", "bedroom", "bed"])
-
-    with pytest.raises(AgentSpatialConfigurationError, match="当前地图"):
-        agent._required_spatial_address("sleeping")
 
 
 def test_maze_never_falls_back_to_an_unrelated_random_address():

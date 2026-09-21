@@ -1,0 +1,4 @@
+interface:
+  display_name: "Summarize Relation"
+  short_description: "Run the Summarize Relation agent skill"
+  default_prompt: "Use $summarize-relation to handle the current agent context and return the result directly."

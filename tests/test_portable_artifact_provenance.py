@@ -10,10 +10,16 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import RunState, RunStatus, atomic_write_json, read_json, validate_run_directory
-from generative_agents.ga_protocol.artifacts import provenance_path, read_artifact_provenance, record_artifact_provenance
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.schemas.manifests import RunState
+from generative_agents.ga_protocol.schemas.manifests import RunStatus
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_protocol.packages.artifacts import provenance_path
+from generative_agents.ga_protocol.packages.artifacts import read_artifact_provenance
+from generative_agents.ga_protocol.packages.artifacts import record_artifact_provenance
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from test_portable_package_protocol import _experiment
 
 
@@ -55,7 +61,7 @@ def _artifacts(client, run_id):
 
 
 def test_partial_export_keeps_its_origin_and_bytes_when_run_advances_during_export(tmp_path, monkeypatch):
-    from generative_agents.web import portable_api
+    import generative_agents.adapters.web.routes.artifacts as portable_api
 
     root, run_id, status, app = _fixture(tmp_path)
     historical = root / "artifacts" / "result-bundle-step-000001-old.zip"
@@ -199,7 +205,7 @@ def test_historical_checkpoint_export_uses_selected_boundary_and_remains_partial
 
 
 def test_checkpoint_pruned_while_waiting_for_lock_does_not_export_empty_zip(tmp_path, monkeypatch):
-    from generative_agents.web import portable_api
+    import generative_agents.ga_runtime.storage.exports as portable_api
 
     var_dir = tmp_path / "var"
     root = var_dir / "packages" / "runs" / "checkpoint"

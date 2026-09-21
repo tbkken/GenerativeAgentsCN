@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retrieve Currently"
+  short_description: "Run the Retrieve Currently agent skill"
+  default_prompt: "Use $retrieve-currently to handle the current agent context and return the result directly."

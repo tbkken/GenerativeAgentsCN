@@ -1,0 +1,4 @@
+interface:
+  display_name: "Determine Arena"
+  short_description: "Run the Determine Arena agent skill"
+  default_prompt: "Use $determine-arena to handle the current agent context and return the result directly."

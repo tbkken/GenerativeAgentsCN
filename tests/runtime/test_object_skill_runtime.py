@@ -12,19 +12,23 @@ from uuid import uuid4
 
 import pytest
 
-from generative_agents.config.game_object_skills import GameObjectSkillBinding
-from generative_agents.ga_runtime.memory import FileMemoryStream
-from generative_agents.modules.game import Game
-from generative_agents.modules.game_object_interaction import GameObjectInteractionSystem
-from generative_agents.modules.maze import Maze
-from generative_agents.modules.memory import Event
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.context import RunControl, SimulationClock
-from generative_agents.runtime.iteration import IterationContext, ObjectIterationContext
-from generative_agents.runtime.object_skills import ObjectMCPServer, ObjectSkillRuntime
-from generative_agents.runtime.results import DomainEventRecord
-from generative_agents.skills import SkillRegistry
-from generative_agents.start import SimulationRunner
+from generative_agents.ga_protocol.schemas.object_skills import GameObjectSkillBinding
+from generative_agents.ga_runtime.memory.stream import FileMemoryStream
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_runtime.engine.objects import GameObjectInteractionSystem
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.context import RunControl
+from generative_agents.ga_runtime.engine.context import SimulationClock
+from generative_agents.ga_runtime.engine.iteration import IterationContext
+from generative_agents.ga_runtime.engine.iteration import ObjectIterationContext
+from generative_agents.ga_runtime.skills.objects import ObjectMCPServer
+from generative_agents.ga_runtime.skills.objects import ObjectSkillRuntime
+from generative_agents.ga_protocol.schemas.facts import DomainEventRecord
+from tests.skill_files import write_skill
+from generative_agents.ga_protocol.skills.documents import SkillRegistry
+from generative_agents.ga_runtime.engine.scheduler import SimulationRunner
 
 
 def world():
@@ -51,7 +55,7 @@ class Rider:
         self.maze, self.agent_key, self.name, self.coord = maze, key, key, coord
         self.path = []
         self.action = None
-        self.scratch = SimpleNamespace(currently="骑行")
+        self.profile = SimpleNamespace(currently="骑行")
         self.percept_config = {"vision_r": 2, "att_bandwidth": 8}
 
     def get_tile(self):
@@ -99,7 +103,7 @@ def game_with_runtime(tmp_path, choose, *, agents=True):
     game._conversation_sequence = 0
     game.conversation = {}
     registry = SkillRegistry(tmp_path / "skills")
-    registry.create(name="facility", description="观察周围，按需记录活动和回复交互。", kind="atomic")
+    write_skill(registry, name="facility", description="观察周围，按需记录活动和回复交互。", kind="atomic")
     # No script and no hand-written MCP tool names are required in this Skill.
     model = ToolModel(choose)
     stream = FileMemoryStream(tmp_path / "memory", run_id=game.context.run_id,
@@ -177,7 +181,7 @@ def test_object_root_uses_model_even_when_its_bundle_contains_scripts(tmp_path):
     scripts.mkdir()
     for name in ("main.py", "legacy.py"):
         (scripts / name).write_text("raise AssertionError('object root must use its model')\n", encoding="utf-8")
-    registry.save("facility", document.markdown + "\n历史附带资源：[旧程序](scripts/legacy.py)。本轮按正文执行。\n")
+    registry.get("facility").path.write_text(document.markdown + "\n历史附带资源：[旧程序](scripts/legacy.py)。本轮按正文执行。\n", encoding="utf-8")
     run, commit = runner(game)
     run.run(1, stride_minutes=1)
     assert len(model.calls) == 1
@@ -353,9 +357,9 @@ def test_object_root_composes_natural_language_children_with_shared_identity(tmp
         return "world-act", {"action_type": "ACT", "predicate": "观察", "object": "周围环境"}
     game, _ = game_with_runtime(tmp_path, choose)
     registry = game.context.object_skill_runtime.registry
-    registry.create(name="helper", description="查看周围并给出自然语言建议", kind="atomic")
+    write_skill(registry, name="helper", description="查看周围并给出自然语言建议", kind="atomic")
     facility = registry.get("facility")
-    registry.save("facility", facility.markdown + "\n先调用 $helper 获取建议，再决定行动。\n")
+    registry.get("facility").path.write_text(facility.markdown + "\n先调用 $helper 获取建议，再决定行动。\n", encoding="utf-8")
     run, commit = runner(game)
     run.run(1, stride_minutes=1)
     assert sum(event.event_type == "GAME_OBJECT_ACTED" for event in commit.results[0].domain_events) == 1

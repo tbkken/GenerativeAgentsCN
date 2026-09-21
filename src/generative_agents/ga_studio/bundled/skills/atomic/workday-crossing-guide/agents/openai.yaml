@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workday Crossing Guide"
+  short_description: "运行 Workday Crossing Guide 智能体技能"
+  default_prompt: "使用 $workday-crossing-guide 来完成任务。"

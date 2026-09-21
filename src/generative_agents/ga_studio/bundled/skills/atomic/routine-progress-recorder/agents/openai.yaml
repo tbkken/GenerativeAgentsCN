@@ -1,0 +1,4 @@
+interface:
+  display_name: "Routine Progress Recorder"
+  short_description: "运行 Routine Progress Recorder 智能体技能"
+  default_prompt: "使用 $routine-progress-recorder 来完成任务。"

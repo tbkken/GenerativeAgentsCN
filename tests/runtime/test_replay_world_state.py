@@ -2,7 +2,7 @@
 import json
 import subprocess
 from pathlib import Path
-from generative_agents.ga_replay import ReplayReader
+from generative_agents.ga_replay.reader import ReplayReader
 
 
 def test_replay_window_reduces_committed_object_state_events():
@@ -17,7 +17,7 @@ def test_replay_window_reduces_committed_object_state_events():
 
 def test_replay_player_applies_window_baseline_and_current_step_event():
     root = Path(__file__).resolve().parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     script = r"""
 const { GAReplayPlayer } = require(process.argv[1]);
 const instance = new GAReplayPlayer({});

@@ -1,6 +1,8 @@
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base, WorldMap
-from generative_agents.services.maps import WorldMapService, normalize_public_world
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.storage.models import WorldMap
+from generative_agents.ga_studio.resources.maps import WorldMapService
+from generative_agents.ga_studio.resources.maps import normalize_public_world
 from tests.foundation.test_navigation import navigation_world
 
 

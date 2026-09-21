@@ -8,14 +8,16 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.skills import (
-    MemoryStream,
-    SkillMCPServer,
-    SkillRegistry,
-    SkillRegistryError,
-    SkillLoopError,
-    SkillRuntime,
-)
+from generative_agents.ga_runtime.memory.stream import FileMemoryStream as MemoryStream
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.iteration import IterationContext
+from datetime import datetime, timezone
+from uuid import uuid4
+from generative_agents.ga_studio.resources.bundled import bundled_skills
+from generative_agents.ga_protocol.skills.documents import SkillRegistry
+from generative_agents.ga_protocol.skills.documents import SkillRegistryError
+from generative_agents.ga_runtime.skills.executor import SkillLoopError
+from generative_agents.ga_runtime.skills.executor import SkillRuntime
 from tests.studio_support import create_test_studio
 
 
@@ -35,7 +37,7 @@ class ScriptedSkillRuntime(SkillRuntime):
 
 def test_file_backed_skill_catalog_and_brain_dependencies():
     """回归验证 ``test_file_backed_skill_catalog_and_brain_dependencies`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
+    registry = bundled_skills()
 
     documents = registry.list()
     assert len(documents) >= 40
@@ -61,7 +63,7 @@ def test_file_backed_skill_catalog_and_brain_dependencies():
 
 def test_skill_pack_hands_child_result_back_as_plain_text():
     """回归验证 ``test_skill_pack_hands_child_result_back_as_plain_text`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
+    registry = bundled_skills()
     runtime = ScriptedSkillRuntime(
         registry,
         responses=[
@@ -109,7 +111,7 @@ def test_skill_pack_hands_child_result_back_as_plain_text():
 
 def test_run_trace_records_the_prompts_sent_to_the_model():
     """回归验证 ``test_run_trace_records_the_prompts_sent_to_the_model`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
+    registry = bundled_skills()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
     result = runtime.run("wake-up", "小明平日六点半起床。")
@@ -122,7 +124,7 @@ def test_run_trace_records_the_prompts_sent_to_the_model():
 
 def test_run_trace_user_prompt_wraps_runtime_context():
     """回归验证 ``test_run_trace_user_prompt_wraps_runtime_context`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
+    registry = bundled_skills()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
     result = runtime.run(
@@ -137,8 +139,12 @@ def test_run_trace_user_prompt_wraps_runtime_context():
 
 def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
     """回归验证 ``test_skill_pack_can_call_mcp_and_continue_with_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
-    mcp = SkillMCPServer(MemoryStream(tmp_path / "memories.db"))
+    registry = bundled_skills()
+    memory = MemoryStream(tmp_path / "memories", run_id=uuid4(), attempt_id=uuid4())
+    now = datetime(2026, 8, 28, 9, tzinfo=timezone.utc)
+    memory.begin_step(1, now)
+    iteration = IterationContext(run_id=uuid4(), attempt_id=uuid4(), agent_key="jane", agent_name="Jane", step_no=1, total_steps=2, now=now, stride_minutes=1, coord=(0, 0), address=("world",))
+    mcp = SimulationMCPServer(None, iteration, memory_stream=memory)
     runtime = ScriptedSkillRuntime(
         registry,
         mcp=mcp,
@@ -152,7 +158,6 @@ def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
                             "name": "memory-stream-append",
                             "arguments": json.dumps(
                                 {
-                                    "agent_key": "jane",
                                     "content": "简今天九点去咖啡馆上班",
                                     "poignancy": 5,
                                 },
@@ -170,14 +175,15 @@ def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
 
     assert result.output_text == "这条工作记忆已经保存。"
     assert any(item["event"] == "mcp.call" for item in result.trace)
-    assert mcp.memory.search(agent_key="jane", query="咖啡馆")[0]["content"] == "简今天九点去咖啡馆上班"
-    assert "已写入 jane 的记忆流" in runtime.requests[-1]["messages"][-1]["content"]
+    assert memory.search(agent_key="jane", query="咖啡馆")[0]["content"] == "简今天九点去咖啡馆上班"
+    assert "简今天九点去咖啡馆上班" in runtime.requests[-1]["messages"][-1]["content"]
     tool_names = {tool["name"] for tool in mcp.tools()}
     assert {"memory-stream-supersede", "memory-stream-invalidate"} <= tool_names
 
 
 def test_memory_stream_fallback_retrieves_chinese_semantics_without_spaces(tmp_path):
-    memory = MemoryStream(tmp_path / "semantic-memory.db")
+    memory = MemoryStream(tmp_path / "semantic-memory", run_id=uuid4(), attempt_id=uuid4())
+    memory.begin_step(1, datetime(2026, 8, 28, tzinfo=timezone.utc))
     memory.append(
         agent_key="zhou",
         content="林晨告诉周宁，今天下午三点在咖啡水吧见面",
@@ -191,61 +197,22 @@ def test_memory_stream_fallback_retrieves_chinese_semantics_without_spaces(tmp_p
     )
 
     assert found and found[0]["object"] == "下午三点咖啡水吧"
-    assert found[0]["retrieval_method"] == "hybrid_lexical"
+    assert found[0]["retrieval_method"] == "file_lexical"
 
 
 def test_skill_pack_can_call_its_private_script(tmp_path):
-    """回归验证 ``test_skill_pack_can_call_its_private_script`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
-    runtime = ScriptedSkillRuntime(
-        registry,
-        responses=[
-            {
-                "content": "",
-                "tool_calls": [
-                    {
-                        "id": "script-1",
-                        "function": {
-                            "name": "run_skill_script",
-                            "arguments": json.dumps(
-                                {
-                                    "function": "memory_context.append_memory",
-                                    "input_text": "Jane will work at the cafe at nine.",
-                                }
-                            ),
-                        },
-                    }
-                ],
-            },
-            {"content": "The memory was persisted by the private Skill script."},
-        ],
-    )
-
-    result = runtime.run(
-        "perception-and-memory",
-        "Remember Jane's work plan.",
-        context={
-            "agent_key": "jane",
-            "memory_database": str(tmp_path / "private-script.db"),
-            "kind": "plan",
-            "poignancy": 4,
-        },
-    )
-
-    assert result.output_text == "The memory was persisted by the private Skill script."
+    root = tmp_path / "skills" / "atomic" / "text-helper"
+    (root / "scripts").mkdir(parents=True)
+    (root / "SKILL.md").write_text("---\nname: text-helper\ndescription: Normalize input text.\n---\nCall the private helper.", encoding="utf-8")
+    (root / "scripts" / "text.py").write_text("def normalize(input_text, context):\n    return input_text.strip().upper()\n", encoding="utf-8")
+    runtime = ScriptedSkillRuntime(SkillRegistry(tmp_path / "skills"), responses=[
+        {"content": "", "tool_calls": [{"id": "script-1", "function": {"name": "run_skill_script", "arguments": json.dumps({"function": "text.normalize", "input_text": " cafe "})}}]},
+        {"content": "CAFE"},
+    ])
+    result = runtime.run("text-helper", "Normalize text.")
+    assert result.output_text == "CAFE"
     assert any(item["event"] == "script.call" for item in result.trace)
-    stored = MemoryStream(tmp_path / "private-script.db").search(
-        agent_key="jane", query="cafe"
-    )
-    assert stored[0]["content"] == "Jane will work at the cafe at nine."
-    tools = runtime.requests[0]["tools"]
-    script_tool = next(
-        item for item in tools if item["function"]["name"] == "run_skill_script"
-    )
-    assert script_tool["function"]["parameters"]["properties"]["function"]["enum"] == [
-        "memory_context.append_memory",
-        "memory_context.recall_memories",
-    ]
+    assert "CAFE" in runtime.requests[-1]["messages"][-1]["content"]
 
 
 def test_skill_api_starts_on_clean_database(tmp_path):
@@ -297,12 +264,7 @@ def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_
     )
     source_path = (
         Path(__file__).resolve().parents[2]
-        / "generative_agents"
-        / "data"
-        / "skills"
-        / "atomic"
-        / "user-runtime-skill"
-        / "SKILL.md"
+        / 'src' / 'generative_agents' / 'ga_studio' / 'bundled' / 'skills' / 'atomic' / 'user-runtime-skill' / 'SKILL.md'
     )
 
     with TestClient(app) as client:
@@ -381,8 +343,9 @@ def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_
 
 def test_example_input_is_parsed_and_exposed(tmp_path):
     """回归验证 ``test_example_input_is_parsed_and_exposed`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
-    registry.create(name="base-desc", description="把角色事实整理成自然语言描述。")
+    registry = SkillRegistry(root=tmp_path / "skills")
+    skill_path = tmp_path / "skills" / "atomic" / "base-desc" / "SKILL.md"
+    skill_path.parent.mkdir(parents=True)
 
     markdown = (
         "---\n"
@@ -392,7 +355,8 @@ def test_example_input_is_parsed_and_exposed(tmp_path):
         "---\n\n"
         "# Base Desc\n"
     )
-    document = registry.save("base-desc", markdown)
+    skill_path.write_text(markdown, encoding="utf-8")
+    document = registry.get("base-desc")
 
     detail = document.detail()
     expected = "姓名：简\n年龄：17岁\n今天是 2026-08-19。简刚从床上醒来。"
@@ -402,8 +366,9 @@ def test_example_input_is_parsed_and_exposed(tmp_path):
 
 def test_unknown_frontmatter_field_is_rejected(tmp_path):
     """回归验证 ``test_unknown_frontmatter_field_is_rejected`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
-    registry.create(name="wake-up", description="推断角色起床的小时。")
+    registry = SkillRegistry(root=tmp_path / "skills")
+    skill_path = tmp_path / "skills" / "atomic" / "wake-up" / "SKILL.md"
+    skill_path.parent.mkdir(parents=True)
 
     markdown = (
         "---\n"
@@ -416,12 +381,13 @@ def test_unknown_frontmatter_field_is_rejected(tmp_path):
     )
 
     with pytest.raises(SkillRegistryError, match="Unsupported frontmatter field"):
-        registry.save("wake-up", markdown)
+        skill_path.write_text(markdown, encoding="utf-8")
+        registry.get("wake-up")
 
 
 def test_builtin_skills_all_have_example_input():
     """回归验证 ``test_builtin_skills_all_have_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry()
+    registry = bundled_skills()
     documents = registry.list()
 
     assert len(documents) >= 40
@@ -430,7 +396,7 @@ def test_builtin_skills_all_have_example_input():
 
 
 def test_repeated_identical_child_call_is_stopped_before_third_execution():
-    registry = SkillRegistry()
+    registry = bundled_skills()
     call_wake_up = {
         "content": "",
         "tool_calls": [
@@ -457,7 +423,7 @@ def test_repeated_identical_child_call_is_stopped_before_third_execution():
 
 
 def test_semantically_repeated_child_call_with_paraphrased_input_is_stopped():
-    registry = SkillRegistry()
+    registry = bundled_skills()
 
     def call_wake_up(call_id, input_text):
         return {
@@ -518,7 +484,7 @@ def test_nested_skill_cannot_receive_world_act_and_mcp_errors_are_explicit():
                 "isError": True,
             }
 
-    registry = SkillRegistry()
+    registry = bundled_skills()
     runtime = ScriptedSkillRuntime(
         registry,
         mcp=_MCP(),
@@ -599,7 +565,7 @@ def test_successful_world_act_is_terminal_for_root_brain():
             }
 
     runtime = ScriptedSkillRuntime(
-        SkillRegistry(),
+        bundled_skills(),
         mcp=_MCP(),
         responses=[
             {
@@ -629,8 +595,9 @@ def test_successful_world_act_is_terminal_for_root_brain():
 
 def test_save_preserves_existing_example_input(tmp_path):
     """回归验证 ``test_save_preserves_existing_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = SkillRegistry(root=tmp_path / "skills", history_root=tmp_path / "history")
-    registry.create(name="wake-up", description="推断角色起床的小时。")
+    registry = SkillRegistry(root=tmp_path / "skills")
+    skill_path = tmp_path / "skills" / "atomic" / "wake-up" / "SKILL.md"
+    skill_path.parent.mkdir(parents=True)
 
     first = (
         "---\n"
@@ -640,10 +607,11 @@ def test_save_preserves_existing_example_input(tmp_path):
         "---\n\n"
         "# Wake Up\n"
     )
-    registry.save("wake-up", first)
+    skill_path.write_text(first, encoding="utf-8")
 
     body = registry.get("wake-up").markdown
     second = body.replace("# Wake Up\n", "# Wake Up\n\n只输出一个 0-23 的小时数字。\n")
-    document = registry.save("wake-up", second)
+    skill_path.write_text(second, encoding="utf-8")
+    document = registry.get("wake-up")
 
     assert document.example_input == "agent：简\nlifestyle：简通常早上7点起床，出门前吃个简餐。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Routine Execution"
+  short_description: "运行 Routine Execution 智能体技能"
+  default_prompt: "使用 $routine-execution 来完成任务。"

@@ -1,6 +1,6 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {GAReplayPlayer} = require('../../generative_agents/web/static/replay-player.js');
+const {GAReplayPlayer} = require('../../src/generative_agents/adapters/web/static/replay/replay-player.js');
 const node = {material_slice_id: 'default', state_appearance: {cases: [{value: '已整理', material_slice_id: 'tidy'}, {value: '1', material_slice_id: 'one'}]}};
 test('visual matching is exact and does not coerce or normalize states', () => {
   assert.equal(GAReplayPlayer.stateMaterial(node, {state:'已整理'}), 'tidy');
@@ -15,7 +15,7 @@ test('seeking reconstructs appearance from committed facts and reverses to initi
   assert.deepEqual(calls,['tidy','default','tidy']);
 });
 test('editor places visual inside node bounds, independent of material source footprint', () => {
-  global.window = {}; require('../../generative_agents/web/static/map-editor-v2.js');
+  global.window = {}; require('../../src/generative_agents/adapters/web/static/resources/map-editor-v2.js');
   const editor=Object.create(window.MapEditorV2.prototype); editor.depth=4;
   editor.document={hierarchy_nodes:[{id:'desk',kind:'GAME_OBJECT',bounds:{x:3,y:4,width:2,height:2},material_slice_id:'default'}]};
   editor.nodeMaterialSlice=()=>({id:'default',grid_rect:{width:40,height:40}});

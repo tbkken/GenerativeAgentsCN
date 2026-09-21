@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const {GAReplayPlayer} = require('../../generative_agents/web/static/replay-player.js');
+const {GAReplayPlayer} = require('../../src/generative_agents/adapters/web/static/replay/replay-player.js');
 
 test('agent display size keeps legacy defaults and honors bounded author configuration', () => {
   assert.equal(GAReplayPlayer.agentDisplaySize({spatial: true, worldScale: 32}), 52);
@@ -47,7 +47,7 @@ test('scene exceptions reject startup instead of leaving it pending', async () =
 });
 
 test('overlapping initialization coalesces and a failed initialization can retry', async () => {
-  const source = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+  const source = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
   const wrapper = source.slice(source.indexOf('  async function ensureReplayPlayer('), source.indexOf('  async function ensureReplayPlayerUnlocked('));
   let reject, calls = 0;
   const nodes = {};

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Determine Sector"
+  short_description: "Run the Determine Sector agent skill"
+  default_prompt: "Use $determine-sector to handle the current agent context and return the result directly."

@@ -1,6 +1,6 @@
 """Regressions for current shared kernel and Studio surfaces."""
 
-from generative_agents.runtime.health import runtime_health_issues
+from generative_agents.ga_runtime.supervision.health import runtime_health_issues
 
 class _BrokenGame:
     def __init__(self):

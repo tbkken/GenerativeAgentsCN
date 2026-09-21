@@ -1,0 +1,4 @@
+interface:
+  display_name: "Poignancy Event"
+  short_description: "Run the Poignancy Event agent skill"
+  default_prompt: "Use $poignancy-event to handle the current agent context and return the result directly."

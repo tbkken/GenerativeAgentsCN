@@ -1,0 +1,4 @@
+interface:
+  display_name: "Determine Object"
+  short_description: "Run the Determine Object agent skill"
+  default_prompt: "Use $determine-object to handle the current agent context and return the result directly."

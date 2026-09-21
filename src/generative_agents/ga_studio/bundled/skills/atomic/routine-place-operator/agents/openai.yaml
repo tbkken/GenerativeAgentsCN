@@ -1,0 +1,4 @@
+interface:
+  display_name: "Routine Place Operator"
+  short_description: "运行 Routine Place Operator 智能体技能"
+  default_prompt: "使用 $routine-place-operator 来完成任务。"

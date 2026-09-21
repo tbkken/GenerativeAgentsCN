@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+const source = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 const functionSource = source.slice(source.indexOf('  async function showCheckpointDetail('), source.indexOf('  async function loadCheckpointPreview('));
 
 test('background checkpoint polls do not discard an in-flight detail request', async () => {

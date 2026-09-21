@@ -1,0 +1,4 @@
+interface:
+  display_name: "Traffic Signal State"
+  short_description: "被动返回当前行人交通信号"
+  default_prompt: "使用 $traffic-signal-state 响应 Agent 对行人信号的查询。"

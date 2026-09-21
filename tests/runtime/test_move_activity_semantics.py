@@ -11,17 +11,20 @@ from uuid import uuid4
 import pytest
 
 from generative_agents.ga_replay.reader import ReplayReader
-from generative_agents.modules.agent import Agent
-from generative_agents.modules.game import Game
-from generative_agents.modules.game_object_interaction import GameObjectInteractionSystem
-from generative_agents.modules.maze import Maze
-from generative_agents.modules.memory import Action, Event
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.context import SimulationClock
-from generative_agents.runtime.iteration import IterationContext, ObjectIterationContext
-from generative_agents.runtime.object_skills import ObjectMCPServer
-from generative_agents.runtime.result_collector import StepResultCollector
-from generative_agents.runtime.results import StepResult, StepResultBuilder
+from generative_agents.ga_runtime.engine.actor import ActorState as Agent
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_runtime.engine.objects import GameObjectInteractionSystem
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.memory.action import Action
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.context import SimulationClock
+from generative_agents.ga_runtime.engine.iteration import IterationContext
+from generative_agents.ga_runtime.engine.iteration import ObjectIterationContext
+from generative_agents.ga_runtime.skills.objects import ObjectMCPServer
+from generative_agents.ga_runtime.engine.collector import StepResultCollector
+from generative_agents.ga_protocol.schemas.facts import StepResult
+from generative_agents.ga_runtime.engine.results import StepResultBuilder
 
 
 def _game():
@@ -55,7 +58,7 @@ def _game():
         actor = Agent.__new__(Agent)
         actor.agent_key = actor.name = key
         actor.maze, actor.coord, actor.path = game.maze, None, []
-        actor.scratch = SimpleNamespace(currently="等待")
+        actor.profile = SimpleNamespace(currently="等待")
         actor.percept_config = {"vision_r": vision, "att_bandwidth": 8}
         actor.action = Action(Event(key, "等待", "下一轮", address=game.maze.tile_at(coord).get_address()),
                               clock=game.context.clock)
@@ -124,7 +127,7 @@ def test_move_activity_commits_to_current_state_perception_and_replay(phrase):
     assert payload["arguments"]["requested_description"] == "已经抵达视野外地点并完成任务"
     assert "视野外地点" not in payload["description"]
     assert "完成任务" not in payload["description"]
-    assert phrase in payload["currently"] == game.agents["rider"].scratch.currently
+    assert phrase in payload["currently"] == game.agents["rider"].profile.currently
     assert payload["emoji"] == "➡️"
 
     perception = _call(_server(game, "peer", step=2), "world-perceive", {})

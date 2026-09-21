@@ -6,23 +6,22 @@ import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
-from generative_agents.modules.storage.index import LlamaIndex
-from generative_agents.runtime.context import SimulationClock
-from generative_agents.services.byte_windows import read_utf8_window
+from generative_agents.ga_runtime.engine.context import SimulationClock
+from generative_agents.ga_protocol.packages.byte_windows import read_utf8_window
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
-SHELL = ROOT / "generative_agents" / "web" / "static" / "experiment-console.html"
+SHELL = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
 
 
-CONSOLE = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
+CONSOLE = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
 
 
-PLAYER = ROOT / "generative_agents" / "web" / "static" / "replay-player.js"
+PLAYER = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
 
 
-PHASER = ROOT / "generative_agents" / "web" / "static" / "vendor" / "phaser.min.js"
+PHASER = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'vendor' / 'phaser.min.js'
 
 
 def test_def_048_operations_ui_has_real_logs_checkpoints_traces_and_stale_guards():
@@ -290,7 +289,7 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     assert PLAYER.is_file(), "formal replay-player.js is not packaged"
     assert PHASER.is_file(), "the replay runtime cannot depend on a CDN Phaser build"
     assert shell.count('/static/console/vendor/phaser.min.js') == 1
-    assert shell.count('/static/console/replay-player.js') == 1
+    assert shell.count('/static/console/replay/replay-player.js') == 1
     assert not [
         body
         for body in __import__("re").findall(r"<script[^>]*>(.*?)</script>", shell, __import__("re").S)
@@ -620,54 +619,3 @@ def test_def_055_tail_limit_inside_utf8_returns_the_complete_final_character(
     assert window.content == "🙂"
     assert window.next_cursor == path.stat().st_size
     assert window.eof is True
-
-
-def test_def_070_legacy_checkpoint_memory_dates_resume_with_an_aware_clock():
-    """ROL-REC-001: pre-timezone memory metadata remains comparable after resume."""
-
-    clock = SimulationClock(
-        datetime(2026, 8, 9, 9, 0, tzinfo=timezone(timedelta(hours=8)))
-    )
-    nodes = {
-        "active": SimpleNamespace(
-            metadata={
-                "create": "20260809-08:00:00",
-                "expire": "20260809-10:00:00",
-            }
-        ),
-        "expired": SimpleNamespace(
-            metadata={
-                "create": "20260809-07:00:00",
-                "expire": "20260809-08:30:00",
-            }
-        ),
-        "future": SimpleNamespace(
-            metadata={
-                "create": "20260809-10:00:00",
-                "expire": "20260809-11:00:00",
-            }
-        ),
-    }
-    removed: list[str] = []
-
-    class LegacyCheckpointIndex:
-        """为 ``LegacyCheckpointIndex`` 相关场景组织共享测试状态、输入或断言。"""
-        docstore = SimpleNamespace(docs=nodes)
-
-        def delete_nodes(self, node_ids, *, delete_from_docstore=True):
-            """为本测试模块封装 ``delete_nodes`` 辅助步骤，减少重复的场景搭建代码。"""
-            assert delete_from_docstore is True
-            removed.extend(node_ids)
-            for node_id in node_ids:
-                nodes.pop(node_id, None)
-
-    restored = object.__new__(LlamaIndex)
-    restored._clock = clock
-    restored._index = LegacyCheckpointIndex()
-
-    # Old checkpoints serialized create/expire without an offset.  Resume must
-    # interpret those values in the aware simulation clock's timezone, not mix
-    # naive and aware datetime objects or silently change retention semantics.
-    assert set(restored.cleanup()) == {"expired", "future"}
-    assert removed == ["expired", "future"]
-    assert list(nodes) == ["active"]

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retrieve Thought"
+  short_description: "Run the Retrieve Thought agent skill"
+  default_prompt: "Use $retrieve-thought to handle the current agent context and return the result directly."

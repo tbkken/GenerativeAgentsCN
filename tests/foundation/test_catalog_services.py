@@ -5,8 +5,9 @@ import zlib
 
 import pytest
 
-from generative_agents.services import ServiceError
-from generative_agents.services.catalog import AssetService, SecretService
+from generative_agents.ga_studio.resources.errors import ServiceError
+from generative_agents.ga_studio.resources.assets import AssetService
+from generative_agents.ga_studio.resources.assets import SecretService
 
 
 def _png(width: int, height: int) -> bytes:

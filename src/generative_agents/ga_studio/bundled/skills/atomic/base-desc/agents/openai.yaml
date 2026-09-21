@@ -1,0 +1,4 @@
+interface:
+  display_name: "Base Desc"
+  short_description: "Run the Base Desc agent skill"
+  default_prompt: "Use $base-desc to handle the current agent context and return the result directly."

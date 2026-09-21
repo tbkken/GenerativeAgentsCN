@@ -35,7 +35,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "  $seen[$processId] = $true;" ^
     "  $processInfo = Get-CimInstance Win32_Process -Filter ('ProcessId = ' + $processId);" ^
     "  if ($null -eq $processInfo) { continue };" ^
-    "  if ($processInfo.CommandLine -notmatch 'generative_agents\.web\.main') {" ^
+    "  if ($processInfo.CommandLine -notmatch 'generative_agents\.(?:adapters\.)?web\.main') {" ^
     "    throw ('Port ' + $env:GA_RESTART_PORT + ' is occupied by another program. PID=' + $processId + '; command=' + $processInfo.CommandLine)" ^
     "  };" ^
     "  Write-Host ('[INFO] Stopping old Web service. PID=' + $processId);" ^
@@ -53,9 +53,9 @@ echo [INFO] Starting Web service in the background...
 set "GA_RESTART_WEB_PID="
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$ErrorActionPreference = 'Stop';" ^
-    "$pythonPath = (Get-Command python).Source;" ^
+    "$pythonPath = Join-Path $env:GA_RESTART_PROJECT_ROOT '.venv/Scripts/python.exe'; if (-not (Test-Path -LiteralPath $pythonPath)) { $pythonPath = (Get-Command python).Source };" ^
     "$arguments = @(" ^
-    "  '-m', 'generative_agents.web.main'," ^
+    "  '-m', 'generative_agents.adapters.web.main'," ^
     "  '--database-url', $env:GA_RESTART_DATABASE_URL," ^
     "  '--var-dir', $env:GA_RESTART_VAR_DIR," ^
     "  '--host', '127.0.0.1'," ^

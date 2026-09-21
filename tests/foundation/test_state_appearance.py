@@ -1,10 +1,11 @@
 from copy import deepcopy
 import pytest
 from pydantic import ValidationError
-from generative_agents.config.map_editor import MapEditorDocumentV2, HierarchyNode
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base
-from generative_agents.ga_studio.resources import StudioResourceService
+from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
+from generative_agents.ga_protocol.schemas.world import HierarchyNode
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.resources.catalog import StudioResourceService
 
 
 def document():
@@ -58,8 +59,8 @@ def test_chinese_crowds_receive_independent_stable_keys(tmp_path):
 
 
 def test_visual_names_survive_package_semantic_index_and_maze():
-    from generative_agents.ga_studio.builder import build_semantic_index
-    from generative_agents.modules.maze import Maze
+    from generative_agents.ga_studio.experiments.builder import build_semantic_index
+    from generative_agents.ga_runtime.engine.space import Maze
     import logging, random
     definition = {"world": "world", "size": [1,1], "tile_size": 32, "tile_address_keys": ["world", "sector", "arena", "game_object"], "editor_v2": document(), "tiles": [{"coord": [0,0], "address": ["world", "sector", "arena", "desk"], "collision": False}]}
     world, index = build_semantic_index({"definition": definition})

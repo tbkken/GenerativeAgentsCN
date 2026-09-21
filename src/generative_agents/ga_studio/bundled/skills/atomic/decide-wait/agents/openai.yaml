@@ -1,0 +1,4 @@
+interface:
+  display_name: "Decide Wait"
+  short_description: "Run the Decide Wait agent skill"
+  default_prompt: "Use $decide-wait to handle the current agent context and return the result directly."

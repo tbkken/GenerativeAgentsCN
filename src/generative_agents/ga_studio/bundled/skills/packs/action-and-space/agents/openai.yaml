@@ -1,0 +1,4 @@
+interface:
+  display_name: "Action And Space"
+  short_description: "Run the Action And Space agent skill"
+  default_prompt: "Use $action-and-space to handle the current agent context and return the result directly."

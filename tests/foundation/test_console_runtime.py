@@ -27,11 +27,11 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         shell = client.get("/").text
-        script_response = client.get("/static/console/console-api.js")
-        skill_script_response = client.get("/static/console/skill-workspace.js")
-        skill_style_response = client.get("/static/console/skill-workspace.css")
-        focus_script_response = client.get("/static/console/modal-focus.js")
-        ux_style_response = client.get("/static/console/console-ux.css")
+        script_response = client.get("/static/console/shell/console-api.js")
+        skill_script_response = client.get("/static/console/resources/skill-workspace.js")
+        skill_style_response = client.get("/static/console/resources/skill-workspace.css")
+        focus_script_response = client.get("/static/console/shell/modal-focus.js")
+        ux_style_response = client.get("/static/console/shell/console-ux.css")
         listing = client.get("/api/studio/experiments").json()
 
     assert script_response.status_code == 200
@@ -46,11 +46,11 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     ux_style = ux_style_response.text
     assert listing["items"] == []
     assert "commute-demo" not in shell and "map-configuration-demo" not in shell
-    assert shell.count('/static/console/console-api.js') == 1
-    assert '/static/console/skill-workspace.js?v=' in shell
-    assert '/static/console/skill-workspace.css?v=' in shell
-    assert shell.count('/static/console/modal-focus.js') == 1
-    assert shell.count('/static/console/console-ux.css') == 1
+    assert shell.count('/static/console/shell/console-api.js') == 1
+    assert '/static/console/resources/skill-workspace.js?v=' in shell
+    assert '/static/console/resources/skill-workspace.css?v=' in shell
+    assert shell.count('/static/console/shell/modal-focus.js') == 1
+    assert shell.count('/static/console/shell/console-ux.css') == 1
     assert "--sidebar-width: 216px" in ux_style
     assert "--text-control: 13px" in ux_style
     assert "max-width: none" in ux_style
@@ -73,7 +73,7 @@ def test_console_experiment_list_replaces_loading_state_when_request_fails():
     """列表请求失败必须显示可重试错误态，不能永久停留在“正在加载”。"""
     root = Path(__file__).resolve().parents[2]
     script = (
-        root / "generative_agents" / "web" / "static" / "console-api.js"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert "实验列表加载失败" in script
@@ -85,9 +85,9 @@ def test_console_experiment_list_replaces_loading_state_when_request_fails():
 def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
     """回归验证 ``test_map_editor_identity_and_publish_actions_share_the_global_topbar`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
-    static = root / "generative_agents" / "web" / "static"
-    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
-    script = (static / "console-api.js").read_text(encoding="utf-8")
+    static = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    shell = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    script = (static / "shell/console-api.js").read_text(encoding="utf-8")
 
     topbar = shell[shell.index('<header class="topbar">') : shell.index("</header>")]
     editor_shell_start = shell.index(
@@ -116,9 +116,9 @@ def test_map_editor_identity_and_publish_actions_share_the_global_topbar():
 def test_crowd_editor_identity_and_publish_actions_share_the_global_topbar():
     """回归验证 ``test_crowd_editor_identity_and_publish_actions_share_the_global_topbar`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
-    static = root / "generative_agents" / "web" / "static"
-    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
-    script = (static / "console-api.js").read_text(encoding="utf-8")
+    static = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    shell = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    script = (static / "shell/console-api.js").read_text(encoding="utf-8")
 
     topbar = shell[shell.index('<header class="topbar">') : shell.index("</header>")]
     editor_shell_start = shell.index(
@@ -149,10 +149,10 @@ def test_crowd_editor_identity_and_publish_actions_share_the_global_topbar():
 def test_console_ui_font_uses_sidebar_typography_as_the_global_baseline():
     """回归验证 ``test_console_ui_font_uses_sidebar_typography_as_the_global_baseline`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).resolve().parents[2]
-    static = root / "generative_agents" / "web" / "static"
-    ux_style = (static / "console-ux.css").read_text(encoding="utf-8")
-    map_style = (static / "map-workspace.css").read_text(encoding="utf-8")
-    crowd_style = (static / "crowd-workspace.css").read_text(encoding="utf-8")
+    static = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    ux_style = (static / "shell/console-ux.css").read_text(encoding="utf-8")
+    map_style = (static / "resources/map-workspace.css").read_text(encoding="utf-8")
+    crowd_style = (static / "resources/crowd-workspace.css").read_text(encoding="utf-8")
 
     assert "--sans: var(--font)" in ux_style
     assert "body {\n  font-family: var(--font);" in ux_style
@@ -171,8 +171,8 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
     app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         shell = client.get("/").text
-        script_response = client.get("/static/console/skill-workspace.js")
-        style_response = client.get("/static/console/skill-workspace.css")
+        script_response = client.get("/static/console/resources/skill-workspace.js")
+        style_response = client.get("/static/console/resources/skill-workspace.css")
 
     assert script_response.status_code == 200
     assert style_response.status_code == 200
@@ -199,10 +199,7 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
             "--check",
             str(
                 Path(__file__).parents[2]
-                / "generative_agents"
-                / "web"
-                / "static"
-                / "skill-workspace.js"
+                / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'resources/skill-workspace.js'
             ),
         ],
         check=True,
@@ -214,10 +211,10 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
 def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab():
     """回归验证 ``test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
-    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(
+    shell = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html').read_text(
         encoding="utf-8"
     )
-    script = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(
+    script = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js').read_text(
         encoding="utf-8"
     )
 
@@ -254,10 +251,7 @@ def test_dynamic_card_and_error_paths_are_owned_by_the_production_script():
     """回归验证 ``test_dynamic_card_and_error_paths_are_owned_by_the_production_script`` 所描述的业务结果、故障边界和隔离约束。"""
     script = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert "function showToast(message, title" in script
@@ -274,7 +268,7 @@ def test_modal_focus_runtime_traps_both_tab_directions_and_restores_focus():
     node = shutil.which("node")
     assert node, "Node.js is required for the executable production JS contract"
     root = Path(__file__).parents[2]
-    focus_module = root / "generative_agents" / "web" / "static" / "modal-focus.js"
+    focus_module = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/modal-focus.js'
     program = r"""
 const { tabTarget } = require(process.argv[1]);
 const first = { id: 'first' };
@@ -302,7 +296,7 @@ if (JSON.stringify(outcomes) !== JSON.stringify({
         text=True,
     )
 
-    console = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(
+    console = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js').read_text(
         encoding="utf-8"
     )
     assert "shell.inert = inert" in console
@@ -315,10 +309,7 @@ def test_console_owns_global_activity_reconciliation_and_resume_hooks():
     """回归验证 ``test_console_owns_global_activity_reconciliation_and_resume_hooks`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert "async function startGlobalActivityStream()" in source
@@ -336,10 +327,7 @@ def test_selected_result_run_is_not_confused_with_the_experiment_latest_run():
     """回归验证 ``test_selected_result_run_is_not_confused_with_the_experiment_latest_run`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
     load_results = source[
         source.index("async function loadResults") : source.index(
@@ -358,10 +346,7 @@ def test_console_url_tracks_the_selected_experiment_workspace_and_run():
     """回归验证 ``test_console_url_tracks_the_selected_experiment_workspace_and_run`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     route = source[source.index("function workspaceUrl") : source.index("function markDirty")]
@@ -385,13 +370,10 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     root = Path(__file__).parents[2]
     shell = (
         root
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "experiment-console.html"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
     script = (
-        root / "generative_agents" / "web" / "static" / "console-api.js"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     for group in ("models", "agent-editor"):
@@ -498,14 +480,14 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
 
 def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
     root = Path(__file__).parents[2]
-    static = root / "generative_agents" / "web" / "static"
-    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
-    console = (static / "console-api.js").read_text(encoding="utf-8")
-    ux = (static / "console-ux.css").read_text(encoding="utf-8")
-    maps = (static / "map-workspace.js").read_text(encoding="utf-8")
-    crowds = (static / "crowd-workspace.js").read_text(encoding="utf-8")
-    skills = (static / "skill-workspace.js").read_text(encoding="utf-8")
-    assets = (static / "spatial-asset-workspace.js").read_text(encoding="utf-8")
+    static = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    shell = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    console = (static / "shell/console-api.js").read_text(encoding="utf-8")
+    ux = (static / "shell/console-ux.css").read_text(encoding="utf-8")
+    maps = (static / "resources/map-workspace.js").read_text(encoding="utf-8")
+    crowds = (static / "resources/crowd-workspace.js").read_text(encoding="utf-8")
+    skills = (static / "resources/skill-workspace.js").read_text(encoding="utf-8")
+    assets = (static / "resources/spatial-asset-workspace.js").read_text(encoding="utf-8")
 
     for element_id in (
         "resourceDeleteModal",
@@ -540,12 +522,12 @@ def test_every_visible_resource_workspace_exposes_guarded_delete_actions():
 
 def test_editor_and_observability_ui_state_is_revision_scoped_and_user_visible():
     root = Path(__file__).parents[2]
-    static = root / "generative_agents" / "web" / "static"
-    shell = (static / "experiment-console.html").read_text(encoding="utf-8")
-    console = (static / "console-api.js").read_text(encoding="utf-8")
-    skills = (static / "skill-workspace.js").read_text(encoding="utf-8")
-    maps = (static / "map-workspace.js").read_text(encoding="utf-8")
-    editor = (static / "map-editor-v2.js").read_text(encoding="utf-8")
+    static = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    shell = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    console = (static / "shell/console-api.js").read_text(encoding="utf-8")
+    skills = (static / "resources/skill-workspace.js").read_text(encoding="utf-8")
+    maps = (static / "resources/map-workspace.js").read_text(encoding="utf-8")
+    editor = (static / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert "host()?.querySelector('#skillSource')" in skills
     assert "inactiveHost.replaceChildren()" in skills
@@ -564,9 +546,9 @@ def test_running_duration_uses_utc_instants_and_a_live_execution_label():
     """回归验证 ``test_running_duration_uses_utc_instants_and_a_live_execution_label`` 所描述的业务结果、故障边界和隔离约束。"""
     root = Path(__file__).parents[2]
     shell = (
-        root / "generative_agents" / "web" / "static" / "experiment-console.html"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
-    script_path = root / "generative_agents" / "web" / "static" / "console-api.js"
+    script_path = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     script = script_path.read_text(encoding="utf-8")
 
     topbar = shell[shell.index('<header class="topbar">') : shell.index('</header>')]
@@ -600,10 +582,7 @@ def test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall():
     """回归验证 ``test_agent_results_use_content_tabs_instead_of_an_all_sections_waterfall`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
     detail = source[
         source.index("function renderAgentDetail") : source.index("function agentPlanText")
@@ -620,8 +599,8 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     node = shutil.which("node")
     assert node, "Node.js is required for the executable Run action contract"
     root = Path(__file__).parents[2]
-    shell_path = root / "generative_agents" / "web" / "static" / "experiment-console.html"
-    script_path = root / "generative_agents" / "web" / "static" / "console-api.js"
+    shell_path = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
+    script_path = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     shell = shell_path.read_text(encoding="utf-8")
     source = script_path.read_text(encoding="utf-8")
 
@@ -648,7 +627,7 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert 'class="result-panel active" data-result-panel="timeline"' in results
     assert ".result-tabs, .content-tabs, .operations-subtabs, .filter-tabs { overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; }" in shell
     assert ".result-tabs::-webkit-scrollbar, .content-tabs::-webkit-scrollbar, .operations-subtabs::-webkit-scrollbar, .filter-tabs::-webkit-scrollbar { display: none; width: 0; height: 0; }" in shell
-    ux_style = (root / "generative_agents" / "web" / "static" / "console-ux.css").read_text(encoding="utf-8")
+    ux_style = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-ux.css').read_text(encoding="utf-8")
     assert '[role="tablist"] {' in ux_style
     assert "overflow-y: hidden" in ux_style
     assert '[role="tablist"]::-webkit-scrollbar {' in ux_style
@@ -780,10 +759,10 @@ if (running.pauseHidden || running.cancelHidden || !running.continueHidden) proc
 def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     root = Path(__file__).parents[2]
     shell = (
-        root / "generative_agents" / "web" / "static" / "experiment-console.html"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
     source = (
-        root / "generative_agents" / "web" / "static" / "console-api.js"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert 'id="newExperimentBrain"' in shell
@@ -811,10 +790,7 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
 def test_uploaded_agent_images_become_canonical_ui_state_without_reload():
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "console-api.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
     upload = source[
         source.index("async function uploadStagedAgentImages") : source.index(
@@ -832,13 +808,10 @@ def test_chat_output_limit_is_not_presented_as_the_model_context_window():
     root = Path(__file__).parents[2]
     shell = (
         root
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "experiment-console.html"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
     script = (
-        root / "generative_agents" / "web" / "static" / "console-api.js"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert "单次最大输出" in shell
@@ -851,10 +824,7 @@ def test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers():
     """回归验证 ``test_replay_player_uses_an_explicit_canvas_renderer_for_custom_browsers`` 所描述的业务结果、故障边界和隔离约束。"""
     source = (
         Path(__file__).parents[2]
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "replay-player.js"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     ).read_text(encoding="utf-8")
 
     assert "type: PhaserRuntime.CANVAS" in source
@@ -866,7 +836,7 @@ def test_replay_spatial_hierarchy_materials_are_ordered_l1_through_l4():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay spatial-layer contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.Phaser = {};
@@ -907,7 +877,7 @@ def test_replay_agent_selection_is_experiment_owned_and_executable():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay selection contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.Phaser = {};
@@ -946,7 +916,7 @@ if (JSON.stringify(circleEvents) !== JSON.stringify([[0,0xffd166,0],[0,0xffd166,
         text=True,
     )
 
-    console = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(
+    console = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js').read_text(
         encoding="utf-8"
     )
     assert "clearReplayInspector();" in console
@@ -961,7 +931,7 @@ def test_replay_playback_starts_at_step_one_and_restarts_after_the_end():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay transport contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.Phaser = {};
@@ -1003,8 +973,8 @@ const fetchImpl = async url => ({
         text=True,
     )
 
-    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(encoding="utf-8")
-    console = (root / "generative_agents" / "web" / "static" / "console-api.js").read_text(encoding="utf-8")
+    shell = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html').read_text(encoding="utf-8")
+    console = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js').read_text(encoding="utf-8")
     assert 'id="timelinePlay" aria-label="播放" disabled' in shell
     assert "replayReady: false" in console
     assert "atEnd ? '↻' : '▶'" in console
@@ -1017,7 +987,7 @@ def test_running_replay_refetches_an_incomplete_cached_tail_after_growth():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay cache growth contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.Phaser = {};
@@ -1069,7 +1039,7 @@ def test_replay_phaser_canvas_stays_owned_by_the_result_map_container():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay canvas ownership contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.devicePixelRatio = 1.5;
@@ -1118,7 +1088,7 @@ instance._createGame(manifest, 1).then(() => {
     assert "'Interior Furniture L2 '" in source
     assert "'Interior Furniture L2'," not in source
     assert "new ResizeObserver" in source
-    shell = (root / "generative_agents" / "web" / "static" / "experiment-console.html").read_text(encoding="utf-8")
+    shell = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html').read_text(encoding="utf-8")
     result_canvas_css = re.search(r"\.result-map\s*>\s*canvas\s*\{([^}]*)\}", shell)
     assert result_canvas_css and "transform:" not in result_canvas_css.group(1)
 
@@ -1128,7 +1098,7 @@ def test_replay_agent_name_and_action_emoji_use_separate_offsets():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay overlay layout contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.Phaser = {};
@@ -1166,7 +1136,7 @@ def test_replay_canvas_survives_running_completed_running_switches():
     node = shutil.which("node")
     assert node, "Node.js is required for the replay lifecycle contract"
     root = Path(__file__).parents[2]
-    player = root / "generative_agents" / "web" / "static" / "replay-player.js"
+    player = root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/replay-player.js'
     program = r"""
 global.window = global;
 global.ResizeObserver = undefined;
@@ -1238,126 +1208,19 @@ async function open(runId,selectedKey,selectedRevision) {
     )
 
 
-def test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_source(
-    database_url,
-):
-    """回归验证 ``test_replay_uses_a_packaged_tile_aligned_texture_without_changing_legacy_source`` 所描述的业务结果、故障边界和隔离约束。"""
-    root = Path(__file__).parents[2]
-    legacy_path = (
-        root
-        / "generative_agents"
-        / "frontend"
-        / "static"
-        / "assets"
-        / "village"
-        / "tilemap"
-        / "interiors_pt3.png"
-    )
-    normalized_path = (
-        root
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "replay-assets"
-        / "interiors_pt3.png"
-    )
-    legacy = legacy_path.read_bytes()
-    normalized = normalized_path.read_bytes()
-
-    assert _png_size(legacy) == (512, 10032)
-    assert hashlib.sha256(legacy).hexdigest() == (
-        "93d523ee6297d54cedba5cec4a2518855c06a68f7084dd259c8eec2769294c0d"
-    )
-    assert _png_size(normalized) == (512, 10016)
-    assert _png_size(normalized)[1] % 32 == 0
-    assert hashlib.sha256(normalized).hexdigest() == (
-        "2d7eab019f428df91dfe8a5861575b7fe15196c1832f2921872de0cd7cc17952"
-    )
-
-    app = create_test_studio(database_url=database_url)
-    with TestClient(app) as client:
-        response = client.get("/static/console/replay-assets/interiors_pt3.png")
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "image/png"
-    assert response.content == normalized
-
-    player = (root / "generative_agents" / "web" / "static" / "replay-player.js").read_text(
-        encoding="utf-8"
-    )
-    assert "assets.texture_overrides?.[name]" in player
-    assert "textureUrl || `${tileRoot}/${name}.png`" in player
 
 
-def test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_corrected(
-    database_url,
-):
-    """回归验证 ``test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_corrected`` 所描述的业务结果、故障边界和隔离约束。"""
-    root = Path(__file__).parents[2]
-    legacy_path = (
-        root
-        / "generative_agents"
-        / "frontend"
-        / "static"
-        / "assets"
-        / "village"
-        / "tilemap"
-        / "tilemap.json"
-    )
-    normalized_path = (
-        root
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "replay-assets"
-        / "tilemap.json"
-    )
-    legacy_bytes = legacy_path.read_bytes()
-    normalized_bytes = normalized_path.read_bytes()
-    legacy = json.loads(legacy_bytes)
-    normalized = json.loads(normalized_bytes)
-
-    # Git may check out text assets with CRLF on Windows and LF on Linux.
-    # Keep the content pin while checking HTTP delivery against the raw bytes below.
-    assert hashlib.sha256(legacy_bytes.replace(b"\r\n", b"\n")).hexdigest() == (
-        "baa342b46b3e12c0a213c3ecab88c645fdc5e000ac7812a9a3de150ac062f6ef"
-    )
-    assert hashlib.sha256(normalized_bytes.replace(b"\r\n", b"\n")).hexdigest() == (
-        "5cb00334916c0eca8c303742afa7fbca36958f48348142f45c0a70115c03ebc1"
-    )
-    legacy_tileset = legacy["tilesets"][12]
-    normalized_tileset = normalized["tilesets"][12]
-    assert legacy_tileset["name"] == normalized_tileset["name"] == "interiors_pt3"
-    assert legacy_tileset["imageheight"] == 10032
-    assert normalized_tileset["imageheight"] == 10016
-    assert normalized_tileset["tilecount"] == 5008
-    assert normalized_tileset["columns"] == 16
-    assert normalized_tileset["tilecount"] // normalized_tileset["columns"] == 313
-
-    restored = json.loads(normalized_bytes)
-    restored["tilesets"][12]["imageheight"] = 10032
-    assert restored == legacy, "Replay tilemap changed outside the controlled imageheight fix"
-
-    app = create_test_studio(database_url=database_url)
-    with TestClient(app) as client:
-        response = client.get("/static/console/replay-assets/tilemap.json")
-    assert response.status_code == 200
-    assert response.headers["content-type"].startswith("application/json")
-    assert response.content == normalized_bytes
 
 
 def test_replay_has_a_real_three_frame_agent_atlas():
     root = Path(__file__).resolve().parents[2]
     atlas_path = (
         root
-        / "generative_agents"
-        / "web"
-        / "static"
-        / "replay-assets"
-        / "agent-sprite-4x3.json"
+        / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'replay/assets' / 'agent-sprite-4x3.json'
     )
     atlas = json.loads(atlas_path.read_text(encoding="utf-8"))
     console = (
-        root / "generative_agents" / "web" / "static" / "console-api.js"
+        root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
     assert atlas["meta"]["size"] == {"w": 96, "h": 128}

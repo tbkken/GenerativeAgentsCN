@@ -1,13 +1,15 @@
 import pytest
 
-from generative_agents.ga_protocol import PackageError, atomic_write_json, read_json
-from generative_agents.ga_replay import ReplayReader
-from generative_agents.ga_runtime.service import RunService
+from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_replay.reader import ReplayReader
+from generative_agents.ga_runtime.lifecycle.service import RunService
 from tests.test_portable_package_protocol import _experiment
 
 
 def test_validation_reused_but_live_status_and_modified_package_are_not(tmp_path, monkeypatch):
-    from generative_agents.ga_replay import reader
+    import generative_agents.ga_replay.cache as reader
 
     root = RunService().create(_experiment(tmp_path / 'packages'), tmp_path / 'run')
     validate = reader.validate_run_integrity
@@ -37,7 +39,7 @@ def test_validation_reused_but_live_status_and_modified_package_are_not(tmp_path
 
 def test_render_manifest_omits_tile_semantics_and_boundary_poll_omits_world(tmp_path):
     from fastapi.testclient import TestClient
-    from generative_agents.ga_studio.web import create_studio_app
+    from generative_agents.adapters.web.app import create_studio_app
 
     var = tmp_path / 'var'
     root = RunService().create(_experiment(var / 'packages'), var / 'packages/runs/run')

@@ -4,13 +4,14 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_studio.resource_api import create_resource_router
-from generative_agents.ga_studio.resources import StudioResourceService
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base
-from generative_agents.skills.database import DatabaseSkillRegistry
-from generative_agents.skills.registry import SnapshotSkillRegistry
-from generative_agents.skills.runtime import SkillModelError, SkillRuntime
+from generative_agents.adapters.web.routes.resources import create_resource_router
+from generative_agents.ga_studio.resources.catalog import StudioResourceService
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_protocol.skills.documents import SkillRegistry
+from generative_agents.ga_runtime.skills.executor import SkillModelError
+from generative_agents.ga_runtime.skills.executor import SkillRuntime
 
 
 @pytest.fixture
@@ -43,7 +44,7 @@ def test_studio_trial_returns_output_and_trace_from_physical_copy(trial, monkeyp
     configure(resources)
     paths = []
     def complete(runtime, messages, tools=None):
-        assert isinstance(runtime.registry, SnapshotSkillRegistry)
+        assert isinstance(runtime.registry, SkillRegistry)
         path = runtime.registry.get(skill.name).path
         assert path.is_file()
         paths.append(path)

@@ -10,24 +10,20 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
-from generative_agents.config.map_editor import (
-    GridRect,
-    MapEditorDocumentV2,
-    MaterialSlice,
-    PixelRect,
-    TileOverridePart,
-)
-from generative_agents.config.schema import WorldConfig
-from generative_agents.services.map_importer import fresh_ville_editor_document
-from generative_agents.services.maps import (
-    _compile_editor_v2_runtime_addresses,
-    _validate_map_editor_v2,
-)
+from generative_agents.ga_protocol.schemas.world import GridRect
+from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
+from generative_agents.ga_protocol.schemas.world import MaterialSlice
+from generative_agents.ga_protocol.schemas.world import PixelRect
+from generative_agents.ga_protocol.schemas.world import TileOverridePart
+from generative_agents.ga_protocol.schemas.experiment import WorldConfig
+from generative_agents.ga_studio.resources.map_importer import fresh_ville_editor_document
+from generative_agents.ga_studio.resources.maps import _compile_editor_v2_runtime_addresses
+from generative_agents.ga_studio.resources.maps import _validate_map_editor_v2
 from tests.studio_support import create_test_studio
 
 
 ROOT = Path(__file__).resolve().parents[2]
-STATIC = ROOT / "generative_agents" / "web" / "static"
+STATIC = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
 
 
 def test_publish_compiler_turns_editor_tree_into_runtime_tile_addresses():
@@ -169,7 +165,7 @@ def test_map_validation_warns_when_every_game_object_is_static():
 
 
 def test_game_object_binding_derives_mode_without_a_separate_switch():
-    from generative_agents.config.map_editor import HierarchyNode
+    from generative_agents.ga_protocol.schemas.world import HierarchyNode
     node = HierarchyNode.model_validate({
         "id": "object", "kind": "GAME_OBJECT", "parent_id": "arena", "name": "Door",
         "bounds": {"x": 0, "y": 0, "width": 1, "height": 1},
@@ -223,10 +219,10 @@ def test_map_editor_document_and_real_tiles_are_served(database_url):
     with TestClient(app) as client:
         document = client.get("/api/studio/resources/map-editor/ville-document")
         source = client.get(
-            "/generative_agents/frontend/static/assets/village/"
+            "/assets/library/village/"
             "tilemap/CuteRPG_Field_B.png"
         )
-        editor = client.get("/static/console/map-editor-v2.js")
+        editor = client.get("/static/console/resources/map-editor-v2.js")
 
     assert document.status_code == 200
     assert document.json()["schema_version"] == "ga-map-editor/v2"
@@ -241,7 +237,7 @@ def test_map_editor_document_and_real_tiles_are_served(database_url):
 
 def test_formal_map_editor_contains_only_world_and_material_tabs():
     """回归验证 ``test_formal_map_editor_contains_only_world_and_material_tabs`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert 'data-me2-tab="map"' not in source
     assert 'data-me2-tab="world"' in source
@@ -271,7 +267,7 @@ def test_formal_map_editor_contains_only_world_and_material_tabs():
 
 def test_formal_map_editor_fills_the_remaining_viewport_height():
     """回归验证 ``test_formal_map_editor_fills_the_remaining_viewport_height`` 所描述的业务结果、故障边界和隔离约束。"""
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "body.map-editor-mode .content" in styles
     assert "height: calc(100dvh - var(--topbar-height));" in styles
@@ -284,7 +280,7 @@ def test_formal_map_editor_fills_the_remaining_viewport_height():
 
 def test_material_canvas_and_world_expose_only_relevant_tools():
     """回归验证 ``test_material_canvas_and_world_expose_only_relevant_tools`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert 'data-me2-tool="select"' not in source
     for tool in ("brush", "fill", "eraser", "pan"):
@@ -309,8 +305,8 @@ def test_material_canvas_and_world_expose_only_relevant_tools():
 
 def test_world_canvas_moves_only_the_selected_non_root_node_and_pans_elsewhere():
     """回归验证 ``test_world_canvas_moves_only_the_selected_non_root_node_and_pans_elsewhere`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "type: 'move-node'" in source
     assert "worldInteraction: true" in source
@@ -318,7 +314,7 @@ def test_world_canvas_moves_only_the_selected_non_root_node_and_pans_elsewhere()
     assert "selected?.kind !== 'WORLD'" in source
     assert ".me2-canvas-host.is-node-move { cursor: move; }" in styles
 
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -379,8 +375,8 @@ assert.equal(editor.drag.type, 'pan', 'the World root is fixed and its surface p
 
 def test_world_canvas_resizes_selected_node_from_bottom_right_handle():
     """非根地址节点应能用右下角手柄调整空间范围并同步表单。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "type: 'resize-node'" in source
     assert "dragWorldNodeResize(point)" in source
@@ -388,7 +384,7 @@ def test_world_canvas_resizes_selected_node_from_bottom_right_handle():
     assert "selected.kind !== 'WORLD'" in source
     assert ".me2-canvas-host.is-resize { cursor: nwse-resize; }" in styles
 
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -436,7 +432,7 @@ assert.equal(editor.drag, null);
 
 def test_world_node_draft_survives_same_node_canvas_reselection_before_save():
     """编辑 World 后点击其画布造成重绘时，第一次保存必须使用用户刚输入的值。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -514,7 +510,7 @@ assert.equal(editor.nodeEditDraft, null);
 
 def test_node_material_selection_preserves_bounds_and_default_name():
     """地址节点选择素材后只替换默认名称，不能改写空间语义范围。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -600,8 +596,8 @@ assert.deepEqual(manuallyNamed.bounds, {{x:1,y:1,width:1,height:1}}, 'manual spa
 
 def test_world_and_material_inspectors_expose_safe_delete_actions():
     """回归验证 ``test_world_and_material_inspectors_expose_safe_delete_actions`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "data-delete-node" in source
     assert "data-delete-slice" in source
@@ -613,7 +609,7 @@ def test_world_and_material_inspectors_expose_safe_delete_actions():
 
 def test_deleting_world_nodes_cascades_and_material_deletion_cleans_references():
     """回归验证 ``test_deleting_world_nodes_cascades_and_material_deletion_cleans_references`` 所描述的业务结果、故障边界和隔离约束。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{confirmResourceDeletion: async () => true}};
@@ -708,8 +704,8 @@ assert.equal(sourceEditor.changed, true);
 
 def test_brushes_use_only_original_source_slices_and_group_them_by_source():
     """回归验证 ``test_brushes_use_only_original_source_slices_and_group_them_by_source`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert 'data-slice-purpose' not in source
     assert "slice.purpose === 'MAP'" not in source
@@ -726,7 +722,7 @@ def test_brushes_use_only_original_source_slices_and_group_them_by_source():
     assert ".me2-brush-source-row" in styles
     assert ".me2-brush-slices" in styles
 
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -755,7 +751,7 @@ assert.deepEqual(editor.paintableMaterialSlices().map(slice => slice.id).sort(),
 
 def test_world_nodes_select_world_slices_and_render_parent_before_child_layers():
     """回归验证 ``test_world_nodes_select_world_slices_and_render_parent_before_child_layers`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert "data-node-material" in source
     assert "worldMaterialSlices(node = null)" in source
@@ -764,7 +760,7 @@ def test_world_nodes_select_world_slices_and_render_parent_before_child_layers()
     assert "WORLD: 1, SECTOR: 2, ARENA: 3, GAME_OBJECT: 4" in source
     assert "世界素材按 World → Sector → Arena → Game Object" not in source
 
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -810,8 +806,8 @@ assert.deepEqual(calls.map(call => call[0]), ['slice-world', 'slice-sector']);
 
 def test_material_slice_range_uses_source_tile_units_and_internal_pixel_crop():
     """切片表单和地图占地使用格数；像素矩形只由素材网格确定性派生。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "data-material-pan" in source
     assert "<span>Tile 格</span>" in source
@@ -821,7 +817,7 @@ def test_material_slice_range_uses_source_tile_units_and_internal_pixel_crop():
     assert "materialResizeHit(point)" in source
     assert ".me2-canvas-host.is-resize { cursor: nwse-resize; }" in styles
 
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -892,7 +888,7 @@ def test_material_slice_rotation_is_quarter_turn_only_and_rendered_by_the_editor
     with pytest.raises(ValidationError):
         MaterialSlice(**base, rotation_degrees=45)
 
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
     assert "data-slice-rotation" in source
     assert "[data-slice-rotation]')?.addEventListener('change'" in source
     assert "this.sliceRotationPreview =" in source
@@ -903,7 +899,7 @@ def test_material_slice_rotation_is_quarter_turn_only_and_rendered_by_the_editor
 
 def test_slice_rotation_preview_swaps_display_size_without_committing_the_slice():
     """回归验证 ``test_slice_rotation_preview_swaps_display_size_without_committing_the_slice`` 所描述的业务结果、故障边界和隔离约束。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -937,7 +933,7 @@ assert.deepEqual(editor.sliceDisplaySize(slice), {{width: 32, height: 64}});
 
 def test_slice_name_draft_survives_finishing_crop_before_save():
     """完成框选触发检查器重绘时，尚未保存的切片名称仍应留在输入框。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1008,8 +1004,8 @@ assert.deepEqual(slice.pixel_rect, {{x:32,y:32,width:64,height:32}});
 
 def test_rectangular_slice_thumbnail_clips_to_the_exact_slice_bounds():
     """矩形切片应按宽高比完整显示，缩略图不能暴露裁剪框之外的白色区域。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1052,7 +1048,7 @@ assert.match(editor.sliceThumb(slice), /transform:rotate\\(90deg\\)/);
 
 def test_large_material_slices_are_stamped_across_their_tile_footprint():
     """多格素材的地图占地由 grid_rect 决定，旋转时交换格数。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert "sliceFootprint(slice)" in source
     assert "const gridRect = this.sliceGridRect(slice)" in source
@@ -1226,7 +1222,7 @@ def test_map_editor_persists_initial_state_only_on_game_objects():
 
 
 def test_new_canvas_uses_confirmed_configuration_and_can_be_undone():
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1268,7 +1264,7 @@ assert.equal(editor.document.material_canvases[0].name, '红绿灯画布');
 
 def test_large_slice_paints_erases_and_restores_as_one_map_stamp():
     """回归验证 ``test_large_slice_paints_erases_and_restores_as_one_map_stamp`` 所描述的业务结果、故障边界和隔离约束。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1320,7 +1316,7 @@ assert.deepEqual(editor.sliceFootprint(largeSlice), {{columns: 1, rows: 2}});
 
 def test_transparent_map_slice_is_composited_without_replacing_the_painted_base():
     """回归验证 ``test_transparent_map_slice_is_composited_without_replacing_the_painted_base`` 所描述的业务结果、故障边界和隔离约束。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1379,7 +1375,7 @@ assert.deepEqual(editor.readPaintCellLayers(9).map(layer => layer.slice_id), ['s
 
 def test_map_editor_change_revisions_protect_edits_made_during_a_save():
     """回归验证 ``test_map_editor_change_revisions_protect_edits_made_during_a_save`` 所描述的业务结果、故障边界和隔离约束。"""
-    editor_path = json.dumps((STATIC / "map-editor-v2.js").as_posix())
+    editor_path = json.dumps((STATIC / "resources/map-editor-v2.js").as_posix())
     script = f"""
 const assert = require('node:assert/strict');
 global.window = {{}};
@@ -1423,8 +1419,8 @@ require({editor_path});
 
 def test_custom_blank_map_does_not_inherit_ville_materials_or_nodes():
     """回归验证 ``test_custom_blank_map_does_not_inherit_ville_materials_or_nodes`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
-    styles = (STATIC / "map-workspace.css").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    styles = (STATIC / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert "if (!this.world || this.world.world_key === 'the-ville')" in source
     assert "material_sources: []," in source

@@ -3,9 +3,10 @@ import hashlib
 import json
 from uuid import uuid4
 from fastapi.testclient import TestClient
-from generative_agents.ga_protocol import read_json, atomic_write_json
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -54,7 +55,7 @@ def test_trace_usage_tools_and_chinese_log_are_read_from_run_files(tmp_path):
 
 def test_failure_keeps_latest_committed_status(tmp_path, monkeypatch):
     import pytest
-    from generative_agents.ga_runtime.executor import execute_run_directory
+    from generative_agents.ga_runtime.lifecycle.executor import execute_run_directory
     experiment = _experiment(tmp_path/'packages')
     root = RunService().create(experiment, tmp_path/'run', requested_steps=2)
     def fail_after_commit(**kwargs):
@@ -62,7 +63,7 @@ def test_failure_keeps_latest_committed_status(tmp_path, monkeypatch):
         latest['committed_step'] = 1
         atomic_write_json(kwargs['status_path'], latest)
         raise PermissionError('projection occupied')
-    monkeypatch.setattr('generative_agents.ga_runtime.executor._execute_attempt', fail_after_commit)
+    monkeypatch.setattr('generative_agents.ga_runtime.lifecycle.executor._execute_attempt', fail_after_commit)
     with pytest.raises(PermissionError):
         execute_run_directory(root)
     latest=read_json(root/'status.json')

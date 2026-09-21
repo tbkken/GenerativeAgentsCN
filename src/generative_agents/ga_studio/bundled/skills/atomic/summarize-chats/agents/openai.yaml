@@ -1,0 +1,4 @@
+interface:
+  display_name: "Summarize Chats"
+  short_description: "Run the Summarize Chats agent skill"
+  default_prompt: "Use $summarize-chats to handle the current agent context and return the result directly."

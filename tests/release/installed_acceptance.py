@@ -18,8 +18,8 @@ import threading
 from fastapi.testclient import TestClient
 
 import generative_agents
-from generative_agents.ga_protocol import read_json
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.adapters.web.app import create_studio_app
 
 
 def main(installed: Path, root: Path) -> None:
@@ -29,6 +29,28 @@ def main(installed: Path, root: Path) -> None:
     assert len(executables) == 1, executables
     executable = executables[0]
     commands = []
+
+    # Protocol and Replay must import without Studio, Web or model dependencies.
+    # Use a fresh process so an earlier Studio import cannot conceal a violation.
+    import_probe = '''
+import importlib.abc
+import sys
+class BlockOptionalDependencies(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname.split('.')[0] in {'sqlalchemy', 'sqlite3', 'alembic', 'fastapi',
+                                     'uvicorn', 'requests', 'httpx', 'cryptography'}:
+            raise ImportError('optional dependency imported: ' + fullname)
+sys.meta_path.insert(0, BlockOptionalDependencies())
+from generative_agents.ga_protocol import ExperimentManifest
+from generative_agents.ga_replay.api import ReplayReader
+from generative_agents.adapters.cli.main import build_parser
+build_parser().parse_args(['studio', 'serve', '--help'])
+'''
+    probe = subprocess.run([sys.executable, '-c', import_probe], cwd=root,
+                           capture_output=True, text=True, encoding='utf-8', timeout=30)
+    assert probe.returncode == 0, (probe.stdout, probe.stderr)
+    assert '--host' in probe.stdout
+    commands.append('studio serve --help')
 
     def cli(*args):
         completed = subprocess.run([str(executable), *map(str, args)], cwd=root,
@@ -197,6 +219,7 @@ def main(installed: Path, root: Path) -> None:
         assert not failures, failures
         print(json.dumps({"installed_acceptance": "passed", "commands": sorted(set(commands)),
                           "author_edit": True, "physical_import_and_seal": True,
+                          "protocol_replay_optional_dependency_isolation": True,
                           "pause_resume_committed_steps": [1, 3], "object_reply_deliveries": [0, 1, 0],
                           "replay_steps": [1, 2, 3], "model": "deterministic local HTTP stub"}), flush=True)
     finally:

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Routine Safe Navigation"
+  short_description: "运行 Routine Safe Navigation 智能体技能"
+  default_prompt: "使用 $routine-safe-navigation 来完成任务。"

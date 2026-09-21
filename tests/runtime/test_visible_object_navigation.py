@@ -10,9 +10,9 @@ from uuid import uuid4
 
 import pytest
 
-from generative_agents.modules.maze import Maze
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.iteration import IterationContext
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.iteration import IterationContext
 
 
 HOME = ["测试住宅", "生活区"]

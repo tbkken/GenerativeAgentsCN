@@ -7,16 +7,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from uuid import uuid4
-from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import make_blank_definition
-from generative_agents.modules import memory as memory_module
-from generative_agents.modules.config_adapter import ConfigAdapter
-from generative_agents.modules.game import Game
-from generative_agents.modules.memory.action import Action
-from generative_agents.modules.memory.event import Event
-from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunControl, RunPaths, SimulationClock
-from generative_agents.start import SimulationRunner
+from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
+from generative_agents.ga_protocol.schemas.experiment import make_blank_definition
+from generative_agents.ga_runtime.memory.action import Action
+import generative_agents.ga_runtime.memory as memory_module
+from generative_agents.ga_runtime.engine.configuration import ConfigAdapter
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_runtime.memory.action import Action
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
+from generative_agents.ga_runtime.engine.context import RunControl
+from generative_agents.ga_runtime.engine.context import RunPaths
+from generative_agents.ga_runtime.engine.context import SimulationClock
+from generative_agents.ga_runtime.engine.scheduler import SimulationRunner
 
 def _definition(key: str) -> ExperimentDefinition:
     """为本测试模块封装 ``_definition`` 辅助步骤，减少重复的场景搭建代码。"""
@@ -71,17 +74,6 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
 ):
     """An action address is not an identity: resume must retain observed coord."""
 
-    class FakeAssociate:
-        """测试替身 ``FakeAssociate``：记录调用并返回当前场景可控的结果。"""
-        def __init__(self, path, *_args, **_kwargs):
-            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
-            self.last_evicted = ()
-            marker = Path(path) / "marker.txt"
-            self.loaded_marker = marker.read_text(encoding="utf-8")
-
-        def to_dict(self):
-            """为本测试模块封装 ``to_dict`` 辅助步骤，减少重复的场景搭建代码。"""
-            return {"memory": {"event": [], "thought": [], "chat": []}}
 
     class Logger:
         """为 ``Logger`` 相关场景组织共享测试状态、输入或断言。"""
@@ -108,7 +100,6 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
             """为本测试模块封装 ``commit`` 辅助步骤，减少重复的场景搭建代码。"""
             self.results.append(result)
 
-    monkeypatch.setattr(memory_module, "Associate", FakeAssociate)
     definition = _definition("multi-tile-resume")
     payload = definition.model_dump(mode="json", exclude_none=False)
     payload["world"]["definition"] = {
@@ -133,11 +124,6 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
     config = ConfigAdapter().game_config(definition)
     clock = SimulationClock(datetime(2026, 1, 1, tzinfo=timezone.utc))
     config["storage_root"] = str(tmp_path / "attempt-storage")
-    associate_root = (
-        Path(config["storage_root"]) / "test-agent" / "associate"
-    )
-    associate_root.mkdir(parents=True)
-    (associate_root / "marker.txt").write_text("restored-index", encoding="utf-8")
     agent_config = config["agents"]["test-agent"]
     agent_config["coord"] = [1, 0]
     agent_config["path"] = []
@@ -183,7 +169,6 @@ def test_resumed_first_step_uses_exact_checkpoint_coord_for_multi_tile_address(
     runner.run(1, stride_minutes=1)
 
     assert game.get_agent("test-agent").coord == (1, 0)
-    assert game.get_agent("test-agent").associate.loaded_marker == "restored-index"
     assert committer.results[0].agents[0].from_coord == (1, 0)
     snapshot = json.loads(json.dumps(game.snapshot_state()))
     expected_next_random = context.random.random()

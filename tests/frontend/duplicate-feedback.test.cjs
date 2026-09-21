@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+const source = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 const cut = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
 const code = cut('  function isGlobalPage(', '  function workspaceUrl(') + cut('  function goToPage(', '  function renderDirtyState(')
   + cut('  async function openExperiment(', '  function applyExperimentRuntime(')

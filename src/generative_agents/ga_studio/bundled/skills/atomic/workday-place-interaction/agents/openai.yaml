@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workday Place Interaction"
+  short_description: "运行 Workday Place Interaction 智能体技能"
+  default_prompt: "使用 $workday-place-interaction 来完成任务。"

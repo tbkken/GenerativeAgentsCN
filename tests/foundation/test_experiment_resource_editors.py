@@ -1,3 +1,4 @@
+from pathlib import Path
 import copy
 import io
 
@@ -6,11 +7,13 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from PIL import Image
 
-from generative_agents.ga_protocol import read_json, seal_directory, validate_experiment_directory
-from generative_agents.ga_studio.catalog import StudioPackageCatalogService
-from generative_agents.ga_studio.experiment_resources import create_experiment_resource_router
-from generative_agents.ga_studio.workspace import ExperimentWorkspaceService
-from generative_agents.web.portable_api import _experiment_definition
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
+from generative_agents.adapters.web.routes.experiment_resources import create_experiment_resource_router
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -120,10 +123,14 @@ def test_skill_pack_kind_and_trial_use_only_copied_models(editing, monkeypatch):
     assert created.status_code == 200, created.text
     assert client.get(f"{prefix}/skills?kind=pack").json()["items"][0]["name"] == "local-pack"
     calls = []
-    def copied_trial(snapshots, name, input_text, context, **model):
-        calls.append((snapshots, name, model))
-        return {"output": "copied model", "model": model["model"]}
-    monkeypatch.setattr("generative_agents.ga_studio.experiment_resources.run_copied_skill_trial", copied_trial)
+    def copied_trial(directory, *, credentials=None):
+        document = read_json(Path(directory) / "trial.json")
+        from generative_agents.ga_protocol.skills.documents import SkillRegistry
+        copied = SkillRegistry(Path(directory) / "skills")
+        calls.append(({item.name for item in copied.list()}, document["skill_key"], document))
+        assert "api_key" not in document["config"]
+        return {"output": "copied model", "model": document["model"]}
+    monkeypatch.setattr("generative_agents.adapters.web.routes.experiment_resources.execute_skill_trial", copied_trial)
     result = client.post(f"{prefix}/skills/test-brain/run", json={"input_text": "test", "context": {}, "model_preset_id": "deleted-public-model"})
     assert result.status_code == 200, result.text
     assert result.json()["model"] == "local-test"

@@ -4,7 +4,7 @@ const { join } = require('node:path');
 const { test } = require('node:test');
 const vm = require('node:vm');
 
-const source = readFileSync(join(__dirname, '../../generative_agents/web/static/console-api.js'), 'utf8');
+const source = readFileSync(join(__dirname, '../../src/generative_agents/adapters/web/static/shell/console-api.js'), 'utf8');
 const editorSource = source.slice(source.indexOf('  function setAgentEditorReadOnly('), source.indexOf('  window.SharedAgentEditor ='));
 
 function agent(key, displaySize) {

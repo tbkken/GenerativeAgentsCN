@@ -11,7 +11,7 @@ from tests.studio_support import create_test_studio
 
 
 ROOT = Path(__file__).resolve().parents[2]
-STATIC = ROOT / "generative_agents" / "web" / "static"
+STATIC = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
 
 
 class _IdParser(HTMLParser):
@@ -30,7 +30,7 @@ class _IdParser(HTMLParser):
 
 def test_public_map_workspace_is_a_first_class_console_surface():
     """回归验证 ``test_public_map_workspace_is_a_first_class_console_surface`` 所描述的业务结果、故障边界和隔离约束。"""
-    shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
+    shell = (STATIC / "shell/experiment-console.html").read_text(encoding="utf-8")
     parser = _IdParser()
     parser.feed(shell)
 
@@ -46,14 +46,14 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert 'data-map-filter="draft"' not in shell
     assert 'id="mapPagination"' not in shell
     assert 'id="createMapBtn" hidden' in shell
-    assert shell.count("map-workspace.js") == 1
-    assert shell.count("map-workspace.css") == 1
+    assert shell.count("resources/map-workspace.js") == 1
+    assert shell.count("resources/map-workspace.css") == 1
 
 
 def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
     """地图编辑只属于资源中心；实验页只保留稳定地图选择。"""
-    source = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
-    editor = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    source = (STATIC / "resources/map-workspace.js").read_text(encoding="utf-8")
+    editor = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert "class GridEditor" not in source
     assert "pointermove" in editor
@@ -69,7 +69,7 @@ def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
     assert "status_counts" in source
     assert "window.prompt" not in source
     subprocess.run(
-        ["node", "--check", str(STATIC / "map-workspace.js")],
+        ["node", "--check", str(STATIC / "resources/map-workspace.js")],
         cwd=ROOT,
         check=True,
         capture_output=True,
@@ -79,9 +79,9 @@ def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
 
 def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
     """回归验证 ``test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy`` 所描述的业务结果、故障边界和隔离约束。"""
-    shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
-    workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
-    editor = (STATIC / "map-editor-v2.js").read_text(encoding="utf-8")
+    shell = (STATIC / "shell/experiment-console.html").read_text(encoding="utf-8")
+    workspace = (STATIC / "resources/map-workspace.js").read_text(encoding="utf-8")
+    editor = (STATIC / "resources/map-editor-v2.js").read_text(encoding="utf-8")
 
     assert 'id="mapAutosaveStatus"' in shell
     assert 'aria-live="polite"' in shell
@@ -101,8 +101,8 @@ def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
 
 def test_new_map_form_normalizes_optional_key_and_validates_dimensions():
     """无效的可选稳定键不应把新建地图流程变成 422 异常。"""
-    shell = (STATIC / "experiment-console.html").read_text(encoding="utf-8")
-    workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
+    shell = (STATIC / "shell/experiment-console.html").read_text(encoding="utf-8")
+    workspace = (STATIC / "resources/map-workspace.js").read_text(encoding="utf-8")
 
     assert "稳定键（可选）" in shell
     assert "留空或无法规范化时自动生成" in shell
@@ -121,7 +121,7 @@ def test_new_map_form_normalizes_optional_key_and_validates_dimensions():
 
 
 def test_mutable_map_can_create_a_new_canvas_without_forking():
-    workspace = (STATIC / "map-workspace.js").read_text(encoding="utf-8")
+    workspace = (STATIC / "resources/map-workspace.js").read_text(encoding="utf-8")
 
     assert "map-editor-v2:request-edit" in workspace
     assert "handlePublicEditorEditRequest(event)" in workspace
@@ -137,8 +137,8 @@ def test_packaged_map_workspace_assets_are_served(database_url):
     app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         page = client.get("/?view=maps")
-        css = client.get("/static/console/map-workspace.css")
-        script = client.get("/static/console/map-workspace.js")
+        css = client.get("/static/console/resources/map-workspace.css")
+        script = client.get("/static/console/resources/map-workspace.js")
 
     assert page.status_code == 200
     assert css.status_code == 200

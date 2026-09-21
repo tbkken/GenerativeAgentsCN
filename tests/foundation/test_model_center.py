@@ -7,14 +7,15 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from generative_agents.config.schema import ModelsConfig
-from generative_agents.ga_protocol import atomic_write_json
-from generative_agents.ga_studio.model_services import HostModelCredentials, create_model_service_router
-from generative_agents.ga_studio.resource_api import create_resource_router
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base
-from generative_agents.skills.database import DatabaseSkillRegistry
-from generative_agents.skills.runtime import SkillRuntime
+from generative_agents.ga_protocol.schemas.experiment import ModelsConfig
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_studio.storage.credentials import HostModelCredentials
+from generative_agents.adapters.web.routes.models import create_model_service_router
+from generative_agents.adapters.web.routes.resources import create_resource_router
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_runtime.skills.executor import SkillRuntime
 
 
 @pytest.fixture
@@ -104,7 +105,7 @@ def test_connection_probe_performs_authenticated_request(center, monkeypatch, pu
         data = {'choices':[{'message':{'content':'OK'}}]} if purpose == 'chat' else {'data':[{'embedding':[0.1,0.2]}]}
         return httpx.Response(200, json=data)
     original = httpx.Client
-    monkeypatch.setattr('generative_agents.ga_studio.model_services.httpx.Client', lambda **kwargs: original(transport=httpx.MockTransport(handle), **kwargs))
+    monkeypatch.setattr('generative_agents.ga_studio.resources.models.httpx.Client', lambda **kwargs: original(transport=httpx.MockTransport(handle), **kwargs))
     response = client.post(f"{URL}/{model['id']}/test/{purpose}")
     assert response.status_code == 200, response.text
     assert response.json()['ok'] is True

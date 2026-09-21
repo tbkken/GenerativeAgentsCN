@@ -26,9 +26,7 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-          cache-dependency-path: |
-            generative_agents/requirements.txt
-            generative_agents/requirements-dev.txt
+          cache-dependency-path: pyproject.toml
       - name: Enable Developer Mode for native Windows symlinks
         if: runner.os == 'Windows'
         shell: pwsh
@@ -39,8 +37,7 @@ jobs:
       - name: Install runtime and test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r generative_agents/requirements.txt
-          python -m pip install -r generative_agents/requirements-dev.txt
+          python -m pip install -e ".[runtime,studio,web,dev]"
           python -m pip install tzdata==2025.2
       - name: Require seven real native-symlink assertions with zero skips
         run: python tools/run_symlink_release_gate.py
@@ -62,16 +59,14 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-          cache-dependency-path: |
-            generative_agents/requirements.txt
-            generative_agents/requirements-dev.txt
+          cache-dependency-path: pyproject.toml
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
       - name: Install runtime, test and wheel dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r generative_agents/requirements.txt -r generative_agents/requirements-dev.txt
+          python -m pip install -e ".[runtime,studio,web,dev]"
           python -m pip install tzdata==2025.2 setuptools wheel
       - name: Python regression suite
         run: python -m pytest tests -q -p no:cacheprovider

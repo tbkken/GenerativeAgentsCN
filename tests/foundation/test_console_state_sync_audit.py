@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parents[2]
-CONSOLE = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
+CONSOLE = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
 
 
 def test_same_run_refresh_and_activity_backlog_cannot_regress_authoritative_facts():

@@ -7,7 +7,7 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_runtime.service import RunService
+from generative_agents.ga_runtime.lifecycle.service import RunService
 from tests.studio_support import create_test_studio
 from tests.test_portable_package_protocol import _experiment
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "行人过街 Brain"
+  short_description: "用于长时步行、信号查询、等待和安全过街实验"
+  default_prompt: "Use $pedestrian-crossing-brain to handle the current pedestrian lifecycle event and return the result directly."

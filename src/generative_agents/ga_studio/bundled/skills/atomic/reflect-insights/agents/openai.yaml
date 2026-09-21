@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect Insights"
+  short_description: "Run the Reflect Insights agent skill"
+  default_prompt: "Use $reflect-insights to handle the current agent context and return the result directly."

@@ -3,9 +3,9 @@ import hashlib
 
 import pytest
 
-from generative_agents.ga_studio.resources import StudioResourceError
-from generative_agents.ga_studio.workspace import ExperimentWorkspaceService
-from generative_agents.persistence.models import Asset
+from generative_agents.ga_studio.resources.catalog import StudioResourceError
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.ga_studio.storage.models import Asset
 
 
 @pytest.fixture

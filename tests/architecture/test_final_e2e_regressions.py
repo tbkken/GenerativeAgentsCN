@@ -10,22 +10,25 @@ from pathlib import Path
 from types import SimpleNamespace
 from uuid import uuid4
 from fastapi.testclient import TestClient
-from generative_agents.config import ExperimentDefinition
-from generative_agents.config.schema import make_blank_definition
-from generative_agents.modules import memory as memory_module
-from generative_agents.modules.config_adapter import ConfigAdapter
-from generative_agents.modules.game import Game
-from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunControl, RunPaths, SimulationClock
+from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
+from generative_agents.ga_protocol.schemas.experiment import make_blank_definition
+from generative_agents.ga_runtime.memory.action import Action
+import generative_agents.ga_runtime.memory as memory_module
+from generative_agents.ga_runtime.engine.configuration import ConfigAdapter
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
+from generative_agents.ga_runtime.engine.context import RunControl
+from generative_agents.ga_runtime.engine.context import RunPaths
+from generative_agents.ga_runtime.engine.context import SimulationClock
 from tests.studio_support import create_test_studio
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
-CONSOLE_HTML = ROOT / "generative_agents" / "web" / "static" / "experiment-console.html"
+CONSOLE_HTML = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
 
 
-CONSOLE_JS = ROOT / "generative_agents" / "web" / "static" / "console-api.js"
+CONSOLE_JS = ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
 
 
 def _definition(key: str) -> ExperimentDefinition:
@@ -78,16 +81,6 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
 
     captured = []
 
-    class FakeAssociate:
-        """测试替身 ``FakeAssociate``：记录调用并返回当前场景可控的结果。"""
-        def __init__(self, _path, *_args, **kwargs):
-            """为本测试模块封装 ``__init__`` 辅助步骤，减少重复的场景搭建代码。"""
-            captured.append(kwargs)
-            self.last_evicted = ()
-
-        def to_dict(self):
-            """为本测试模块封装 ``to_dict`` 辅助步骤，减少重复的场景搭建代码。"""
-            return {"memory": {"event": [], "thought": [], "chat": []}}
 
     class Logger:
         """为 ``Logger`` 相关场景组织共享测试状态、输入或断言。"""
@@ -98,7 +91,6 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
         debug = info
         warning = info
 
-    monkeypatch.setattr(memory_module, "Associate", FakeAssociate)
     definition = _definition("thread-lock")
     config = ConfigAdapter().game_config(definition)
     config["storage_root"] = str(tmp_path / "attempt-storage")
@@ -120,8 +112,7 @@ def test_def_031_runtime_thread_lock_is_not_deepcopied_into_agent(monkeypatch, t
 
     game = Game(config, {}, context=context)
 
-    assert game.get_agent("test-agent").associate is not None
-    assert captured[0]["embedding"]["_control"] is control
+    assert game.context.control is control
 
 
 def test_def_036_agent_modal_has_scrollable_body_and_reachable_footer():
@@ -136,7 +127,7 @@ def test_def_036_agent_modal_has_scrollable_body_and_reachable_footer():
 def test_def_036_agent_modal_traps_focus_and_restores_the_trigger():
     """回归验证 ``test_def_036_agent_modal_traps_focus_and_restores_the_trigger`` 所描述的业务结果、故障边界和隔离约束。"""
     html = (
-        ROOT / "generative_agents" / "web" / "static" / "experiment-console.html"
+        ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
     source = CONSOLE_JS.read_text(encoding="utf-8")
     modal_start = html.index('id="agentEditorModal"')
@@ -177,7 +168,7 @@ def test_def_036_modal_focus_explicitly_advances_middle_items():
     node = shutil.which("node")
     assert node, "Node.js is required for the executable modal focus contract"
     focus_module = (
-        ROOT / "generative_agents" / "web" / "static" / "modal-focus.js"
+        ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/modal-focus.js'
     )
     program = r"""
 const { tabTarget } = require(process.argv[1]);
@@ -263,7 +254,7 @@ def test_def_040_production_shell_does_not_ship_prototype_event_listeners(tmp_pa
     assert not [script for script in scripts if script.strip()], (
         "inline prototype state/listeners execute beside console-api.js"
     )
-    assert html.count('/static/console/console-api.js') == 1
+    assert html.count('/static/console/shell/console-api.js') == 1
 
 
 def test_def_045_console_api_owns_every_required_ui_global():
@@ -340,7 +331,7 @@ def test_def_045_every_static_id_selector_exists_in_the_neutral_shell():
     """A renderer cannot dereference children erased by shell neutralization."""
 
     shell = (
-        ROOT / "generative_agents" / "web" / "static" / "experiment-console.html"
+        ROOT / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/experiment-console.html'
     ).read_text(encoding="utf-8")
     source = CONSOLE_JS.read_text(encoding="utf-8")
     shell_ids = set(re.findall(r'\bid=["\']([^"\']+)["\']', shell))

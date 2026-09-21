@@ -1,9 +1,10 @@
 """Experiment lifecycle and live Run status must remain separate file projections."""
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import atomic_write_json, read_json
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 

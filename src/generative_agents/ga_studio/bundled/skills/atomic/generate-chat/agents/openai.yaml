@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Chat"
+  short_description: "Run the Generate Chat agent skill"
+  default_prompt: "Use $generate-chat to handle the current agent context and return the result directly."
