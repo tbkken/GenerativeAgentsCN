@@ -19,7 +19,7 @@ const fs = require('fs');
 const source = fs.readFileSync(process.argv[1], 'utf8');
 const cut = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
 const production = [
-  cut('async function refreshResultData(', 'function applyRunActivity(activity)'),
+  cut('function refreshResultData(', 'function renderRunQuality('),
   cut('function applyRunActivity(activity)', 'function scheduleGlobalReconcile('),
 ].join('\n');
 
@@ -46,6 +46,7 @@ const renderConversations = () => {};
 const renderMemories = () => {};
 const renderRunActions = run => { $('actions').textContent = run.status; };
 const renderRunSelect = () => {};
+const renderRunQuality = () => {};
 const renderOperations = operations => { $('artifacts').textContent = operations.marker; };
 const syncWorkspaceUrl = () => {};
 const refreshOperationFacts = async () => {};
@@ -78,11 +79,22 @@ function resolveBatch(batch, status, marker) {
 }
 
 (async () => {
-  const older = refreshResultData('run-1', 4);
-  const olderBatch = deferred.splice(0, 6);
-  const newer = refreshResultData('run-1', 4);
-  const newerBatch = deferred.splice(0, 6);
-  resolveBatch(newerBatch, 'COMPLETED', 'new');
+  // Poll coalescing does not issue duplicate requests for one selection.
+  const shared = refreshResultData('run-1', 4);
+  if (refreshResultData('run-1', 4) !== shared || deferred.length !== 1) throw new Error('duplicate refresh was not coalesced');
+  resolveBatch(deferred.splice(0), 'COMPLETED', 'shared');
+  await Promise.resolve();
+  resolveBatch(deferred.splice(0), 'COMPLETED', 'shared');
+  await shared;
+  // In-flight reads from an older request cannot overwrite newer facts.
+  const older = refreshResultDataUnlocked('run-1', 4);
+  resolveBatch(deferred.splice(0), 'RUNNING', 'old');
+  await Promise.resolve();
+  const olderBatch = deferred.splice(0);
+  const newer = refreshResultDataUnlocked('run-1', 4);
+  resolveBatch(deferred.splice(0), 'COMPLETED', 'new');
+  await Promise.resolve();
+  resolveBatch(deferred.splice(0), 'COMPLETED', 'new');
   await newer;
   resolveBatch(olderBatch, 'RUNNING', 'old');
   await older;

@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 
 from generative_agents.ga_protocol import atomic_write_json, read_json
 from generative_agents.ga_studio.web import create_studio_app
-from generative_agents.web.app import create_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -53,11 +52,9 @@ def test_fixed_pagination_archive_restore_and_metadata(tmp_path):
 
 
 def test_removed_list_features_have_no_routes_or_query_contract(tmp_path):
-    factories = [create_studio_app, create_app]
+    factories = [create_studio_app]
     for index, factory in enumerate(factories):
         kwargs = {"database_url": f"sqlite:///{(tmp_path / f'studio-{index}.db').as_posix()}", "var_dir": tmp_path / f"var-{index}"}
-        if factory is create_app:
-            kwargs["supervisor_enabled"] = False
         app = factory(**kwargs)
         paths = app.openapi()["paths"]
         assert not any("experiment-saved-views" in path or "experiment-comparison-groups" in path or path.endswith("/experiments/compare") for path in paths)

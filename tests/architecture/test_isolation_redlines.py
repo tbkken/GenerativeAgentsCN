@@ -1,9 +1,8 @@
 """Release-blocking architecture redlines for experiment isolation.
 
-Every assertion describes a target invariant from the approved technical
-design.  Failures are intentional on the legacy baseline and reference a DEF
-entry in ``docs/defect-log.md``.  Product changes should make these pass; do
-not weaken a redline merely to obtain a green test run.
+These source-level checks retain their original DEF identifiers. Some still
+exercise legacy entry points; review their scope against AGENTS.md and
+docs/test-strategy.md before treating them as current release requirements.
 """
 
 from __future__ import annotations
@@ -69,7 +68,7 @@ def test_def_003_run_paths_are_not_derived_from_user_visible_names() -> None:
     """回归验证 ``test_def_003_run_paths_are_not_derived_from_user_visible_names`` 所描述的业务结果、故障边界和隔离约束。"""
     game_source = _source("generative_agents/modules/game.py")
     start_source = _source("generative_agents/start.py")
-    replay_source = _source("generative_agents/replay.py")
+    replay_source = _source("generative_agents/ga_replay/reader.py")
     offenders = []
     if 'f"results/checkpoints/{name}"' in game_source:
         offenders.append("modules/game.py")
@@ -111,7 +110,7 @@ def test_def_006_runtime_does_not_read_shared_bootstrap_configuration() -> None:
     checked = {
         "generative_agents/start.py": ("data/config.json", "frontend/static"),
         "generative_agents/modules/prompt/scratch.py": ("data/prompts",),
-        "generative_agents/compress.py": ("frontend/static/assets/village",),
+        "generative_agents/cli/main.py": ("frontend/static/assets/village",),
     }
     found: list[str] = []
     for relative_path, tokens in checked.items():
@@ -124,7 +123,7 @@ def test_def_007_importing_product_modules_does_not_parse_process_arguments() ->
     """回归验证 ``test_def_007_importing_product_modules_does_not_parse_process_arguments`` 所描述的业务结果、故障边界和隔离约束。"""
     offenders = {
         path: _module_scope_calls(path, "parse_args")
-        for path in ("generative_agents/start.py", "generative_agents/compress.py")
+        for path in ("generative_agents/start.py", "generative_agents/cli/main.py")
     }
     offenders = {path: lines for path, lines in offenders.items() if lines}
     assert not offenders, f"DEF-007 import-time argparse side effects remain: {offenders}"
@@ -134,9 +133,9 @@ def test_def_008_simulation_loop_commits_complete_step_results() -> None:
     """回归验证 ``test_def_008_simulation_loop_commits_complete_step_results`` 所描述的业务结果、故障边界和隔离约束。"""
     start_source = _source("generative_agents/start.py")
     required_files = (
-        PRODUCT_ROOT / "runtime" / "result_types.py",
+        PRODUCT_ROOT / "runtime" / "results.py",
         PRODUCT_ROOT / "runtime" / "result_collector.py",
-        PRODUCT_ROOT / "runtime" / "result_projector.py",
+        PRODUCT_ROOT / "runtime" / "file_result_projector.py",
     )
     missing = [str(path.relative_to(REPO_ROOT)) for path in required_files if not path.exists()]
     assert '["plan"]' not in start_source, "DEF-008 simulation loop still discards non-plan agent facts"

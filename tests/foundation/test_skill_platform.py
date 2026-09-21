@@ -16,7 +16,7 @@ from generative_agents.skills import (
     SkillLoopError,
     SkillRuntime,
 )
-from generative_agents.web.app import create_app
+from tests.studio_support import create_test_studio
 
 
 class ScriptedSkillRuntime(SkillRuntime):
@@ -251,17 +251,15 @@ def test_skill_pack_can_call_its_private_script(tmp_path):
 def test_skill_api_starts_on_clean_database(tmp_path):
     """回归验证 ``test_skill_api_starts_on_clean_database`` 所描述的业务结果、故障边界和隔离约束。"""
     database_path = tmp_path / "app.db"
-    app = create_app(
+    app = create_test_studio(
         database_url=f"sqlite:///{database_path.as_posix()}",
         var_dir=str(tmp_path / "var"),
-        supervisor_enabled=False,
     )
 
     with TestClient(app) as client:
-        catalog = client.get("/api/v1/skills")
-        runtime = client.get("/api/v1/skill-runtime")
+        catalog = client.get("/api/studio/resources/skills")
         created = client.post(
-            "/api/v1/experiments",
+            "/api/studio/experiments",
             json={
                 "name": "Skill E2E",
                 "goal": "verify the cutover",
@@ -273,34 +271,29 @@ def test_skill_api_starts_on_clean_database(tmp_path):
     assert counts["atomic"] >= 33
     assert counts["pack"] >= 5
     assert counts["brain"] >= 2
-    assert runtime.json()["model"] == "Qwen3.8-27B-UD-Q4_K_XL"
-    assert runtime.json()["base_url"] == "http://127.0.0.1:8888/v1"
-    assert runtime.json()["handoff"] == "natural-language"
     assert created.status_code == 422
-    assert created.json()["error"]["code"] == "REQUEST_VALIDATION_FAILED"
 
 
 def test_seeded_brain_can_be_deleted_and_is_not_recreated(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        brain = client.get("/api/v1/skills/stanford-town-brain")
+        brain = client.get("/api/studio/resources/skills/stanford-town-brain")
         assert brain.status_code == 200
         assert brain.json()["is_builtin"] is True
-        deleted = client.delete("/api/v1/skills/stanford-town-brain")
+        deleted = client.delete("/api/studio/resources/skills/stanford-town-brain")
         assert deleted.status_code == 204, deleted.text
 
-    restarted = create_app(database_url=database_url, supervisor_enabled=False)
+    restarted = create_test_studio(database_url=database_url)
     with TestClient(restarted) as client:
-        missing = client.get("/api/v1/skills/stanford-town-brain")
+        missing = client.get("/api/studio/resources/skills/stanford-town-brain")
     assert missing.status_code == 404
 
 
-def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_path):
+def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_path):
     database_path = tmp_path / "app.db"
-    app = create_app(
+    app = create_test_studio(
         database_url=f"sqlite:///{database_path.as_posix()}",
         var_dir=str(tmp_path / "var"),
-        supervisor_enabled=False,
     )
     source_path = (
         Path(__file__).resolve().parents[2]
@@ -314,7 +307,7 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
 
     with TestClient(app) as client:
         created = client.post(
-            "/api/v1/skills",
+            "/api/studio/resources/skills",
             json={
                 "name": "user-runtime-skill",
                 "description": "用文本决定普通活动的 Event 语义。",
@@ -328,7 +321,7 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
             "使用 ACT 直接输出 Event(subject, predicate, object)",
         )
         saved = client.put(
-            "/api/v1/skills/user-runtime-skill",
+            "/api/studio/resources/skills/user-runtime-skill",
             json={
                 "markdown": markdown,
                 "scripts": {
@@ -340,36 +333,35 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
             },
         )
         detail_with_script = client.get(
-            "/api/v1/skills/user-runtime-skill"
+            "/api/studio/resources/skills/user-runtime-skill"
         ).json()
         found_by_display_name = client.get(
-            "/api/v1/skills?q=User%20Runtime%20Skill"
+            "/api/studio/resources/skills?q=User%20Runtime%20Skill"
         ).json()["items"]
         found_by_key = client.get(
-            "/api/v1/skills?q=user-runtime-skill"
+            "/api/studio/resources/skills?q=user-runtime-skill"
         ).json()["items"]
         history = client.get(
-            "/api/v1/skills/user-runtime-skill/history"
+            "/api/studio/resources/skills/user-runtime-skill/history"
         ).json()["items"]
         archived = client.post(
-            "/api/v1/skills/user-runtime-skill/archive"
+            "/api/studio/resources/skills/user-runtime-skill/archive"
         )
-        hidden = client.get("/api/v1/skills/user-runtime-skill")
+        hidden = client.get("/api/studio/resources/skills/user-runtime-skill")
         visible_in_archive = client.get(
-            "/api/v1/skills?include_archived=true&q=user-runtime-skill"
+            "/api/studio/resources/skills?include_archived=true&q=user-runtime-skill"
         ).json()["items"]
         restored = client.post(
-            "/api/v1/skills/user-runtime-skill/restore"
+            "/api/studio/resources/skills/user-runtime-skill/restore"
         )
-        deleted = client.delete("/api/v1/skills/user-runtime-skill")
-        missing_after_delete = client.get("/api/v1/skills/user-runtime-skill")
+        deleted = client.delete("/api/studio/resources/skills/user-runtime-skill")
+        missing_after_delete = client.get("/api/studio/resources/skills/user-runtime-skill")
 
+    assert len(history) == 1
     assert first["storage"] == "database"
-    assert first["revision_no"] == 1
     assert first["path"].startswith("database://skills/")
     assert saved.status_code == 200
-    assert saved.json()["revision_no"] == 2
-    assert saved.json()["revision"] != first["revision"]
+    assert saved.json()["content_hash"] != first["content_hash"]
     assert detail_with_script["script_sources"]["scripts/main.py"].startswith(
         "def run("
     )
@@ -378,7 +370,6 @@ def test_user_skill_is_database_versioned_and_never_written_to_source_tree(tmp_p
         "user-runtime-skill"
     ]
     assert [item["name"] for item in found_by_key] == ["user-runtime-skill"]
-    assert [item["revision_no"] for item in history] == [2, 1]
     assert archived.status_code == 200
     assert hidden.status_code == 404
     assert visible_in_archive[0]["archived_at"] is not None

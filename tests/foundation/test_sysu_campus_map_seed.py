@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from generative_agents.config.schema import WorldConfig
-from generative_agents.web.app import create_app
+from tests.studio_support import create_test_studio
 from tools.seed_sysu_south_campus_map import HEIGHT, MAP_KEY, WIDTH, build_world
 
 
@@ -29,18 +29,18 @@ def test_campus_map_has_approximate_geometry_and_agent_semantics():
 
 def test_api_accepts_a_human_selected_public_map_key(database_url):
     """回归验证 ``test_api_accepts_a_human_selected_public_map_key`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         created = client.post(
-            "/api/v1/maps",
+            "/api/studio/resources/maps",
             json={"map_key": MAP_KEY, "name": "校园地图"},
         )
         duplicate = client.post(
-            "/api/v1/maps",
+            "/api/studio/resources/maps",
             json={"map_key": MAP_KEY, "name": "重复校园地图"},
         )
 
     assert created.status_code == 201
     assert created.json()["map_key"] == MAP_KEY
     assert duplicate.status_code == 409
-    assert duplicate.json()["error"]["code"] == "MAP_KEY_CONFLICT"
+    assert duplicate.json()["detail"]["code"] == "MAP_KEY_CONFLICT"

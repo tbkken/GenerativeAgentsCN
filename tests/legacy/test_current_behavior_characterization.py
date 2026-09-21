@@ -96,19 +96,15 @@ def test_fixed_agent_serialization_has_no_vector_index_io_side_effect() -> None:
 
 def test_fixed_replay_reads_run_manifest_and_observed_frames_only() -> None:
     """回归验证 ``test_fixed_replay_reads_run_manifest_and_observed_frames_only`` 所描述的业务结果、故障边界和隔离约束。"""
-    compress_source = _source("generative_agents/compress.py")
-    replay_v2_source = _source("generative_agents/runtime/replay_v2.py")
-    assert "RunManifestStore" in compress_source
-    assert "build_replay_v2" in compress_source
-    assert "StepResult.from_dict" in compress_source
-    assert '"path_source": agent.path_source' in replay_v2_source
-    assert "find_path(" not in compress_source
-    assert "frontend/static" not in compress_source
+    source = _source("generative_agents/ga_replay/reader.py")
+    assert "validate_run_integrity" in source
+    assert "find_path(" not in source
+    assert "frontend/static" not in source
 
 
 def test_fixed_product_imports_parse_arguments_only_inside_main() -> None:
     """回归验证 ``test_fixed_product_imports_parse_arguments_only_inside_main`` 所描述的业务结果、故障边界和隔离约束。"""
-    for relative_path in ("generative_agents/start.py", "generative_agents/compress.py"):
+    for relative_path in ("generative_agents/cli/main.py",):
         source = _source(relative_path)
         tree = __import__("ast").parse(source)
         module_calls = [
@@ -119,4 +115,4 @@ def test_fixed_product_imports_parse_arguments_only_inside_main() -> None:
             and getattr(node.value.func, "attr", None) == "parse_args"
         ]
         assert not module_calls
-        assert "def main(argv=None)" in source
+        assert "def main(" in source

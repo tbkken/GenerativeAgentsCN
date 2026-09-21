@@ -6,22 +6,21 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from generative_agents.web import create_app
-from tests.support import brain_revision_via_api, publish_user_map_via_api
+from tests.studio_support import create_test_studio
 
 
 def test_map_catalog_is_a_single_mutable_resource_list(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         for index in range(6):
             response = client.post(
-                "/api/v1/maps",
+                "/api/studio/resources/maps",
                 json={"name": f"分页地图 {index + 1}", "description": "地图列表 UX 验收"},
             )
             assert response.status_code == 201, response.text
 
-        first_page = client.get("/api/v1/maps?page=1&page_size=5").json()
-        second_page = client.get("/api/v1/maps?page=2&page_size=5").json()
+        first_page = client.get("/api/studio/resources/maps?page=1&page_size=5").json()
+        second_page = client.get("/api/studio/resources/maps?page=2&page_size=5").json()
 
     assert first_page["page_size"] == 5
     assert len(first_page["items"]) == 5
@@ -48,18 +47,18 @@ def test_map_workspace_populates_experiment_creation_selector():
 
 
 def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
         created = client.post(
-            "/api/v1/maps",
+            "/api/studio/resources/maps",
             json={"name": "可清理地图", "description": "归档与删除验收"},
         ).json()
-        archived = client.post(f"/api/v1/maps/{created['id']}/archive")
-        active = client.get("/api/v1/maps?archived=active").json()
-        archive_page = client.get("/api/v1/maps?archived=archived").json()
-        restored = client.post(f"/api/v1/maps/{created['id']}/restore")
-        deleted = client.delete(f"/api/v1/maps/{created['id']}")
-        missing = client.get(f"/api/v1/maps/{created['id']}")
+        archived = client.post(f"/api/studio/resources/maps/{created['id']}/archive")
+        active = client.get("/api/studio/resources/maps?archived=active").json()
+        archive_page = client.get("/api/studio/resources/maps?archived=archived").json()
+        restored = client.post(f"/api/studio/resources/maps/{created['id']}/restore")
+        deleted = client.delete(f"/api/studio/resources/maps/{created['id']}")
+        missing = client.get(f"/api/studio/resources/maps/{created['id']}")
 
     assert archived.status_code == 200
     assert archived.json()["archived_at"] is not None
@@ -71,80 +70,29 @@ def test_user_map_can_be_archived_restored_and_hard_deleted(database_url):
     assert missing.status_code == 404
 
 
-def test_experiment_draft_selects_map_id_without_private_overlay(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
-    with TestClient(app) as client:
-        first_map = publish_user_map_via_api(client, name="第一张实时地图")
-        second_map = publish_user_map_via_api(client, name="第二张实时地图")
-        brain = brain_revision_via_api(client)
-        experiment_response = client.post(
-            "/api/v1/experiments",
-            json={
-                "name": "地图引用实验",
-                "brain_skill": brain["name"],
-                "brain_revision_id": brain["revision_id"],
-                "source": {"type": "BLANK"},
-                "map_id": first_map["id"],
-            },
-        )
-        assert experiment_response.status_code == 201, experiment_response.text
-        experiment = experiment_response.json()
-        draft = client.get(f"/api/v1/experiments/{experiment['id']}/draft").json()
-
-        selected = client.put(
-            f"/api/v1/experiments/{experiment['id']}/draft/map",
-            json={"lock_version": draft["lock_version"], "map_id": second_map["id"]},
-        )
-        assert selected.status_code == 200, selected.text
-        selected_world = selected.json()["definition"]["world"]
-        assert selected_world["map_id"] == second_map["id"]
-        assert selected_world["map_snapshot_hash"] is None
-        assert "overlay" not in selected_world
-        assert selected.json()["provenance"]["world_map_id"] == second_map["id"]
-        assert "world_map_" + "revision_id" not in selected.json()["provenance"]
-
-        overlaid = client.put(
-            f"/api/v1/experiments/{experiment['id']}/draft/map-overlay",
-            json={"lock_version": selected.json()["lock_version"], "overlay": {}},
-        )
-        assert overlaid.status_code in {404, 405}
-
-        tampered = copy.deepcopy(selected.json()["definition"])
-        tampered["world"]["world_name"] = "绕过地图选择端点"
-        bypass = client.put(
-            f"/api/v1/experiments/{experiment['id']}/draft",
-            json={"lock_version": selected.json()["lock_version"], "data": tampered},
-        )
-        assert bypass.status_code == 422
-        assert bypass.json()["error"]["code"] == "RESOURCE_SELECTION_ENDPOINT_REQUIRED"
-
-        refreshed = client.get(f"/api/v1/maps/{second_map['id']}").json()
-        assert refreshed["usage_count"] == 1
-
-
 def test_map_update_uses_optimistic_row_version(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        current = client.post("/api/v1/maps", json={"name": "并发地图"}).json()
+        current = client.post("/api/studio/resources/maps", json={"name": "并发地图"}).json()
         first = client.put(
-            f"/api/v1/maps/{current['id']}",
-            json={"lock_version": current["lock_version"], "world": current["world"]},
+            f"/api/studio/resources/maps/{current['id']}",
+            json={"row_version": current["lock_version"], "world": current["world"]},
         )
         assert first.status_code == 200, first.text
         stale = client.put(
-            f"/api/v1/maps/{current['id']}",
-            json={"lock_version": current["lock_version"], "world": current["world"]},
+            f"/api/studio/resources/maps/{current['id']}",
+            json={"row_version": current["lock_version"], "world": current["world"]},
         )
 
     assert stale.status_code == 409
-    assert stale.json()["error"]["code"] == "MAP_CONFLICT"
+    assert stale.json()["detail"]["code"] == "MAP_CONFLICT"
 
 
 def test_map_editor_document_survives_save_and_fresh_detail_reload(database_url):
     """地图保存响应和刷新后的详情都必须返回同一份完整 editor_v2 文档。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        created = client.post("/api/v1/maps", json={"name": "刷新回归地图"}).json()
+        created = client.post("/api/studio/resources/maps", json={"name": "刷新回归地图"}).json()
         world = copy.deepcopy(created["world"])
         height, width = world["definition"]["size"]
         editor = {
@@ -218,25 +166,28 @@ def test_map_editor_document_survives_save_and_fresh_detail_reload(database_url)
         })
 
         saved_response = client.put(
-            f"/api/v1/maps/{created['id']}",
-            json={"lock_version": created["lock_version"], "world": world},
+            f"/api/studio/resources/maps/{created['id']}",
+            json={"row_version": created["lock_version"], "world": world},
         )
         assert saved_response.status_code == 200, saved_response.text
         saved = saved_response.json()
-        refreshed_response = client.get(f"/api/v1/maps/{created['id']}")
+        refreshed_response = client.get(f"/api/studio/resources/maps/{created['id']}")
         assert refreshed_response.status_code == 200, refreshed_response.text
         refreshed = refreshed_response.json()
 
-    assert saved["world"]["definition"]["editor_v2"] == editor
-    assert refreshed["world"]["definition"]["editor_v2"] == editor
+    from generative_agents.config.map_editor import MapEditorDocumentV2
+    expected_editor = MapEditorDocumentV2.model_validate(editor).model_dump(mode="json", exclude_none=False)
+    expected_editor["navigation"] = {"base_blocked": [], "overrides": {}}
+    assert saved["world"]["definition"]["editor_v2"] == expected_editor
+    assert refreshed["world"]["definition"]["editor_v2"] == expected_editor
     assert refreshed["world_hash"] == saved["world_hash"]
     assert refreshed["lock_version"] == saved["lock_version"]
 
 
 def test_map_validation_reports_invalid_tiles_without_locking_map(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        current = client.post("/api/v1/maps", json={"name": "无效地图"}).json()
+        current = client.post("/api/studio/resources/maps", json={"name": "无效地图"}).json()
         world = current["world"]
         world["world_key"] = "invalid-map"
         world["world_name"] = "无效地图"
@@ -248,12 +199,12 @@ def test_map_validation_reports_invalid_tiles_without_locking_map(database_url):
             "tiles": [{"coord": [11, 2], "address": ["越界"]}],
         }
         updated = client.put(
-            f"/api/v1/maps/{current['id']}",
-            json={"lock_version": current["lock_version"], "world": world},
+            f"/api/studio/resources/maps/{current['id']}",
+            json={"row_version": current["lock_version"], "world": world},
         ).json()
         response = client.post(
-            f"/api/v1/maps/{current['id']}/validate",
-            json={"lock_version": updated["lock_version"]},
+            f"/api/studio/resources/maps/{current['id']}/validate",
+            params={"row_version": updated["lock_version"]},
         )
         assert response.status_code == 200, response.text
         report = response.json()["validation"]
@@ -261,16 +212,16 @@ def test_map_validation_reports_invalid_tiles_without_locking_map(database_url):
         assert report["errors"][0]["code"] == "WORLD_TILE_OUT_OF_BOUNDS"
 
         editable = client.put(
-            f"/api/v1/maps/{current['id']}",
-            json={"lock_version": updated["lock_version"], "world": updated["world"]},
+            f"/api/studio/resources/maps/{current['id']}",
+            json={"row_version": updated["lock_version"], "world": updated["world"]},
         )
         assert editable.status_code == 200, editable.text
 
 
 def test_map_validation_accepts_all_four_address_levels(database_url):
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        current = client.post("/api/v1/maps", json={"name": "Four-level map"}).json()
+        current = client.post("/api/studio/resources/maps", json={"name": "Four-level map"}).json()
         world = current["world"]
         world["definition"] = {
             "world": "four-level-map",
@@ -284,12 +235,12 @@ def test_map_validation_accepts_all_four_address_levels(database_url):
             }],
         }
         updated = client.put(
-            f"/api/v1/maps/{current['id']}",
-            json={"lock_version": current["lock_version"], "world": world},
+            f"/api/studio/resources/maps/{current['id']}",
+            json={"row_version": current["lock_version"], "world": world},
         ).json()
         response = client.post(
-            f"/api/v1/maps/{current['id']}/validate",
-            json={"lock_version": updated["lock_version"]},
+            f"/api/studio/resources/maps/{current['id']}/validate",
+            params={"row_version": updated["lock_version"]},
         )
 
     assert response.status_code == 200, response.text

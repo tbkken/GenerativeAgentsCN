@@ -34,7 +34,8 @@ def test_trace_usage_tools_and_chinese_log_are_read_from_run_files(tmp_path):
     (run/'traces').mkdir(exist_ok=True)
     (run/'traces/model.jsonl').write_text('\n'.join(json.dumps(x) for x in records), encoding='utf-8')
     (run/'logs').mkdir(exist_ok=True)
-    (run/'logs/runtime-process.log').write_bytes('教师 陈明远 在溪谷大学\n'.encode('gb18030'))
+    # FileRunSupervisor explicitly sets PYTHONUTF8/PYTHONIOENCODING for workers.
+    (run/'logs/runtime-process.log').write_bytes('教师 陈明远 在溪谷大学\n'.encode('utf-8'))
     app=create_studio_app(database_url='sqlite:///'+(tmp_path/'test.db').as_posix(),var_dir=var)
     with TestClient(app) as client:
         client.post('/api/studio/packages/rebuild').raise_for_status()

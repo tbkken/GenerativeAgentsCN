@@ -1,184 +1,83 @@
-简体中文 | [English](./README_en.md)
+[English](README_en.md)
 
-# 生成式智能体（Generative Agents）深度汉化版
+# GenerativeAgentsCN
 
-斯坦福AI小镇由斯坦福大学和谷歌于2023年8月开源，由25个智能体组成的虚拟世界，模拟了真实的人类生活。
+用中文自然语言 Skill 定义智能体与 Game Object 行为的仿真项目。Studio 用于编辑公共作者资源和实验；Runtime 执行自包含实验包；Replay 从已提交事实读取结果。
 
-25个智能体完全由ChatGPT驱动，自主组织派对、参加会议、在情人节筹办各种活动。他们能够展现出与人类相似的生活模式和行为习惯。
+当前规则见 [AGENTS.md](AGENTS.md)，完整入口见 [文档索引](docs/README.md)。项目源于 Generative Agents / wounderland，现行运行方式以本页为准。
 
-Generative Agents的原始代码工程化程度较低，难以持续维护或拓展功能，且时隔两年，中文LLM的能力早已胜任此类任务。因此，我们对原项目进行了重构+深度汉化，旨在为中文用户提供一个利于维护的基础版本，以便后续实验或尝试更多玩法。
+**安装与启动**
 
-如果你准备阅读或修改源码，建议先看[中文代码导览](docs/code-guide-cn.md)。它按“实验、运行、智能体、Skill、地图和回放”梳理了核心调用链与推荐阅读顺序。
+在仓库根目录操作。需要 Python 3.11 或更高版本；前端回归测试另需 Node.js。
 
-## 当前架构：实验就是可移植文件包
+~~~bash
+python -m venv .venv
+~~~
 
-当前主架构不再把实验定义、Run 或回放事实绑定到数据库：
+Windows PowerShell 激活环境：
 
-- `ga_protocol` 定义实验目录/`.gaexp` 与 Run 目录/`.garun` 的通用协议；
-- `ga_studio` 是唯一使用数据库的模块，数据库只保存可变公共作者资源和可重建的包位置目录；
-- `ga_runtime` 只读取实验包，并把新跑、续跑、重跑的全部状态写进 Run 目录；
-- `ga_replay` 只读取 Run 中已提交的 StepResult，不读取数据库、不运行 Brain、不调用模型。
+~~~powershell
+.\.venv\Scripts\Activate.ps1
+~~~
 
-公共 Map、Agent、Crowd、Brain、Skill、模型预设和评估器在加入实验时会立即物理复制。公共 Agent 不保存坐标或 Sleeping 等地图地址；坐标和四层空间地址属于实验包内 placement。文件名和目录名不是身份，`experiment_id`、`run_id`、`attempt_id` 都写在包内清单中。
+macOS / Linux 激活环境：
 
-不启动 Web 也可以直接操作：
+~~~bash
+source .venv/bin/activate
+~~~
 
-```bash
-ga experiment validate ./my-experiment
-ga experiment seal ./my-experiment ./my-experiment.gaexp
-ga run start ./my-experiment.gaexp ./my-run --steps 24
-ga run resume ./my-run
-ga run rerun ./my-run ./another-run
-ga run seal ./my-run ./my-run.garun
-ga replay state ./my-run.garun 12
-```
+安装运行依赖并注册 ga 命令：
 
-Studio Web 使用完全相同的文件协议：
-
-```bash
+~~~bash
+python -m pip install -r generative_agents/requirements.txt
+python -m pip install -e .
 python -m generative_agents.web.main
-```
+~~~
 
-完整设计见[可移植实验包与文件化 Run 架构](docs/capability-composition-platform-design.md)和[实验包构建 UX](docs/experiment-resource-composition-ux.md)。
+打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数、备份及恢复见 [运行手册](docs/operations-runbook.md)。
 
-[wounderland](https://github.com/Archermmt/wounderland)项目是原[Generative Agents](https://github.com/joonspk-research/generative_agents)项目的重构版本，结构良好且代码质量远优于原版，因此本项目基于wounderland开发。
+当前 pyproject.toml 没有声明完整运行依赖，单独执行 editable 安装不能代替 requirements 安装。uv.lock 也不是完整运行环境的锁定清单。
 
-更新：
+**创建第一个实验**
 
-- 2025.06.02
-    - 增加对`Qwen3`和`DeepSeek-R1`等新模型的支持（处理输出结果中的\<think\>标签）。
-- 2026.01.15
-    - 使用`pydantic`模型取代正则表达式解析。感谢[Findworth](https://github.com/Findworth)提交的PR。
-    - 默认语言模型改为`qwen3:4b-instruct-2507`，嵌入模型改为`qwen3-embedding:0.6b`，减少显存占用，提升推理速度。
+1. 在基础配置中创建用户地图、智能体，以及所需 Brain / 子 Skill / 对象 Skill；按场景配置空间素材和人群。
+2. 在模型中心配置聊天和向量模型的服务地址、明确的模型 ID、必要的 API Key，并测试连接。详见 [模型配置](docs/model-configuration.md)。
+3. 新建实验时显式选择地图、Brain 和模型，以及需要的 Agent / Crowd。选入的资源和依赖立即物理复制到实验工作目录。
+4. 在实验草稿内核对地图、初始位置、包内 Skill、模型参数和仿真时间，通过校验后封存。
+5. 启动 Run，在实验结果中查看提交进度、质量问题、日志和回放。公共资源后续修改不会自动更新已有实验。
 
-主要工作：
+系统不提供默认地图或内置公共 Agent。实验生命周期为 DRAFT → SEALED；封存后若需调整，复制为新的独立实验。具体仿真流程由 Brain Skill 决定，内核提供感知、导航、隔离记忆和经过校验的世界动作。
 
-- 重写全部提示语，将智能体的“母语”切换为中文，以便对接Qwen或GLM-4等中文模型；
-- 针对中文特点和Qwen2.5/3系列模型的能力，优化中文提示语及智能体之间的对话起止逻辑；
-- 所有提示语模板化，便于后期维护；
-- 修正原版的小问题（例如wounderland原版中智能体在入睡后便不再醒来）；
-- 增加对本地Ollama API的支持，同时将LlamaIndex embedding也接入Ollama，实现完全本地部署，降低实验成本。*Ollama安装及配置可参考[ollama.md](docs/ollama.md)*；
-- 增加“断点恢复”等特性；
-- 回放界面基于原Generative Agents前端代码精简，同时将智能体活动的时间线及对话内容保存至Markdown文档。
+**文件协议与命令行**
 
-回放画面：
+| 模块 | 职责 | 事实来源 |
+| --- | --- | --- |
+| ga_protocol | 清单、身份、完整性、安全归档、空间索引与公共文件合同 | 包内文件 |
+| ga_studio | 公共作者资源、实验编辑、包构建和可重建目录索引 | 作者数据库与实验工作目录 |
+| ga_runtime | 执行、监督、控制、提交和恢复 | Run 内嵌实验与 Run 文件 |
+| ga_replay | 概览、时间线、状态归约与质量读取 | Run 内已提交事实 |
 
-![snapshot](docs/resources/snapshot.png)
+数据库只属于 Studio 作者侧；Runtime 和 Replay 不以数据库为事实来源。旧目录中仍有被当前入口复用的底层组件，实际调用关系见 [代码导览](docs/code-guide-cn.md)。
 
-*注：地图及人物名称也同步汉化，是为了避免LLM在遇到中英混杂的上下文时，切换到英文语境。*
+以下路径是示例，需要已有的完整实验目录和可用模型连接：
 
-## 1. 准备工作
+~~~bash
+ga --help
+ga experiment seal ./my-experiment ./my-experiment.gaexp
+ga experiment validate ./my-experiment.gaexp
+ga run start ./my-experiment.gaexp ./my-run --steps 24
+ga run status ./my-run
+ga replay state ./my-run 12
+ga run seal ./my-run ./my-run.garun
+~~~
 
-### 1.1 获取代码：
+暂停的 Run 可用 ga run resume ./my-run 续跑；已完成 Run 用 ga run rerun ./my-run ./another-run 重跑。从 .garun 续跑须提供 --destination 指定可写目录。完整命令和状态含义见 [运行手册](docs/operations-runbook.md)。
 
-```
-git clone https://github.com/x-glacier/GenerativeAgentsCN.git
-cd GenerativeAgentsCN
-```
+**阅读与验证**
 
-### 1.2 配置大语言模型（LLM）
+- [文档索引](docs/README.md)：统一查阅现行合同、操作指南和案例证据。
+- [文件包架构](docs/capability-composition-platform-design.md)与[实验工作区 UX](docs/experiment-resource-composition-ux.md)。
+- [教材案例入口](docs/book/sample/README.md)：每个案例独立保存地图、人物、Skill、参数和验收证据。
+- [测试指南](docs/test-strategy.md)：当前文件包专项、前端测试及旧测试的适用边界。
 
-修改配置文件 `generative_agents/data/config.json`:
-1. 默认通过 vLLM 的 OpenAI 兼容接口调用本地聊天模型，配置及接口说明见 [vllm.md](docs/vllm.md)。`model` 设为 `auto` 时会从 `/v1/models` 自动选择服务返回的第一个模型。
-2. 记忆检索使用的 embedding 模型独立配置，默认通过本地 OpenAI 兼容接口调用，配置说明见 [embedding.md](docs/embedding.md)。
-3. 如果希望调用其他 OpenAI 兼容 API，需要将 `provider` 改为 `openai`，并根据 API 文档修改 `model`、`api_key` 和 `base_url`。
-
-### 1.3 安装python依赖
-
-建议先使用anaconda3创建并激活虚拟环境：
-
-```
-conda create -n generative_agents_cn python=3.12
-conda activate generative_agents_cn
-```
-
-安装依赖：
-
-```
-pip install -r requirements.txt
-```
-
-## 2. 运行虚拟小镇
-
-```
-cd generative_agents
-python start.py --name sim-test --start "20250213-09:30" --step 10 --stride 10
-```
-
-参数说明:
-- `name` - 每次启动虚拟小镇，需要设定唯一的名称，用于事后回放。
-- `start` - 虚拟小镇的起始时间。
-- `resume` - 在运行结束或意外中断后，从上次的“断点”处，继续运行虚拟小镇。
-- `step` - 在迭代多少步之后停止运行。
-- `stride` - 每一步迭代在虚拟小镇中对应的时间（分钟）。假如设定`--stride 10`，虚拟小镇在迭代过程中的时间变化将会是 9:00，9:10，9:20 ...
-
-## 3. 回放
-
-### 3.1 生成回放数据
-
-```
-python compress.py --name sim-test
-```
-
-运行结束后将在`results/compressed/sim-test`目录下生成回放数据文件`movement.json`。同时还将生成`simulation.md`，以时间线方式呈现每个智能体的状态及对话内容。
-
-### 3.2 启动回放服务
-
-```
-python replay.py
-```
-
-通过浏览器打开回放页面（地址：`http://127.0.0.1:5000/?name=sim-test` ），可以看到虚拟小镇中的居民在各个时间段的活动。
-
-*只能通过键盘方向键移动画面*
-
-参数说明  
-- `name` - 启动虚拟小镇时设定的名称。
-- `step` - 回放的起始步数，0代表从第一帧开始回放，预设值为0。
-- `speed` - 回放速度（0-5），0最慢，5最快，预设值为2。
-- `zoom` - 画面缩放比例，预设值为0.8。
-
-发布版本中内置了名为`example`的回放数据（由qwen2.5:32b-instruct-q4_K_M生成）。若希望以较快速度从头开始回放，画面缩放比例为0.6，则对应的url是：
-http://127.0.0.1:5000/?name=example&step=0&speed=2&zoom=0.6
-
-也可直接打开[simulation.md](generative_agents/results/compressed/example/simulation.md)，查看`example`中所有人物活动和对话信息。
-
-### 3.3 回放截图
-
-*画面中对话内容由qwen2.5:14b-instruct-q4_K_M生成*
-
-小镇全景
-
-![小镇全景](docs/resources/snapshot1.gif)
-
-公园
-
-![公园](docs/resources/snapshot2.gif)
-
-咖啡馆
-
-![咖啡馆](docs/resources/snapshot3.gif)
-
-教室
-
-![教室](docs/resources/snapshot4.gif)
-
-## 4. 修改地图
-
-由于wounderland项目原作者没有提供maze.json的生成代码，所以想要创建新地图，有以下几种方案：
-
-1. 参考原始generative_agents项目中maze.py的逻辑，修改现有代码，以便兼容tiled编辑器导出的json和csv数据文件；
-2. 参考现有的maze.json格式，编写代码用于合并tiled编辑器导出的maze_meta_info.json、collision_maze.csv、sector_maze.csv等文件，为新地图生成maze.json。
-3. `jiejieje`已为本项目开发了一款地图标注工具，项目地址：https://github.com/jiejieje/tiled_to_maze.json
-
-## 5. 参考资料
-
-### 5.1 论文
-
-[Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)
-
-### 5.2 代码
-
-[Generative Agents](https://github.com/joonspk-research/generative_agents)
-
-[wounderland](https://github.com/Archermmt/wounderland)
+研究来源：[Generative Agents](https://github.com/joonspk-research/generative_agents)、[wounderland](https://github.com/Archermmt/wounderland)。许可见 [LICENSE](LICENSE)。

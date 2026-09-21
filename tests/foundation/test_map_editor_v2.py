@@ -23,7 +23,7 @@ from generative_agents.services.maps import (
     _compile_editor_v2_runtime_addresses,
     _validate_map_editor_v2,
 )
-from generative_agents.web.app import create_app
+from tests.studio_support import create_test_studio
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -219,9 +219,9 @@ def test_ville_import_builds_exact_four_level_address_tree():
 
 def test_map_editor_document_and_real_tiles_are_served(database_url):
     """回归验证 ``test_map_editor_document_and_real_tiles_are_served`` 所描述的业务结果、故障边界和隔离约束。"""
-    app = create_app(database_url=database_url, supervisor_enabled=False)
+    app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        document = client.get("/api/v1/map-editor/ville-document")
+        document = client.get("/api/studio/resources/map-editor/ville-document")
         source = client.get(
             "/generative_agents/frontend/static/assets/village/"
             "tilemap/CuteRPG_Field_B.png"
@@ -1431,8 +1431,8 @@ def test_custom_blank_map_does_not_inherit_ville_materials_or_nodes():
     assert "material_slices: []," in source
     assert "material_canvases: []," in source
     assert "used_gid_count: 0" in source
-    assert "fetch('/api/v1/assets', { method: 'POST', body })" in source
-    assert "/api/v1/assets/${encodeURIComponent(source.asset_id)}/content" in source
+    assert "fetch(window.ResourceScope?.url('/assets') || '/api/studio/resources/assets', { method: 'POST', body })" in source
+    assert "/api/studio/resources/assets/${encodeURIComponent(source.asset_id)}/content" in source
     assert "tile.address = node ? this.nodeAddress(node) : [];" in source
     assert "Object.keys(this.document.tile_overrides || {})" in source
     assert "tile_override_layers" in source

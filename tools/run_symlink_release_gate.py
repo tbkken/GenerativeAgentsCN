@@ -17,7 +17,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROL_TEST = "tests/architecture/test_run_observability_lifecycle_redlines.py"
+ROL_TEST = "tests/architecture/test_portable_storage_security.py"
 SYMLINK_TEST_NODES = (
     f"{ROL_TEST}::test_def_047_log_service_rejects_a_real_symlink_chain",
     f"{ROL_TEST}::test_def_061_artifact_preview_and_download_enforce_persisted_storage_integrity[final_symlink]",
