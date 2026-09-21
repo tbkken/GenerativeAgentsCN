@@ -8,6 +8,7 @@ import requests
 from datetime import datetime, timezone
 from uuid import uuid4
 
+from generative_agents.ga_protocol.schemas.experiment import normalize_openai_base_url
 from generative_agents.ga_runtime.models.trace import ModelTraceEvent
 from generative_agents.ga_runtime.models.trace import ModelTraceEventType
 from generative_agents.ga_runtime.models.trace import ModelTraceStatus
@@ -271,9 +272,7 @@ class LLMModel:
     ):
         """Perform one physical OpenAI-compatible chat completion request."""
 
-        base_url = self._base_url.rstrip("/")
-        if not base_url.endswith("/v1"):
-            base_url = f"{base_url}/v1"
+        base_url = normalize_openai_base_url(self._base_url)
         payload = {
             "model": self._model,
             "messages": messages,
@@ -612,9 +611,7 @@ class VLLMLLMModel(LLMModel):
         返回:
             返回函数计算得到的结果。
         """
-        prefix = (
-            self._base_url if self._base_url.endswith("/v1") else f"{self._base_url}/v1"
-        )
+        prefix = normalize_openai_base_url(self._base_url)
         return f"{prefix}/{path.lstrip('/')}"
 
     @staticmethod

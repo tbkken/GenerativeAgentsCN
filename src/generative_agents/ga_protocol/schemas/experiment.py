@@ -34,19 +34,12 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
 
-def _normalize_v1_url(value: AnyHttpUrl | str) -> str:
-    """规范化`v1``url`。
-
-    参数:
-        value: 当前操作使用的`value`。 类型：`AnyHttpUrl | str`。
-
-    返回:
-        返回处理后的文本或稳定标识。
-    """
+def normalize_openai_base_url(value: AnyHttpUrl | str) -> str:
+    """保留服务商的显式 API 路径，仅为裸服务地址补充 /v1。"""
     parsed = urlsplit(str(value).rstrip("/"))
     path = parsed.path.rstrip("/")
-    if not path.endswith("/v1"):
-        path = f"{path}/v1" if path else "/v1"
+    if not path:
+        path = "/v1"
     return urlunsplit((parsed.scheme, parsed.netloc, path, "", ""))
 
 
@@ -168,7 +161,7 @@ class ChatVLLMConfig(ChatTransport):
         返回:
             返回 `AnyHttpUrl` 类型的处理结果。
         """
-        return AnyHttpUrl(_normalize_v1_url(value))
+        return AnyHttpUrl(normalize_openai_base_url(value))
 
 
 class ChatOpenAIConfig(ChatTransport):
@@ -205,7 +198,7 @@ class ChatOpenAIConfig(ChatTransport):
         返回:
             返回 `AnyHttpUrl` 类型的处理结果。
         """
-        return AnyHttpUrl(_normalize_v1_url(value))
+        return AnyHttpUrl(normalize_openai_base_url(value))
 
 
 class ChatOllamaConfig(ChatTransport):
@@ -265,7 +258,7 @@ class EmbeddingOpenAICompatibleConfig(EmbeddingTransport):
         返回:
             返回 `AnyHttpUrl` 类型的处理结果。
         """
-        return AnyHttpUrl(_normalize_v1_url(value))
+        return AnyHttpUrl(normalize_openai_base_url(value))
 
 
 class EmbeddingOpenAIConfig(EmbeddingTransport):
@@ -302,7 +295,7 @@ class EmbeddingOpenAIConfig(EmbeddingTransport):
         返回:
             返回 `AnyHttpUrl` 类型的处理结果。
         """
-        return AnyHttpUrl(_normalize_v1_url(value))
+        return AnyHttpUrl(normalize_openai_base_url(value))
 
 
 class EmbeddingOllamaConfig(EmbeddingTransport):

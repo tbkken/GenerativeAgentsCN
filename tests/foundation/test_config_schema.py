@@ -11,6 +11,27 @@ from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
 from generative_agents.ga_protocol.packages.hashing import canonical_json_bytes
 from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
 from generative_agents.ga_protocol.schemas.experiment import make_blank_definition
+from generative_agents.ga_protocol.schemas.experiment import (
+    ChatVLLMConfig, ChatOpenAIConfig,
+    EmbeddingOpenAICompatibleConfig, EmbeddingOpenAIConfig,
+)
+
+
+@pytest.mark.parametrize("schema,provider", [
+    (ChatVLLMConfig, "vllm"), (ChatOpenAIConfig, "openai"),
+    (EmbeddingOpenAICompatibleConfig, "openai_compatible"),
+    (EmbeddingOpenAIConfig, "openai"),
+])
+@pytest.mark.parametrize("path,expected", [
+    ("", "/v1"), ("/", "/v1"), ("/v1/", "/v1"),
+    ("/api/plan/v3/", "/api/plan/v3"),
+    ("/compatible-mode/v1", "/compatible-mode/v1"),
+    ("/custom-api", "/custom-api"),
+])
+def test_provider_api_paths_survive_configuration_round_trip(schema, provider, path, expected):
+    config = schema(provider=provider, model="test-model", base_url="https://model.example" + path)
+    assert str(config.base_url) == "https://model.example" + expected
+    assert schema.model_validate_json(config.model_dump_json()) == config
 
 
 def test_new_experiment_uses_the_real_unsloth_chat_endpoint():
