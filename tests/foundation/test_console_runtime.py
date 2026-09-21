@@ -1316,11 +1316,13 @@ def test_replay_uses_a_packaged_tilemap_with_only_the_invalid_imageheight_correc
     legacy = json.loads(legacy_bytes)
     normalized = json.loads(normalized_bytes)
 
-    assert hashlib.sha256(legacy_bytes).hexdigest() == (
-        "8c15aa6f46ebaf43aec6cf3244860e8161e9d8f7541d1765f907a496686a9bfc"
+    # Git may check out text assets with CRLF on Windows and LF on Linux.
+    # Keep the content pin while checking HTTP delivery against the raw bytes below.
+    assert hashlib.sha256(legacy_bytes.replace(b"\r\n", b"\n")).hexdigest() == (
+        "baa342b46b3e12c0a213c3ecab88c645fdc5e000ac7812a9a3de150ac062f6ef"
     )
-    assert hashlib.sha256(normalized_bytes).hexdigest() == (
-        "53477dc3e5eed02798967fbe032774bf73abe96316a7aeb93397b932e1d3259b"
+    assert hashlib.sha256(normalized_bytes.replace(b"\r\n", b"\n")).hexdigest() == (
+        "5cb00334916c0eca8c303742afa7fbca36958f48348142f45c0a70115c03ebc1"
     )
     legacy_tileset = legacy["tilesets"][12]
     normalized_tileset = normalized["tilesets"][12]
