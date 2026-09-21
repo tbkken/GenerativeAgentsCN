@@ -13,7 +13,7 @@ dependencies = ["pydantic==2.12.4", "filelock==3.32.2", "typing-extensions>=4.12
 [project.optional-dependencies]
 runtime = ["requests==2.32.5"]
 studio = ["SQLAlchemy==2.0.51", "alembic==1.19.0", "cryptography==50.0.0", "httpx==0.28.1"]
-web = ["fastapi==0.141.1", "uvicorn==0.52.1", "python-multipart==0.0.22"]
+web = ["fastapi==0.141.1", "uvicorn==0.52.1", "python-multipart==0.0.22", "Pillow==12.3.0"]
 dev = ["pytest==8.4.2", "pytest-cov==6.2.1", "httpx==0.28.1", "playwright==1.54.0", "setuptools>=69", "wheel"]
 
 [project.scripts]
