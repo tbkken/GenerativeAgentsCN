@@ -96,10 +96,17 @@ def test_trial_uses_selected_model_and_encrypted_key(center, monkeypatch):
 
 
 @pytest.mark.parametrize('purpose', ['chat', 'embedding'])
-def test_connection_probe_performs_authenticated_request(center, monkeypatch, purpose):
+@pytest.mark.parametrize('base_url', ['http://localhost:9876/v1', 'https://model.example/api/plan/v3'])
+def test_connection_probe_performs_authenticated_request(center, monkeypatch, purpose, base_url):
     client, _, _ = center
-    _, model = create(client, purpose)
+    body, model = create(client, purpose)
+    body.update(base_url=base_url, row_version=model['row_version'], api_key=None)
+    saved = client.put(f"{URL}/{model['id']}", json=body)
+    assert saved.status_code == 200, saved.text
+    assert saved.json()['config'][purpose]['base_url'] == base_url
     def handle(request):
+        endpoint = '/chat/completions' if purpose == 'chat' else '/embeddings'
+        assert str(request.url) == base_url + endpoint
         assert request.headers['Authorization'] == 'Bearer secret-test-123'
         assert json.loads(request.content)['model'] == f'test-{purpose}'
         data = {'choices':[{'message':{'content':'OK'}}]} if purpose == 'chat' else {'data':[{'embedding':[0.1,0.2]}]}
