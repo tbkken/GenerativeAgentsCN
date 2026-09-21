@@ -7,11 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from generative_agents.ga_protocol.io import PackageError
-from generative_agents.ga_protocol.quality import (
-    deterministic_quality_issues,
-    project_run_quality,
-)
+from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.facts.quality import deterministic_quality_issues
+from generative_agents.ga_protocol.facts.quality import project_run_quality
 
 
 def _call(tool="world-navigate", *, error=True, output="blocked", request="{}"):

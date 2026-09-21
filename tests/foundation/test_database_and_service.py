@@ -1,7 +1,8 @@
 """The database contains author resources and a rebuildable catalog only."""
 from sqlalchemy import inspect
-from generative_agents.ga_studio.schema import BASELINE_REVISION, STUDIO_TABLE_NAMES
-from generative_agents.persistence.models import Base
+from generative_agents.ga_studio.storage.schema import BASELINE_REVISION
+from generative_agents.ga_studio.storage.schema import STUDIO_TABLE_NAMES
+from generative_agents.ga_studio.storage.models import Base
 
 
 def test_alembic_matches_studio_models_and_sqlite_pragmas(database):

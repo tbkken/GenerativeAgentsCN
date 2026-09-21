@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import uvicorn
 from playwright.sync_api import sync_playwright
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.adapters.web.app import create_studio_app
 
 
 class Gateway(BaseHTTPRequestHandler):

@@ -11,14 +11,13 @@ Start with the [documentation index](docs/README.md). [AGENTS.md](AGENTS.md) def
 Use Python 3.11 or later and run these commands from the repository root. Create and activate a virtual environment first; see the [Chinese quick start](README.md) for Windows and Unix activation commands.
 
 ~~~bash
-python -m pip install -r generative_agents/requirements.txt
-python -m pip install -e .
-python -m generative_agents.web.main
+python -m pip install -e ".[runtime,studio,web]"
+ga studio serve
 ~~~
 
 Open [Studio](http://127.0.0.1:8000/). The health endpoint is [api/studio/health](http://127.0.0.1:8000/api/studio/health). Defaults are var/generative-agents.db for Studio author data and var/ for local files.
 
-The editable install registers the ga command. It does not install the full runtime dependencies declared in requirements.txt; the current uv.lock is not a complete runtime dependency lock.
+Dependencies are declared in pyproject.toml. Install `.` for package inspection and Replay, `.[runtime]` for simulation, or `.[runtime,studio,web]` for Studio. Add `dev` for tests. Code lives under `src/generative_agents/`; installed commands work outside the checkout.
 
 **Configure an experiment**
 
@@ -37,7 +36,7 @@ The system has no default map or built-in public Agent catalog. Agent placement 
 | ga_runtime | Execution, supervision, checkpoints and recovery |
 | ga_replay | Read-only reconstruction from committed Run facts |
 
-Studio owns the author database. Runtime and Replay consume files and do not depend on Studio database state. The [code guide](docs/code-guide-cn.md) also identifies shared components still used from older directories.
+Studio owns the author database. Runtime and Replay consume files and do not depend on Studio database state. The [code guide](docs/code-guide-cn.md) maps the four modules and their CLI/Web adapters.
 
 For an existing complete experiment directory:
 

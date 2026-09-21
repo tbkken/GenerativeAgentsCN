@@ -2,9 +2,11 @@ import ctypes
 import threading
 from pathlib import Path
 import pytest
-from generative_agents.ga_protocol import read_json,atomic_write_json,write_integrity_manifest
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.runtime.file_result_projector import FileResultProjector
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.ga_runtime.storage.projection import FileResultProjector
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -40,7 +42,7 @@ def test_projector_retries_real_windows_reader_handle(tmp_path,monkeypatch):
 
 @pytest.mark.parametrize("failed_step", [1, 2])
 def test_status_failure_resumes_without_rewriting_committed_frame(tmp_path,monkeypatch,failed_step):
-    import generative_agents.ga_protocol.io as io
+    import generative_agents.ga_protocol.packages.io as io
     real_replace=io._replace_file
     def block(source,target):
         if Path(target).name=='status.json':
@@ -55,7 +57,7 @@ def test_status_failure_resumes_without_rewriting_committed_frame(tmp_path,monke
         with pytest.raises(PermissionError):RunService().start(exp,run,requested_steps=3)
     failed=read_json(run/'status.json')
     assert failed['status']=='FAILED' and failed['committed_step']==failed_step-1
-    from generative_agents.ga_replay import ReplayReader
+    from generative_agents.ga_replay.reader import ReplayReader
     with ReplayReader(run) as replay:
         assert replay.available_steps() == tuple(range(1, failed_step))
     old=(run/'frames/step-000001.json.gz').read_bytes() if failed_step>1 else None
@@ -68,8 +70,8 @@ def test_status_failure_resumes_without_rewriting_committed_frame(tmp_path,monke
 
 @pytest.mark.parametrize('blocked_steps', [{1}, {2}, {1, 2, 3}])
 def test_projection_denial_does_not_fail_committed_run(tmp_path, monkeypatch, caplog, blocked_steps):
-    import generative_agents.ga_protocol.io as io
-    from generative_agents.ga_replay import ReplayReader
+    import generative_agents.ga_protocol.packages.io as io
+    from generative_agents.ga_replay.reader import ReplayReader
     real_replace = io._replace_file
     def block(source, target):
         if Path(target).name == 'projection.json' and read_json(Path(source))['available_step'] in blocked_steps:
@@ -91,7 +93,7 @@ def test_projection_denial_does_not_fail_committed_run(tmp_path, monkeypatch, ca
 
 @pytest.mark.skipif(__import__('os').name != 'nt', reason='Windows file sharing')
 def test_shared_reader_allows_576_atomic_replacements_while_handle_stays_open(tmp_path):
-    from generative_agents.ga_protocol.io import open_shared_reader
+    from generative_agents.ga_protocol.packages.io import open_shared_reader
     path = tmp_path / 'projection.json'
     atomic_write_json(path, {'step': 0})
     with open_shared_reader(path) as held:
@@ -103,7 +105,7 @@ def test_shared_reader_allows_576_atomic_replacements_while_handle_stays_open(tm
 
 @pytest.mark.skipif(__import__('os').name != 'nt', reason='Windows file sharing')
 def test_external_reader_held_past_retry_budget_does_not_stop_run(tmp_path, monkeypatch):
-    from generative_agents.ga_replay import ReplayReader
+    from generative_agents.ga_replay.reader import ReplayReader
     kernel = ctypes.WinDLL('kernel32', use_last_error=True)
     kernel.CreateFileW.argtypes = [ctypes.c_wchar_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_void_p]
     kernel.CreateFileW.restype = ctypes.c_void_p
@@ -130,7 +132,7 @@ def test_external_reader_held_past_retry_budget_does_not_stop_run(tmp_path, monk
 
 
 def test_new_worker_rebuilds_lagging_projection_before_resume(tmp_path, monkeypatch):
-    import generative_agents.ga_protocol.io as io
+    import generative_agents.ga_protocol.packages.io as io
     run = tmp_path / 'run'
     real_replace = io._replace_file
     original = FileResultProjector.commit_step
@@ -158,7 +160,7 @@ def test_new_worker_rebuilds_lagging_projection_before_resume(tmp_path, monkeypa
 
 
 def test_missing_checkpoint_rejects_resume_before_new_attempt(tmp_path):
-    from generative_agents.ga_protocol import PackageError
+    from generative_agents.ga_protocol.packages.io import PackageError
     run=RunService().create(source(tmp_path),tmp_path/'run',requested_steps=3)
     status=read_json(run/'status.json');status.update(status='FAILED',committed_step=1)
     atomic_write_json(run/'status.json',status)

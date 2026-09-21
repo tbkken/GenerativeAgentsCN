@@ -6,10 +6,12 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import PackageError, atomic_write_json, read_json
+from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_replay.reader import read_run_status
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -18,9 +20,9 @@ def forbidden(*args, **kwargs):
 
 
 def test_filter_and_pagination_happen_before_any_package_read(tmp_path, monkeypatch):
-    import generative_agents.web.portable_api as api
-    from generative_agents.ga_replay import reader
-    from generative_agents.ga_protocol import recovery
+    import generative_agents.adapters.web.context as api
+    import generative_agents.ga_replay.reader as reader
+    import generative_agents.ga_protocol.facts.recovery as recovery
 
     var = tmp_path / 'var'
     roots = [_experiment(var / f'packages/source-{index}') for index in range(7)]
@@ -71,7 +73,7 @@ def test_filter_and_pagination_happen_before_any_package_read(tmp_path, monkeypa
 
 
 def test_live_list_status_reads_no_frames_and_archive_is_not_extracted(tmp_path, monkeypatch):
-    from generative_agents.ga_replay import reader
+    import generative_agents.ga_replay.reader as reader
     root = RunService().create(_experiment(tmp_path / 'packages'), tmp_path / 'run')
     status = read_json(root / 'status.json')
     # The navigation reader can show a committed boundary even while its full
@@ -99,7 +101,7 @@ def test_live_list_status_reads_no_frames_and_archive_is_not_extracted(tmp_path,
 
 
 def test_list_summary_does_not_open_model_skill_or_evaluation_documents(tmp_path, monkeypatch):
-    import generative_agents.web.portable_api as api
+    import generative_agents.ga_protocol.packages.definition as api
     root = _experiment(tmp_path / 'packages')
     original = api.read_json
     seen = []

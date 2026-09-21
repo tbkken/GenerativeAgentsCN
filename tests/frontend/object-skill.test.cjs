@@ -1,7 +1,7 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 global.window = {};
-require('../../generative_agents/web/static/map-editor-v2.js');
+require('../../src/generative_agents/adapters/web/static/resources/map-editor-v2.js');
 
 function fixture() {
   const node = {id: 'camera', name: 'camera', kind: 'GAME_OBJECT', parent_id: 'road',

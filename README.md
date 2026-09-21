@@ -29,14 +29,13 @@ source .venv/bin/activate
 安装运行依赖并注册 ga 命令：
 
 ~~~bash
-python -m pip install -r generative_agents/requirements.txt
-python -m pip install -e .
-python -m generative_agents.web.main
+python -m pip install -e ".[runtime,studio,web]"
+ga studio serve
 ~~~
 
 打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数、备份及恢复见 [运行手册](docs/operations-runbook.md)。
 
-当前 pyproject.toml 没有声明完整运行依赖，单独执行 editable 安装不能代替 requirements 安装。uv.lock 也不是完整运行环境的锁定清单。
+依赖统一在 pyproject.toml 声明。仅检查包或回放时安装 `.`；运行仿真使用 `.[runtime]`；完整 Studio 使用 `.[runtime,studio,web]`；开发测试再加 `dev`。源码统一放在 `src/generative_agents/`，命令从安装后的包加载，可在任意工作目录运行。
 
 **创建第一个实验**
 
@@ -57,7 +56,7 @@ python -m generative_agents.web.main
 | ga_runtime | 执行、监督、控制、提交和恢复 | Run 内嵌实验与 Run 文件 |
 | ga_replay | 概览、时间线、状态归约与质量读取 | Run 内已提交事实 |
 
-数据库只属于 Studio 作者侧；Runtime 和 Replay 不以数据库为事实来源。旧目录中仍有被当前入口复用的底层组件，实际调用关系见 [代码导览](docs/code-guide-cn.md)。
+数据库只属于 Studio 作者侧；Runtime 和 Replay 不以数据库为事实来源。四模块及 CLI/Web 适配层的实际调用关系见 [代码导览](docs/code-guide-cn.md)。
 
 以下路径是示例，需要已有的完整实验目录和可用模型连接：
 
@@ -78,6 +77,6 @@ ga run seal ./my-run ./my-run.garun
 - [文档索引](docs/README.md)：统一查阅现行合同、操作指南和案例证据。
 - [文件包架构](docs/capability-composition-platform-design.md)与[实验工作区 UX](docs/experiment-resource-composition-ux.md)。
 - [教材案例入口](docs/book/sample/README.md)：每个案例独立保存地图、人物、Skill、参数和验收证据。
-- [测试指南](docs/test-strategy.md)：当前文件包专项、前端测试及旧测试的适用边界。
+- [测试指南](docs/test-strategy.md)：文件协议、架构边界、前端及安装包验收。
 
 研究来源：[Generative Agents](https://github.com/joonspk-research/generative_agents)、[wounderland](https://github.com/Archermmt/wounderland)。许可见 [LICENSE](LICENSE)。

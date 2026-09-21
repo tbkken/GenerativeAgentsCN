@@ -6,12 +6,13 @@ import sqlite3
 from fastapi.testclient import TestClient
 from sqlalchemy import inspect
 
-from generative_agents.ga_studio.schema import prepare_studio_database
-from generative_agents.ga_studio.web import create_studio_app
-from generative_agents.persistence import create_database, upgrade_database
+from generative_agents.ga_studio.storage.schema import prepare_studio_database
+from generative_agents.adapters.web.app import create_studio_app
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.database import upgrade_database
 
 
-ROOT = Path(__file__).resolve().parents[2] / "generative_agents"
+ROOT = Path(__file__).resolve().parents[2] / "src" / "generative_agents"
 
 
 def _python_sources(module: str) -> str:
@@ -24,8 +25,8 @@ def _python_sources(module: str) -> str:
 def test_protocol_runtime_and_replay_do_not_import_studio_persistence() -> None:
     for module in ("ga_protocol", "ga_runtime", "ga_replay"):
         source = _python_sources(module)
-        assert "generative_agents.persistence" not in source
-        assert "generative_agents.ga_studio" not in source
+        assert "generative_agents.ga_studio.storage" not in source
+        assert "generative_agents.ga_studio.api" not in source
         assert "from sqlalchemy" not in source
         assert "import sqlalchemy" not in source
 
@@ -120,7 +121,7 @@ def test_package_studio_root_serves_functional_management_console(tmp_path: Path
     )
     with TestClient(app) as client:
         page = client.get("/")
-        script = client.get("/static/console/console-api.js")
+        script = client.get("/static/console/shell/console-api.js")
         health = client.get("/api/studio/health")
         spatial_assets = client.get("/api/studio/resources/spatial-assets")
 
@@ -138,9 +139,9 @@ def test_package_studio_root_serves_functional_management_console(tmp_path: Path
 
 
 def test_agent_manager_exposes_one_user_owned_public_catalog() -> None:
-    static_root = ROOT / "web" / "static"
-    html = (static_root / "experiment-console.html").read_text(encoding="utf-8")
-    workspace = (static_root / "crowd-workspace.js").read_text(encoding="utf-8")
+    static_root = ROOT / "adapters" / "web" / "static"
+    html = (static_root / "shell/experiment-console.html").read_text(encoding="utf-8")
+    workspace = (static_root / "resources/crowd-workspace.js").read_text(encoding="utf-8")
 
     assert "系统公共 Agent" not in html
     assert "系统 Agent" not in html

@@ -8,24 +8,28 @@ version = "0.1.0"
 description = "Experiment-isolated GenerativeAgentsCN Web service"
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = ["pydantic==2.12.4", "filelock==3.32.2", "typing-extensions>=4.12", "tzdata==2025.2"]
+
+[project.optional-dependencies]
+runtime = ["requests==2.32.5"]
+studio = ["SQLAlchemy==2.0.51", "alembic==1.19.0", "cryptography==50.0.0", "httpx==0.28.1"]
+web = ["fastapi==0.141.1", "uvicorn==0.52.1", "python-multipart==0.0.22"]
+dev = ["pytest==8.4.2", "pytest-cov==6.2.1", "httpx==0.28.1", "playwright==1.54.0", "setuptools>=69", "wheel"]
 
 [project.scripts]
-ga = "generative_agents.cli.main:main"
+ga = "generative_agents.adapters.cli.main:main"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["generative_agents*"]
 namespaces = true
 
-# Runtime package roots: generative_agents/web/static and
-# generative_agents/frontend/static/assets/village.
 [tool.setuptools.package-data]
 generative_agents = [
-  "data/**/*",
-  "assets/**/*",
-  "web/static/**/*",
-  "frontend/static/assets/village/**/*",
+  "adapters/web/static/**/*",
+  "ga_studio/bundled/**/*",
+  "ga_studio/storage/migrations/*.mako",
 ]

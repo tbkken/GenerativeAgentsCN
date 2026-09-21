@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PRODUCT_ROOT = REPO_ROOT / "generative_agents"
+PRODUCT_ROOT = REPO_ROOT / "src" / "generative_agents"
 
 
 def _source(relative_path: str) -> str:
@@ -39,10 +39,10 @@ def test_def_001_runtime_has_no_process_global_game_or_timer_registry() -> None:
     """回归验证 ``test_def_001_runtime_has_no_process_global_game_or_timer_registry`` 所描述的业务结果、故障边界和隔离约束。"""
     offenders: list[str] = []
     for relative_path in (
-        "generative_agents/modules/game.py",
-        "generative_agents/modules/utils/timer.py",
-        "generative_agents/modules/utils/log.py",
-        "generative_agents/modules/agent.py",
+        "src/generative_agents/ga_runtime/engine/world.py",
+        "src/generative_agents/ga_runtime/engine/time.py",
+        "src/generative_agents/ga_runtime/storage/logging.py",
+        "src/generative_agents/ga_runtime/engine/actor.py",
     ):
         source = _source(relative_path)
         if "GenerativeAgentsMap" in source or "get_timer()" in source:
@@ -52,7 +52,7 @@ def test_def_001_runtime_has_no_process_global_game_or_timer_registry() -> None:
 
 def test_def_002_vector_indexes_do_not_write_llama_global_settings() -> None:
     """回归验证 ``test_def_002_vector_indexes_do_not_write_llama_global_settings`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = _source("generative_agents/modules/storage/index.py")
+    source = _source("src/generative_agents/ga_runtime/memory/stream.py")
     forbidden = (
         "from llama_index.core import Settings",
         "Settings.embed_model",
@@ -66,9 +66,9 @@ def test_def_002_vector_indexes_do_not_write_llama_global_settings() -> None:
 
 def test_def_003_run_paths_are_not_derived_from_user_visible_names() -> None:
     """回归验证 ``test_def_003_run_paths_are_not_derived_from_user_visible_names`` 所描述的业务结果、故障边界和隔离约束。"""
-    game_source = _source("generative_agents/modules/game.py")
-    start_source = _source("generative_agents/start.py")
-    replay_source = _source("generative_agents/ga_replay/reader.py")
+    game_source = _source("src/generative_agents/ga_runtime/engine/world.py")
+    start_source = _source("src/generative_agents/ga_runtime/engine/scheduler.py")
+    replay_source = _source("src/generative_agents/ga_replay/reader.py")
     offenders = []
     if 'f"results/checkpoints/{name}"' in game_source:
         offenders.append("modules/game.py")
@@ -81,18 +81,18 @@ def test_def_003_run_paths_are_not_derived_from_user_visible_names() -> None:
 
 def test_def_004_checkpoint_identity_is_monotonic_step_number() -> None:
     """回归验证 ``test_def_004_checkpoint_identity_is_monotonic_step_number`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = _source("generative_agents/start.py")
+    source = _source("src/generative_agents/ga_runtime/engine/scheduler.py")
     assert "simulate-{sim_time.replace(':', '')}.json" not in source, (
         "DEF-004 checkpoint filename still uses virtual minute and can overwrite another step"
     )
-    assert "step-{" in source or (PRODUCT_ROOT / "runtime" / "checkpoint.py").exists(), (
+    assert "step-{" in source or (PRODUCT_ROOT / "ga_runtime" / "storage" / "checkpoints.py").exists(), (
         "DEF-004 no step-numbered checkpoint writer is present"
     )
 
 
 def test_def_005_snapshot_serialization_has_no_hidden_index_persist() -> None:
     """回归验证 ``test_def_005_snapshot_serialization_has_no_hidden_index_persist`` 所描述的业务结果、故障边界和隔离约束。"""
-    source = _source("generative_agents/modules/memory/associate.py")
+    source = _source("src/generative_agents/ga_runtime/engine/actor.py")
     tree = ast.parse(source)
     to_dict = next(
         node
@@ -108,9 +108,9 @@ def test_def_005_snapshot_serialization_has_no_hidden_index_persist() -> None:
 def test_def_006_runtime_does_not_read_shared_bootstrap_configuration() -> None:
     """回归验证 ``test_def_006_runtime_does_not_read_shared_bootstrap_configuration`` 所描述的业务结果、故障边界和隔离约束。"""
     checked = {
-        "generative_agents/start.py": ("data/config.json", "frontend/static"),
-        "generative_agents/modules/prompt/scratch.py": ("data/prompts",),
-        "generative_agents/cli/main.py": ("frontend/static/assets/village",),
+        "src/generative_agents/ga_runtime/engine/scheduler.py": ("data/config.json", "frontend/static"),
+        "src/generative_agents/ga_runtime/skills/brain.py": ("data/prompts",),
+        "src/generative_agents/adapters/cli/main.py": ("frontend/static/assets/village",),
     }
     found: list[str] = []
     for relative_path, tokens in checked.items():
@@ -123,7 +123,7 @@ def test_def_007_importing_product_modules_does_not_parse_process_arguments() ->
     """回归验证 ``test_def_007_importing_product_modules_does_not_parse_process_arguments`` 所描述的业务结果、故障边界和隔离约束。"""
     offenders = {
         path: _module_scope_calls(path, "parse_args")
-        for path in ("generative_agents/start.py", "generative_agents/cli/main.py")
+        for path in ("src/generative_agents/ga_runtime/engine/scheduler.py", "src/generative_agents/adapters/cli/main.py")
     }
     offenders = {path: lines for path, lines in offenders.items() if lines}
     assert not offenders, f"DEF-007 import-time argparse side effects remain: {offenders}"
@@ -131,11 +131,11 @@ def test_def_007_importing_product_modules_does_not_parse_process_arguments() ->
 
 def test_def_008_simulation_loop_commits_complete_step_results() -> None:
     """回归验证 ``test_def_008_simulation_loop_commits_complete_step_results`` 所描述的业务结果、故障边界和隔离约束。"""
-    start_source = _source("generative_agents/start.py")
+    start_source = _source("src/generative_agents/ga_runtime/engine/scheduler.py")
     required_files = (
-        PRODUCT_ROOT / "runtime" / "results.py",
-        PRODUCT_ROOT / "runtime" / "result_collector.py",
-        PRODUCT_ROOT / "runtime" / "file_result_projector.py",
+        PRODUCT_ROOT / "ga_runtime" / "engine" / "results.py",
+        PRODUCT_ROOT / "ga_runtime" / "engine" / "collector.py",
+        PRODUCT_ROOT / "ga_runtime" / "storage" / "projection.py",
     )
     missing = [str(path.relative_to(REPO_ROOT)) for path in required_files if not path.exists()]
     assert '["plan"]' not in start_source, "DEF-008 simulation loop still discards non-plan agent facts"
@@ -144,9 +144,9 @@ def test_def_008_simulation_loop_commits_complete_step_results() -> None:
 
 def test_def_012_published_world_and_action_inputs_are_not_mutated() -> None:
     """回归验证 ``test_def_012_published_world_and_action_inputs_are_not_mutated`` 所描述的业务结果、故障边界和隔离约束。"""
-    maze_source = _source("generative_agents/modules/maze.py")
-    action_source = _source("generative_agents/modules/memory/action.py")
-    agent_source = _source("generative_agents/modules/agent.py")
+    maze_source = _source("src/generative_agents/ga_runtime/engine/space.py")
+    action_source = _source("src/generative_agents/ga_runtime/memory/action.py")
+    agent_source = _source("src/generative_agents/ga_runtime/engine/actor.py")
     offenders = []
     if 'tile.pop("coord")' in maze_source:
         offenders.append("Maze.__init__ tile.pop")
@@ -161,9 +161,9 @@ def test_def_013_simulation_randomness_comes_from_run_context() -> None:
     """回归验证 ``test_def_013_simulation_randomness_comes_from_run_context`` 所描述的业务结果、故障边界和隔离约束。"""
     offenders: list[str] = []
     for relative_path in (
-        "generative_agents/modules/agent.py",
-        "generative_agents/modules/maze.py",
-        "generative_agents/modules/prompt/scratch.py",
+        "src/generative_agents/ga_runtime/engine/actor.py",
+        "src/generative_agents/ga_runtime/engine/space.py",
+        "src/generative_agents/ga_runtime/skills/brain.py",
     ):
         source = _source(relative_path)
         if "import random" in source or "random.choice" in source or "random.sample" in source:

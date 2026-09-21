@@ -4,7 +4,7 @@ from pathlib import Path
 
 from sqlalchemy.engine import make_url
 
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.adapters.web.app import create_studio_app
 
 
 def create_test_studio(*, database_url: str, var_dir=None, **kwargs):

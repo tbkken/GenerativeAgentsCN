@@ -3,7 +3,8 @@ from io import BytesIO
 
 import pytest
 
-from generative_agents.assets import AssetStore, AssetValidationError
+from generative_agents.ga_studio.storage.assets import AssetStore
+from generative_agents.ga_studio.storage.assets import AssetValidationError
 
 
 def test_same_asset_is_materialized_once_with_server_hash(tmp_path):

@@ -1,41 +1,24 @@
 # Repository working guide
 
-Read [AGENTS.md](AGENTS.md) first. It is the repository authority for architecture, editing boundaries, case construction and acceptance. This file is a navigation guide and does not introduce a second set of design rules.
+Read [AGENTS.md](AGENTS.md) first. It defines architecture and case acceptance boundaries. This file provides navigation, not a second set of design rules.
 
-**Current documentation**
+- [Documentation index](docs/README.md), [architecture](docs/capability-composition-platform-design.md), [source organization](docs/source-organization-design.md).
+- [Code guide](docs/code-guide-cn.md), [operations](docs/operations-runbook.md), [model configuration](docs/model-configuration.md), [tests](docs/test-strategy.md).
 
-- [Documentation index](docs/README.md): current contracts, operating guides and case evidence.
-- [Architecture](docs/capability-composition-platform-design.md) and [Studio UX](docs/experiment-resource-composition-ux.md).
-- [Code guide](docs/code-guide-cn.md), [operations](docs/operations-runbook.md), [model configuration](docs/model-configuration.md) and [tests](docs/test-strategy.md).
+All product code is under `src/generative_agents/`. `ga_protocol` owns file contracts; `ga_studio` alone owns database access and author resources; `ga_runtime` owns execution and Run writes; `ga_replay` reads committed files. `adapters` contains CLI and Web presentation. Adapters call named operations in module `api.py` files. No retired top-level import paths or compatibility shims exist.
 
-Obsolete designs and prototypes have been removed. Follow the current contracts; do not restore author-resource Revision workflows, database Run queues/projections, the former Prompt workflow editor or the old smallville CLI.
+Studio copies selected resource closures into independent DRAFT experiments. Sealing creates `.gaexp`; Runtime embeds it in a new Run. Replay reads Run files or `.garun`. Manifest IDs are authoritative. Natural-language Brain Skills choose behavior; the kernel owns identity, input validation, world commit, recovery and supervision.
 
-**Actual entry points**
-
-- Studio: python -m generative_agents.web.main → ga_studio.web.create_studio_app.
-- CLI: ga, or python -m generative_agents.cli.main.
-- Runtime: ga_runtime.service / executor; Studio's FileRunSupervisor launches the CLI against a Run directory.
-- Replay: ga_replay.reader.ReplayReader.
-- Browser shell: generative_agents/web/static/experiment-console.html.
-
-Studio is the only database-owning business module. Experiments follow DRAFT → SEALED and own physical copies of their inputs. Runtime consumes the Run's embedded experiment; Replay reads committed Run facts. Package manifests determine experiment_id, run_id and attempt_id.
-
-Shared kernel code remains in start.py, modules/, runtime/, config/ and skills/, with Studio support in services/ and persistence/. The old web.app, database Run services/workers/projectors, revision Manifest serializer, publication preflight and demo routes have been removed. Package initializers expose only current support; persistence/models.py maps exactly the 11 Studio tables. Follow ga_studio.web.create_studio_app and ga CLI for application startup.
-
-**Commands from the repository root**
-
-~~~bash
-python -m pip install -r generative_agents/requirements.txt
-python -m pip install -r generative_agents/requirements-dev.txt
-python -m pip install -e .
-python -m generative_agents.web.main
-ga --help
-python -m pytest -q -p no:cacheprovider tests/architecture/test_portable_module_boundaries.py tests/test_portable_package_protocol.py
+```bash
+python -m pip install -e ".[runtime,studio,web,dev]"
+ga studio serve
+python tools/check_source_boundaries.py
+python -m pytest tests -q -p no:cacheprovider
 node --test tests/frontend/*.test.cjs
-~~~
+```
 
-Health: /api/studio/health. The Web entry point uses one Uvicorn worker; Runtime supervision owns the execution processes. A model service must already be available before a real simulation; the Web launcher does not manage model servers.
+The sole Web application is `adapters/web/app.py`; CLI parsing is in `adapters/cli/main.py`. Health is `/api/studio/health`. Run workers operate on directories and never receive author registries or database sessions. Skill trials follow the same boundary: Studio prepares files, Runtime executes them.
 
-Use focused checks from the test guide. Historical tests may still assert superseded database contracts; document those failures rather than restoring the old design or claiming the entire suite is green.
+Run focused checks and the release gates in the test guide. Update README, the code guide and the documentation index when changing entry points. Do not preserve tests requiring retired cognition or SQLite memory; maintain the valid isolation, safety and recovery contracts on current entry points.
 
-For teaching cases, follow the browser-only authoring and acceptance rules in AGENTS.md, including the explicit approval boundary for newly found defects and the restart/retest requirement after approved fixes. A real case's exact Skill, package copies, verification records and export hashes are evidence, not disposable fixtures.
+For teaching cases, follow AGENTS.md: browser authoring, explicit approval for newly found case defects, service restart and original-path acceptance after approved fixes. Case documents and original exports are scoped evidence and must not be rewritten to claim validation of new code.

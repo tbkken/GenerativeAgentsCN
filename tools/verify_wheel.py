@@ -17,15 +17,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def verify(wheel: Path) -> None:
-    package = ROOT / "generative_agents"
+    package = ROOT / "src" / "generative_agents"
     expected = {
-        path.relative_to(ROOT).as_posix(): path
+        path.relative_to(ROOT / "src").as_posix(): path
         for path in package.rglob("*.py")
         if "__pycache__" not in path.parts
     }
-    for relative in ("data", "assets", "web/static", "frontend/static/assets/village"):
+    for relative in ("ga_studio/bundled", "adapters/web/static", "ga_studio/storage/migrations"):
         expected.update({
-            path.relative_to(ROOT).as_posix(): path
+            path.relative_to(ROOT / "src").as_posix(): path
             for path in (package / relative).rglob("*")
             if path.is_file() and "__pycache__" not in path.parts
         })

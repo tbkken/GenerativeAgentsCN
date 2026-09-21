@@ -41,6 +41,8 @@ ga_replay  ──读取──>  StepResult / Frame / Checkpoint
 
 Module 之间不调用对方数据库、ORM、Repository 或业务 Service。`ga_runtime` 和 `ga_replay` 被复制到没有 Studio 的环境后仍须可用。
 
+产品源码位于 `src/generative_agents/`，按四模块及 adapters 组织；具体归属与依赖门禁见[源码组织](source-organization-design.md)。
+
 ## 3. 身份与关联
 
 身份写在清单里，绝不从目录名或压缩包名推断：

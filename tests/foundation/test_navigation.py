@@ -8,14 +8,15 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from generative_agents.config.map_editor import MapEditorDocumentV2
-from generative_agents.ga_protocol.navigation import collision_preview, grid_path
-from generative_agents.ga_studio.builder import build_semantic_index
-from generative_agents.ga_studio.resource_api import create_resource_router
-from generative_agents.modules.maze import Maze
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.iteration import IterationContext
-from generative_agents.services.maps import normalize_public_world
+from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
+from generative_agents.ga_protocol.spatial.navigation import collision_preview
+from generative_agents.ga_protocol.spatial.navigation import grid_path
+from generative_agents.ga_studio.experiments.builder import build_semantic_index
+from generative_agents.adapters.web.routes.resources import create_resource_router
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.iteration import IterationContext
+from generative_agents.ga_studio.resources.maps import normalize_public_world
 
 
 def navigation_world():

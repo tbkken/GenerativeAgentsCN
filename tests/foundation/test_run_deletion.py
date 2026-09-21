@@ -2,9 +2,10 @@ from pathlib import Path
 import json
 import pytest
 from fastapi.testclient import TestClient
-from generative_agents.ga_protocol import read_json, atomic_write_json
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -42,7 +43,7 @@ def test_delete_recycles_complete_run_and_is_idempotent(scenario):
 def test_occupied_directory_fails_without_partial_deletion(scenario, monkeypatch):
     client, var, run, url = scenario
     before = contents(run)
-    import generative_agents.ga_studio.run_deletion as deletion
+    import generative_agents.ga_studio.catalog.deletion as deletion
     rename = deletion.os.rename
     def blocked(source, target):
         if Path(source) == run:
@@ -69,7 +70,7 @@ def test_damaged_run_remains_selectable_and_deletable(scenario):
 
 def test_index_failure_after_move_can_be_retried(scenario, monkeypatch):
     client, var, run, url = scenario
-    from generative_agents.ga_studio.catalog import StudioPackageCatalogService
+    from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
     before = contents(run)
     with monkeypatch.context() as patch:
         patch.setattr(StudioPackageCatalogService, 'delete', lambda *_: (_ for _ in ()).throw(RuntimeError('database unavailable')))

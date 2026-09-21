@@ -2,14 +2,15 @@
 from pathlib import Path
 import tempfile
 
-from generative_agents.ga_studio.web import create_studio_app
-from generative_agents.ga_studio.workspace import ExperimentWorkspaceService, ExperimentSelection
-from generative_agents.ga_studio.resources import StudioResourceService
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import WorldMap
-from generative_agents.services.maps import normalize_public_world
-from generative_agents.skills import DatabaseSkillRegistry
-from generative_agents.ga_protocol import seal_directory
+from generative_agents.adapters.web.app import create_studio_app
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.ga_studio.experiments.workspace import ExperimentSelection
+from generative_agents.ga_studio.resources.catalog import StudioResourceService
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import WorldMap
+from generative_agents.ga_studio.resources.maps import normalize_public_world
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_protocol.packages.io import seal_directory
 from tests.foundation.test_navigation import navigation_world
 
 var = Path(tempfile.mkdtemp(prefix="ga-experiment-workspace-ui-"))

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from generative_agents.config.schema import AgentDefinition
-from generative_agents.ga_studio.resources import StudioAgentDefinition
+from generative_agents.ga_protocol.schemas.experiment import AgentDefinition
+from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
 
 
 def _agent_payload() -> dict:

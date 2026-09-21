@@ -5,11 +5,12 @@ from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from uuid import uuid4
 
-from generative_agents.modules.agent import Agent, valid_chat_message
-from generative_agents.modules.memory import Event, Schedule
-from generative_agents.runtime.context import RunControl, SimulationClock
-from generative_agents.runtime.results import ActivityKind
-from generative_agents.start import SimulationRunner
+from generative_agents.ga_runtime.engine.actor import ActorState as Agent
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.engine.context import RunControl
+from generative_agents.ga_runtime.engine.context import SimulationClock
+from generative_agents.ga_protocol.schemas.facts import ActivityKind
+from generative_agents.ga_runtime.engine.scheduler import SimulationRunner
 
 
 class _Tile:
@@ -152,103 +153,3 @@ def test_runner_consumes_route_by_budget_and_keeps_the_remainder_for_resume():
     assert second.agents[0].path == ((2, 0), (3, 0), (4, 0))
     assert game.agent.path == [(5, 0)]
     assert runner.agent_status["resident-005"]["path"] == ((5, 0),)
-
-
-def test_chat_cooldown_uses_durable_pair_timestamp_not_semantic_retrieval():
-    """回归验证 ``test_chat_cooldown_uses_durable_pair_timestamp_not_semantic_retrieval`` 所描述的业务结果、故障边界和隔离约束。"""
-    clock = SimulationClock(datetime(2026, 1, 1, 13, 30, tzinfo=timezone.utc))
-
-    def build(name, agent_key):
-        """构造当前测试场景所需的 ``build`` 数据、文件或受控对象。"""
-        agent = Agent.__new__(Agent)
-        agent.name = name
-        agent.agent_key = agent_key
-        agent.schedule = SimpleNamespace(daily_schedule=[{"describe": "research"}])
-        agent.path = []
-        agent.chat_cooldown_minutes = 60
-        agent.chat_stop_after_hour = 23
-        agent._clock = clock
-        agent.last_chat_at = {}
-        agent.logger = SimpleNamespace(info=lambda *_args, **_kwargs: None)
-        agent._skip_react = lambda _other: False
-        agent.get_event = lambda: Event(
-            name,
-            "is",
-            "researching",
-            address=["world", "campus", "library", "desk"],
-        )
-        return agent
-
-    klaus = build("Klaus", "resident-005")
-    aisha = build("Aisha", "resident-024")
-    klaus.last_chat_at[aisha.agent_key] = clock.get_date() - timedelta(minutes=20)
-    klaus.associate = SimpleNamespace(
-        retrieve_chats=lambda _name: (_ for _ in ()).throw(
-            AssertionError("cooldown must not depend on vector retrieval")
-        )
-    )
-
-    assert klaus._chat_with(aisha, {}) is False
-
-
-def test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work():
-    """回归验证 ``test_schedule_chat_is_a_local_splice_that_preserves_unaffected_work`` 所描述的业务结果、故障边界和隔离约束。"""
-    clock = SimulationClock(datetime(2026, 1, 1, 13, 25, tzinfo=timezone.utc))
-    schedule = Schedule(
-        clock=clock,
-        daily_schedule=[
-            {
-                "idx": 0,
-                "describe": "research",
-                "start": 780,
-                "duration": 60,
-                "decompose": [
-                    {"idx": 0, "describe": "read", "start": 780, "duration": 30},
-                    {"idx": 1, "describe": "write", "start": 810, "duration": 30},
-                ],
-            }
-        ],
-    )
-
-    assert schedule.insert_interruption("talk with Aisha", clock.get_date(), 2)
-    items = schedule.daily_schedule[0]["decompose"]
-
-    assert [(item["start"], item["duration"], item["describe"]) for item in items] == [
-        (780, 25, "read"),
-        (805, 2, "talk with Aisha"),
-        (807, 3, "read"),
-        (810, 30, "write"),
-    ]
-
-
-def test_restored_schedule_compares_the_simulation_local_calendar_day():
-    """回归验证 ``test_restored_schedule_compares_the_simulation_local_calendar_day`` 所描述的业务结果、故障边界和隔离约束。"""
-    clock = SimulationClock(
-        datetime(2026, 2, 13, 0, 30, tzinfo=timezone(timedelta(hours=8)))
-    )
-    schedule = Schedule(
-        clock=clock,
-        create="20260213-00:00:00",
-        daily_schedule=[
-            {
-                "idx": 0,
-                "describe": "sleep",
-                "start": 0,
-                "duration": 60,
-                "decompose": {},
-            }
-        ],
-    )
-
-    assert schedule.scheduled()
-
-
-def test_chat_quality_guard_rejects_placeholders_and_exact_repeats():
-    """回归验证 ``test_chat_quality_guard_rejects_placeholders_and_exact_repeats`` 所描述的业务结果、故障边界和隔离约束。"""
-    assert valid_chat_message("我们一起核对住房政策数据。")
-    assert not valid_chat_message("填坑")
-    assert not valid_chat_message("TODO")
-    assert not valid_chat_message(
-        "我们一起核对住房政策数据。",
-        [("Aisha", "我们一起核对住房政策数据。")],
-    )

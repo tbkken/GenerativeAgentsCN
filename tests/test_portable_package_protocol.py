@@ -9,26 +9,30 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import (
-    RunState,
-    RunStatus,
-    atomic_write_json,
-    seal_directory,
-    validate_experiment_directory,
-    validate_run_directory,
-    write_integrity_manifest,
-)
-from generative_agents.ga_replay import ReplayReader
-from generative_agents.ga_runtime.memory import FileMemoryStream
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio import ExperimentPackageBuilder, SkillSource
-from generative_agents.ga_studio.catalog import StudioPackageCatalogService
-from generative_agents.ga_studio.resources import StudioAgentDefinition, StudioResourceService
-from generative_agents.ga_studio.workspace import ExperimentSelection, ExperimentWorkspaceService
-from generative_agents.ga_studio.web import create_studio_app
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base, StudioAgent, StudioCrowd, WorldMap
-from generative_agents.skills import DatabaseSkillRegistry
+from generative_agents.ga_protocol.schemas.manifests import RunState
+from generative_agents.ga_protocol.schemas.manifests import RunStatus
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_replay.reader import ReplayReader
+from generative_agents.ga_runtime.memory.stream import FileMemoryStream
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
+from generative_agents.ga_studio.experiments.builder import SkillSource
+from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
+from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
+from generative_agents.ga_studio.resources.catalog import StudioResourceService
+from generative_agents.ga_studio.experiments.workspace import ExperimentSelection
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.adapters.web.app import create_studio_app
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.storage.models import StudioAgent
+from generative_agents.ga_studio.storage.models import StudioCrowd
+from generative_agents.ga_studio.storage.models import WorldMap
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
 
 
 def _definition() -> dict:
@@ -188,9 +192,10 @@ def test_runtime_finalization_keeps_diagnostics_from_before_resume(tmp_path: Pat
     from dataclasses import replace
     from uuid import uuid4
 
-    from generative_agents.ga_runtime.control import FileRunControl
-    from generative_agents.ga_runtime.executor import _StatusCommitter
-    from generative_agents.runtime.results import StepEffectKind, StepEffectRecord
+    from generative_agents.ga_runtime.lifecycle.control import FileRunControl
+    from generative_agents.ga_runtime.lifecycle.executor import _StatusCommitter
+    from generative_agents.ga_protocol.schemas.facts import StepEffectKind
+    from generative_agents.ga_protocol.schemas.facts import StepEffectRecord
 
     experiment = _experiment(tmp_path)
     run_root = tmp_path / "run"
@@ -714,7 +719,7 @@ def test_workspace_create_persists_owner_and_tags_in_overview(tmp_path: Path, mo
     with TestClient(app) as client:
         rebuilt = client.post("/api/studio/packages/rebuild")
         shell = client.get("/").text
-        console_script = client.get("/static/console/console-api.js").text
+        console_script = client.get("/static/console/shell/console-api.js").text
         created = client.post(
             "/api/studio/experiments",
             json={

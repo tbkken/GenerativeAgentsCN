@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-const crowdSource = fs.readFileSync('generative_agents/web/static/crowd-workspace.js', 'utf8');
-const consoleSource = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+const crowdSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/crowd-workspace.js', 'utf8');
+const consoleSource = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 const cut = (start, end) => consoleSource.slice(consoleSource.indexOf(start), consoleSource.indexOf(end, consoleSource.indexOf(start)));
 const wizardSource = cut('  function renderWizardStep()', '  async function prepareExperimentBrainChoices()')
   + cut("  $('createExperimentBtn').addEventListener(", "  $('closeModal').addEventListener(")

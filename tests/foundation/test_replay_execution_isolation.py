@@ -8,17 +8,15 @@ from uuid import uuid4
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import (
-    PackageError,
-    atomic_write_json,
-    read_json,
-    seal_directory,
-    validate_run_directory,
-    write_integrity_manifest,
-)
-from generative_agents.ga_replay import ReplayReader
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_replay.reader import ReplayReader
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -52,7 +50,7 @@ def recorded_run(tmp_path):
 
 @pytest.mark.parametrize("archive", [False, True])
 def test_recorded_facts_replay_without_execution_validation_or_package_changes(recorded_run, tmp_path, monkeypatch, archive):
-    from generative_agents.ga_protocol import validation
+    import generative_agents.ga_protocol.packages.validation as validation
 
     root = recorded_run
     expected = json.loads(gzip.decompress((root / "frames/step-000002.json.gz").read_bytes()))["result"]

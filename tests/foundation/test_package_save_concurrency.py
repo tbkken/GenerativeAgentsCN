@@ -6,17 +6,20 @@ from pathlib import Path
 
 import pytest
 
-from generative_agents.ga_protocol import atomic_write_bytes, read_json, validate_experiment_directory
-from generative_agents.ga_studio.workspace import ExperimentWorkspaceService, WorkspaceConflictError
-from generative_agents.ga_studio.catalog import StudioPackageCatalogService
-from generative_agents.web.portable_api import _experiment_definition
+from generative_agents.ga_protocol.packages.io import atomic_write_bytes
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.ga_studio.experiments.workspace import WorkspaceConflictError
+from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
 from tests.test_portable_package_protocol import _experiment
 
 
 def test_identical_file_does_not_replace(tmp_path, monkeypatch):
     target = tmp_path/'world.json'
     target.write_bytes(b'unchanged')
-    monkeypatch.setattr('generative_agents.ga_protocol.io._replace_file', lambda *_: pytest.fail('unchanged file replaced'))
+    monkeypatch.setattr('generative_agents.ga_protocol.packages.io._replace_file', lambda *_: pytest.fail('unchanged file replaced'))
     atomic_write_bytes(target, b'unchanged')
 
 
@@ -29,8 +32,8 @@ def test_windows_replace_retry_is_bounded_and_preserves_original(tmp_path, monke
         error = PermissionError('sharing violation')
         error.winerror = 5
         raise error
-    monkeypatch.setattr('generative_agents.ga_protocol.io._replace_file', blocked)
-    monkeypatch.setattr('generative_agents.ga_protocol.io.time.sleep', lambda _: None)
+    monkeypatch.setattr('generative_agents.ga_protocol.packages.io._replace_file', blocked)
+    monkeypatch.setattr('generative_agents.ga_protocol.packages.io.time.sleep', lambda _: None)
     with pytest.raises(PermissionError):
         atomic_write_bytes(target, b'new')
     assert len(attempts) == 7
@@ -66,8 +69,8 @@ def test_concurrent_saves_reject_stale_input_and_do_not_rebuild_world(database, 
     expected = read_json(root/'integrity/sha256.json')['root_sha256']
     before = (root/'world/world.json').stat().st_mtime_ns
     definition['experiment']['goal'] = 'updated'
-    monkeypatch.setattr('generative_agents.ga_studio.builder.build_semantic_index', lambda *_: pytest.fail('unchanged world rebuilt'))
-    monkeypatch.setattr('generative_agents.ga_studio.catalog.validate_experiment_integrity', lambda *_: pytest.fail('catalog redundantly revalidated saved package'))
+    monkeypatch.setattr('generative_agents.ga_studio.experiments.builder.build_semantic_index', lambda *_: pytest.fail('unchanged world rebuilt'))
+    monkeypatch.setattr('generative_agents.ga_studio.catalog.packages.validate_experiment_integrity', lambda *_: pytest.fail('catalog redundantly revalidated saved package'))
     barrier = threading.Barrier(2)
     def save():
         barrier.wait()
@@ -109,7 +112,7 @@ def test_failed_multi_file_save_rolls_back_valid_package(database, tmp_path, mon
         error = PermissionError('manifest locked')
         error.winerror = 5
         raise error
-    monkeypatch.setattr('generative_agents.ga_studio.workspace.atomic_write_json', fail_manifest)
+    monkeypatch.setattr('generative_agents.ga_studio.experiments.workspace.atomic_write_json', fail_manifest)
     with pytest.raises(PermissionError):
         service.replace_definition(record.package_id, definition)
     assert {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()} == originals
@@ -118,8 +121,8 @@ def test_failed_multi_file_save_rolls_back_valid_package(database, tmp_path, mon
 
 def test_list_and_detail_remain_consistent_during_seal(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
-    from generative_agents.ga_studio.web import create_studio_app
-    import generative_agents.web.portable_api as api_module
+    from generative_agents.adapters.web.app import create_studio_app
+    import generative_agents.adapters.web.routes.experiments as api_module
     var = tmp_path/'var'
     root = _experiment(var/'packages')
     app = create_studio_app(database_url='sqlite:///'+(tmp_path/'studio.db').as_posix(), var_dir=var)
@@ -152,20 +155,23 @@ def test_list_and_detail_remain_consistent_during_seal(tmp_path, monkeypatch):
         assert client.get('/api/studio/experiments').status_code == 200
 
 def test_immutable_run_validation_does_not_take_workspace_save_lock(tmp_path, monkeypatch):
-    from generative_agents.ga_runtime.service import RunService
-    from generative_agents.ga_protocol import validate_run_directory, open_package
+    from generative_agents.ga_runtime.lifecycle.service import RunService
+    from generative_agents.ga_protocol.packages.validation import validate_run_directory
+    from generative_agents.ga_protocol.packages.io import open_package
     source = _experiment(tmp_path)
     run = tmp_path/'run'
     RunService().start(source, run, requested_steps=2)
-    monkeypatch.setattr('generative_agents.ga_protocol.locking._lock', lambda *_: pytest.fail('immutable Run took Studio save lock'))
+    monkeypatch.setattr('generative_agents.ga_protocol.packages.locking._lock', lambda *_: pytest.fail('immutable Run took Studio save lock'))
     validate_run_directory(run)
     with open_package(source) as opened:
         validate_experiment_directory(opened)
 
 def test_run_overview_reads_live_status_without_full_replay_validation(tmp_path, monkeypatch):
-    from generative_agents.ga_runtime.service import RunService
-    from generative_agents.ga_replay.reader import ReplayReader, read_run_overview
-    from generative_agents.ga_protocol import atomic_write_json, PackageError
+    from generative_agents.ga_runtime.lifecycle.service import RunService
+    from generative_agents.ga_replay.reader import ReplayReader
+    from generative_agents.ga_replay.reader import read_run_overview
+    from generative_agents.ga_protocol.packages.io import atomic_write_json
+    from generative_agents.ga_protocol.packages.io import PackageError
     source = _experiment(tmp_path)
     root = tmp_path/'run'
     RunService().start(source, root, requested_steps=2)

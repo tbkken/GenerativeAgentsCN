@@ -1,71 +1,44 @@
 # GenerativeAgentsCN 中文代码导览
 
-先读 [AGENTS.md](../AGENTS.md) 和 [文件包架构](capability-composition-platform-design.md)。本导览按当前源码入口组织；历史 Revision 服务仍存在于源码中，但不构成当前实验模型。
+规则见 [AGENTS.md](../AGENTS.md)，文件合同见[系统架构](capability-composition-platform-design.md)，目录依赖见[源码组织](source-organization-design.md)。所有产品源码在 `src/generative_agents/`；四模块之间通过自包含文件交换业务数据。
 
-**先区分三类内容**
+## 从任务找到代码
 
-公共作者资源由 Studio 按稳定 ID 编辑。实验选入资源时立即复制完整依赖，拥有自己的地图、Agent placement、Skill、模型参数和素材；生命周期为 DRAFT → SEALED。Run 再复制整个实验，并保存每次 Attempt、已提交 StepResult、检查点、Trace 和文件记忆。
-
-实验身份在 manifest.json 的 experiment.experiment_id；Run 身份在 run.json 的 run_id；Attempt 身份在各 attempt.json。目录名用于定位，不能替代身份。SPO 与 structured_payload 一起构成世界事实，模型文本和记忆不直接驱动画面。
-
-**从这些入口开始**
-
-| 要理解的事情 | 入口与后续调用 |
+| 任务 | 当前入口 |
 | --- | --- |
-| Web 启动 | [web/main.py](../generative_agents/web/main.py) → [ga_studio/web.py](../generative_agents/ga_studio/web.py) |
-| 通用命令行 | [cli/main.py](../generative_agents/cli/main.py)，由 pyproject.toml 注册 ga |
-| 公共资源编辑 | [ga_studio/resource_api.py](../generative_agents/ga_studio/resource_api.py)、resources.py、model_services.py |
-| 创建、编辑和封存实验 | [ga_studio/workspace.py](../generative_agents/ga_studio/workspace.py) → builder.py；包内编辑见 experiment_resources.py |
-| Web 运行和结果适配 | [web/portable_api.py](../generative_agents/web/portable_api.py) |
-| 文件运行生命周期 | [ga_runtime/service.py](../generative_agents/ga_runtime/service.py)、supervisor.py、executor.py |
-| 文件回放 | [ga_replay/reader.py](../generative_agents/ga_replay/reader.py) |
+| `ga` 命令 | [adapters/cli/main.py](../src/generative_agents/adapters/cli/main.py) |
+| Studio 服务 | [adapters/web/app.py](../src/generative_agents/adapters/web/app.py)，`ga studio serve` |
+| 公共作者资源 | [ga_studio/api.py](../src/generative_agents/ga_studio/api.py) → resources/ |
+| 实验导入、编辑、封存 | [ga_studio/experiments/workspace.py](../src/generative_agents/ga_studio/experiments/workspace.py)、builder.py、editor.py |
+| Run 新跑、恢复、控制 | [ga_runtime/api.py](../src/generative_agents/ga_runtime/api.py) → lifecycle/ |
+| Step 推进与世界提交 | [ga_runtime/engine/scheduler.py](../src/generative_agents/ga_runtime/engine/scheduler.py)、world.py、storage/commit.py |
+| Brain 和对象 Skill | ga_runtime/skills/brain.py、objects.py；共享执行器 executor.py |
+| MCP 身份和权限 | [ga_runtime/capabilities/server.py](../src/generative_agents/ga_runtime/capabilities/server.py) |
+| 文件记忆 | [ga_runtime/memory/stream.py](../src/generative_agents/ga_runtime/memory/stream.py) |
+| StepResult 类型 | [ga_protocol/schemas/facts.py](../src/generative_agents/ga_protocol/schemas/facts.py) |
+| Replay | [ga_replay/api.py](../src/generative_agents/ga_replay/api.py) → reader.py、projections/、cache.py |
 
-**四个模块的边界**
+## 一次创建与执行
 
-| 模块 | 核心文件 | 作用 |
-| --- | --- | --- |
-| ga_protocol | models.py、io.py、validation.py、locking.py、navigation.py、recovery.py、quality.py | 清单、完整性、安全路径、空间编译、恢复边界与事实投影合同 |
-| ga_studio | workspace.py、builder.py、resources.py、catalog.py、schema.py | 作者资源数据库、一次性导入、实验副本和可重建目录索引 |
-| ga_runtime | package.py、service.py、executor.py、control.py、memory.py、supervisor.py | 只用文件加载、执行、控制、恢复和保存私有记忆 |
-| ga_replay | reader.py | 读取已提交事实，返回概览、时间线、状态和质量信息 |
+1. Studio 读取用户明确选择的公共地图、Agent、Brain、Skill 和模型配置。工作区服务展开依赖闭包，物理复制资源并写完整性清单。
+2. 实验编辑只修改草稿内副本；封存校验产生 `.gaexp`。公共资源后续编辑或删除不改变这个包。
+3. Runtime 创建新 Run，将实验完整嵌入。执行器获得单写者锁，读取最近完整检查点并创建 Attempt。
+4. lifecycle/assembly.py 装配 ActorState、世界、模型、Brain、对象执行器、文件记忆和提交器。ActorState 只保存参与者状态；没有固定排程、反思或聊天业务流水线。
+5. Scheduler 每步处理 Agent 动作，再处理对象 Skill，并提交完整 StepResult、帧及恢复数据。Skill 文本进入过程审计；世界事实必须经过 MCP 与提交器。
+6. Replay 只读已提交边界，归约状态、对象、对话和质量。其缓存可丢弃，不能替代源 Run。Web 按当前 Experiment/Run/Attempt 展示结果。
 
-数据库依赖属于 Studio。当前作者侧仍复用 services/、persistence/ 和 skills/database.py；这是现有源码组织，不是允许 Runtime 或 Replay 回查作者库的例外。
+公共 Skill 试运行是可选作者功能：Studio 在临时目录准备物理闭包与模型配置，适配层交给 Runtime。密钥只在执行环境中注入，调用仿真 MCP 的 Skill 必须进入实验。
 
-**一次创建与执行**
+## 数据与资源归属
 
-1. Studio 的 ExperimentWorkspaceService 读取用户明确选择的公共资源；ExperimentPackageBuilder 复制资源、展开 Skill 闭包，写清单和完整性记录。
-2. 草稿编辑修改实验包内副本。封存校验生成 .gaexp；公共资源改变不会隐式更新这个包。
-3. RunService 创建新 Run 目录，复制实验并生成 run.json。Studio 的 FileRunSupervisor 启动 ga CLI 的 run resume 子进程；手动 CLI 也使用同一文件运行实现。
-4. executor.execute_run_directory 获得 worker.lock，读取包内模型与 Skill，选择完整恢复点，创建 Attempt，并装配执行上下文。
-5. executor 仍调用 [start.py](../generative_agents/start.py) 的 build_runner / SimulationRunner。它们继续复用 Game、Agent、Maze 和文件提交器。
-6. 每步按内核顺序处理 Agent 动作、实际移动和 Game Object Skill；冻结 StepResult 后提交帧和检查点，再推进可见状态。Brain 决定调用哪些能力，内核不固定业务 SOP。
-7. ReplayReader 读取该 Run 的内嵌实验与已提交帧；浏览器只是这份事实的展示层。
+- ga_protocol/schemas 保存包合同；Studio 的地图编辑状态、公共素材 ID、数据库 Skill 身份分别在 resources/map_document.py、skill_document.py。导入时显式转换，不带入运行期数据库定位条件。
+- ga_studio/storage 包含 ORM、数据库会话、当前迁移基线、上传素材和本机凭据。其他模块不能导入数据库实现。
+- ga_studio/bundled 保存显式导入的地图素材及可编辑 Skill 种子；没有默认地图或内置公共 Agent。Runtime 和 Replay 只使用已复制到包内的资源。
+- adapters/web/static/shell 是页面和请求协调；resources 是作者编辑器；replay 是播放器与人物图集；vendor 保存前端依赖。资源 URL 不再暴露旧源码目录。
+- var 是用户工作区和运行数据，不是源码；tests 和 tools 分别维护回归与发布工具。
 
-**仍在使用的共享代码**
+## 验证入口
 
-| 目录或文件 | 当前用途 |
-| --- | --- |
-| start.py、modules/game.py、modules/agent.py、modules/maze.py | 仿真步推进、参与者和空间计算 |
-| runtime/brain.py、object_skills.py、capabilities.py、iteration.py | Brain、对象 Skill、身份隔离 MCP 与轮次上下文 |
-| runtime/results.py、result_collector.py、commit.py、checkpoint.py、frame_store.py、file_result_projector.py | StepResult、文件提交与恢复支持 |
-| runtime/model_trace.py、modules/model/ | 模型调用、取消、重试与过程审计 |
-| ga_runtime/memory.py | Run 自有、身份隔离的文件记忆 |
-| skills/registry.py、runtime.py、dependencies.py 与 data/skills/ | 解析、递归依赖、自然语言/脚本 Skill；源码 Skill 是作者种子，运行使用包内副本 |
-| config/、services/maps.py、services/spatial_assets.py、services/catalog.py、persistence/ | 配置校验及 Studio 作者侧支持 |
-| frontend/static/assets/village/、web/static/replay-assets/ | 当前地图导入或回放仍引用的资源 |
+`tools/check_source_boundaries.py` 扫描全部 Python 文件、延迟导入与种子脚本，并检查传递依赖。架构测试防止旧顶层目录或通配导出回流。协议安全、身份隔离、暂停恢复、对象响应、前端异步隔离和 wheel 验收见[测试指南](test-strategy.md)。
 
-阅读到历史命名的字段或方法时，要继续追踪实际参数与持久化位置。例如包内内容哈希不等于公共作者资源的业务 Revision。不要按目录名整批删除仍被当前链调用的组件。
-
-**前端入口**
-
-正式页面是 [web/static/experiment-console.html](../generative_agents/web/static/experiment-console.html)。console-api.js 管理实验与结果请求；resource-scope.js 隔离公共资源和当前实验副本；map-workspace.js / map-editor-v2.js / map-navigation.js 负责地图；crowd-workspace.js、skill-workspace.js、model-workspace.js 负责作者编辑；replay-player.js 展示已提交事实。
-
-定位前端问题时，先确认当前 Experiment、Run、Attempt 和请求代次，再追踪加载、渲染和事件绑定。不要用已删除的 docs HTML 原型解释正式页面。
-
-**工程边界与测试**
-
-旧数据库业务链、34 个历史 ORM 映射、旧包导出、旧 Manifest/发布预检、独立回放压缩入口和两套演示页面已经退役。当前数据库只映射 11 张 Studio 作者资源和包目录索引表；Run 的状态、队列、日志、帧和产物继续由文件协议管理。
-
-start.py 保留 ga_runtime 使用的仿真循环与 build_runner，不再提供旧 worker 命令行。地图导入仍由 services/maps.py 的 materialize_validated_world 校验当前作者资源，再由 Studio 物理复制；不保留运行期地图外键或 Brain Revision。
-
-安全测试按现行入口维护，见 [测试指南](test-strategy.md)。修改合同后，选择对应的文件包、隔离、恢复或前端测试；教材案例还需遵守 AGENTS.md 的原浏览器路径复验要求。
+源码重构不改写教材案例证据；浏览器、正式模型、原始导出各自的验收范围仍以对应记录为准。

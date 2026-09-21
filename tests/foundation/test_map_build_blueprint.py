@@ -132,11 +132,11 @@ def test_map_workspace_exposes_persisted_build_guide_controls():
     """回归验证 ``test_map_workspace_exposes_persisted_build_guide_controls`` 所描述的业务结果、故障边界和隔离约束。"""
     from pathlib import Path
 
-    static = Path(__file__).parents[2] / "generative_agents" / "web" / "static"
-    html = (static / "experiment-console.html").read_text(encoding="utf-8")
-    javascript = (static / "map-workspace.js").read_text(encoding="utf-8")
-    editor_javascript = (static / "map-editor-v2.js").read_text(encoding="utf-8")
-    stylesheet = (static / "map-workspace.css").read_text(encoding="utf-8")
+    static = Path(__file__).parents[2] / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    html = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    javascript = (static / "resources/map-workspace.js").read_text(encoding="utf-8")
+    editor_javascript = (static / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    stylesheet = (static / "resources/map-workspace.css").read_text(encoding="utf-8")
 
     assert 'id="newMapBlueprint"' in html
     assert 'id="mapBuildGuide"' in editor_javascript

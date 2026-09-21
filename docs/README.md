@@ -22,8 +22,9 @@
 | [项目 README](../README.md) / [English](../README_en.md) | 安装、Studio 启动和最短使用路径 |
 | [运行手册](operations-runbook.md) | CLI、数据目录、控制、备份、恢复与排障 |
 | [模型配置](model-configuration.md) | Studio 模型中心、明确模型 ID、包内环境变量名与本机凭据 |
-| [中文代码导览](code-guide-cn.md) | 真实入口、调用链、共享内核与工程边界 |
-| [测试指南](test-strategy.md) | 当前专项、前端检查、浏览器验收及历史门禁限制 |
+| [中文代码导览](code-guide-cn.md) | 真实入口、调用链、文件内核与工程边界 |
+| [源码组织重构设计](source-organization-design.md) | 当前 src 布局、四模块归属、依赖规则与发布门禁 |
+| [测试指南](test-strategy.md) | 当前专项、前端检查、浏览器验收与安装包门禁 |
 | [CLAUDE 导航](../CLAUDE.md) | 指向本索引和 AGENTS.md 的开发工具入口 |
 
 **案例与验证证据**

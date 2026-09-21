@@ -11,7 +11,7 @@ function workspace() {
     return elements.get(id);
   } };
   const context = { window: {}, document, console };
-  vm.runInNewContext(readFileSync(join(__dirname, '../../generative_agents/web/static/crowd-workspace.js'), 'utf8'), context);
+  vm.runInNewContext(readFileSync(join(__dirname, '../../src/generative_agents/adapters/web/static/resources/crowd-workspace.js'), 'utf8'), context);
   const manager = context.window.CrowdWorkspace;
   manager.modal = () => {};
   manager.notify = () => {};

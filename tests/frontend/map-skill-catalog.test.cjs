@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-const editorSource = fs.readFileSync('generative_agents/web/static/map-editor-v2.js', 'utf8');
-const workspaceSource = fs.readFileSync('generative_agents/web/static/map-workspace.js', 'utf8');
+const editorSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-editor-v2.js', 'utf8');
+const workspaceSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-workspace.js', 'utf8');
 const activateSource = workspaceSource.slice(workspaceSource.indexOf('    async activate()'), workspaceSource.indexOf('    async loadBlueprints()'));
 const response = items => ({ok: true, json: async () => ({items})});
 

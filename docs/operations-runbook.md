@@ -1,20 +1,20 @@
 # 当前运行手册
 
-适用入口：ga CLI 与 python -m generative_agents.web.main。安装见 [README](../README.md)，模型连接见 [模型配置](model-configuration.md)，规则见 [AGENTS.md](../AGENTS.md)。本页按当前源码组织；不沿用旧数据库 Run 或 legacy import 流程。
+适用入口：ga CLI 与 ga studio serve。安装见 [README](../README.md)，模型连接见 [模型配置](model-configuration.md)，规则见 [AGENTS.md](../AGENTS.md)。本页按当前源码组织；不沿用旧数据库 Run 或 legacy import 流程。
 
 **启动 Studio**
 
 从仓库根目录、已安装依赖的 Python 环境启动：
 
 ~~~bash
-python -m generative_agents.web.main --database-url sqlite:///var/generative-agents.db --var-dir var --host 127.0.0.1 --port 8000 --max-concurrent-runs 2
+ga studio serve --database-url sqlite:///var/generative-agents.db --var-dir var --host 127.0.0.1 --port 8000 --max-concurrent-runs 2
 ~~~
 
 浏览器入口为 http://127.0.0.1:8000/，健康接口为 GET /api/studio/health。健康检查只证明 Web 与 Studio 数据库可用，不证明模型连接成功或某个 Run 可恢复。
 
 命令行参数也可由 GA_DATABASE_URL、GA_VAR_DIR、GA_HOST、GA_PORT、GA_MAX_CONCURRENT_RUNS、GA_WEB_LOG_LEVEL 提供。Web 固定一个 Uvicorn worker；FileRunSupervisor 管理子进程和有界执行槽位。
 
-Windows 的 [restart-web.bat](../restart-web.bat) 使用 PATH 中的 python 重启端口 8000 上的本项目 Web，输出到 var/logs/。运行前确认该解释器环境正确；若有活动 Run，先按 AGENTS.md 在 UI 中安全暂停，再重启和核验。它不是模型服务启动器。
+Windows 的 [restart-web.bat](../restart-web.bat) 优先使用仓库 .venv 中的 Python，缺省回退到 PATH 中的 python 重启端口 8000 上的本项目 Web，输出到 var/logs/。运行前确认该解释器环境正确；若有活动 Run，先按 AGENTS.md 在 UI 中安全暂停，再重启和核验。它不是模型服务启动器。
 
 **配置与数据位置**
 
@@ -28,13 +28,13 @@ Windows 的 [restart-web.bat](../restart-web.bat) 使用 PATH 中的 python 重�
 | 本机模型凭据映射 | var/model-credentials.json；密文在 Studio Secret 存储，密钥由 GA_MASTER_KEY 或 var/master.key 提供 |
 | 主进程日志 | 使用重启脚本时为 var/logs/；子进程日志保存在对应 Run 中 |
 
-首次启动由 Studio 初始化作者表和 Skill 种子。没有默认地图或公共 Agent，必须由用户创建并选择。源码中的 data/config.json 不是当前配置入口。
+首次启动由 Studio 初始化作者表和 Skill 种子。没有默认地图或公共 Agent，必须由用户创建并选择。模型与实验配置在 Studio 明确编辑并复制入包。
 
 现行 schema 准备逻辑会先备份不兼容的本地 SQLite 作者库，再重建当前基线；这不是旧 Run 的兼容迁移。对已有工作区升级前保留备份，不用旧表结构判断文件包是否存在。
 
 **文件命令**
 
-ga 由 editable 安装注册；也可以将下列 ga 替换为 python -m generative_agents.cli.main。以下路径都是用户准备的示例，命令不自动生成案例内容。
+ga 由 editable 安装注册；也可以将下列 ga 替换为 python -m generative_agents.adapters.cli.main。以下路径都是用户准备的示例，命令不自动生成案例内容。
 
 ~~~bash
 ga experiment seal ./my-experiment ./my-experiment.gaexp

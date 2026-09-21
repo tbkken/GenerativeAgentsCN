@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables():
     """回归验证 ``test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables`` 所描述的业务结果、故障边界和隔离约束。"""
-    html = (ROOT / "generative_agents/web/static/experiment-console.html").read_text(encoding="utf-8")
-    source = (ROOT / "generative_agents/web/static/console-api.js").read_text(encoding="utf-8")
+    html = (ROOT / "src/generative_agents/adapters/web/static/shell/experiment-console.html").read_text(encoding="utf-8")
+    source = (ROOT / "src/generative_agents/adapters/web/static/shell/console-api.js").read_text(encoding="utf-8")
 
     editor = html[html.index('id="agentEditorModal"') : html.index('id="createMapModal"')]
     assert 'id="deleteAgentBtn"' not in editor

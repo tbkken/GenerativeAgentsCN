@@ -6,16 +6,21 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.ga_protocol import (
-    PackageError, atomic_write_json, open_package, read_json,
-    validate_experiment_directory, write_integrity_manifest,
-)
-from generative_agents.ga_studio import ExperimentPackageBuilder, SkillSource
-from generative_agents.ga_studio.resources import StudioAgentDefinition, StudioResourceService
-from generative_agents.ga_studio.web import create_studio_app
-from generative_agents.ga_studio.workspace import AgentPlacement, ExperimentWorkspaceService
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base
+from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import open_package
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
+from generative_agents.ga_studio.experiments.builder import SkillSource
+from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
+from generative_agents.ga_studio.resources.catalog import StudioResourceService
+from generative_agents.adapters.web.app import create_studio_app
+from generative_agents.ga_studio.experiments.workspace import AgentPlacement
+from generative_agents.ga_studio.experiments.workspace import ExperimentWorkspaceService
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
 from tests.test_portable_package_protocol import _definition
 
 

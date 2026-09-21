@@ -2,8 +2,8 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const scopeSource = fs.readFileSync('generative_agents/web/static/resource-scope.js', 'utf8');
-const consoleSource = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+const scopeSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/resource-scope.js', 'utf8');
+const consoleSource = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 
 function setup(pathname) {
   const navigations = [], events = [];
@@ -58,7 +58,7 @@ test('switching between experiments cannot reuse the previous editor scope', () 
 });
 
 test('map recovery accepts a matching package hash and preserves conflicting recovery data', async () => {
-  const source = fs.readFileSync('generative_agents/web/static/map-workspace.js', 'utf8');
+  const source = fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-workspace.js', 'utf8');
   const method = source.slice(source.indexOf('    async restoreLocalRecovery('), source.indexOf('    handleBeforeUnload('));
   let restored = null, cleared = false;
   const recovery = {schema:'ga-map-draft-recovery/v1', baseLockVersion:'abc123', world:{name:'unsaved'}};

@@ -6,10 +6,10 @@ from uuid import uuid4
 
 import requests
 
-from generative_agents.modules.model.llm_model import LLMModel
-from generative_agents.modules.utils.log import create_file_logger
-from generative_agents.runtime.context import RunControl
-from generative_agents.runtime.model_trace import ModelTraceEventType
+from generative_agents.ga_runtime.models.gateway import LLMModel
+from generative_agents.ga_runtime.storage.logging import create_file_logger
+from generative_agents.ga_runtime.engine.context import RunControl
+from generative_agents.ga_runtime.models.trace import ModelTraceEventType
 
 
 class _AlwaysFailModel(LLMModel):
@@ -137,7 +137,7 @@ def test_chat_gateway_retries_timeout_and_malformed_tool_json(monkeypatch):
         return outcome
 
     monkeypatch.setattr(
-        "generative_agents.modules.model.llm_model.requests.post", fake_post
+        "generative_agents.ga_runtime.models.gateway.requests.post", fake_post
     )
     model = _ChatTransportModel(
         {

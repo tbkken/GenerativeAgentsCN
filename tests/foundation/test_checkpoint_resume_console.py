@@ -1,10 +1,12 @@
 from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
-from generative_agents.ga_protocol import read_json, atomic_write_json, write_integrity_manifest
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_runtime.executor import _StatusCommitter
-from generative_agents.ga_studio.web import create_studio_app
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import atomic_write_json
+from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.ga_runtime.lifecycle.executor import _StatusCommitter
+from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
 
 
@@ -40,7 +42,7 @@ def test_console_resumes_same_run_with_new_attempt_and_preserves_facts(tmp_path,
     def submit(self, root, **kwargs):
         submissions.append(root)
         RunService().resume(root)
-    monkeypatch.setattr('generative_agents.web.portable_api.FileRunSupervisor.submit', submit)
+    monkeypatch.setattr('generative_agents.adapters.web.context.FileRunSupervisor.submit', submit)
     app = create_studio_app(database_url='sqlite:///' + (tmp_path / 'studio.db').as_posix(), var_dir=var)
     url = f'/api/studio/runs/{before.run_id}'
     with TestClient(app) as client:

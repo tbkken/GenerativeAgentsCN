@@ -12,12 +12,13 @@ from uuid import uuid4
 
 import pytest
 
-from generative_agents.modules.agent import Agent
-from generative_agents.modules.game import Game
-from generative_agents.modules.maze import Maze
-from generative_agents.modules.memory import Action, Event
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.iteration import IterationContext
+from generative_agents.ga_runtime.engine.actor import ActorState as Agent
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.memory.action import Action
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.iteration import IterationContext
 
 
 def _game():
@@ -52,7 +53,7 @@ def _game():
     agent.maze = maze
     agent.coord = None
     agent.path = []
-    agent.scratch = SimpleNamespace(currently="刚刚醒来")
+    agent.profile = SimpleNamespace(currently="刚刚醒来")
     agent.percept_config = {"vision_r": 4, "att_bandwidth": 20}
     agent.action = Action(
         Event(agent.name, "醒来", "床边", address=maze.tile_at((0, 0)).get_address()),

@@ -2,20 +2,19 @@
 from __future__ import annotations
 
 import shutil
-import sqlite3
+import json
+import pytest
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
-from generative_agents.runtime.results import (
-    MemoryDelta,
-    MemoryDeltaKind,
-    StepEffectKind,
-    StepResult,
-    StepResultBuilder,
-    deterministic_record_id,
-)
-from generative_agents.runtime.result_collector import StepResultCollector
-from generative_agents.skills import MemoryStream
+from generative_agents.ga_protocol.schemas.facts import MemoryDelta
+from generative_agents.ga_protocol.schemas.facts import MemoryDeltaKind
+from generative_agents.ga_protocol.schemas.facts import StepEffectKind
+from generative_agents.ga_protocol.schemas.facts import StepResult
+from generative_agents.ga_runtime.engine.results import StepResultBuilder
+from generative_agents.ga_protocol.schemas.facts import deterministic_record_id
+from generative_agents.ga_runtime.engine.collector import StepResultCollector
+from generative_agents.ga_runtime.memory.stream import FileMemoryStream as MemoryStream
 
 
 def test_step_result_persists_one_canonical_effect_ledger():
@@ -69,7 +68,7 @@ def test_run_memory_is_attempt_recoverable_and_run_isolated(tmp_path):
     run_id = uuid4()
     attempt_one = uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
-    first_path = tmp_path / "attempt-1" / "memory.sqlite"
+    first_path = tmp_path / "attempt-1" / "memory"
     first = MemoryStream(first_path, run_id=run_id, attempt_id=attempt_one)
     first.begin_step(1, now)
     committed = first.append(
@@ -89,9 +88,9 @@ def test_run_memory_is_attempt_recoverable_and_run_isolated(tmp_path):
         poignancy=6,
     )
 
-    recovered_path = tmp_path / "attempt-2" / "memory.sqlite"
+    recovered_path = tmp_path / "attempt-2" / "memory"
     recovered_path.parent.mkdir(parents=True)
-    shutil.copy2(checkpoint / "memory.sqlite", recovered_path)
+    shutil.copytree(checkpoint, recovered_path)
     recovered = MemoryStream(
         recovered_path,
         run_id=run_id,
@@ -110,13 +109,9 @@ def test_run_memory_is_attempt_recoverable_and_run_isolated(tmp_path):
     )
     assert replayed["id"] == future["id"]
 
-    other_run = MemoryStream(
-        recovered_path,
-        run_id=uuid4(),
-        attempt_id=uuid4(),
-    )
-    other_run.begin_step(1, now)
-    assert other_run.search(agent_key="resident-001") == []
+    with pytest.raises(ValueError, match="another Run"):
+        MemoryStream(recovered_path, run_id=uuid4(), attempt_id=uuid4())
+
 
 
 def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
@@ -125,7 +120,7 @@ def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
     attempt_id = uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
     memory = MemoryStream(
-        tmp_path / "memory.sqlite",
+        tmp_path / "memory",
         run_id=run_id,
         attempt_id=attempt_id,
     )
@@ -153,7 +148,7 @@ def test_skill_memory_side_effects_join_the_step_ledger(tmp_path):
         MemoryDeltaKind.CREATED,
         MemoryDeltaKind.ACCESSED,
     ]
-    assert StepEffectKind.EVENT_PERCEIVED in {
+    assert StepEffectKind.MEMORY_CREATED in {
         effect.kind for effect in result.effects
     }
 
@@ -162,7 +157,7 @@ def test_memory_iteration_rollback_restores_rows_and_pending_events(tmp_path):
     run_id, attempt_id = uuid4(), uuid4()
     now = datetime(2026, 8, 24, 9, 0, tzinfo=timezone.utc)
     memory = MemoryStream(
-        tmp_path / "atomic-memory.sqlite",
+        tmp_path / "atomic-memory",
         run_id=run_id,
         attempt_id=attempt_id,
     )
@@ -200,7 +195,7 @@ def test_memory_iteration_rollback_restores_rows_and_pending_events(tmp_path):
 def test_memory_supersede_and_invalidate_preserve_history_but_hide_stale_versions(
     tmp_path,
 ):
-    database_path = tmp_path / "memory-lifecycle.sqlite"
+    database_path = tmp_path / "memory-lifecycle"
     memory = MemoryStream(database_path, run_id=uuid4(), attempt_id=uuid4())
     started = datetime(2026, 8, 28, 9, 0, tzinfo=timezone.utc)
     memory.begin_step(1, started)
@@ -228,15 +223,9 @@ def test_memory_supersede_and_invalidate_preserve_history_but_hide_stale_version
         MemoryDeltaKind.SUPERSEDED.value,
         MemoryDeltaKind.CREATED.value,
     ]
-    with sqlite3.connect(database_path) as connection:
-        old_state, superseded_by = connection.execute(
-            "SELECT state, superseded_by_memory_id FROM run_memories WHERE id = ?",
-            (original["id"],),
-        ).fetchone()
-        new_state, supersedes = connection.execute(
-            "SELECT state, supersedes_memory_id FROM run_memories WHERE id = ?",
-            (replacement["id"],),
-        ).fetchone()
+    rows = {item["id"]: item for item in json.loads((database_path / "memories.json").read_text(encoding="utf-8"))["items"]}
+    old_state, superseded_by = rows[original["id"]]["state"], rows[original["id"]]["superseded_by_memory_id"]
+    new_state, supersedes = rows[replacement["id"]]["state"], rows[replacement["id"]]["supersedes_memory_id"]
     assert (old_state, superseded_by) == ("SUPERSEDED", replacement["id"])
     assert (new_state, supersedes) == ("ACTIVE", original["id"])
 
@@ -248,9 +237,6 @@ def test_memory_supersede_and_invalidate_preserve_history_but_hide_stale_version
     )
 
     assert memory.search(agent_key="resident-001", query="会议") == []
-    with sqlite3.connect(database_path) as connection:
-        state, reason = connection.execute(
-            "SELECT state, invalidated_reason FROM run_memories WHERE id = ?",
-            (replacement["id"],),
-        ).fetchone()
+    row = next(item for item in json.loads((database_path / "memories.json").read_text(encoding="utf-8"))["items"] if item["id"] == replacement["id"])
+    state, reason = row["state"], row["invalidated_reason"]
     assert (state, reason) == ("INVALIDATED", "会议已经取消")

@@ -11,23 +11,22 @@ from uuid import uuid4
 
 import pytest
 
-from generative_agents.modules.memory import Event
-from generative_agents.modules.game import Game
-from generative_agents.modules.maze import Maze
-from generative_agents.runtime.brain import BrainRuntime
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.runtime.iteration import IterationContext
-from generative_agents.runtime.result_collector import StepResultCollector
-from generative_agents.runtime.results import (
-    ActionSnapshot,
-    ActivityKind,
-    AgentStepResult,
-    DomainEventRecord,
-    StepResult,
-    StepResultBuilder,
-)
-from generative_agents.skills import SkillRunResult
-from generative_agents.skills import MemoryStream, SkillLoopError
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.engine.world import Game
+from generative_agents.ga_runtime.engine.space import Maze
+from generative_agents.ga_runtime.skills.brain import BrainRuntime
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.engine.iteration import IterationContext
+from generative_agents.ga_runtime.engine.collector import StepResultCollector
+from generative_agents.ga_protocol.schemas.facts import ActionSnapshot
+from generative_agents.ga_protocol.schemas.facts import ActivityKind
+from generative_agents.ga_protocol.schemas.facts import AgentStepResult
+from generative_agents.ga_protocol.schemas.facts import DomainEventRecord
+from generative_agents.ga_protocol.schemas.facts import StepResult
+from generative_agents.ga_runtime.engine.results import StepResultBuilder
+from generative_agents.ga_runtime.skills.executor import SkillRunResult
+from generative_agents.ga_runtime.memory.stream import FileMemoryStream as MemoryStream
+from generative_agents.ga_runtime.skills.executor import SkillLoopError
 
 
 class _Tile:
@@ -457,7 +456,7 @@ def test_world_commit_uses_the_actual_move_endpoint_as_replay_fact():
             self.maze = maze
             self.coord = (1, 1)
             self.path = []
-            self.scratch = SimpleNamespace(currently="准备起床")
+            self.profile = SimpleNamespace(currently="准备起床")
             self.action = None
 
         def get_tile(self):
@@ -648,10 +647,10 @@ def test_game_object_skill_response_is_delivered_once_in_next_iteration_context(
             return SkillRunResult(skill=skill, output_text="accepted", trace=())
 
     monkeypatch.setattr(
-        "generative_agents.runtime.brain.SkillRuntime", _CapturingSkillRuntime
+        "generative_agents.ga_runtime.skills.brain.SkillRuntime", _CapturingSkillRuntime
     )
     agent = _Agent()
-    agent.scratch = SimpleNamespace(currently="刚刚查看红绿灯", config={"daily_plan": "09:00 授课；15:30 答疑"})
+    agent.profile = SimpleNamespace(currently="刚刚查看红绿灯", config={"daily_plan": "09:00 授课；15:30 答疑"})
     agent.associate = SimpleNamespace(abstract=lambda: {})
     agent.schedule = SimpleNamespace(abstract=lambda: {})
     agent.spatial = SimpleNamespace(tree={}, address={})
@@ -872,11 +871,11 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
             )
 
     monkeypatch.setattr(
-        "generative_agents.runtime.brain.SkillRuntime",
+        "generative_agents.ga_runtime.skills.brain.SkillRuntime",
         _PartiallyFailingSkillRuntime,
     )
     agent = _Agent()
-    agent.scratch = SimpleNamespace(currently="准备行动", config={"daily_plan": "09:00 授课；15:30 答疑"})
+    agent.profile = SimpleNamespace(currently="准备行动", config={"daily_plan": "09:00 授课；15:30 答疑"})
     agent.associate = SimpleNamespace(abstract=lambda: {})
     agent.schedule = SimpleNamespace(abstract=lambda: {})
     agent.spatial = SimpleNamespace(tree={}, address={})
@@ -957,7 +956,7 @@ def test_failed_execution_quality_is_partial_and_does_not_call_model():
 
 def test_brain_receives_authored_daily_plan_even_when_runtime_schedule_is_empty():
     agent = _Agent()
-    agent.scratch = SimpleNamespace(currently='准备上课', config={'daily_plan': '09:00 授课；15:30 答疑', 'learned': '教师'})
+    agent.profile = SimpleNamespace(currently='准备上课', config={'daily_plan': '09:00 授课；15:30 答疑', 'learned': '教师'})
     agent.schedule = SimpleNamespace(abstract=lambda: {})
     agent.spatial = SimpleNamespace(tree={}, address={})
     agent.concepts = []
@@ -965,7 +964,7 @@ def test_brain_receives_authored_daily_plan_even_when_runtime_schedule_is_empty(
     assert variables['daily_plan'] == '09:00 授课；15:30 答疑'
     assert variables['profile']['daily_plan'] == variables['daily_plan']
     assert variables['profile']['learned'] == '教师'
-    assert variables['schedule'] == {}
+    assert variables['schedule'] == []
 
 
 def test_visual_state_is_perceived_and_can_change_without_passive_skill():

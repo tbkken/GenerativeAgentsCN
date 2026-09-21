@@ -1,9 +1,11 @@
 import json
 import zipfile
 
-from generative_agents.ga_protocol import seal_directory, validate_experiment_directory
-from generative_agents.ga_studio import ExperimentPackageBuilder, SkillSource
-from generative_agents.services.maps import normalize_public_world
+from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
+from generative_agents.ga_studio.experiments.builder import SkillSource
+from generative_agents.ga_studio.resources.maps import normalize_public_world
 from tests.foundation.test_navigation import navigation_world
 from tests.test_portable_package_protocol import _definition
 

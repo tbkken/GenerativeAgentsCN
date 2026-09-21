@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const source = fs.readFileSync('generative_agents/web/static/console-api.js', 'utf8');
+const source = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 const wrapper = source.slice(source.indexOf('  async function deleteCurrentRun('), source.indexOf('  async function batchArchiveSelected('));
 
 function setup(failDelete = false) {

@@ -1,11 +1,16 @@
 """Real file package execution, checkpoint resume and replay for autonomous objects."""
 
 import json
-from generative_agents.ga_protocol import RunState, read_json, seal_directory, validate_experiment_directory
-from generative_agents.ga_replay import ReplayReader
-from generative_agents.ga_runtime.executor import RuntimeModelRegistry, execute_run_directory
-from generative_agents.ga_runtime.service import RunService
-from generative_agents.ga_studio import ExperimentPackageBuilder, SkillSource
+from generative_agents.ga_protocol.schemas.manifests import RunState
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_replay.reader import ReplayReader
+from generative_agents.ga_runtime.lifecycle.executor import RuntimeModelRegistry
+from generative_agents.ga_runtime.lifecycle.executor import execute_run_directory
+from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
+from generative_agents.ga_studio.experiments.builder import SkillSource
 from tests.runtime.test_object_skill_runtime import ToolModel, world
 from tests.test_portable_package_protocol import _definition
 

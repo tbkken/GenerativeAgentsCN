@@ -10,22 +10,20 @@ from uuid import uuid4
 
 import pytest
 
-from generative_agents.runtime.algorithm import get_algorithm_profile
-from generative_agents.runtime.context import RunPaths
-from generative_agents.runtime.checkpoint import CheckpointBundleWriter, CheckpointSnapshot
-from generative_agents.runtime.frame_store import FrameConflictError, FrameStore
-from generative_agents.runtime.results import (
-    ActionSnapshot,
-    ActivityKind,
-    AgentStepResult,
-    StepResultBuilder,
-)
-from generative_agents.runtime.model_trace import (
-    ModelTraceEvent,
-    ModelTraceEventType,
-    ModelTraceStatus,
-    ModelTraceWriter,
-)
+from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
+from generative_agents.ga_runtime.engine.context import RunPaths
+from generative_agents.ga_runtime.storage.checkpoints import CheckpointBundleWriter
+from generative_agents.ga_runtime.storage.checkpoints import CheckpointSnapshot
+from generative_agents.ga_runtime.storage.frames import FrameConflictError
+from generative_agents.ga_runtime.storage.frames import FrameStore
+from generative_agents.ga_protocol.schemas.facts import ActionSnapshot
+from generative_agents.ga_protocol.schemas.facts import ActivityKind
+from generative_agents.ga_protocol.schemas.facts import AgentStepResult
+from generative_agents.ga_runtime.engine.results import StepResultBuilder
+from generative_agents.ga_runtime.models.trace import ModelTraceEvent
+from generative_agents.ga_runtime.models.trace import ModelTraceEventType
+from generative_agents.ga_runtime.models.trace import ModelTraceStatus
+from generative_agents.ga_runtime.models.trace import ModelTraceWriter
 
 
 def _builder(run_id, attempt_id, step_no=1):
@@ -54,8 +52,9 @@ def _agent(key: str, x: int) -> AgentStepResult:
 def test_algorithm_profile_is_versioned_and_fixed():
     """回归验证 ``test_algorithm_profile_is_versioned_and_fixed`` 所描述的业务结果、故障边界和隔离约束。"""
     profile = get_algorithm_profile("ga-cn-v1")
-    assert profile.sentence_chunk_size == 512
-    assert profile.chat_chars_per_minute == 240
+    assert profile.movement_tiles_per_minute == 4
+    assert "sentence_chunk_size" not in profile.as_dict()
+    assert "chat_chars_per_minute" not in profile.as_dict()
     with pytest.raises(ValueError, match="unsupported algorithm_version"):
         get_algorithm_profile("future")
 
@@ -165,7 +164,7 @@ def test_checkpoint_publish_retries_transient_windows_access_denied(
         return original_rename(old, new)
 
     monkeypatch.setattr(os, "rename", transient_rename)
-    monkeypatch.setattr("generative_agents.runtime.checkpoint.time.sleep", lambda _: None)
+    monkeypatch.setattr("generative_agents.ga_runtime.storage.checkpoints.time.sleep", lambda _: None)
 
     CheckpointBundleWriter._publish_directory(source, target)
 

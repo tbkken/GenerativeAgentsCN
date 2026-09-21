@@ -261,13 +261,13 @@
 
 - `AGENTS.md`：职责边界、动作原语、身份隔离、文件化运行和禁止引入的设计。
 - `docs/capability-composition-platform-design.md`：四模块与包协议架构。
-- `generative_agents/runtime/capabilities.py`：公共 MCP、导航目标知识边界、动作校验。
-- `generative_agents/runtime/brain.py`：人物上下文、运行与质量评估入口。
-- `generative_agents/ga_runtime/memory.py`：文件记忆、词项检索、替代/失效和记忆事件。
-- `generative_agents/ga_studio/skill_trial.py`：独立文本试运行与需要仿真上下文的边界。
-- `generative_agents/ga_studio/workspace.py`：资源物理导入与实验内容。
-- `generative_agents/ga_runtime/executor.py`：执行阶段、最终质量报告和运行文件。
-- `generative_agents/ga_replay/reader.py`、`generative_agents/web/portable_api.py`：文件读取、回放及管理台结果接口。
+- `src/generative_agents/ga_runtime/capabilities/server.py`：公共 MCP、导航目标知识边界、动作校验。
+- `src/generative_agents/ga_runtime/skills/brain.py`：人物上下文、运行与质量评估入口。
+- `src/generative_agents/ga_runtime/memory/stream.py`：文件记忆、词项检索、替代/失效和记忆事件。
+- `src/generative_agents/ga_studio/resources/trials.py`、`ga_runtime/skills/trial.py`：独立文本试运行的准备和执行边界。
+- `src/generative_agents/ga_studio/experiments/workspace.py`：资源物理导入与实验内容。
+- `src/generative_agents/ga_runtime/lifecycle/executor.py`：执行阶段、最终质量报告和运行文件。
+- `src/generative_agents/ga_replay/reader.py`、`adapters/web/routes/results.py`：文件读取、回放及管理台结果接口。
 
 现场 Run 的进度、迟到情况和临时 PermissionError 不写入书稿主线；它们只进入带版本、包哈希和证据路径的开发日志。出版验收必须引用冻结的参考 Run、StepResult、检查点和质量报告，不能引用正在变化的 Run 观察。
 

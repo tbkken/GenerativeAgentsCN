@@ -2,12 +2,14 @@
 
 import pytest
 
-from generative_agents.persistence import create_database
-from generative_agents.persistence.models import Base
-from generative_agents.runtime.capabilities import SimulationMCPServer
-from generative_agents.skills.database import DatabaseSkillRegistry
-from generative_agents.skills.dependencies import SIMULATION_MCP_TOOLS, referenced_mcp_tools
-from generative_agents.skills.registry import SkillRegistry
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_protocol.skills.dependencies import SIMULATION_MCP_TOOLS
+from generative_agents.ga_protocol.skills.dependencies import referenced_mcp_tools
+from tests.skill_files import write_skill
+from generative_agents.ga_protocol.skills.documents import SkillRegistry
 
 
 def test_dependency_catalog_matches_runtime_registration():
@@ -31,16 +33,23 @@ def test_saved_brain_dependencies_reload_all_referenced_tools(tmp_path, storage)
         registry = (
             DatabaseSkillRegistry(database, cache_root=tmp_path / 'cache')
             if storage == 'database'
-            else SkillRegistry(root=tmp_path / 'skills', history_root=tmp_path / 'history')
+            else SkillRegistry(root=tmp_path / 'skills')
         )
-        brain = registry.create(name='dependency-brain', description='测试依赖', kind='brain')
+        brain = (registry.create(name='dependency-brain', description='测试依赖', kind='brain') if storage == 'database' else write_skill(registry, 'dependency-brain', '测试依赖', kind='brain'))
         markdown = brain.markdown + '\n' + '\n'.join(f'调用 `{name}`。' for name in SIMULATION_MCP_TOOLS)
-        registry.save(brain.name, markdown)
+        if storage == 'database':
+            registry.save(brain.name, markdown)
+        else:
+            brain.path.write_text(markdown, encoding='utf-8')
         dependencies = registry.dependencies(brain.name)
         assert dependencies['mcp'] == list(SIMULATION_MCP_TOOLS)
         assert dependencies['skills'] == []
         assert dependencies['scripts'] == []
-        registry.save(brain.name, brain.markdown + '\n仅调用 `world-perceive`。')
+        changed = brain.markdown + '\n仅调用 `world-perceive`。'
+        if storage == 'database':
+            registry.save(brain.name, changed)
+        else:
+            brain.path.write_text(changed, encoding='utf-8')
         assert registry.dependencies(brain.name)['mcp'] == ['world-perceive']
     finally:
         database.close()

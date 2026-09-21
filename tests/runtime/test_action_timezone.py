@@ -9,8 +9,9 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from generative_agents.modules.memory import Action, Event
-from generative_agents.runtime.context import SimulationClock
+from generative_agents.ga_runtime.memory.action import Action
+from generative_agents.ga_runtime.memory.event import Event
+from generative_agents.ga_runtime.engine.context import SimulationClock
 
 
 def _event():

@@ -7,7 +7,8 @@
 从仓库根目录、已安装运行依赖的环境执行：
 
 ~~~bash
-python -m pip install -r generative_agents/requirements-dev.txt
+python -m pip install -e ".[runtime,studio,web,dev]"
+python tools/check_source_boundaries.py
 python -m pytest -q -p no:cacheprovider tests/architecture/test_portable_module_boundaries.py tests/test_portable_package_protocol.py
 node --test tests/frontend/*.test.cjs
 ~~~
@@ -18,7 +19,7 @@ Node.js 用于前端测试；浏览器专项另需相应 Playwright 环境。普
 
 | 改动范围 | 优先入口 |
 | --- | --- |
-| 四模块边界与包协议 | tests/architecture/test_portable_module_boundaries.py、tests/test_portable_package_protocol.py |
+| 四模块边界与包协议 | tests/architecture/test_source_graph.py、test_portable_module_boundaries.py、tests/test_portable_package_protocol.py |
 | 实验副本、封存与并发保存 | tests/foundation/test_experiment_resource_editors.py、test_sealed_experiment_run.py、test_package_save_concurrency.py |
 | 空间位置与导航 | tests/test_initial_location_contract.py、tests/test_navigation_package.py、tests/foundation/test_navigation.py |
 | 对象 Skill、状态与真实 MOVE | tests/test_object_skill_package.py、tests/runtime/test_object_skill_runtime.py、test_move_activity_semantics.py、test_world_commit_event_sync.py |
@@ -43,7 +44,7 @@ Node.js 用于前端测试；浏览器专项另需相应 Playwright 环境。普
 
 [发布 CI](../.github/workflows/native-symlink-release-gate.yml)在 Linux、Windows 分别运行原生符号链接与安装包验收，覆盖 PR、main/master 和 codex 分支推送。原生门禁通过 [run_symlink_release_gate.py](../tools/run_symlink_release_gate.py)运行迁移后的七条指定断言，要求全部执行、零跳过；普通本机 pytest 因权限不足而跳过不等于门禁通过，不能放宽 CI 的能力检查。
 
-现行行为通过实际代码验证。tests/legacy/ 保留共享内核的 RNG 隔离、检查点、记忆、模型重试和导入副作用等回归，目录名称不表示可以删除。
+原 tests/legacy 的有效 RNG 隔离、检查点、模型重试与导入合同已迁入 tests/runtime/test_engine_isolation.py 和 tests/architecture/test_fact_boundaries.py。旧固定认知链和 SQLite 表结构断言随实现退役；文件记忆的隔离、历史状态、幂等与恢复继续验证。
 
 ~~~bash
 python -m pytest tests -q -p no:cacheprovider
@@ -58,7 +59,7 @@ python -m pip wheel . --no-deps --no-build-isolation -w dist
 python tools/verify_wheel.py dist/generative_agents_cn-0.1.0-py3-none-any.whl
 ~~~
 
-[verify_wheel.py](../tools/verify_wheel.py)逐字节核对 Python 源码、种子、素材、当前 Web 静态文件与 village 资源，拒绝缺失或额外的旧文件，再将 wheel 安装到临时目录，从仓库外调用实际的 `ga` 可执行入口。
+[verify_wheel.py](../tools/verify_wheel.py)逐字节核对 src 下 Python 源码、Studio 种子/导入素材、Web 静态文件和迁移模板，拒绝缺失或额外的旧文件，再将 wheel 安装到临时目录，从仓库外调用实际的 `ga` 可执行入口。
 
 安装验收通过 Studio HTTP 接口创建和编辑地图、Agent、Brain、对象 Skill 与模型配置，物理导入实验并封存；作者资源后续编辑不改变已导入副本。随后删除临时作者工作区，执行 CLI 实验校验/封存、Run 创建/启动/暂停/封存/异地恢复/重跑/取消请求、Replay 摘要/时间线/状态读取。检查同一 Run 的新 Attempt、已提交帧不变、对象状态恢复和回复仅在下一轮投递一次。取消命令检查控制请求写入；执行中取消的中断行为由运行控制回归覆盖。
 

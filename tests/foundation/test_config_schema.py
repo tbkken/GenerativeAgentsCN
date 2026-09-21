@@ -6,9 +6,11 @@ import copy
 import pytest
 from pydantic import ValidationError
 
-from generative_agents.config import definition_hash, get_algorithm_profile
-from generative_agents.config.hashing import canonical_json_bytes
-from generative_agents.config.schema import ExperimentDefinition, make_blank_definition
+from generative_agents.ga_protocol.packages.hashing import definition_hash
+from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
+from generative_agents.ga_protocol.packages.hashing import canonical_json_bytes
+from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
+from generative_agents.ga_protocol.schemas.experiment import make_blank_definition
 
 
 def test_new_experiment_uses_the_real_unsloth_chat_endpoint():
@@ -32,16 +34,8 @@ def test_canonical_hash_normalizes_key_order_unicode_and_newlines():
 def test_algorithm_profile_is_the_fixed_ga_cn_v1_contract():
     """回归验证 ``test_algorithm_profile_is_the_fixed_ga_cn_v1_contract`` 所描述的业务结果、故障边界和隔离约束。"""
     assert get_algorithm_profile("ga-cn-v1").as_dict() == {
-        "sentence_chunk_size": 512,
-        "sentence_chunk_overlap": 64,
-        "llama_num_output": 1024,
-        "llama_context_window": 4096,
-        "similarity_top_k": 5,
-        "focus_retrieve_max": 30,
-        "schedule_decompose_threshold_minutes": 60,
         "path_target_sample_limit": 4,
         "movement_tiles_per_minute": 4,
-        "chat_chars_per_minute": 240,
         "default_event_poignancy": 1,
     }
     with pytest.raises(ValueError, match="unsupported"):

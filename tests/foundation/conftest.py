@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from generative_agents.persistence import create_database, upgrade_database
+from generative_agents.ga_studio.storage.database import create_database
+from generative_agents.ga_studio.storage.database import upgrade_database
 
 
 @pytest.fixture

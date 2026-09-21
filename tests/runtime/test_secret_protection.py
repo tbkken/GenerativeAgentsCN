@@ -1,7 +1,8 @@
 """运行时回归测试：覆盖 ``test_secret_protection`` 对应的行为、故障边界和回归约束。"""
 from cryptography.fernet import Fernet
 
-from generative_agents.security import MasterKeyStore, SecretCipher
+from generative_agents.ga_studio.storage.secrets import MasterKeyStore
+from generative_agents.ga_studio.storage.secrets import SecretCipher
 
 
 def test_master_key_file_is_created_once_and_ciphertext_is_version_safe(tmp_path):

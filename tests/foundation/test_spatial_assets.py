@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from generative_agents.config.spatial_assets import SpatialSceneExtension
+from generative_agents.ga_protocol.schemas.spatial_assets import SpatialSceneExtension
 from tests.studio_support import create_test_studio
 
 
@@ -159,11 +159,11 @@ def test_spatial_scene_contract_rejects_duplicate_placement_keys():
 
 
 def test_map_workspace_exposes_live_spatial_asset_management():
-    static = Path(__file__).parents[2] / "generative_agents" / "web" / "static"
-    html = (static / "experiment-console.html").read_text(encoding="utf-8")
-    map_javascript = (static / "map-workspace.js").read_text(encoding="utf-8")
-    editor_javascript = (static / "map-editor-v2.js").read_text(encoding="utf-8")
-    asset_javascript = (static / "spatial-asset-workspace.js").read_text(encoding="utf-8")
+    static = Path(__file__).parents[2] / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+    html = (static / "shell/experiment-console.html").read_text(encoding="utf-8")
+    map_javascript = (static / "resources/map-workspace.js").read_text(encoding="utf-8")
+    editor_javascript = (static / "resources/map-editor-v2.js").read_text(encoding="utf-8")
+    asset_javascript = (static / "resources/spatial-asset-workspace.js").read_text(encoding="utf-8")
 
     assert 'data-map-tab="assets"' in html
     assert 'id="spatialAssetGrid"' in html

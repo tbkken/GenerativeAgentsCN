@@ -4,17 +4,17 @@
 
 ## 速度来自哪里
 
-当前 `generative_agents/config/algorithm.py` 的 `GA_CN_V1` 固定 `movement_tiles_per_minute=4`（第 42 行）；同文件注册表只有 `ga-cn-v1`。`generative_agents/config/schema.py` 的 `EngineConfig.algorithm_version` 也只允许 `ga-cn-v1`（第 87 行）。因此当前正常配置下的世界移动速度是 **4 格/虚拟分钟**，不是从本例人物描述、图片尺寸或播放动画速度推测的数值。
+当前 `src/generative_agents/ga_protocol/schemas/engine.py` 的 `GA_CN_V1` 固定 `movement_tiles_per_minute=4`；同文件注册表只有 `ga-cn-v1`。`schemas/experiment.py` 的 `EngineConfig.algorithm_version` 也只允许 `ga-cn-v1`。因此当前正常配置下的世界移动速度是 **4 格/虚拟分钟**。
 
-Portable Runtime 在 `generative_agents/ga_runtime/executor.py` 第 317 行根据实验中的 `engine.algorithm_version` 取得 profile。`generative_agents/start.py` 第 240–251 行的 `_movement_budget()` 从该 profile 读取速度并按步长计算：
+Runtime 在 `src/generative_agents/ga_runtime/lifecycle/executor.py` 根据实验中的 `engine.algorithm_version` 取得 profile。`ga_runtime/engine/scheduler.py` 的 `_movement_budget()` 从该 profile 读取速度并按步长计算：
 
 `movement_budget = max(1, stride_minutes × max(1, movement_tiles_per_minute))`
 
-`generative_agents/modules/game.py` 第 369 行在 MOVE 提交时仅消费 `planned_path[:movement_budget]`，余下部分保留为 remaining path。其他普通 ACT 不消费这条移动路径。
+`src/generative_agents/ga_runtime/engine/world.py` 在 MOVE 提交时仅消费 `planned_path[:movement_budget]`，余下部分保留为 remaining path。其他普通 ACT 不消费这条移动路径。
 
 ## 当前 UI 能设置什么
 
-当前没有可单独修改“格/分钟”的速度输入。浏览器中可以打开实验的 **“时间与运行参数”**，修改 **“单步时间跨度”**（输入控件 ID `stride`，单位分钟，最小值 1）。此输入由 `generative_agents/web/static/experiment-console.html` 第 1474 行定义；`console-api.js` 第 3098 行保存为 `definition.simulation.stride_minutes`。页面初始化会把原参数面板移入“时间与运行参数”区，不能照旧模板位置假定它仍在结果标签页中。
+当前没有可单独修改“格/分钟”的速度输入。浏览器中可以打开实验的 **“时间与运行参数”**，修改 **“单步时间跨度”**（输入控件 ID `stride`，单位分钟，最小值 1）。入口在 `src/generative_agents/adapters/web/static/shell/experiment-console.html`，同目录 `console-api.js` 保存为 `definition.simulation.stride_minutes`。
 
 主 Agent 已通过 UI 将正式实验步长保存为 **1 分钟**，当前算法下每轮 MOVE 最多消费 **4 个格**，正式 Step 2–4 实际分别消费 4、4、2 格。地图逻辑 tile 的 32px、素材切片的源网格、人物显示 2.5 格和回放倍速均不是该速度设置。
 
