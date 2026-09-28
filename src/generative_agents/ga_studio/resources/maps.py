@@ -1612,7 +1612,12 @@ class WorldMapService:
                 "INVALID_ARCHIVE_FILTER", "地图归档筛选无效", status_code=422
             )
         with self.database.session_factory() as session:
-            statement = select(WorldMap)
+            statement = select(WorldMap.id, WorldMap.map_key, WorldMap.name, WorldMap.description,
+                               WorldMap.row_version, WorldMap.archived_at,
+                               WorldMap.updated_at, WorldMap.created_at,
+                               WorldMap.world_json["definition"]["size"].label("dimensions"),
+                               WorldMap.world_json["definition"]["tile_size"].as_integer().label("tile_size"),
+                               WorldMap.validation_json["valid"].as_boolean().label("valid"))
             count_statement = select(func.count()).select_from(WorldMap)
             archive_predicate = (
                 WorldMap.archived_at.is_(None)
@@ -1634,20 +1639,29 @@ class WorldMapService:
                 count_statement = count_statement.where(predicate)
             total = int(session.scalar(count_statement) or 0)
             rows = list(
-                session.scalars(
+                session.execute(
                     statement.order_by(WorldMap.updated_at.desc(), WorldMap.id.desc())
                     .offset((page - 1) * page_size)
                     .limit(page_size)
-                )
+                ).mappings()
             )
             return {
-                "items": [self._map_detail(session, item) for item in rows],
+                "items": [self._map_summary(item) for item in rows],
                 "page": page,
                 "page_size": page_size,
                 "total": total,
                 "total_pages": max(1, ceil(total / page_size)),
                 "status_counts": {"ALL": total},
             }
+
+    @staticmethod
+    def _map_summary(row):
+        from .listing import dates
+        result = dates(dict(row))
+        valid = result.pop("valid")
+        result["validation"] = {"valid": valid} if valid is not None else None
+        result["lock_version"] = result["row_version"]
+        return result
 
     def set_archived(self, map_id: str, *, archived: bool) -> dict[str, Any]:
         with self.database.session_factory.begin() as session:
@@ -1664,6 +1678,8 @@ class WorldMapService:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:
                 raise not_found("map", map_id)
+            from .exchange import delete_resource_exchange_state
+            delete_resource_exchange_state(session, "map", map_id)
             session.delete(public_map)
 
     def get_map(self, map_id: str) -> dict[str, Any]:
@@ -1731,6 +1747,8 @@ class WorldMapService:
                     },
                 )
             session.flush()
+            from generative_agents.ga_studio.resources.exchange import bind_saved_resource_dependencies, _skill_dependencies
+            bind_saved_resource_dependencies(session, "map", map_id, _skill_dependencies(normalized.model_dump(mode="json")))
             return self._map_detail(session, session.get(WorldMap, map_id))
 
     def validate_map(

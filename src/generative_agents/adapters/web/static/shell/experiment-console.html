@@ -1078,12 +1078,9 @@
       .usage-row { grid-template-columns: minmax(100px,1fr) repeat(3,55px); }
     }
   </style>
-  <link rel="stylesheet" href="/static/console/resources/crowd-workspace.css?v=20260829c" />
-  <link rel="stylesheet" href="/static/console/resources/map-workspace.css?v=20260905a" />
-  <link rel="stylesheet" href="/static/console/resources/skill-workspace.css?v=20260829a" />
   <link rel="stylesheet" href="/static/console/shell/console-ux.css?v=20260829e" />
-  <link rel="stylesheet" href="/static/console/resources/model-workspace.css">
   <link rel="stylesheet" href="/static/console/resources/resource-list.css">
+  <link rel="stylesheet" href="/static/console/resources/resource-exchange.css">
 </head>
 <body class="hub-mode">
   <div class="app-shell">
@@ -1105,9 +1102,7 @@
       <nav class="nav foundation-scope">
         <button class="nav-item" data-page="maps"><span class="nav-icon">▧</span><span class="nav-text">地图</span></button>
         <button class="nav-item" data-page="public-agents"><span class="nav-icon">♙</span><span class="nav-text">智能体</span></button>
-        <button class="nav-item" data-page="crowds"><span class="nav-icon">◉</span><span class="nav-text">人群</span></button>
         <button class="nav-item" data-page="skills"><span class="nav-icon">◇</span><span class="nav-text">技能</span></button>
-        <button class="nav-item" data-page="brains"><span class="nav-icon">⌬</span><span class="nav-text">大脑</span></button>
         <button class="nav-item" data-page="model-catalog"><span class="nav-icon">⌁</span><span class="nav-text">模型</span></button>
       </nav>
       <div class="nav-label experiment-scope">当前实验</div>
@@ -1116,9 +1111,7 @@
         <button class="nav-item" data-page="results"><span class="nav-icon">◈</span><span class="nav-text">实验结果</span><span class="nav-count" id="navRunCount"></span></button>
         <button class="nav-item" data-page="maps"><span class="nav-icon">▧</span><span class="nav-text">地图</span></button>
         <button class="nav-item" data-page="agents"><span class="nav-icon">♙</span><span class="nav-text">智能体</span><span class="nav-count" id="navAgentCount"></span></button>
-        <button class="nav-item" data-page="crowds"><span class="nav-icon">◉</span><span class="nav-text">人群</span></button>
         <button class="nav-item" data-page="skills"><span class="nav-icon">◇</span><span class="nav-text">技能</span></button>
-        <button class="nav-item" data-page="brains"><span class="nav-icon">⌬</span><span class="nav-text">大脑</span></button>
         <button class="nav-item" data-page="models"><span class="nav-icon">⌁</span><span class="nav-text">模型</span></button>
       </nav>
       <a class="nav-item experiment-scope experiment-home" href="/"><span class="nav-icon">‹</span><span class="nav-text">返回实验列表</span></a>
@@ -1176,6 +1169,8 @@
         <div class="top-actions">
           <div class="hub-actions" id="hubActions">
             <button class="btn" id="operationHistoryBtn">操作历史</button>
+            <button class="btn" id="importResourcePackageBtn" hidden>导入资源包</button>
+            <button class="btn" id="exportResourcePackageBtn" hidden>导出资源包</button>
             <button class="btn btn-primary" id="createExperimentBtn">＋ 新建实验</button>
             <button class="btn btn-primary" id="createMapBtn" hidden>＋ 新建地图</button>
             <button class="btn btn-primary" id="createAgentResourceBtn" hidden>＋ 新建智能体</button>
@@ -1187,6 +1182,7 @@
           <div class="experiment-actions" id="experimentActions" hidden>
             <span class="unsaved" id="unsaved" hidden><i class="unsaved-dot"></i><span>有未保存更改</span></span>
             <select class="control result-run-select" id="resultRunSelect" aria-label="选择仿真" hidden><option value="">正在加载仿真记录…</option></select>
+            <div id="runHistoryPager" class="run-history-pager" hidden></div>
             <div class="result-run-controls" id="resultRunControls" hidden>
               <button class="btn" id="runPauseResumeBtn" hidden>暂停仿真</button>
               <button class="btn" id="runCancelBtn" hidden>取消仿真</button>
@@ -1224,6 +1220,7 @@
       <div id="experimentScopeNotice" class="experiment-scope-notice"><strong>当前实验</strong><span>实验独立副本 · 修改仅影响当前实验</span></div>
 
       <div class="content">
+        <nav id="resourceTabs" class="resource-tabs" role="tablist" aria-label="资源类型" hidden></nav>
         <section class="page active" id="page-experiments">
           <div class="experiment-list-controls" aria-label="实验归档管理">
             <div class="list-control-group">
@@ -1350,7 +1347,7 @@
           <div class="crowd-editor-shell" id="crowdEditorShell" hidden>
             <div class="crowd-editor-body">
               <section class="crowd-definition-panel">
-                <div class="section-title"><div><h2>人群定义</h2><p id="crowdDefinitionHelp">人群组织基础智能体，创建实验时复制完整定义。</p></div></div>
+                <div class="section-title"><div><h2>人群定义</h2><p id="crowdDefinitionHelp">人群组织基础智能体，创建实验时复制完整定义。</p><p id="crowdPendingDependencies" role="status" hidden></p></div></div>
                 <div class="form-grid">
                   <div class="field"><label for="crowdEditName">人群名称</label><input class="control" id="crowdEditName" /></div>
                   <div class="field"><label>稳定键</label><input class="control" id="crowdEditKey" readonly /></div>
@@ -1609,45 +1606,6 @@
         </section>
         <section class="page" id="page-models">
           <section class="card" style="padding:24px"><div class="panel-intro"><div><h2>实验模型配置</h2><p>从模型中心选择并复制到当前草稿。已有实验不会跟随公共配置变化；封存后只读。</p></div></div><div id="experimentModelCopySummary" class="model-summary"></div><div class="form-grid" style="margin-top:20px"><div class="field"><label for="experimentChatModelChoice">聊天模型</label><select class="control" id="experimentChatModelChoice"></select></div><div class="field"><label for="experimentEmbeddingModelChoice">Embedding 模型</label><select class="control" id="experimentEmbeddingModelChoice"></select></div></div><button class="btn btn-primary" id="applyExperimentModelChoices" style="margin-top:16px">复制所选配置到实验</button></section>
-          <div class="content-workspace" data-content-tabs="models" hidden>
-            <nav class="content-tabs" role="tablist" aria-label="模型服务配置">
-              <button class="content-tab active" role="tab" aria-selected="true" data-content-tab="chat">Chat 模型</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="embedding">Embedding 模型</button>
-              <button class="content-tab" role="tab" aria-selected="false" data-content-tab="resolution">解析结果</button>
-            </nav>
-            <div class="content-tab-panel active" role="tabpanel" data-content-panel="chat">
-              <div class="provider-head"><div class="provider-logo">LLM</div><div class="section-title"><strong>聊天与推理模型</strong><button type="button" class="help-tip" aria-label="聊天模型用途" data-tooltip="用于规划、对话、反思和动作决策。">?</button></div></div>
-              <div class="form-grid">
-                <div class="field"><label for="chatProvider">Provider</label><select class="control dirty-track" id="chatProvider"><option value="vllm">vLLM</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option></select></div>
-                <div class="field"><label for="chatModel">模型 ID</label><input class="control dirty-track" id="chatModel" value="Qwen3.8-27B-UD-Q4_K_XL" /></div>
-                <div class="field" style="grid-column:1/-1"><label for="chatBaseUrl">Base URL</label><input class="control dirty-track" id="chatBaseUrl" value="http://127.0.0.1:8888/v1" /></div>
-                <div class="field"><label for="chatTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="chatTimeout" value="120" min="1" max="600" /><span>秒</span></div></div>
-                <div class="field"><div class="field-label"><label for="chatMaxTokens">单次最大输出</label><button type="button" class="help-tip" aria-label="单次最大输出说明" data-tooltip="限制模型每次回复最多生成多少 tokens，不是模型的上下文窗口。服务上下文能力会在下方自动检测。">?</button></div><div class="input-unit"><input class="control dirty-track" id="chatMaxTokens" value="2048" /><span>tokens</span></div></div>
-                <div class="field"><label for="chatTemperature">Temperature</label><input class="control dirty-track" id="chatTemperature" type="number" min="0" max="2" step="0.1" value="0.5" /></div>
-                <div class="field"><label for="chatRetries">失败重试预算</label><div class="input-unit"><input class="control dirty-track" id="chatRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
-                <div class="field"><label for="chatBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="chatBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
-                <div class="field"><label>思考模式</label><button class="switch" id="chatThinking" aria-label="切换聊天模型思考模式"></button></div>
-                <div class="field" style="grid-column:1/-1"><div class="field-label"><label for="chatSecret">API Key</label><button type="button" class="help-tip" aria-label="API Key 说明" data-tooltip="模型服务未启用鉴权时可以留空。">?</button></div><input class="control dirty-track" id="chatSecret" type="password" value="" placeholder="未设置" /></div>
-              </div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="embedding">
-              <div class="provider-head"><div class="provider-logo blue">EMB</div><div class="section-title"><strong>记忆 Embedding 模型</strong><button type="button" class="help-tip" aria-label="Embedding 模型用途" data-tooltip="用于记忆索引、相似度检索和关联排序。">?</button></div></div>
-              <div class="form-grid">
-                <div class="field"><label for="embeddingProvider">Provider</label><select class="control dirty-track" id="embeddingProvider"><option value="openai_compatible">OpenAI Compatible</option><option value="openai">OpenAI</option><option value="ollama">Ollama</option><option value="hugging_face">Hugging Face</option></select></div>
-                <div class="field"><label for="embeddingModel">模型 ID</label><input class="control dirty-track" id="embeddingModel" value="qwen3-embedding-0.6b" /></div>
-                <div class="field" style="grid-column:1/-1"><label for="embeddingBaseUrl">Base URL</label><input class="control dirty-track" id="embeddingBaseUrl" value="http://127.0.0.1:5002" /></div>
-                <div class="field"><label for="embeddingTimeout">请求超时</label><div class="input-unit"><input class="control dirty-track" id="embeddingTimeout" value="120" /><span>秒</span></div></div>
-                <div class="field"><label for="embeddingTransportRetries">传输重试预算</label><div class="input-unit"><input class="control dirty-track" id="embeddingTransportRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
-                <div class="field"><label for="embeddingIndexRetries">索引操作重试预算</label><div class="input-unit"><input class="control dirty-track" id="embeddingIndexRetries" type="number" min="1" max="5" value="3" /><span>次</span></div></div>
-                <div class="field"><label for="embeddingBackoff">重试退避</label><div class="input-unit"><input class="control dirty-track" id="embeddingBackoff" type="number" min="0" max="300" value="5" /><span>秒</span></div></div>
-                <div class="field" style="grid-column:1/-1"><label for="embeddingSecret">API Key</label><input class="control dirty-track" id="embeddingSecret" type="password" value="" placeholder="未设置" /></div>
-              </div>
-            </div>
-            <div class="content-tab-panel" role="tabpanel" data-content-panel="resolution">
-              <div class="panel-intro"><div><h2>模型解析结果</h2><p>auto 会在执行前解析为明确模型 ID，并在本次仿真中保持不变。</p></div><span class="chip blue">本次仿真固定</span></div>
-              <div class="model-summary"><div class="summary-cell"><span>Chat Model</span><strong id="resolvedChatModel">尚未解析</strong></div><div class="summary-cell"><span>Embedding Model</span><strong id="resolvedEmbeddingModel">尚未解析</strong></div></div>
-            </div>
-          </div>
         </section>
 
       </div>
@@ -1655,6 +1613,28 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-icon">✓</span><div><strong id="toastTitle">操作成功</strong><span id="toastText">更改已保存</span></div></div>
+
+  <dialog id="resourceExchangeDialog" class="resource-exchange-dialog" aria-labelledby="resourceExchangeTitle">
+    <div class="modal-head"><h2 id="resourceExchangeTitle">导入资源包</h2><button class="close" id="resourceExchangeClose" aria-label="关闭资源交换">×</button></div>
+    <div class="modal-body">
+      <div id="resourceExchangeImport">
+        <div class="field"><label for="resourceExchangeFile">选择资源包、实验包或 Run 包</label><input class="control" id="resourceExchangeFile" type="file" accept=".zip,.gaconfig,.gaexp,.garun,application/zip"></div>
+        <p>上传后选择需要的基础资源。地图和智能体的图片、技能脚本会随资源保存，模型密钥需要在本机配置。</p>
+        <label class="exchange-option" id="resourceExchangeImportOption"><input type="checkbox" id="resourceExchangeDependencies">同时导入所选资源在包内的关联资源</label>
+        <p id="resourceExchangeImportPolicy" hidden>人群成员和技能依赖会自动加入。取消选择上层人群或大脑后，也可只提取某个智能体或技能。</p>
+      </div>
+      <div id="resourceExchangeExport" hidden>
+        <div class="field"><label for="resourceExchangeExportChoice">选择要导出的资源</label><select class="control" id="resourceExchangeExportChoice"></select></div>
+        <p>导出当前已保存的内容及自身图片、脚本。需要分享的修改请先在编辑器中保存。模型密钥不进入资源包。</p>
+        <label class="exchange-option" id="resourceExchangeExportOption"><input type="checkbox" id="resourceExchangeExportDependencies">同时打包关联资源</label>
+        <p id="resourceExchangeExportPolicy" hidden></p>
+      </div>
+      <div id="resourceExchangePreview"></div>
+      <p id="resourceExchangeConflict" role="status" aria-live="polite"></p>
+      <p id="resourceExchangeStatus" role="status" aria-live="polite"></p>
+    </div>
+    <div class="modal-foot"><button class="btn" id="resourceExchangeCancel">关闭</button><button class="btn btn-primary" id="resourceExchangeSubmit" disabled>导入所选资源</button></div>
+  </dialog>
 
   <div class="context-menu" id="experimentContextMenu" hidden>
     <button data-context-action="open">↗ 打开实验</button>
@@ -1819,13 +1799,14 @@
           <div class="content-tab-panel" role="tabpanel" data-content-panel="traits"><div class="form-grid"><div class="field"><label for="agentEditInnate">天生特质</label><textarea class="control" id="agentEditInnate"></textarea></div><div class="field"><label for="agentEditLearned">背景经历</label><textarea class="control" id="agentEditLearned"></textarea></div><div class="field"><label for="agentEditLifestyle">生活方式</label><textarea class="control" id="agentEditLifestyle"></textarea></div><div class="field"><label for="agentEditDailyPlan">日常计划</label><textarea class="control" id="agentEditDailyPlan"></textarea></div><div class="field" style="grid-column:1/-1"><label for="agentEditGoals">长程目标（每行一条）</label><textarea class="control" id="agentEditGoals" rows="5" placeholder="按故事阶段填写目标；保存后运行时将依次参考这些目标"></textarea></div></div></div>
           <div class="content-tab-panel" role="tabpanel" data-content-panel="space">
             <div class="form-grid">
-              <div class="field"><label for="agentEditX">初始 X</label><input class="control" id="agentEditX" type="number" min="0" /></div>
-              <div class="field"><label for="agentEditY">初始 Y</label><input class="control" id="agentEditY" type="number" min="0" /></div>
-              <div class="field" style="grid-column:1/-1"><label>坐标语义校验</label><div class="inline-actions"><small id="agentInitialLocationResolved">尚未解析当前坐标</small><button class="btn btn-sm" id="useAgentInitialLocation" type="button">同步为初始位置</button></div></div>
+              <div class="field" style="grid-column:1/-1"><label for="agentInitialLocationPath">初始位置</label><div class="spatial-location-control"><input class="control" id="agentInitialLocationPath" readonly placeholder="从空间树选择初始位置" /><button class="btn" id="chooseAgentInitialLocation" type="button">选择空间</button></div><small class="field-hint">按 世界 → 区域 → 场所 → 对象 选择；坐标自动取所选空间中心附近的可行走格。</small></div>
+              <div class="field"><label for="agentEditX">初始 X（自动）</label><input class="control" id="agentEditX" type="number" min="0" readonly /></div>
+              <div class="field"><label for="agentEditY">初始 Y（自动）</label><input class="control" id="agentEditY" type="number" min="0" readonly /></div>
+              <div class="field" style="grid-column:1/-1"><small id="agentInitialLocationResolved">尚未选择初始位置</small></div>
               <div class="spatial-form-editor">
                 <section class="spatial-editor-section" aria-labelledby="agentAddressTitle">
                   <div class="spatial-editor-head">
-                    <div><strong id="agentAddressTitle">常用地址</strong><span>为“初始位置”“居住地”“睡觉”等用途指定位置；初始位置必须与上方坐标语义一致。</span></div>
+                    <div><strong id="agentAddressTitle">常用地址</strong><span>为“居住地”“睡觉”等用途从同一空间树选择地址；初始位置在上方单独设置。</span></div>
                     <button class="btn btn-sm" id="addAgentAddressRow" type="button">添加地址</button>
                   </div>
                   <div class="spatial-table spatial-address-table">
@@ -1835,7 +1816,7 @@
                 </section>
                 <section class="spatial-editor-section" aria-labelledby="agentSpaceTreeTitle">
                   <div class="spatial-editor-head">
-                    <div><strong id="agentSpaceTreeTitle">可用空间</strong><span>填写 Agent 已知的地点，以及该地点内可交互的物件；多个物件用逗号分隔。</span></div>
+                    <div><strong id="agentSpaceTreeTitle">可用空间</strong><span>从空间树选择 Agent 已知的场所或对象；同一场所的对象会合并，初始位置自动加入。</span></div>
                     <button class="btn btn-sm" id="addAgentSpaceRow" type="button">添加空间</button>
                   </div>
                   <div class="spatial-table spatial-tree-table">
@@ -1912,8 +1893,7 @@
         <div class="form-grid">
           <div class="field"><label for="batchAgentEnabled">启用状态</label><select class="control" id="batchAgentEnabled"><option value="">保持不变</option><option value="true">全部启用</option><option value="false">全部停用</option></select></div>
           <div class="field"><label for="batchAgentModel">模型覆盖</label><input class="control" id="batchAgentModel" placeholder="留空则保持不变" /></div>
-          <div class="field"><label for="batchAgentX">初始区域 X</label><input class="control" id="batchAgentX" type="number" min="0" placeholder="保持不变" /></div>
-          <div class="field"><label for="batchAgentY">初始区域 Y</label><input class="control" id="batchAgentY" type="number" min="0" placeholder="保持不变" /></div>
+          <div class="field" style="grid-column:1/-1"><label for="batchAgentLocation">初始位置</label><div class="spatial-location-control"><input class="control" id="batchAgentLocation" readonly placeholder="保持不变" /><button class="btn" id="chooseBatchAgentLocation" type="button">选择空间</button><button class="btn" id="clearBatchAgentLocation" type="button">保持不变</button></div><small id="batchAgentLocationCoord" class="field-hint">选择后自动取中心附近的可行走格，并同步每个智能体的初始地址与已知空间。</small></div>
           <div class="field"><label for="batchAgentGoal">追加目标</label><input class="control" id="batchAgentGoal" placeholder="追加到每个 Agent" /></div>
           <div class="field"><label for="batchAgentTags">追加标签</label><input class="control" id="batchAgentTags" placeholder="逗号分隔" /></div>
         </div>
@@ -1953,18 +1933,12 @@
     </div>
   </div>
 
-  <script src="/static/console/vendor/phaser.min.js"></script>
-  <script src="/static/console/replay/replay-player.js?v=20260909-inspector-facts1"></script>
   <script src="/static/console/shell/modal-focus.js"></script>
   <script src="/static/console/resources/resource-scope.js"></script>
   <script src="/static/console/resources/resource-list.js"></script>
-  <script src="/static/console/resources/spatial-asset-workspace.js?v=20260902a"></script>
-  <script src="/static/console/resources/map-navigation.js?v=20260905a"></script>
-  <script src="/static/console/resources/map-editor-v2.js?v=20260909-state-help1"></script>
-  <script src="/static/console/resources/map-workspace.js?v=20260905a"></script>
-  <script src="/static/console/resources/crowd-workspace.js?v=20260829f"></script>
-  <script src="/static/console/resources/model-workspace.js"></script>
-  <script src="/static/console/resources/skill-workspace.js?v=20260829d"></script>
+  <script src="/static/console/resources/resource-tabs.js"></script>
+  <script src="/static/console/resources/resource-exchange.js"></script>
+  <script src="/static/console/shell/workspace-loader.js"></script>
   <script src="/static/console/shell/console-api.js?v=20260909-agent-scale1"></script>
 </body>
 </html>

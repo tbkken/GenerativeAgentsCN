@@ -12,6 +12,7 @@ from generative_agents.ga_protocol.packages.io import open_package
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
 from generative_agents.ga_protocol.packages.io import write_integrity_manifest
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
 from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
 from generative_agents.ga_studio.experiments.builder import SkillSource
 from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
@@ -77,7 +78,7 @@ def workspace_client(tmp_path):
 @pytest.mark.parametrize("coord,address", [([1, 0], ARENA), ([0, 0], OBJECT)])
 def test_agent_save_reopen_preflight_and_seal_share_actual_address_contract(workspace_client, coord, address):
     client, endpoint, _ = workspace_client
-    detail = client.get(endpoint).json()
+    detail = client.get(endpoint, params={"view": "definition"}).json()
     definition = detail["definition"]
     agent = definition["agents"][0]
     agent["coord"] = coord
@@ -88,7 +89,7 @@ def test_agent_save_reopen_preflight_and_seal_share_actual_address_contract(work
         "definition": definition, "expected_content_sha256": detail["content_sha256"],
     })
     assert saved.status_code == 200, saved.text
-    reopened = client.get(endpoint).json()["definition"]["agents"][0]
+    reopened = client.get(endpoint, params={"view": "definition"}).json()["definition"]["agents"][0]
     assert reopened["coord"] == coord
     assert reopened["spatial"] == agent["spatial"]
     preflight = client.post(endpoint + "/validate").json()
@@ -98,7 +99,7 @@ def test_agent_save_reopen_preflight_and_seal_share_actual_address_contract(work
     assert sealed.json()["status"] == "SEALED"
     with open_package(Path(sealed.json()["location"])) as root:
         validate_experiment_directory(root)
-        packaged = read_json(root / "agents/index.json")["agents"][0]
+        packaged = _experiment_definition(root)[1]["agents"][0]
         assert packaged["coord"] == coord
         assert packaged["spatial"] == agent["spatial"]
 
@@ -117,7 +118,7 @@ def test_agent_save_reopen_preflight_and_seal_share_actual_address_contract(work
 ])
 def test_invalid_spawn_save_is_rejected_and_keeps_existing_package(workspace_client, coord, address, missing_tree):
     client, endpoint, root = workspace_client
-    detail = client.get(endpoint).json()
+    detail = client.get(endpoint, params={"view": "definition"}).json()
     before = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
     definition = detail["definition"]
     agent = definition["agents"][0]
@@ -165,7 +166,8 @@ def test_three_level_spawn_does_not_bypass_semantic_node_validation(tmp_path, da
     definition["agents"][0]["coord"] = [1, 0]
     definition["agents"][0]["spatial"]["address"]["initial_location"] = ARENA
     root = build_package(tmp_path, definition)
-    world = read_json(root / "world/world.json")
+    index = read_json(root / "resources/index.json")
+    world = next(item["definition"] for item in index["resources"] if item["kind"] == "map")
     semantic = copy.deepcopy(world["definition"]["semantic_index"])
     arena_node = next(node for node in semantic["nodes"] if node["address"] == ARENA)
     if damage == "unknown-node":
@@ -175,8 +177,7 @@ def test_three_level_spawn_does_not_bypass_semantic_node_validation(tmp_path, da
     else:
         arena_node["parent_id"] = next(node["id"] for node in semantic["nodes"] if node["kind"] == "WORLD")
     world["definition"]["semantic_index"] = semantic
-    atomic_write_json(root / "world/world.json", world)
-    atomic_write_json(root / "world/semantic-index.json", semantic)
+    atomic_write_json(root / "resources/index.json", index)
     write_integrity_manifest(root)
     with pytest.raises(PackageError, match="semantic"):
         validate_experiment_directory(root)

@@ -8,6 +8,7 @@ __all__ = [
     "GameObjectInteractionSystem",
     "export_checkpoint_artifact",
     "export_run_artifact",
+    "ArtifactJobs",
     "execute_skill_trial",
     "FileMemoryStream",
     "FileRunControl",
@@ -20,6 +21,9 @@ __all__ = [
 
 
 def __getattr__(name: str):
+    if name == 'ArtifactJobs':
+        from generative_agents.ga_runtime.storage.jobs import ArtifactJobs
+        return ArtifactJobs
     if name == "FileRunControl":
         from generative_agents.ga_runtime.lifecycle.control import FileRunControl
 

@@ -32,12 +32,14 @@ def recorded_run(tmp_path):
     var = tmp_path / "var"
     root = var / "packages/runs/recorded"
     RunService().start(_experiment(var / "author"), root, requested_steps=2)
-    # Reproduce the sealed registry at the time these facts were committed.
+    # Reproduce an execution-only field accepted when these facts were committed.
     # This is fixture construction only; Replay must never rewrite these bytes.
-    registry_path = root / "experiment/skills/registry.json"
-    registry = read_json(registry_path)
-    registry["passive_roots"] = registry.pop("object_roots")
-    atomic_write_json(registry_path, registry)
+    experiment = root / 'experiment'
+    index_path = experiment / read_json(experiment / 'manifest.json')['entrypoints']['resources']
+    index = read_json(index_path)
+    skill = next(item for item in index['resources'] if item['kind'] == 'skill')
+    skill['definition']['historical_execution_mode'] = 'recorded-only'
+    atomic_write_json(index_path, index)
     asset = root / "experiment/assets/replay.svg"
     asset.parent.mkdir(parents=True, exist_ok=True)
     asset.write_text('<svg xmlns="http://www.w3.org/2000/svg"/>', encoding="utf-8")
@@ -55,7 +57,7 @@ def test_recorded_facts_replay_without_execution_validation_or_package_changes(r
     root = recorded_run
     expected = json.loads(gzip.decompress((root / "frames/step-000002.json.gz").read_bytes()))["result"]
     run_id = read_json(root / "run.json")["run_id"]
-    with pytest.raises(PackageError, match="passive_roots"):
+    with pytest.raises(PackageError, match="Skill content must declare"):
         validate_run_directory(root)
 
     package = root
@@ -119,7 +121,7 @@ def test_web_replay_and_run_catalog_use_recorded_facts(recorded_run, tmp_path):
         for endpoint in (f"maps/{experiment_id}/validate", "skills/test-brain/run"):
             response = client.post(f"{prefix}/{endpoint}", json={"input_text": "test"})
             assert response.status_code == 422, response.text
-            assert "passive_roots" in response.text
+            assert "Skill content must declare" in response.text
     assert _file_hashes(root) == before
     assert experiment_archive.read_bytes() == archive_before
 
@@ -133,7 +135,7 @@ def test_start_resume_and_rerun_still_reject_non_executable_skill_registry(recor
         lambda: service.resume(root),
         lambda: service.create_rerun(root, tmp_path / "rerun"),
     ):
-        with pytest.raises(PackageError, match="passive_roots"):
+        with pytest.raises(PackageError, match="Skill content must declare"):
             operation()
     assert _file_hashes(root) == before
     assert not (tmp_path / "created").exists()
@@ -143,8 +145,9 @@ def test_start_resume_and_rerun_still_reject_non_executable_skill_registry(recor
 @pytest.mark.parametrize("damage", ["skill_bytes", "missing_skill", "embedded_hash", "embedded_id", "frame_hash", "frame_id", "frame_gap"])
 def test_replay_still_rejects_corruption_and_mismatched_identity(recorded_run, damage):
     root = recorded_run
-    registry = read_json(root / "experiment/skills/registry.json")
-    skill = root / "experiment" / registry["skills"][0]["path"]
+    experiment = root / 'experiment'
+    index = read_json(experiment / read_json(experiment / 'manifest.json')['entrypoints']['resources'])
+    skill = experiment / next(item['definition']['entrypoint'] for item in index['resources'] if item['kind'] == 'skill')
     # Warm the directory cache so immutable changes must invalidate it.
     with ReplayReader(root):
         pass
@@ -180,7 +183,7 @@ def test_replay_still_rejects_corruption_and_mismatched_identity(recorded_run, d
 def test_read_only_validation_still_checks_safe_existing_entrypoints(recorded_run, entrypoint):
     root = recorded_run
     experiment = read_json(root / "experiment/manifest.json")
-    experiment["entrypoints"]["skills"] = entrypoint
+    experiment["entrypoints"]["resources"] = entrypoint
     atomic_write_json(root / "experiment/manifest.json", experiment)
     integrity = write_integrity_manifest(root / "experiment")
     manifest = read_json(root / "run.json")

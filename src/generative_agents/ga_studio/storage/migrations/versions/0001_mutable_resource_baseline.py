@@ -20,6 +20,7 @@ from generative_agents.ga_studio.storage.models import StudioEvaluator
 from generative_agents.ga_studio.storage.models import StudioModelPreset
 from generative_agents.ga_studio.storage.models import StudioPackageCatalog
 from generative_agents.ga_studio.storage.models import StudioSkill
+from generative_agents.ga_studio.storage.models import StudioResourceExchangeState
 from generative_agents.ga_studio.storage.models import WorldMap
 
 
@@ -32,6 +33,7 @@ depends_on = None
 STUDIO_TABLES = [
     SeedResourceTombstone.__table__,
     StudioSkill.__table__,
+    StudioResourceExchangeState.__table__,
     StudioAgent.__table__,
     StudioCrowd.__table__,
     StudioModelPreset.__table__,

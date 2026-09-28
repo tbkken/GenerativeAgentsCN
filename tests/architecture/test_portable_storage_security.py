@@ -8,6 +8,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from generative_agents.ga_runtime.lifecycle.service import RunService
+from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.resources import read_experiment_resource_set
 from tests.studio_support import create_test_studio
 from tests.test_portable_package_protocol import _experiment
 
@@ -176,14 +178,16 @@ def test_log_preview_reads_a_bounded_utf8_window_and_keeps_append_identity(porta
     assert client.get(url, params={"cursor": path.stat().st_size + 1}).status_code == 409
 
 
-@pytest.mark.parametrize("relative", ["skills/test-brain/SKILL.md", "world/world.json"])
-def test_changed_embedded_inputs_cannot_be_replayed(portable_storage, relative):
+@pytest.mark.parametrize("content", ["skill", "resources"])
+def test_changed_embedded_inputs_cannot_be_replayed(portable_storage, content):
     client, root, run_id, _ = portable_storage
     # Find the actual copied Skill entrypoint instead of a public resource ID.
-    if relative.startswith("skills/"):
-        target = next((root / "experiment" / "skills").rglob("SKILL.md"))
+    experiment = root / 'experiment'
+    if content == 'skill':
+        skill = next(item for item in read_experiment_resource_set(experiment).resources if item.kind == 'skill')
+        target = experiment / skill.definition['entrypoint']
     else:
-        target = root / "experiment" / relative
+        target = experiment / read_json(experiment / 'manifest.json')['entrypoints']['resources']
     with target.open("a", encoding="utf-8") as handle:
         handle.write("\nchanged after sealing\n")
     assert_rejected(client, replay_urls(run_id), root)

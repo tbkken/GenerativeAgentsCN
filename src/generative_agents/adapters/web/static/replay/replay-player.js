@@ -128,7 +128,8 @@
       this.manifest = manifest;
       this.availableStep = manifest.available_step;
       this.agentDefinitions = new Map(manifest.agents.map(item => [item.agent_key, item]));
-      await this._createGame(manifest, generation);
+      const initialFrame = this.availableStep > 0 ? this._ensureStep(1) : Promise.resolve();
+      await Promise.all([this._createGame(manifest, generation), initialFrame]);
       if (!this._owns(runId, generation)) return;
       if (this.availableStep > 0) await this.seek(1);
       if (!this._owns(runId, generation)) return;
@@ -509,6 +510,7 @@
           parent: host,
           canvas: player.canvas,
           resolution: DISPLAY_RENDER_RESOLUTION,
+          loader: {maxParallelDownloads:4},
           backgroundColor: '#a9c991',
           render: { antialias: false, pixelArt: true },
           scale: { mode: PhaserRuntime.Scale.RESIZE },
@@ -590,6 +592,7 @@
       const materialSources = Array.isArray(editorV2.material_sources)
         ? editorV2.material_sources
         : [];
+      const neededSourceIds = window.RenderMaterials.sourceIds(editorV2);
       const materialSlices = Array.isArray(editorV2.material_slices)
         ? editorV2.material_slices
         : [];
@@ -621,12 +624,14 @@
           parent: host,
           canvas: player.canvas,
           resolution: DISPLAY_RENDER_RESOLUTION,
+          loader: {maxParallelDownloads:4},
           backgroundColor: '#eef3ee',
           render: { antialias: true, pixelArt: false },
           scale: { mode: PhaserRuntime.Scale.RESIZE },
           scene: {
             preload() {
               materialSources.forEach(source => {
+                if (!neededSourceIds.has(String(source.id))) return;
                 const sourceUrl = sourceTextureUrl(source);
                 if (!sourceUrl) return;
                 this.load.image(

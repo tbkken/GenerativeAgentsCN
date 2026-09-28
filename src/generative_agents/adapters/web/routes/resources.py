@@ -112,7 +112,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
         q: str | None = None,
         archived: Literal["active", "archived", "all"] = "active",
         page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=50, ge=1, le=100),
+        page_size: int = Query(default=20, ge=1, le=100),
     ):
         return call(
             lambda: maps.list_maps(
@@ -217,7 +217,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
         q: str | None = None,
         kind: str | None = None,
         page: int = Query(default=1, ge=1),
-        page_size: int = Query(default=100, ge=1, le=100),
+        page_size: int = Query(default=20, ge=1, le=100),
     ):
         return call(
             lambda: spatial_assets.list_assets(
@@ -263,34 +263,14 @@ def create_resource_router(database, skill_registry) -> APIRouter:
 
     @router.get("/skills")
     def list_skills(
-        kind: Literal["atomic", "pack", "brain"] | None = None,
+        kind: Literal["atomic", "pack", "brain", "skill"] | None = None,
         q: str = Query(default="", max_length=200),
         include_archived: bool = False,
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
     ):
-        documents = call(
-            lambda: skill_registry.list(
-                kind=kind,
-                query=q,
-                include_archived=include_archived,
-            )
-        )
-        counts = {
-            item_kind: len(
-                call(
-                    lambda item_kind=item_kind: skill_registry.list(
-                        kind=item_kind,
-                        query="",
-                        include_archived=include_archived,
-                    )
-                )
-            )
-            for item_kind in ("atomic", "pack", "brain")
-        }
-        return {
-            "items": [item.summary() for item in documents],
-            "total": len(documents),
-            "counts": counts,
-        }
+        return call(lambda: skill_registry.list_summaries(kind=kind, query=q,
+                    include_archived=include_archived, page=page, page_size=page_size))
 
     @router.post("/skills", status_code=201)
     def create_skill(body: SkillCreate):
@@ -304,14 +284,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
 
     @router.get("/skills/{skill_name}")
     def get_skill(skill_name: str):
-        def detail() -> dict[str, Any]:
-            document = skill_registry.get(skill_name)
-            return {
-                **document.detail(),
-                "script_sources": skill_registry.script_sources(skill_name),
-            }
-
-        return call(detail)
+        return call(lambda: skill_registry.author_detail(skill_name))
 
     @router.post("/skills/{skill_name}/run")
     def trial_skill(skill_name: str, body: SkillTrial):

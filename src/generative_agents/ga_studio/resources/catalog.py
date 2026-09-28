@@ -10,7 +10,8 @@ from typing import Annotated, Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.orm import object_session
 
 from generative_agents.ga_protocol.packages.hashing import canonical_json_bytes
 from generative_agents.ga_protocol.schemas.experiment import AgentPerceptionLimits
@@ -76,6 +77,50 @@ class StudioResourceService:
 
     def __init__(self, database) -> None:
         self.database = database
+
+    def list_summaries(self, kind, *, include_archived=False, query="", page=1, page_size=20, purpose=None):
+        """Query only the page's display columns; keep author definitions in detail reads."""
+        from .listing import dates, page_result, query_page, search_predicate
+        selected_purpose = purpose
+        model = self._model(kind)
+        key_name = {"agent": "agent_key", "crowd": "crowd_key", "model": "preset_key",
+                    "evaluator": "evaluator_key"}[kind]
+        key = getattr(model, key_name)
+        columns = [model.id, key.label(key_name if kind in {"agent", "crowd"} else "key"),
+                   model.name, model.description, model.content_hash, model.row_version,
+                   model.archived_at, model.updated_at]
+        if kind == "agent":
+            columns.extend(model.definition_json[name].as_string().label(name)
+                           for name in ("portrait_asset_id", "sprite_asset_id"))
+        if kind == "crowd":
+            columns.append(func.json_array_length(model.agent_ids_json).label("member_count"))
+        if kind == "model":
+            for purpose in ("chat", "embedding"):
+                columns.extend(model.config_json[purpose][name].as_string().label(f"{purpose}_{name}")
+                               for name in ("model", "base_url", "credential_env"))
+        predicates = [] if include_archived else [model.archived_at.is_(None)]
+        if kind == "model" and selected_purpose:
+            if selected_purpose not in {"chat", "embedding"}:
+                raise StudioResourceError("模型用途无效")
+            predicates.append(model.config_json[selected_purpose]["model"].as_string().is_not(None))
+        if query.strip():
+            predicates.append(search_predicate(query, key, model.name, model.description))
+        with self.database.session_factory() as session:
+            rows, total = query_page(session, model, columns, predicates=predicates,
+                                     order=(model.updated_at.desc(), model.id), page=page, page_size=page_size)
+        for item in rows:
+            dates(item)
+            if kind == "agent":
+                portrait = item.get("portrait_asset_id")
+                item["image_url"] = f"/api/studio/resources/assets/{portrait}/content?width=96" if portrait else None
+            if kind == "model":
+                item["purposes"] = [{"purpose": purpose,
+                                     **{name: item[f"{purpose}_{name}"] for name in ("model", "base_url", "credential_env")}}
+                                    for purpose in ("chat", "embedding") if item[f"{purpose}_model"]]
+                for purpose in ("chat", "embedding"):
+                    for name in ("model", "base_url", "credential_env"):
+                        item.pop(f"{purpose}_{name}")
+        return page_result(rows, total, page, page_size)
 
     def create_agent(
         self,
@@ -204,6 +249,11 @@ class StudioResourceService:
             if description is not None:
                 row.description = description.strip()
             row.agent_ids_json = members
+            from generative_agents.ga_studio.resources.exchange import bind_saved_resource_dependencies
+            bind_saved_resource_dependencies(session, "crowd", row.id, [
+                {"kind": "agent", "key": session.get(StudioAgent, agent_id).agent_key}
+                for agent_id in members
+            ])
             row.content_hash = _hash(members)
             row.row_version += 1
             row.updated_at = _now()
@@ -347,6 +397,8 @@ class StudioResourceService:
             row = session.get(model, resource_id)
             self._current(row, kind, resource_id)
             session.delete(row)
+            from generative_agents.ga_studio.resources.exchange import delete_resource_exchange_state
+            delete_resource_exchange_state(session, kind, resource_id)
 
     @staticmethod
     def _model(kind: str):
@@ -394,12 +446,24 @@ class StudioResourceService:
 
     @staticmethod
     def _crowd(row: StudioCrowd) -> dict[str, Any]:
+        from generative_agents.ga_studio.resources.exchange import pending_resource_dependencies
+        session = object_session(row)
+        member_rows = session.execute(select(StudioAgent.id, StudioAgent.agent_key, StudioAgent.name,
+            StudioAgent.definition_json["portrait_asset_id"].as_string().label("portrait_asset_id"))
+            .where(StudioAgent.id.in_(row.agent_ids_json or []))).mappings()
+        members = {item["id"]: dict(item) for item in member_rows}
+        for member in members.values():
+            portrait = member.get("portrait_asset_id")
+            member["image_url"] = f"/api/studio/resources/assets/{portrait}/content?width=96" if portrait else None
         return {
             "id": row.id,
             "crowd_key": row.crowd_key,
             "name": row.name,
             "description": row.description,
             "agent_ids": list(row.agent_ids_json or []),
+            "members": [members.get(identity, {"id": identity, "name": identity, "missing": True})
+                        for identity in row.agent_ids_json or []],
+            "pending_dependencies": pending_resource_dependencies(object_session(row), "crowd", row.id),
             "content_hash": row.content_hash,
             "row_version": row.row_version,
             "archived_at": row.archived_at.isoformat() if row.archived_at else None,

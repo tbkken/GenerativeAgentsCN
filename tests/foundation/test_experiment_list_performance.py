@@ -100,17 +100,21 @@ def test_live_list_status_reads_no_frames_and_archive_is_not_extracted(tmp_path,
         read_run_status(root)
 
 
-def test_list_summary_does_not_open_model_skill_or_evaluation_documents(tmp_path, monkeypatch):
+def test_list_summary_reads_only_manifest_shared_index_and_assembly(tmp_path, monkeypatch):
     import generative_agents.ga_protocol.packages.definition as api
     root = _experiment(tmp_path / 'packages')
-    original = api.read_json
+    original = api.read_package_json
     seen = []
 
-    def tracked(path):
-        seen.append(Path(path).relative_to(root).as_posix())
-        return original(path)
+    def tracked(path, relative):
+        seen.append(relative)
+        return original(path, relative)
 
-    monkeypatch.setattr(api, 'read_json', tracked)
+    api._documents.clear()
+    monkeypatch.setattr(api, 'read_package_json', tracked)
+    monkeypatch.setattr(api, 'assemble_experiment_definition', forbidden)
     manifest, summary = api._experiment_definition(root, summary_only=True)
-    assert set(seen) == {'manifest.json', *(manifest['entrypoints'][key] for key in ('world', 'simulation', 'agents'))}
+    assert set(seen) == {'manifest.json', *(manifest['entrypoints'][key] for key in ('resources', 'assembly'))}
+    assert not any(path.startswith(('assets/', 'skills/')) for path in seen)
     assert set(summary) == {'world', 'agents', 'simulation'}
+    assert 'definition' not in summary['world']

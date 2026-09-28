@@ -89,8 +89,8 @@
         <div class="me2-navigation-tools">${[['block','阻挡'],['walk','可走'],['restore',scope.slice?'恢复素材组合':'恢复素材结果'],['path','路径检查']].map(([key,label]) => `<button class="me2-outline ${this.tool===key?'active':''}" data-nav-tool="${key}" ${e.readonly && key!=='path'?'disabled':''} aria-pressed="${this.tool===key}">${label}</button>`).join('')}</div></div>
         <div class="me2-form-section"><label>叠层透明度 <output data-nav-opacity-label>${Math.round(this.opacity*100)}%</output><input type="range" min="15" max="85" value="${this.opacity*100}" data-nav-opacity></label></div>
         <div class="me2-property-list"><div><span>当前格</span><strong data-nav-cell>—</strong></div><div><span>通行结果</span><strong data-nav-state>—</strong></div><div><span>配置来源</span><strong data-nav-source>—</strong></div></div>
-        <div class="me2-form-section"><div class="me2-section-title"><strong>两点路径</strong><span>上下左右</span></div><div class="me2-four-fields"><label>A · 起点<input class="control" data-nav-start readonly value="${this.start?.join(', ') || '点击画布选择'}"></label><label>B · 终点<input class="control" data-nav-end readonly value="${this.end?.join(', ') || '点击画布选择'}"></label></div><p class="me2-inspector-note" data-nav-result role="status"></p></div>
-        <div class="me2-inspector-note">${scope.slice?'在未旋转的切片网格上配置；放置时随素材旋转。':'阻挡格用于墙体、湖泊等障碍；可走格可以打开门洞。地图手工配置优先于素材。'}<br>拖动绘制；按住空格拖动画布。</div>
+        <div class="me2-form-section"><div class="me2-section-title"><strong>两点路径</strong><span>上下左右</span></div><div class="me2-four-fields"><label>A · 起点<input class="control" data-nav-start readonly value="${this.start?.join(', ') || 'Ctrl + 左键选择'}"></label><label>B · 终点<input class="control" data-nav-end readonly value="${this.end?.join(', ') || 'Ctrl + 左键选择'}"></label></div><p class="me2-inspector-note" data-nav-result role="status"></p></div>
+        <div class="me2-inspector-note">${scope.slice?'在未旋转的切片网格上配置；放置时随素材旋转。':'阻挡格用于墙体、湖泊等障碍；可走格可以打开门洞。地图手工配置优先于素材。'}<br>默认左键拖动平移地图；按住 Ctrl + 左键点击或拖动编辑通路，路径检查也需按住 Ctrl 选点。</div>
         ${e.readonly?'':'<div class="me2-navigation-save"><button class="me2-save" data-nav-save>保存</button><span data-nav-save-status></span></div>'}`;
       e.inspector.querySelectorAll('[data-nav-tool]').forEach(b => b.onclick = () => {
         this.tool = b.dataset.navTool; this.renderInspector();
@@ -157,8 +157,9 @@
       const x=Math.floor((point.x-e.offsetX)/e.zoom/m.x),y=Math.floor((point.y-e.offsetY)/e.zoom/m.y);
       return x>=0&&y>=0&&x<s.width&&y<s.height ? [x,y] : null;
     }
-    pointerDown(point) {
+    pointerDown(point, event) {
       if(!this.active||!this.scope())return false;
+      if(!event?.ctrlKey || event.button !== 0)return true;
       const p=this.point(point); if(!p)return true;
       this.selected=p;
       if(this.tool==='path') {
@@ -182,7 +183,11 @@
       if(this.preview)this.preview.path=[];
       this.status='通路已修改，松开后重新检查';this.details();e.renderCanvas();
     }
-    pointerMove(point) { if(!this.stroke)return false;const p=this.point(point);if(p)this.paint(p);return true; }
+    pointerMove(point, event) {
+      if(!this.stroke)return false;
+      if(!event?.ctrlKey) { this.pointerUp(); return true; }
+      const p=this.point(point);if(p)this.paint(p);return true;
+    }
     pointerUp() {
       if(!this.stroke)return false;
       const e=this.editor,entry={kind:'navigation',label:'通路绘制',scope:this.stroke.scope,before:this.stroke.before,after:copy(this.values())};

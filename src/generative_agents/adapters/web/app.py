@@ -8,8 +8,10 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+from time import perf_counter
 
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -43,6 +45,7 @@ def create_studio_app(
         try:
             yield
         finally:
+            portable_router.operation_jobs.close()
             studio.close()
 
     app = FastAPI(
@@ -50,6 +53,9 @@ def create_studio_app(
         version="2.0",
         lifespan=lifespan,
     )
+    # Large map definitions and console scripts otherwise block remote page
+    # loading on their uncompressed transfer. Package bytes stay unchanged.
+    app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=4)
     @app.exception_handler(PackageError)
     async def invalid_package(_request, _exception):
         return JSONResponse(status_code=409, content={"detail": "Package integrity or storage boundary validation failed"})
@@ -60,7 +66,10 @@ def create_studio_app(
 
     @app.middleware("http")
     async def revalidate_console(request, call_next):
+        started = perf_counter()
         response = await call_next(request)
+        if request.url.path.startswith('/api/'):
+            response.headers['Server-Timing'] = f'app;dur={(perf_counter() - started) * 1000:.2f}'
         if request.url.path == "/" or request.url.path.startswith(("/experiments/", "/static/console/")):
             response.headers["Cache-Control"] = "no-cache, must-revalidate"
         return response
@@ -68,13 +77,9 @@ def create_studio_app(
     app.include_router(create_resource_router(database, skills))
     app.include_router(create_model_service_router(database, root))
     app.include_router(create_experiment_resource_router(database, root))
-    app.include_router(
-        create_portable_router(
-            database,
-            package_root=root / "packages",
-            max_concurrent_runs=max_concurrent_runs,
-        )
-    )
+    portable_router = create_portable_router(database, package_root=root / 'packages',
+                                              max_concurrent_runs=max_concurrent_runs)
+    app.include_router(portable_router)
     console_static = Path(__file__).resolve().parent / "static"
     # Keep the established management console as the Web presentation layer.
     # The package-first refactor changes its adapters and data sources, not the

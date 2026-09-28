@@ -10,6 +10,7 @@ from typing import BinaryIO
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import defer
 
 from generative_agents.ga_studio.storage.assets import AssetStore
 from generative_agents.ga_studio.storage.assets import AssetValidationError
@@ -114,10 +115,51 @@ class AssetService:
             返回以字段名或业务键组织的结构化映射。
         """
         with self._database.session_factory() as session:
-            asset = session.get(Asset, asset_id)
+            asset = session.get(Asset, asset_id, options=[defer(Asset.content_blob, raiseload=True)])
             if asset is None:
                 raise not_found("asset", asset_id)
             return self._detail(asset)
+
+    def content_metadata(self, asset_id):
+        """Read conditional-request metadata without transferring the BLOB from SQL."""
+        with self._database.session_factory() as session:
+            row = session.execute(select(Asset.id, Asset.sha256, Asset.media_type,
+                Asset.logical_name, Asset.relative_path, Asset.size_bytes,
+                Asset.content_blob.is_not(None).label("database_backed")).where(Asset.id == asset_id)).mappings().one_or_none()
+            if row is None:
+                raise not_found("asset", asset_id)
+            return dict(row)
+
+    def delivery_content(self, metadata):
+        if metadata["database_backed"]:
+            with self._database.session_factory() as session:
+                data = session.scalar(select(Asset.content_blob).where(Asset.id == metadata["id"]))
+            if data is None or hashlib.sha256(data).hexdigest() != metadata["sha256"]:
+                raise ServiceError("ASSET_INTEGRITY_INVALID", "图片内容校验失败", status_code=409)
+            return bytes(data)
+        return self.store.resolve(metadata["relative_path"], expected_sha256=metadata["sha256"])
+
+    def thumbnail(self, metadata, width):
+        """Disposable preview; original author bytes and package assets stay untouched."""
+        from io import BytesIO
+        from PIL import Image, ImageOps
+        from generative_agents.ga_protocol.packages.io import atomic_write_bytes, checked_package_path
+        if width not in {96, 192, 384}:
+            raise ServiceError("THUMBNAIL_SIZE_INVALID", "图片预览宽度须为 96、192 或 384", status_code=422)
+        target = checked_package_path(self.store.root / "preview-cache" / f"{metadata['sha256']}-{width}-v1.webp")
+        if target.is_file():
+            return target
+        source = self.delivery_content(metadata)
+        with Image.open(BytesIO(source) if isinstance(source, bytes) else source) as image:
+            preview = ImageOps.exif_transpose(image)
+            preview.thumbnail((width, width), Image.Resampling.LANCZOS)
+            if preview.mode not in {"RGB", "RGBA"}:
+                preview = preview.convert("RGBA")
+            output = BytesIO()
+            preview.save(output, format="WEBP", quality=82)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        atomic_write_bytes(target, output.getvalue())
+        return target
 
     def upload_database_images(
         self,

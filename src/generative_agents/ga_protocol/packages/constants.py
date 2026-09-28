@@ -6,9 +6,12 @@ file formats are the integration boundary between the four GA modules.
 
 from __future__ import annotations
 
-EXPERIMENT_PROTOCOL = "ga-experiment"
-RUN_PROTOCOL = "ga-run"
-PROTOCOL_VERSION = 1
+PACKAGE_PROTOCOL = "ga-package"
+EXPERIMENT_PROTOCOL = PACKAGE_PROTOCOL
+RUN_PROTOCOL = PACKAGE_PROTOCOL
+PROTOCOL_VERSION = 2
+
+CONFIG_ARCHIVE_SUFFIX = ".gaconfig"
 
 EXPERIMENT_ARCHIVE_SUFFIX = ".gaexp"
 RUN_ARCHIVE_SUFFIX = ".garun"
@@ -19,12 +22,6 @@ RUN_STATUS = "status.json"
 INTEGRITY_MANIFEST = "integrity/sha256.json"
 
 DEFAULT_EXPERIMENT_ENTRYPOINTS = {
-    "world": "world/world.json",
-    "semantic_index": "world/semantic-index.json",
-    "agents": "agents/index.json",
-    "skills": "skills/registry.json",
-    "models": "models/models.json",
-    "simulation": "runtime/simulation.json",
-    "engine": "runtime/engine.json",
-    "evaluation": "evaluation/evaluators.json",
+    "resources": "resources/index.json",
+    "assembly": "runtime/assembly.json",
 }

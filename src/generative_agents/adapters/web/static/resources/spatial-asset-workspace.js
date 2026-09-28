@@ -9,7 +9,7 @@
   const KIND_LABELS = { TILE: '画块', OBJECT: '物件', ZONE: '区域', MARKING: '标线', NETWORK: '网络' };
   const manager = {
     initialized: false,
-    items: [],
+    items: [], page:1,
     kind: '',
     query: '',
     detail: null,
@@ -53,11 +53,11 @@
       this.$('spatialAssetEditKind').addEventListener('change', () => this.setDirty());
       this.$('spatialAssetSearch').addEventListener('input', event => {
         clearTimeout(this.searchTimer);
-        this.searchTimer = setTimeout(() => { this.query = event.target.value.trim(); this.load().catch(error => this.fail(error)); }, 220);
+        this.searchTimer = setTimeout(() => { this.query = event.target.value.trim(); this.page=1; this.load().catch(error => this.fail(error)); }, 220);
       });
       document.querySelectorAll('[data-spatial-kind]').forEach(button => button.addEventListener('click', () => {
         document.querySelectorAll('[data-spatial-kind]').forEach(item => item.classList.toggle('active', item === button));
-        this.kind = button.dataset.spatialKind; this.load().catch(error => this.fail(error));
+        this.kind = button.dataset.spatialKind; this.page=1; this.load().catch(error => this.fail(error));
       }));
       document.querySelectorAll('.spatial-dirty').forEach(control => control.addEventListener('input', () => this.setDirty()));
     },
@@ -67,7 +67,7 @@
       const generation = ++this.listGeneration;
       const grid = this.$('spatialAssetGrid');
       grid.setAttribute('aria-busy', 'true');
-      const params = new URLSearchParams({ page: '1', page_size: '100' });
+      const params = new URLSearchParams({ page: this.page, page_size: '5' });
       if (this.kind) params.set('kind', this.kind); if (this.query) params.set('q', this.query);
       let assets;
       try {
@@ -83,6 +83,9 @@
       if (generation !== this.listGeneration) return;
       this.items = assets.items;
       this.renderCatalog();
+      let pager=this.$('spatialAssetPager');
+      if (!pager) {pager=document.createElement('div');pager.id='spatialAssetPager';grid.insertAdjacentElement('afterend',pager);}
+      window.ResourceList.pager(pager,{...assets,onPage:page => {this.page=page;this.load().catch(error=>this.fail(error));}});
     },
     renderCatalog() {
       const grid = this.$('spatialAssetGrid');
@@ -90,7 +93,7 @@
         const contract = item.contract || {}; const appearance = contract.appearance || {};
         const preview = appearance.mode === 'EMOJI' ? this.escape(appearance.emoji) : '';
         const style = appearance.mode === 'COLOR' ? `background:${this.escape(appearance.color)}` : '';
-        return `<article class="resource-card-shell"><button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state draft">实时素材${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code><span>${item.usage_count || 0} 张地图</span></span></button><button class="resource-card-delete" type="button" aria-label="删除资产" title="删除资产" data-delete-spatial-id="${item.id}" data-delete-spatial-name="${this.escape(item.name)}">删除</button></article>`;
+        return `<article class="resource-card-shell"><button class="spatial-asset-card" data-spatial-id="${item.id}"><span class="spatial-asset-card-top"><span class="spatial-asset-preview" style="${style}">${preview}</span><span class="map-state draft">实时素材${item.is_builtin ? ' · 系统' : ''}</span></span><h3>${this.escape(item.name)}</h3><p>${this.escape(contract.summary || item.description || '可复用空间资产')}</p><span class="spatial-asset-card-tags"><span>${this.escape(KIND_LABELS[item.asset_kind])}</span>${(contract.semantics?.tags || []).slice(0, 3).map(tag => `<span>${this.escape(tag)}</span>`).join('')}</span><span class="spatial-asset-card-foot"><code>${this.escape(item.asset_key)}</code><span>按需打开详情</span></span></button><button class="resource-card-delete" type="button" aria-label="删除资产" title="删除资产" data-delete-spatial-id="${item.id}" data-delete-spatial-name="${this.escape(item.name)}">删除</button></article>`;
       }).join('') : '<div class="empty-state"><strong>没有符合条件的空间资产</strong></div>';
       grid.querySelectorAll('[data-spatial-id]').forEach(card => card.addEventListener('click', () => this.open(card.dataset.spatialId).catch(error => this.fail(error))));
       grid.querySelectorAll('[data-delete-spatial-id]').forEach(button => button.addEventListener('click', () => this.deleteAsset(button.dataset.deleteSpatialId, button.dataset.deleteSpatialName).catch(error => this.fail(error))));

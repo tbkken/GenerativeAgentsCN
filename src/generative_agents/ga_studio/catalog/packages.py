@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Iterable
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, func
 
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
@@ -136,6 +136,43 @@ class StudioPackageCatalogService:
             if package_kind:
                 statement = statement.where(StudioPackageCatalog.package_kind == package_kind)
             return list(session.scalars(statement.order_by(StudioPackageCatalog.updated_at.desc())))
+
+    def page(self, *, package_kind=None, experiment_id=None, page=1, page_size=5,
+             included_ids=None, excluded_ids=()):
+        """Query only the visible catalog page before opening any package."""
+        filters = []
+        if package_kind:
+            filters.append(StudioPackageCatalog.package_kind == package_kind)
+        if experiment_id:
+            filters.append(StudioPackageCatalog.experiment_id == experiment_id)
+        if included_ids is not None:
+            filters.append(StudioPackageCatalog.package_id.in_(included_ids))
+        if excluded_ids:
+            filters.append(StudioPackageCatalog.package_id.not_in(excluded_ids))
+        with self.database.session_factory() as session:
+            total = session.scalar(select(func.count()).select_from(StudioPackageCatalog).where(*filters))
+            rows = list(session.scalars(select(StudioPackageCatalog).where(*filters).order_by(
+                StudioPackageCatalog.updated_at.desc(), StudioPackageCatalog.package_id.desc()
+            ).offset((page - 1) * page_size).limit(page_size)))
+        return {'items': rows, 'page': page, 'page_size': page_size, 'total': total,
+                'total_pages': max(1, (total + page_size - 1) // page_size)}
+
+    def recent_runs(self, experiment_ids):
+        """Counts and one latest row per visible experiment, without all history."""
+        ids = tuple(experiment_ids)
+        if not ids:
+            return {}
+        model = StudioPackageCatalog
+        filters = (model.package_kind == 'run', model.experiment_id.in_(ids))
+        ranked = select(model.package_id, func.row_number().over(
+            partition_by=model.experiment_id,
+            order_by=(model.updated_at.desc(), model.package_id.desc())).label('position')
+        ).where(*filters).subquery()
+        with self.database.session_factory() as session:
+            counts = dict(session.execute(select(model.experiment_id, func.count()).where(*filters).group_by(model.experiment_id)).all())
+            latest = list(session.scalars(select(model).join(ranked, model.package_id == ranked.c.package_id)
+                                         .where(model.package_kind == 'run', ranked.c.position == 1)))
+        return {row.experiment_id: {'count': counts[row.experiment_id], 'latest': row} for row in latest}
 
     def get(self, package_kind: str, package_id: str) -> StudioPackageCatalog | None:
         with self.database.session_factory() as session:

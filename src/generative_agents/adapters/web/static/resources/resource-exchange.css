@@ -1,0 +1,24 @@
+.resource-exchange-dialog { width:min(740px, calc(100vw - 32px)); max-height:calc(100vh - 48px); border:1px solid #dce5e1; border-radius:16px; padding:0; color:var(--text, #263b35); background:#fff; box-shadow:0 20px 80px #173d3433; }
+.resource-exchange-dialog::backdrop { background:#163e3659; }
+.resource-exchange-dialog .modal-body { max-height:65vh; overflow:auto; }
+.resource-exchange-dialog p { font-size:13px; line-height:1.65; }
+.exchange-resource { display:flex; gap:12px; align-items:flex-start; padding:14px 4px; border-bottom:1px solid #edf2f0; cursor:pointer; }
+.exchange-resource input { margin-top:4px; accent-color:#177562; }
+.exchange-resource span { min-width:0; overflow-wrap:anywhere; }
+.exchange-resource strong, .exchange-resource small { display:block; }
+.exchange-resource small { color:#64766f; margin-top:5px; line-height:1.5; }
+.exchange-resource .exchange-warning, #resourceExchangeConflict { color:#9b6323; }
+.exchange-other { margin-top:14px; }
+.exchange-other summary { cursor:pointer; font-size:13px; }
+.exchange-option { display:flex; gap:8px; align-items:flex-start; margin:16px 0; font-size:13px; line-height:1.5; }
+#resourceExchangeStatus { white-space:pre-wrap; overflow-wrap:anywhere; }
+#resourceExchangeStatus[role="alert"] { color:#a53f2b; }
+.experiment-workspace #importResourcePackageBtn, .experiment-workspace #exportResourcePackageBtn { display:none; }
+.resource-tabs { display:flex; gap:6px; margin:0 0 22px; padding:0 0 10px; border-bottom:1px solid #dce5e1; }
+.resource-tabs[hidden] { display:none; }
+.resource-tabs [role="tab"] { border:0; border-radius:8px; background:transparent; color:#64766f; padding:10px 22px; font:inherit; font-weight:600; cursor:pointer; }
+.resource-tabs [aria-selected="true"] { background:#e3f3ed; color:#12634f; }
+.resource-tabs [role="tab"]:focus-visible { outline:2px solid #177562; outline-offset:2px; }
+.exchange-option[hidden] { display:none; }
+.exchange-resource[data-automatic="true"] { background:#f3f8f5; }
+.exchange-selection-summary { padding:12px; border-radius:8px; background:#f3f8f5; }

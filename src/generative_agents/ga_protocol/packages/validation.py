@@ -281,124 +281,45 @@ def validate_experiment_integrity(root: Path, *, verify_hashes: bool = True) -> 
 
 
 def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> ExperimentManifest:
+    from generative_agents.ga_protocol.packages.resources import read_resource_index, validate_resource_set
+    from generative_agents.ga_protocol.packages.definition import assemble_experiment_definition
+    from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly
+    from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
+
     root = checked_package_path(root)
     manifest = validate_experiment_integrity(root, verify_hashes=verify_hashes)
-    entrypoint_paths = manifest.entrypoints.model_dump(exclude_none=True)
-    documents: dict[str, object] = {}
-    for name, relative in entrypoint_paths.items():
-        path = root / relative
-        if not path.is_file():
-            raise PackageError(f"experiment entrypoint is missing: {name}={relative}")
-        documents[name] = read_json(path)
-        _validate_no_live_references(documents[name], f"$.{name}")
-
-    _validate_world_and_agents(
-        documents["world"],
-        documents["agents"],
-        documents["semantic_index"],
-    )
-    agent_keys = {item["agent_key"] for item in documents["agents"]["agents"]}
-    crowd_keys = set()
-    for crowd in documents["agents"].get("crowds", []):
-        if not isinstance(crowd, dict) or not crowd.get("crowd_key") or not crowd.get("name"):
-            raise PackageError("experiment crowds require a local crowd_key and name")
-        if crowd["crowd_key"] in crowd_keys:
-            raise PackageError(f"duplicate experiment crowd key: {crowd['crowd_key']}")
-        crowd_keys.add(crowd["crowd_key"])
-        members = crowd.get("agent_keys")
-        if not isinstance(members, list) or not all(isinstance(key, str) for key in members):
-            raise PackageError("crowd members must be package-local Agent keys")
-        if len(set(members)) != len(members) or set(members) - agent_keys:
-            raise PackageError(f"crowd {crowd['crowd_key']} has duplicate or missing Agent members")
-
+    resources = read_resource_index(root, manifest.entrypoints.resources)
+    validate_resource_set(resources)
     try:
-        registry = SkillPackageRegistry.model_validate(documents["skills"])
-    except ValidationError as exc:
-        raise PackageError(f"invalid Skill package registry: {exc}") from exc
-    entries = {entry.skill_id: entry for entry in registry.skills}
-    if len(entries) != len(registry.skills):
-        raise PackageError("Skill IDs must be unique inside an experiment")
-    roots = [registry.brain_skill, *registry.object_roots]
-    missing_roots = sorted(set(roots) - set(entries))
-    if missing_roots:
-        raise PackageError(f"Skill roots are missing from the physical bundle: {missing_roots}")
-    if entries[registry.brain_skill].kind != "brain":
-        raise PackageError("brain_skill must identify a Skill entry of kind 'brain'")
-    for entry in registry.skills:
-        missing = sorted(set(entry.dependencies) - set(entries))
-        if missing:
-            raise PackageError(f"Skill {entry.skill_id} has missing dependencies: {missing}")
-        skill_path = root / entry.path
-        if not skill_path.is_file():
-            raise PackageError(f"physical Skill file is missing: {entry.path}")
-        if entry.content_sha256 and sha256_file(skill_path) != entry.content_sha256:
-            raise PackageError(f"Skill content hash mismatch: {entry.skill_id}")
-    brain_entries = [entry.skill_id for entry in registry.skills if entry.kind == "brain"]
-    if brain_entries != [registry.brain_skill]:
-        raise PackageError("an experiment must contain exactly one configured Brain Skill")
-    for object_root in registry.object_roots:
-        if entries[object_root].kind != "object":
-            raise PackageError(f"object root is not marked as an object Skill: {object_root}")
-
-    visiting: set[str] = set()
-    visited: set[str] = set()
-
-    def visit(skill_id: str) -> None:
-        if skill_id in visiting:
-            raise PackageError(f"cyclic Skill dependency detected at {skill_id}")
-        if skill_id in visited:
-            return
-        visiting.add(skill_id)
-        for dependency in entries[skill_id].dependencies:
-            visit(dependency)
-        visiting.remove(skill_id)
-        visited.add(skill_id)
-
-    for skill_id in entries:
-        visit(skill_id)
-
-    bound_object_skills: set[str] = set()
-
-    def collect_bindings(value: object) -> None:
-        if isinstance(value, dict):
-            bindings = value.get("skill_bindings")
-            if isinstance(bindings, list):
-                if len(bindings) > 1:
-                    raise PackageError("a Game Object binds one root Skill; compose its child Skills")
-                for binding in bindings:
-                    if not isinstance(binding, dict) or not isinstance(binding.get("skill_name"), str) or not binding["skill_name"].strip():
-                        raise PackageError("Game Object binding requires a Skill name")
-                    for name, default in (("vision_radius", 4), ("attention_bandwidth", 8)):
-                        limit = binding.get(name, default)
-                        if type(limit) is not int or not 0 <= limit <= 100:
-                            raise PackageError(f"Game Object {name} must be an integer between 0 and 100")
-                    bound_object_skills.add(binding["skill_name"])
-            for child in value.values():
-                collect_bindings(child)
-        elif isinstance(value, list):
-            for child in value:
-                collect_bindings(child)
-
-    collect_bindings(documents["world"])
-    undeclared = sorted(bound_object_skills - set(registry.object_roots))
-    if undeclared:
-        raise PackageError(f"Game Object Skills are not declared as roots: {undeclared}")
-
-    world_document = documents["world"]
-    assets = world_document.get("assets") if isinstance(world_document, dict) else None
-    if isinstance(assets, list):
-        for asset in assets:
-            if not isinstance(asset, dict) or not asset.get("logical_path"):
-                raise PackageError("world asset records require logical_path")
-            logical_path = validate_package_path(str(asset["logical_path"]))
-            asset_path = root / logical_path
-            if not asset_path.is_file():
-                raise PackageError(f"physical world asset is missing: {logical_path}")
-            declared_hash = str(asset.get("asset_hash") or "")
-            if declared_hash and declared_hash != f"sha256:{sha256_file(asset_path)}":
-                raise PackageError(f"world asset hash mismatch: {logical_path}")
-            if asset.get("size") is not None and int(asset["size"]) != asset_path.stat().st_size:
-                raise PackageError(f"world asset size mismatch: {logical_path}")
+        assembly = ExperimentAssembly.model_validate(read_json(root / manifest.entrypoints.assembly))
+        if assembly.map.kind != "map" or assembly.brain.kind != "skill":
+            raise PackageError("experiment map and Brain selections have invalid kinds")
+        brain = resources.get(assembly.brain)
+        if brain.definition.get("skill_kind") != "brain":
+            raise PackageError("experiment Brain selection must identify a Brain Skill")
+        brains = [record.key for record in resources.resources if record.kind == "skill" and record.definition.get("skill_kind") == "brain"]
+        if brains != [assembly.brain.key]:
+            raise PackageError("an experiment must contain exactly one configured Brain Skill")
+        if set(assembly.models) != {"chat", "embedding"}:
+            raise PackageError("experiment must select chat and embedding model configurations")
+        placement_keys = [placement.agent.identity for placement in assembly.placements]
+        if len(placement_keys) != len(set(placement_keys)):
+            raise PackageError("each Agent must have exactly one experiment placement")
+        definition = assemble_experiment_definition(manifest, resources, assembly)
+        runtime_identity = {key: value for key, value in definition["experiment"].items() if key != "experiment_id"}
+        ExperimentDefinition.model_validate({key: (runtime_identity if key == "experiment" else value)
+                                             for key, value in definition.items() if key not in {"crowds", "evaluation"}})
+        world = definition["world"]
+        semantic = world.get("definition", {}).get("semantic_index")
+        _validate_world_and_agents(world, {"agents": definition["agents"]}, semantic)
+        agent_keys = {agent["agent_key"] for agent in definition["agents"]}
+        for crowd in definition["crowds"]:
+            if set(crowd["agent_keys"]) - agent_keys:
+                raise PackageError(f"Crowd {crowd['crowd_key']} contains an Agent without an experiment placement")
+    except (ValidationError, KeyError, TypeError, ValueError) as exc:
+        if isinstance(exc, PackageError):
+            raise
+        raise PackageError(f"invalid experiment assembly: {exc}") from exc
     return manifest
 
 
@@ -434,4 +355,13 @@ def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
     root = checked_package_path(root)
     manifest = validate_run_integrity(root, sealed=sealed)
     validate_experiment_directory(root / manifest.experiment.path, verify_hashes=False)
+    from generative_agents.ga_protocol.schemas.manifests import RunStatus
+    from generative_agents.ga_protocol.facts.commits import validate_committed_frames
+    from generative_agents.ga_protocol.facts.recovery import boundary_snapshot
+    status = RunStatus.model_validate(read_json(root / "status.json"))
+    if status.run_id != manifest.run_id or status.total_steps != manifest.requested_steps:
+        raise PackageError("Run status identity or step budget disagrees with its manifest")
+    validate_committed_frames(root, manifest.run_id, status.committed_step)
+    if status.committed_step:
+        boundary_snapshot(root, manifest.run_id, status.committed_step)
     return manifest

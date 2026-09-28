@@ -26,7 +26,7 @@ function setup() {
   }});
   root.querySelectorAll = () => inputs;
   root.querySelector = () => inputs[0];
-  const window = {
+  const window = {WorkspaceLoader:{load:async()=>{}},
     dispatchEvent(event) { events.push(event); listeners[event.type]?.(event); },
     ModelWorkspace: {loadChoices: async () => {}}, MapWorkspace: {prepareExperimentCreate: async () => {}},
   };
@@ -42,14 +42,19 @@ function setup() {
   manager.initialized = true;
   let catalog = [{id: 'unrelated-crowd', name: '其他案例人群', agent_ids: []},
     {id: 'traffic-crowd', name: '交通实验人群', agent_ids: ['student']}];
-  manager.request = async path => path === '/crowds' ? {items: catalog} : {items: [{id: 'student', name: '学生'}]};
+  manager.request = async path => {
+    if (path.startsWith('/crowds?')) return {items:catalog, page:1,total_pages:1};
+    const item=catalog.find(item => path === `/crowds/${item.id}`);
+    if (!item) throw Object.assign(new Error('not found'),{status:404});
+    return {...item,members:(item.agent_ids||[]).map(id => ({id,name:'学生'}))};
+  };
   vm.runInContext(wizardSource, context);
   listeners['crowd-workspace:create-selection'] = context.renderWizardStep;
   const click = id => node(id).handlers.click({stopImmediatePropagation() {}});
   const select = (id, checked) => {
     const input = inputs.find(item => item.value === id);
     input.checked = checked;
-    input.handlers.change();
+    return input.handlers.change();
   };
   const open = async () => {
     await click('createExperimentBtn');
@@ -82,7 +87,7 @@ test('new experiment requires a deliberate crowd choice even when public crowds 
 test('wizard navigation keeps an explicit choice and opening a new wizard clears it', async () => {
   const {context, manager, open, click, select, node, inputs} = setup();
   await open();
-  select('traffic-crowd', true);
+  await select('traffic-crowd', true);
   await click('wizardNext');
   assert.equal(context.state.wizardStep, 3);
   assert.equal(node('createSummaryCrowds').textContent, '交通实验人群');
@@ -102,14 +107,14 @@ test('wizard navigation keeps an explicit choice and opening a new wizard clears
 test('refresh preserves deliberate choices and never substitutes a crowd after clearing or removal', async () => {
   const {manager, open, select, inputs, setCatalog} = setup();
   await open();
-  select('traffic-crowd', true);
+  await select('traffic-crowd', true);
   await manager.prepareExperimentCreate();
   assert.deepEqual([...manager.selectedCreateRevisionIds()], ['traffic-crowd']);
-  select('traffic-crowd', false);
+  await select('traffic-crowd', false);
   await manager.prepareExperimentCreate();
   assert.equal(manager.selectedCreateRevisionIds().length, 0);
   assert.ok(inputs().every(input => !input.checked));
-  select('traffic-crowd', true);
+  await select('traffic-crowd', true);
   setCatalog([{id: 'unrelated-crowd', name: '其他案例人群', agent_ids: []}]);
   await manager.prepareExperimentCreate();
   assert.equal(manager.selectedCreateRevisionIds().length, 0);

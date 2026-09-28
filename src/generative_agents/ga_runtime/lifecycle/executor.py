@@ -112,9 +112,9 @@ def _read_checkpoint(paths: RunPaths, committed_step: int):
 def _quarantine_uncommitted(paths: RunPaths, boundary: int) -> None:
     """Preserve failed commit outputs outside the new Attempt's writable paths."""
     batch = paths.orphaned / f'recovery-{uuid4()}'
-    for directory, pattern in ((paths.frames, 'step-*.json.gz'), (paths.checkpoints, 'step-*'), (paths.root / 'recovery', 'step-*')):
+    for directory, pattern in ((paths.frames, 'step-*.json.gz'), (paths.root / 'commits', 'step-*.json'), (paths.checkpoints, 'step-*'), (paths.root / 'recovery', 'step-*')):
         for candidate in sorted(directory.glob(pattern)):
-            step = candidate.name.removeprefix('step-').removesuffix('.json.gz')
+            step = candidate.name.removeprefix('step-').removesuffix('.json.gz').removesuffix('.json')
             if not step.isdigit() or int(step) <= boundary:
                 continue
             if candidate.is_symlink() or candidate.resolve().parent != directory.resolve():

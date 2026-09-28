@@ -8,6 +8,7 @@ from generative_agents.ga_protocol.packages.io import atomic_write_json
 from generative_agents.ga_runtime.lifecycle.service import RunService
 from generative_agents.adapters.web.app import create_studio_app
 from tests.test_portable_package_protocol import _experiment
+from tests.committed_frames import write_frame
 
 
 def test_trace_usage_tools_and_chinese_log_are_read_from_run_files(tmp_path):
@@ -24,7 +25,7 @@ def test_trace_usage_tools_and_chinese_log_are_read_from_run_files(tmp_path):
                  agents=[], domain_events=[], memory_deltas=[], conversations=[],
                  effects=[{'agent_keys':['teacher'], 'payload':{'trace':[
                      {'event':'mcp.call','tool':'world-perceive','input_text':'{"radius":2}', 'output_text':'附近地点'}]}}])
-    (run/'frames/step-000001.json.gz').write_bytes(gzip.compress(json.dumps({'result':frame}).encode()))
+    write_frame(run, frame)
     projection = read_json(run/'projection.json')
     projection['steps']['1']['frame_sha256'] = hashlib.sha256((run/'frames/step-000001.json.gz').read_bytes()).hexdigest()
     atomic_write_json(run/'projection.json', projection)
@@ -44,7 +45,7 @@ def test_trace_usage_tools_and_chinese_log_are_read_from_run_files(tmp_path):
         detail=client.get(base+'/model-traces/'+attempt+':2').json()
         assert not detail['payload_available']
         assert detail['iteration_tools'][0]['tool']=='world-perceive'
-        usage=client.get(base+'/results/operations').json()['model_usage'][0]
+        usage=client.get(base+'/results/operations?section=usage').json()['model_usage'][0]
         assert (usage['logical_calls'],usage['physical_attempts'],usage['input_tokens'])==(1,1,10)
         cursor=0; text=''
         while True:

@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync('src/generative_agents/adapters/web/static/shell/console-api.js', 'utf8');
 const code = source.slice(source.indexOf('  async function publishAndRun()'), source.indexOf('  async function prepareNextSimulation()'));
+const readyCode = source.slice(source.indexOf('  async function ensureDraftReadyForRun()'), source.indexOf('  async function acceptSavedDraft('));
 function setup(startFails = false) {
   const requests = [], notices = [];
   const context = {
@@ -15,7 +16,7 @@ function setup(startFails = false) {
     loadRunHistory: async () => {},
     showToast: message => notices.push(message),
   };
-  vm.createContext(context); vm.runInContext(code, context);
+  vm.createContext(context); vm.runInContext(readyCode + code, context);
   return { context, requests, notices };
 }
 test('a refresh failure retains successful launch identity and never repeats launch', async () => {
@@ -47,3 +48,47 @@ test('duplicate confirm clicks share the in-flight launch guard', async()=>{
   assert.equal(requests.length,1);release({run_id:'new-run'});await first;
   assert.equal(context.state.launchingRun,false);
 });
+
+test('unchanged draft is sealed and launched without uploading its complete map again', async () => {
+  const {context, requests} = setup();
+  context.state.dirty = false;
+  context.saveDraft = async () => { throw Error('unchanged draft was uploaded'); };
+  await context.publishAndRun();
+  assert.deepEqual(requests, ['/experiments/experiment/seal', '/experiments/experiment/runs']);
+});
+
+test('launch waits for pending saves and saves new form changes before sealing', async () => {
+  const {context, requests} = setup();
+  let release;
+  context.state.draftMutation = new Promise(resolve => { release = resolve; });
+  context.state.dirty = true;
+  context.saveDraft = async () => { requests.push('save'); context.state.dirty = false; };
+  const launch = context.publishAndRun();
+  assert.deepEqual(requests, []);
+  release();
+  await launch;
+  assert.deepEqual(requests, ['save', '/experiments/experiment/seal', '/experiments/experiment/runs']);
+});
+
+for (const dirty of [false, true]) {
+  test(`execution preparation validates the package and only saves modified drafts (dirty=${dirty})`, async () => {
+    const calls = [];
+    const elements = new Map();
+    const estimate = {scale:{execution_mode:'SKILL_BRAIN',agents:4,steps:12,brain_skill:'campus'},estimate:{}};
+    const context = {
+      state: {draft:{}, dirty, selectedExperimentId:'experiment', draftMutation:Promise.resolve(),
+        definition:{agents:[{enabled:true}],models:{chat:{model:'chat'},embedding:{model:'embedding'}},world:{world_name:'campus'}}},
+      $: id => { if(!elements.has(id)) elements.set(id,{}); return elements.get(id); },
+      saveDraft: async () => { calls.push('save'); context.state.dirty = false; },
+      refreshValidation: async () => { calls.push('validate'); return {valid:true}; },
+      api: async () => { calls.push('estimate'); return estimate; },
+      openModal: () => {}, renderPublishValidation: () => {},
+      formatRange: () => '', formatSeconds: () => '', formatBytes: () => '',
+    };
+    vm.createContext(context);
+    vm.runInContext(readyCode + source.slice(source.indexOf('  async function openPublishModal()'), source.indexOf('  async function openResumeRunModal(')),context);
+    await context.openPublishModal();
+    assert.deepEqual(calls, dirty ? ['save','validate','estimate'] : ['validate','estimate']);
+    assert.equal(elements.get('publishLaunchStatus').textContent, '检查通过，等待确认执行。');
+  });
+}

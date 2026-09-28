@@ -247,7 +247,8 @@ class SpatialAssetService:
         page: int = 1,
         page_size: int = 50,
     ) -> dict[str, Any]:
-        self.ensure_builtin_assets()
+        from .listing import bounds, dates
+        bounds(page, page_size)
         filters = []
         if query:
             like = f"%{query.strip()}%"
@@ -262,13 +263,16 @@ class SpatialAssetService:
             total = int(session.scalar(
                 select(func.count()).select_from(SpatialAssetDefinition).where(*filters)
             ) or 0)
-            rows = list(session.scalars(
-                select(SpatialAssetDefinition).where(*filters)
+            columns = [getattr(SpatialAssetDefinition, name) for name in
+                       ("id", "asset_key", "name", "description", "asset_kind", "is_builtin",
+                        "schema_version", "row_version", "contract_hash", "updated_at", "created_at")]
+            rows = session.execute(
+                select(*columns).where(*filters)
                 .order_by(SpatialAssetDefinition.updated_at.desc(), SpatialAssetDefinition.id)
                 .offset((page - 1) * page_size).limit(page_size)
-            ))
+            ).mappings()
             return {
-                "items": [self._detail(session, item) for item in rows],
+                "items": [dates(dict(item)) for item in rows],
                 "page": page, "page_size": page_size, "total": total,
                 "total_pages": max(1, ceil(total / page_size)),
             }

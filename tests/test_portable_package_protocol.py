@@ -33,6 +33,9 @@ from generative_agents.ga_studio.storage.models import StudioAgent
 from generative_agents.ga_studio.storage.models import StudioCrowd
 from generative_agents.ga_studio.storage.models import WorldMap
 from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_protocol.packages.definition import _experiment_definition, write_experiment_definition, assemble_skill_registry, read_experiment_assembly
+from generative_agents.ga_protocol.packages.resources import read_experiment_resource_set
+from tests.committed_frames import write_frame
 
 
 def _definition() -> dict:
@@ -138,9 +141,7 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
             "effects": [{"effect_id": f"brain-{step}", "kind": "SKILL_EXECUTED", "agent_keys": ["test-agent"],
                          "payload": {"execution_source": "BRAIN_RUNTIME", "trace": calls}}],
         }
-        (run_root / "frames" / f"step-{step:06d}.json.gz").write_bytes(
-            gzip.compress(json.dumps({"schema_version": 1, "result": result}).encode(), mtime=0)
-        )
+        write_frame(run_root, result)
     status = RunStatus.model_validate(json.loads((run_root / "status.json").read_text(encoding="utf-8")))
     status.status = RunState.PAUSED
     status.committed_step = 2
@@ -155,9 +156,9 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
     app = create_studio_app(database_url=f"sqlite:///{(tmp_path / 'studio.sqlite').as_posix()}", var_dir=var_dir)
     with TestClient(app) as client:
         assert client.post("/api/studio/packages/rebuild").status_code == 200
-        response = client.get(f"/api/studio/runs/{run_id}")
+        response = client.get(f"/api/studio/runs/{run_id}/quality")
         assert response.status_code == 200
-        quality = response.json()["quality"]
+        quality = {key: value for key, value in response.json().items() if key not in {'total', 'next_offset'}}
         assert quality["source_committed_step"] == 2
         assert quality["evaluated_agent_steps"] == 2
         assert len(quality["issues"]) == 5
@@ -166,7 +167,9 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
         assert {p.relative_to(run_root).as_posix(): p.read_bytes() for p in run_root.rglob("*") if p.is_file()} == snapshot
         exported = client.post(f"/api/studio/runs/{run_id}/artifact-jobs", json={"job_type": "RESULT_BUNDLE", "parameters": {}})
         assert exported.status_code == 201, exported.text
-        artifacts = client.get(f"/api/studio/runs/{run_id}/results/operations").json()["artifacts"]
+        from tests.artifact_jobs import wait_artifact
+        exported = wait_artifact(client, run_id, exported)
+        artifacts = client.get(f"/api/studio/runs/{run_id}/results/operations?section=artifacts").json()["artifacts"]
         report = next(a for a in artifacts if a["logical_name"].startswith("quality-report-step-"))
         report_response = client.get(f"/api/studio/runs/{run_id}/artifacts/{report['artifact_id']}/download")
         assert report_response.json() == quality
@@ -180,9 +183,11 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
             assert "artifacts/quality-report.json" not in archive.namelist()
         repeated = client.post(f"/api/studio/runs/{run_id}/artifact-jobs", json={"job_type": "RESULT_BUNDLE", "parameters": {}})
         assert repeated.status_code == 201
+        repeated = wait_artifact(client, run_id, repeated)
         assert repeated.json()["artifact_name"] != exported.json()["artifact_name"]
         assert (run_root / "artifacts" / exported.json()["artifact_name"]).read_bytes() == bundle_bytes
-        assert client.get(f"/api/studio/runs/{run_id}").json()["quality"] == quality
+        current = client.get(f"/api/studio/runs/{run_id}/quality").json()
+        assert {key: value for key, value in current.items() if key not in {'total', 'next_offset'}} == quality
     assert (run_root / "artifacts" / "quality-report.json").read_bytes() == old_bytes
     for relative, content in snapshot.items():
         assert (run_root / relative).read_bytes() == content
@@ -233,13 +238,12 @@ def test_runtime_finalization_keeps_diagnostics_from_before_resume(tmp_path: Pat
 def test_experiment_is_physical_and_archive_name_is_not_identity(tmp_path: Path) -> None:
     package = _experiment(tmp_path)
     manifest = validate_experiment_directory(package)
-    engine = json.loads((package / "runtime" / "engine.json").read_text(encoding="utf-8"))
-    world = json.loads((package / "world" / "world.json").read_text(encoding="utf-8"))
+    definition = _experiment_definition(package)[1]
+    engine = definition["engine"]
+    world = definition["world"]
     assert "brain_revision_id" not in engine
     assert "map_id" not in world
-    semantic_index = json.loads(
-        (package / "world" / "semantic-index.json").read_text(encoding="utf-8")
-    )
+    semantic_index = world["definition"]["semantic_index"]
     assert [item["kind"] for item in semantic_index["nodes"]] == [
         "WORLD",
         "SECTOR",
@@ -309,7 +313,7 @@ def test_replay_reads_only_committed_frames(tmp_path: Path) -> None:
     )
     frame = run_root / "frames" / "step-000001.json.gz"
     frame.parent.mkdir()
-    frame.write_bytes(compressed)
+    write_frame(run_root, result)
     atomic_write_json(
         run_root / "projection.json",
         {
@@ -366,8 +370,8 @@ def test_replay_serves_only_assets_embedded_in_the_run(tmp_path: Path) -> None:
     logical_path = "assets/demo.bin"
     (experiment / logical_path).parent.mkdir(parents=True)
     (experiment / logical_path).write_bytes(content)
-    world_path = experiment / "world" / "world.json"
-    world = json.loads(world_path.read_text())
+    definition = _experiment_definition(experiment)[1]
+    world = definition["world"]
     world["assets"] = [
         {
             "logical_path": logical_path,
@@ -376,7 +380,7 @@ def test_replay_serves_only_assets_embedded_in_the_run(tmp_path: Path) -> None:
             "size": len(content),
         }
     ]
-    atomic_write_json(world_path, world)
+    write_experiment_definition(experiment, definition)
     write_integrity_manifest(experiment)
     validate_experiment_directory(experiment)
     run_root = RunService().create(experiment, tmp_path / "asset-run", requested_steps=1)
@@ -557,24 +561,23 @@ def test_studio_selection_physically_copies_map_agent_brain_and_skill(tmp_path: 
             )
         )
         package = Path(created["location"])
-        copied_models = json.loads((package / "models/models.json").read_text())
+        copied = _experiment_definition(package)[1]
+        copied_models = copied["models"]
         assert copied_models["embedding"]["model"] == "separate-embedding"
         assert copied_models["embedding"]["credential_env"] == "GA_MODEL_TEST_EMBEDDING"
         assert embedding_model["id"] not in json.dumps(copied_models)
         before = (package / "integrity" / "sha256.json").read_bytes()
-        packaged_agents = json.loads((package / "agents" / "index.json").read_text())
+        packaged_agents = copied
         assert packaged_agents["agents"][0]["coord"] == [0, 0]
         assert packaged_agents["agents"][0]["spatial"]["address"] == {
             "initial_location": ["Copy World", "Home", "Room", "Desk"]
         }
-        registry = json.loads((package / "skills" / "registry.json").read_text())
+        registry = assemble_skill_registry(read_experiment_resource_set(package), read_experiment_assembly(package)).model_dump(mode="json")
         assert {item["skill_id"] for item in registry["skills"]} == {
             "copy-brain",
             "copy-child",
         }
-        evaluation = json.loads(
-            (package / "evaluation" / "evaluators.json").read_text()
-        )
+        evaluation = copied["evaluation"]
         assert evaluation["evaluators"] == [
             {"key": "copy-evaluator", "type": "assertion", "expression": "true"}
         ]
@@ -599,7 +602,7 @@ def test_studio_selection_physically_copies_map_agent_brain_and_skill(tmp_path: 
 
         assert validate_experiment_directory(package).experiment.experiment_id == created["experiment_id"]
         assert (package / "integrity" / "sha256.json").read_bytes() == before
-        packaged_agents = json.loads((package / "agents" / "index.json").read_text())
+        packaged_agents = _experiment_definition(package)[1]
         assert packaged_agents["agents"][0]["name"] == "Alice"
     finally:
         database.close()
@@ -651,18 +654,19 @@ def test_established_console_reads_and_edits_package_backed_experiments(tmp_path
 
     with TestClient(app) as client:
         rebuilt = client.post("/api/studio/packages/rebuild")
-        detail = client.get(f"/api/studio/experiments/{experiment_id}")
+        detail = client.get(f"/api/studio/experiments/{experiment_id}?view=definition")
         saved = client.put(
             f"/api/studio/experiments/{experiment_id}",
             json={"definition": detail.json()["definition"]},
         )
+        saved_detail = client.get(f"/api/studio/experiments/{experiment_id}?view=definition")
         duplicate = client.post(f"/api/studio/experiments/{experiment_id}/duplicate", json={})
         duplicate_id = duplicate.json()["experiment_id"]
         archived = client.post(f"/api/studio/experiments/{experiment_id}/archive", json={})
         archived_list = client.get("/api/studio/experiments?archived=archived")
         restored = client.post(f"/api/studio/experiments/{experiment_id}/restore", json={})
         timeline = client.get(f"/api/studio/runs/{run_id}/results/timeline")
-        operations = client.get(f"/api/studio/runs/{run_id}/results/operations")
+        operations = client.get(f"/api/studio/runs/{run_id}/results/operations?section=artifacts")
         attempts = client.get(f"/api/studio/runs/{run_id}/attempts")
         replay_manifest = client.get(f"/api/studio/runs/{run_id}/replay/manifest")
         replay_steps = client.get(f"/api/studio/runs/{run_id}/replay/steps")
@@ -671,7 +675,8 @@ def test_established_console_reads_and_edits_package_backed_experiments(tmp_path
     assert rebuilt.status_code == 200
     assert detail.status_code == 200
     assert saved.status_code == 200
-    assert saved.json()["definition"]["experiment"]["name"] == "Portable Test"
+    assert saved.json()['id'] == experiment_id
+    assert saved_detail.json()["definition"]["experiment"]["name"] == "Portable Test"
     assert duplicate.status_code == 201
     assert duplicate_id != experiment_id
     assert archived.status_code == 200

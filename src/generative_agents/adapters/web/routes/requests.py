@@ -66,6 +66,10 @@ class ExperimentDefinitionUpdate(PortableRequest):
     definition: dict
     expected_content_sha256: str | None = None
 
+class ExperimentSettingsUpdate(PortableRequest):
+    sections: dict
+    expected_content_sha256: str = Field(min_length=1)
+
 class ResumeRunRequest(PortableRequest):
     checkpoint_step: int | None = Field(default=None, ge=1)
     expected_attempt_id: str | None = None

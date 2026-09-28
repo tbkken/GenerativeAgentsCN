@@ -144,7 +144,7 @@
       if (this.initialized) return;
       this.initialized = true;
       const publicEditorRoot = document.getElementById('publicMapEditor');
-      this.publicEditor = new window.MapEditorV2(publicEditorRoot);
+
       document.getElementById('createMapBtn').addEventListener('click', () => this.openCreate());
       document.getElementById('backToMapsBtn').addEventListener('click', () => this.showCatalog().catch(error => this.fail(error)));
       document.getElementById('saveMapBtn').addEventListener('click', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
@@ -197,7 +197,7 @@
 
     async activate() {
       this.init();
-      const skillCatalogRefresh = this.publicEditor.refreshSkillCatalog();
+      const skillCatalogRefresh = this.publicEditor?.refreshSkillCatalog() || Promise.resolve();
       if (experimentScope) {
         await this.openMap(window.ResourceScope.experimentId, false);
         await skillCatalogRefresh;
@@ -207,7 +207,7 @@
       this.query = saved.query;
       this.page = saved.page;
       document.getElementById('mapSearch').value = this.query;
-      await Promise.all([this.loadMaps(), this.loadBlueprints(), skillCatalogRefresh]);
+      await Promise.all([this.loadMaps(), skillCatalogRefresh]);
       const mapId = new URLSearchParams(location.search).get('map_id');
       if (mapId && mapId !== this.selectedMapId) await this.openMap(mapId, false);
     },
@@ -287,19 +287,13 @@
       list.remember('maps', {query: this.query, page: this.page});
       const params = new URLSearchParams({page: this.page, page_size: 5, q: this.query});
       try {
-        const [result, selector] = await Promise.all([request(`/maps?${params}`), request('/maps?page=1&page_size=100')]);
+        const result = await request(`/maps?${params}`);
         if (generation !== this.listGeneration) return;
         if (this.page > Math.max(1, result.total_pages)) {
           this.page = Math.max(1, result.total_pages);
           return this.loadAuthorMaps();
         }
         this.maps = result.items;
-        this.selectorMaps = selector.items;
-        for (let page = 2; page <= (selector.total_pages || 1); page++) {
-          const next = await request(`/maps?page=${page}&page_size=100`);
-          if (generation !== this.listGeneration) return;
-          this.selectorMaps.push(...next.items);
-        }
         grid.innerHTML = this.maps.map(item => list.row({
           name: item.name, description: item.description, icon: '▧',
           meta: [item.dimensions ? `${item.dimensions[1]} × ${item.dimensions[0]} 格` : '待设置尺寸'],
@@ -314,7 +308,6 @@
           list.remember('maps', {page, scroll: 0});
           this.loadMaps().catch(error => this.fail(error));
         }});
-        this.populateMapSelectors();
         if (!new URLSearchParams(location.search).has('map_id')) list.restore('maps');
       } catch (error) {
         if (generation !== this.listGeneration) return;
@@ -382,15 +375,9 @@
 
     async prepareExperimentCreate() {
       this.init();
-      if (experimentScope) {
-        const selector = document.getElementById('experimentMapSelect');
-        selector.replaceChildren(new Option(context.world?.world_name || '实验地图', 'world'));
-        selector.disabled = true;
-        document.getElementById('experimentMapMeta').textContent = '当前实验的独立地图副本';
-        return;
-      }
-      if (!this.selectorMaps.length) await this.loadMaps();
-      this.populateMapSelectors();
+      await window.ResourceList.choices(document.getElementById('newExperimentMap'), {
+        loadPage: page => request(`/maps?page=${page}&page_size=20`), placeholder:'请选择地图',
+      });
     },
 
     recoveryKey(mapId = this.selectedMapId) {
@@ -545,8 +532,10 @@
         await this.savePublic({ manual: false });
       }
       this.cancelScheduledSaves();
-      const detail = this.requireCompleteMap(await request(`/maps/${mapId}`), '加载');
+      const [detail] = await Promise.all([request(`/maps/${mapId}`).then(value => this.requireCompleteMap(value, '加载')), window.WorkspaceLoader.load('map-editor')]);
       if (generation !== this.openGeneration) return;
+      this.publicEditor ||= new window.MapEditorV2(document.getElementById('publicMapEditor'));
+      this.publicEditor.refreshSkillCatalog();
       this.detail = detail;
       this.selectedMapId = mapId;
       this.draft = this.detail;
@@ -782,7 +771,8 @@
     },
 
     openCreate() {
-      this.populateMapSelectors();
+      this.loadBlueprints().catch(error => this.fail(error));
+      window.ResourceList.choices(document.getElementById('newMapSource'), {loadPage: page => request(`/maps?page=${page}&page_size=20`), placeholder:'不复制'}).catch(error => this.fail(error));
       document.getElementById('newMapName').value = '';
       document.getElementById('newMapDescription').value = '';
       document.getElementById('newMapSource').value = '';
@@ -980,22 +970,7 @@
     },
 
     async setExperimentContext(context) {
-      this.init();
       this.experiment = context;
-      if (experimentScope) {
-        const selector = document.getElementById('experimentMapSelect');
-        selector.replaceChildren(new Option(context.world?.world_name || '实验地图', 'world'));
-        selector.disabled = true;
-        document.getElementById('experimentMapMeta').textContent = '当前实验的独立地图副本';
-        return;
-      }
-      if (!this.selectorMaps.length) await this.loadMaps();
-      this.populateMapSelectors();
-      const world = context.world || {};
-      const meta = document.getElementById('experimentMapMeta');
-      if (meta) meta.textContent = world.world_name
-        ? '实验持有完整世界副本；公共地图后续变化不会影响这里'
-        : '尚未导入地图';
     },
 
     async selectExperimentMap() {

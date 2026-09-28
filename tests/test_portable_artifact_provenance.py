@@ -21,6 +21,8 @@ from generative_agents.ga_protocol.packages.artifacts import record_artifact_pro
 from generative_agents.ga_runtime.lifecycle.service import RunService
 from generative_agents.adapters.web.app import create_studio_app
 from test_portable_package_protocol import _experiment
+from tests.committed_frames import write_frame
+from tests.artifact_jobs import wait_artifact
 
 
 def _fixture(tmp_path: Path):
@@ -37,9 +39,7 @@ def _fixture(tmp_path: Path):
             "agents": [], "conversations": [], "memory_deltas": [], "schedule_revisions": [],
             "domain_events": [], "committed_model_usage": [], "effects": [],
         }
-        (root / "frames" / f"step-{step:06d}.json.gz").write_bytes(
-            gzip.compress(json.dumps({"schema_version": 1, "result": result}).encode(), mtime=0)
-        )
+        write_frame(root, result)
     status = RunStatus.model_validate(read_json(root / "status.json"))
     status.status = RunState.PAUSED
     status.committed_step = 2
@@ -55,7 +55,7 @@ def _fixture(tmp_path: Path):
 
 
 def _artifacts(client, run_id):
-    response = client.get(f"/api/studio/runs/{run_id}/results/operations")
+    response = client.get(f"/api/studio/runs/{run_id}/results/operations?section=artifacts")
     assert response.status_code == 200, response.text
     return {item["logical_name"]: item for item in response.json()["artifacts"]}
 
@@ -92,6 +92,7 @@ def test_partial_export_keeps_its_origin_and_bytes_when_run_advances_during_expo
         monkeypatch.setattr(portable_api, "read_run_quality", advance_after_snapshot)
         response = client.post(f"/api/studio/runs/{run_id}/artifact-jobs", json={"job_type": "RESULT_BUNDLE"})
         assert response.status_code == 201, response.text
+        response = wait_artifact(client, run_id, response)
         monkeypatch.setattr(portable_api, "read_run_quality", original_quality)
         first_name = response.json()["artifact_name"]
         first = _artifacts(client, run_id)[first_name]
@@ -119,6 +120,7 @@ def test_partial_export_keeps_its_origin_and_bytes_when_run_advances_during_expo
 
         response = client.post(f"/api/studio/runs/{run_id}/artifact-jobs", json={"job_type": "RESULT_BUNDLE"})
         assert response.status_code == 201, response.text
+        response = wait_artifact(client, run_id, response)
         final_name = response.json()["artifact_name"]
         items = _artifacts(client, run_id)
         assert final_name != first_name
@@ -145,6 +147,7 @@ def test_same_step_filtered_exports_never_replace_each_other(tmp_path):
                     "job_type": job_type, "parameters": {"q": query},
                 })
                 assert response.status_code == 201, response.text
+                response = wait_artifact(client, run_id, response)
                 names.append(response.json()["artifact_name"])
         assert len(set(names)) == 4
         originals = {name: (root / "artifacts" / name).read_bytes() for name in names}
@@ -153,6 +156,7 @@ def test_same_step_filtered_exports_never_replace_each_other(tmp_path):
         status.committed_step = 3
         atomic_write_json(root / "status.json", status.model_dump(mode="json"))
         latest = client.post(f"/api/studio/runs/{run_id}/artifact-jobs", json={"job_type": "FILTERED_MEMORIES"})
+        latest = wait_artifact(client, run_id, latest)
         items = _artifacts(client, run_id)
         for name in names:
             assert items[name] == records[name]
@@ -196,6 +200,7 @@ def test_historical_checkpoint_export_uses_selected_boundary_and_remains_partial
         client.post("/api/studio/packages/rebuild")
         response = client.post(f"/api/studio/runs/{run_id}/checkpoints/2/artifact-job")
         assert response.status_code == 201, response.text
+        response = wait_artifact(client, run_id, response)
         item = _artifacts(client, run_id)[response.json()["artifact_name"]]
         assert item["source_step"] == 2
         assert item["source_status"] == "COMPLETED"
@@ -230,5 +235,6 @@ def test_checkpoint_pruned_while_waiting_for_lock_does_not_export_empty_zip(tmp_
         client.post("/api/studio/packages/rebuild")
         monkeypatch.setattr(portable_api, "FileLock", PruneBeforeAcquiringLock)
         response = client.post(f"/api/studio/runs/{run_id}/checkpoints/2/artifact-job")
-        assert response.status_code == 404, response.text
+        response = wait_artifact(client, run_id, response, expected='FAILED')
+        assert 'Checkpoint was removed' in response.json()['error']
         assert not list((root / "artifacts").glob("checkpoint-step-*.zip"))

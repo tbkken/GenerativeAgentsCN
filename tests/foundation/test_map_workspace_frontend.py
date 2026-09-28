@@ -46,8 +46,11 @@ def test_public_map_workspace_is_a_first_class_console_surface():
     assert 'data-map-filter="draft"' not in shell
     assert 'id="mapPagination"' not in shell
     assert 'id="createMapBtn" hidden' in shell
-    assert shell.count("resources/map-workspace.js") == 1
-    assert shell.count("resources/map-workspace.css") == 1
+    loader = (STATIC / "shell/workspace-loader.js").read_text(encoding="utf-8")
+    assert shell.count("shell/workspace-loader.js") == 1
+    assert "resources/map-workspace.js" not in shell
+    assert loader.count("resources/map-workspace.js") == 1
+    assert loader.count("resources/map-workspace.css") == 1
 
 
 def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
@@ -92,7 +95,8 @@ def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
     assert "window.addEventListener('beforeunload'" in workspace
     assert "if (this.publicEditor.changed || this.savePromise)" in workspace
     assert "acceptSavedWorld(saved.world, editorRevision)" in workspace
-    assert "requireCompleteMap(await request(`/maps/${mapId}`), '加载')" in workspace
+    assert "request(`/maps/${mapId}`).then(value => this.requireCompleteMap(value, '加载'))" in workspace
+    assert "WorkspaceLoader.load('map-editor')" in workspace
     assert "requireCompleteMap(await request(`/maps/${mapId}`," in workspace
     assert "地图${operation}响应缺少完整 world" in workspace
     assert "get changeRevision()" in editor

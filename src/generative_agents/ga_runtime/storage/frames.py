@@ -12,6 +12,7 @@ from uuid import uuid4
 
 from generative_agents.ga_runtime.engine.context import RunPaths
 from generative_agents.ga_protocol.schemas.facts import StepResult
+from generative_agents.ga_protocol.packages.io import atomic_write_json, read_json
 
 
 class FrameConflictError(RuntimeError):
@@ -96,6 +97,7 @@ class FrameStore:
                 raise FrameConflictError(
                     f"step {result.step_no} already has different immutable content"
                 )
+            self._record(result, target, digest, len(compressed))
             return StoredFrame(path=target, sha256=digest, created=False)
 
         temporary = self._paths.temporary / f"frame-{result.step_no}-{uuid4()}.tmp"
@@ -108,7 +110,22 @@ class FrameStore:
             self._fsync_directory(target.parent)
         finally:
             temporary.unlink(missing_ok=True)
+        self._record(result, target, digest, len(compressed))
         return StoredFrame(path=target, sha256=digest, created=True)
+
+    def _record(self, result: StepResult, frame: Path, digest: str, size: int) -> None:
+        """Stage immutable evidence before status can publish this Step."""
+        value = result.to_dict()
+        record = {"schema_version": 1, "run_id": value["run_id"],
+                  "attempt_id": value["attempt_id"], "step_no": result.step_no,
+                  "virtual_time": value["virtual_time"],
+                  "frame": f"frames/{frame.name}", "sha256": digest, "size": size}
+        target = frame.parent.parent / "commits" / f"step-{result.step_no:06d}.json"
+        if target.exists():
+            if read_json(target) != record:
+                raise FrameConflictError(f"step {result.step_no} has a conflicting commit record")
+        else:
+            atomic_write_json(target, record)
 
     def read_document(self, step_no: int) -> dict:
         """读取`document`。

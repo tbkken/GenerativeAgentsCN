@@ -6,6 +6,8 @@ from typing import Any
 from fastapi import HTTPException, Response
 from generative_agents.ga_replay.api import read_run_overview
 from generative_agents.ga_replay.api import read_run_status
+from generative_agents.ga_replay.api import read_metadata, trace_records
+from generative_agents.ga_protocol.packages.reading import read_package_json, open_readonly_package
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.io import atomic_write_json
@@ -31,6 +33,8 @@ def _catalog_item(row) -> dict:
 class WebContext:
 
     def __init__(self, database, *, package_root: str | Path, max_concurrent_runs: int=2):
+        from generative_agents.ga_runtime.api import ArtifactJobs
+        self.artifact_jobs = ArtifactJobs()
         catalog = StudioPackageCatalogService(database)
         resources = StudioResourceService(database)
         runtime = PortableRunService()
@@ -51,6 +55,13 @@ class WebContext:
         self.secret_service = secret_service
         self.supervisor = supervisor
         self.workspaces = workspaces
+
+    def serialized_run(self, operation):
+        @wraps(operation)
+        def wrapped(run_id, *args, **kwargs):
+            with package_lock(self.package_root / 'runs' / f'{run_id}.resume-submit.identity'):
+                return operation(run_id, *args, **kwargs)
+        return wrapped
 
     def serialized_experiment(self, operation):
 
@@ -112,7 +123,8 @@ class WebContext:
 
     def run_summary(self, row) -> dict:
         try:
-            summary, status, quality = read_run_overview(Path(row.location))
+            summary, status = read_metadata(Path(row.location))
+            quality = None
         except (PackageError, OSError) as exc:
             location = Path(row.location)
             if not location.exists():
@@ -132,7 +144,7 @@ class WebContext:
         started_at = attempts[0].get('started_at') if attempts else None
         terminal = summary['status'] in {'COMPLETED', 'FAILED', 'CANCELLED'}
         finished_at = attempts[-1].get('finished_at') if terminal and attempts else None
-        return {**summary, 'id': summary['run_id'], 'status': summary['status'], 'completed_steps': summary['committed_step'], 'requested_steps': summary['requested_steps'], 'active_attempt_id': status.active_attempt_id, 'started_at': started_at, 'finished_at': finished_at, 'recoverable': summary['status'] in {'PAUSED', 'FAILED'} and summary.get('recoverable_step', 0) > 0, 'recoverable_step': summary.get('recoverable_step', 0), 'quality': quality, 'updated_at': row.updated_at.isoformat()}
+        return {**summary, 'id': summary['run_id'], 'status': summary['status'], 'completed_steps': summary['committed_step'], 'requested_steps': summary['requested_steps'], 'active_attempt_id': status.active_attempt_id, 'started_at': started_at, 'finished_at': finished_at, 'recovery_check_required': summary['status'] in {'PAUSED', 'FAILED'}, 'quality_summary': None, 'updated_at': status.updated_at.isoformat()}
 
     def run_list_summary(self, row) -> dict:
         manifest, status = read_run_status(Path(row.location))
@@ -149,20 +161,10 @@ class WebContext:
             raise HTTPException(status_code=409, detail='Run 包不完整或正在移入回收站，无法读取结果；请查看 Run 状态') from exc
 
     def trace_records_for(self, run_id):
-        with open_package(self.run_location(run_id)) as root:
-            records = []
-            for path in sorted((root / 'traces').glob('*.jsonl')):
-                for line in path.read_text(encoding='utf-8').splitlines():
-                    try:
-                        item = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    item['trace_id'] = f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}"
-                    records.append(item)
-            return records
+        return trace_records(self.run_location(run_id))
 
     def run_log_bytes(self, run_id: str) -> tuple[bytes, bool]:
-        with open_package(self.run_location(run_id)) as root:
+        with open_readonly_package(self.run_location(run_id)) as root:
             path = checked_package_path(root / 'logs' / 'runtime-process.log')
             content = path.read_bytes() if path.is_file() else b''
             status = RunStatus.model_validate(read_json(root / 'status.json'))
@@ -190,9 +192,8 @@ class WebContext:
 
     def run_location(self, run_id: str) -> Path:
         location = self.catalog_location('run', run_id)
-        with open_package(location) as root:
-            if read_json(root / 'run.json').get('run_id') != run_id:
-                raise PackageError('catalog Run identity does not match its package')
+        if read_package_json(location, 'run.json').get('run_id') != run_id:
+            raise PackageError('catalog Run identity does not match its package')
         return location
 
     def experiment_location(self, experiment_id: str) -> Path:
@@ -214,6 +215,8 @@ class WebContext:
         from generative_agents.ga_studio.api import recycle_run
         from generative_agents.ga_studio.api import RunRecycleBusy
         with package_lock(self.package_root / 'runs' / f'{run_id}.resume-submit.identity'):
+            if self.artifact_jobs.active(run_id):
+                raise HTTPException(status_code=409, detail='Run 正在导出，请等待任务完成后删除')
             if self.supervisor.process_status(run_id).get('owned_by_this_studio'):
                 raise HTTPException(status_code=409, detail='Run 执行进程仍在退出或整理结果，请稍后重试删除')
             try:

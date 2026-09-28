@@ -5,15 +5,18 @@ from fastapi import HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from generative_agents.ga_protocol.packages.io import open_package
 from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.reading import read_package_json
 from generative_agents.adapters.web.context import _catalog_item
 
 def install_routes(router, ctx):
 
     @router.get('/packages')
-    def list_packages(kind: str | None=Query(default=None, pattern='^(experiment|run)$')):
-        return {'items': [_catalog_item(row) for row in ctx.catalog.list(package_kind=kind)]}
+    def list_packages(kind: str | None=Query(default=None, pattern='^(experiment|run)$'), page: int=Query(default=1, ge=1), page_size: int=Query(default=50, ge=1, le=100)):
+        listing = ctx.catalog.page(package_kind=kind, page=page, page_size=page_size)
+        return {**listing, 'items': [_catalog_item(row) for row in listing['items']]}
 
     @router.post('/packages/rebuild')
+    @ctx.jobs.action('REBUILD_CATALOG')
     def rebuild_packages():
         try:
             records = ctx.catalog.rebuild([ctx.package_root])
@@ -24,12 +27,11 @@ def install_routes(router, ctx):
     @router.get('/packages/{package_kind}/{package_id}')
     def package_detail(package_kind: str, package_id: str):
         location = ctx.catalog_location(package_kind, package_id)
-        with open_package(location) as root:
-            manifest_name = 'manifest.json' if package_kind == 'experiment' else 'run.json'
-            result = {'catalog': _catalog_item(ctx.catalog.get(package_kind, package_id)), 'manifest': read_json(root / manifest_name)}
-            if package_kind == 'run':
-                result['status'] = read_json(root / 'status.json')
-            return result
+        manifest_name = 'manifest.json' if package_kind == 'experiment' else 'run.json'
+        result = {'catalog': _catalog_item(ctx.catalog.get(package_kind, package_id)), 'manifest': read_package_json(location, manifest_name)}
+        if package_kind == 'run':
+            result['status'] = read_package_json(location, 'status.json')
+        return result
 
     @router.get('/packages/{package_kind}/{package_id}/download')
     def download_package(package_kind: str, package_id: str):

@@ -134,7 +134,7 @@ test('scope changes clear the old catalog and ignore late author responses', asy
   releaseAuthor(response([{name: 'author-camera'}]));
   assert.equal(await author, false);
   assert.deepEqual(f.optionValues(), ['', 'package-camera']);
-  assert.equal(f.requests.at(-1).url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic');
+  assert.equal(f.requests.at(-1).url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic&page=1&page_size=20');
 });
 
 test('a request from an abandoned scope is ignored even before a replacement refresh starts', async () => {
@@ -166,6 +166,6 @@ test('experiment activation keeps its existing map reload while refreshing only 
   f.setCatalog([{name: 'package-camera'}]);
   await f.manager.activate();
   assert.deepEqual(f.openedMaps, [['experiment-a', false]]);
-  assert.equal(f.requests[0].url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic');
+  assert.equal(f.requests[0].url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic&page=1&page_size=20');
   assert.deepEqual(f.optionValues(), ['', 'package-camera']);
 });

@@ -29,8 +29,9 @@ def test_validation_reused_but_live_status_and_modified_package_are_not(tmp_path
         assert replay.status.status.value == 'FAILED'
         manifest = replay.manifest
     assert len(calls) == 1
-    world = root / manifest.experiment.path / 'world/world.json'
-    world.write_bytes(world.read_bytes() + b' ')
+    experiment = root / manifest.experiment.path
+    resources = experiment / read_json(experiment / 'manifest.json')['entrypoints']['resources']
+    resources.write_bytes(resources.read_bytes() + b' ')
     with pytest.raises(PackageError):
         with ReplayReader(root):
             pass
@@ -56,3 +57,40 @@ def test_render_manifest_omits_tile_semantics_and_boundary_poll_omits_world(tmp_
         response = client.get(f'/api/studio/runs/{run_id}/replay/availability')
         response.raise_for_status()
         assert response.json() == {'run_id': run_id, 'available_step': 0, 'partial': True}
+
+
+def test_quality_cache_is_invalidated_when_commit_evidence_changes(tmp_path, monkeypatch):
+    import generative_agents.ga_replay.cache as cache
+    from generative_agents.ga_protocol.schemas.manifests import RunManifest, RunStatus
+    from tests.committed_frames import write_frame
+
+    root = RunService().create(_experiment(tmp_path / 'packages'), tmp_path / 'run')
+    manifest = RunManifest.model_validate(read_json(root / 'run.json'))
+    status = RunStatus.model_validate(read_json(root / 'status.json'))
+    status.committed_step = 1
+    frame = write_frame(root, {
+        'run_id': manifest.run_id, 'attempt_id': 'quality-cache-test', 'step_no': 1,
+        'virtual_time': '2026-09-03T08:00:00+08:00', 'effects': [],
+    })
+    project = cache.project_run_quality
+    calls = []
+
+    def tracked(*args, **kwargs):
+        calls.append(1)
+        return project(*args, **kwargs)
+
+    monkeypatch.setattr(cache, 'project_run_quality', tracked)
+    report = cache.read_run_quality(root, manifest, status)
+    assert cache.read_run_quality(root, manifest, status) == report
+    assert len(calls) == 1
+    frame_before = frame.read_bytes()
+    commit = root / 'commits/step-000001.json'
+    document = read_json(commit)
+    document['sha256'] = '0' * 64
+    atomic_write_json(commit, document)
+
+    with pytest.raises(PackageError, match='cannot read committed quality frame at Step 1'):
+        cache.read_run_quality(root, manifest, status)
+    # Changed evidence is rejected before constructing another quality report.
+    assert len(calls) == 1
+    assert frame.read_bytes() == frame_before

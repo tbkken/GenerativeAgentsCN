@@ -23,6 +23,7 @@ from generative_agents.ga_protocol.packages.io import open_package
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
 from generative_agents.ga_protocol.packages.validation import validate_experiment_integrity
+from generative_agents.ga_protocol.packages.reading import open_readonly_package, validated_experiment
 from generative_agents.ga_protocol.packages.io import write_integrity_manifest
 from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.ga_protocol.schemas.manifests import validate_package_path
@@ -33,6 +34,13 @@ from generative_agents.ga_studio.experiments.builder import build_semantic_index
 from generative_agents.ga_studio.experiments.workspace import WorkspaceConflictError
 from generative_agents.ga_studio.resources.trials import prepare_copied_trial
 from generative_agents.ga_studio.storage.credentials import HostModelCredentials
+from generative_agents.ga_protocol.packages.definition import (
+    _experiment_definition, assemble_skill_registry, read_experiment_assembly, read_experiment_documents, write_experiment_definition,
+)
+from generative_agents.ga_protocol.packages.resources import read_experiment_resource_set
+from generative_agents.ga_protocol.schemas.resources import ResourceIndex, ResourceRecord, ResourceRef
+from generative_agents.ga_protocol.packages.resources import ResourceSet
+from generative_agents.ga_studio.experiments.transaction import edit_experiment
 
 
 def encoded(value):
@@ -70,45 +78,54 @@ class ExperimentResourceEditor:
             location = Path(row.location)
             if write and not location.is_dir():
                 raise ExperimentResourceError(409, "实验已封存；请复制为新的独立实验后修改")
-            with package_lock(location), open_package(location) as root:
-                validate = validate_experiment_directory if write or validate_execution else validate_experiment_integrity
+            opener = open_package if write else open_readonly_package
+            with package_lock(location), opener(location) as root:
+                validate = validate_experiment_directory if write or validate_execution else validated_experiment
                 manifest = validate(root)
                 digest = read_json(root / "integrity/sha256.json")["root_sha256"]
                 if write and expected != digest:
                     raise WorkspaceConflictError("实验内容已变化，请重新打开当前编辑页后保存；本次未覆盖已有内容。")
                 yield root, manifest.entrypoints.model_dump(exclude_none=True), digest, location.is_dir()
 
-    def commit(self, root, changes):
-        """Rollback every touched file, including registry/index/integrity, on failure."""
-        changes = dict(changes)
-        paths = {root / validate_package_path(key) for key in changes}
-        paths.add(root / "integrity/sha256.json")
-        for path in paths:
-            path.resolve().relative_to(root.resolve())
-        before = {path: path.read_bytes() if path.is_file() else None for path in paths}
-        try:
+    def commit(self, root, changes, definition=None, resources=None):
+        """Publish the common resources and assembly as one validated draft edit."""
+        def update(staged):
             for relative, content in changes.items():
-                target = root / relative
+                target = staged / validate_package_path(relative)
                 if content is None:
                     target.unlink(missing_ok=True)
+                    if resources is not None:
+                        resources.files.pop(relative, None)
                 else:
-                    target.parent.mkdir(parents=True, exist_ok=True)
                     atomic_write_bytes(target, content)
-            write_integrity_manifest(root)
-            manifest = validate_experiment_directory(root)
-        except Exception:
-            for path, content in before.items():
-                if content is None:
-                    path.unlink(missing_ok=True)
-                else:
-                    atomic_write_bytes(path, content)
-            raise
-        digest = read_json(root / "integrity/sha256.json")["root_sha256"]
+                    if resources is not None:
+                        resources.files[relative] = content
+            if resources is None:
+                return  # An uploaded attachment is adopted when its resource is saved.
+            for record in resources.resources:
+                if record.kind == "skill":
+                    folder = str(Path(record.definition["entrypoint"]).parent.as_posix()) + "/"
+                    record.attachments = sorted(path for path in resources.files if path.startswith(folder))
+            write_experiment_definition(staged, definition, resource_set=resources)
+        manifest, digest = edit_experiment(root, update)
         self.workspace.catalog.record_validated_experiment(root, manifest, digest)
         return digest
 
     @staticmethod
+    def registry(root):
+        _manifest, index, assembly = read_experiment_documents(root)
+        return assemble_skill_registry(ResourceSet(index.resources, {}, index.roots),
+                                       assembly).model_dump(mode="json")
+
+    @staticmethod
     def skill(root, entry, *, markdown=None, scripts=None):
+        if markdown is None and scripts is None:
+            source = root / validate_package_path(entry["path"])
+            document = SkillRegistry(root=root)._read(source, entry.get("editor_kind") or
+                                                      ("brain" if entry["kind"] == "brain" else "atomic"))
+            return {**document.detail(), "path": entry["path"], "storage": "experiment",
+                    "script_sources": {relative: (source.parent / relative).read_text(encoding="utf-8")
+                                       for relative in document.scripts}}
         # The shared parser checks folder/key consistency. Use a temporary local
         # directory named after the package key; never materialize Studio content.
         with tempfile.TemporaryDirectory(prefix="ga-edit-skill-") as temporary:
@@ -148,57 +165,152 @@ class ExperimentResourceEditor:
                     validation={"valid": True, "errors": [], "warnings": []} if validated else None)
 
     def read(self, experiment_id, resource, query, *, validate_execution=False):
+        from generative_agents.ga_studio.resources.listing import bounds, page_result
         with self.package(experiment_id, validate_execution=validate_execution) as (root, ep, digest, editable):
             parts = resource.strip("/").split("/")
             family, key = parts[0], parts[1] if len(parts) > 1 else None
-            world = read_json(root / ep["world"]) if family in ("maps", "map-editor", "spatial-assets") else None
-            if family == "maps":
-                if key and key != experiment_id:
+            _manifest, index, assembly = read_experiment_documents(root)
+            records = {item.identity: item for item in index.resources}
+            def chosen(reference):
+                item = records.get(reference.identity)
+                if item is None:
                     self.missing()
-                detail = self.map_detail(world, digest, editable, experiment_id, validated=validate_execution)
-                return detail if key else {"items": [detail], "total": 1}
-            if resource == "map-editor/ville-document":
-                return editor_world(world).get("definition", {}).get("editor_v2") or {}
-            if family == "skills":
-                registry = read_json(root / ep["skills"])
-                entries = registry["skills"]
+                return item
+            def summary(record):
+                return dict(id=record.key, name=record.name, description=record.description,
+                            row_version=digest, editable=editable)
+            def listed(items, **extra):
+                try:
+                    page, size = int(query.get("page", 1)), int(query.get("page_size", 20))
+                    bounds(page, size)
+                except (ValueError, TypeError) as exc:
+                    raise ExperimentResourceError(422, "资源分页参数无效") from exc
+                needle = query.get("q", "").strip().casefold()
+                filtered = []
+                for item in items:
+                    search = item.pop("_search", item.get("name", "") + " " + item.get("description", "") + " " + item.get("id", ""))
+                    if not needle or needle in search.casefold():
+                        filtered.append(item)
+                items = filtered
+                total = len(items)
+                return page_result(items[(page - 1) * size:page * size], total, page, size,
+                                   editable=editable, row_version=digest, **extra)
+            if family in ("maps", "map-editor", "spatial-assets"):
+                record = chosen(assembly.map)
+                world = dict(record.definition, world_key=record.key, world_name=record.name)
+                if family == "maps":
+                    if key:
+                        if key != experiment_id:
+                            self.missing()
+                        return self.map_detail(world, digest, editable, experiment_id, validated=validate_execution)
+                    geometry = world.get("definition", {})
+                    return listed([dict(summary(record), id=experiment_id, map_key=record.key,
+                                        dimensions=copy.deepcopy(geometry.get("size")), tile_size=geometry.get("tile_size"), validation=None)])
+                if resource == "map-editor/ville-document":
+                    return editor_world(world).get("definition", {}).get("editor_v2") or {}
+                contracts = world.get("definition", {}).get("editor", {}).get("spatial_assets", {})
                 if key:
-                    entry = next((item for item in entries if item["skill_id"] == key), None)
-                    if entry is None:
-                        raise ExperimentResourceError(404, "实验中没有这个技能")
+                    if key not in contracts:
+                        self.missing()
+                    contract = contracts[key]
+                    return dict(id=key, asset_key=key, name=contract.get("name") or key,
+                                asset_kind=contract.get("kind", "OBJECT"), contract=copy.deepcopy(contract),
+                                row_version=digest, editable=editable)
+                return listed([dict(id=asset_key, asset_key=asset_key, name=contract.get("name") or asset_key,
+                                    description=contract.get("summary", ""), asset_kind=contract.get("kind", "OBJECT"),
+                                    row_version=digest, editable=editable)
+                               for asset_key, contract in sorted(contracts.items())
+                               if not query.get("kind") or contract.get("kind", "OBJECT") == query["kind"]])
+            if family == "skills":
+                skills = [record for record in index.resources if record.kind == "skill"]
+                def skill_summary(record):
+                    folder = str(Path(record.definition["entrypoint"]).parent.as_posix()) + "/"
+                    return dict(summary(record), name=record.key, kind=record.definition["skill_kind"],
+                                path=record.definition["entrypoint"], storage="experiment",
+                                children=[item.key for item in record.dependencies],
+                                scripts=[path[len(folder):] for path in record.attachments if path.startswith(folder + "scripts/")])
+                if key:
+                    record = records.get(("skill", key))
+                    if record is None:
+                        self.missing()
+                    entry = dict(skill_id=key, path=record.definition["entrypoint"], editor_kind=record.definition["skill_kind"])
                     detail = self.skill(root, entry)
                     detail.update(row_version=digest, editable=editable)
                     if len(parts) > 2 and parts[2] == "dependencies":
                         return {"skill": key, "scripts": detail["scripts"],
-                                "skills": [self.skill(root, item) for item in entries if item["skill_id"] in entry["dependencies"]],
+                                "skills": [skill_summary(chosen(item)) for item in record.dependencies],
                                 "mcp": referenced_mcp_tools(detail["markdown"])}
                     if len(parts) > 2 and parts[2] == "history":
                         return {"items": [{"content_hash": detail["content_hash"], "updated_at": detail["updated_at"]}]}
                     return detail
-                items = [self.skill(root, entry) for entry in entries]
-                counts = {kind: sum(item["kind"] == kind for item in items) for kind in ("atomic", "pack", "brain")}
-                items = [item for item in items if (not query.get("kind") or item["kind"] == query["kind"])
-                         and query.get("q", "").casefold() in (item["name"] + item["description"]).casefold()]
-                return {"items": items, "counts": counts, "editable": editable}
-            if family in ("agents", "crowds"):
-                document = read_json(root / ep["agents"])
-                if family == "agents":
-                    items = [dict(id=agent["agent_key"], agent_key=agent["agent_key"], name=agent["name"],
-                                  definition=agent, row_version=digest, editable=editable) for agent in document["agents"]]
-                else:
-                    items = [dict(item, id=item["crowd_key"], agent_ids=item["agent_keys"], row_version=digest,
-                                  editable=editable) for item in document.get("crowds", [])]
+                counts = {kind: sum(item.definition["skill_kind"] == kind for item in skills) for kind in ("atomic", "pack", "brain")}
+                return listed([skill_summary(item) for item in sorted(skills, key=lambda item: (item.definition["skill_kind"], item.key))
+                               if not query.get("kind") or item.definition["skill_kind"] == query["kind"]
+                               or (query["kind"] == "skill" and item.definition["skill_kind"] in {"atomic", "pack"})], counts=counts)
+            if family == "agents":
+                placements = {item.agent.key: item for item in assembly.placements}
                 if key:
-                    return next((item for item in items if item["id"] == key), None) or self.missing()
-                return {"items": items, "editable": editable, "row_version": digest}
-            if family == "spatial-assets":
-                contracts = world.get("definition", {}).get("editor", {}).get("spatial_assets", {})
-                items = [dict(id=asset_key, asset_key=asset_key, name=contract.get("name") or asset_key,
-                              asset_kind=contract.get("kind", "OBJECT"), contract=contract,
-                              row_version=digest, editable=editable) for asset_key, contract in contracts.items()]
+                    if key not in placements:
+                        self.missing()
+                    placement = placements[key]
+                    record = chosen(placement.agent)
+                    agent = dict(copy.deepcopy(record.definition), agent_key=key, name=record.name,
+                                 coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial))
+                    return dict(summary(record), agent_key=key, definition=agent)
+                items = []
+                enabled_filter = query.get("enabled", "all")
+                completeness = query.get("completeness", "all")
+                if enabled_filter not in {"all", "enabled", "disabled"} or completeness not in {"all", "complete", "incomplete"}:
+                    raise ExperimentResourceError(422, "智能体筛选条件无效")
+                default_model = chosen(assembly.models["chat"]).definition.get("chat", {}).get("model", "")
+                for agent_key, placement in sorted(placements.items()):
+                    record = chosen(placement.agent)
+                    portrait = record.definition.get("portrait_asset")
+                    enabled = record.definition.get("enabled", True)
+                    scratch = record.definition.get("scratch", {})
+                    complete = bool(record.name and scratch.get("daily_plan") and len(placement.coord) == 2)
+                    address = placement.spatial.get("address", {})
+                    initial = address.get("initial_location") or address.get("living_area") or []
+                    location = " > ".join(initial) if isinstance(initial, list) else str(initial)
+                    model = record.definition.get("model_override") or default_model
+                    if enabled_filter != "all" and enabled != (enabled_filter == "enabled"):
+                        continue
+                    if completeness != "all" and complete != (completeness == "complete"):
+                        continue
+                    if query.get("location", "").casefold() not in location.casefold():
+                        continue
+                    if query.get("model", "").casefold() not in str(model).casefold():
+                        continue
+                    search = " ".join(str(value) for value in (record.name, record.description, record.key,
+                        scratch.get("innate", ""), scratch.get("learned", ""), location, model,
+                        " ".join(record.definition.get("tags", []))))
+                    items.append(dict(summary(record), agent_key=agent_key,
+                                      enabled=enabled, coord=list(placement.coord),
+                                      currently=record.definition.get("currently") or next(iter(record.definition.get("goals", [])), ""),
+                                      scratch={name: scratch.get(name) for name in ("age", "innate")},
+                                      definition_complete=complete, initial_location=copy.deepcopy(initial),
+                                      model_override=record.definition.get("model_override"), model=model, _search=search,
+                                      image_url=f"/api/studio/experiments/{experiment_id}/assets/{portrait.removeprefix('assets/')}?width=96" if portrait else None))
+                return listed(items)
+            if family == "crowds":
+                crowds = [chosen(reference) for reference in assembly.crowds]
                 if key:
-                    return next((item for item in items if item["id"] == key), None) or self.missing()
-                return {"items": [item for item in items if not query.get("kind") or item["asset_kind"] == query["kind"]]}
+                    record = next((item for item in crowds if item.key == key), None)
+                    if record is None:
+                        self.missing()
+                    members = [item["key"] for item in record.definition.get("members", [])]
+                    member_summaries = []
+                    for member_key in members:
+                        agent = records.get(("agent", member_key))
+                        if agent is None:
+                            member_summaries.append(dict(id=member_key, name=member_key, missing=True))
+                            continue
+                        portrait = agent.definition.get("portrait_asset")
+                        member_summaries.append(dict(id=member_key, agent_key=member_key, name=agent.name,
+                            image_url=f"/api/studio/experiments/{experiment_id}/assets/{portrait.removeprefix('assets/')}?width=96" if portrait else None))
+                    return dict(summary(record), crowd_key=key, agent_keys=members, agent_ids=members, members=member_summaries)
+                return listed([dict(summary(record), crowd_key=record.key, member_count=len(record.definition.get("members", [])))
+                               for record in sorted(crowds, key=lambda item: item.key)])
             raise ExperimentResourceError(404, "实验资源入口不存在")
 
     @staticmethod
@@ -207,7 +319,7 @@ class ExperimentResourceEditor:
 
     def prepare_trial(self, experiment_id, key, body, *, destination):
         with self.package(experiment_id, validate_execution=True) as (root, ep, digest, editable):
-            registry = read_json(root / ep["skills"])
+            registry = self.registry(root)
             entries = {item["skill_id"]: item for item in registry["skills"]}
             if key not in entries:
                 self.missing()
@@ -219,7 +331,7 @@ class ExperimentResourceEditor:
                 item = self.skill(root, entries[current])
                 snapshots[current] = {**item, "scripts": item["script_sources"]}
                 pending.extend(entries[current]["dependencies"])
-            config = read_json(root / ep["models"])["chat"]
+            config = _experiment_definition(root)[1]["models"]["chat"]
         model = config.get("resolved_model") or config.get("model")
         if not model or model == "auto" or not config.get("base_url"):
             raise PackageError("请先在当前实验的模型页填写明确的模型和连接地址")
@@ -235,12 +347,15 @@ class ExperimentResourceEditor:
             parts = resource.strip("/").split("/")
             family, key = parts[0], parts[1] if len(parts) > 1 else None
             changes = {}
+            definition = _experiment_definition(root)[1]
+            resources = read_experiment_resource_set(root)
+            registry = self.registry(root)
             if family == "maps" and key and method in ("PUT", "POST"):
                 if key != experiment_id:
                     self.missing()
                 if method == "POST" and parts[2:] != ["validate"]:
                     raise ExperimentResourceError(405, "不支持此地图操作")
-                world = copy.deepcopy(body.get("world") or read_json(root / ep["world"]))
+                world = copy.deepcopy(body.get("world") or definition["world"])
                 assets = world.setdefault("assets", [])
                 known = {item["logical_path"] for item in assets}
                 for source in world.get("definition", {}).get("editor_v2", {}).get("material_sources", []):
@@ -253,15 +368,8 @@ class ExperimentResourceEditor:
                                        "media_type": source.get("media_type") or "image/png", "size": len(content)})
                         known.add(logical)
                 world, semantic = build_semantic_index(world)
-                registry = read_json(root / ep["skills"])
-                roots = self.workspace._object_skill_names(world)
-                registry["object_roots"] = sorted(roots)
-                for entry in registry["skills"]:
-                    if entry["kind"] != "brain":
-                        entry["kind"] = "object" if entry["skill_id"] in roots else "sub_skill"
-                changes.update({ep["world"]: encoded(world), ep["semantic_index"]: encoded(semantic), ep["skills"]: encoded(registry)})
+                definition["world"] = world
             elif family == "skills" and method == "POST" and not key:
-                registry = read_json(root / ep["skills"])
                 if body.get("kind") == "brain":
                     raise PackageError("实验已有一个大脑，请编辑当前大脑")
                 key = SkillRegistry.normalize_name(body["name"])
@@ -272,21 +380,18 @@ class ExperimentResourceEditor:
                     raise PackageError("请填写技能用途")
                 path = f"skills/items/{key}/SKILL.md"
                 markdown = f"---\nname: {key}\ndescription: {json.dumps(description, ensure_ascii=False)}\n---\n\n# {key}\n\n请填写技能说明。\n"
-                registry["skills"].append(dict(skill_id=key, kind="sub_skill", editor_kind=body.get("kind", "atomic"), path=path, dependencies=[],
-                                                content_sha256=hashlib.sha256(markdown.encode()).hexdigest()))
-                changes.update({path: markdown.encode(), ep["skills"]: encoded(registry)})
+                resources.resources.append(ResourceRecord(kind="skill", key=key, name=key, description=description,
+                    definition={"skill_kind": body.get("kind", "atomic"), "entrypoint": path}, attachments=[path]))
+                changes[path] = markdown.encode()
             elif family == "skills" and key and method == "DELETE":
-                registry = read_json(root / ep["skills"])
                 entry = next((item for item in registry["skills"] if item["skill_id"] == key), None)
                 if entry is None:
                     self.missing()
-                registry["skills"].remove(entry)
+                resources.resources = [item for item in resources.resources if item.identity != ("skill", key)]
                 for path in (root / entry["path"]).parent.rglob("*"):
                     if path.is_file():
                         changes[path.relative_to(root).as_posix()] = None
-                changes[ep["skills"]] = encoded(registry)
             elif family == "skills" and key and method == "PUT":
-                registry = read_json(root / ep["skills"])
                 entry = next((item for item in registry["skills"] if item["skill_id"] == key), None)
                 if entry is None:
                     self.missing()
@@ -301,9 +406,11 @@ class ExperimentResourceEditor:
                     if old.is_file():
                         changes[old.relative_to(root).as_posix()] = None
                 changes.update({(folder / relative).as_posix(): content.encode() for relative, content in detail["script_sources"].items()})
-                changes[ep["skills"]] = encoded(registry)
+                record = resources.get(ResourceRef(kind="skill", key=key))
+                record.description = detail["description"]
+                record.dependencies = [ResourceRef(kind="skill", key=child) for child in detail["children"]]
             elif family == "crowds" and method in ("PUT", "POST", "DELETE"):
-                document = read_json(root / ep["agents"])
+                document = definition
                 crowds = document.setdefault("crowds", [])
                 if method == "POST":
                     key = f"crowd-{uuid4().hex[:12]}"
@@ -323,9 +430,8 @@ class ExperimentResourceEditor:
                     if not name:
                         raise PackageError("请填写人群名称")
                     crowd.update(name=name, description=str(body.get("description", "")), agent_keys=members)
-                changes[ep["agents"]] = encoded(document)
             elif family == "spatial-assets" and method in ("PUT", "POST", "DELETE"):
-                world = read_json(root / ep["world"])
+                world = definition["world"]
                 contracts = world["definition"].setdefault("editor", {}).setdefault("spatial_assets", {})
                 if method == "POST":
                     key = body.get("asset_key") or f"asset-{uuid4().hex[:12]}"
@@ -340,8 +446,8 @@ class ExperimentResourceEditor:
                                                         "appearance": {"mode": "COLOR", "color": "#dce9df"}}
                     contracts[key] = SpatialAssetContract.model_validate(contract).model_dump(mode="json")
                 world, semantic = build_semantic_index(world)
-                changes.update({ep["world"]: encoded(world), ep["semantic_index"]: encoded(semantic)})
+                definition["world"] = world
             else:
                 raise ExperimentResourceError(405, "此实验资源不支持该操作")
-            self.commit(root, changes)
+            self.commit(root, changes, definition, resources)
         return None if method == "DELETE" else self.read(experiment_id, f"{family}/{key}", {})

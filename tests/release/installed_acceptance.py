@@ -125,6 +125,7 @@ build_parser().parse_args(['studio', 'serve', '--help'])
 
             assert api("GET", "/health")["runtime_truth"] == "files"
             assert client.get("/").status_code == 200
+            assert client.get('/static/console/resources/resource-exchange.js').status_code == 200
             for retired in ("/static/console/commute-demo.html", "/static/console/map-configuration-demo.html", "/api/v1/experiments"):
                 assert client.get(retired).status_code == 404
             skills = {}
@@ -155,6 +156,14 @@ build_parser().parse_args(['studio', 'serve', '--help'])
             definition = copy.deepcopy(agent["definition"])
             definition["name"] = "已编辑人物"
             agent = api("PUT", f"/resources/agents/{agent['id']}", json={"definition": definition, "row_version": agent["row_version"]})
+            resource_download = client.get(f"/api/studio/resource-exchange/export/agent/{agent['id']}")
+            assert resource_download.status_code == 200, resource_download.text
+            resource_archive = root / 'agent-config.zip'
+            resource_archive.write_bytes(resource_download.content)
+            preview = api('POST', '/resource-exchange/preview', data={'kind': 'agent'},
+                          files={'file': ('agent-config.zip', resource_download.content, 'application/zip')})
+            assert preview['source_kind'] == 'config'
+            assert any(item['kind'] == 'agent' and item['key'] == 'acceptance-agent' for item in preview['resources'])
             models = api("POST", "/resources/model-presets", json={"name": "HTTP 验收替身", "config": {
                 "chat": {"provider": "vllm", "model": "acceptance-model", "base_url": endpoint},
                 "embedding": {"provider": "openai_compatible", "model": "acceptance-embedding", "base_url": endpoint}}})
@@ -172,6 +181,10 @@ build_parser().parse_args(['studio', 'serve', '--help'])
             sealed = api("POST", f"/experiments/{experiment_id}/seal")
             exchange = root / "renamed.gaexp"
             shutil.copyfile(sealed["location"], exchange)
+            preview = api('POST', '/resource-exchange/preview', data={'kind': 'agent'},
+                          files={'file': ('renamed.gaexp', exchange.read_bytes(), 'application/zip')})
+            assert preview['source_kind'] in {'exp', 'experiment'}
+            assert any(item['kind'] == 'agent' and item['key'] == 'acceptance-agent' for item in preview['resources'])
             assert client.put(f"/api/studio/experiments/{experiment_id}/entrypoints/simulation",
                               json={"document": {}}).status_code >= 400
         # Removing the disposable author workspace proves Runtime needs only the package.
@@ -202,6 +215,26 @@ build_parser().parse_args(['studio', 'serve', '--help'])
         assert cli("run", "status", resumed)["run_id"] == paused["run_id"]
         archive = root / "final.garun"
         cli("run", "seal", resumed, archive)
+        receiver_var = root / 'receiver-studio'
+        receiver = create_studio_app(database_url=f"sqlite:///{(receiver_var / 'studio.db').as_posix()}", var_dir=receiver_var)
+        with TestClient(receiver) as receiver_client:
+            preview = receiver_client.post('/api/studio/resource-exchange/preview', data={'kind': 'agent'},
+                                           files={'file': ('agent-config.zip', resource_archive.read_bytes(), 'application/zip')})
+            assert preview.status_code == 200, preview.text
+            imported = receiver_client.post('/api/studio/resource-exchange/imports', json={
+                'token': preview.json()['token'], 'selected': [{'kind': 'agent', 'key': 'acceptance-agent'}]})
+            assert imported.status_code == 200, imported.text
+            assert len(imported.json()['imported']) == 1
+            preview = receiver_client.post('/api/studio/resource-exchange/preview', data={'kind': 'map'},
+                                           files={'file': ('final.garun', archive.read_bytes(), 'application/zip')})
+            assert preview.status_code == 200, preview.text
+            assert preview.json()['source_kind'] == 'run'
+            maps = [item for item in preview.json()['resources'] if item['kind'] == 'map']
+            assert len(maps) == 1
+            imported = receiver_client.post('/api/studio/resource-exchange/imports', json={
+                'token': preview.json()['token'], 'selected': [{'kind': 'map', 'key': maps[0]['key']}]})
+            assert imported.status_code == 200, imported.text
+            assert [item['kind'] for item in imported.json()['imported']] == ['map']
         assert cli("replay", "summary", archive)["run_id"] == paused["run_id"]
         timeline = cli("replay", "timeline", archive)
         assert [f["step_no"] for f in timeline] == [1, 2, 3]
@@ -219,6 +252,7 @@ build_parser().parse_args(['studio', 'serve', '--help'])
         assert not failures, failures
         print(json.dumps({"installed_acceptance": "passed", "commands": sorted(set(commands)),
                           "author_edit": True, "physical_import_and_seal": True,
+                          "resource_exchange_config_exp_run": True,
                           "protocol_replay_optional_dependency_isolation": True,
                           "pause_resume_committed_steps": [1, 3], "object_reply_deliveries": [0, 1, 0],
                           "replay_steps": [1, 2, 3], "model": "deterministic local HTTP stub"}), flush=True)

@@ -12,7 +12,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Iterable, Mapping
 
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.orm import object_session
 from sqlalchemy.exc import IntegrityError
 
 from generative_agents.ga_studio.storage.database import Database
@@ -110,6 +111,32 @@ class DatabaseSkillRegistry:
                 ]
             return [self._document(row) for row in rows]
 
+    def list_summaries(self, *, kind=None, query="", include_archived=False, page=1, page_size=20):
+        """The author list is a SQL projection, never an executable Skill materialization."""
+        from .listing import dates, page_result, query_page, search_predicate
+        model = StudioSkill
+        base = [] if include_archived else [model.archived_at.is_(None)]
+        predicates = [*base]
+        if kind:
+            predicates.append(model.kind.in_(("atomic", "pack")) if kind == "skill" else model.kind == kind)
+        if query.strip():
+            normalized = re.sub(r"[\s_-]+", "-", query.strip().casefold()).strip("-")
+            predicates.append(search_predicate(normalized, model.skill_key)
+                              | search_predicate(query, model.description))
+        columns = [model.id.label("resource_id"), model.skill_key.label("name"), model.kind,
+                   model.description, model.children_json.label("children"), model.content_hash,
+                   model.is_builtin, model.archived_at, model.updated_at, model.row_version]
+        with self.database.session_factory() as session:
+            rows, total = query_page(session, model, columns, predicates=predicates,
+                                     order=(model.kind, model.skill_key), page=page, page_size=page_size)
+            counts = dict(session.execute(select(model.kind, func.count()).where(*base).group_by(model.kind)).all())
+        for row in rows:
+            dates(row)
+            row.update(storage="database", storage_ref=f"database://skills/{row['resource_id']}")
+            row["path"] = row["storage_ref"]
+        return page_result(rows, total, page, page_size,
+                           counts={name: counts.get(name, 0) for name in ("atomic", "pack", "brain")})
+
     def get(self, name: str, *, include_archived: bool = False) -> SkillDocument:
         normalized = self.normalize_name(name)
         with self.database.session_factory() as session:
@@ -186,8 +213,14 @@ class DatabaseSkillRegistry:
                 if scripts is None
                 else self._normalize_script_sources(scripts)
             )
-            parsed = self._parse_candidate(normalized, row.kind, markdown, normalized_scripts)
-            content_hash = self._content_hash(markdown, normalized_scripts)
+            from generative_agents.ga_studio.resources.exchange import resource_extra_files, bind_saved_resource_dependencies
+            parsed = self._parse_candidate(normalized, row.kind, markdown, normalized_scripts,
+                                           extra_files=resource_extra_files(session, "skill", row.id))
+            bind_saved_resource_dependencies(session, "skill", row.id, [
+                {"kind": "skill", "key": key} for key in parsed.children
+            ])
+            content_hash = self._content_hash(markdown, normalized_scripts,
+                                               extra_files=resource_extra_files(session, "skill", row.id))
             if content_hash != row.content_hash:
                 row.markdown = markdown
                 row.content_hash = content_hash
@@ -204,12 +237,30 @@ class DatabaseSkillRegistry:
             row = self._row(session, normalized)
             return dict(sorted((row.scripts_json or {}).items()))
 
+    def author_detail(self, name):
+        """Parse one author document in memory, without executing/materializing its closure."""
+        with self.database.session_factory() as session:
+            row = self._row(session, self.normalize_name(name))
+            scripts = row.scripts_json or {}
+            document = SkillRegistry(self.cache_root)._parse(row.markdown,
+                self.cache_root / row.skill_key / "SKILL.md", row.kind,
+                file_contents={path: text.encode("utf-8") for path, text in scripts.items()})
+            return {**document.detail(), "content_hash": row.content_hash,
+                    "updated_at": row.updated_at.isoformat(), "row_version": row.row_version,
+                    "path": f"database://skills/{row.id}", "storage": "database",
+                    "storage_ref": f"database://skills/{row.id}", "resource_id": row.id,
+                    "is_builtin": row.is_builtin, "archived_at": row.archived_at.isoformat() if row.archived_at else None,
+                    "script_sources": dict(sorted(scripts.items()))}
+
     def history(self, name: str) -> list[dict[str, str | int]]:
         """Return current content metadata; public Skills have no version history."""
 
         normalized = self.normalize_name(name)
         with self.database.session_factory() as session:
-            row = self._row(session, normalized, include_archived=True)
+            row = session.execute(select(StudioSkill.content_hash, StudioSkill.row_version, StudioSkill.updated_at)
+                                  .where(StudioSkill.skill_key == normalized)).one_or_none()
+            if row is None:
+                raise SkillRegistryError(f"Skill does not exist: {normalized}")
             return [
                 {
                     "content_hash": row.content_hash,
@@ -220,18 +271,18 @@ class DatabaseSkillRegistry:
             ]
 
     def dependencies(self, name: str) -> dict[str, object]:
-        document = self.get(name)
-        children = []
-        for child_name in document.children:
-            try:
-                children.append(self.get(child_name).summary())
-            except SkillRegistryError:
-                children.append({"name": child_name, "missing": True})
+        document = self.author_detail(name)
+        with self.database.session_factory() as session:
+            rows = session.execute(select(StudioSkill.skill_key.label("name"), StudioSkill.kind, StudioSkill.description,
+                StudioSkill.content_hash).where(StudioSkill.skill_key.in_(document["children"]),
+                                                StudioSkill.archived_at.is_(None))).mappings()
+            available = {row["name"]: dict(row) for row in rows}
+        children = [available.get(child, {"name": child, "missing": True}) for child in document["children"]]
         return {
-            "skill": document.name,
-            "scripts": list(document.scripts),
+            "skill": document["name"],
+            "scripts": document["scripts"],
             "skills": children,
-            "mcp": referenced_mcp_tools(document.body),
+            "mcp": referenced_mcp_tools(document["markdown"]),
         }
 
     def snapshot(
@@ -315,6 +366,8 @@ class DatabaseSkillRegistry:
                     SeedResourceTombstone(resource_type="skill", resource_key=row.skill_key)
                 )
             session.delete(row)
+            from generative_agents.ga_studio.resources.exchange import delete_resource_exchange_state
+            delete_resource_exchange_state(session, "skill", row.id)
 
     @staticmethod
     def _row(session, name: str, *, include_archived: bool = False) -> StudioSkill:
@@ -330,6 +383,11 @@ class DatabaseSkillRegistry:
         self._write_exact(skill_root / "SKILL.md", row.markdown)
         for relative, source in sorted((row.scripts_json or {}).items()):
             self._write_exact(self._safe_script_path(skill_root, relative), source)
+        from generative_agents.ga_studio.resources.exchange import resource_extra_files
+        for relative, content in resource_extra_files(object_session(row), "skill", row.id).items():
+            target = self._safe_script_path(skill_root, relative)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
         document = SkillRegistry(
             root=root,
         ).get(row.skill_key)
@@ -342,20 +400,28 @@ class DatabaseSkillRegistry:
             archived_at=row.archived_at.isoformat() if row.archived_at else None,
         )
 
-    def _parse_candidate(self, name, kind, markdown, scripts) -> SkillDocument:
-        content_hash = self._content_hash(markdown, scripts)
+    def _parse_candidate(self, name, kind, markdown, scripts, *, extra_files=None) -> SkillDocument:
+        content_hash = self._content_hash(markdown, scripts, extra_files=extra_files)
         root = self.cache_root / "validation" / content_hash
         folder = "atomic" if kind == "atomic" else f"{kind}s"
         skill_root = root / folder / name
         self._write_exact(skill_root / "SKILL.md", markdown)
         for relative, source in sorted(scripts.items()):
             self._write_exact(self._safe_script_path(skill_root, relative), source)
+        for relative, content in sorted((extra_files or {}).items()):
+            target = self._safe_script_path(skill_root, relative)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
         return SkillRegistry(root=root).get(name)
 
     @staticmethod
-    def _content_hash(markdown: str, scripts: Mapping[str, str]) -> str:
+    def _content_hash(markdown: str, scripts: Mapping[str, str], *, extra_files=None) -> str:
+        payload = {"markdown": markdown, "scripts": dict(sorted(scripts.items()))}
+        if extra_files:
+            payload["extra_files"] = {path: hashlib.sha256(content).hexdigest()
+                                      for path, content in sorted(extra_files.items())}
         encoded = json.dumps(
-            {"markdown": markdown, "scripts": dict(sorted(scripts.items()))},
+            payload,
             ensure_ascii=False,
             sort_keys=True,
             separators=(",", ":"),
@@ -395,7 +461,7 @@ class DatabaseSkillRegistry:
     def _write_exact(path: Path, content: str) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.exists():
-            if path.read_text(encoding="utf-8-sig") != content:
+            if path.read_bytes() != content.encode("utf-8"):
                 raise SkillRegistryError(f"Skill cache conflicts with content hash: {path}")
             return
         path.write_bytes(content.encode("utf-8"))

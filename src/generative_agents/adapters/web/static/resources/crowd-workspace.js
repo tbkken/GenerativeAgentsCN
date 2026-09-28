@@ -44,6 +44,7 @@
         const body = await response.json().catch(() => null);
         const detail = body?.detail;
         const error = new Error(detail?.message || (typeof detail === 'string' ? detail : '') || body?.error?.message || `请求失败（${response.status}）`);
+        error.status = response.status;
         error.code = detail?.code || body?.error?.code;
         error.details = detail?.details || body?.error?.details;
         throw error;
@@ -76,7 +77,7 @@
       byId('createAgentResourceBtn').addEventListener('click', () => this.openAgentEditor().catch(error => this.fail(error)));
       byId('publicAgentSearch').addEventListener('input', () => {
         window.ResourceList.remember('public-agents', {query: byId('publicAgentSearch').value.trim(), page: 1, scroll: 0});
-        this.renderAgentList();
+        clearTimeout(this.searchTimer); this.searchTimer=setTimeout(() => this.activateAgents().catch(error => this.fail(error)), 250);
       });
       byId('createCrowdBtn').addEventListener('click', () => this.openCreate());
       byId('backToCrowdsBtn').addEventListener('click', () => this.showCatalog());
@@ -89,7 +90,7 @@
       ['closeCrowdAgentManager', 'cancelCrowdAgentManager'].forEach(id => byId(id).addEventListener('click', () => this.modal('close', 'crowdAgentManagerModal')));
       byId('confirmCrowdAgentManager').addEventListener('click', () => this.applyAgentSelection().catch(error => this.fail(error)));
       byId('createPublicAgentBtn').addEventListener('click', () => this.openAgentEditor().catch(error => this.fail(error)));
-      byId('crowdAgentSearch').addEventListener('input', () => this.renderAgentList());
+      byId('crowdAgentSearch').addEventListener('input', () => {this.memberPage=1; clearTimeout(this.searchTimer); this.searchTimer=setTimeout(() => this.loadAgents().then(() => this.renderAgentList()).catch(error => this.fail(error)),250);});
       byId('crowdSearch').addEventListener('input', event => {
         clearTimeout(this.searchTimer);
         this.searchTimer = setTimeout(() => {
@@ -116,6 +117,7 @@
     },
 
     async activate() {
+      const activation = this.activationGeneration = (this.activationGeneration || 0) + 1;
       this.agentCatalogActive = false;
       this.init();
       if (!experimentScope) {
@@ -125,6 +127,7 @@
         byId('crowdSearch').value = this.query;
       }
       await this.loadCrowds();
+      if (activation !== this.activationGeneration) return;
       byId('createCrowdBtn').hidden = experimentScope && !window.ResourceScope.editable;
       const crowdId = new URLSearchParams(location.search).get('crowd_id');
       if (crowdId) await this.openCrowd(crowdId, false);
@@ -137,10 +140,11 @@
       byId('publicAgentSearch').value = window.ResourceList.read('public-agents').query;
       window.ResourceList.loading(byId('publicAgentList'), '智能体');
       try {
-        const result = await this.request('/agents');
+        const saved = window.ResourceList.read('public-agents');
+        const result = await this.request(`/agents?${new URLSearchParams({page:saved.page, page_size:5, q:saved.query})}`);
         if (generation !== this.agentListGeneration || !this.agentCatalogActive) return;
         this.agents = result.items || [];
-        this.agents.forEach(item => this.agentRevisionDetails.set(item.id, item));
+        this.agentPage = result;
         this.renderAgentList();
         window.ResourceList.restore('public-agents');
       } catch (error) {
@@ -152,50 +156,7 @@
 
     async loadCrowds() {
       this.init();
-      if (!experimentScope) return this.loadAuthorCrowds();
-      const generation = ++this.listGeneration;
-      const grid = byId('crowdCatalogGrid');
-      grid.setAttribute('aria-busy', 'true');
-      const params = new URLSearchParams({ page: String(this.page), page_size: String(this.pageSize) });
-      if (this.query) params.set('q', this.query);
-      if (this.status) params.set('status', this.status);
-      let result;
-      let selector;
-      try {
-        selector = await this.request('/crowds');
-        const all = (selector.items || []).map(item => ({
-          ...item,
-          agent_count: (item.agent_ids || []).length,
-          usage_count: 0,
-        }));
-        const filtered = all.filter(item => !this.query || `${item.name} ${item.crowd_key} ${item.description || ''}`.toLocaleLowerCase().includes(this.query.toLocaleLowerCase()));
-        const start = (this.page - 1) * this.pageSize;
-        result = {
-          items: filtered.slice(start, start + this.pageSize),
-          page: this.page,
-          page_size: this.pageSize,
-          total: filtered.length,
-          total_pages: Math.max(1, Math.ceil(filtered.length / this.pageSize)),
-          status_counts: { ALL: all.length, DRAFT: all.length, PUBLISHED: 0 },
-        };
-      } catch (error) {
-        if (generation !== this.listGeneration) return;
-        grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>人群列表加载失败</strong><span>${this.escape(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-crowd-list>重新加载</button></div>`;
-        grid.querySelector('[data-retry-crowd-list]')?.addEventListener('click', () => this.loadCrowds().catch(nextError => this.fail(nextError)));
-        byId('crowdListFooter').hidden = true;
-        throw error;
-      } finally {
-        if (generation === this.listGeneration) grid.removeAttribute('aria-busy');
-      }
-      if (generation !== this.listGeneration) return;
-      this.crowds = result.items;
-      this.selectorCrowds = (selector.items || []).map(item => ({
-        ...item,
-        agent_count: (item.agent_ids || []).length,
-        usage_count: 0,
-      }));
-      this.renderCatalog(result);
-      this.populateCreateSelector();
+      return this.loadAuthorCrowds();
     },
 
     async loadAuthorCrowds() {
@@ -206,15 +167,13 @@
       list.loading(grid, '人群');
       list.remember('crowds', {query: this.query, page: this.page});
       try {
-        const result = await this.request('/crowds');
+        const result = await this.request(`/crowds?${new URLSearchParams({page:this.page || 1, page_size:5, q:this.query})}`);
         if (generation !== this.listGeneration) return;
-        this.selectorCrowds = result.items || [];
-        const filtered = list.sorted(this.selectorCrowds).filter(item => !this.query || `${item.name} ${item.crowd_key} ${item.description || ''}`.toLocaleLowerCase().includes(this.query.toLocaleLowerCase()));
-        const data = list.slice(filtered, this.page);
+        const data = result;
         this.page = data.page;
         this.crowds = data.items;
         grid.innerHTML = data.items.map(item => list.row({name: item.name, description: item.description, icon: '◉',
-          meta: [`${(item.agent_ids || []).length} 个智能体`], open: {'data-crowd-id': item.id},
+          meta: [`${item.member_count ?? (item.agent_ids || []).length} 个智能体`], open: {'data-crowd-id': item.id},
           actions: [{label: '删除人群', danger: true, attributes: {'data-delete-crowd-id': item.id, 'data-delete-crowd-name': item.name}}],
         })).join('') || list.empty('人群', Boolean(this.query));
         grid.querySelectorAll('[data-crowd-id]').forEach(button => button.onclick = () => this.openCrowd(button.dataset.crowdId).catch(error => this.fail(error)));
@@ -279,12 +238,7 @@
       const detail = await this.request(`/crowds/${crowdId}`);
       if (generation !== this.openGeneration) return;
       this.detail = detail;
-      await this.loadAgents();
-      if (generation !== this.openGeneration) return;
-      const members = (this.detail.agent_ids || []).map(agentId => {
-        const agent = this.agents.find(item => item.id === agentId);
-        return agent ? { agent_id: agent.id, name: agent.name, agent_key: agent.agent_key, definition: agent.definition } : null;
-      }).filter(Boolean);
+      const members = (detail.members || []).map(agent => ({agent_id:agent.id || agent.agent_id, name:agent.name, agent_key:agent.agent_key}));
       this.revision = {
         ...this.detail,
         state: 'DRAFT',
@@ -297,6 +251,12 @@
       byId('crowdEditorTitle').textContent = this.detail.name;
       byId('crowdEditorMeta').textContent = `${this.detail.crowd_key} · ${this.revision.agent_count} 个 Agent · 实时可编辑`;
       byId('crowdDefinitionHelp').textContent = experimentScope ? '人群组织当前实验的智能体，修改仅影响本实验。' : '人群组织基础智能体，创建实验时复制完整定义。';
+      const pending = this.detail.pending_dependencies || [];
+      const pendingNotice = byId('crowdPendingDependencies');
+      if (pendingNotice) {
+        pendingNotice.hidden = !pending.length;
+        pendingNotice.textContent = pending.length ? `待绑定的成员：${pending.map(item => item.key || item.agent_key || String(item)).join('、')}。请在“智能体”菜单导入这些成员，再在“管理智能体”中确认成员。保存成员选择会以当前选择替换待绑定关系。` : '';
+      }
       byId('crowdEditName').value = this.revision.name;
       byId('crowdEditDescription').value = this.revision.description || '';
       byId('crowdEditKey').value = this.revision.crowd_key;
@@ -390,10 +350,29 @@
     },
 
     async loadAgents() {
-      const result = await this.request('/agents');
+      const page = this.memberPage || 1;
+      const query = byId('crowdAgentSearch')?.value || '';
+      const result = await this.request(`/agents?${new URLSearchParams({page, page_size:5, q:query})}`);
       this.agents = result.items || [];
-      if (experimentScope) this.agentRevisionDetails.clear();
+      this.memberPageData = result;
       this.agents.forEach(item => this.agentRevisionOwners.set(item.id, item.id));
+    },
+
+    deactivate() {
+      this.activationGeneration = (this.activationGeneration || 0) + 1;
+      this.openGeneration = (this.openGeneration || 0) + 1;
+      this.agentListGeneration = (this.agentListGeneration || 0) + 1;
+      this.listGeneration += 1;
+      this.agentCatalogActive = false;
+      clearTimeout(this.searchTimer);
+    },
+
+    resourcesImported(result) {
+      if ([...(result.imported || []), ...(result.reused || [])].some(item => ['agent', 'crowd'].includes(item.kind))) {
+        this.selectorDetails.clear();
+        this.agentRevisionDetails.clear();
+        this.agentRevisionOwners.clear();
+      }
     },
 
     async loadAgentRevisionDetails() {
@@ -422,6 +401,8 @@
       if (!this.revision || this.detail?.editable === false) return;
       this.agentCatalogActive = false;
       byId('createPublicAgentBtn').hidden = experimentScope;
+      this.memberPage = 1;
+      byId('crowdAgentSearch').value = '';
       await this.loadAgents();
       this.memberSelection = new Set((this.revision.members || []).map(item => item.agent_id));
       (this.revision.members || []).forEach(member => this.agentRevisionOwners.set(member.agent_id, member.agent_id));
@@ -430,8 +411,7 @@
       byId('confirmCrowdAgentManager').textContent = '应用到人群';
       this.renderAgentList();
       this.modal('open', 'crowdAgentManagerModal', 'crowdAgentSearch');
-      await this.loadAgentRevisionDetails();
-      this.renderAgentList();
+
     },
 
     selectedRevisionIdForAgent(agentId) {
@@ -464,7 +444,7 @@
         return `<article class="crowd-agent-card${checked ? ' selected' : ''}" data-agent-scope="public">
           <div class="crowd-agent-card-head"><div><small>${experimentScope ? 'EXPERIMENT AGENT' : 'PUBLIC AGENT'}</small><h3>${this.escape(item.name)}<code>${this.escape(item.agent_key)}</code></h3><div class="crowd-agent-version-state">${versionState}</div></div><div class="crowd-agent-card-actions"><span class="crowd-agent-scope">${scopeLabel}</span>${edit}${remove}${selectionControl}</div></div>
           <p>${this.escape(item.description || '暂无用途说明')}</p>
-          <div class="crowd-agent-definition-state ${error ? 'error' : ''}">${error ? this.escape(error) : '正在读取完整 Agent 定义…'}</div>
+          <div class="crowd-agent-definition-state ${error ? 'error' : ''}">${error ? this.escape(error) : '点击编辑查看人物定义和图片'}</div>
         </article>`;
       }
       const scratch = definition.scratch || {};
@@ -477,7 +457,7 @@
         || (experimentScope ? window.ResourceScope.assetUrl(definition.sprite_asset) : definition.sprite_asset);
       const imageCard = (url, title, note, spriteSheet = false) => `<article class="agent-image-card crowd-agent-readonly-image-card">
         <div class="agent-image-preview ${spriteSheet ? 'sprite' : 'portrait'}">${url
-          ? `<img src="${this.escape(url)}" alt="${this.escape(definition.name)}${title}" onerror="this.hidden=true;this.nextElementSibling.hidden=false" /><span hidden>暂无${title}</span>`
+          ? `<img loading="lazy" decoding="async" src="${this.escape(url)}" alt="${this.escape(definition.name)}${title}" onerror="this.hidden=true;this.nextElementSibling.hidden=false" /><span hidden>暂无${title}</span>`
           : `<span>暂无${title}</span>`}</div>
         <div class="agent-image-copy"><strong>${title}</strong><span>${note}</span><small>随当前${experimentScope ? '实验智能体' : '基础智能体'}保存</small></div>
       </article>`;
@@ -548,27 +528,31 @@
         });
         workspace.querySelectorAll('[data-agent-card-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.agentCardPanel === tab));
       }));
+      let pager = byId('crowdAgentPager');
+      if (!pager) { pager = document.createElement('div'); pager.id='crowdAgentPager'; list.insertAdjacentElement('afterend', pager); }
+      window.ResourceList.pager(pager, {...(this.memberPageData || {page:1,total:this.agents.length}), onPage: page => {
+        this.memberPage=page; this.loadAgents().then(() => this.renderAgentList()).catch(error => this.fail(error));
+      }});
       this.updateAgentSelectionCount();
     },
 
     renderAuthorAgents() {
       const list = window.ResourceList, saved = list.read('public-agents');
       const query = saved.query.toLocaleLowerCase();
-      const items = list.sorted(this.agents).filter(item => !query || `${item.name} ${item.agent_key} ${item.description || ''} ${item.definition?.currently || ''}`.toLocaleLowerCase().includes(query));
-      const data = list.slice(items, saved.page);
+      const data = this.agentPage || {items:this.agents, page:1, total:this.agents.length};
       list.remember('public-agents', {page: data.page});
       const grid = byId('publicAgentList');
       grid.innerHTML = data.items.map(item => {
         const definition = item.definition || {}, age = definition.scratch?.age;
-        const portrait = definition.portrait_asset_id ? `${API}/assets/${encodeURIComponent(definition.portrait_asset_id)}/content` : definition.portrait_asset || '';
+        const portrait = item.image_url || (definition.portrait_asset_id ? `${API}/assets/${encodeURIComponent(definition.portrait_asset_id)}/content` : definition.portrait_asset || '');
         return list.row({name: item.name, description: item.description || definition.currently, icon: '♙', image: portrait,
-          meta: [age != null ? `${age} 岁` : '', portrait ? '头像已配置' : '暂无头像', definition.sprite_asset_id || definition.sprite_asset ? '行走图已配置' : '暂无行走图'],
+          meta: [age != null ? `${age} 岁` : '', portrait ? '头像已配置' : '暂无头像', item.sprite_asset_id || definition.sprite_asset_id || definition.sprite_asset ? '行走图已配置' : '暂无行走图'],
           open: {'data-edit-public-agent': item.id}, actions: [{label: '删除智能体', danger: true, attributes: {'data-delete-public-agent': item.id, 'data-delete-public-agent-name': item.name}}],
         });
       }).join('') || list.empty('智能体', Boolean(query));
       grid.querySelectorAll('[data-edit-public-agent]').forEach(button => button.onclick = () => this.openAgentEditor(button.dataset.editPublicAgent).catch(error => this.fail(error)));
       grid.querySelectorAll('[data-delete-public-agent]').forEach(button => button.onclick = () => this.deleteAgent(button.dataset.deletePublicAgent, button.dataset.deletePublicAgentName).catch(error => this.fail(error)));
-      list.pager(byId('publicAgentFooter'), {...data, onPage: page => {list.remember('public-agents', {page, scroll: 0}); this.renderAuthorAgents();}});
+      list.pager(byId('publicAgentFooter'), {...data, onPage: page => {list.remember('public-agents', {page, scroll: 0}); this.activateAgents().catch(error => this.fail(error));}});
     },
 
     async deleteAgent(agentId, name = '当前 Agent') {
@@ -664,29 +648,27 @@
       await this.loadAgents();
       this.renderAgentList();
       this.modal('open', 'crowdAgentManagerModal', 'crowdAgentSearch');
-      await this.loadAgentRevisionDetails();
-      this.renderAgentList();
+
       this.notify(`Agent“${name}”已保存并加入当前选择`);
     },
 
-    async prepareExperimentCreate({ resetSelection = false } = {}) {
+    async prepareExperimentCreate({ resetSelection = false, append = false } = {}) {
       this.init();
-      if (resetSelection) {
-        this.createSelection.clear();
-        this.populateCreateSelector();
+      if (resetSelection) {this.selectionGeneration=(this.selectionGeneration || 0)+1; this.createSelection.clear(); this.selectorDetails.clear();}
+      const generation=this.selectionGeneration;
+      const page = append ? (this.selectorPage || 1) + 1 : 1;
+      const result = await this.request(`/crowds?page=${page}&page_size=20`);
+      if (generation !== this.selectionGeneration) return this.getCreationSummary();
+      this.selectorPage = result.page || page;
+      this.selectorHasMore = this.selectorPage < (result.total_pages || 1);
+      const items = (result.items || []).map(item => ({...item, agent_count:item.member_count ?? item.agent_count ?? 0}));
+      this.selectorCrowds = append ? [...this.selectorCrowds, ...items] : items;
+      if (!append && !resetSelection) {
+        await Promise.all([...this.createSelection].map(async id => {
+          try { this.selectorDetails.set(id, await this.request(`/crowds/${encodeURIComponent(id)}`)); }
+          catch (error) { if (error.status === 404) {this.createSelection.delete(id); this.selectorDetails.delete(id);} else throw error; }
+        }));
       }
-      const result = await this.request('/crowds');
-      this.selectorCrowds = (result.items || []).map(item => ({ ...item, agent_count: (item.agent_ids || []).length }));
-      await Promise.all(this.selectorCrowds.map(async item => {
-        if (!this.selectorDetails.has(item.id)) {
-          const agents = await this.request('/agents');
-          const byAgentId = new Map((agents.items || []).map(agent => [agent.id, agent]));
-          const members = (item.agent_ids || []).map(agentId => byAgentId.get(agentId)).filter(Boolean);
-          this.selectorDetails.set(item.id, { ...item, members });
-        }
-      }));
-      const available = new Set(this.selectorCrowds.map(item => item.id));
-      this.createSelection = new Set([...this.createSelection].filter(id => available.has(id)));
       this.populateCreateSelector();
       return this.getCreationSummary();
     },
@@ -697,12 +679,26 @@
       root.innerHTML = this.selectorCrowds.length ? this.selectorCrowds.map(item => (
         `<label class="creation-crowd-option${this.createSelection.has(item.id) ? ' selected' : ''}"><input type="checkbox" value="${item.id}" ${this.createSelection.has(item.id) ? 'checked' : ''} /><span><strong>${this.escape(item.name)}</strong><small>${item.agent_count} 个 Agent · 当前公共定义</small></span></label>`
       )).join('') : '<div class="empty-state"><strong>暂无公共人群</strong><span>请先在人群中心创建人群并添加 Agent。</span></div>';
-      root.querySelectorAll('input[type="checkbox"]').forEach(input => input.addEventListener('change', () => {
-        if (input.checked) this.createSelection.add(input.value);
+      root.querySelectorAll('input[type="checkbox"]').forEach(input => input.addEventListener('change', async () => {
+        const generation=this.selectionGeneration;
+        if (input.checked) {
+          input.disabled = true;
+          try {
+            const detail = await this.request(`/crowds/${encodeURIComponent(input.value)}`);
+            if (generation !== this.selectionGeneration) return;
+            this.selectorDetails.set(input.value, detail);
+            this.createSelection.add(input.value);
+          } catch (error) { input.checked=false; this.fail(error); }
+          finally { input.disabled=false; }
+        }
         else this.createSelection.delete(input.value);
         this.populateCreateSelector();
         window.dispatchEvent(new CustomEvent('crowd-workspace:create-selection', { detail: this.getCreationSummary() }));
       }));
+      if (this.selectorHasMore) {
+        const button=document.createElement('button'); button.type='button'; button.className='btn btn-sm'; button.textContent='加载更多人群';
+        button.onclick=() => this.prepareExperimentCreate({append:true}).catch(error => this.fail(error)); root.appendChild(button);
+      }
     },
 
     selectedCreateRevisionIds() {
@@ -717,7 +713,7 @@
         const detail = this.selectorDetails.get(item.id);
         (detail?.members || []).forEach(member => {
           rawCount += 1;
-          names.add(member.name.normalize('NFKC').trim().toLocaleLowerCase());
+          names.add(member.id || member.agent_id || member.agent_key || member.name);
         });
       });
       return {
