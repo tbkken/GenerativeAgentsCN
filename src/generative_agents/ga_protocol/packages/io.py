@@ -16,6 +16,7 @@ from pathlib import Path, PurePosixPath
 from uuid import uuid4
 
 from generative_agents.ga_protocol.packages.constants import INTEGRITY_MANIFEST
+from generative_agents.ga_protocol.schemas.manifests import validate_package_path
 
 
 class PackageError(ValueError):
@@ -150,9 +151,10 @@ def sha256_file(path: Path) -> str:
 
 def _safe_relative_path(path: Path, root: Path) -> str:
     relative = path.relative_to(root).as_posix()
-    pure = PurePosixPath(relative)
-    if pure.is_absolute() or any(part in {"", ".", ".."} for part in pure.parts):
-        raise PackageError(f"unsafe package path: {relative}")
+    try:
+        validate_package_path(relative)
+    except ValueError as exc:
+        raise PackageError(f"unsafe package path: {relative}") from exc
     return relative
 
 
@@ -293,15 +295,20 @@ def extract_archive(
             seen: set[str] = set()
             for member in members:
                 normalized = member.filename.replace("\\", "/")
+                candidate = normalized[:-1] if member.is_dir() else normalized
+                try:
+                    validate_package_path(candidate)
+                except ValueError as exc:
+                    raise PackageError(f"unsafe archive member: {member.filename}") from exc
                 pure = PurePosixPath(normalized)
                 if (
                     not normalized
                     or pure.is_absolute()
                     or any(part in {"", ".", ".."} for part in pure.parts)
-                    or normalized in seen
+                    or candidate.casefold() in seen
                 ):
                     raise PackageError(f"unsafe or duplicate archive member: {member.filename}")
-                seen.add(normalized)
+                seen.add(candidate.casefold())
                 unix_mode = member.external_attr >> 16
                 if stat.S_ISLNK(unix_mode):
                     raise PackageError(f"archive links are not allowed: {member.filename}")

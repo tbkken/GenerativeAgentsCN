@@ -14,10 +14,10 @@ def paused_run(tmp_path, monkeypatch):
     var = tmp_path / 'var'
     exp = _experiment(var / 'packages')
     manifest = read_json(exp / 'manifest.json')
-    simulation = exp / manifest['entrypoints']['simulation']
-    document = read_json(simulation)
-    document['checkpoint_interval_steps'] = 3
-    atomic_write_json(simulation, document)
+    assembly = exp / manifest['entrypoints']['assembly']
+    document = read_json(assembly)
+    document['simulation']['checkpoint_interval_steps'] = 3
+    atomic_write_json(assembly, document)
     write_integrity_manifest(exp)
     run = var / 'packages/runs/run'
     original = _StatusCommitter.commit
@@ -48,7 +48,7 @@ def test_console_resumes_same_run_with_new_attempt_and_preserves_facts(tmp_path,
     with TestClient(app) as client:
         client.post('/api/studio/packages/rebuild').raise_for_status()
         rows = client.get(url + '/checkpoints').json()['items']
-        assert next(row for row in rows if row['step_no'] == 2)['resumable']
+        assert next(row for row in rows if row['step_no'] == 2)['recovery_check_required']
         assert not next(row for row in rows if row['step_no'] == 1)['resumable']
         detail = client.get(url + '/checkpoints/2').json()
         assert detail['validated'] and detail['snapshot_kind'] == 'recovery'
@@ -73,7 +73,7 @@ def test_corrupt_snapshot_is_not_valid_or_resumable_and_dispatch_is_rejected(tmp
     url = f'/api/studio/runs/{before.run_id}'
     with TestClient(app) as client:
         client.post('/api/studio/packages/rebuild').raise_for_status()
-        row = next(item for item in client.get(url + '/checkpoints').json()['items'] if item['step_no'] == 2)
+        row = client.get(url + '/checkpoints/2').json()
         assert not row['validated'] and not row['resumable'] and row['status'] == 'INVALID'
         response = client.post(url + '/resume', json={'checkpoint_step': 2})
         assert response.status_code == 409

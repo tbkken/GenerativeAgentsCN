@@ -10,7 +10,7 @@ const {chromium}=require('playwright');
   await page.waitForFunction(()=>window.editor?.document?.navigation);
   await page.locator('[data-navigation]').click();
   await page.waitForFunction(()=>!!editor.navigation.preview);
-  const clickTile=async(x,y)=>{const p=await page.evaluate(([x,y])=>{const r=editor.canvas.getBoundingClientRect(),m=editor.navigation.metrics();return {x:r.x+editor.offsetX+(x+.5)*m.x*editor.zoom,y:r.y+editor.offsetY+(y+.5)*m.y*editor.zoom}},[x,y]);await page.mouse.click(p.x,p.y);};
+  const clickTile=async(x,y)=>{const p=await page.evaluate(([x,y])=>{const r=editor.canvas.getBoundingClientRect(),m=editor.navigation.metrics();return {x:r.x+editor.offsetX+(x+.5)*m.x*editor.zoom,y:r.y+editor.offsetY+(y+.5)*m.y*editor.zoom}},[x,y]);await page.keyboard.down('Control');await page.mouse.click(p.x,p.y);await page.keyboard.up('Control');};
   await page.locator('[data-nav-tool="path"]').click();await clickTile(1,2);await clickTile(5,2);
   await page.waitForFunction(()=>editor.navigation.status.startsWith('不可达'));
   await page.locator('[data-nav-tool="walk"]').click();await clickTile(3,2);

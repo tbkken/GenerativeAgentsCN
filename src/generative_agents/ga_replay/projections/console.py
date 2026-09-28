@@ -3,16 +3,21 @@ from __future__ import annotations
 import hashlib
 import json
 import mimetypes
+from collections import OrderedDict
+from threading import RLock
 from typing import Any
 from generative_agents.ga_replay.reader import ReplayReader
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.io import open_package
+from generative_agents.ga_protocol.packages.reading import open_readonly_package
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.io import checked_package_path
 from generative_agents.ga_protocol.packages.io import iter_package_files
 from generative_agents.ga_protocol.packages.artifacts import read_artifact_provenance
 from generative_agents.ga_protocol.packages.definition import _experiment_definition
+_render_manifests = OrderedDict()
+_render_manifest_lock = RLock()
 
 def read_run_facts_unlocked(run_path, run_id: str) -> dict[str, Any]:
     """Build Web projections exclusively from one Run package."""
@@ -191,38 +196,54 @@ def agent_views(facts: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, 
         details[key]['content_counts'] = {'plans': item['plan_count'], 'actions': item['action_count'], 'events': item['event_count'], 'conversations': item['conversation_count'], 'memories': item['memory_created_count'], 'state_changes': len(details[key]['state_changes'])}
     return (sorted(items.values(), key=lambda item: item['agent_key']), details)
 
-def checkpoint_documents(run_path, run_id: str) -> list[dict[str, Any]]:
-    with open_package(run_path) as root:
+def checkpoint_documents(run_path, run_id: str, *, step_no=None, offset=0, limit=50, validate=False) -> list[dict[str, Any]]:
+    with open_readonly_package(run_path) as root:
         status = RunStatus.model_validate(read_json(root / 'status.json'))
         documents = []
         checkpoint_root = root / 'checkpoints'
         paths = {p.name: p for p in (root / 'recovery').glob('step-*')}
         paths.update({p.name: p for p in checkpoint_root.glob('step-*')})
         from generative_agents.ga_protocol.facts.recovery import validate_snapshot
-        for path in sorted(paths.values(), key=lambda p: p.name, reverse=True):
+        selected = sorted(paths.values(), key=lambda p: p.name, reverse=True)
+        if step_no is not None:
+            selected = [path for path in selected if path.name == f'step-{step_no:06d}']
+        for path in selected[offset:offset+limit]:
             bundle_path = path / 'bundle.json'
             bundle = read_json(bundle_path) if bundle_path.is_file() else None
             if not isinstance(bundle, dict):
                 continue
             step = int(bundle.get('step_no') or 0)
-            try:
-                validate_snapshot(root, path, run_id, step)
-                valid, error = (True, None)
-            except (OSError, ValueError, KeyError, TypeError) as exc:
-                valid, error = (False, str(exc))
+            valid, error = (False, None)
+            if validate:
+                try:
+                    validate_snapshot(root, path, run_id, step)
+                    valid, error = (True, None)
+                except (OSError, ValueError, KeyError, TypeError) as exc:
+                    valid, error = (False, str(exc))
             reason = error or (f'已提交到 Step {status.committed_step}；该检查点不能重复执行之后的已提交步骤' if step != status.committed_step else '仅暂停或失败的仿真可以恢复' if status.status.value not in {'PAUSED', 'FAILED'} else None)
             declared = list(bundle.get('files') or [])
             size = bundle_path.stat().st_size + sum((int(item.get('size') or 0) for item in declared if isinstance(item, dict)))
-            documents.append({'run_id': run_id, 'step_no': int(bundle.get('step_no') or 0), 'status': 'VALID' if valid else 'INVALID', 'attempt_id': bundle.get('attempt_id'), 'bundle_sha256': hashlib.sha256(bundle_path.read_bytes()).hexdigest(), 'virtual_time': bundle.get('virtual_time'), 'size_bytes': size, 'file_count': len(declared) + 1, 'validated': valid, 'snapshot_kind': path.parent.name, 'resumable': valid and reason is None, 'committed_step': status.committed_step, 'active_attempt_id': status.active_attempt_id, 'recovery_reason': reason, 'validation': {'code': 'VALID' if valid else 'INVALID', 'reason': error}, 'files': declared})
+            code = ('VALID' if valid else 'INVALID') if validate else 'UNCHECKED'
+            documents.append({'run_id': run_id, 'step_no': int(bundle.get('step_no') or 0), 'status': code, 'attempt_id': bundle.get('attempt_id'), 'bundle_sha256': hashlib.sha256(bundle_path.read_bytes()).hexdigest(), 'virtual_time': bundle.get('virtual_time'), 'size_bytes': size, 'file_count': len(declared) + 1, 'validated': valid, 'snapshot_kind': path.parent.name, 'resumable': valid and reason is None, 'recovery_check_required': not validate and reason is None, 'committed_step': status.committed_step, 'active_attempt_id': status.active_attempt_id, 'recovery_reason': reason, 'validation': {'code': code, 'reason': error}, 'files': declared if step_no is not None else []})
     return documents
 
 def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
-    world = json.loads(json.dumps(facts['definition']['world']))
-    definition = world.get('definition') or {}
+    summary = facts['summary']
+    with _render_manifest_lock:
+        cached = _render_manifests.get(run_id)
+        if cached is not None and cached[0] is facts['definition']:
+            _render_manifests.move_to_end(run_id)
+            return {**cached[1], 'source_step': summary['committed_step'], 'available_step': summary['committed_step'], 'partial': summary['status'] != 'COMPLETED'}
+    world = dict(facts['definition']['world'])
+    definition = dict(world.get('definition') or {})
+    world['definition'] = definition
     definition.pop('semantic_index', None)
     definition['tiles'] = [{key: tile[key] for key in ('coord', 'tile', 'palette_key', 'visual_slice_id', 'visual_slice_part') if key in tile} if isinstance(tile, dict) else tile for tile in definition.get('tiles') or []]
     editor = definition.get('editor') or {}
-    editor_v2 = definition.get('editor_v2') or {}
+    editor_v2 = dict(definition.get('editor_v2') or {})
+    editor_v2['material_sources'] = [dict(item) if isinstance(item, dict) else item for item in editor_v2.get('material_sources') or []]
+    if definition.get('editor_v2'):
+        definition['editor_v2'] = editor_v2
     palette_items = definition.get('palette') or editor.get('palette') or []
     palette = {str(item.get('key') or item.get('id')): {'color': str(item.get('color') or '#d9e2df'), 'label': str(item.get('label') or item.get('name') or item.get('key') or 'Tile')} for item in palette_items if isinstance(item, dict) and (item.get('key') or item.get('id'))}
     palette.setdefault('ground', {'color': '#d9e2df', 'label': 'Ground'})
@@ -252,7 +273,12 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
         tags = {str(value).casefold() for value in item.get('tags') or []}
         agents.append({'agent_key': key, 'display_name': item.get('name') or item.get('display_name') or key, 'initial_coord': list(item.get('coord') or [0, 0]), 'sprite_asset': sprite, 'sprite_display_tiles': item.get('sprite_display_tiles'), 'role': 'PEDESTRIAN' if any(('pedestrian' in value or '行人' in value for value in tags)) else None})
     summary = facts['summary']
-    return {'schema_version': 2, 'generator_version': 'ga-replay-package-v1', 'source_kind': 'RUN_FRAMES', 'run_id': run_id, 'experiment_id': summary['experiment_id'], 'definition_hash': '', 'world': world, 'source_step': summary['committed_step'], 'available_step': summary['committed_step'], 'stride_minutes': int(facts['definition']['simulation'].get('stride_minutes') or 1), 'execution_mode': 'SKILL_BRAIN', 'brain_skill': facts['definition']['engine'].get('brain_skill') or '', 'step_interval_ms': None, 'start_time': facts['definition']['simulation'].get('start_time'), 'requested_steps': summary['requested_steps'], 'timezone': facts['definition'].get('experiment', {}).get('timezone') or 'Asia/Shanghai', 'agents': agents, 'partial': summary['status'] != 'COMPLETED'}
+    result = {'schema_version': 2, 'generator_version': 'ga-replay-package-v1', 'source_kind': 'RUN_FRAMES', 'run_id': run_id, 'experiment_id': summary['experiment_id'], 'definition_hash': '', 'world': world, 'source_step': summary['committed_step'], 'available_step': summary['committed_step'], 'stride_minutes': int(facts['definition']['simulation'].get('stride_minutes') or 1), 'execution_mode': 'SKILL_BRAIN', 'brain_skill': facts['definition']['engine'].get('brain_skill') or '', 'step_interval_ms': None, 'start_time': facts['definition']['simulation'].get('start_time'), 'requested_steps': summary['requested_steps'], 'timezone': facts['definition'].get('experiment', {}).get('timezone') or 'Asia/Shanghai', 'agents': agents, 'partial': summary['status'] != 'COMPLETED'}
+    with _render_manifest_lock:
+        _render_manifests[run_id] = (facts['definition'], result)
+        while len(_render_manifests) > 4:
+            _render_manifests.popitem(last=False)
+    return result
 
 def replay_web_step(frame: dict[str, Any], *, checkpoint: bool, attempt_boundary: bool) -> dict[str, Any]:
     return {'step_no': frame['step_no'], 'virtual_time': frame['virtual_time'], 'attempt_id': frame.get('attempt_id'), 'attempt_boundary': attempt_boundary, 'checkpoint': checkpoint, 'agents': [{'agent_key': item.get('agent_key'), 'from_coord': list(item.get('from_coord') or []), 'coord': list(item.get('to_coord') or item.get('coord') or []), 'path': list(item.get('path') or []), 'path_source': item.get('path_source') or 'OBSERVED', 'action': dict(item.get('action') or {}), 'address': list(item.get('location') or item.get('address') or []), 'currently': item.get('currently'), 'schedule_item_id': item.get('schedule_item_id'), 'decision_context': dict(item.get('decision_context') or {})} for item in frame.get('agents') or []], 'conversations': list(frame.get('conversations') or []), 'memory_deltas': list(frame.get('memory_deltas') or []), 'schedule_revisions': list(frame.get('schedule_revisions') or []), 'domain_events': list(frame.get('domain_events') or []), 'effects': list(frame.get('effects') or [])}

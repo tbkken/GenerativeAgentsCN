@@ -1,0 +1,165 @@
+{
+  "figures": [
+    {
+      "section": "3.1",
+      "name": "01-information-sources",
+      "title": "信息来源与角色边界"
+    },
+    {
+      "section": "3.1",
+      "name": "01-observation-window",
+      "title": "观察窗口与活动终点"
+    },
+    {
+      "section": "3.2",
+      "name": "02-editor-scope",
+      "title": "公共资源与当前实验范围"
+    },
+    {
+      "section": "3.2",
+      "name": "02-identity-content-placement",
+      "title": "资源身份、内容与实验位置"
+    },
+    {
+      "section": "3.3",
+      "name": "03-semantic-map",
+      "title": "四个 Arena 与设计门洞"
+    },
+    {
+      "section": "3.3",
+      "name": "03-map-layers",
+      "title": "显示、语义与碰撞层"
+    },
+    {
+      "section": "3.3",
+      "name": "03-spawn-selection",
+      "title": "人物出生的页面装配"
+    },
+    {
+      "section": "3.4",
+      "name": "04-skill-topology",
+      "title": "Brain 依赖与对象 Skill 绑定"
+    },
+    {
+      "section": "3.4",
+      "name": "04-brain-turn",
+      "title": "条件式 Brain 与动作结束点"
+    },
+    {
+      "section": "3.5",
+      "name": "05-perception-limits",
+      "title": "视野与注意力的两个边界"
+    },
+    {
+      "section": "3.5",
+      "name": "05-movement-budget",
+      "title": "路径预算与实际终点"
+    },
+    {
+      "section": "3.5",
+      "name": "05-action-ownership",
+      "title": "动作原语与参与者控制权"
+    },
+    {
+      "section": "3.6",
+      "name": "06-memory-lifecycle",
+      "title": "记忆追加、替代、失效与检索"
+    },
+    {
+      "section": "3.6",
+      "name": "06-pending-confirmation",
+      "title": "跨步进度与动作结束边界"
+    },
+    {
+      "section": "3.7",
+      "name": "07-bilateral-speech",
+      "title": "双人会话与真实回复"
+    },
+    {
+      "section": "3.7",
+      "name": "07-object-sequence",
+      "title": "对象交互与下一轮投递"
+    },
+    {
+      "section": "3.7",
+      "name": "07-notice-state-change",
+      "title": "候选安排、公告提交与外观"
+    },
+    {
+      "section": "3.8",
+      "name": "08-experiment-copy-seal",
+      "title": "物理副本与封存边界"
+    },
+    {
+      "section": "3.8",
+      "name": "08-preflight-execution",
+      "title": "保存预检与确认执行"
+    },
+    {
+      "section": "3.9",
+      "name": "09-run-states",
+      "title": "执行状态的不同含义"
+    },
+    {
+      "section": "3.9",
+      "name": "09-calls-time-units",
+      "title": "轮次、模型尝试与时间单位"
+    },
+    {
+      "section": "3.10",
+      "name": "10-run-attempt-identity",
+      "title": "Run 与 Attempt 身份"
+    },
+    {
+      "section": "3.10",
+      "name": "10-recovery-boundary",
+      "title": "最新提交与恢复快照边界"
+    },
+    {
+      "section": "3.10",
+      "name": "10-cancel-request-versus-stop",
+      "title": "取消请求与实际停止"
+    },
+    {
+      "section": "3.11",
+      "name": "11-commit-chain",
+      "title": "从动作选择到已提交事实"
+    },
+    {
+      "section": "3.11",
+      "name": "11-replay-reduction",
+      "title": "事实归约与回放隔离"
+    },
+    {
+      "section": "3.11",
+      "name": "11-diagnosis-evidence",
+      "title": "从观察到最小可定位证据"
+    },
+    {
+      "section": "3.12",
+      "name": "12-evaluation-dimensions",
+      "title": "三层评价各自的证据"
+    },
+    {
+      "section": "3.12",
+      "name": "12-metric-denominators",
+      "title": "目标人群与指标分母"
+    },
+    {
+      "section": "3.13",
+      "name": "13-package-contents",
+      "title": "三种正式包与结果 ZIP"
+    },
+    {
+      "section": "3.13",
+      "name": "13-handoff-levels",
+      "title": "迁移与复现的三个验收层次"
+    },
+    {
+      "section": "3.14",
+      "name": "14-behavior-kernel-boundary",
+      "title": "行为自由与内核边界"
+    }
+  ],
+  "text_outside_canvas": []
+}

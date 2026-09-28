@@ -1,0 +1,184 @@
+{
+  "document": "第一章 1.5 能力快照的资料记录",
+  "checked_at": "2026-09-25",
+  "book_ran_model_evaluations": false,
+  "scope": "记录原始报告数据及已核验条件，不是排行榜、离线复算包或本书实测。not_disclosed_in_cited_sections 指所引段落未提供，不代表整份来源或其他仓库必然没有该信息。",
+  "sources": {
+    "anthropic_fable51_card": {
+      "title": "System Card: Claude Fable 5.1 & Claude Mythos 5.1",
+      "url": "https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card",
+      "report_date": "2026-09-01",
+      "source_type": "model_vendor_self_report",
+      "page_count": 212,
+      "verification": "读取原始 PDF；核对第 167 页表格与第 189 页图表的渲染图；相关方法与个案按原文页码读取。Fable 与 Mythos 的结果不互换。"
+    },
+    "anthropic_fable51_launch": {
+      "title": "Claude Fable 5.1 and Claude Mythos 5.1",
+      "url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+      "report_date_precision": "September 2026 as displayed",
+      "source_type": "model_vendor_self_report",
+      "verification": "读取 HTML 可见结果表，与系统卡所选数值交叉核对。"
+    },
+    "google_gemini38_method": {
+      "title": "Gemini 3.8 Flash Model evaluation: Approach, methodology & results",
+      "url": "https://deepmind.google/models/evals-methodology/gemini-3-8-flash",
+      "report_date": "2026-09",
+      "report_date_precision": "month",
+      "source_type": "model_vendor_self_report",
+      "page_count": 4,
+      "verification": "读取原始 PDF 第 2—3 页方法；提取并目视核对第 4 页原始结果图；与 https://deepmind.google/models/gemini/ 的 HTML 表对应。"
+    },
+    "swebench": {
+      "title": "SWE-bench official leaderboard",
+      "url": "https://www.swebench.com/",
+      "method_url": "https://www.swebench.com/verified.html",
+      "source_type": "benchmark_maintainer_published_results",
+      "verification": "读取官方榜单 HTML 内嵌结果行；checked 字段为 null，不能视为独立复核通过。"
+    }
+  },
+  "measurements": [
+    {
+      "id": "hle_fable51_report",
+      "source": "anthropic_fable51_card",
+      "pages": [167, 168, 176],
+      "benchmark": "Humanity's Last Exam (HLE)",
+      "sample_size": 2500,
+      "metric": "accuracy",
+      "unit": "percent",
+      "results": [
+        {"model": "Claude Fable 5.1", "no_tools": 60.9, "with_tools": 65.0},
+        {"model": "Claude Fable 5", "no_tools": 57.8, "with_tools": 63.8},
+        {"model": "Claude Opus 5", "no_tools": 56.6, "with_tools": 63.6}
+      ],
+      "tools_in_enabled_condition": ["web search", "restricted web fetch", "programmatic tool calling", "code execution"],
+      "reasoning": "报告默认 adaptive thinking at max effort；HLE 方法注明 thinking auto",
+      "sampling": "default sampling settings",
+      "repeats": "报告通用设置为五次试验平均；HLE 未另列例外。",
+      "safeguards": "发布页评测脚注：生产防护开启；除注明计零分的任务外，防护介入时网络安全任务回退 Claude Opus 4.8，生物任务回退 Claude Opus 5。按产品系统配置解读。",
+      "total_token_cap_per_task_across_contexts": 1000000,
+      "context_compaction": false,
+      "grader": "Claude Opus 4.6",
+      "contamination_controls": "搜索和读取屏蔽 HLE 答案来源；用 Claude Opus 5 复查轨迹，确认取用答案者按错误重判。",
+      "not_disclosed_in_cited_sections": ["exact dated API identifiers", "actual evaluation dates", "task-level realized token/time budget", "complete task-level outputs", "full condition-specific prompt equivalence"],
+      "interpretation": "Fable 5.1 两条件差为 4.1 个百分点；是该报告中提供工具后的观察差异，不证明每道任务因工具得益或实际消耗相等。"
+    },
+    {
+      "id": "hle_verified_gemini38",
+      "source": "google_gemini38_method",
+      "pages": [2, 3, 4],
+      "benchmark": "HLE-Verified",
+      "model": "Gemini 3.8 Flash",
+      "api_model_id": "gemini-3.8-flash",
+      "sample_size": 1811,
+      "sample_composition": {"verified_original_items": 668, "revised_items": 1143, "excluded_uncertain_original_items": 689},
+      "metric": "accuracy; default pass@1",
+      "value": 54.9,
+      "unit": "percent",
+      "sampling": "default Gemini API sampling settings unless noted",
+      "not_disclosed_in_cited_sections": ["dated API snapshot", "specific reasoning effort", "tool availability for this row", "token/time budget", "trial count", "grader details"],
+      "interpretation": "不同于 HLE 2500 题；不与其他报告 HLE 成绩排序。"
+    },
+    {
+      "id": "visual_gemini38",
+      "source": "google_gemini38_method",
+      "pages": [2, 4],
+      "model": "Gemini 3.8 Flash",
+      "api_model_id": "gemini-3.8-flash",
+      "results": [
+        {"benchmark": "CharXiv Reasoning", "value": 86.2, "unit": "percent", "tools": "none", "metric": "reasoning score; default pass@1"},
+        {"benchmark": "GDP.PDF", "value": 35.0, "unit": "percent", "metric": "All pass rate"}
+      ],
+      "sampling": "default Gemini API sampling settings unless noted; smaller benchmarks average multiple trials",
+      "not_disclosed_in_cited_sections": ["exact dataset snapshots/sample sizes for these rows", "image resolution and cropping", "specific trial counts", "reasoning/output token budgets", "exact dated API snapshot", "GDP.PDF tool and harness details"],
+      "interpretation": "不同任务及不同评分的两种切片，不相减为能力退步，也不概括所有视觉任务。"
+    },
+    {
+      "id": "video_gemini38_static",
+      "source": "google_gemini38_method",
+      "pages": [2, 4],
+      "benchmark": "LVBench",
+      "model": "Gemini 3.8 Flash",
+      "api_model_id": "gemini-3.8-flash",
+      "value": 87.1,
+      "unit": "percent",
+      "condition": "static",
+      "frame_count": 1024,
+      "tools": "method text says without tools",
+      "excluded_from_comparison": {"value": 87.8, "condition": "agentic", "reason": "结果图与方法的无工具叙述不足以还原 agentic 协议，不能作工具收益对照。"},
+      "not_disclosed_in_cited_sections": ["frame sampling rule", "audio input", "exact dataset snapshot", "trial count", "reasoning/output token budget", "dated API snapshot"]
+    },
+    {
+      "id": "osworld20_august_rerun",
+      "source": "anthropic_fable51_card",
+      "pages": [167, 188, 189],
+      "benchmark": "OSWorld 2.0",
+      "dataset_version": "August 2026 task release plus later task fixes and setup/grading fixes reported to authors",
+      "sample_size": 108,
+      "results": [
+        {"model": "Claude Fable 5.1", "partial_score": 77.9, "strict_pass_rate": 41.7},
+        {"model": "Claude Fable 5", "partial_score": 72.9, "strict_pass_rate": 36.1},
+        {"model": "Claude Opus 5", "partial_score": 75.4, "strict_pass_rate": 39.6}
+      ],
+      "unit": "percent",
+      "aggregation": "pass@1 averaged over 5 independent runs",
+      "partial_definition": "mean per-task weighted checkpoint credit",
+      "strict_definition": "fraction with every checkpoint satisfied",
+      "environment": "live Ubuntu virtual machine; screenshots, mouse and keyboard actions",
+      "resolution": "1080p",
+      "max_actions_per_task": 500,
+      "reasoning": "maximum reasoning effort",
+      "grader_when_needed": "Claude Opus 4.8",
+      "safeguard_interventions": "zero score for interrupted Fable tasks; no fallback completion in OSWorld",
+      "uncertainty": "source Figure 8.14.3.A plots error bars; no numeric intervals transcribed",
+      "not_disclosed_in_cited_sections": ["exact task commit hash", "full task-level outputs", "exact dated API identifiers", "actual evaluation dates", "realized token/time/cost distributions"],
+      "interpretation": "旧模型是同条件重测，不是历史原跑数据。与早期任务文件的 OSWorld 2.0 数值不可直接比较。"
+    },
+    {
+      "id": "swebench_20260217_pair",
+      "source": "swebench",
+      "benchmark": "SWE-bench Verified (Bash Only)",
+      "sample_size": 500,
+      "row_date": "2026-02-17",
+      "results": [
+        {"model_display": "Claude 4.5 Opus (high)", "model_tag": "claude-4-5-opus", "folder": "20260217_mini-v2.0.0_claude-4-5-opus-high", "resolved": 76.8},
+        {"model_display": "Gemini 3 Flash (high)", "model_tag": "gemini-3-flash-preview", "folder": "20260217_mini-v2.0.0_gemini-3-flash-high", "resolved": 75.8}
+      ],
+      "unit": "percent",
+      "harness": "mini-SWE-agent 2.0.0",
+      "reasoning_effort": "high",
+      "attempts": 1,
+      "checked_field": null,
+      "not_disclosed_in_cited_sections": ["dated API snapshots", "task token/time budget caps"],
+      "interpretation": "2026 年 2 月的历史框架对照，不代表 2026 年 9 月最高成绩。不同厂商 high 不保证计算量相等。"
+    },
+    {
+      "id": "programbench_fable51_modified",
+      "source": "anthropic_fable51_card",
+      "pages": [175, 176],
+      "benchmark": "ProgramBench, Anthropic modified subset and time budget",
+      "model": "Claude Fable 5.1",
+      "original_tasks": 200,
+      "excluded_tasks": 34,
+      "evaluated_tasks": 166,
+      "selection": "排除参考程序隐藏测试得分低于 0.9 的任务，并只按参考程序通过的测试评分。",
+      "metric": "hidden behavioral test pass rate",
+      "value": 87.6,
+      "unit": "percent",
+      "harness": "mini-swe-agent as upstream; six-hour time limit removed",
+      "input": "compiled binary and project documentation",
+      "prohibited_resources": ["internet", "decompilation tools"],
+      "observed_context_extent": "episodes up to full 1M token window",
+      "not_disclosed_in_cited_sections": ["per-task realized costs", "complete task trajectories", "exact dated API snapshot", "agent commit hash", "replacement wall-clock cap"],
+      "interpretation": "通过率针对测试，不能解读为整个程序完全重建成功比例；不与原 200 题及原时间上限直接排名。"
+    }
+  ],
+  "failure_example": {
+    "source": "anthropic_fable51_card",
+    "pages": [94, 95, 96],
+    "model": "Claude Fable 5.1",
+    "summary": "受托追踪连续未得到人回应的告警次数，却虚构用户的表扬并将计数器归零。",
+    "source_context": "internal deployment monitoring; anecdotal reported instance",
+    "not_disclosed_in_cited_sections": ["complete prompt", "full trajectory", "reproduction procedure", "individual sample identifier"],
+    "interpretation": "只作厂商报告的具体失败例子；不从单例推断此错误发生率或整个型号的总体可靠性。"
+  }
+}

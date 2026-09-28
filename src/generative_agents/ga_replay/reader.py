@@ -4,8 +4,6 @@ from __future__ import annotations
 from generative_agents.ga_replay.cache import _validated_directory, read_run_quality
 
 import copy
-import gzip
-import hashlib
 import json
 import mimetypes
 import zipfile
@@ -16,10 +14,13 @@ from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.schemas.manifests import RunManifest
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.io import open_package
+from generative_agents.ga_protocol.packages.reading import open_readonly_package, read_package_json
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.validation import validate_run_integrity
 from generative_agents.ga_protocol.schemas.manifests import validate_package_path
 from generative_agents.ga_protocol.packages.io import checked_package_path
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
+from generative_agents.ga_protocol.facts.commits import read_committed_frame
 
 
 
@@ -37,15 +38,18 @@ class ReplayReader:
         self._package_context = None
 
     def __enter__(self) -> "ReplayReader":
-        self._package_context = open_package(self.package)
+        self._package_context = open_readonly_package(self.package)
         self.root = self._package_context.__enter__()
-        self.manifest = (
-            validate_run_integrity(self.root, sealed=True)
-            if self.package.is_file() else _validated_directory(self.root)
-        )
-        self.status = RunStatus.model_validate(read_json(self.root / "status.json"))
-        if self.status.run_id != self.manifest.run_id:
-            raise PackageError("Run status belongs to another Run")
+        try:
+            self.manifest = _validated_directory(self.root, sealed=self.package.is_file())
+            self.status = RunStatus.model_validate(read_json(self.root / "status.json"))
+            if self.status.run_id != self.manifest.run_id:
+                raise PackageError("Run status belongs to another Run")
+            self.available_steps()
+        except BaseException:
+            self._package_context.__exit__(None, None, None)
+            self.root = None
+            raise
         return self
 
     def __exit__(self, exc_type, exc, traceback) -> None:
@@ -63,43 +67,21 @@ class ReplayReader:
         return _run_summary(root, manifest, status)
 
     def experiment_world(self) -> dict:
-        root, manifest, _status = self._require_open()
-        experiment_root = root / manifest.experiment.path
-        experiment_manifest = read_json(experiment_root / "manifest.json")
-        if not isinstance(experiment_manifest, dict):
-            raise PackageError("embedded experiment manifest is invalid")
-        entrypoints = experiment_manifest.get("entrypoints")
-        if not isinstance(entrypoints, dict) or not isinstance(entrypoints.get("world"), str):
-            raise PackageError("embedded experiment world entrypoint is missing")
-        world = read_json(experiment_root / entrypoints["world"])
-        if not isinstance(world, dict):
-            raise PackageError("embedded world is invalid")
-        return world
+        from generative_agents.ga_replay.queries import definition_for
+        self._require_open()
+        return definition_for(self)["world"]
 
     def experiment_agents(self) -> list[dict]:
         """Return the Agent definitions physically embedded in this Run."""
 
-        root, manifest, _status = self._require_open()
-        experiment_root = root / manifest.experiment.path
-        experiment_manifest = read_json(experiment_root / "manifest.json")
-        entrypoints = experiment_manifest.get("entrypoints") if isinstance(experiment_manifest, dict) else None
-        relative = entrypoints.get("agents") if isinstance(entrypoints, dict) else None
-        document = read_json(experiment_root / relative) if isinstance(relative, str) else None
-        if not isinstance(document, dict) or not isinstance(document.get("agents"), list):
-            raise PackageError("embedded experiment Agent entrypoint is invalid")
-        return [dict(item) for item in document["agents"] if isinstance(item, dict)]
+        from generative_agents.ga_replay.queries import definition_for
+        self._require_open()
+        return definition_for(self)["agents"]
 
     def semantic_index(self) -> dict:
         """Return the exact four-level spatial index embedded by Studio."""
 
-        root, manifest, _status = self._require_open()
-        experiment_root = root / manifest.experiment.path
-        experiment_manifest = read_json(experiment_root / "manifest.json")
-        entrypoints = experiment_manifest.get("entrypoints") if isinstance(experiment_manifest, dict) else None
-        relative = entrypoints.get("semantic_index") if isinstance(entrypoints, dict) else None
-        if not isinstance(relative, str):
-            raise PackageError("embedded experiment semantic index entrypoint is missing")
-        document = read_json(experiment_root / relative)
+        document = self.experiment_world().get("definition", {}).get("semantic_index")
         if not isinstance(document, dict):
             raise PackageError("embedded experiment semantic index is invalid")
         return document
@@ -128,7 +110,7 @@ class ReplayReader:
         # A projection may lag, be locked or be deleted. Only durable status
         # and immutable frames determine which Steps are visible.
         committed_frames = tuple(
-            int(path.name.removeprefix("step-").removesuffix(".json.gz"))
+            int(checked_package_path(path).name.removeprefix("step-").removesuffix(".json.gz"))
             for path in sorted(checked_package_path(root / "frames").glob("step-*.json.gz"))
             if int(path.name.removeprefix("step-").removesuffix(".json.gz"))
             <= status.committed_step
@@ -141,27 +123,7 @@ class ReplayReader:
         root, manifest, status = self._require_open()
         if step_no < 1 or step_no > status.committed_step:
             raise IndexError(f"step {step_no} is outside the committed Replay boundary")
-        path = checked_package_path(root / "frames" / f"step-{step_no:06d}.json.gz")
-        compressed = path.read_bytes()
-        projection_path = root / "projection.json"
-        if projection_path.is_file():
-            try:
-                projection = read_json(projection_path)
-            except PackageError:
-                projection = {}  # Optional derived cache, never a read barrier.
-            record = (projection.get("steps") or {}).get(str(step_no)) if isinstance(projection, dict) else None
-            if isinstance(record, dict) and record.get("frame_sha256") != hashlib.sha256(compressed).hexdigest():
-                raise PackageError(f"Replay frame hash mismatch at step {step_no}")
-        try:
-            document = json.loads(gzip.decompress(compressed).decode("utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-            raise PackageError(f"invalid Replay frame at step {step_no}") from exc
-        result = document.get("result") if isinstance(document, dict) else None
-        if not isinstance(result, dict):
-            raise PackageError(f"Replay frame has no StepResult at step {step_no}")
-        if result.get("run_id") != manifest.run_id or result.get("step_no") != step_no:
-            raise PackageError(f"Replay frame identity mismatch at step {step_no}")
-        return result
+        return read_committed_frame(root, manifest.run_id, step_no)
 
     def iter_steps(self, *, start: int = 1, end: int | None = None) -> Iterator[dict]:
         _root, _manifest, status = self._require_open()
@@ -268,10 +230,7 @@ def read_run_status(package):
             raise PackageError('Run status experiment identity mismatch')
         return manifest, status
 
-    if package.is_file():
-        with zipfile.ZipFile(package) as archive:
-            return read_status(lambda relative: json.loads(archive.read(relative)))
-    return read_status(lambda relative: read_json(package / relative))
+    return read_status(lambda relative: read_package_json(package, relative))
 
 
 def read_run_overview(package):
@@ -279,7 +238,7 @@ def read_run_overview(package):
 
     This is a status overview, not an integrity verdict or a replay open operation.
     """
-    with open_package(Path(package)) as root:
+    with open_readonly_package(Path(package)) as root:
         manifest = RunManifest.model_validate(read_json(root / 'run.json'))
         status = RunStatus.model_validate(read_json(root / 'status.json'))
         if status.run_id != manifest.run_id:

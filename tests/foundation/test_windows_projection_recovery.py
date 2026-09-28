@@ -13,8 +13,8 @@ from tests.test_portable_package_protocol import _experiment
 def source(tmp_path):
     root=_experiment(tmp_path/'packages')
     manifest=read_json(root/'manifest.json')
-    path=root/manifest['entrypoints']['simulation']
-    config=read_json(path);config['checkpoint_interval_steps']=1
+    path=root/manifest['entrypoints']['assembly']
+    config=read_json(path);config['simulation']['checkpoint_interval_steps']=1
     atomic_write_json(path,config);write_integrity_manifest(root)
     return root
 
@@ -164,6 +164,10 @@ def test_missing_checkpoint_rejects_resume_before_new_attempt(tmp_path):
     run=RunService().create(source(tmp_path),tmp_path/'run',requested_steps=3)
     status=read_json(run/'status.json');status.update(status='FAILED',committed_step=1)
     atomic_write_json(run/'status.json',status)
+    from tests.committed_frames import write_frame
+    from uuid import uuid4
+    write_frame(run, {'run_id': status['run_id'], 'attempt_id': str(uuid4()), 'step_no': 1,
+                      'virtual_time': '2026-09-03T08:00:00+08:00', 'agents': [], 'effects': []})
     before={p.relative_to(run):p.read_bytes() for p in run.rglob('*') if p.is_file() and p.name!='worker.lock'}
     with pytest.raises(PackageError,match='complete checkpoint'):
         RunService().resume(run)

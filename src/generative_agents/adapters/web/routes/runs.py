@@ -9,6 +9,7 @@ from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.adapters.web.routes.requests import ResumeRunRequest
 from generative_agents.adapters.web.context import _catalog_item
+from generative_agents.ga_replay.api import ReplayReader, read_run_quality
 
 def install_routes(router, ctx):
 
@@ -19,12 +20,31 @@ def install_routes(router, ctx):
             raise HTTPException(status_code=404, detail='Run package is not in the Studio catalog')
         return ctx.run_summary(row)
 
+    @router.get('/runs/{run_id}/quality')
+    def run_quality(run_id: str, offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        with ReplayReader(ctx.run_location(run_id)) as replay:
+            quality = read_run_quality(replay.root, replay.manifest, replay.status)
+        issues = quality.get('issues') or []
+        return {**quality, 'issues': issues[offset:offset+limit], 'total': len(issues),
+                'next_offset': offset+limit if offset+limit < len(issues) else None}
+
+    @router.get('/runs/{run_id}/recovery')
+    def run_recovery(run_id: str):
+        with ReplayReader(ctx.run_location(run_id)) as replay:
+            summary = replay.summary()
+        return {'run_id': run_id, 'recoverable_step': summary['recoverable_step'],
+                'recoverable': summary['status'] in {'PAUSED', 'FAILED'} and summary['recoverable_step'] > 0}
+
     @router.delete('/runs/{run_id}', status_code=204)
     def delete_run(run_id: str):
         return ctx.delete_run(run_id)
 
     @router.post('/runs/{run_id}/seal')
+    @ctx.jobs.action('SEAL_RUN')
+    @ctx.serialized_run
     def seal_run(run_id: str):
+        if ctx.artifact_jobs.active(run_id):
+            raise HTTPException(status_code=409, detail='Run 正在导出，请等待任务完成后封存')
         source = ctx.catalog_location('run', run_id)
         if source.is_file():
             return _catalog_item(ctx.catalog.get('run', run_id))
@@ -40,6 +60,7 @@ def install_routes(router, ctx):
             raise
 
     @router.post('/runs/{run_id}/resume')
+    @ctx.jobs.action('RESUME_RUN')
     def resume_run(run_id: str, body: ResumeRunRequest | None=None):
         from generative_agents.ga_protocol.facts.recovery import boundary_snapshot
         with package_lock(ctx.package_root / 'runs' / f'{run_id}.resume-submit.identity'):
@@ -61,6 +82,7 @@ def install_routes(router, ctx):
             return ctx.submit_directory(run_root)
 
     @router.post('/runs/{run_id}/rerun')
+    @ctx.jobs.action('RERUN')
     def rerun(run_id: str, steps: int | None=Query(default=None, ge=1)):
         destination = ctx.package_root / 'runs' / f'workspace-{uuid4().hex}'
         try:

@@ -47,8 +47,10 @@ def test_console_shell_and_api_script_form_one_self_contained_runtime(database_u
     assert listing["items"] == []
     assert "commute-demo" not in shell and "map-configuration-demo" not in shell
     assert shell.count('/static/console/shell/console-api.js') == 1
-    assert '/static/console/resources/skill-workspace.js?v=' in shell
-    assert '/static/console/resources/skill-workspace.css?v=' in shell
+    loader = (Path(__file__).parents[2] / 'src/generative_agents/adapters/web/static/shell/workspace-loader.js').read_text(encoding='utf-8')
+    assert '/static/console/shell/workspace-loader.js' in shell
+    assert 'resources/skill-workspace.js' not in shell
+    assert 'resources/skill-workspace.js' in loader and 'resources/skill-workspace.css' in loader
     assert shell.count('/static/console/shell/modal-focus.js') == 1
     assert shell.count('/static/console/shell/console-ux.css') == 1
     assert "--sidebar-width: 216px" in ux_style
@@ -314,7 +316,9 @@ def test_console_owns_global_activity_reconciliation_and_resume_hooks():
 
     assert "async function startGlobalActivityStream()" in source
     assert "scheduleExperimentListPoll();" in source
-    assert "state.globalPollTimer = setInterval" in source
+    assert "state.globalPollTimer = setTimeout" in source
+    assert "if (!needsDetailPoll()) return" in source
+    assert "state.globalPollTimer = setInterval" not in source
     assert "scheduleGlobalReconcile({ experimentId: activity.experiment_id })" in source
     assert "scheduleGlobalReconcile({ full: true })" in source
     assert "document.addEventListener('visibilitychange'" in source
@@ -376,8 +380,10 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
         root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
-    for group in ("models", "agent-editor"):
-        assert f'data-content-tabs="{group}"' in shell
+    assert 'data-content-tabs="agent-editor"' in shell
+    assert 'data-content-tabs="models"' not in shell
+    assert 'id="applyExperimentModelChoices"' in shell
+    assert 'id="chatSecret"' not in shell and 'id="embeddingSecret"' not in shell
     assert 'data-content-tabs="world"' not in shell
     assert 'data-content-tabs="advanced"' not in shell
     overview = shell[shell.index('id="page-overview"') : shell.index('id="page-results"')]
@@ -466,7 +472,7 @@ def test_overview_is_a_single_definition_workspace_while_other_workspaces_keep_t
     assert "forkCurrentRevision" not in script
     assert "$('saveBtn').hidden = pageName === 'results';" in script
     latest_summary = script[
-        script.index("async function fillLatestRunSummary") : script.index("function setSwitch")
+        script.index("async function fillLatestRunSummary") : script.index("function fillModelFields")
     ]
     assert "/results/summary" not in latest_summary
     assert "/results/operations" not in latest_summary
@@ -674,7 +680,8 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert 'class="agent-content-pagination"' in source
     assert 'data-agent-page-kind="${kind}"' in source
     assert "state.agentContentPages.set(pageKey, targetPage)" in source
-    assert "state.agentDetailCache.get(`${state.selectedRunId}:${state.selectedAgentKey}`)" in source
+    assert "showAgentDetail(state.selectedAgentKey).catch(reportError)" in source
+    assert "section=${section}&offset=${(page-1)*AGENT_CONTENT_PAGE_SIZE}&limit=${AGENT_CONTENT_PAGE_SIZE}" in source
     agent_sections = source[source.index("function renderAgentPlanSection") : source.index("function agentPlanText")]
     assert "slice(0," not in agent_sections
     assert agent_sections.count("slice(pagination.itemsFrom, pagination.itemsTo)") == 6
@@ -688,7 +695,9 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert "state.modelUsageItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
     assert "state.traceItems.slice(pagination.itemsFrom, pagination.itemsTo)" in source
     assert "event_type=PHYSICAL&cursor=" in source
-    assert "syncModelTracePolling(runId, generation)" in source
+    assert "scheduleDetailPoll()" in source
+    assert "syncModelTracePolling" not in source
+    assert "await loadModelTraces(runId" in source
     assert "item.status === 'RUNNING'" in source
     assert "JSON.stringify({ force: options.force ?? true })" in source
     assert "filtered.slice(pagination.itemsFrom, pagination.itemsTo)" in source
@@ -697,7 +706,9 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert "state.checkpointPage = page" in source
     assert 'data-operation-list="${kind}"' in source
     assert ".trace-row[data-trace-id] { cursor: pointer; }" in shell
-    assert "while (cursor)" in source
+    assert "runs?page=${pageNumber}&page_size=20" in source
+    assert "data-run-page" in source
+    assert "while (cursor)" not in source
     assert 'id="runAgainBtn"' not in shell
     assert 'id="openReplayBtn"' not in shell
     assert 'id="resumeRunModal"' in shell
@@ -773,7 +784,8 @@ def test_creation_wizard_selects_brain_and_saved_drafts_refresh_derived_state():
     assert "saveExperimentComposition" not in source
     assert 'id="experimentBrainRevisionSelect" disabled' in shell
     assert 'id="experimentMapSelect" disabled' in shell
-    assert "enqueueDraftMutation(() => saveDraftUnlocked(options))" in source
+    assert "return enqueueDraftMutation(async () => {" in source
+    assert "const saved = await saveDraftUnlocked(options);" in source
     assert "CONTROL_PLANE_NETWORK_ERROR" in source
     assert "await acceptSavedDraft(saved);" in source
     assert "state.runEstimate = null;" in source
@@ -814,8 +826,9 @@ def test_chat_output_limit_is_not_presented_as_the_model_context_window():
         root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static' / 'shell/console-api.js'
     ).read_text(encoding="utf-8")
 
-    assert "单次最大输出" in shell
-    assert "不是模型的上下文窗口" in shell
+    model_editor = (root / 'src' / 'generative_agents' / 'adapters' / 'web' / 'static'
+                    / 'resources/model-workspace.js').read_text(encoding="utf-8")
+    assert '<label for="modelServiceTokens">最大输出 tokens</label>' in model_editor
     assert 'id="chatServiceStatus"' not in shell
     assert "testModelConnection" not in script
 

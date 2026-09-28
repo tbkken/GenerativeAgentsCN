@@ -1,0 +1,4 @@
+activity_id,name,participants,duration_minutes,earliest_start,latest_end,allowed_room_ids
+reading_share,阅读分享,24,60,2026-10-17T09:00:00+08:00,2026-10-17T12:00:00+08:00,reading
+craft_workshop,手作体验,10,60,2026-10-17T09:00:00+08:00,2026-10-17T12:00:00+08:00,craft
+exchange,邻里交流,16,45,2026-10-17T09:00:00+08:00,2026-10-17T12:00:00+08:00,discussion

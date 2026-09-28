@@ -27,6 +27,7 @@ from generative_agents.ga_protocol.packages.validation import validate_run_direc
 from generative_agents.ga_protocol.packages.io import verify_integrity
 from generative_agents.ga_protocol.packages.io import write_integrity_manifest
 from generative_agents.ga_protocol.packages.constants import INTEGRITY_MANIFEST
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
 
 from generative_agents.ga_runtime.lifecycle.control import FileRunControl
 class RunService:
@@ -46,7 +47,7 @@ class RunService:
         with open_package(Path(experiment_package)) as experiment_root:
             experiment_manifest = validate_experiment_directory(experiment_root)
             experiment_integrity = verify_integrity(experiment_root)
-            simulation = read_json(experiment_root / experiment_manifest.entrypoints.simulation)
+            simulation = _experiment_definition(experiment_root)[1]["simulation"]
             if not isinstance(simulation, dict):
                 raise PackageError("experiment simulation config is invalid")
             max_steps = int(simulation.get("max_steps") or 0)

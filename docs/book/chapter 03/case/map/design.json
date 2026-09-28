@@ -1,0 +1,29 @@
+{
+  "document_kind": "teaching-map-design",
+  "status": "prepared-not-imported",
+  "description": "仅供绘图和UI逐项录入的作者设计，不是ga-package或可导入实验。",
+  "name": "青禾社区学习中心开放日",
+  "width": 32,
+  "height": 24,
+  "tile_pixels": 32,
+  "world": "青禾社区",
+  "sector": "学习中心",
+  "arenas": [
+    {"key": "reading", "name": "阅读室", "rect": [1, 1, 10, 12], "color": "#dceaf1"},
+    {"key": "craft", "name": "手作室", "rect": [12, 1, 9, 12], "color": "#f1e5ce"},
+    {"key": "discussion", "name": "交流室", "rect": [22, 1, 9, 12], "color": "#dfebdf"},
+    {"key": "hall", "name": "公共大厅", "rect": [1, 13, 30, 10], "color": "#f3f1e9"}
+  ],
+  "wall_columns": [0, 11, 21, 31],
+  "interior_wall_y_end_exclusive": 13,
+  "wall_rows": [0, 13, 23],
+  "door_row": 13,
+  "door_columns": [5, 6, 16, 17, 26, 27],
+  "objects": [
+    {"key": "reading-table", "name": "阅读桌", "arena": "reading", "rect": [3, 5, 5, 2], "blocked": true, "skill_key": null},
+    {"key": "craft-table", "name": "手作台", "arena": "craft", "rect": [14, 5, 5, 2], "blocked": true, "skill_key": null},
+    {"key": "discussion-table", "name": "交流桌", "arena": "discussion", "rect": [24, 5, 5, 2], "blocked": true, "skill_key": null},
+    {"key": "board", "name": "公告栏", "arena": "hall", "rect": [14, 15, 3, 2], "blocked": true, "skill_key": "qinghe-notice-board", "initial_state": {"state": "original"}, "state_images": {"original": "assets/board-original.png", "revised": "assets/board-revised.png"}},
+    {"key": "helpdesk", "name": "服务台", "arena": "hall", "rect": [4, 17, 4, 2], "blocked": true, "skill_key": "qinghe-helpdesk", "initial_state": {"state": "ready"}}
+  ]
+}

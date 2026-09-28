@@ -96,7 +96,7 @@
       this.bind();
       this.resizeObserver = new ResizeObserver(() => this.resize());
       this.resizeObserver.observe(this.canvasHost);
-      this.ready = this.loadDocument();
+      this.ready = Promise.resolve();
     }
 
     get changed() { return this._changed; }
@@ -329,7 +329,7 @@
       return window.ResourceScope?.url('/skills?kind=atomic') || '/api/studio/resources/skills?kind=atomic';
     }
 
-    async refreshSkillCatalog() {
+    async refreshSkillCatalog({append=false} = {}) {
       const scope = this.skillCatalogUrl();
       const generation = this.skillCatalogGeneration = (this.skillCatalogGeneration || 0) + 1;
       this.skillCatalogController?.abort();
@@ -341,13 +341,16 @@
       }
       const current = () => generation === this.skillCatalogGeneration && scope === this.skillCatalogUrl();
       try {
-        const response = await fetch(scope, { signal: controller.signal, cache: 'no-store' });
+        const page=append ? (this.skillCatalogPage || 1)+1 : 1;
+        const response = await fetch(`${scope}&page=${page}&page_size=20`, { signal: controller.signal, cache: 'no-store' });
         if (!current()) return false;
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const catalog = await response.json();
         if (!current()) return false;
         if (!Array.isArray(catalog.items)) throw new Error('Skill 目录响应缺少列表');
-        this.passiveSkillCatalog = catalog.items;
+        this.passiveSkillCatalog = append ? [...this.passiveSkillCatalog,...catalog.items] : catalog.items;
+        this.skillCatalogPage = catalog.page || page;
+        this.skillCatalogHasMore = this.skillCatalogPage < (catalog.total_pages || 1);
         this.refreshSkillSelector();
         return true;
       } catch (error) {
@@ -376,6 +379,13 @@
       const selected = selector.value;
       selector.innerHTML = '<option value="">不绑定 Skill</option>' + this.skillOptions(selected);
       selector.value = selected;
+      let more=this.inspector?.querySelector('[data-node-skill-more]');
+      if (this.skillCatalogHasMore && !more && selector?.insertAdjacentElement) {
+        more=document.createElement('button');more.type='button';more.className='btn btn-sm';more.dataset.nodeSkillMore='';more.textContent='加载更多技能';
+        selector.insertAdjacentElement('afterend',more);
+      }
+      if (more) {more.hidden=!this.skillCatalogHasMore;more.onclick=()=>this.refreshSkillCatalog({append:true});}
+
     }
 
     mergeVilleAuthoringState(bundled) {
@@ -485,22 +495,31 @@
     }
 
     async loadSourceImages() {
-      this.images.clear();
-      this.imageUrls.clear();
-      this.sliceTransparency.clear();
-      const jobs = (this.document.material_sources || []).map(async source => {
-        if (source.kind === 'CANVAS') return;
-        const url = window.ResourceScope?.experimentId && source.bundled_path
-          ? window.ResourceScope.assetUrl(source.bundled_path)
-          : source.asset_id
-          ? `/api/studio/resources/assets/${encodeURIComponent(source.asset_id)}/content`
-          : (source.bundled_path ? `${VILLAGE_URL}${source.bundled_path}` : '');
-        if (!url) return;
-        this.imageUrls.set(source.id, url);
-        try { this.images.set(source.id, await loadImage(url)); } catch (_) { /* shown as missing */ }
-      });
-      await Promise.all(jobs);
-      this.refreshCanvasImages();
+      if (!this.document) return false;
+      const document = this.document;
+      const extra = this.workspace === 'materials' ? [this.selectedSourceId] : [];
+      extra.push(...(this.expandedBrushSources || []));
+      const needed = window.RenderMaterials.sourceIds(document, extra);
+      this.imageRequests ||= new Map();
+      const jobs = (document.material_sources || []).filter(source => needed.has(String(source.id)) && source.kind !== 'CANVAS');
+      let changed = false;
+      const worker = async () => {
+        while (jobs.length) {
+          const source = jobs.shift();
+          const url = window.ResourceScope?.experimentId && source.bundled_path
+            ? window.ResourceScope.assetUrl(source.bundled_path)
+            : source.asset_id ? `/api/studio/resources/assets/${encodeURIComponent(source.asset_id)}/content`
+            : source.bundled_path ? `${VILLAGE_URL}${source.bundled_path}` : '';
+          if (!url || (this.imageUrls.get(source.id) === url && this.images.has(source.id))) continue;
+          if (!this.imageRequests.has(url)) this.imageRequests.set(url, loadImage(url).catch(() => null));
+          const image = await this.imageRequests.get(url);
+          if (this.document !== document) return;
+          if (image) { this.images.set(source.id,image); this.imageUrls.set(source.id,url); changed=true; }
+        }
+      };
+      await Promise.all(Array.from({length:Math.min(4,jobs.length)},worker));
+      if (changed && this.document === document) this.refreshCanvasImages();
+      return changed;
     }
 
     currentMaterialCanvas() {
@@ -624,7 +643,7 @@
       this.root.querySelectorAll('[data-me2-tab]').forEach(item => item.classList.toggle('active', item.dataset.me2Tab === 'world'));
       this.root.querySelectorAll('[data-me2-tool]').forEach(item => item.classList.toggle('active', item.dataset.me2Tool === 'brush'));
       if (this.document) this.reindex();
-      this.loadSourceImages().then(() => { this.renderAll(); requestAnimationFrame(() => this.fit()); });
+      this.loadSourceImages().then(() => { this.renderCanvas(); requestAnimationFrame(() => this.fit()); });
       this._changed = false;
       this._changeRevision = 0;
       this.renderAll();
@@ -716,10 +735,14 @@
     }
 
     renderAll() {
+      if (this.document && !this.materialLoadPending) {
+        this.materialLoadPending = this.loadSourceImages().then(changed => {if (changed) {this.renderCanvas(); this.renderLeft();}}).finally(() => {this.materialLoadPending=null;});
+      }
       if (!this.document) return;
       this.navigation?.remapMasks();
       this.renderLeft();
       this.renderInspector();
+      this.refreshSkillSelector();
       const material = this.workspace === 'materials';
       const canvasEditing = this.isCanvasEditing();
       this.root.querySelector('[data-map-tools]').hidden = !canvasEditing;
@@ -2041,12 +2064,12 @@
       const point = this.localPoint(event);
       const canvasEditing = this.isCanvasEditing();
       const panActive = this.workspace === 'materials' && !canvasEditing ? this.materialPan : this.tool === 'pan';
-      if (event.button === 1 || this.spaceDown || panActive) {
+      if (event.button === 1 || this.spaceDown || panActive || (event.button === 0 && this.navigation?.active && !event.ctrlKey)) {
         this.drag = { type: 'pan', startX: point.x, startY: point.y, offsetX: this.offsetX, offsetY: this.offsetY };
         this.updateCanvasCursor(point); return;
       }
       if (event.button !== 0) return;
-      if (this.navigation?.pointerDown(point)) return;
+      if (this.navigation?.pointerDown(point, event)) return;
       if (this.workspace === 'materials' && !canvasEditing) { this.materialPointerDown(point); return; }
       if (this.workspace === 'world') {
         const position = this.mapPosition(point);
@@ -2093,7 +2116,7 @@
 
     pointerMove(event) {
       const point = this.localPoint(event);
-      if (this.navigation?.pointerMove(point)) return;
+      if (this.navigation?.pointerMove(point, event)) return;
       if (this.drag?.type === 'pan') {
         if (this.drag.worldInteraction) {
           const distance = Math.hypot(point.x - this.drag.startX, point.y - this.drag.startY);
@@ -2249,6 +2272,12 @@
 
     updateCanvasCursor(point = null) {
       if (!this.canvasHost) return;
+      if (this.navigation?.active) {
+        this.canvasHost.classList.toggle('is-pan', true);
+        this.canvasHost.classList.toggle('is-panning', this.drag?.type === 'pan');
+        for (const name of ['is-node-move', 'is-node-moving', 'is-resize']) this.canvasHost.classList.remove(name);
+        return;
+      }
       const nodeResizing = this.drag?.type === 'resize-node';
       const nodeResize = !this.drag && point && this.worldNodeResizeHit(point);
       const nodeMoving = this.drag?.type === 'move-node';

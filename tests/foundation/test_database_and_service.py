@@ -6,7 +6,7 @@ from generative_agents.ga_studio.storage.models import Base
 
 
 def test_alembic_matches_studio_models_and_sqlite_pragmas(database):
-    assert len(STUDIO_TABLE_NAMES) == 11
+    assert len(STUDIO_TABLE_NAMES) == 12
     assert set(Base.metadata.tables) == STUDIO_TABLE_NAMES
     with database.engine.connect() as connection:
         assert set(inspect(connection).get_table_names()) == STUDIO_TABLE_NAMES | {"alembic_version"}

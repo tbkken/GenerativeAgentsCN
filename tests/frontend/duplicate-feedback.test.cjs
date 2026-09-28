@@ -33,10 +33,12 @@ function setup() {
     editable: true, status: 'DRAFT', run_count: 0, definition: null,
   });
   const context = {
+    resourceTabs: {sync() {}},
     state, $: node, document: {querySelectorAll: () => [], body: node('body')},
-    window: {scrollTo() {}}, navigateToExperiment: () => false, statusLabels: {DRAFT: '草稿'},
+    window: {scrollTo() {}, MapWorkspace:{activate:async()=>{}}, SkillWorkspace:{activate:async()=>{}}, CrowdWorkspace:{activate:async()=>{},activateAgents:async()=>{}}}, navigateToExperiment: () => false, statusLabels: {DRAFT: '草稿'},
     requestAnimationFrame: callback => callback(),
     clearTimeout() {}, clearInterval() {},
+    clearDirty() { state.formDirty = false; state.dirty = false; },
     stopExperimentListRefresh() {},
     syncMapEditorTopbar() {}, latestRunHasPendingExecution: () => false,
     clearResultDurationTimer() {}, closeLogStream() {}, scheduleGlobalReconcile() {},

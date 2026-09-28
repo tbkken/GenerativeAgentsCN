@@ -86,5 +86,29 @@
     if (event.key !== 'Escape') return;
     document.querySelectorAll('.resource-more[open]').forEach(menu => { menu.open = false; menu.querySelector('summary').focus(); });
   });
-  window.ResourceList = {esc, row, slice, pager, empty, loading, error, sorted, read, remember, capture, restore, route};
+  async function choices(select, {loadPage, label = item => item.name, value = item => item.id, placeholder = '请选择', selected = select.value}) {
+    const token = {};
+    select.choiceRequest = token;
+    select.replaceChildren(new Option(placeholder, ''));
+    let page = 0;
+    let button = select.nextElementSibling?.matches?.('[data-choice-more]') ? select.nextElementSibling : null;
+    if (!button) {
+      button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-sm';
+      button.dataset.choiceMore = ''; button.textContent = '加载更多选项'; select.insertAdjacentElement('afterend', button);
+    }
+    async function next() {
+      button.disabled = true; select.disabled = true;
+      try {
+        const result = await loadPage(page + 1);
+        if (select.choiceRequest !== token || !select.isConnected) return;
+        page = result.page || page + 1;
+        (result.items || []).forEach(item => {const option=new Option(label(item),value(item)); option.dataset.skillName=item.name || ''; select.add(option);});
+        if ([...select.options].some(option => option.value === selected)) select.value = selected;
+        button.hidden = page >= (result.total_pages || 1);
+      } finally { if (select.choiceRequest === token) { button.disabled = false; select.disabled = false; } }
+    }
+    button.onclick = () => { selected = select.value; next().catch(error => window.showToast?.(error.message, '加载失败')); };
+    await next();
+  }
+  window.ResourceList = {esc, row, slice, pager, empty, loading, error, sorted, read, remember, capture, restore, route, choices};
 })();

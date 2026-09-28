@@ -1,0 +1,14 @@
+{
+  "document_kind": "synthetic-teaching-comparison",
+  "provenance": "教材作者人工构造，仅供算术与报告练习；不是实际Run数据。",
+  "window_minutes": 60,
+  "latency_definition": "从统一起始时刻到任务闭环；所有任务观察至60分钟，未闭环者终点未知。",
+  "rows": [
+    {"teaching_row": "A01", "group": "A", "tasks": 4, "completed_minutes": [8, 12], "logical_calls": 120, "physical_attempts": 132},
+    {"teaching_row": "A02", "group": "A", "tasks": 4, "completed_minutes": [7, 11, 17], "logical_calls": 140, "physical_attempts": 154},
+    {"teaching_row": "A03", "group": "A", "tasks": 4, "completed_minutes": [6], "logical_calls": 110, "physical_attempts": 125},
+    {"teaching_row": "B01", "group": "B", "tasks": 4, "completed_minutes": [10, 14, 19], "logical_calls": 160, "physical_attempts": 170},
+    {"teaching_row": "B02", "group": "B", "tasks": 4, "completed_minutes": [9, 13, 18], "logical_calls": 155, "physical_attempts": 166},
+    {"teaching_row": "B03", "group": "B", "tasks": 4, "completed_minutes": [12, 16], "logical_calls": 165, "physical_attempts": 180}
+  ]
+}

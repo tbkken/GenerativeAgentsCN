@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "date": {"type": "string", "enum": ["2026-10-17"]},
+    "timezone": {"type": "string", "enum": ["Asia/Shanghai"]},
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "activity_id": {"type": "string", "enum": ["reading_share", "craft_workshop", "exchange"]},
+          "room_id": {"type": "string", "enum": ["reading", "craft", "discussion"]},
+          "start": {"type": "string"},
+          "end": {"type": "string"},
+          "participants": {"type": "integer"}
+        },
+        "required": ["activity_id", "room_id", "start", "end", "participants"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["date", "timezone", "activities"],
+  "additionalProperties": false
+}

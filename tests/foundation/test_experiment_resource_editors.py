@@ -30,14 +30,15 @@ def editing(database, tmp_path):
 
 def test_map_edits_are_file_backed_and_reject_stale_saves(editing):
     client, prefix, root, identity = editing
-    before = (root / "world/world.json").read_bytes()
+    resources_path = root / read_json(root / 'manifest.json')['entrypoints']['resources']
+    before = resources_path.read_bytes()
     original = client.get(f"{prefix}/maps/{identity}").json()
     body = copy.deepcopy(original)
     body["world"]["world_name"] = "实验地图改名"
     saved = client.put(f"{prefix}/maps/{identity}", json={"row_version": body["row_version"], "world": body["world"]})
     assert saved.status_code == 200, saved.text
     assert client.get(f"{prefix}/maps/{identity}").json()["world"]["world_name"] == "实验地图改名"
-    assert (root / "world/world.json").read_bytes() != before
+    assert resources_path.read_bytes() != before
     stale = client.put(f"{prefix}/maps/{identity}", json={"row_version": original["row_version"], "world": original["world"]})
     assert stale.status_code == 409
     validate_experiment_directory(root)

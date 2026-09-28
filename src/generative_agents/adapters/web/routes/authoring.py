@@ -1,6 +1,6 @@
 """Authoring HTTP routes."""
 from __future__ import annotations
-from fastapi import File, HTTPException, Request, Response, UploadFile
+from fastapi import File, HTTPException, Query, Request, Response, UploadFile
 from fastapi.responses import FileResponse
 from generative_agents.adapters.web.routes.requests import AgentResourceCreate, AgentResourceUpdate, CrowdResourceCreate, CrowdResourceUpdate, DocumentResourceCreate, DocumentResourceUpdate, SecretCreate
 
@@ -37,23 +37,28 @@ def install_routes(router, ctx):
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     @router.get('/resources/assets/{asset_id}/content')
-    def public_asset_content(asset_id: str, request: Request):
+    def public_asset_content(asset_id: str, request: Request, width: int | None=Query(default=None)):
         try:
-            metadata = ctx.asset_service.get(asset_id)
-            etag = f'''"{metadata['sha256']}"'''
-            if etag in request.headers.get('if-none-match', '').split(', '):
-                return Response(status_code=304, headers={'ETag': etag})
+            metadata = ctx.asset_service.content_metadata(asset_id)
+            if width is not None and width not in {96, 192, 384}:
+                raise HTTPException(422, '图片预览宽度须为 96、192 或 384')
+            suffix = f'-{width}-v1' if width else ''
+            etag = f'"{metadata["sha256"]}{suffix}"'
+            headers = {'ETag': etag, 'Cache-Control': 'public, max-age=31536000, immutable',
+                       'X-Content-Type-Options': 'nosniff'}
+            candidates = {item.strip().removeprefix('W/') for item in request.headers.get('if-none-match', '').split(',')}
+            if etag in candidates or '*' in candidates:
+                return Response(status_code=304, headers=headers)
+            content = ctx.asset_service.thumbnail(metadata, width) if width else ctx.asset_service.delivery_content(metadata)
+            media_type = 'image/webp' if width else metadata['media_type']
+            if isinstance(content, bytes):
+                return Response(content=content, media_type=media_type, headers=headers)
+            return FileResponse(content, media_type=media_type, headers=headers,
+                                content_disposition_type='inline')
+        except HTTPException:
+            raise
         except Exception as exc:
-            raise HTTPException(status_code=404, detail='Asset is not available') from exc
-        try:
-            asset, content = ctx.asset_service.database_image_content(asset_id)
-            return Response(content=content, media_type=asset.media_type, headers={'ETag': f'"{asset.sha256}"', 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff'})
-        except Exception:
-            try:
-                asset, path = ctx.asset_service.content(asset_id)
-                return FileResponse(path, media_type=asset.media_type, filename=asset.logical_name, content_disposition_type='inline', headers={'ETag': f'"{asset.sha256}"', 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff'})
-            except Exception as exc:
-                raise HTTPException(status_code=404, detail=str(exc)) from exc
+            raise HTTPException(getattr(exc, 'status_code', 404), str(exc)) from exc
 
     @router.post('/secrets', status_code=201)
     def create_secret(body: SecretCreate):
@@ -70,8 +75,10 @@ def install_routes(router, ctx):
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @router.get('/resources/agents')
-    def list_agents(include_archived: bool=False):
-        return {'items': ctx.resources.list_agents(include_archived=include_archived)}
+    def list_agents(include_archived: bool=False, q: str=Query(default='', max_length=200),
+                      page: int=Query(default=1, ge=1), page_size: int=Query(default=20, ge=1, le=100)):
+        return ctx.resources.list_summaries('agent', include_archived=include_archived,
+                                            query=q, page=page, page_size=page_size)
 
     @router.post('/resources/agents', status_code=201)
     def create_agent(body: AgentResourceCreate):
@@ -91,8 +98,10 @@ def install_routes(router, ctx):
         return Response(status_code=204)
 
     @router.get('/resources/crowds')
-    def list_crowds(include_archived: bool=False):
-        return {'items': ctx.resources.list_crowds(include_archived=include_archived)}
+    def list_crowds(include_archived: bool=False, q: str=Query(default='', max_length=200),
+                      page: int=Query(default=1, ge=1), page_size: int=Query(default=20, ge=1, le=100)):
+        return ctx.resources.list_summaries('crowd', include_archived=include_archived,
+                                            query=q, page=page, page_size=page_size)
 
     @router.get('/resources/crowds/{crowd_id}')
     def get_crowd(crowd_id: str):
@@ -112,8 +121,10 @@ def install_routes(router, ctx):
         return Response(status_code=204)
 
     @router.get('/resources/model-presets')
-    def list_model_presets(include_archived: bool=False):
-        return {'items': ctx.resources.list_model_presets(include_archived=include_archived)}
+    def list_model_presets(include_archived: bool=False, q: str=Query(default='', max_length=200),
+                      page: int=Query(default=1, ge=1), page_size: int=Query(default=20, ge=1, le=100)):
+        return ctx.resources.list_summaries('model', include_archived=include_archived,
+                                            query=q, page=page, page_size=page_size)
 
     @router.get('/resources/model-presets/{preset_id}')
     def get_model_preset(preset_id: str):
@@ -133,8 +144,10 @@ def install_routes(router, ctx):
         return Response(status_code=204)
 
     @router.get('/resources/evaluators')
-    def list_evaluators(include_archived: bool=False):
-        return {'items': ctx.resources.list_evaluators(include_archived=include_archived)}
+    def list_evaluators(include_archived: bool=False, q: str=Query(default='', max_length=200),
+                      page: int=Query(default=1, ge=1), page_size: int=Query(default=20, ge=1, le=100)):
+        return ctx.resources.list_summaries('evaluator', include_archived=include_archived,
+                                            query=q, page=page, page_size=page_size)
 
     @router.get('/resources/evaluators/{evaluator_id}')
     def get_evaluator(evaluator_id: str):

@@ -1,6 +1,7 @@
 """Database-free universal protocols for experiments and Runs."""
 
 from generative_agents.ga_protocol.packages.constants import EXPERIMENT_ARCHIVE_SUFFIX
+from generative_agents.ga_protocol.packages.constants import CONFIG_ARCHIVE_SUFFIX
 from generative_agents.ga_protocol.packages.constants import EXPERIMENT_MANIFEST
 from generative_agents.ga_protocol.packages.constants import INTEGRITY_MANIFEST
 from generative_agents.ga_protocol.packages.constants import RUN_ARCHIVE_SUFFIX
@@ -24,6 +25,7 @@ from generative_agents.ga_protocol.schemas.manifests import EmbeddedExperiment
 from generative_agents.ga_protocol.schemas.manifests import ExperimentEntrypoints
 from generative_agents.ga_protocol.schemas.manifests import ExperimentIdentity
 from generative_agents.ga_protocol.schemas.manifests import ExperimentManifest
+from generative_agents.ga_protocol.schemas.manifests import ConfigManifest
 from generative_agents.ga_protocol.schemas.manifests import RunLineage
 from generative_agents.ga_protocol.schemas.manifests import RunManifest
 from generative_agents.ga_protocol.schemas.manifests import RunState
@@ -35,10 +37,14 @@ from generative_agents.ga_protocol.packages.validation import validate_experimen
 from generative_agents.ga_protocol.packages.validation import validate_experiment_integrity
 from generative_agents.ga_protocol.packages.validation import validate_run_directory
 from generative_agents.ga_protocol.packages.validation import validate_run_integrity
+from generative_agents.ga_protocol.packages.resources import ResourceRef, ResourceRecord, ResourceSet
+from generative_agents.ga_protocol.packages.resources import read_resource_set, select_resources, write_config_package
 
 __all__ = [
     "AttemptRecord",
     "AttemptState",
+    "CONFIG_ARCHIVE_SUFFIX",
+    "ConfigManifest",
     "EmbeddedExperiment",
     "EXPERIMENT_ARCHIVE_SUFFIX",
     "EXPERIMENT_MANIFEST",
@@ -54,6 +60,9 @@ __all__ = [
     "RunManifest",
     "RunState",
     "RunStatus",
+    "ResourceRef",
+    "ResourceRecord",
+    "ResourceSet",
     "SkillPackageEntry",
     "SkillPackageRegistry",
     "atomic_write_bytes",
@@ -63,6 +72,9 @@ __all__ = [
     "extract_archive",
     "open_package",
     "read_json",
+    "read_resource_set",
+    "select_resources",
+    "write_config_package",
     "seal_directory",
     "sha256_file",
     "validate_experiment_directory",

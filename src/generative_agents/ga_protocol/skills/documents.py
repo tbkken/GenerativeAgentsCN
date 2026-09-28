@@ -268,7 +268,7 @@ class SkillRegistry:
         """
         return self._parse(path.read_text(encoding="utf-8-sig"), path, kind)
 
-    def _parse(self, markdown: str, path: Path, kind: SkillKind) -> SkillDocument:
+    def _parse(self, markdown: str, path: Path, kind: SkillKind, *, file_contents: Mapping[str, bytes] | None = None) -> SkillDocument:
         """执行`parse`的内部处理，供当前模块或类复用。
 
         参数:
@@ -328,7 +328,7 @@ class SkillRegistry:
             )
         )
         scripts_root = path.parent / "scripts"
-        scripts = (
+        scripts = (tuple(sorted(name for name in file_contents if name.startswith("scripts/"))) if file_contents is not None else (
             tuple(
                 item.relative_to(path.parent).as_posix()
                 for item in sorted(scripts_root.rglob("*"))
@@ -338,15 +338,15 @@ class SkillRegistry:
             )
             if scripts_root.exists()
             else ()
-        )
+        ))
         digest_builder = hashlib.sha256(markdown.encode("utf-8"))
         for relative_path in scripts:
             digest_builder.update(b"\x00")
             digest_builder.update(relative_path.encode("utf-8"))
             digest_builder.update(b"\x00")
-            digest_builder.update((path.parent / relative_path).read_bytes())
+            digest_builder.update(file_contents[relative_path] if file_contents is not None else (path.parent / relative_path).read_bytes())
         digest = digest_builder.hexdigest()
-        updated = datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat()
+        updated = "" if file_contents is not None else datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat()
         return SkillDocument(
             name=name,
             description=description,
@@ -450,7 +450,20 @@ class SnapshotSkillRegistry:
                         f"Skill snapshot script escaped Skill root: {raw_relative}"
                     ) from exc
                 target.parent.mkdir(parents=True, exist_ok=True)
-                self._write_exact(target, str(raw_source))
+                if str(raw_relative) not in (snapshot.get("files") or {}):
+                    self._write_exact(target, str(raw_source))
+            for raw_relative, content in sorted((snapshot.get("files") or {}).items()):
+                from generative_agents.ga_protocol.schemas.manifests import validate_package_path
+                relative = validate_package_path(str(raw_relative))
+                target = skill_root / relative
+                target.resolve().relative_to(skill_root.resolve())
+                if not isinstance(content, bytes):
+                    raise SkillRegistryError(f"Skill attachment must contain bytes: {relative}")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if target.exists() and target.read_bytes() != content:
+                    raise SkillRegistryError(f"Skill attachment conflicts with its exact snapshot: {relative}")
+                if not target.exists():
+                    target.write_bytes(content)
 
     @staticmethod
     def _write_exact(path: Path, content: str) -> None:

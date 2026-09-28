@@ -1,0 +1,164 @@
+{
+  "rows": [
+    {
+      "section": "3.1",
+      "file": "01-case-and-boundaries.md",
+      "figures": 2,
+      "before_han": 2331,
+      "after_han": 2433,
+      "delta": 102,
+      "reflowed": 9
+    },
+    {
+      "section": "3.2",
+      "file": "02-studio-and-resources.md",
+      "figures": 2,
+      "before_han": 2173,
+      "after_han": 2225,
+      "delta": 52,
+      "reflowed": 12
+    },
+    {
+      "section": "3.3",
+      "file": "03-map-and-space.md",
+      "figures": 3,
+      "before_han": 2109,
+      "after_han": 2232,
+      "delta": 123,
+      "reflowed": 12
+    },
+    {
+      "section": "3.4",
+      "file": "04-brain-and-skills.md",
+      "figures": 2,
+      "before_han": 2170,
+      "after_han": 2240,
+      "delta": 70,
+      "reflowed": 13
+    },
+    {
+      "section": "3.5",
+      "file": "05-perception-navigation-actions.md",
+      "figures": 3,
+      "before_han": 2115,
+      "after_han": 2255,
+      "delta": 140,
+      "reflowed": 13
+    },
+    {
+      "section": "3.6",
+      "file": "06-memory-and-progress.md",
+      "figures": 2,
+      "before_han": 2161,
+      "after_han": 2263,
+      "delta": 102,
+      "reflowed": 11
+    },
+    {
+      "section": "3.7",
+      "file": "07-conversation-and-objects.md",
+      "figures": 3,
+      "before_han": 2244,
+      "after_han": 2382,
+      "delta": 138,
+      "reflowed": 14
+    },
+    {
+      "section": "3.8",
+      "file": "08-experiment-lifecycle.md",
+      "figures": 2,
+      "before_han": 2452,
+      "after_han": 2488,
+      "delta": 36,
+      "reflowed": 18
+    },
+    {
+      "section": "3.9",
+      "file": "09-running-and-cost.md",
+      "figures": 2,
+      "before_han": 2030,
+      "after_han": 2112,
+      "delta": 82,
+      "reflowed": 11
+    },
+    {
+      "section": "3.10",
+      "file": "10-pause-resume-rerun.md",
+      "figures": 3,
+      "before_han": 1958,
+      "after_han": 2056,
+      "delta": 98,
+      "reflowed": 9
+    },
+    {
+      "section": "3.11",
+      "file": "11-replay-and-diagnosis.md",
+      "figures": 3,
+      "before_han": 2104,
+      "after_han": 2199,
+      "delta": 95,
+      "reflowed": 7
+    },
+    {
+      "section": "3.12",
+      "file": "12-quality-and-evaluation.md",
+      "figures": 2,
+      "before_han": 2352,
+      "after_han": 2414,
+      "delta": 62,
+      "reflowed": 8
+    },
+    {
+      "section": "3.13",
+      "file": "13-packages-and-reproduction.md",
+      "figures": 2,
+      "before_han": 2053,
+      "after_han": 2128,
+      "delta": 75,
+      "reflowed": 6
+    },
+    {
+      "section": "3.14",
+      "file": "14-architecture-and-delivery.md",
+      "figures": 3,
+      "before_han": 2443,
+      "after_han": 2529,
+      "delta": 86,
+      "reflowed": 9
+    }
+  ],
+  "reflowed_paragraphs": {
+    "01-case-and-boundaries.md": 9,
+    "02-studio-and-resources.md": 12,
+    "03-map-and-space.md": 12,
+    "04-brain-and-skills.md": 13,
+    "05-perception-navigation-actions.md": 13,
+    "06-memory-and-progress.md": 11,
+    "07-conversation-and-objects.md": 14,
+    "08-experiment-lifecycle.md": 18,
+    "09-running-and-cost.md": 11,
+    "10-pause-resume-rerun.md": 9,
+    "11-replay-and-diagnosis.md": 7,
+    "12-quality-and-evaluation.md": 8,
+    "13-packages-and-reproduction.md": 6,
+    "14-architecture-and-delivery.md": 9
+  },
+  "case_files_unchanged": 41,
+  "errors": [],
+  "body_diagrams": 34,
+  "new_diagrams": 32,
+  "review_contact_sheets": 6,
+  "individually_reviewed": [
+    "01-observation-window",
+    "03-semantic-map",
+    "03-map-layers",
+    "05-perception-limits",
+    "05-action-ownership",
+    "07-object-sequence",
+    "10-recovery-boundary",
+    "10-cancel-request-versus-stop",
+    "11-commit-chain",
+    "package-flow",
+    "step-and-feedback"
+  ]
+}

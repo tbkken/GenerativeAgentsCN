@@ -31,7 +31,7 @@ test('history response cannot switch back to an older selection or undo a newer 
   const nodes = {};
   const context = {
     state: {selectedExperimentId: 'experiment', selectedRunId: 'old', workspacePage: 'results', runHistoryGeneration: 0},
-    $: id => nodes[id] ||= {}, escapeHtml: String, statusLabels: {RUNNING: '运行中', PAUSED: '已暂停'},
+    $: id => nodes[id] ||= {querySelectorAll:()=>[]}, escapeHtml: String, statusLabels: {RUNNING: '运行中', PAUSED: '已暂停'},
     api: async () => new Promise(resolve => finish = resolve),
   };
   vm.createContext(context);

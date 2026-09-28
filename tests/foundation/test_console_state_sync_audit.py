@@ -19,7 +19,7 @@ const fs = require('fs');
 const source = fs.readFileSync(process.argv[1], 'utf8');
 const cut = (start, end) => source.slice(source.indexOf(start), source.indexOf(end, source.indexOf(start)));
 const production = [
-  cut('function refreshResultData(', 'function renderRunQuality('),
+  cut('function refreshResultData(', 'function resultPageControls('),
   cut('function applyRunActivity(activity)', 'function scheduleGlobalReconcile('),
 ].join('\n');
 
@@ -32,7 +32,7 @@ global.history = {replaceState(){}};
 global.document = {querySelector(){return null}};
 const state = {
   resultGeneration: 4, resultRequestGeneration: 0, selectedRunId: 'run-1',
-  selectedExperimentId: 'exp-1', workspacePage: 'results', currentRun: null,
+  selectedExperimentId: 'exp-1', workspacePage: 'results', resultTab:'artifacts', currentRun: null,
   operationsRunId: 'run-1', replayPlayer: null, replayRunId: null,
   runHistory: [{run_id:'run-1',status:'COMPLETED',completed_steps:10}],
 };
@@ -40,6 +40,7 @@ const statusLabels = {RUNNING:'运行中',COMPLETED:'已完成',FAILED:'失败'}
 const formatTime = value => value || '—';
 const formatDuration = () => '1m';
 const startResultDurationTimer = run => { $('duration').textContent = run.status; };
+const resultPageControls = () => {};
 const renderTimeline = () => {};
 const renderAgents = () => {};
 const renderConversations = () => {};
@@ -125,6 +126,6 @@ def test_result_actions_capture_run_ownership_before_network_wait():
     assert "const experimentId = state.selectedExperimentId;" in source
     assert "runId === state.selectedRunId" in source
     assert "experimentId === state.selectedExperimentId" in source
-    assert "requestGeneration !== state.resultRequestGeneration" in source
+    assert "requestGeneration === state.resultRequestGeneration" in source
     assert "factsGeneration !== state.operationFactsGeneration" in source
     assert "Persisted events are invalidation signals" in source

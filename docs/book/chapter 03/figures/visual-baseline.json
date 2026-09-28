@@ -1,0 +1,103 @@
+{
+  "before": {
+    "01-case-and-boundaries.md": {
+      "han": 2331,
+      "bytes": 8633
+    },
+    "02-studio-and-resources.md": {
+      "han": 2173,
+      "bytes": 8761
+    },
+    "03-map-and-space.md": {
+      "han": 2109,
+      "bytes": 8772
+    },
+    "04-brain-and-skills.md": {
+      "han": 2170,
+      "bytes": 8878
+    },
+    "05-perception-navigation-actions.md": {
+      "han": 2115,
+      "bytes": 8635
+    },
+    "06-memory-and-progress.md": {
+      "han": 2161,
+      "bytes": 8553
+    },
+    "07-conversation-and-objects.md": {
+      "han": 2244,
+      "bytes": 9178
+    },
+    "08-experiment-lifecycle.md": {
+      "han": 2452,
+      "bytes": 9396
+    },
+    "09-running-and-cost.md": {
+      "han": 2030,
+      "bytes": 8389
+    },
+    "10-pause-resume-rerun.md": {
+      "han": 1958,
+      "bytes": 8153
+    },
+    "11-replay-and-diagnosis.md": {
+      "han": 2104,
+      "bytes": 8286
+    },
+    "12-quality-and-evaluation.md": {
+      "han": 2352,
+      "bytes": 8944
+    },
+    "13-packages-and-reproduction.md": {
+      "han": 2053,
+      "bytes": 8893
+    },
+    "14-architecture-and-delivery.md": {
+      "han": 2443,
+      "bytes": 9341
+    }
+  },
+  "case_sha256": {
+    "case\\README.md": "b3935acbf28dbb56a0c2741f10348753d5381a70f6adc97d539209eb1ccb9dad",
+    "case\\render_assets.py": "96d2abd96897a5b18dedd73a2b8ca99d6f4671a738fe19de6521765861d7d753",
+    "case\\agents\\README.md": "448448f5a02db1b4b18710d83a7c3eea90721b3236402d797b11a6a80c36e99e",
+    "case\\map\\design.json": "c5f887b0cbb22d28dbb16088ead4d58abf5c90324df34f4f305e50ea91be983b",
+    "case\\map\\README.md": "6d92392cc78fb4e2ee229afe2eadc6508132712bb0adcc4117667e410244c04e",
+    "case\\settings\\README.md": "9792bb7b5b8972775d444e8e4a6a9dff62dfb2650abd76fcbaf590a734d1a577",
+    "case\\skill\\README.md": "3eba7a219921150b9b2058c705382b4eacc425bed482a35072d3aeb1de1f0f38",
+    "case\\verification\\checklist.md": "c60b42b5b6e0c82994fbb98d56b7a5f95ff1fad635a30d0382290e538d5d2992",
+    "case\\verification\\metrics.md": "b308d90e623d5e81536366d5426010c3533c1f3c43c56b7ea69d782e05a3e800",
+    "case\\verification\\run-record-template.md": "e3041318a70e11b283536fc860c9dd6144fe3c74b22a6aed80d28b9ab2dc6526",
+    "case\\skill\\brains\\qinghe-open-day-brain\\SKILL.md": "8a3fbe2b5ba9219c548bcc647365780385f4b08c10d25e2eab127d3f0fad10e4",
+    "case\\skill\\atomic\\qinghe-compare-options\\SKILL.md": "956d6907f969432e7bb4464838737c7c753941af8bdd63ace891888d97b14e06",
+    "case\\skill\\atomic\\qinghe-helpdesk\\SKILL.md": "5341ccf8988c2c342aa308c98495cd3b5305dcb36078eb135060b1521694211d",
+    "case\\skill\\atomic\\qinghe-memory-review\\SKILL.md": "132bd3c2a6e6a11e7ae750a1cabf97a0585cea9e85052253af87a86f4a9e1d85",
+    "case\\skill\\atomic\\qinghe-notice-board\\SKILL.md": "8d25fc6b7d55bf2f2f8b7d83254e5962ddc0b834a298a9a8ef6cc2399a441c82",
+    "case\\map\\assets\\board-original.png": "5955cb9e2c0695f4125dacefa111e9e543081be6cd012feeeb9efac5b9385326",
+    "case\\map\\assets\\board-original.svg": "2961d916246e6f234edf7dc9e4c7d97ee934ccbdcd72454174eafaef931e7f64",
+    "case\\map\\assets\\board-revised.png": "143320b672b0cef7efa9378b4667ec0e8ca4b86efac279c407a347927864c8e3",
+    "case\\map\\assets\\board-revised.svg": "937f6fdab875dab597f39943d89db7bed335731d5072e5bfa6539d68cea510aa",
+    "case\\map\\assets\\learning-center-background.png": "7d479833a7cf649da1446f4357f96bbdaf35168f2f2a9e2d9b8c62c8a5b73e95",
+    "case\\map\\assets\\learning-center-background.svg": "2fed72a95a4e36942c58c8beb2bd926b9b6bb8f76778f9b3f9ce4c4e6e2d831a",
+    "case\\agents\\chen-chen\\portrait.png": "8bb7e0752852f18ecbd9bc0b283b38aac1a2c7dc908fafd26ca761bd2b48b6da",
+    "case\\agents\\chen-chen\\portrait.svg": "60232010f47f5135150b9787fa34e8704634c8fb50b07a356846fa8f0ab9c3fe",
+    "case\\agents\\chen-chen\\README.md": "c5656e17011e87304026d4b526b13ee9ecbb45d904641f07934757c79400c802",
+    "case\\agents\\chen-chen\\sprite-4x4.png": "b1275209e033a5a32cb0d922807bc633bf3137aa0e284d7023c22c4b8960e590",
+    "case\\agents\\chen-chen\\sprite-4x4.svg": "82d7db674dc3f84cf27211f02d0a7cc68c570104259c8bb1e284e249b56f4b02",
+    "case\\agents\\lin-lan\\portrait.png": "5dd45efdc8c3bb9eb6e7e10646ad80b032b0e434b58275c00f4bd678449faeac",
+    "case\\agents\\lin-lan\\portrait.svg": "7fb7a82d139849220d1099521dfd8b5b641bd05539091ed7e09b2d5ff7f6e848",
+    "case\\agents\\lin-lan\\README.md": "cde3171d3dd08884f1132cd10fd8a16c826069b31b1cf91fb2180308227a1ed2",
+    "case\\agents\\lin-lan\\sprite-4x4.png": "649da1e9833019e2db3cf4338563d75aee55b02a11a0271b653606a9da41f19c",
+    "case\\agents\\lin-lan\\sprite-4x4.svg": "538dd2bc97b72d3497b34f4c87262153e4e86be06bc07489b5709c79875fb03b",
+    "case\\agents\\xu-an\\portrait.png": "223fd73879762b59f2656240f395d703b132aaaa8cb9d363a82636f214eeab2c",
+    "case\\agents\\xu-an\\portrait.svg": "32ae76f0c3647de81952756ece2b106f645c3082446c3ffa9baa3c41868176f4",
+    "case\\agents\\xu-an\\README.md": "11713ee6ea88eb92d4118f491abee740bbf2db3aa288519b6983d85899608342",
+    "case\\agents\\xu-an\\sprite-4x4.png": "79409ec0b4e8ab76280b6fa0c57c92e4e66b20f10b08caa2d867b39ff1148542",
+    "case\\agents\\xu-an\\sprite-4x4.svg": "34bb192e8c4c81209de30f1768bc00765681f8f45462e43bc2f2751d4df5dee2",
+    "case\\agents\\zhou-ning\\portrait.png": "c381ed8233524a4843c26e358ef74175a4e0fa3b4ba54c15635412062bf97f9a",
+    "case\\agents\\zhou-ning\\portrait.svg": "a657371e78986fd3346fd5414ff07b95223b769e361bc087d74063023a3a41ba",
+    "case\\agents\\zhou-ning\\README.md": "f4f4cb390f14e9935a559fd96998e4a96aab7529d25b619380c152715d52c0b9",
+    "case\\agents\\zhou-ning\\sprite-4x4.png": "c09ab60cceea87f034a5cfadc29ec42aa76819d89c33ecabad500a9dd8f1d983",
+    "case\\agents\\zhou-ning\\sprite-4x4.svg": "a8ea0fc771a553a7feb332a69c373a4995db0f172c2f860dd83a9e2295f1bee4"
+  }
+}

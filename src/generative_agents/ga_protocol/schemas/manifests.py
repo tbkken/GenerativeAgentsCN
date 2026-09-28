@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
-from pathlib import PurePosixPath
+from pathlib import PurePosixPath, PureWindowsPath
 from typing import Annotated, Literal
 from uuid import UUID
 
@@ -30,8 +30,13 @@ def validate_package_path(value: str) -> str:
 
     normalized = value.replace("\\", "/")
     path = PurePosixPath(normalized)
-    if path.is_absolute() or not path.parts or any(part in {"", ".", ".."} for part in path.parts):
+    if (path.is_absolute() or PureWindowsPath(normalized).drive or not path.parts
+            or any(part in {"", ".", ".."} for part in normalized.split("/"))
+            or any(":" in part for part in path.parts)):
         raise ValueError("package path must be a safe relative POSIX path")
+    reserved = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+    if any(part.rstrip(" .") != part or part.split(".", 1)[0].upper() in reserved for part in path.parts):
+        raise ValueError("package path is not portable to Windows")
     return path.as_posix()
 
 
@@ -52,24 +57,18 @@ class ExperimentIdentity(ProtocolModel):
 
 
 class ExperimentEntrypoints(ProtocolModel):
-    world: SafePath
-    semantic_index: SafePath
-    agents: SafePath
-    skills: SafePath
-    models: SafePath
-    simulation: SafePath
-    engine: SafePath
-    evaluation: SafePath | None = None
+    resources: SafePath = "resources/index.json"
+    assembly: SafePath = "runtime/assembly.json"
 
     _safe_paths = field_validator(
-        "world", "semantic_index", "agents", "skills", "models", "simulation", "engine", "evaluation"
+        "resources", "assembly"
     )(lambda value: validate_package_path(value) if value is not None else None)
 
 
 class ExperimentManifest(ProtocolModel):
-    protocol: Literal["ga-experiment"] = EXPERIMENT_PROTOCOL
-    schema_version: Literal[1] = PROTOCOL_VERSION
-    package_kind: Literal["experiment"] = "experiment"
+    protocol: Literal["ga-package"] = EXPERIMENT_PROTOCOL
+    schema_version: Literal[2] = PROTOCOL_VERSION
+    package_kind: Literal["exp"] = "exp"
     experiment: ExperimentIdentity
     created_at: datetime
     entrypoints: ExperimentEntrypoints
@@ -81,6 +80,26 @@ class ExperimentManifest(ProtocolModel):
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("created_at must contain a UTC offset")
         return value
+
+
+class ConfigEntrypoints(ProtocolModel):
+    resources: SafePath = "resources/index.json"
+
+    _safe_path = field_validator("resources")(validate_package_path)
+
+
+class ConfigManifest(ProtocolModel):
+    protocol: Literal["ga-package"] = EXPERIMENT_PROTOCOL
+    schema_version: Literal[2] = PROTOCOL_VERSION
+    package_kind: Literal["config"] = "config"
+    config_id: str
+    name: str = "Configuration"
+    created_at: datetime
+    entrypoints: ConfigEntrypoints = Field(default_factory=ConfigEntrypoints)
+    metadata: dict = Field(default_factory=dict)
+
+    _canonical_id = field_validator("config_id")(validate_uuid)
+    _aware_time = field_validator("created_at")(ExperimentManifest.require_aware_created_at)
 
 
 class SkillPackageEntry(ProtocolModel):
@@ -95,7 +114,9 @@ class SkillPackageEntry(ProtocolModel):
 
 
 class SkillPackageRegistry(ProtocolModel):
-    schema_version: Literal[1] = 1
+    """An assembled execution view; never persisted beside ResourceSet."""
+
+    schema_version: Literal[2] = 2
     brain_skill: str
     object_roots: list[str] = Field(default_factory=list)
     skills: list[SkillPackageEntry]
@@ -120,8 +141,8 @@ class EmbeddedExperiment(ProtocolModel):
 
 
 class RunManifest(ProtocolModel):
-    protocol: Literal["ga-run"] = RUN_PROTOCOL
-    schema_version: Literal[1] = PROTOCOL_VERSION
+    protocol: Literal["ga-package"] = RUN_PROTOCOL
+    schema_version: Literal[2] = PROTOCOL_VERSION
     package_kind: Literal["run"] = "run"
     run_id: str
     created_at: datetime

@@ -81,6 +81,21 @@ class StudioSkill(Base):
     )
 
 
+class StudioResourceExchangeState(Base):
+    """Author-owned pending bindings and private files received with a resource.
+
+    This is author content, not a Runtime lookup or an experiment relationship.
+    A null target ID explicitly means that the user has not bound a dependency.
+    """
+
+    __tablename__ = "studio_resource_exchange_state"
+
+    resource_kind: Mapped[str] = mapped_column(String(24), primary_key=True)
+    resource_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    dependencies_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+    extra_files_json: Mapped[dict[str, str]] = mapped_column(JSON, nullable=False, default=dict)
+
+
 class StudioAgent(Base):
     """Mutable map-independent Agent author resource.
 

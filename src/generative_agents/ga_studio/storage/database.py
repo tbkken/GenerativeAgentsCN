@@ -131,3 +131,12 @@ def upgrade_database(database_url: str, revision: str = "head") -> None:
     config.set_main_option("script_location", str(package_root / "migrations"))
     config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
     command.upgrade(config, revision)
+    if revision == "head":
+        # A new author-only table is additive even when Alembic is already at
+        # the clean baseline. Do not rebuild existing public resources for it.
+        from generative_agents.ga_studio.storage.models import StudioResourceExchangeState
+        engine = create_engine(database_url)
+        try:
+            StudioResourceExchangeState.__table__.create(engine, checkfirst=True)
+        finally:
+            engine.dispose()

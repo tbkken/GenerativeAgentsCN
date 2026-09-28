@@ -2,6 +2,7 @@ import json
 import zipfile
 
 from generative_agents.ga_protocol.packages.io import seal_directory
+from generative_agents.ga_protocol.packages.definition import _experiment_definition
 from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
 from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder
 from generative_agents.ga_studio.experiments.builder import SkillSource
@@ -26,7 +27,7 @@ def test_sealed_experiment_physically_owns_collision_and_covers_it_in_integrity(
     definition['world']['definition']['editor_v2']['navigation']['overrides'] = {'17': True}
     sealed = seal_directory(packages[1], tmp_path / 'campus.gaexp')
     with zipfile.ZipFile(sealed) as bundle:
-        world = json.loads(bundle.read('world/world.json'))
+        world = _experiment_definition(sealed)[1]['world']
         assert not next(t for t in world['definition']['tiles'] if t['coord'] == [3, 2])['collision']
         assert world['definition']['editor_v2']['navigation']['overrides']['17'] is False
     hashes = [json.loads((p / 'integrity/sha256.json').read_text(encoding='utf-8')) for p in packages]

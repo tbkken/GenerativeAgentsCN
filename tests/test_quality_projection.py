@@ -10,6 +10,7 @@ import pytest
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.facts.quality import deterministic_quality_issues
 from generative_agents.ga_protocol.facts.quality import project_run_quality
+from tests.committed_frames import write_frame
 
 
 def _call(tool="world-navigate", *, error=True, output="blocked", request="{}"):
@@ -36,7 +37,7 @@ def _frame(root: Path, step: int, effects: list, *, attempt="attempt-a", run="ru
     path = root / "frames" / f"step-{step:06d}.json.gz"
     path.parent.mkdir(parents=True, exist_ok=True)
     result = {"run_id": run, "attempt_id": attempt, "step_no": step, "effects": effects}
-    path.write_bytes(gzip.compress(json.dumps({"schema_version": 1, "result": result}).encode(), mtime=0))
+    write_frame(root, result)
     return path
 
 

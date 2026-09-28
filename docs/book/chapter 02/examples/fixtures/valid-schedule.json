@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-17",
+  "timezone": "Asia/Shanghai",
+  "activities": [
+    {"activity_id": "reading_share", "room_id": "reading", "start": "2026-10-17T09:00:00+08:00", "end": "2026-10-17T10:00:00+08:00", "participants": 24},
+    {"activity_id": "craft_workshop", "room_id": "craft", "start": "2026-10-17T10:30:00+08:00", "end": "2026-10-17T11:30:00+08:00", "participants": 10},
+    {"activity_id": "exchange", "room_id": "discussion", "start": "2026-10-17T09:00:00+08:00", "end": "2026-10-17T09:45:00+08:00", "participants": 16}
+  ]
+}

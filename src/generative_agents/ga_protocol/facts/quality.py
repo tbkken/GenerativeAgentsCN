@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import copy
-import gzip
 import hashlib
 import json
 from collections.abc import Iterable, Mapping
@@ -11,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from generative_agents.ga_protocol.packages.io import PackageError
-from generative_agents.ga_protocol.packages.io import open_shared_reader
+from generative_agents.ga_protocol.facts.commits import read_committed_frame
 
 
 QUALITY_PROJECTION_VERSION = 2
@@ -148,19 +147,10 @@ def deterministic_quality_issues(records: Iterable[Mapping[str, Any]]) -> list[d
 
 
 def _read_frame(root: Path, run_id: str, step_no: int) -> dict[str, Any]:
-    path = root / "frames" / f"step-{step_no:06d}.json.gz"
     try:
-        with open_shared_reader(path) as handle:
-            document = json.loads(gzip.decompress(handle.read()).decode("utf-8"))
+        result = read_committed_frame(root, run_id, step_no)
     except (OSError, UnicodeError, ValueError, EOFError) as exc:
         raise PackageError(f"cannot read committed quality frame at Step {step_no}") from exc
-    if not isinstance(document, dict) or document.get("schema_version") != 1:
-        raise PackageError(f"unsupported quality frame schema at Step {step_no}")
-    result = document.get("result")
-    if not isinstance(result, dict):
-        raise PackageError(f"missing StepResult at Step {step_no}")
-    if result.get("run_id") != run_id or result.get("step_no") != step_no:
-        raise PackageError(f"quality frame identity mismatch at Step {step_no}")
     if not isinstance(result.get("attempt_id"), str) or not result["attempt_id"]:
         raise PackageError(f"quality frame has no Attempt identity at Step {step_no}")
     if not isinstance(result.get("effects"), list):
@@ -168,10 +158,10 @@ def _read_frame(root: Path, run_id: str, step_no: int) -> dict[str, Any]:
     return result
 
 
-def _audit_records(root: Path, run_id: str, committed_step: int) -> list[dict[str, Any]]:
+def read_quality_records(root: Path, run_id: str, committed_step: int, *, start_step: int = 1) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     seen_effects: dict[tuple[str, str, int, str], str] = {}
-    for step_no in range(1, committed_step + 1):
+    for step_no in range(max(1, start_step), committed_step + 1):
         result = _read_frame(root, run_id, step_no)
         for effect in result["effects"]:
             if not isinstance(effect, dict):
@@ -271,13 +261,14 @@ def project_run_quality(
     brain_skill: str,
     evaluated_at: str,
     previous_report: dict | None = None,
+    audit_records: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Return a stable full-Run report without writing files or invoking models."""
     if not isinstance(run_id, str) or not run_id:
         raise PackageError("quality projection requires a Run identity")
     if type(committed_step) is not int or committed_step < 0:
         raise PackageError("quality projection requires a nonnegative committed Step")
-    records = _audit_records(Path(run_root), run_id, committed_step)
+    records = read_quality_records(Path(run_root), run_id, committed_step) if audit_records is None else audit_records
     evaluator, evaluator_issues = _previous_evaluator(previous_report)
     issues = [*deterministic_quality_issues(records), *evaluator_issues]
     evaluated = {(run_id, item["step_no"], item["agent_key"]) for item in records if not item.get("object_key")}

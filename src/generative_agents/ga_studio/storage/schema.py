@@ -28,6 +28,7 @@ from generative_agents.ga_studio.storage.models import StudioEvaluator
 from generative_agents.ga_studio.storage.models import StudioModelPreset
 from generative_agents.ga_studio.storage.models import StudioPackageCatalog
 from generative_agents.ga_studio.storage.models import StudioSkill
+from generative_agents.ga_studio.storage.models import StudioResourceExchangeState
 from generative_agents.ga_studio.storage.models import WorldMap
 
 
@@ -38,6 +39,7 @@ STUDIO_TABLE_NAMES = frozenset(
     for model in (
         SeedResourceTombstone,
         StudioSkill,
+        StudioResourceExchangeState,
         StudioAgent,
         StudioCrowd,
         StudioModelPreset,
@@ -53,6 +55,8 @@ _SQLITE_ALLOWED_TABLE_NAMES = STUDIO_TABLE_NAMES | {
     "alembic_version",
     "sqlite_sequence",
 }
+# Adding author exchange metadata must never replace an existing author database.
+_OPTIONAL_NEW_TABLES = {StudioResourceExchangeState.__tablename__}
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,7 +100,7 @@ def _sqlite_schema(path: Path) -> tuple[set[str], set[str]]:
 
 def _is_current_sqlite_schema(tables: set[str], versions: set[str]) -> bool:
     return (
-        STUDIO_TABLE_NAMES <= tables
+        STUDIO_TABLE_NAMES - _OPTIONAL_NEW_TABLES <= tables
         and not tables - _SQLITE_ALLOWED_TABLE_NAMES
         and versions == {BASELINE_REVISION}
     )

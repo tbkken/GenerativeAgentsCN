@@ -28,6 +28,7 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[character]));
 
+  let catalogSearchTimer;
   const experimentScope = Boolean(window.ResourceScope?.experimentId);
   async function api(path, options = {}) {
     if (experimentScope) path = path.replace('/api/studio/resources', window.ResourceScope.base);
@@ -78,24 +79,7 @@
   }
 
   async function loadCatalog() {
-    if (!experimentScope) return loadAuthorCatalog();
-    const generation = ++state.catalogGeneration;
-    let result;
-    try {
-      result = await api(`/api/studio/resources/skills?kind=${encodeURIComponent(state.kind)}&q=${encodeURIComponent(state.query)}`);
-    } catch (error) {
-      if (generation !== state.catalogGeneration) return;
-      const target = host();
-      if (target) {
-        target.innerHTML = `<div class="skill-empty resource-load-error" role="alert"><strong>Skill 列表加载失败</strong><span>${escapeHtml(error.message || '请稍后重试')}</span><button class="btn btn-sm" id="retrySkillCatalog">重新加载</button></div>`;
-        $('retrySkillCatalog')?.addEventListener('click', () => loadCatalog().catch(report));
-      }
-      throw error;
-    }
-    if (generation !== state.catalogGeneration) return;
-    state.items = result.items || [];
-    state.counts = result.counts || state.counts;
-    renderCatalog();
+    return loadAuthorCatalog();
   }
 
   async function loadAuthorCatalog() {
@@ -109,15 +93,16 @@
     target.innerHTML = `<div class="resource-catalog" data-resource-catalog><div class="resource-toolbar"><div class="search"><input class="control" id="skillSearchInput" aria-label="搜索${label}" placeholder="搜索${label}名称或说明…" value="${escapeHtml(state.query)}"></div>${isBrain?'':`<label>类型<select class="control" id="skillKindFilter"><option value="">全部类型</option><option value="atomic">单个技能</option><option value="pack">技能包</option></select></label>`}</div><div class="resource-rows" id="authorSkillRows"></div><div class="resource-list-footer" id="authorSkillFooter"></div></div>`;
     if ($('skillKindFilter')) {
       $('skillKindFilter').value = saved.kind;
-      $('skillKindFilter').onchange = event => {state.kind = event.target.value; list.remember(page, {kind: state.kind, page: 1, scroll: 0}); renderAuthorRows();};
+      $('skillKindFilter').onchange = event => {state.kind = event.target.value; list.remember(page, {kind: state.kind, page: 1, scroll: 0}); loadAuthorCatalog().catch(report);};
     }
-    $('skillSearchInput').oninput = event => {state.query = event.target.value; list.remember(page, {query: state.query, page: 1, scroll: 0}); renderAuthorRows();};
+    $('skillSearchInput').oninput = event => {state.query = event.target.value; list.remember(page, {query: state.query, page: 1, scroll: 0}); clearTimeout(catalogSearchTimer); catalogSearchTimer=setTimeout(() => loadAuthorCatalog().catch(report), 250);};
     const grid = $('authorSkillRows');
     list.loading(grid, label);
     try {
-      const result = await api('/api/studio/resources/skills');
+      const result = await api(`/api/studio/resources/skills?${new URLSearchParams({page:saved.page, page_size:5, q:saved.query, kind:isBrain ? 'brain' : (saved.kind || 'skill')})}`);
       if (generation !== state.catalogGeneration || page !== state.page) return;
-      state.items = (result.items || []).filter(item => isBrain ? item.kind === 'brain' : item.kind !== 'brain');
+      state.items = result.items || [];
+      state.catalogPage = result;
       renderAuthorRows();
       if (!new URLSearchParams(location.search).has('skill_key')) list.restore(page);
     } catch (error) {
@@ -130,8 +115,7 @@
   function renderAuthorRows() {
     const list = window.ResourceList, saved = list.read(state.page), query = saved.query.toLocaleLowerCase();
     const label = state.page === 'brains' ? '大脑' : '技能';
-    const items = list.sorted(state.items).filter(item => (!saved.kind || item.kind === saved.kind) && (!query || `${item.name} ${item.description || ''}`.toLocaleLowerCase().includes(query)));
-    const data = list.slice(items, saved.page), grid = $('authorSkillRows');
+    const data = state.catalogPage || {items:state.items, page:1, total:state.items.length}, grid = $('authorSkillRows');
     if (!grid) return;
     list.remember(state.page, {page: data.page});
     grid.innerHTML = data.items.map(item => list.row({name: titleCase(item.name), description: item.description, icon: state.page === 'brains' ? '⌬' : '◇',
@@ -141,7 +125,7 @@
     })).join('') || list.empty(label, Boolean(query || saved.kind));
     grid.querySelectorAll('[data-skill-name]').forEach(button => button.onclick = () => openSkill(button.dataset.skillName).catch(report));
     grid.querySelectorAll('[data-delete-skill]').forEach(button => button.onclick = () => deleteSkill(button.dataset.deleteSkill, button.dataset.deleteSkillLabel, button.dataset.deleteSkillKind).catch(report));
-    list.pager($('authorSkillFooter'), {...data, onPage: page => {list.remember(state.page, {page, scroll: 0}); renderAuthorRows();}});
+    list.pager($('authorSkillFooter'), {...data, onPage: page => {list.remember(state.page, {page, scroll: 0}); loadAuthorCatalog().catch(report);}});
   }
 
   function host() {
@@ -209,13 +193,10 @@
     if (!experimentScope && push) window.ResourceList.capture(state.page);
     const generation = ++state.editorGeneration;
     const requestedPage = state.page;
-    const [detail, dependencies] = await Promise.all([
-      api(`/api/studio/resources/skills/${encodeURIComponent(name)}`),
-      api(`/api/studio/resources/skills/${encodeURIComponent(name)}/dependencies`),
-    ]);
+    const detail = await api(`/api/studio/resources/skills/${encodeURIComponent(name)}`);
     if (generation !== state.editorGeneration || requestedPage !== state.page) return;
     state.current = detail;
-    state.dependencies = dependencies;
+    state.dependencies = null;
     state.activeTab = 'definition';
     state.activeFile = 'SKILL.md';
     state.run = null;
@@ -240,9 +221,18 @@
         <code>${escapeHtml(item.path)}</code>
       </nav>
       <main id="skillEditorPanel">${renderPanel()}</main>`;
-    target.querySelectorAll('[data-skill-tab]').forEach(button => button.addEventListener('click', () => {
+    target.querySelectorAll('[data-skill-tab]').forEach(button => button.addEventListener('click', async () => {
       if (state.activeTab === 'definition') captureActiveSource();
       state.activeTab = button.dataset.skillTab;
+      if (state.activeTab === 'dependencies' && !state.dependencies) {
+        const item = state.current;
+        try {
+          const dependencies = await api(`/api/studio/resources/skills/${encodeURIComponent(item.name)}/dependencies`);
+          if (state.current !== item) return;
+          state.dependencies = dependencies;
+        } catch (error) { report(error); return; }
+      }
+      if (state.activeTab === 'run') await window.WorkspaceLoader.load('models');
       renderEditor();
     }));
     bindPanel();
@@ -256,7 +246,7 @@
   }
 
   function editorRootLabel() {
-    if (state.page === 'brains') return '大脑中心';
+    if (state.page === 'brains') return '大脑列表';
     return '技能列表';
   }
 
@@ -556,6 +546,6 @@
   }
   function report(error) { toast(error?.message || String(error), true); }
 
-  window.SkillWorkspace = { activate, openSkill, showCreate, deactivateTopbar, invalidate() {state.catalogGeneration++; state.editorGeneration++; state.activationGeneration = (state.activationGeneration || 0) + 1;} };
+  window.SkillWorkspace = { activate, openSkill, showCreate, deactivateTopbar, refreshCatalog() { if (!state.current) return loadCatalog(); }, invalidate() {state.catalogGeneration++; state.editorGeneration++; state.activationGeneration = (state.activationGeneration || 0) + 1;} };
   document.addEventListener('DOMContentLoaded', mount);
 }());

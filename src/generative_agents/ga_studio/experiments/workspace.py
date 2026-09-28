@@ -42,6 +42,10 @@ from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogSer
 from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
 from generative_agents.ga_studio.resources.catalog import StudioResourceError
 from generative_agents.ga_protocol.packages.locking import package_lock
+from generative_agents.ga_protocol.packages.definition import _experiment_definition, write_experiment_definition
+from generative_agents.ga_studio.experiments.transaction import edit_experiment
+from generative_agents.ga_studio.resources.exchange import ResourceExchangeService, require_resolved_resource_dependencies, resource_extra_files
+from generative_agents.ga_protocol.schemas.resources import ResourceRef
 
 
 class WorkspaceConflictError(PackageError):
@@ -119,6 +123,7 @@ class ExperimentWorkspaceService:
         with self.database.session_factory() as session:
             public_map = session.get(WorldMap, selection.map_id)
             self._available(public_map, "Map", selection.map_id)
+            require_resolved_resource_dependencies(session, "map", public_map.id)
             world = self.map_service.materialize_validated_world(
                 session,
                 public_map.id,
@@ -132,6 +137,7 @@ class ExperimentWorkspaceService:
             crowds = []
             for crowd_id in dict.fromkeys(selection.crowd_ids):
                 crowd = session.get(StudioCrowd, crowd_id)
+                require_resolved_resource_dependencies(session, "crowd", crowd.id)
                 crowds.append({
                     "crowd_key": crowd.crowd_key, "name": crowd.name,
                     "description": crowd.description or "",
@@ -146,12 +152,23 @@ class ExperimentWorkspaceService:
             model_preset = session.get(StudioModelPreset, selection.model_preset_id)
             self._available(model_preset, "Model preset", selection.model_preset_id)
             model_config = copy.deepcopy(model_preset.config_json)
+            model_bindings = {purpose: ResourceRef(kind="model", key=model_preset.preset_key)
+                              for purpose in model_config if purpose in {"chat", "embedding"}}
             if selection.embedding_model_preset_id:
                 embedding_preset = session.get(StudioModelPreset, selection.embedding_model_preset_id)
                 self._available(embedding_preset, "Embedding model", selection.embedding_model_preset_id)
                 model_config['embedding'] = copy.deepcopy(embedding_preset.config_json.get('embedding'))
+                model_bindings['embedding'] = ResourceRef(kind="model", key=embedding_preset.preset_key)
             models = ModelsConfig.model_validate(model_config).model_dump(
                 mode="json", exclude_none=False
+            )
+            model_selections = [("model", selection.model_preset_id)]
+            if selection.embedding_model_preset_id and selection.embedding_model_preset_id != selection.model_preset_id:
+                model_selections.append(("model", selection.embedding_model_preset_id))
+            selected_resources = ResourceExchangeService(self.database, asset_store=self.asset_store).materialize_resources(
+                [("map", selection.map_id), *[("agent", key) for key in selected_agent_ids],
+                 *[("crowd", key) for key in selection.crowd_ids], *model_selections],
+                include_dependencies=False,
             )
             evaluators = []
             for evaluator_id in selection.evaluator_ids:
@@ -212,6 +229,8 @@ class ExperimentWorkspaceService:
                 asset_sources={**world_assets, **agent_assets},
                 experiment_id=experiment_id,
                 metadata={"created_by": "ga_studio"},
+                resource_set=selected_resources,
+                model_selections=model_bindings,
             )
         record = self.catalog.upsert(workspace)
         return {
@@ -237,39 +256,50 @@ class ExperimentWorkspaceService:
         root = Path(row.location).resolve()
         if not root.is_dir():
             raise PackageError("sealed .gaexp files are read-only; materialize a workspace first")
-        manifest = validate_experiment_directory(root)
-        entrypoints = manifest.entrypoints.model_dump(exclude_none=True)
-        if section not in entrypoints:
+        validate_experiment_directory(root)
+        _, definition = _experiment_definition(root)
+        if section not in {"world", "agents", "models", "simulation", "engine", "evaluation"}:
             raise PackageError(f"unknown experiment section: {section}")
-        target = root / entrypoints[section]
-        original = target.read_bytes()
-        semantic_target = root / entrypoints["semantic_index"]
-        original_semantic = semantic_target.read_bytes()
         integrity_path = root / "integrity" / "sha256.json"
         if expected_content_sha256 and read_json(integrity_path)['root_sha256'] != expected_content_sha256:
             raise WorkspaceConflictError('实验已被其他保存操作修改，请重新打开实验后再保存；本次修改未覆盖已有内容。')
-        original_integrity = integrity_path.read_bytes()
-        try:
-            payload = copy.deepcopy(dict(document))
-            payload["schema_version"] = 1
-            if section == "world":
-                payload, semantic_index = build_semantic_index(payload)
-                payload["schema_version"] = 1
-                atomic_write_json(semantic_target, semantic_index)
-            atomic_write_json(target, payload)
-            write_integrity_manifest(root)
-            validate_experiment_directory(root)
-        except Exception:
-            atomic_write_bytes(target, original)
-            atomic_write_bytes(semantic_target, original_semantic)
-            atomic_write_bytes(integrity_path, original_integrity)
-            raise
-        record = self.catalog.upsert(root)
+        payload = copy.deepcopy(dict(document))
+        payload.pop("schema_version", None)
+        if section == "agents":
+            definition["agents"] = payload.get("agents", [])
+            definition["crowds"] = payload.get("crowds", [])
+        elif section == "evaluation":
+            definition["evaluation"] = {"evaluators": payload.get("evaluators", [])}
+            definition["results"] = payload.get("results", definition.get("results", {}))
+        else:
+            definition[section] = payload
+        manifest, digest = edit_experiment(root, lambda staged: write_experiment_definition(staged, definition))
+        record = self.catalog.record_validated_experiment(root, manifest, digest)
         return {
             "experiment_id": experiment_id,
             "section": section,
             "content_sha256": record.content_sha256,
         }
+
+    @serialized_workspace
+    def update_settings(
+        self, experiment_id: str, sections: Mapping[str, Any],
+        *, expected_content_sha256: str,
+    ) -> dict[str, Any]:
+        """Save form sections together without transporting the package-owned map."""
+        allowed = {"experiment", "simulation", "results", "models", "agents", "crowds"}
+        if not sections or set(sections) - allowed:
+            raise PackageError("unsupported experiment settings sections")
+        if not expected_content_sha256:
+            raise PackageError("expected_content_sha256 is required")
+        row = self.catalog.get("experiment", experiment_id)
+        root = Path(row.location).resolve()
+        if not root.is_dir():
+            raise PackageError("sealed .gaexp files are read-only; duplicate the experiment to edit it")
+        _, definition = _experiment_definition(root)
+        definition.update(copy.deepcopy(dict(sections)))
+        # The reentrant package lock covers both reading and replacing the draft.
+        return self.replace_definition(experiment_id, definition, expected_content_sha256=expected_content_sha256)
 
     @serialized_workspace
     def replace_definition(
@@ -292,21 +322,12 @@ class ExperimentWorkspaceService:
             raise WorkspaceConflictError('实验已被其他保存操作修改，请重新打开实验后再保存；本次修改未覆盖已有内容。')
         if not isinstance(manifest_document, dict):
             raise PackageError("experiment manifest is invalid")
-        entrypoints = manifest.entrypoints.model_dump(exclude_none=True)
-        tracked = {
-            root / "manifest.json",
-            root / "integrity" / "sha256.json",
-            *(root / relative for relative in entrypoints.values()),
-        }
-        originals = {path: path.read_bytes() for path in tracked if path.is_file()}
-        try:
+        def update(staged):
             payload = dict(definition)
             identity = payload.get("experiment")
             if not isinstance(identity, Mapping):
                 raise PackageError("definition.experiment is required")
-            saved_world = read_json(root / entrypoints['world'])
-            saved_world.pop('schema_version', None)
-            self.builder._write_definition(root, payload, reuse_world=payload.get('world') == saved_world)
+            write_experiment_definition(staged, payload)
             manifest_document["experiment"] = {
                 "experiment_id": experiment_id,
                 "key": str(identity.get("key") or manifest.experiment.key),
@@ -314,16 +335,10 @@ class ExperimentWorkspaceService:
                 "goal": str(identity.get("goal") or ""),
                 "timezone": str(identity.get("timezone") or manifest.experiment.timezone),
             }
-            atomic_write_json(root / "manifest.json", manifest_document)
-            write_integrity_manifest(root)
-            validated = validate_experiment_directory(root)
-        except Exception:
-            for path, content in originals.items():
-                path.parent.mkdir(parents=True, exist_ok=True)
-                atomic_write_bytes(path, content)
-            raise
+            atomic_write_json(staged / "manifest.json", manifest_document)
+        validated, digest = edit_experiment(root, update)
         record = self.catalog.record_validated_experiment(
-            root, validated, read_json(root / 'integrity/sha256.json')['root_sha256'],
+            root, validated, digest,
         )
         return {
             "experiment_id": experiment_id,
@@ -429,12 +444,14 @@ class ExperimentWorkspaceService:
                 continue
             row = session.scalar(select(StudioSkill).where(StudioSkill.skill_key == name))
             cls._available(row, "Skill", name)
+            require_resolved_resource_dependencies(session, "skill", row.id)
             records[name] = {
                 "name": row.skill_key,
                 "kind": row.kind,
                 "markdown": row.markdown,
                 "scripts": copy.deepcopy(row.scripts_json or {}),
                 "dependencies": tuple(row.children_json or ()),
+                "extra_files": resource_extra_files(session, "skill", row.id),
             }
             pending.extend(reversed(row.children_json or ()))
         return records
@@ -456,14 +473,19 @@ class ExperimentWorkspaceService:
             folder = root / name
             folder.mkdir(parents=True)
             skill_file = folder / "SKILL.md"
-            skill_file.write_text(record["markdown"], encoding="utf-8")
+            skill_file.write_bytes(record["markdown"].encode("utf-8"))
+            for relative, content in record.get("extra_files", {}).items():
+                from generative_agents.ga_protocol.schemas.manifests import validate_package_path
+                target = folder / validate_package_path(relative)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(content)
             for raw_relative, source in sorted(record["scripts"].items()):
                 relative = Path(str(raw_relative).replace("\\", "/"))
                 if relative.is_absolute() or ".." in relative.parts or not relative.parts or relative.parts[0] != "scripts":
                     raise PackageError(f"unsafe Skill private file: {raw_relative}")
                 target = folder / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text(source, encoding="utf-8")
+                target.write_bytes(source.encode("utf-8"))
             result.append(
                 SkillSource(
                     skill_id=name,
@@ -507,6 +529,7 @@ class ExperimentWorkspaceService:
         for crowd_id in crowd_ids:
             crowd = session.get(StudioCrowd, crowd_id)
             cls._available(crowd, "Crowd", crowd_id)
+            require_resolved_resource_dependencies(session, "crowd", crowd.id)
             selected.extend(crowd.agent_ids_json or [])
         result = list(dict.fromkeys(selected))
         if not result:

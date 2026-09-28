@@ -60,29 +60,34 @@ def test_real_windows_reader_without_delete_sharing_can_release_during_retry(tmp
     assert target.read_bytes() == b'new'
 
 
-def test_concurrent_saves_reject_stale_input_and_do_not_rebuild_world(database, tmp_path, monkeypatch):
+@pytest.mark.parametrize('partial', [False, True])
+def test_concurrent_saves_reject_stale_input_and_do_not_rebuild_world(database, tmp_path, monkeypatch, partial):
     root = _experiment(tmp_path)
     catalog = StudioPackageCatalogService(database)
     record = catalog.upsert(root)
     service = ExperimentWorkspaceService(database, package_root=tmp_path/'packages', var_dir=tmp_path)
     _, definition = _experiment_definition(root)
     expected = read_json(root/'integrity/sha256.json')['root_sha256']
-    before = (root/'world/world.json').stat().st_mtime_ns
+    resources_path = root / read_json(root/'manifest.json')['entrypoints']['resources']
+    before = resources_path.stat().st_mtime_ns
     definition['experiment']['goal'] = 'updated'
-    monkeypatch.setattr('generative_agents.ga_studio.experiments.builder.build_semantic_index', lambda *_: pytest.fail('unchanged world rebuilt'))
+    monkeypatch.setattr('generative_agents.ga_protocol.packages.definition.build_semantic_index', lambda *_: pytest.fail('unchanged world rebuilt'))
     monkeypatch.setattr('generative_agents.ga_studio.catalog.packages.validate_experiment_integrity', lambda *_: pytest.fail('catalog redundantly revalidated saved package'))
     barrier = threading.Barrier(2)
     def save():
         barrier.wait()
         try:
-            service.replace_definition(record.package_id, definition, expected_content_sha256=expected)
+            if partial:
+                service.update_settings(record.package_id, {'experiment': definition['experiment']}, expected_content_sha256=expected)
+            else:
+                service.replace_definition(record.package_id, definition, expected_content_sha256=expected)
             return 'saved'
         except WorkspaceConflictError:
             return 'conflict'
     with ThreadPoolExecutor(2) as pool:
         results = list(pool.map(lambda _: save(), range(2)))
     assert sorted(results) == ['conflict', 'saved']
-    assert (root/'world/world.json').stat().st_mtime_ns == before
+    assert resources_path.stat().st_mtime_ns == before
     validate_experiment_directory(root)
 
 def test_asset_upload_advances_save_token_and_rejects_stale_upload(database, tmp_path):

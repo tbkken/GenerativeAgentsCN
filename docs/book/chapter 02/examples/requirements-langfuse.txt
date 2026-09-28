@@ -1,0 +1,4 @@
+# Optional observability lesson only; does not change product dependencies.
+# Signatures checked with Langfuse 4.15.6 and OpenAI 2.54.0.
+langfuse>=4.15.6,<5
+openai>=2.54,<3

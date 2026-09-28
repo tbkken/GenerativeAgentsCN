@@ -68,9 +68,15 @@ def test_chat_and_embedding_config_copy_and_environment_do_not_contain_secret_id
     _, chat = create(client)
     _, embedding = create(client, 'embedding', 'embedding-test-key')
     models = ModelsConfig.model_validate({**chat['config'], **embedding['config']}).model_dump(mode='json')
+    from tests.test_portable_package_protocol import _experiment
+    from generative_agents.ga_protocol.packages.definition import _experiment_definition, write_experiment_definition
+    import shutil
     experiment = root / 'run' / 'experiment'
-    atomic_write_json(experiment / 'manifest.json', {'entrypoints': {'models':'models/models.json'}})
-    atomic_write_json(experiment / 'models/models.json', models)
+    source = _experiment(root / 'model-fixture')
+    shutil.copytree(source, experiment)
+    definition = _experiment_definition(experiment)[1]
+    definition['models'] = models
+    write_experiment_definition(experiment, definition)
     environment = credentials.run_environment(root / 'run')
     assert set(environment.values()) == {'secret-test-123', 'embedding-test-key'}
     serialized = json.dumps(models)

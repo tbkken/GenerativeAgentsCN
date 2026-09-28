@@ -495,3 +495,4 @@ body:not(.experiment-workspace) .experiment-scope,
   .sidebar .nav-count { display: none; }
   .main { margin-left: 0 !important; width: 100% !important; }
 }
+.spatial-location-control{display:flex;align-items:center;gap:8px;min-width:0}.spatial-location-control .control{min-width:0;flex:1}.spatial-location-control .btn{flex:none}.spatial-location-control input[readonly]{background:#f8faf9;cursor:default}.spatial-object-chips{display:flex;flex-wrap:wrap;gap:5px}.spatial-object-chips small{color:var(--muted)}.spatial-object-remove{padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:#f3f8f5;color:var(--text);font:inherit;cursor:pointer}.spatial-object-remove:disabled{cursor:default}

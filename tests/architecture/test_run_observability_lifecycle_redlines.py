@@ -107,8 +107,8 @@ if (state.selectedAttemptId !== 'attempt-1' || elements.attemptLogSelect.value !
     )
     assert result.returncode == 0, result.stderr or result.stdout
     refresh = source[
-        source.index("async function refreshOperationFacts") : source.index(
-            "async function loadOperationsWorkspace"
+        source.index("async function loadOperationsWorkspaceUnlocked") : source.index(
+            "function simulationStartTime"
         )
     ]
     assert "/attempts" in refresh and "renderAttempts" in refresh, (
@@ -170,8 +170,8 @@ def test_def_058_trace_detail_and_operation_collections_are_pageable():
     assert "runId !== state.selectedRunId" in trace
     assert "attemptId !== state.selectedAttemptId" in trace
     refresh = script[
-        script.index("async function refreshOperationFacts") : script.index(
-            "async function loadOperationsWorkspace"
+        script.index("async function loadOperationsWorkspaceUnlocked") : script.index(
+            "function simulationStartTime"
         )
     ]
     assert "loadModelTraces" in refresh, "RUNNING trace facts never refresh"
@@ -288,8 +288,12 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     console = CONSOLE.read_text(encoding="utf-8")
     assert PLAYER.is_file(), "formal replay-player.js is not packaged"
     assert PHASER.is_file(), "the replay runtime cannot depend on a CDN Phaser build"
-    assert shell.count('/static/console/vendor/phaser.min.js') == 1
-    assert shell.count('/static/console/replay/replay-player.js') == 1
+    loader = (CONSOLE.parent / 'workspace-loader.js').read_text(encoding='utf-8')
+    assert shell.count('/static/console/shell/workspace-loader.js') == 1
+    assert 'vendor/phaser.min.js' not in shell and 'replay/replay-player.js' not in shell
+    assert loader.count('vendor/phaser.min.js') == 1
+    assert loader.count('replay/replay-player.js') == 1
+    assert "WorkspaceLoader.load('replay')" in console
     assert not [
         body
         for body in __import__("re").findall(r"<script[^>]*>(.*?)</script>", shell, __import__("re").S)
@@ -335,6 +339,7 @@ def test_def_065_switch_run_reconciles_replay_selection_and_inspector():
     ]
     program = r"""
 const [teardownSource, ensureSource, clearInspectorSource] = process.argv.slice(1);
+const window = {WorkspaceLoader:{load:async () => {}}};
 const inspectorIds = [
   'replayInspectorLocation','replayInspectorAction','replayInspectorCurrently',
   'replayInspectorConversation','replayInspectorMemories','replayInspectorSchedule'

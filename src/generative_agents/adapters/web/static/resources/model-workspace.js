@@ -5,7 +5,8 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   const $ = id => document.getElementById(id);
   let items = [], selected = null, purpose = 'chat', generation = 0, dirty = false;
-  let editing = false, initialized = false;
+  let editing = false, initialized = false, catalogPage = null, searchTimer;
+  const choiceRequests = new Map();
   const list = window.ResourceList;
   async function request(path = '', options = {}) {
     const response = await fetch(API + path, {headers: {'Content-Type': 'application/json'}, ...options});
@@ -15,39 +16,39 @@
   }
   function message(text) { $('modelServiceStatus').textContent = text; }
   async function loadChoices(select, kind, value = '') {
-    select.disabled = true;
-    select.replaceChildren(new Option('正在加载模型…', ''));
-    try {
-      const result = await request();
-      if (!select.isConnected) return;
-      const available = result.items.filter(item => item.config[kind]);
-      select.replaceChildren(new Option(available.length ? '请选择已配置模型' : '请先到模型中心添加模型', ''));
-      available.forEach(item => select.add(new Option(`${item.name} · ${item.config[kind].model}`, item.id)));
-      if (available.some(item => item.id === value)) select.value = value;
-    } catch (error) {
-      if (select.isConnected) select.replaceChildren(new Option(error.message, ''));
-    } finally { if (select.isConnected) select.disabled = false; }
+    return list.choices(select, {
+      placeholder:'请选择已配置模型', selected:value,
+      loadPage: page => {
+        const key = `${kind}:${page}`;
+        if (!choiceRequests.has(key)) {
+          const pending = request(`?purpose=${kind}&page=${page}&page_size=20`).finally(() => choiceRequests.delete(key));
+          choiceRequests.set(key, pending);
+        }
+        return choiceRequests.get(key);
+      },
+      label: item => `${item.name} · ${(item.purposes || []).find(entry => entry.purpose === kind)?.model || ''}`,
+    });
   }
   async function mayLeave() {
     return !dirty || await window.confirmResourceDeletion({title:'放弃未保存修改', name:'模型配置', message:'当前修改尚未保存。', confirmLabel:'放弃修改'});
   }
   function renderList() {
     const saved = list.read('model-catalog'), query = saved.query.toLocaleLowerCase();
-    const filtered = list.sorted(items).filter(item => (!saved.kind || item.config[saved.kind]) && (!query || `${item.name} ${item.config.chat?.model || ''} ${item.config.embedding?.model || ''}`.toLocaleLowerCase().includes(query)));
-    const data = list.slice(filtered, saved.page);
+    const data = catalogPage || {items, page:1, total:items.length};
     list.remember('model-catalog', {page: data.page});
     $('modelServiceList').innerHTML = data.items.map(item => {
-      const kinds = ['chat','embedding'].filter(kind => item.config[kind]);
+      const purposes = item.purposes || ['chat','embedding'].filter(kind => item.config?.[kind]).map(kind => ({purpose:kind, ...item.config[kind], credential_configured:item.credential_configured?.[kind]}));
+      const kinds = purposes.map(entry => entry.purpose);
       return list.row({name: item.name, icon: '⌁',
-        description: kinds.map(kind => `${kind === 'chat' ? '聊天' : '向量'}：${item.config[kind].model}`).join(' · '),
+        description: kinds.map(kind => `${kind === 'chat' ? '聊天' : '向量'}：${purposes.find(entry => entry.purpose === kind).model}`).join(' · '),
         badges: [kinds.map(kind => kind === 'chat' ? '聊天' : '向量').join(' + ')],
-        meta: kinds.map(kind => `${kind === 'chat' ? '聊天' : '向量'}${item.credential_configured?.[kind] ? '密钥已配置' : '未配置密钥'}`),
+        meta: kinds.map(kind => `${kind === 'chat' ? '聊天' : '向量'}${purposes.find(entry => entry.purpose === kind)?.credential_configured ? '密钥已配置' : '未配置密钥'}`),
         open: {'data-model-id': item.id}, actions: [{label: '删除模型', danger: true, attributes: {'data-delete-model': item.id}}],
       });
     }).join('') || list.empty('模型', Boolean(query || saved.kind));
     $('modelServiceList').querySelectorAll('[data-model-id]').forEach(button => button.onclick = () => openEditor(button.dataset.modelId).catch(report));
     $('modelServiceList').querySelectorAll('[data-delete-model]').forEach(button => button.onclick = () => deleteModel(items.find(item => item.id === button.dataset.deleteModel)).catch(report));
-    list.pager($('modelListFooter'), {...data, onPage: page => {list.remember('model-catalog', {page, scroll: 0}); renderList();}});
+    list.pager($('modelListFooter'), {...data, onPage: page => {list.remember('model-catalog', {page, scroll: 0}); activate();}});
   }
   function report(error) { window.showToast?.(error.message || String(error), '操作失败'); }
   async function deleteModel(target) {
@@ -61,7 +62,7 @@
   async function openEditor(id = null, push = true) {
     if (!await mayLeave()) return;
     if (push) list.capture('model-catalog');
-    selected = id ? items.find(item => item.id === id) : null;
+    selected = id ? await request(`/${encodeURIComponent(id)}`) : null;
     if (id && !selected) throw new Error('该模型已不存在，请返回列表重新选择');
     generation++;
     purpose = selected && !selected.config.chat ? 'embedding' : 'chat';
@@ -130,9 +131,11 @@
     $('modelEditorShell').hidden = true;
     list.loading($('modelServiceList'), '模型');
     try {
-      const result = await request();
+      const query = new URLSearchParams({page:saved.page, page_size:5, q:saved.query});
+      if (saved.kind) query.set('purpose', saved.kind);
+      const result = await request(`?${query}`);
       if (token !== generation) return;
-      items=result.items;
+      items=result.items; catalogPage=result;
       $('modelServiceList').removeAttribute('aria-busy');
       const params = new URLSearchParams(location.search), id = params.get('model_id');
       if (id || params.get('create')) await openEditor(id, false);
@@ -146,8 +149,8 @@
   function init() {
     if (initialized) return;
     initialized = true;
-    $('modelServiceSearch').oninput = event => {list.remember('model-catalog', {query:event.target.value, page:1, scroll:0}); renderList();};
-    $('modelServicePurpose').onchange = event => {list.remember('model-catalog', {kind:event.target.value, page:1, scroll:0}); renderList();};
+    $('modelServiceSearch').oninput = event => {list.remember('model-catalog', {query:event.target.value, page:1, scroll:0}); clearTimeout(searchTimer); searchTimer=setTimeout(() => activate(), 250);};
+    $('modelServicePurpose').onchange = event => {list.remember('model-catalog', {kind:event.target.value, page:1, scroll:0}); activate();};
     $('createModelResourceBtn').onclick = () => openEditor().catch(report);
     $('backToModelList').onclick = async () => {
       if (!await mayLeave()) return;
@@ -160,5 +163,5 @@
       generation++; purpose=kind; dirty=false; render();
     });
   }
-  window.ModelWorkspace = {activate, loadChoices, mayLeave, deactivate() {generation++;}};
+  window.ModelWorkspace = {activate, loadChoices, mayLeave, refreshCatalog() { if (!editing) return activate(); }, deactivate() {generation++;}};
 })();

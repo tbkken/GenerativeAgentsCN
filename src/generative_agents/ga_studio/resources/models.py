@@ -8,6 +8,7 @@ from generative_agents.ga_protocol.schemas.experiment import EmbeddingOpenAIComp
 from generative_agents.ga_studio.resources.catalog import StudioResourceService
 from generative_agents.ga_studio.resources.catalog import StudioResourceError
 from generative_agents.ga_protocol.schemas.errors import ServiceError
+from generative_agents.ga_studio.storage.models import StudioResourceExchangeState
 
 class ModelServiceInput(BaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -34,7 +35,10 @@ class ModelService:
         self.credentials = HostModelCredentials(database, root)
 
     def detail(self, item):
-        return {**item, 'credential_configured': {purpose: bool(config.get('credential_env')) for purpose, config in item['config'].items() if isinstance(config, dict)}}
+        configs = {purpose: config for purpose, config in item['config'].items() if isinstance(config, dict)}
+        aliases = self.credentials.configured(config.get('credential_env') for config in configs.values())
+        configured = {purpose: aliases[config.get('credential_env')] for purpose, config in configs.items()}
+        return {**item, 'credential_configured': configured}
 
     def require(self, model_id):
         try:
@@ -55,7 +59,12 @@ class ModelService:
         if body.clear_api_key:
             alias = None
         if body.api_key:
-            alias = self.credentials.store(body.api_key)
+            imported_alias = None
+            if previous and alias:
+                with self.resources.database.session_factory() as session:
+                    if session.get(StudioResourceExchangeState, ('model', previous['id'])) is not None:
+                        imported_alias = alias
+            alias = self.credentials.store(body.api_key, alias=imported_alias)
         transport = {'provider': 'vllm' if body.purpose == 'chat' else 'openai_compatible', 'base_url': str(body.base_url).rstrip('/'), 'model': body.model.strip(), 'timeout_seconds': body.timeout_seconds, 'credential_env': alias}
         if not transport['model'] or transport['model'] == 'auto':
             raise ModelServiceError(422, '请填写明确的模型 ID。')
@@ -74,8 +83,19 @@ class ModelService:
         except StudioResourceError as exc:
             raise ModelServiceError(422, str(exc)) from exc
 
-    def list_models(self):
-        return {'items': [self.detail(item) for item in self.resources.list_model_presets()]}
+    def list_models(self, *, query='', page=1, page_size=20, purpose=None):
+        result = self.resources.list_summaries('model', query=query, page=page, page_size=page_size, purpose=purpose)
+        configured = self.credentials.configured(config.get('credential_env')
+            for item in result['items'] for config in item['purposes'])
+        for item in result['items']:
+            item['credential_configured'] = {}
+            for config in item['purposes']:
+                config['credential_configured'] = configured[config.pop('credential_env')]
+                item['credential_configured'][config['purpose']] = config['credential_configured']
+        return result
+
+    def get_model(self, model_id):
+        return self.detail(self.require(model_id))
 
     def create(self, body: ModelServiceInput):
         return self.save(body)

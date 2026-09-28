@@ -65,6 +65,7 @@ test('a model with chat and embedding capabilities has one row and one deletion 
   const {list, context} = setup(), nodes = {};
   context.list = list;
   context.$ = id => nodes[id] ||= {innerHTML:'',querySelectorAll:()=>[]};
+  context.catalogPage = null;
   context.items = [{id:'combined',name:'模型配置',config:{chat:{model:'chat-a'},embedding:{model:'embed-a'}},credential_configured:{chat:true}}];
   context.openEditor = () => {}; context.deleteModel = () => {}; context.report = () => {};
   const models = fs.readFileSync('src/generative_agents/adapters/web/static/resources/model-workspace.js','utf8');

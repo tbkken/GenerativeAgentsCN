@@ -10,7 +10,7 @@ function workspace() {
     if (!elements.has(id)) elements.set(id, { value: '', innerHTML: '', querySelectorAll: () => [] });
     return elements.get(id);
   } };
-  const context = { window: {}, document, console };
+  const context = { window: {ResourceList:{pager(){}}}, document, console, URLSearchParams };
   vm.runInNewContext(readFileSync(join(__dirname, '../../src/generative_agents/adapters/web/static/resources/crowd-workspace.js'), 'utf8'), context);
   const manager = context.window.CrowdWorkspace;
   manager.modal = () => {};
@@ -35,8 +35,9 @@ test('saved server definition appears immediately and survives reopening the man
       stored = { ...agent(body.definition.currently.trim(), stored.row_version + 1) };
       return stored;
     }
-    return path === '/agents' ? { items: [stored] } : stored;
+    return path.startsWith('/agents?') ? { items: [stored] } : stored;
   };
+  manager.agentRevisionDetails.set(stored.id, stored);
   await manager.openAgentManager();
   assert.match(elements.get('crowdAgentList').innerHTML, /旧目标/);
   for (const goal of ['新目标一', '新目标二']) {

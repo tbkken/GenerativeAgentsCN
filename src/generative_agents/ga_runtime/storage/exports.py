@@ -2,6 +2,8 @@
 from __future__ import annotations
 import hashlib
 import json
+import shutil
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from uuid import uuid4
 from filelock import FileLock
@@ -36,6 +38,17 @@ def write_zip(target: Path, root: Path, files: list[Path], *, overrides: dict[st
     finally:
         temporary.unlink(missing_ok=True)
 
+
+def _capture_files(root, files, destination):
+    captured = []
+    for path in files:
+        checked_package_path(path)
+        target = destination / path.relative_to(root)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(path, target)
+        captured.append(target)
+    return captured
+
 def export_run_artifact(root, facts, *, job_type, parameters, quality=None, memories=None, conversations=None):
     run_id = facts['summary']['run_id']
     artifact_root = root / 'artifacts'
@@ -51,24 +64,27 @@ def export_run_artifact(root, facts, *, job_type, parameters, quality=None, memo
         target = artifact_root / f'result-bundle-step-{step:06d}-{uuid4().hex[:8]}.zip'
         overrides = {'status.json': canonical_json_bytes(facts['status'])}
         overrides.update({f"attempts/{item['attempt_id']}/attempt.json": canonical_json_bytes(item) for item in facts['summary'].get('attempts', [])})
-        with FileLock(str(root / 'checkpoint.lock'), timeout=15), FileLock(str(root / 'recovery.lock'), timeout=15):
-            files = []
-            for path in root.rglob('*'):
-                relative = path.relative_to(root)
-                if not path.is_file() or path.is_symlink() or relative.parts[0] in {'artifacts', 'artifact-metadata', 'orphaned'} or any((part.startswith('.') for part in relative.parts)) or (relative.as_posix() in {'projection.json', 'integrity/sha256.json'}) or path.name.endswith('.lock'):
-                    continue
-                if relative.parts[0] in {'frames', 'checkpoints', 'recovery'}:
-                    boundary = relative.parts[1].removeprefix('step-').removesuffix('.json.gz')
-                    if not boundary.isdigit() or int(boundary) > step:
+        with TemporaryDirectory(prefix='ga-result-export-') as temporary:
+            staging = Path(temporary)
+            with FileLock(str(root / 'checkpoint.lock'), timeout=15), FileLock(str(root / 'recovery.lock'), timeout=15):
+                files = []
+                for path in root.rglob('*'):
+                    relative = path.relative_to(root)
+                    if not path.is_file() or path.is_symlink() or relative.parts[0] in {'artifacts', 'artifact-metadata', 'artifact-jobs', 'orphaned'} or any((part.startswith('.') for part in relative.parts)) or (relative.as_posix() in {'projection.json', 'integrity/sha256.json'}) or path.name.endswith('.lock'):
                         continue
-                if relative.parts[0] == 'attempts':
-                    if relative.parts[1] not in {item['attempt_id'] for item in facts['summary'].get('attempts', [])}:
-                        continue
-                    if len(relative.parts) > 2 and relative.parts[2] in {'storage', 'runtime-storage'}:
-                        continue
-                files.append(path)
-            files.extend([quality_path, quality_metadata])
-            write_zip(target, root, files, overrides=overrides)
+                    if relative.parts[0] in {'frames', 'commits', 'checkpoints', 'recovery'}:
+                        boundary = relative.parts[1].removeprefix('step-').removesuffix('.json.gz').removesuffix('.json')
+                        if not boundary.isdigit() or int(boundary) > step:
+                            continue
+                    if relative.parts[0] == 'attempts':
+                        if relative.parts[1] not in {item['attempt_id'] for item in facts['summary'].get('attempts', [])}:
+                            continue
+                        if len(relative.parts) > 2 and relative.parts[2] in {'storage', 'runtime-storage'}:
+                            continue
+                    files.append(path)
+                files.extend([quality_path, quality_metadata])
+                captured = _capture_files(root, files, staging)
+            write_zip(target, staging, captured, overrides=overrides)
     elif job_type == 'FILTERED_MEMORIES':
         items = memories
         agent_key = parameters.get('agent_key')
@@ -108,9 +124,14 @@ def export_checkpoint_artifact(root, run_id, step_no):
         raise ArtifactExportError(status_code=404, detail='Checkpoint is not present in this Run package')
     target = root / 'artifacts' / f'checkpoint-step-{step_no:06d}-{uuid4().hex[:8]}.zip'
     lock = 'recovery.lock' if checkpoint.parent.name == 'recovery' else 'checkpoint.lock'
-    with FileLock(str(root / lock), timeout=15):
-        if not checkpoint.is_dir() or not (checkpoint / 'bundle.json').is_file():
-            raise ArtifactExportError(status_code=404, detail='Checkpoint was removed before export; refresh the checkpoint list')
-        write_zip(target, checkpoint, [path for path in checkpoint.rglob('*') if path.is_file()])
+    with TemporaryDirectory(prefix='ga-checkpoint-export-') as temporary:
+        staging = Path(temporary)
+        with FileLock(str(root / lock), timeout=15):
+            if not checkpoint.is_dir() or not (checkpoint / 'bundle.json').is_file():
+                raise ArtifactExportError(status_code=404, detail='Checkpoint was removed before export; refresh the checkpoint list')
+            from generative_agents.ga_protocol.facts.recovery import validate_snapshot
+            validate_snapshot(root, checkpoint, run_id, step_no)
+            captured = _capture_files(checkpoint, [path for path in checkpoint.rglob('*') if path.is_file()], staging)
+        write_zip(target, staging, captured)
     record_artifact_provenance(root, target, source_status, source_step=step_no)
     return {'job_id': str(uuid4()), 'run_id': run_id, 'status': 'SUCCEEDED', 'artifact_name': target.name}

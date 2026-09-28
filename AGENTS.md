@@ -1,192 +1,185 @@
-# GenerativeAgentsCN 系统设计原则（仓库级强制约束）
+# GenerativeAgentsCN 架构与开发约定
 
-本文件是本仓库所有开发、诊断、重构和评审任务必须遵守的系统级原则。进入本仓库的会话应先以本文件判断需求边界；`docs/capability-composition-platform-design.md` 是完整架构说明。
+本文件统一仓库规则、文件协议和代码导览，适用于开发、诊断、重构与评审。未经用户明确决定，不得改变这些原则；发现需求或实现冲突时，先说明冲突及影响，等待用户决定。允许颠覆性重构，不为旧数据库、迁移、Run 或导入路径保留兼容层。
 
-除非用户明确要求修改这些原则，否则不得以“兼容旧实现”“方便 UI”“常见 Agent 框架”或“更容易编码”为理由绕过它们。发现需求或现有实现与本文件冲突时，先说明冲突及影响，再等待用户决定；不要静默引入相反设计。
+## 1. 职责与模块边界
 
-## 1. 总体边界
+内核提供可验证、可恢复、可回放的仿真能力，负责身份、校验、世界提交、事实与监督；自然语言 Brain/子 Skill/对象 Skill 决定调用目的、顺序、条件和停止方式。ReAct、排程、反思只是可选 Brain 模式，不得固化为系统流水线或用可视化编排器替代。
 
-- 系统提供稳定、可验证、可回放的仿真内核和公共 MCP；用户通过地图、Brain Skill、子 Skill 与 Game Object Skill 定义具体仿真。
-- 具体仿真流程尽量由自然语言 Skill 驱动。不得把用户流程重新固化成系统里的排程、感知、计划、反思流水线，也不得新增可视化流程编排器替代 Brain Skill。
-- ReAct、带排程的规划、反思或其他模式只是可选 Brain Skill 模式，不是系统唯一写死的大脑框架。
-- 系统内核负责能力边界、身份注入、输入校验、世界提交、事实记录、恢复和监督；Skill 负责“为什么调用、按什么顺序调用、如何使用结果”。
-- 只在“实验包必须自包含、运行必须可恢复、事实必须可审计”的边界使用不可变快照。Map、Spatial Asset、Agent、Crowd、Brain、Skill、Evaluator 与 Model Preset 都是 Studio 中按稳定 ID 直接编辑的公共作者资源，不拥有业务 Revision、发布、派生或关联锁定流程。
-- 系统不提供内置、系统级或只读公共 Agent。所有公共 Agent 都由用户创建，具有相同的编辑、归档和删除规则；不得保留系统 Agent 种子、独立分组或内置图片回退。
-- 当前架构允许颠覆性重构，不为旧数据库、旧迁移或旧 Run 保留兼容层。不要为了历史债务削弱新模型；需要时可重建表结构并清理历史数据。
-- 仓库按 `ga_protocol`、`ga_studio`、`ga_runtime`、`ga_replay` 四个模块组织。`ga_studio` 是唯一允许使用数据库的模块；其他三个模块不得导入 ORM、数据库连接或 Studio 业务服务。
-- 四个模块之间的业务数据只通过自包含文件协议交换：Studio 生成 `.gaexp`，Runtime 消费 `.gaexp` 并生成 Run 工作目录或 `.garun`，Replay 只读 Run 工作目录或 `.garun`。Web 是这些能力的可视化适配器，不是实验或 Run 的事实来源。
+产品源码位于 `src/generative_agents/`，业务数据只通过自包含文件交换：`Studio → 实验目录/.gaexp → Runtime → Run目录/.garun → Replay`。
 
-## 2. 地图与空间语义
+| 模块 | 职责与主要目录 | 允许的项目依赖 |
+| --- | --- | --- |
+| `ga_protocol` | `schemas/` 文件合同；`packages/` 安全归档、完整性、原子文件；`spatial/` 几何、索引、碰撞、导航；`skills/` 文档与闭包；`facts/` 事实、恢复与质量格式 | 自身；无数据库、Web、模型客户端 |
+| `ga_studio` | `resources/` 公共作者资源；`experiments/` 导入、编辑、预检、封存；`catalog/` 可重建包索引；`storage/` 数据库、素材、凭据；`bundled/` 显式导入素材与可编辑 Skill 种子 | 自身、Protocol；唯一数据库所有者 |
+| `ga_runtime` | `lifecycle/` Run/Attempt 装配；`engine/` 世界、Scheduler、ActorState；`capabilities/` MCP；`skills/` 执行；`memory/` 文件记忆；`models/` 网关、重试、审计；`storage/` 提交与恢复；`supervision/` 监督 | 自身、Protocol；只消费包内内容 |
+| `ga_replay` | `reader.py` 已提交事实；`projections/` 状态与页面投影；`cache.py` 可丢弃缓存 | 自身、Protocol；不执行 Skill、加载 Brain 或调用模型 |
+| `adapters` | `cli/` 参数、输出、退出码；`web/` 应用、路由、静态页面 | 四模块公开 API、Protocol DTO；不直接查询 ORM |
 
-- 系统不提供默认地图。创建实验必须显式选择一张用户地图，不能隐式继承地图。
-- 地图和空间素材是 Studio 中按稳定 ID 直接保存的可变作者资源，不拥有 Draft/Published Revision、发布或派生流程；地图始终可继续编辑。
-- 用户把地图选入实验时，Studio 必须立即把该地图、全部空间素材、Game Object 配置、渲染/碰撞资源和对象 Skill 闭包物理复制进实验工作目录。实验定义不得保存用于运行期解析的 `map_id`、素材外键或来源 Revision；公共地图后续修改、归档或删除不得影响已经创建的实验。
-- 实验中的 World 是实验包自有内容。用户在实验草稿中主动替换地图时，这是一次新的完整导入，不是来源升级、同步或映射；系统不得自动把旧坐标解释为新地图位置。
-- 地图固定为 `World → Sector → Arena → Game Object` 四层；四层都可以定义空间语义。
-- 只有 Game Object 可以绑定对象 Skill。绑定即同时具备自主运行、周围感知和交互响应能力，不配置主动/被动开关或触发器；World、Sector、Arena 只需可被感知和记忆。一个对象绑定一个根 Skill，通过子 Skill 组合行为。
-- Tile 是渲染、碰撞和寻路的内部结构，不是 Agent 空间感知的公共合同。
-- `world-perceive` 必须按稳定节点身份返回紧凑、唯一的四层语义、附近 Agent、Event 和 Game Object；不得逐 Tile 重复返回 World/Sector/Arena 语义。
-- 实验封存时在实验包内建立空间语义索引；运行时只从包内索引查询相交节点，而不是每轮从 Tile 反向拼装语义树。
-- Agent 的 `vision_radius` 是感知硬上限。模型可以请求更小范围，不能扩大系统配置的视野；`attention_bandwidth` 必须真正限制附近候选输出。当前位置的四层语义锚点始终保留。
-- 空间节点和 Game Object 按稳定 ID 去重；Event 按完整事实身份处理。不得用名称或显示文本粗暴合并不同对象、地点或事件。
+- 模块不得跨界导入 ORM、Repository 或业务 Service；公开操作由 `api.py` 明确导出，不保留兼容壳、重复实现或旧顶层目录。
+- Studio 数据库仅保存作者资源、工作区/权限/展示设置、包摘要缓存及 `experiment_id/run_id → package_location` 可重建索引。删库后，已有包仍须可运行、续跑、重跑和回放；包内清单始终优先。
+- Runtime 状态、资源槽位、控制请求与日志使用 Run/主机工作目录、原子文件和锁，不使用数据库队列、状态机或 SQLite 恢复投影。Replay 缓存必须可删除并从 StepResult 重建；Web 只做适配，不是事实源。
 
-## 3. 时间与 IterationContext
+## 2. 作者资源与实验生命周期
 
-- Scheduler 从 1 到 `steps` 确定性推进仿真，Skill 和 Agent 不能自行推进世界时间。
-- Agent 获取的是带时区的具体虚拟时间，例如 `2026-08-27T11:13:51+08:00`，不是抽象步号或宿主机 UTC 显示值。
-- 每个 Brain/子 Skill 调用共享同一轮 `IterationContext`，至少包含 Run、Attempt、Agent、Step、总步数、虚拟时间、步长、坐标、四层地址、当前空间语义和公共运行变量。
-- 上一个 Skill 的自然语言输出可以成为下一个 Skill 的输入。该调用链由 Brain Skill 的 SOP 决定，不由系统写死。
-- Game Object Skill 的响应是 Agent 的观察结果，必须进入该 Agent 下一轮上下文，并且只投递一次，不能丢失或泄漏给无关 Agent。
+- Map、Spatial Asset、Agent、Crowd、Brain、Skill、Evaluator、Model Preset 均按稳定 ID 直接编辑；不设业务 Revision、发布、派生、跟随最新或引用锁。各类资源、实验和 Run 均须支持删除或归档。
+- 不提供默认地图或隐式地图选择；公共 Agent 全由用户创建，编辑/归档/删除规则相同，不保留系统 Agent、只读分组、种子或内置图片回退。
+- 资源选入实验时立即递归展开并物理复制完整内容：地图、素材、渲染/碰撞、Agent/Crowd、Brain/子 Skill/对象 Skill、Evaluator、模型配置、脚本和模板。导入后与公共资源断开；双方修改、归档或删除互不影响。
+- 实验仅有 `DRAFT → SEALED`。草稿只修改包内副本；封存后不可修改，调整须复制为新的独立实验，不建 Revision、base/fork 或升级关系。草稿替换地图是全量重新导入，不能自动沿用旧坐标含义。
+- Skill 仅以包内 `skill_key` 引用；同 key 同内容可合并，同 key 异内容必须阻断并诊断；依赖缺失或非法依赖环必须在封存前失败。不得留下公共资源 ID、Revision、素材外键或运行期数据库查询条件。
+- Studio 公共 Skill 保存在数据库；源码 `SKILL.md` 仅用于种子、手写实验、导入导出或开发。实验和 Run 使用各自物理副本。Run 启动时完整嵌入 `.gaexp`，之后不读当前实验目录或公共资源。
+- 校验必须覆盖四层层级、坐标/地址、素材、对象交互、Agent 初始位置语义及完整依赖；预检统计与明细一致，保存、上传和预检后立即同步服务端事实。可选 Skill 试运行由 Studio 准备临时闭包、适配层调用 Runtime；需仿真 MCP 的 Skill 必须进入实验。不得强制正式运行前试跑 1～3 步。
 
-## 4. Brain Skill 与 Skill 存储
+## 3. 文件协议、身份与安全
 
-- Brain Skill 是自然语言 SOP，也是 Agent 大脑模式的定义；它通过配置选择可调用的子 Skill，并决定调用顺序、条件和停止方式。
-- 不要求每个 Skill 为回放额外输出一套机器合同。Skill 的 Thought、计划、反思和中间文本属于过程与审计信息，不直接驱动回放。
-- Brain 与 Skill 是用户可随时创建、修改、归档的 Studio 公共作者资源；Studio 数据库只负责作者工作区，不是 Runtime 的依赖。
-- Brain、子 Skill、Game Object Skill、Evaluator Skill、脚本、模板和相关资源在选入实验时必须递归展开完整闭包并物理复制进实验包。包内只允许使用本地 `skill_key` 互相引用，不得保存公共 Skill ID、Revision ID 或运行期数据库查询条件。
-- 相同 `skill_key` 且内容相同的导入项可在实验包内合并；相同 key 但内容不同必须阻止导入并给出冲突诊断。依赖缺失或非法依赖环必须在实验封存前失败。
-- 源码中的 `SKILL.md` 只用于内置种子、手写实验、导入导出或开发；用户通过 Studio 编辑的公共 Skill 保存在 Studio 数据库中，实验和 Run 使用各自包内的物理副本。
-- Run 启动时把完整 `.gaexp` 再复制进 Run 包；运行只读 Run 内嵌的 Brain、递归子 Skill 与 Game Object Skill，不读取实验当前目录或 Studio 数据库。
-- Brain 的循环次数需要系统安全上限和无进展检测，但系统不能用固定业务流程取代 Brain。无意义重复调用应产生可追踪诊断。
+统一使用 `ga-package` v2：`config` 为任意基础资源集合，`exp` 为资源内容与实验装配，`run` 完整内嵌实验并保存执行事实。目录是工作形态，基础资源 `.zip`、实验 `.gaexp`、运行 `.garun` 是确定性 ZIP 交换形态。清单中的 UUID 是唯一业务身份，目录或文件可改名；Replay 直接使用 `run_id`，不创建独立业务 ID。不读取旧 v1 包，不自动改写已有证据。
 
-## 5. 公共 MCP 能力
+- 地图、智能体、人群、技能、大脑、模型均可独立导入导出；基础配置入口可从 config、exp、run 中仅选所需资源。实验导出始终包含完整资源闭包。资源自身附件必须齐全；config 可保留显式未绑定的跨资源依赖，进入实验前必须绑定。同 key 异内容阻断整次导入，不静默覆盖或按名字绑定。
+- 公共 `ResourceSet` 统一资源内容、包内引用、附件和内容摘要。Agent 核心不含坐标与空间；出生位置属于实验装配。Skill 固有类型为 atomic/pack/brain，对象根与子技能是装配后的使用角色。依赖内容摘要用于交换时辨识内容，草稿显式编辑时更新，不构成资源版本或引用锁。
 
-- 感知、记忆读取/写入和世界动作是系统公共 MCP，不是各个 Skill 自行实现的底层协议。
-- MCP 必须注入当前 Agent 身份并隔离数据；模型不能伪造其他 Agent 身份、跨 Agent 读取私有记忆，或绕过校验直接改世界。
-- `world-perceive` 是只读语义查询；`memory-stream-*` 是按 Agent 隔离的记忆能力；`world-act` 是唯一世界动作入口。
-- 每名 Agent 每个 Step 可以多次读取，但最多提交一次 `world-act`。第二次世界动作必须拒绝；未提交动作时系统可以安全收敛为 WAIT 并记录回退原因。
-- Game Object Skill 默认由大模型按自然语言 SOP 驱动，以对象自己的身份调用公共感知、隔离记忆和 world-act；不要求用户编写脚本。对象每 Step 最多提交一次 world-act，自主动作和交互回复一同接受校验并进入 World Commit；Skill 原始文本不能直接改世界。
+| 操作 | 身份与输入 |
+| --- | --- |
+| 新跑 | 从实验创建新 `run_id` 和首个 `attempt_id` |
+| 续跑 | 保持 `run_id`，从最近完整检查点新建 `attempt_id` |
+| 重跑 | 读取 Run 内嵌实验，创建新 `run_id`；可记录 `origin_run_id` |
 
+推荐包结构：
 
-- 对象 Skill 的感知复用 Agent 的四层语义、位置、活动、视野硬上限与注意力约束；本步可见的实际运动路径按范围裁剪，不泄漏视野外坐标，不以计划路径代替已执行轨迹。
-- 对象不是内置 Agent，不加入公共 Agent 目录或人物回放列表。对象记忆使用独立身份空间；对象仅修改自身状态，Agent 向绑定 Skill 的对象提出交互请求，不能直接改写其内部状态。
-- 当前固定设施支持 ACT、WAIT、SET_OBJECT_STATE，并可在同一次 world-act 的 responses 中回复真实请求 ID。对象状态的 state 外观标签公开，其余字段和自身记忆不自动泄漏到其他参与者的感知。
-- 对象每 Step 在 Agent 动作之后执行一次，再统一提交 StepResult；对象读取本步已执行的可见运动事实，状态修改和回复供下一轮 Agent 使用。对象检查点必须保存待处理请求、最后提交动作、连续失败计数与幂等活动键；对象故障进入可定位的质量结果。
+```text
+基础资源 / .zip 或实验 / .gaexp     Run 目录 / .garun
+manifest.json                     run.json
+integrity/sha256.json              status.json / control.json
+resources/index.json              experiment/（完整内嵌实验）
+runtime/assembly.json（仅实验）    attempts/<attempt_id>/attempt.json
+skills/items/<key>/SKILL.md        attempts/<attempt_id>/storage/
+skills/items/<key>/scripts/...     attempts/<attempt_id>/runtime-storage/
+skills/items/<key>/templates/...   frames/step-000001.json.gz
+assets/...                        commits/step-000001.json
+                                  checkpoints/LATEST
+                                  checkpoints/step-000001/...
+                                  recovery/step-000001/...
+                                  traces/ / artifacts/
+                                  projection.json（可丢弃）
+```
 
-## 6. 记忆
+- 实验 `manifest.json` 保存协议身份、`experiment_id`、展示元数据和安全的包内相对 POSIX 入口路径。`resources/index.json` 保存唯一一份资源内容及附件引用，地图内含语义索引；`runtime/assembly.json` 指定唯一 Brain、地图、模型用途、Agent 出生位置、人群与运行参数。执行视图按需装配，不重复持久化 Skill registry 或旧分散 entrypoints。
+- 运行配置禁止 `map_id`、`map_snapshot_hash`、`revision_id`、`brain_revision_id`、`skill_revision_id`、`secret_ref` 等外部活引用。模型密钥不进包，只声明环境变量名（如 `GA_CHAT_API_KEY`），由目标机器注入。
+- `integrity/sha256.json` 覆盖清单及所有内容文件，排序计算 Bundle Hash，包含地图、Agent、Skill 文本/脚本、模型参数和素材等全部行为内容。内容哈希决定行为身份，不使用资源版本字段。
+- `run.json` 创建后不可变，含 `run_id`、请求步数、内嵌 `experiment_id`/根哈希和可选来源 Run；原子更新的 `status.json` 保存状态、当前 Attempt、最后提交 Step；`attempt.json` 保存启动边界与结局。
+- ZIP 拒绝绝对路径、`..`、重复成员、符号链接、超量文件/展开体积；目录包也拒绝符号链接。JSON 使用 UTF-8、排序键、规范分隔符；归档使用排序成员与固定时间戳，确保同内容同字节。
+- 清单、状态、控制、记忆等文件以同目录临时文件、`fsync`、原子替换提交。先落盘帧及独立的 `commits/` 身份/哈希记录，再发布检查点，最后推进可见投影和 `status.committed_step`；须跨平台可靠。帧校验不依赖可删除的 `projection.json`。
+- 活动 Run 以目录为唯一可写包，Runtime 单写者，文件锁串行化执行与封存。暂停、取消、完成或显式导出时，从一致性暂存副本生成完整性清单与 `.garun`；不得原地修改 ZIP。
+- 续跑 `.garun`：安全解压至新可写目录 → 校验 Run/内嵌实验 → 获取 `worker.lock` → 核对最新完整检查点与已提交帧边界 → 新建 Attempt → 从下一 Step 继续。状态、路径、对话、记忆、对象变化必须幂等，不产生零进展 Attempt 或重复副作用。
 
-- 记忆是 Agent 的公共持久能力，由 `memory-stream-search`、`append`、`supersede`、`invalidate` 等 MCP 提供。
-- 记忆内容可以自然语言为主，并可附带 Event(SPO)、来源、证据和重要性。不要为了 LLM 检索强迫用户维护复杂活动编码字典。
-- 记忆检索必须真正按当前 Agent 隔离并能检索刚写入的有效内容；被替代和失效的记忆保留历史，但状态必须明确，默认检索不再把它们当作有效事实。
-- Agent 可以记住空间语义和已探索地点，减少重复探索；地图知识属于 Agent 记忆，不应通过每轮发送整张地图实现。
-- 记忆文本不是世界回放事实，回放不得依赖重新解释记忆来重建世界。
+## 4. 空间、时间与上下文
 
-## 7. 世界动作与普通活动
+- 地图固定 `World → Sector → Arena → Game Object` 四层，均可定义语义；仅 Game Object 可绑定一个根 Skill，并通过子 Skill 组合行为。Tile 仅用于渲染、碰撞、寻路，不是公共感知合同。
+- 封存时生成包内空间语义索引。Runtime/Replay 使用同一索引；感知按相交节点返回紧凑、唯一的层级语义及附近 Agent、Event、对象，不逐 Tile 重建语义树。
+- `vision_radius` 是硬上限，模型只能缩小；`attention_bandwidth` 必须限制候选输出，同时保留当前位置的层级语义锚点。节点/对象按稳定 ID 去重，Event 按完整事实身份处理，不按名称或文本合并。
+- Scheduler 从 1 到 `steps` 确定性推进时间，Skill/Agent 不能自行推进。每轮 Brain/子 Skill 共享 `IterationContext`：Run、Attempt、Agent、Step、总步数、带时区的具体虚拟时间、步长、坐标、四层地址、当前空间语义、公共运行变量。
+- Skill 输出可成为后续 Skill 的输入，调用链由 Brain SOP 决定。对象响应只进入目标 Agent 下一轮上下文，必须恰好投递一次，不丢失或泄漏。
 
-- 系统动作原语保持通用：`MOVE`、`ACT`、`WAIT`、`SPEAK`、`INTERACT`、`SET_OBJECT_STATE`。
-- 起床、洗漱、吃饭、办公、喝咖啡等普通活动统一使用 `ACT`。Skill 直接填写 Event 的 `predicate`、`object` 和可选 `description`。
-- 系统和 UI 不维护“普通活动类型 → 显示文本”的编码或数据字典；回放和页面直接展示提交的语义内容。
-- `WAIT` 只表示真实等待，不能作为普通活动的兜底编码。预期等待可以携带原因和截止 Step/时间，供 Supervisor 避免误报。
-- `SPEAK` 必须形成稳定、可复用且参与者隔离的 conversation_id；同一会话回复不能每句话新建线程。
-- Game Object 的名称和空间语义帮助 LLM 判断用途；绑定的自然语言 Skill 决定自主行为和如何响应交互，不要求为每种设施额外硬编码业务逻辑。
+## 5. MCP、记忆与对象 Skill
 
-## 8. 回放事实合同
+- 系统提供公共感知、导航、记忆与动作能力；MCP 注入当前参与者身份并校验权限，禁止伪造身份、跨参与者读私有记忆或绕过校验改世界。
+- `world-perceive` 只读；`memory-stream-search/append/supersede/invalidate` 提供隔离持久记忆；`world-act` 是唯一世界动作入口。每名 Agent/对象每 Step 可多次读取，最多成功提交一次动作，第二次必须拒绝；无动作时可回退 `WAIT` 并记录原因。
+- 记忆以自然语言为主，可附 SPO、来源、证据、重要性；刚写入的有效记忆须可检索，替代/失效内容留历史但默认不当有效事实。已探索空间归参与者记忆，不靠每轮发送全图，也不强制活动编码字典。
+- Brain 需要循环安全上限和无进展检测，重复调用必须留下诊断。Thought、计划、反思及中间文本只供过程审计，不要求 Skill 额外输出回放机器合同。
+- 对象绑定 Skill 后默认用大模型按 SOP 自主运行、感知和响应交互，不要求脚本、主动/被动开关或触发器；不加入公共 Agent 目录或人物回放列表。对象有独立身份/记忆，只能修改自身状态；Agent 通过交互请求访问绑定 Skill 的对象，不能改其内部状态。
+- 对象感知复用四层语义、位置、活动、视野和注意力合同；只暴露范围内已执行运动轨迹，不暴露视野外坐标或以计划路径替代事实。状态的 `state` 外观标签公开，其余字段和私有记忆不自动公开。
+- 固定设施支持 `ACT`、`WAIT`、`SET_OBJECT_STATE`，可在同次 `world-act.responses` 中回复真实请求 ID。对象每 Step 在 Agent 动作后执行一次，再统一提交 StepResult；读取本步可见运动事实，状态/回复供下一轮使用。
+- 对象动作与回复均须校验并进入 World Commit；检查点保存待处理请求、最后提交动作、连续失败计数和幂等活动键，故障进入可定位的质量结果。
 
-- 回放合同由系统 MCP、World Commit 和 StepResult 实现，不由 Skill 提示词承担。
-- 每一条已提交的世界变化必须同时包含：
-  - `Event(subject, predicate, object)`；
-  - 非空且足以确定性重建的 `structured_payload`。
-- SPO 用于稳定语义索引和人类理解；`structured_payload` 用于无歧义回放、检查点恢复和状态归约，两者都不可省略。
-- Action、Game Object 状态变化、对话等会改变或呈现世界的操作必须产出回放事实；LLM 原始文本不能直接驱动画面状态。
-- StepResult 是投影、检查点、Agent 状态、质量检查和回放的共同事实来源。不得由多个互相矛盾的临时状态拼接最终页面。
-- 回放必须按 `L1 World → L2 Sector → L3 Arena → L4 Game Object` 顺序绘制，World 素材是最底层。
-- StepResult、世界事实、Checkpoint、Effect Ledger、Trace 和日志必须保存在 Run 工作目录或 `.garun` 中；数据库表不能成为 Run 恢复或 Replay 的事实来源。
+## 6. 动作、提交与回放事实
 
-## 9. Run、恢复与监督
+- 通用原语仅 `MOVE`、`ACT`、`WAIT`、`SPEAK`、`INTERACT`、`SET_OBJECT_STATE`。普通活动用 `ACT`，由 Skill 填写 `predicate`、`object`、可选 `description`，页面直接展示语义，不维护活动编码/显示字典或设施业务逻辑。
+- `WAIT` 只表示真实等待，可含原因和截止 Step/时间；不兜底普通活动。`SPEAK` 使用稳定、可复用且参与者隔离的 `conversation_id`，同一会话回复不新建线程。
+- 每条已提交世界变化都必须有 `Event(subject, predicate, object)` 和非空、足以确定性重建的 `structured_payload`。动作、对话、对象变化均由 MCP → World Commit → StepResult 形成事实。
+- MOVE 分别保存内核位移事实与移动活动：内核保证 `Event(subject, "移动到", 实际地址)` 和实际路径；经提交的活动 predicate 成为 `movement_activity`，供状态、感知和回放共用。活动文字不能证明抵达。
+- StepResult 是帧、检查点、参与者状态、投影、质量和回放的共同事实源。事实类型只在 Protocol 定义，Runtime 构建/提交，Replay 读取/归约；LLM 原始文本、记忆或矛盾的临时状态不得驱动画面。
+- StepResult、世界事实、Checkpoint、Effect Ledger、Trace、日志和运行记忆必须保存在 Run 文件中。Replay 校验身份、内嵌实验哈希、帧连续性/哈希，只读已提交边界及包内素材，归约 Agent、Event、Effect、对话与对象状态，按 `L1 World → L2 Sector → L3 Arena → L4 Game Object` 绘制。
 
-- Run Supervisor 属于系统，不属于 Brain Skill。它负责卡死检测、暂停、取消、恢复、资源槽位和运行健康诊断。
-- 卡死检测必须区分“有边界、有原因的计划等待”和无意义的同地重复动作，不能把实验设计中的等待误报为卡死。
-- LLM 超时、瞬时网络错误和可修复格式错误由模型调用基础设施处理；不能要求 Brain Skill 自己实现网络重试。
-- 重试必须区分错误类型、可中断并受预算约束。禁止用超长超时乘多次盲重试掩盖问题；格式修复不能反复携带无限增长的上下文。
-- 取消应能中断正在等待的模型请求或重试退避，而不是只能等完整 Step 结束。
-- 检查点提交必须跨平台原子可靠；恢复必须从最近完整检查点继续，不能创建零进展 Attempt 或重复已提交副作用。
-- Agent 同一步的状态、路径、对话、记忆和对象变化必须保持幂等，暂停恢复后不能重复动作。
-- 正在执行的 Run 以目录作为唯一可写包，Runtime 是单写者；暂停、完成或导出时才可封存为 `.garun`。续跑 `.garun` 必须先安全解压、校验、获取单写者锁，再从最近完整检查点创建新 Attempt。
-- `run_id`、`experiment_id`、`attempt_id` 必须写入包内 Manifest；目录名和压缩包文件名只用于展示，不能作为协议身份。新跑/重跑创建新 `run_id`，续跑保持 `run_id` 并创建新 `attempt_id`。
+## 7. 监督、质量与页面状态
 
-## 10. 运行状态、质量与可观测性
+- 系统 Supervisor 负责卡死检测、暂停、取消、恢复、资源槽位和健康诊断；有原因、有边界的计划等待不得误报为卡死。
+- 模型基础设施处理超时、瞬时网络错误和可修复格式错误，按类型重试，受预算约束且可中断；禁止超长超时叠加盲重试或无限增长的修复上下文。取消须中断模型等待/退避，不只在 Step 结束生效。
+- Run 区分 `CREATED/QUEUED/RUNNING/FINALIZING/PAUSED/CANCELLED/COMPLETED/FAILED`；恢复阶段须可见。最后一步后进入 `FINALIZING`，完成报告和固化后才 `COMPLETED`。
+- 执行完成与实验质量分开。业务成功条件仅来自用户配置的指标、Evaluator 或显式断言，不写死在内核。空记忆、Brain 偏离、循环回退、对象不可交互等须有可展开、可定位到 Agent/Step 的质量明细，数量与报告一致。
+- 统计区分逻辑调用和物理尝试，实时显示执行中的调用；估算按 Agent 数、调用链、重试、上下文规模、本地模型吞吐校准。大 Payload 去重/引用保存，不在 Trace 各阶段重复复制。
+- 页面请求、状态和操作反馈按 Experiment/Run/Attempt/草稿隔离，旧响应不能覆盖新选择或强制跳转；迟到的复制结果留在操作历史。运行状态不能用操作成功提示替代。
+- 时间保存保留时区偏移与精度；仿真摘要按 Run 时区显示，标注“北京时间”时必须转为 `Asia/Shanghai`。虚拟时间、模型耗时、含暂停的墙钟耗时分别记录，不能改写历史日志掩盖旧显示问题。
+- 实验中心固定每页 5 条，保留负责人/标签元数据、归档/恢复和分页；不恢复搜索/组合筛选、状态计数整行、比较、批量标签/负责人、页容量选择、紧凑表格、保存视图。不得新增本地 `.bat` 模型服务管理界面。
 
-- “执行完成”和“实验质量”是两个维度。系统可以产生可追踪的质量报告和告警，但不能擅自把“到办公室、喝两次咖啡”等业务成功条件固化为核心运行判定。
-- 若用户需要特定实验结论，应由观察指标、评估器或显式实验断言得出；未配置时不要把业务目标变成系统强制成功条件。
-- 记忆检索为空、Brain 偏离、循环回退、对象不可交互等语义问题必须进入可展开、可定位到 Agent/Step 的质量结果，不能只显示一个告警数量。
-- 运行状态必须区分排队、执行 Step、暂停、取消、恢复和结束后报告/固化阶段，避免 `24/24` 后仍长时间只显示“运行中”。
-- 模型调用统计必须明确区分逻辑调用与物理尝试；执行中的调用要实时可见。估算应基于 Agent 数、Brain 调用链、重试、上下文规模和本地模型吞吐校准。
-- Trace 可保存模型 Payload 供审计，但大 Payload 应去重或引用存储，不能在开始、尝试和逻辑结束事件中重复复制并拖慢运行。
-- 页面切换 Experiment、Run、Attempt 或草稿时，所有请求和状态都必须按当前选择作用域隔离；旧异步响应不能覆盖新选择。
-- 面向用户标注的北京时间必须真正按 `Asia/Shanghai` 转换，不能把 UTC 值直接贴上北京时间标签。
-- Runtime 的状态、资源槽位、控制请求和 Attempt 日志使用 Run 目录、主机工作目录、原子文件和文件锁；不得使用数据库队列或数据库状态机。Replay 的索引与投影必须是文件化、可删除、可从 StepResult 重建的派生内容。
+## 8. 代码入口、命令与验证
 
-## 11. 发布、校验与资源生命周期
+以下路径相对 `src/generative_agents/`：
 
-- Studio 创建或修改实验时，通过一次性导入把当前公共 Map、Spatial Asset、Agent/Crowd、Brain、递归 Skill、Game Object Skill、Evaluator、模型配置与资源文件复制成自包含实验工作目录；导入完成即与公共资源断开关系。
-- 实验生命周期只使用 `DRAFT → SEALED`。SEALED 实验不可修改；需要调整时复制为新的独立实验，不建立 Revision、base/fork 或升级关系。封存产生可移植 `.gaexp`，其完整性清单与 Bundle Hash 必须覆盖所有会改变行为的内容。
-- Run 启动时把 `.gaexp` 完整复制到 Run 目录并生成新的 `run_id`。Runtime 只读取 Run 内嵌实验，Replay 只读取 Run 目录或 `.garun`；两者不得回查 Studio 数据库、公共资源或当前实验目录。
-- 地图校验必须检查四层层级、坐标与语义地址一致性、素材引用、Game Object 交互配置和初始 Agent 位置语义，不能只验证图片或节点数量。
-- 预检统计与明细必须一致；警告存在时不能显示“0 个警告”。局部保存、上传和预检结果必须立即与服务端事实同步。
-- 公共作者资源的修改、归档或删除不得因“已被实验导入”而锁定；已有实验和 Run 持有自己的物理副本，不依赖作者资源继续存在。
-- 地图、空间素材、Agent、Crowd、Skill、实验和 Run 都应提供删除或归档能力，避免测试资源永久堆积。
-- Studio 数据库可以维护 `experiment_id/run_id → package_location` 的可重建目录索引，但该索引不是运行或回放事实。Replay 不创建独立业务 ID，直接以 Run Manifest 中的 `run_id` 为身份；文件可改名或移动，包内 ID 才是权威身份。
+| 任务 | 入口 |
+| --- | --- |
+| CLI / Web | `adapters/cli/main.py` / `adapters/web/app.py` |
+| 作者资源 / 实验 | `ga_studio/api.py`、`resources/` / `experiments/workspace.py`、`builder.py`、`editor.py` |
+| Run 装配与控制 | `ga_runtime/api.py`、`lifecycle/assembly.py`、`executor.py`、`control.py` |
+| Step 与提交 | `ga_runtime/engine/scheduler.py`、`world.py`、`storage/commit.py` |
+| Brain / 对象 / 执行器 | `ga_runtime/skills/brain.py`、`objects.py`、`executor.py` |
+| MCP / 记忆 | `ga_runtime/capabilities/server.py` / `ga_runtime/memory/stream.py` |
+| 事实类型 / Replay | `ga_protocol/schemas/facts.py` / `ga_replay/api.py`、`reader.py`、`projections/` |
 
-## 12. 明确禁止擅自引入的设计
+ActorState 只保存身份、人物信息、位置、当前动作和剩余路径，不承载固定业务流程。作者地图/Skill 元数据在 `ga_studio/resources/map_document.py`、`skill_document.py`，导入时转换为 Protocol 合同并去除数据库定位信息。源码资源仅由 Studio `bundled/` 与 Web `static/` 持有；`static/shell` 协调页面/请求，`resources` 为编辑器，`replay` 为播放器，`vendor` 为前端依赖。`var/` 是用户数据，不是源码；重构不得改写案例证据或另建历史备份目录。
 
-除非用户之后明确改变决定，不要主动加入：
+维护一个 wheel，依赖按 `runtime/studio/web/dev` 声明；CLI/Web 使用同一包与协议，不依赖仓库当前目录。常用命令（路径为占位值）：
 
-- 系统默认地图或隐式地图选择；
-- 用可视化流程编排替代自然语言 Brain Skill；
-- 系统级硬编码的起床、洗漱、吃饭、办公等活动字典；
-- 把业务成功条件强制混入普通 Run 的完成状态；
-- 为核心仿真绑定本地 `.bat` 模型服务管理界面；
-- 把运行前 1～3 步试跑设为正式运行的强制前置流程；
-- 为旧数据库、旧迁移、旧 Run 增加兼容债务；
-- 为地图或空间素材重新加入 Draft/Published Revision、发布、派生版本或“已被引用所以禁止编辑/删除”的关联限制；
-- 为 Agent、Crowd、Brain、Skill、Evaluator 或 Experiment 引入业务 Revision、来源升级、跟随最新、发布时回查或 `*_revision_id` 依赖；
-- 让 Runtime 或 Replay 连接数据库、导入 Studio ORM/服务，或把 SQLite 投影作为运行恢复与回放事实；
-- 用目录名、压缩包文件名或数据库自增键代替包内 `experiment_id`、`run_id`、`attempt_id`；
-- 让 Skill 输出或 LLM 文本绕过 MCP/StepResult 直接控制回放。
+```text
+ga studio serve
+ga experiment validate <目录或.gaexp>
+ga experiment seal <目录> <输出.gaexp>
+ga run create|start <实验包> <Run目录> [--steps N]
+ga run status|pause|cancel <Run目录>
+ga run resume <Run目录>
+ga run resume <输入.garun> --destination <可写目录>
+ga run rerun <Run目录或.garun> <新Run目录> [--steps N]
+ga run seal <Run目录> <输出.garun>
+ga replay summary|timeline <Run目录或.garun>
+ga replay state <Run目录或.garun> <Step>
+```
 
-## 13. 教材案例构建与验收经验
+开发按改动运行相关检查；发布门禁覆盖完整 Python/Node 回归、跨平台原生文件系统安全、仓库外 wheel 安装：
 
-本节来自案例 1 的浏览器构建与 32 步运行验证，以及案例 2 的空间导航与边界对照，补充工作方法，不改变前述架构原则。案例专用的坐标、人物比例、模型、步数与提示词不得固化为系统默认值。案例 1 证据见 `docs/book/sample/01-morning-routine/settings/verification-record.md`，问题及处理状态见 `docs/book/sample/01-morning-routine/verification/pending-decisions.md`；案例 2 证据见 `docs/book/sample/02-doorway-reading/verification/formal-run-record.md` 与 `verification/contrasts/`。
+```text
+python tools/check_source_boundaries.py
+python -m pytest tests -q -p no:cacheprovider
+node --test tests/frontend/*.test.cjs
+python tools/run_symlink_release_gate.py
+python -m pip wheel . --no-deps --no-build-isolation -w dist
+python tools/verify_wheel.py <生成的.whl>
+```
 
-### 操作边界与资料同步
+边界扫描包含直接/传递依赖、函数内导入和种子脚本；架构测试防止旧目录/通配导出回流。安装验收覆盖 CLI、Studio、文件协议、MCP、暂停恢复、对象响应、Replay，外部模型用确定性 HTTP 服务替代；前端资源搬迁另做浏览器检查。CI 见 [.github/workflows/native-symlink-release-gate.yml](.github/workflows/native-symlink-release-gate.yml)。
 
-- 教材案例的系统配置和运行验收由主 Agent 通过浏览器完成，不用脚本、直接接口或直接改数据库/实验目录绕过界面。素材生成、向案例目录保存素材、编辑教学文档属于资料准备；它们不代替浏览器上传、绑定和保存。
-- 用户在案例 2 开始时明确更新规则：发现系统 bug 或体验问题时必须阻断，停止继续构建和运行验证，先向用户报告页面入口、复现动作、预期/实际结果、Experiment/Run/Attempt/Step、影响与证据。只有用户针对该问题明确评估同意后，才可交给工程子 Agent 修复；此前案例或其他问题的修复授权不自动扩展到新问题。不得静默绕过、自动修复，或一边等待决定一边继续推进案例。修复完成相关测试、重启后，主 Agent 再回到原浏览器路径复验，不能用单元测试或重跑另一个 Run 冒充原问题通过。案例设计中预期的权限拒绝、不可达等对照结果应按合同判断，不直接误报为系统 bug。
-- 本任务已获准使用仓库 `restart-web.bat` 启动服务。重启前检查运行状态，需要时先通过 UI 安全暂停；启动后台进程使用隐藏窗口。这个操作授权不构成新增本地模型服务管理界面的依据。
-- 用户于 2026-09-13 明确要求：工程子 Agent 修复 bug 并完成相关测试后，主 Agent 必须重启 Web 服务，再从原浏览器路径验收；不能只刷新前端页面就假定后端已经加载新代码。即使修复内容是前端静态文件，也遵守这项重启约定。重启前仍按上一条检查运行状态，重启后核对新进程、健康检查，以及本次修复涉及的实际接口或页面行为。
-- 新发现的 bug、体验建议、待复现现象与已修复项目分开记录；注明证据、影响、建议路径和验收条件。需要用户决定的方案保持待定，不把“已经记录”写成“已经解决”。
-- 验收聚焦当前案例与已批准的修复范围。用户已指出其他实验的慢加载不应干扰案例 2；不要为了状态检查扩展排查其他实验，也不要把一次慢加载直接升级为当前案例的阻断。用户已确认属于正常等待的现象，应继续原任务。
-- 每个案例拥有自己的 `map/`、`agents/`、`skill/`、`settings/`。新生成的图片必须实际保存到对应素材目录，再经浏览器上传并绑定；不能只留在生成工具临时位置，也不能未经同意换用别的地图。
-- 每次 UI 修改后，同步对应的中文录入说明、精确 Skill 和参数记录，并核对概览、检查清单、视觉验收表是否残留旧坐标、旧比例、旧 MCP 或“待验证”状态。历史 JSON 必须明确标为历史参考，不能继续被当前录入说明引用为执行依据。
-- 用户已明确要求精简实验中心列表：移除搜索与组合筛选、状态计数整行、比较、批量标签/负责人、可选页容量、紧凑表格和保存视图；固定每页 5 条并收拢布局。后续教材与自动化不得依赖这些已取消的入口，也不能为消除其旧缺陷而重新加入功能。实验本身的负责人/标签元数据、基本归档/恢复和分页不因此删除。
+## 9. 教材案例操作与验收
 
-### 先验证画面与空间，再组织行为
+案例入口与证据见 [docs/book/sample/README.md](docs/book/sample/README.md)。案例坐标、显示比例、模型、步数和提示词不是系统默认值。
 
-- 对案例 1 这类住宅场景，优先用一张完整背景叠加四层空间语义，仅给需要状态换图的 Game Object 配置独立素材；不要为了演示把整间房拆成大量家具图片。
-- 地图和人物要一起检查美术风格、源图尺寸、逻辑网格、显示比例、脚底锚点与遮挡。头像、行走图必须都上传并应用到人群，在实验内确认物理副本。案例 1 的人物显示 3 格是该地图的实测配置，不是通用比例。
-- 两种对象状态图使用相同视角、位置、切片边界与显示尺寸；同时确认默认状态、状态键与图片绑定。先看编辑器切换，再看真实 `SET_OBJECT_STATE` 后的回放；普通 ACT 或“已经整理好”的文字不能证明换图发生。
-- 背景画着门不等于门可走，Game Object 地址也不等于可走站位。分别核验语义边界、碰撞、出生点、家具旁操作站位和跨房间路线；预检通过不替代视觉与行为验收。
-- 出生点在 Arena 的可走空地且未覆盖 Game Object 时，应使用地图实际返回的三层地址，不虚构第四层对象。固定四层地图层级不要求每格都覆盖对象；同步保存后重新打开核对坐标、实际地址与已知空间，再做预检和封存。出生在真实 Game Object 内时仍须保留完整对象地址，不能用 Arena 前缀替代。
-- 导航与 MOVE 使用核验过的可走目标；`next_coord` 是路径第一格，不能误当整段行程终点。按步长与速度计算移动预算，未抵达就继续行程，不能提前开始目的地活动。已知空间不扩大视野硬上限；远端目标应经感知与可达性核验选择途经点，不能猜门洞或为消除拒绝而擅自扩大视野。
-- 对象地址导航可从对象的多个可走格中选择终点，不能要求它与编辑器人工选点的路径长度相同。案例 2 静态选点为11格，真实对象导航为10格，实际消费4+4+2格；应核对请求目标、每步实际终点、剩余路径与抵达后的零距离导航，而非按纸面路长判断失败。
-- 视野与注意力对照分别记录实际请求半径、生效半径、硬上限、各类别候选数和实际返回项；当前位置CURRENT语义锚点单独核对。模型可能改写残缺地址或错误转述拒绝内容，教材必须保留真实MCP参数，不用ACT摘要替代，也不将没有发出的精确输入标成通过。
+### 操作边界
 
-### Brain 进度与事实验证
+- 系统配置和运行验收由主 Agent 通过浏览器完成，不用脚本、直接接口或改数据库/实验目录绕过 UI。素材生成、保存、教学文档编辑属于资料准备，不能代替浏览器上传、绑定和保存。
+- 发现当前案例的系统 bug 或体验问题即停止构建/运行验收，报告页面入口、复现动作、预期/实际、Experiment/Run/Attempt/Step、影响与证据。仅在用户针对该问题明确同意后交工程子 Agent 修复；授权不跨问题，不静默绕过或边等决定边推进。预期权限拒绝、不可达按合同判断；不扩查其他实验，用户确认的正常等待继续原任务。
+- 修复并完成相关测试后，主 Agent 必须重启 Web，再回原浏览器路径验收；前端静态修改也如此，刷新、单元测试或另一个 Run 不替代复验。已授权使用 `restart-web.bat`；重启前检查运行状态，必要时 UI 安全暂停，后台启动隐藏窗口，重启后核对新进程、健康检查和实际页面/接口行为。
+- bug、体验建议、待复现、已修复分别记录证据、影响、建议和验收条件，待定不写成解决。每案独立保存 `map/`、`agents/`、`skill/`、`settings/`；新图先落入素材目录，再上传绑定，未经同意不换地图。UI 修改同步中文说明、精确 Skill、参数、概览和检查表；历史 JSON 标为参考，不作当前执行依据。
 
-- 连续生活过程用自然语言 SOP 和真实进度驱动，分开 MOVE、到达后的 ACT、对象状态动作；不要按 Step 编号编排，也不要把一整个早晨塞进一个 ACT。
-- 不假设上一轮模型输出会自动成为下一轮进度。需要跨步记忆时使用当前 Agent 的持久记忆，并区分“已确认完成”与“拟执行/待确认”。当前运行中成功 `world-act` 会结束本轮，必要的进度便签应在动作前写入；下一轮再用真实活动、坐标与对象状态核验，失败不记成完成。
-- 不从动作文字推断跨地点移动或物品状态。例如“将餐具放回厨房方向”而坐标仍在餐区，只能证明在餐区收拢餐具，不能记成已送回厨房。事件、地址、坐标和对象 payload 不一致时应登记缺陷，不能让 Skill 编造事实补齐。
-- 依赖感知结果的导航必须等真实工具返回后才构造参数。案例 2 诊断中模型曾在同一响应提前猜导航地址，随后又把被拒目标描述成另一个已感知对象；这类 Run 不构成目标分支的有效复验。核对实际 MCP 输入/输出，保留无效运行；需要调整案例说明时通过 UI 建立独立副本并记录变化，不能靠反复重跑挑成功结果或把错误目标被正确拒绝当作系统导航缺陷。
-- 公共作者资源修改后，已有实验和 Run 不会自动更新。需要验证新 Brain、地图或 Agent 时，按当前实验生命周期在 UI 中明确导入；SEALED 实验需复制为新的独立实验，再确认包内资源。不要修改已封存参考 Run 对应的精确 Skill，并仍将旧结果宣称为新内容的验证。
+### 空间与行为
 
-### 运行、报告与交付
+- 先验画面和空间，再组织行为。住宅优先完整背景叠加语义，只为需换图的对象独立配图；联合检查人物/地图风格、尺寸、网格、比例、脚底锚点、遮挡，头像与行走图均上传应用并确认实验副本。
+- 状态图保持视角、位置、切片边界和尺寸一致，核对默认状态/键/图片；编辑器切换后还须用真实 `SET_OBJECT_STATE` 验证回放，ACT 描述不能证明换图。
+- 分别核验语义边界、碰撞、出生点、对象旁站位和跨房间路线，预检不能替代。空地出生用实际三层地址，不虚构对象；落在对象内保留完整四层地址。保存后重开核对坐标、地址、已知空间，再预检封存。
+- 导航等真实感知返回后再构造参数，不猜门洞/地址或扩大视野；`next_coord` 只是路径首格。按步长和速度核对已走/剩余路径，抵达后才 ACT；对象可选多个可走终点，不要求路长等于人工选点。核对请求目标、每步终点与抵达后零距离导航。
+- 边界对照记录真实 MCP 输入/输出、请求/生效半径、硬上限、各类候选/返回数及 CURRENT 锚点；不以 ACT 摘要、模型转述或未发出的输入冒充通过，也不把正确拒绝错误目标报为系统缺陷。
+- 连续行为用 SOP 和真实进度驱动，分开 MOVE、抵达 ACT、对象状态动作，不按 Step 编排。跨步进度用私有持久记忆，区分待确认/已完成；成功 `world-act` 结束本轮，必要便签在动作前写，下轮按真实坐标、活动、对象状态核验，失败不记完成。
+- 文字不能证明移动或状态变化，事件/坐标/地址/payload 不一致须登记问题。保留无效 Run，不反复重跑挑成功结果；改案例通过 UI 建独立副本。公共资源修改后须明确重新导入，SEALED 先复制；不改参考 Run 的精确 Skill 后仍引用旧结果证明新内容。
 
-- 分清实验生命周期 `DRAFT → SEALED`、Run 执行状态和实验质量；它们不要求显示同一个词。发现顶部徽标、Run 选择器和实际进度冲突时记录来源问题，不根据一个可能滞后的徽标判定运行卡死。
-- 顶部“复制已完成”等操作反馈也有所属上下文，不能当作当前 Run 状态。验证残留反馈修复时重走复制、删除、资源中心、新建实验路径，并检查正常操作提示仍可用；仅刷新后旧文字消失不能证明修复通过。复制请求晚返回的结果要保留在操作历史中，不能覆盖新实验或强制跳回旧副本。
-- 暂停恢复应核对同一 `run_id`、新的 `attempt_id`、最近完整检查点及下一条提交 Step，检查动作和对象状态没有重复。旧检查点清理的瞬时错误与新检查点提交失败分开诊断，不能只见 `PermissionError` 就断言恢复数据损坏。
-- 运行完成后，核对所有 Attempt 的质量条目、UI 数量、独立报告和 ZIP 内容一致；总步数完成不代表零质量问题。首次空记忆、可恢复 MCP 拒绝与模型物理重试分别统计，不能把“0 次物理重试”写成“工具从未失败”。
-- 仿真虚拟时间、日志展示时区、模型推理耗时和含暂停的墙钟总耗时分别记录。估算偏差应结合实际调用链、物理重试和暂停时间解释，不直接把一次调试总时长当模型速度基准。
-- UI 导出后保留原始产物、生成时的 Step/状态、文件大小与 SHA256，并将其原样归档到案例目录。核对嵌入实验的图片、Skill 与参数，以及完整帧和报告；历史导出不能因当前 Run 已结束而被描述成最终结果。
-- 导出来源要区分“取材时的提交边界/状态”和“文件生成时间”，并绑定实际文件哈希；缺少可信来源显示未知。固定 Step 的结果包不能夹入下一 Step 的 Attempt 可变记忆，未提交的日志只能作为审计过程保留，不能当作已提交事实。
-- 恢复相关的时间值保存时保留时区偏移和精度；摘要按该 Run 的仿真时区显示，不依赖宿主时区。核对同一绝对时刻与持续时间，并测试跨日期和重复恢复；不要重写历史纯文本日志来掩盖曾经的显示问题。
-- 普通结果 ZIP、正式 `.gaexp` / `.garun` 和异机复现是不同验收项。没有完成协议封存与独立环境验证，就不能承诺一键导入或恢复。回放画面已确认也不等于出版近景、缩放清晰度和遮挡检查全部通过。
+### 运行与交付
+
+- 分开实验生命周期、Run 状态、操作反馈和质量；徽标/选择器/进度冲突先核对来源。残留反馈修复须重走复制、删除、资源中心、新建路径，同时验证正常提示。
+- 恢复核对同一 `run_id`、新 `attempt_id`、完整检查点及下一提交 Step，无重复动作/对象变化；区分旧检查点清理错误与新提交失败。时间验收核对绝对时刻/持续时间、跨日期及重复恢复。
+- 完成后核对所有 Attempt 质量明细、UI 数量、报告、ZIP 一致；空记忆、可恢复 MCP 拒绝、物理重试分别计数。估算分析区分调用链、重试、暂停，调试墙钟总时长不当模型速度。
+- UI 导出保留原始文件，记录取材提交边界/状态、生成时间、大小、SHA256，原样归档并核对嵌入素材/Skill/参数、完整帧与报告；来源未知就标未知，历史导出不冒充最终结果。固定 Step 包不得夹入下一 Step 可变记忆，未提交日志仅作审计。
+- 普通结果 ZIP、正式 `.gaexp/.garun`、异机复现分别验收；未做协议封存与独立环境验证，不承诺一键导入/恢复。回放确认不代替出版近景、缩放清晰度和遮挡检查。

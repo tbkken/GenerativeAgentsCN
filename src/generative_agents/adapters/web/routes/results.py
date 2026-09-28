@@ -4,17 +4,21 @@ import hashlib
 import json
 from typing import Any
 from fastapi import HTTPException, Query, Response
+from fastapi.responses import StreamingResponse
 from generative_agents.ga_replay.api import ReplayReader
 from generative_agents.ga_protocol.packages.io import open_package
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.io import checked_package_path
+from generative_agents.ga_protocol.packages.io import iter_package_files
 from generative_agents.ga_replay.api import definition_names, event_view, conversation_views, memory_views, agent_views, checkpoint_documents
+from generative_agents.ga_replay.api import read_slice, result_index, read_metadata, artifact_page, trace_page, trace_record
+from generative_agents.ga_protocol.packages.reading import open_readonly_package
 
 def install_routes(router, ctx):
 
     @router.get('/runs/{run_id}/results/timeline')
     def result_timeline(run_id: str, from_step: int=Query(default=1, ge=1), to_step: int | None=Query(default=None, ge=1), limit: int=Query(default=200, ge=1, le=500)):
-        facts = ctx.read_run_facts(run_id)
+        facts = read_slice(ctx.run_location(run_id), start=from_step, end=min(to_step or from_step + limit - 1, from_step + limit - 1))
         names = definition_names(facts)
         frames = [frame for frame in facts['frames'] if frame['step_no'] >= from_step and (to_step is None or frame['step_no'] <= to_step)][:limit]
         events = [event_view(raw, step_no=frame['step_no'], virtual_time=frame['virtual_time'], names=names) for frame in frames for raw in frame.get('domain_events') or []]
@@ -33,23 +37,34 @@ def install_routes(router, ctx):
         return {'run_id': run_id, 'available_step': facts['summary']['committed_step'], 'requested_steps': facts['summary']['requested_steps'], 'steps': steps, 'events': events, 'agent_steps': agent_steps}
 
     @router.get('/runs/{run_id}/results/agents')
-    def result_agents(run_id: str):
-        facts = ctx.read_run_facts(run_id)
-        items, _details = agent_views(facts)
-        return {'run_id': run_id, 'items': items}
+    def result_agents(run_id: str, offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        facts = result_index(ctx.run_location(run_id))
+        items = facts['agents']
+        return {'run_id': run_id, 'items': [{**{key: value for key, value in item.items() if key != 'definition'}, 'run_status': facts['summary']['status']} for item in items[offset:offset+limit]],
+                'total': len(items), 'next_offset': offset+limit if offset+limit < len(items) else None}
 
     @router.get('/runs/{run_id}/results/agents/{agent_key}')
-    def result_agent(run_id: str, agent_key: str):
-        facts = ctx.read_run_facts(run_id)
-        _items, details = agent_views(facts)
+    def result_agent(run_id: str, agent_key: str, section: str=Query(default='overview', pattern='^(overview|actions|events|conversations|memories|plans|state_changes)$'), offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        facts = result_index(ctx.run_location(run_id))
+        details = facts['agent_details']
         if agent_key not in details:
             raise HTTPException(status_code=404, detail='Agent is not present in this Run package')
-        return details[agent_key]
+        item = details[agent_key]
+        field = 'plan_revisions' if section == 'plans' else section
+        selected = item.get(field) or [] if section != 'overview' else []
+        arrays = {'steps', 'actions', 'events', 'conversations', 'memories', 'plan_revisions', 'state_changes'}
+        result = {key: ([] if key in arrays else value) for key, value in item.items()}
+        if section != 'overview':
+            result[field] = selected[offset:offset+limit]
+        result.update(section=section, total=len(selected), next_offset=offset+limit if offset+limit < len(selected) else None)
+        result['run_status'] = facts['summary']['status']
+        result['agent'] = {**result['agent'], 'run_status': facts['summary']['status']}
+        return result
 
     @router.get('/runs/{run_id}/results/conversations')
     def result_conversations(run_id: str, agent_key: str | None=None, q: str='', offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
-        facts = ctx.read_run_facts(run_id)
-        items = conversation_views(facts, definition_names(facts))
+        facts = result_index(ctx.run_location(run_id))
+        items = facts['conversations']
         if agent_key:
             items = [item for item in items if agent_key in item['participants']]
         if q:
@@ -59,17 +74,19 @@ def install_routes(router, ctx):
         return {'run_id': run_id, 'items': [{key: value for key, value in item.items() if key != 'messages'} for item in selected], 'next_offset': offset + limit if offset + limit < len(items) else None}
 
     @router.get('/runs/{run_id}/results/conversations/{conversation_id}')
-    def result_conversation(run_id: str, conversation_id: str):
-        facts = ctx.read_run_facts(run_id)
-        for item in conversation_views(facts, definition_names(facts)):
+    def result_conversation(run_id: str, conversation_id: str, offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        facts = result_index(ctx.run_location(run_id))
+        for item in facts['conversations']:
             if item['conversation_id'] == conversation_id:
-                return {'run_id': run_id, **item}
+                messages = item['messages']
+                return {'run_id': run_id, **item, 'messages': messages[offset:offset+limit], 'total': len(messages),
+                        'next_offset': offset+limit if offset+limit < len(messages) else None}
         raise HTTPException(status_code=404, detail='Conversation is not present in this Run package')
 
     @router.get('/runs/{run_id}/results/memories')
     def result_memories(run_id: str, agent_key: str | None=None, memory_type: str | None=None, state: str | None=None, q: str='', offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
-        facts = ctx.read_run_facts(run_id)
-        items = memory_views(facts, definition_names(facts))
+        facts = result_index(ctx.run_location(run_id))
+        items = facts['memories']
         if agent_key:
             items = [item for item in items if item['agent_key'] == agent_key]
         if memory_type:
@@ -82,10 +99,17 @@ def install_routes(router, ctx):
         return {'run_id': run_id, 'items': items[offset:offset + limit], 'next_offset': offset + limit if offset + limit < len(items) else None}
 
     @router.get('/runs/{run_id}/results/operations')
-    def result_operations(run_id: str):
-        facts = ctx.read_run_facts(run_id)
+    def result_operations(run_id: str, section: str=Query(default='overview', pattern='^(overview|usage|artifacts)$'), offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        location = ctx.run_location(run_id)
+        if location.is_dir():
+            artifact_root = checked_package_path(location / 'artifacts')
+            if artifact_root.is_dir():
+                # Reject an unsafe package namespace without reading exports.
+                for _relative, _path in iter_package_files(artifact_root):
+                    pass
+        summary, _status = read_metadata(location)
         usage: dict[tuple[str, str, str], dict[str, Any]] = {}
-        for raw in facts['traces']:
+        for raw in ctx.trace_records_for(run_id) if section == 'usage' else []:
             event_type = raw.get('event_type')
             if event_type not in {'LOGICAL_END', 'PHYSICAL_START', 'PHYSICAL_ATTEMPT'}:
                 continue
@@ -99,58 +123,45 @@ def install_routes(router, ctx):
                 item['input_tokens'] += int(raw.get('prompt_tokens') or 0)
                 item['output_tokens'] += int(raw.get('completion_tokens') or 0)
                 item['max_latency_ms'] = max(item['max_latency_ms'], int(raw.get('latency_ms') or 0))
-        return {'run_id': run_id, 'run_status': facts['summary']['status'], 'usage_consistency': 'RUN_TRACE_EVENTS', 'usage_committed_through_step': facts['summary']['committed_step'], 'attempts': facts['summary'].get('attempts') or [], 'model_usage': list(usage.values()), 'artifacts': facts['artifacts'], 'artifact_jobs': []}
+        artifacts = artifact_page(location, run_id, offset=offset, limit=limit) if section == 'artifacts' else {'items': [], 'total': 0, 'next_offset': None}
+        return {'run_id': run_id, 'run_status': summary['status'], 'usage_consistency': 'RUN_TRACE_EVENTS', 'usage_committed_through_step': summary['committed_step'], 'attempts': summary.get('attempts') or [], 'model_usage': list(usage.values()), 'artifacts': artifacts['items'], 'artifact_jobs': [], 'total': artifacts['total'], 'next_offset': artifacts['next_offset']}
 
     @router.get('/runs/{run_id}/events')
     def run_events(run_id: str, after_id: int=Query(default=0, ge=0), limit: int=Query(default=200, ge=1, le=500)):
-        facts = ctx.read_run_facts(run_id)
-        names = definition_names(facts)
         events = []
-        sequence = 0
-        for frame in facts['frames']:
-            for raw in frame.get('domain_events') or []:
-                sequence += 1
-                if sequence <= after_id:
-                    continue
-                view = event_view(raw, step_no=frame['step_no'], virtual_time=frame['virtual_time'], names=names)
-                events.append({'id': sequence, 'event_type': view['event_type'], 'created_at': frame['virtual_time'], 'payload': {'step_no': frame['step_no'], 'event_id': view['event_id'], **view['payload']}})
+        with ReplayReader(ctx.run_location(run_id)) as replay:
+            names = {str(item['agent_key']): item.get('name') or item['agent_key'] for item in replay.experiment_agents()}
+            for frame in replay.iter_steps(start=max(1, after_id >> 32)):
+                for position, raw in enumerate(frame.get('domain_events') or [], 1):
+                    sequence = (frame['step_no'] << 32) | position
+                    if sequence <= after_id:
+                        continue
+                    view = event_view(raw, step_no=frame['step_no'], virtual_time=frame['virtual_time'], names=names)
+                    events.append({'id': sequence, 'event_type': view['event_type'], 'created_at': frame['virtual_time'], 'payload': {'step_no': frame['step_no'], 'event_id': view['event_id'], **view['payload']}})
+                    if len(events) >= limit:
+                        break
                 if len(events) >= limit:
                     break
-            if len(events) >= limit:
-                break
         return {'items': events, 'next_after_id': events[-1]['id'] if events else after_id}
 
     @router.get('/runs/{run_id}/attempts')
     def run_attempts(run_id: str):
-        facts = ctx.read_run_facts(run_id)
-        frame_steps: dict[str, list[int]] = {}
-        for frame in facts['frames']:
-            frame_steps.setdefault(str(frame.get('attempt_id') or ''), []).append(frame['step_no'])
+        summary, status = read_metadata(ctx.run_location(run_id))
         items = []
-        for raw in facts['summary'].get('attempts') or []:
+        attempts = sorted(summary.get('attempts') or [], key=lambda item: item.get('ordinal') or 0)
+        for position, raw in enumerate(attempts):
             attempt_id = str(raw.get('attempt_id') or '')
-            steps = frame_steps.get(attempt_id) or []
-            items.append({'attempt_id': attempt_id, 'attempt_no': raw.get('ordinal') or len(items) + 1, 'status': raw.get('status') or 'UNKNOWN', 'start_step': int(raw.get('resumed_from_step') or 0) + 1, 'end_step': max(steps) if steps else raw.get('resumed_from_step'), 'stop_reason': raw.get('failure') or raw.get('status'), 'started_at': raw.get('started_at'), 'ended_at': raw.get('finished_at'), 'error_message': raw.get('failure'), 'log': facts['log']})
-        return {'run_id': run_id, 'items': items, 'default_attempt_id': facts['status'].get('active_attempt_id') or (items[-1]['attempt_id'] if items else None)}
+            end_step = attempts[position+1].get('resumed_from_step', 0) if position+1 < len(attempts) else summary['committed_step']
+            items.append({'attempt_id': attempt_id, 'attempt_no': raw.get('ordinal') or len(items) + 1, 'status': raw.get('status') or 'UNKNOWN', 'start_step': int(raw.get('resumed_from_step') or 0) + 1, 'end_step': end_step, 'stop_reason': raw.get('failure') or raw.get('status'), 'started_at': raw.get('started_at'), 'ended_at': raw.get('finished_at'), 'error_message': raw.get('failure')})
+        return {'run_id': run_id, 'items': items, 'default_attempt_id': status.active_attempt_id or (items[-1]['attempt_id'] if items else None)}
 
     @router.get('/runs/{run_id}/model-traces')
     def run_model_traces(run_id: str, attempt_id: str | None=None, event_type: str | None=None, purpose: str='', cursor: int=Query(default=0, ge=0), limit: int=Query(default=200, ge=1, le=500)):
-        records = ctx.trace_records_for(run_id)
-        if attempt_id:
-            records = [item for item in records if item.get('attempt_id') == attempt_id]
-        if event_type == 'PHYSICAL':
-            records = [item for item in records if str(item.get('event_type') or '').startswith('PHYSICAL')]
-        elif event_type:
-            records = [item for item in records if item.get('event_type') == event_type]
-        if purpose:
-            records = [item for item in records if purpose.casefold() in str(item.get('purpose') or '').casefold()]
-        selected = records[cursor:cursor + limit]
-        next_cursor = cursor + len(selected)
-        return {'items': selected, 'next_cursor': next_cursor, 'eof': next_cursor >= len(records)}
+        return trace_page(ctx.run_location(run_id), attempt_id=attempt_id, event_type=event_type, purpose=purpose, cursor=cursor, limit=limit)
 
     @router.get('/runs/{run_id}/model-traces/{trace_id}')
     def run_model_trace_detail(run_id: str, trace_id: str, cursor: int=Query(default=0, ge=0), limit_bytes: int=Query(default=16384, ge=1, le=1048576)):
-        record = next((item for item in ctx.trace_records_for(run_id) if item['trace_id'] == trace_id), None)
+        record = trace_record(ctx.run_location(run_id), trace_id)
         if record is None:
             raise HTTPException(status_code=404, detail='Model trace is not present in this Run package')
         iteration_tools = []
@@ -163,20 +174,24 @@ def install_routes(router, ctx):
                         continue
                     iteration_tools.extend((item for item in (effect.get('payload') or {}).get('trace', []) if item.get('event') == 'mcp.call'))
         payload = record.get('payload')
-        content = json.dumps(payload, ensure_ascii=False, indent=2) if payload is not None else ''
-        chunk = content[cursor:cursor + limit_bytes]
-        next_cursor = cursor + len(chunk)
-        return {'trace': record, 'iteration_tools': iteration_tools, 'payload_diagnostic': '该 Run 未保存此请求的模型 Payload，无法还原历史请求全文；下方展示已有的同轮 MCP 事实记录。', 'payload_available': payload is not None, 'content': chunk, 'next_cursor': next_cursor if next_cursor < len(content) else None, 'file_id': record.get('payload_sha256')}
+        content = (json.dumps(payload, ensure_ascii=False, indent=2) if payload is not None else '').encode('utf-8')
+        if cursor > len(content) or (cursor < len(content) and content[cursor] & 0xC0 == 0x80):
+            raise HTTPException(status_code=422, detail='Payload cursor must be at a UTF-8 boundary')
+        next_cursor = min(cursor+limit_bytes, len(content))
+        while next_cursor < len(content) and content[next_cursor] & 0xC0 == 0x80:
+            next_cursor += 1
+        chunk = content[cursor:next_cursor].decode('utf-8')
+        return {'trace': {key: value for key, value in record.items() if key != 'payload'}, 'iteration_tools': iteration_tools, 'payload_diagnostic': '该 Run 未保存此请求的模型 Payload，无法还原历史请求全文；下方展示已有的同轮 MCP 事实记录。', 'payload_available': payload is not None, 'content': chunk, 'next_cursor': next_cursor if next_cursor < len(content) else None, 'file_id': record.get('payload_sha256')}
 
     @router.get('/runs/{run_id}/attempts/{attempt_id}/log')
     def run_attempt_log(run_id: str, attempt_id: str, cursor: int=Query(default=0, ge=0), limit_bytes: int=Query(default=65536, ge=1, le=262144)):
-        facts = ctx.read_run_facts(run_id)
-        if attempt_id not in {str(item.get('attempt_id')) for item in facts['summary'].get('attempts') or []}:
+        summary, status = read_metadata(ctx.run_location(run_id))
+        if attempt_id not in {str(item.get('attempt_id')) for item in summary.get('attempts') or []}:
             raise HTTPException(status_code=404, detail='Attempt is not present in this Run package')
         from generative_agents.ga_protocol.packages.byte_windows import read_utf8_window
         from generative_agents.ga_studio.api import ServiceError
-        terminal = facts['status']['status'] in {'PAUSED', 'CANCELLED', 'COMPLETED', 'FAILED'}
-        with open_package(ctx.run_location(run_id)) as root:
+        terminal = status.status.value in {'PAUSED', 'CANCELLED', 'COMPLETED', 'FAILED'}
+        with open_readonly_package(ctx.run_location(run_id)) as root:
             path = checked_package_path(root / 'logs' / 'runtime-process.log')
             if not path.is_file():
                 return {'content': '', 'next_cursor': 0, 'file_id': None, 'starts_mid_line': False, 'eof': True, 'terminal': terminal}
@@ -193,22 +208,29 @@ def install_routes(router, ctx):
 
     @router.get('/runs/{run_id}/attempts/{attempt_id}/log/download')
     def download_run_attempt_log(run_id: str, attempt_id: str):
-        facts = ctx.read_run_facts(run_id)
-        if attempt_id not in {str(item.get('attempt_id')) for item in facts['summary'].get('attempts') or []}:
+        location = ctx.run_location(run_id)
+        summary, _status = read_metadata(location)
+        if attempt_id not in {str(item.get('attempt_id')) for item in summary.get('attempts') or []}:
             raise HTTPException(status_code=404, detail='Attempt is not present in this Run package')
-        content, _terminal = ctx.run_log_bytes(run_id)
-        return Response(content=content, media_type='text/plain; charset=utf-8', headers={'Content-Disposition': f'attachment; filename="run-{run_id}-attempt-{attempt_id}.log"'})
+        def chunks():
+            with open_readonly_package(location) as root:
+                path = checked_package_path(root / 'logs' / 'runtime-process.log')
+                if path.is_file():
+                    with path.open('rb') as handle:
+                        yield from iter(lambda: handle.read(65536), b'')
+        return StreamingResponse(chunks(), media_type='text/plain; charset=utf-8', headers={'Content-Disposition': f'attachment; filename="run-{run_id}-attempt-{attempt_id}.log"'})
 
     @router.get('/runs/{run_id}/checkpoints')
-    def run_checkpoints(run_id: str):
-        return {'run_id': run_id, 'items': checkpoint_documents(ctx.run_location(run_id), run_id)}
+    def run_checkpoints(run_id: str, offset: int=Query(default=0, ge=0), limit: int=Query(default=50, ge=1, le=100)):
+        items = checkpoint_documents(ctx.run_location(run_id), run_id, offset=offset, limit=limit+1)
+        return {'run_id': run_id, 'items': items[:limit], 'next_offset': offset+limit if len(items) > limit else None}
 
     @router.get('/runs/{run_id}/checkpoints/{step_no}')
     def run_checkpoint(run_id: str, step_no: int):
-        summary = next((item for item in checkpoint_documents(ctx.run_location(run_id), run_id) if item['step_no'] == step_no), None)
+        summary = next(iter(checkpoint_documents(ctx.run_location(run_id), run_id, step_no=step_no, validate=True)), None)
         if summary is None:
             raise HTTPException(status_code=404, detail='Checkpoint is not present in this Run package')
-        with open_package(ctx.run_location(run_id)) as root:
+        with open_readonly_package(ctx.run_location(run_id)) as root:
             checkpoint = root / summary['snapshot_kind'] / f'step-{step_no:06d}'
             state = read_json(checkpoint / 'state.json') if summary['validated'] else {}
             conversation = read_json(checkpoint / 'conversation.json') if summary['validated'] else {}
@@ -237,14 +259,12 @@ def install_routes(router, ctx):
 
     @router.get('/runs/{run_id}/checkpoints/{step_no}/preview')
     def run_checkpoint_preview(run_id: str, step_no: int, section: str=Query(pattern='^(state|conversation)$'), cursor: int=Query(default=0, ge=0), limit_bytes: int=Query(default=32768, ge=1, le=1048576), file_id: str | None=None):
-        del file_id
-        with open_package(ctx.run_location(run_id)) as root:
+        from generative_agents.ga_protocol.packages.byte_windows import read_utf8_window
+        with open_readonly_package(ctx.run_location(run_id)) as root:
             path = root / 'checkpoints' / f'step-{step_no:06d}' / f'{section}.json'
             if not path.is_file():
                 path = root / 'recovery' / f'step-{step_no:06d}' / f'{section}.json'
             if not path.is_file():
                 raise HTTPException(status_code=404, detail='Checkpoint preview is not present')
-            content = path.read_bytes()
-        chunk = content[cursor:cursor + limit_bytes]
-        next_cursor = cursor + len(chunk)
-        return {'content': chunk.decode('utf-8', errors='replace'), 'next_cursor': next_cursor if next_cursor < len(content) else None, 'file_id': hashlib.sha256(content).hexdigest()}
+            window = read_utf8_window(checked_package_path(path), cursor=cursor, limit_bytes=min(limit_bytes, 262144), expected_file_id=file_id)
+        return {'content': window.content, 'next_cursor': None if window.eof else window.next_cursor, 'file_id': window.file_id}
